@@ -1,0 +1,6 @@
+export const REACT_APP_CLIENT_ID="BO2j8ZVZjLmRpGqhclE_xcPdWjGMZYMsDy5ZWgZ7FJSA-zJ2U4huIQAKKuKDe8BSABl60EQXjbFhnx78et4leB0"
+export const REACT_APP_VERIFIER="lancer0"
+export const REACT_APP_AUTH0_DOMAIN="https://dev-kgvm1sxe.us.auth0.com"
+export const REACT_APP_SPA_CLIENTID="ZaU1oZzvlb06tZC8UXtTvTM9KSBY9pzk"
+export const REACT_APP_RWA_CLIENTID="ZaU1oZzvlb06tZC8UXtTvTM9KSBY9pzk"
+export const REACT_APP_BACKEND_SERVER_API="http://localhost:3001/callback"

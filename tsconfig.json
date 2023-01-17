@@ -1,0 +1,78 @@
+{
+  "compilerOptions": {
+    "target": "ESNext",
+    "useDefineForClassFields": true,
+    "lib": [
+      "DOM",
+      "DOM.Iterable",
+      "ESNext"
+    ],
+    "allowJs": false,
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "strict": false,
+    "forceConsistentCasingInFileNames": true,
+    "module": "ESNext",
+    "moduleResolution": "Node",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "jsx": "react-jsx",
+    "baseUrl": ".",
+    "paths": {
+      "@/*": [
+        "./*"
+      ],
+      "@/assets": [
+        "./src/assets/*"
+      ],
+      "@/atoms": [
+        "./src/atoms/index.ts"
+      ],
+      "@/background": [
+        "./src/background/index.ts"
+      ],
+      "@/components": [
+        "./src/components/index.ts"
+      ],
+      "@/config": [
+        "./src/config/index.ts"
+      ],
+      "@/constants": [
+        "./src/constants/index.ts"
+      ],
+      "@/helpers": [
+        "./src/content/helpers/index.ts"
+      ],
+      "@/hooks": [
+        "./src/hooks/index.ts"
+      ],
+      "@/pages": [
+        "./src/pages"
+      ],
+      "@/providers": [
+        "./src/providers/index.ts"
+      ],
+      "@/styles": [
+        "./src/styles"
+      ],
+      "@/types": [
+        "./src/types/index.ts"
+      ],
+      "@/utils": [
+        "./src/utils/index.ts"
+      ]
+    },
+    "outDir": "./extension",
+    "noEmit": false,
+    "incremental": true
+  },
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
+}
