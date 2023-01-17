@@ -37,3 +37,4 @@ next-env.d.ts
 extension
 second_wallet.json
 test-keypair.json
+.env
