@@ -4,7 +4,7 @@ import request from "request";
 import axios from "axios";
 import cors from 'cors';
 import { Octokit } from 'octokit';
-import { auth } from "./src/routes";
+import { auth, data, health } from "./src/routes";
 
 dotenv;
 const app = express();
@@ -14,8 +14,8 @@ const port = process.env.PORT;
 app.use(cors())
 
 
-// app.use("/data", data);
-// app.use("/health", health);
+app.use("/data", data);
+app.use("/health", health);
 app.use("/", auth);
 
 app.listen(port, () => {

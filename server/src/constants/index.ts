@@ -1,5 +1,5 @@
 // USER
-export const USER_API_ROUTE = "user";
+export const ACCOUNT_API_ROUTE = "account";
 
 // RAFFLE
 export const RAFFLE_API_ROUTE = "raffle";

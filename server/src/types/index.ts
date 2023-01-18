@@ -4,13 +4,28 @@ import timezone from "dayjs/plugin/timezone";
 dayjs.extend(timezone);
 
 // USER
-export interface UserParams {
-  userKey: PublicKey;
-  canCreateRaffle?: boolean;
+export interface AccountInsertParams extends AccountGetParams {
+  solanaKey: PublicKey;
+  verified?: boolean;
   isAdmin?: boolean;
 }
 
-// RAFFLE
+export interface AccountGetParams {
+  githubId: string;
+}
+
+// ISSUE
+
+export interface IssueInsertParams extends IssueGetParams {
+fundingHash: string
+}
+
+export interface IssueGetParams {
+  title: string,
+  repo: string,
+  org: string,
+  issueNumber?: number
+}
 
 export interface RaffleParams {
   raffleKey: PublicKey;

@@ -6,19 +6,20 @@ const temp = {"access_token":"eyJhbGciOiJkaXIiLCJlbmMiOiJBMjU2R0NNIiwiaXNzIjoiaH
 const uuid_ext = "CREATE EXTENSION IF NOT EXISTS \"uuid-ossp\";";
 
 const account = `CREATE TABLE account (
-    uuid UUID PRIMARY KEY,
+    uuid UUID DEFAULT uuid_generate_v4 (),
     solana_pubkey VARCHAR,
     is_admin BOOLEAN NOT NULL,
     verified BOOLEAN NOT NULL,
-    github_id VARCHAR,
+    github_id VARCHAR NOT NULL,
 		name VARCHAR,
 		discord VARCHAR,
 		twitter VARCHAR,
-		instagram VARCHAR
+		instagram VARCHAR,
+    PRIMARY KEY (uuid)
 );`;
 
 const issue = `CREATE TABLE issue (
-    uuid UUID PRIMARY KEY,
+    uuid UUID DEFAULT uuid_generate_v4 (),
 		fundingHash VARCHAR,
     fundingAmount DECIMAL(20),
     title VARCHAR,
@@ -27,19 +28,16 @@ const issue = `CREATE TABLE issue (
     issueNumber DECIMAL(20),
     state VARCHAR,
     type VARCHAR,
-    raffle_type VARCHAR NOT NULL,
-    raffle_mint VARCHAR,
-    max_tickets DECIMAL(20),
-    expiration TIMESTAMP WITH TIME ZONE,
-		hidden BOOLEAN
+    PRIMARY KEY (uuid)
 );`;
 
 const pullRequest = `CREATE TABLE pull_request (
-  uuid UUID PRIMARY KEY,
+  uuid UUID DEFAULT uuid_generate_v4 (),
   title VARCHAR,
   repo VARCHAR,
   org VARCHAR,
-  pullNumber DECIMAL(20)
+  pullNumber DECIMAL(20),
+  PRIMARY KEY (uuid)
 );`;
 
 const accountIssueAssoc = `CREATE TABLE account_issue (
@@ -55,7 +53,8 @@ const accountPullRequestAssoc = `CREATE TABLE account_pull_request (
   pull_request_uuid UUID,
   PRIMARY KEY (account_uuid, pull_request_uuid),
   CONSTRAINT fk_account FOREIGN KEY(account_uuid) REFERENCES account(uuid),
-  CONSTRAINT fk_pull_request FOREIGN KEY(pull_request_uuid) REFERENCES pull_request(uuid)
+  CONSTRAINT fk_pull_request FOREIGN KEY(pull_request_uuid) REFERENCES pull_request(uuid),
+  amount DECIMAL(20)
 );`;
 
 export async function migrate() {

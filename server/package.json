@@ -4,7 +4,7 @@
     "lint": "eslint",
     "start": "node ./dist/server.js",
     "migrate": "ts-node ./src/db/migrate.ts",
-    "dev": "NODE_ENV=dev ts-node ./src/index.ts",
+    "dev": "concurrently \"npx tsc --watch\" \"nodemon -q dist/server.js\"",
     "build": "npx tsc"
   },
   "dependencies": {
@@ -28,6 +28,7 @@
     "@types/request": "2.48.8",
     "@types/node": "^16.11.8",
     "@types/pg": "^8.6.5",
+    "concurrently": "7.6.0",
     "eslint": "^8.20.0",
     "typescript": "^4.6.4",
     "ts-node": "^10.5.0",

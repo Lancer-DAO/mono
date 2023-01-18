@@ -1,15 +1,15 @@
 import { Router } from "express";
 import { PublicKey } from "@solana/web3.js";
 import {
-  insertUser,
-  getUser,
+  insertAccount,
+  getAccount,
   insertRaffle,
   insertRaffleEntry,
   updateRaffleEntry,
   getRaffleEntry,
 } from "../controllers";
 import {
-  USER_API_ROUTE,
+  ACCOUNT_API_ROUTE,
   RAFFLE_API_ROUTE,
   RAFFLE_ENTRY_API_ROUTE,
   TICKET_API_ROUTE,
@@ -22,27 +22,27 @@ const router = Router();
 
 // USERS
 
-// router.post(`/${USER_API_ROUTE}`, async function (req, res, next) {
-//   try {
-//     return res.json(
-//       await insertUser({ userKey: new PublicKey(req.query.user_key) })
-//     );
-//   } catch (err) {
-//     next(err);
-//   }
-// });
+router.post(`/${ACCOUNT_API_ROUTE}`, async function (req, res, next) {
+  try {
+    return res.json(
+      await insertAccount({ githubId: req.query.github_id as string, solanaKey: new PublicKey(req.query.solana_key as string) })
+    );
+  } catch (err) {
+    next(err);
+  }
+});
 
-// router.get(`/${USER_API_ROUTE}`, async function (req, res, next) {
-//   try {
-//     return res.json(
-//       await getUser({ userKey: new PublicKey(req.query.user_key) })
-//     );
-//   } catch (err) {
-//     next(err);
-//   }
-// });
+router.get(`/${ACCOUNT_API_ROUTE}`, async function (req, res, next) {
+  try {
+    return res.json(
+      await getAccount({ githubId: req.query.github_id as string })
+    );
+  } catch (err) {
+    next(err);
+  }
+});
 
-// // RAFFLE
+// ISSUE
 
 // router.post(`/${RAFFLE_API_ROUTE}`, async function (req, res, next) {
 //   try {

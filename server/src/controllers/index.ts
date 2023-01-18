@@ -1,7 +1,8 @@
 import { DB } from "../db";
 import {
   RaffleEntryParams,
-  UserParams,
+  AccountInsertParams,
+  AccountGetParams,
   RaffleParams,
   GetRaffleEntryParams,
 } from "../types";
@@ -12,24 +13,24 @@ dayjs.extend(timezone);
 
 // USERS
 
-export const insertUser = async (params: UserParams) => {
-  let query = "INSERT INTO users (pubkey, can_create_raffle, is_admin)";
-  query += ` VALUES ('${params.userKey.toString()}',${!!params.canCreateRaffle}, ${!!params.isAdmin})`;
+export const insertAccount = async (params: AccountInsertParams) => {
+  let query = "INSERT INTO account (github_id, solana_pubkey, verified, is_admin)";
+  query += ` VALUES ('${params.githubId}','${params.solanaKey.toString()}',${!!params.verified}, ${!!params.isAdmin})`;
   const result = await DB.query(query);
   return result;
 };
 
-export const getUser = async (params: UserParams) => {
-  let query = `SELECT * FROM users where pubkey='${params.userKey.toString()}'`;
+export const getAccount = async (params: AccountGetParams) => {
+  let query = `SELECT * FROM account where github_id='${params.githubId}'`;
   const result = await DB.query(query);
   return result;
 };
 
 // RAFFLE
 
-export const insertRaffle = async (params: RaffleParams) => {
+export const insertIssue = async (params: RaffleParams) => {
   let query =
-    "INSERT INTO raffle (pubkey, raffle_type, raffle_mint,max_tickets, expiration,hidden)";
+    "INSERT INTO issue (pubkey, raffle_type, raffle_mint,max_tickets, expiration,hidden)";
   query += ` VALUES ('${params.raffleKey.toString()}', '${
     params.raffleType
   }', '${params.raffleMint?.toString()}', ${
