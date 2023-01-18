@@ -1,0 +1,15 @@
+{
+	"compilerOptions": {
+		"lib": ["es2015"],
+		"module": "CommonJS",
+		"target": "es2020",
+		"outDir": "lib",
+		"esModuleInterop": true,
+		"declaration": true,
+		"sourceMap": true,
+		"resolveJsonModule": true,
+		"baseUrl": "."
+	},
+	"include": ["src/**/*"],
+	"exclude": ["node_modules"]
+}
