@@ -1,11 +1,23 @@
 // USER
 export const ACCOUNT_API_ROUTE = "account";
 
-// RAFFLE
-export const RAFFLE_API_ROUTE = "raffle";
+// ISSUE
+export const ISSUE_API_ROUTE = "issue";
+export const NEW_ISSUE_API_ROUTE = "new_issue";
 
-// RAFFLE ENTRY
-export const RAFFLE_ENTRY_API_ROUTE = "raffle_entry";
+// PULL REQUEST
+export const PULL_REQUEST_API_ROUTE = "pull_request";
+export const NEW_PULL_REQUEST_API_ROUTE = "new_pull_request";
+export const LINK_PULL_REQUEST_API_ROUTE = "link_pull_request";
+
+// ACCOUNT ISSUE
+
+export const ACCOUNT_ISSUE_API_ROUTE = "account_issue";
+
+// ACCOUNT PULL REQUEST
+
+export const ACCOUNT_PULL_REQUEST_API_ROUTE = "account_pull_request";
+
 
 // BUY TICKET
 export const TICKET_API_ROUTE = "ticket";

@@ -3,16 +3,30 @@ import { PublicKey } from "@solana/web3.js";
 import {
   insertAccount,
   getAccount,
-  insertRaffle,
-  insertRaffleEntry,
-  updateRaffleEntry,
-  getRaffleEntry,
+  insertIssue,
+  getIssueByNumber,
+  getIssueByTitle,
+  updateIssueNumber,
+  updateIssueState,
+  insertPullRequest,
+  getPullRequestByNumber,
+  insertAccountIssue,
+  getAccountIssue,
+  insertAccountPullRequest,
+  getAccountPullRequest,
+  newAccountIssue,
+  newAccountPullRequest,
+  linkPullRequest,
 } from "../controllers";
 import {
   ACCOUNT_API_ROUTE,
-  RAFFLE_API_ROUTE,
-  RAFFLE_ENTRY_API_ROUTE,
-  TICKET_API_ROUTE,
+  ACCOUNT_ISSUE_API_ROUTE,
+  ACCOUNT_PULL_REQUEST_API_ROUTE,
+  ISSUE_API_ROUTE,
+  LINK_PULL_REQUEST_API_ROUTE,
+  NEW_ISSUE_API_ROUTE,
+  NEW_PULL_REQUEST_API_ROUTE,
+  PULL_REQUEST_API_ROUTE,
 } from "../constants";
 import dayjs from "dayjs";
 import timezone from "dayjs/plugin/timezone";
@@ -44,135 +58,219 @@ router.get(`/${ACCOUNT_API_ROUTE}`, async function (req, res, next) {
 
 // ISSUE
 
-// router.post(`/${RAFFLE_API_ROUTE}`, async function (req, res, next) {
-//   try {
-//     console.log("hi");
-//     const raffleKey = new PublicKey(req.query.raffle_key);
-//     console.log("key", raffleKey);
-//     const raffleMint = req.query.raffle_mint
-//       ? new PublicKey(req.query.raffle_mint)
-//       : undefined;
-//     console.log("mint", raffleMint);
-//     const expiration = dayjs(req.query.expiration);
-//     console.log("expiration", expiration);
-//     return res.json(
-//       await insertRaffle({
-//         raffleKey: raffleKey,
-//         raffleType: req.query.raffle_type,
-//         raffleMint: raffleMint,
-//         maxTickets: req.query.max_tickets,
-//         expiration: expiration,
-//         hidden: req.query.hidden,
-//       })
-//     );
-//   } catch (err) {
-//     next(err);
-//   }
-// });
+router.post(`/${ISSUE_API_ROUTE}`, async function (req, res, next) {
+  try {
+    return res.json(
+      await insertIssue({
+        fundingHash: req.query.fundingHash as string,
+         fundingAmount: parseInt(req.query.fundingAmount as string),
+         title: req.query.title as string,
+         repo: req.query.repo as string,
+         org: req.query.org as string
+        })
+    );
+  } catch (err) {
+    next(err);
+  }
+});
 
-// // RAFFLE ENTRY
+router.get(`/${ISSUE_API_ROUTE}`, async function (req, res, next) {
+  try {
+    if(req.query.issueNumber) {
+      return res.json(
+        await getIssueByNumber({
+           title: req.query.title as string,
+           repo: req.query.repo as string,
+           org: req.query.org as string,
+           issueNumber: parseInt(req.query.issueNumber as string)
+          })
+      );
+    }
+    return res.json(
+      await getIssueByTitle({
+         title: req.query.title as string,
+         repo: req.query.repo as string,
+         org: req.query.org as string
+        })
+    );
+  } catch (err) {
+    next(err);
+  }
+});
 
-// router.post(`/${RAFFLE_ENTRY_API_ROUTE}`, async function (req, res, next) {
-//   try {
-//     const userKey = new PublicKey(req.query.user_key);
-//     const raffleKey = new PublicKey(req.query.raffle_key);
-//     return res.json(
-//       await insertRaffleEntry({
-//         userKey: userKey,
-//         raffleKey: raffleKey,
-//         count: req.query.count,
-//       })
-//     );
-//   } catch (err) {
-//     next(err);
-//   }
-// });
+router.put(`/${ISSUE_API_ROUTE}`, async function (req, res, next) {
+  try {
+    if(req.query.state) {
+      return res.json(
+        await updateIssueState({
+           title: req.query.title as string,
+           repo: req.query.repo as string,
+           org: req.query.org as string,
+           state: req.query.state as string
+          })
+      );
+    }
+      return res.json(
+        await updateIssueNumber({
+           title: req.query.title as string,
+           repo: req.query.repo as string,
+           org: req.query.org as string,
+           issueNumber: parseInt(req.query.issueNumber as string)
+          })
+      );
+  } catch (err) {
+    next(err);
+  }
+});
 
-// router.put(`/${RAFFLE_ENTRY_API_ROUTE}`, async function (req, res, next) {
-//   try {
-//     const userKey = new PublicKey(req.query.user_key);
-//     const raffleKey = new PublicKey(req.query.raffle_key);
-//     return res.json(
-//       await updateRaffleEntry({
-//         userKey: userKey,
-//         raffleKey: raffleKey,
-//         count: req.query.count,
-//       })
-//     );
-//   } catch (err) {
-//     next(err);
-//   }
-// });
+// PULL REQUEST
 
-// router.get(`/${RAFFLE_ENTRY_API_ROUTE}`, async function (req, res, next) {
-//   try {
-//     const userKey = new PublicKey(req.query.user_key);
-//     const raffleKey = new PublicKey(req.query.raffle_key);
-//     return res.json(
-//       await getRaffleEntry({
-//         userKey: userKey,
-//         raffleKey: raffleKey,
-//       })
-//     );
-//   } catch (err) {
-//     next(err);
-//   }
-// });
+router.post(`/${PULL_REQUEST_API_ROUTE}`, async function (req, res, next) {
+  try {
+    return res.json(
+      await insertPullRequest({
+         title: req.query.title as string,
+         repo: req.query.repo as string,
+         org: req.query.org as string,
+         pullNumber: parseInt(req.query.pullNumber as string)
+        })
+    );
+  } catch (err) {
+    next(err);
+  }
+});
 
-// // TICKET
+router.get(`/${PULL_REQUEST_API_ROUTE}`, async function (req, res, next) {
+  try {
+    return res.json(
+      await getPullRequestByNumber({
+         repo: req.query.repo as string,
+         org: req.query.org as string,
+         pullNumber: parseInt(req.query.pullNumber as string)
+        })
+    );
+  } catch (err) {
+    next(err);
+  }
+});
 
-// router.post(`/${TICKET_API_ROUTE}`, async function (req, res, next) {
-//   try {
-//     const userKey = new PublicKey(req.query.user_key);
-//     const raffleKey = new PublicKey(req.query.raffle_key);
-//     const userExists = (await getUser({ userKey })).rowCount > 0;
-//     if (!userExists) {
-//       insertUser({ userKey: userKey });
-//     }
+router.put(`/${LINK_PULL_REQUEST_API_ROUTE}`, async function (req, res, next) {
+  try {
+    return res.json(
+      await linkPullRequest({
+         title: req.query.title as string,
+         repo: req.query.repo as string,
+         org: req.query.org as string,
+         pullNumber: parseInt(req.query.pullNumber as string)
+        })
+    );
+  } catch (err) {
+    next(err);
+  }
+});
 
-//     const maybeRaffleEntry = await getRaffleEntry({ userKey, raffleKey });
-//     const raffleEntryExists = maybeRaffleEntry.length > 0;
+// ACCOUNT ISSUE
 
-//     if (raffleEntryExists) {
-//       const totalTickets =
-//         parseInt(req.query.count) + parseInt(maybeRaffleEntry[0].count);
-//       return res.json(
-//         await updateRaffleEntry({
-//           userKey: userKey,
-//           raffleKey: raffleKey,
-//           count: totalTickets,
-//         })
-//       );
-//     } else {
-//       return res.json(
-//         await insertRaffleEntry({
-//           userKey: userKey,
-//           raffleKey: raffleKey,
-//           count: req.query.count,
-//         })
-//       );
-//     }
-//   } catch (err) {
-//     next(err);
-//   }
-// });
+router.post(`/${ACCOUNT_ISSUE_API_ROUTE}`, async function (req, res, next) {
+  try {
+    return res.json(
+      await insertAccountIssue({
+         title: req.query.title as string,
+         repo: req.query.repo as string,
+         org: req.query.org as string,
+         githubId: req.query.github_id as string
+        })
+    );
+  } catch (err) {
+    next(err);
+  }
+});
 
-// router.get(`/${TICKET_API_ROUTE}`, async function (req, res, next) {
-//   try {
-//     const userKey = new PublicKey(req.query.user_key);
-//     const raffleKey = new PublicKey(req.query.raffle_key);
-//     const maybeRaffleEntry = await getRaffleEntry({
-//       userKey: userKey,
-//       raffleKey: raffleKey,
-//     });
-//     if (maybeRaffleEntry.length > 0) {
-//       return res.json(maybeRaffleEntry[0]);
-//     } else {
-//       return res.json({ count: 0 });
-//     }
-//   } catch (err) {
-//     next(err);
-//   }
-// });
+router.get(`/${ACCOUNT_ISSUE_API_ROUTE}`, async function (req, res, next) {
+  try {
+    return res.json(
+      await getAccountIssue({
+         title: req.query.title as string,
+         repo: req.query.repo as string,
+         org: req.query.org as string,
+         githubId: req.query.github_id as string
+        })
+    );
+  } catch (err) {
+    next(err);
+  }
+});
 
-export default router;
+router.post(`/${NEW_ISSUE_API_ROUTE}`, async function (req, res, next) {
+  try {
+    return res.json(
+      await newAccountIssue({
+         githubId: req.query.github_id as string,
+         fundingHash: req.query.fundingHash as string,
+         fundingAmount: parseInt(req.query.fundingAmount as string),
+         title: req.query.title as string,
+         repo: req.query.repo as string,
+         org: req.query.org as string,
+         solanaKey: new PublicKey(req.query.solana_key as string)
+        })
+    );
+  } catch (err) {
+    next(err);
+  }
+});
+
+
+
+// ACCOUNT PULL REQUEST
+
+router.post(`/${ACCOUNT_PULL_REQUEST_API_ROUTE}`, async function (req, res, next) {
+  try {
+    return res.json(
+      await insertAccountPullRequest({
+         repo: req.query.repo as string,
+         org: req.query.org as string,
+         githubId: req.query.github_id as string,
+         pullNumber: parseInt(req.query.pullNumber as string),
+         amount: parseInt(req.query.amount as string)
+        })
+    );
+  } catch (err) {
+    next(err);
+  }
+});
+
+router.get(`/${ACCOUNT_PULL_REQUEST_API_ROUTE}`, async function (req, res, next) {
+  try {
+    return res.json(
+      await getAccountPullRequest({
+        repo: req.query.repo as string,
+        org: req.query.org as string,
+        githubId: req.query.github_id as string,
+        pullNumber: parseInt(req.query.pullNumber as string),
+        amount: parseInt(req.query.amount as string)
+       })
+    );
+  } catch (err) {
+    next(err);
+  }
+});
+
+router.post(`/${NEW_PULL_REQUEST_API_ROUTE}`, async function (req, res, next) {
+  try {
+    return res.json(
+      await newAccountPullRequest({
+         githubId: req.query.github_id as string,
+         solanaKey: new PublicKey(req.query.solana_key as string),
+         title: req.query.title as string,
+         repo: req.query.repo as string,
+         org: req.query.org as string,
+         pullNumber: parseInt(req.query.pullNumber as string),
+         amount: parseInt(req.query.amount as string)
+        })
+    );
+  } catch (err) {
+    next(err);
+  }
+});
+
+export default router

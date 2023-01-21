@@ -17,7 +17,8 @@ export interface AccountGetParams {
 // ISSUE
 
 export interface IssueInsertParams extends IssueGetParams {
-fundingHash: string
+fundingHash: string,
+fundingAmount: number
 }
 
 export interface IssueGetParams {
@@ -26,6 +27,39 @@ export interface IssueGetParams {
   org: string,
   issueNumber?: number
 }
+
+export interface IssueUpdateParams extends IssueGetParams {
+  state: string
+  }
+
+
+// PULL REQUEST
+
+export interface PullRequestInsertParams extends PullRequestGetParams {
+  title: string,
+  }
+
+  export interface PullRequestGetParams {
+    repo: string,
+    org: string,
+    pullNumber: number
+
+  }
+
+  export interface LinkPullRequestParams extends PullRequestGetParams, IssueGetParams {}
+
+  // ACCOUNT ISSUE
+  export interface AccountIssueGetParams extends AccountGetParams, IssueGetParams {}
+  export interface AccountIssueNewParams extends AccountInsertParams, IssueInsertParams {}
+
+// ACCOUNT PULL REQUEST
+export interface AccountPullRequestGetParams extends AccountGetParams, PullRequestGetParams {
+  amount: number
+}
+export interface AccountPullRequestNewParams extends AccountInsertParams, PullRequestInsertParams {
+  amount: number
+}
+
 
 export interface RaffleParams {
   raffleKey: PublicKey;

@@ -20,12 +20,12 @@ const account = `CREATE TABLE account (
 
 const issue = `CREATE TABLE issue (
     uuid UUID DEFAULT uuid_generate_v4 (),
-		fundingHash VARCHAR,
-    fundingAmount DECIMAL(20),
+		funding_hash VARCHAR,
+    funding_amount DECIMAL(20),
     title VARCHAR,
     repo VARCHAR,
     org VARCHAR,
-    issueNumber DECIMAL(20),
+    issue_number DECIMAL(20),
     state VARCHAR,
     type VARCHAR,
     PRIMARY KEY (uuid)
@@ -36,7 +36,9 @@ const pullRequest = `CREATE TABLE pull_request (
   title VARCHAR,
   repo VARCHAR,
   org VARCHAR,
-  pullNumber DECIMAL(20),
+  pull_number DECIMAL(20),
+  issue_uuid UUID,
+  CONSTRAINT fk_issue_pr FOREIGN KEY(issue_uuid) REFERENCES issue(uuid),
   PRIMARY KEY (uuid)
 );`;
 
