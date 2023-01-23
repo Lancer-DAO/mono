@@ -64,10 +64,8 @@ export interface PullRequestInsertParams extends PullRequestGetParams {
 
 // ACCOUNT PULL REQUEST
 export interface AccountPullRequestGetParams extends AccountGetParams, PullRequestGetParams {
-  amount: number
 }
 export interface AccountPullRequestNewParams extends AccountInsertParams, PullRequestInsertParams {
-  issueNumber: number,
   amount: number
 }
 

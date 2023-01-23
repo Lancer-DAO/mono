@@ -1,6 +1,18 @@
 import * as ReactDOM from "react-dom/client";
 import { BountyFeed } from "@/components";
+import axios, { AxiosResponse } from "axios";
+import { API_ENDPOINT } from "@/constants";
+import {
+  DATA_API_ROUTE,
+  FULL_PULL_REQUEST_API_ROUTE,
+  ISSUE_API_ROUTE,
+  NEW_ISSUE_API_ROUTE,
+} from "@/server/src/constants";
+import { convertToQueryParams } from "@/utils";
 const LIST_ITEM_ID = "bounty-list-item";
+
+const getIssues = () =>
+  axios.get(`${API_ENDPOINT}${DATA_API_ROUTE}/${ISSUE_API_ROUTE}s`);
 
 export const insertHomeFeed = () => {
   const existingWrapper = window.document.getElementById(LIST_ITEM_ID);
@@ -24,26 +36,31 @@ export const insertHomeFeed = () => {
       aria-selected="false"
       tabIndex={-2}
       onClick={() => {
-        chrome.runtime.sendMessage(
-          {
-            message: "get_issues",
-            data: {
-              filters: ["open"],
-            },
-          },
-          (response) => {
-            const footerEle = window.document.querySelector(footerSelector);
-            const bodyEle = window.document.querySelector(".bounty-tab");
+        getIssues().then((response) => {
+          const issues = response.data.map((rawIssue) => {
+            return {
+              ...rawIssue,
+              hash: rawIssue.funding_hash,
+              amount: parseFloat(rawIssue.funding_amount),
+              pullNumber: rawIssue.pull_number,
+              issueNumber: rawIssue.issue_number,
+              githubId: rawIssue.github_id,
+              payoutHash: rawIssue.payout_hash,
+              author: rawIssue.github_login,
+              pubkey: rawIssue.solana_pubkey,
+            };
+          });
+          const footerEle = window.document.querySelector(footerSelector);
+          const bodyEle = window.document.querySelector(".bounty-tab");
 
-            if (footerEle && !bodyEle) {
-              const feedItem = window.document.createElement("div");
-              feedItem.className = "feed-wrapper";
-              footerEle.insertAdjacentElement("beforebegin", feedItem);
-              const feedInner = ReactDOM.createRoot(feedItem);
-              feedInner.render(<BountyFeed issues={response.issues} />);
-            }
+          if (footerEle && !bodyEle) {
+            const feedItem = window.document.createElement("div");
+            feedItem.className = "feed-wrapper";
+            footerEle.insertAdjacentElement("beforebegin", feedItem);
+            const feedInner = ReactDOM.createRoot(feedItem);
+            feedInner.render(<BountyFeed issues={issues} />);
           }
-        );
+        });
       }}
     >
       <span data-view-component="true"> Bounties</span>

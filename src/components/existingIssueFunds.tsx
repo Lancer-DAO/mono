@@ -37,12 +37,16 @@ export const ExistingIssueFunds = ({ issue }: ExistingIssueFundsProps) => {
           This Issue Was Funded Through Lancer
         </div>
         {!issue.paid && (
-          <>
-            <div className="lancer-funded-amount">
-              {`Issue Payout: ${issue.amount.toFixed(4)}`}
-            </div>
+          <div className="lancer-funded-amount">
+            {`Issue Payout: ${issue.amount?.toFixed(4)} SOL`}
+            {/* <SolLogo className="sol-logo-small" /> */}
+
             <button
-              className={"confirm-button"}
+              className={classnames(
+                "confirm-button",
+                "hug",
+                "margin-left-auto"
+              )}
               onClick={(e) => {
                 window.open(
                   `https://solscan.io/tx/${issue.hash}?cluster=devnet`,
@@ -51,9 +55,9 @@ export const ExistingIssueFunds = ({ issue }: ExistingIssueFundsProps) => {
                 e.preventDefault();
               }}
             >
-              View Funding
+              View
             </button>
-          </>
+          </div>
         )}
       </div>
 
@@ -72,16 +76,15 @@ export const ExistingIssueFunds = ({ issue }: ExistingIssueFundsProps) => {
                   issue.githubId.split("|")[1]
                 }?s=60&v=4`}
               />
-              <div className="contributor-name">{issue.author}</div>
-              <div className="contributor-amount">
-                {`${issue.amount.toFixed(4)}`}{" "}
-              </div>
-              {issue.payoutHash && (
+              <div className="contributor-name">{`${
+                issue.author
+              }: ${issue.amount?.toFixed(4)} SOL`}</div>
+              {issue.payoutHash ? (
                 <button
                   className={classnames(
                     "confirm-button",
                     "hug",
-                    "margin-left-4"
+                    "margin-left-auto"
                   )}
                   onClick={(e) => {
                     window.open(
@@ -93,20 +96,23 @@ export const ExistingIssueFunds = ({ issue }: ExistingIssueFundsProps) => {
                 >
                   View
                 </button>
+              ) : (
+                <button
+                  className={classnames(
+                    "confirm-button",
+                    "hug",
+                    "margin-left-auto"
+                  )}
+                  onClick={(e) => {
+                    onClick();
+                    e.preventDefault();
+                  }}
+                >
+                  {buttonText}
+                </button>
               )}
             </div>
           </div>
-          {!issue.paid && (
-            <button
-              className={"confirm-button"}
-              onClick={(e) => {
-                onClick();
-                e.preventDefault();
-              }}
-            >
-              {buttonText}
-            </button>
-          )}
         </>
       )}
     </>

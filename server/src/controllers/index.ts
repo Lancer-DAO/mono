@@ -13,7 +13,8 @@ import {
   LinkPullRequestParams,
   NewPullRequestParams,
   GetFullPullRequest,
-  PullRequestUpdateParams
+  PullRequestUpdateParams,
+  AccountPullRequestNewParams
 } from "../types";
 import dayjs from "dayjs";
 import timezone from "dayjs/plugin/timezone";
@@ -163,7 +164,7 @@ export const getAccountIssue = async (params: AccountIssueGetParams) => {
   return result.rows.length > 0 ? result.rows[0] : {message: 'NOT FOUND'};
 };
 
-export const insertAccountPullRequest = async (params: AccountPullRequestGetParams) => {
+export const insertAccountPullRequest = async (params: AccountPullRequestNewParams) => {
   const pullRequest = await getPullRequestByNumber(params);
   const account = await getAccount(params)
 
@@ -226,22 +227,33 @@ export const newPullRequest = async (params: NewPullRequestParams) => {
     account = await getAccount(params);
   }
   let issue = await getIssueByNumber(params)
+  let linkedPr = await getAccountPullRequest(params);
+  if(linkedPr.message === 'NOT FOUND') {
 
-  let query =
+    let query =
     "INSERT INTO account_pull_request (account_uuid, pull_request_uuid, amount)";
   query += ` VALUES ('${
     account.uuid
   }', '${pullRequest.uuid}', ${issue.funding_amount});`;
-  query += `UPDATE issue set state='in_progress' where uuid='${issue.uuid}';`
-  console.log(query);
-  const result = await DB.query(query);
+  await DB.query(query);
+
+  }
+  if(issue.state !== 'in_progress') {
+
+    let query = `UPDATE issue set state='in_progress' where uuid='${issue.uuid}';`
+    console.log(query);
+  await DB.query(query);
+
+  }
+
+
   linkPullRequest(params)
-  return result;
+  return {message: 'SUCCESS'};
 };
 
 export const linkPullRequest = async (params: LinkPullRequestParams) => {
   let pullRequest = await getPullRequestByNumber(params);
-  let issue = await getIssueByTitle(params);
+  let issue = await getIssueByNumber(params);
 
   if(!issue || !pullRequest) {
     return {message: 'NOT FOUND'}
@@ -259,7 +271,7 @@ export const linkPullRequest = async (params: LinkPullRequestParams) => {
 
 export const getFullPullRequestByNumber = async (params: GetFullPullRequest) => {
   let query =
-    "SELECT pr.org, pr.repo, i.funding_amount, a.solana_pubkey, i.issue_number, pr.pull_number, i.funding_hash, a.github_login, a.github_id "
+    "SELECT pr.payout_hash, pr.org, pr.repo, i.state, i.funding_amount, a.solana_pubkey, i.issue_number, pr.pull_number, i.funding_hash, a.github_login, a.github_id "
 
   query += ` from pull_request as pr`
   query += ` LEFT OUTER JOIN account_pull_request as apr`
@@ -274,4 +286,18 @@ export const getFullPullRequestByNumber = async (params: GetFullPullRequest) => 
   console.log(query);
   const result = await DB.query(query);
   return result.rows.length > 0 ? result.rows[0] : {message: 'NOT FOUND'};
+};
+
+export const getAllIssues = async () => {
+  let query =
+    "SELECT i.title, i.funding_amount, i.issue_number, i.funding_hash, i.org, i.repo, i.state, a.github_login, a.github_id "
+
+  query += ` from issue as i`
+  query += ` LEFT OUTER JOIN account_issue as ai`
+  query += ` ON i.uuid = ai.issue_uuid`
+  query += ` LEFT OUTER JOIN account as a`
+  query += ` ON ai.account_uuid = a.uuid`
+  console.log(query);
+  const result = await DB.query(query);
+  return result.rows.length > 0 ? result.rows : {message: 'NOT FOUND'};
 };

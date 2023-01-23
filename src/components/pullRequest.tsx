@@ -51,7 +51,7 @@ export const PullRequest = ({ issue }: PullRequestProps) => {
         {!issue.paid && (
           <>
             <div className="lancer-funded-amount">
-              {`Issue Payout: ${issue.amount?.toFixed(4)}`}
+              {`Issue Payout: ${issue.amount?.toFixed(4)} SOL`}
               {/* <SolLogo className="sol-logo-small" /> */}
 
               <button
@@ -113,11 +113,9 @@ export const PullRequest = ({ issue }: PullRequestProps) => {
                   issue.githubId.split("|")[1]
                 }?s=60&v=4`}
               />
-              <div className="contributor-name">{issue.author}</div>
-              <div className="contributor-amount">
-                {`${issue.amount?.toFixed(4)}`}
-                {/* <SolLogo className="sol-logo-small" /> */}
-              </div>
+              <div className="contributor-name">{`${
+                issue.author
+              }: ${issue.amount?.toFixed(4)} SOL`}</div>
               {issue.payoutHash && (
                 <button
                   className={classnames(

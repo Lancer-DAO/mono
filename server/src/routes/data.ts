@@ -19,6 +19,7 @@ import {
   linkPullRequest,
   getFullPullRequestByNumber,
   updatePullRequestPayout,
+  getAllIssues,
 } from "../controllers";
 import {
   ACCOUNT_API_ROUTE,
@@ -101,6 +102,14 @@ router.get(`/${ISSUE_API_ROUTE}`, async function (req, res, next) {
          org: req.query.org as string
         })
     );
+  } catch (err) {
+    next(err);
+  }
+});
+
+router.get(`/${ISSUE_API_ROUTE}s`, async function (req, res, next) {
+  try {
+    return res.json(await getAllIssues())
   } catch (err) {
     next(err);
   }
@@ -253,8 +262,7 @@ router.get(`/${ACCOUNT_PULL_REQUEST_API_ROUTE}`, async function (req, res, next)
       await getAccountPullRequest({
         repo: req.query.repo as string,
         org: req.query.org as string,githubLogin: req.query.githubLogin as string,
-        pullNumber: parseInt(req.query.pullNumber as string),
-        amount: parseFloat(req.query.amount as string)
+        pullNumber: parseInt(req.query.pullNumber as string)
        })
     );
   } catch (err) {

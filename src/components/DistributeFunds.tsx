@@ -102,7 +102,7 @@ export const DistributeFunding = ({ issue, port }: DistributeFundingProps) => {
             <div className="contributor-name">{issue.author}</div>
 
             <div className="contributor-amount">
-              {`${issue.amount.toFixed(4)} `}
+              {`${issue.amount.toFixed(4)} SOL`}
               {/* <SolLogo className="solana-logo" /> */}
             </div>
             {issue.payoutHash && (

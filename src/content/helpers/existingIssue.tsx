@@ -51,10 +51,10 @@ export const insertIssue = (response, splitURL) => {
     assigneeEle.insertAdjacentElement("afterend", fundingWrapper);
     const fundingInner = ReactDOM.createRoot(fundingWrapper);
     fundingInner.render(<ExistingIssueFunds issue={issue} />);
-    if (issue?.issueNumber === undefined) {
+    if (!issue.issueNumber) {
       const newIssue = {
-        issueNumber: splitURL[6],
         ...issue,
+        issueNumber: splitURL[6],
       };
       delete newIssue.state;
       axios.put(
@@ -74,29 +74,31 @@ export const insertExistingIssue = (splitURL: string[]) => {
     const issueTitle = window.document.querySelectorAll(
       ".js-issue-title.markdown-title"
     )[0].innerHTML;
-    const prNumberRaw = window.document
-      .querySelectorAll(linkedPRSelector)[0]
-      .querySelector(innerPRSpanSelector)
-      .innerHTML.split("#")[1];
-    const author = window.document.querySelector(authorSelector).innerHTML;
-    maybeGetPR(splitURL, parseInt(prNumberRaw), author).then((resp) => {
-      if (resp.data.message === "NOT FOUND") {
-        axios
-          .get(
-            `${API_ENDPOINT}${DATA_API_ROUTE}/${ISSUE_API_ROUTE}?${convertToQueryParams(
-              {
-                org: splitURL[3],
-                repo: splitURL[4],
-                title: issueTitle,
-              }
-            )}`
-          )
-          .then((response: AxiosResponse<any, any>) => {
-            insertIssue(response, splitURL);
-          });
-      } else {
+    const prNumberRawWrapper =
+      window.document.querySelectorAll(linkedPRSelector)[0];
+    if (prNumberRawWrapper) {
+      const prNumberRaw = prNumberRawWrapper
+        .querySelector(innerPRSpanSelector)
+        .innerHTML.split("#")[1];
+      const author = window.document.querySelector(authorSelector).innerHTML;
+
+      maybeGetPR(splitURL, parseInt(prNumberRaw), author).then((resp) => {
         insertIssue(resp, splitURL);
-      }
-    });
+      });
+    } else {
+      axios
+        .get(
+          `${API_ENDPOINT}${DATA_API_ROUTE}/${ISSUE_API_ROUTE}?${convertToQueryParams(
+            {
+              org: splitURL[3],
+              repo: splitURL[4],
+              title: issueTitle,
+            }
+          )}`
+        )
+        .then((response: AxiosResponse<any, any>) => {
+          insertIssue(response, splitURL);
+        });
+    }
   }
 };

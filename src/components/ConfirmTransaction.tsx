@@ -129,7 +129,7 @@ export const ConfirmFunding = ({ issue, port }: ConfirmFundingProps) => {
     <div className="confirm-funding-wrapper">
       <div className="logo-wrapper">{/* <ReactLogo className="logo" /> */}</div>
       <div className="confirm-title">
-        {`Would you like fund this issue with ${issue.amount.toFixed(4)}`}
+        {`Would you like fund this issue with ${issue.amount.toFixed(4)} SOL`}
         {/* <SolLogo className="solana-logo" /> */}
       </div>
 
