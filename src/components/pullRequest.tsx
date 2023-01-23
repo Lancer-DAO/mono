@@ -3,61 +3,45 @@ import classnames from "classnames";
 import { ContributorCompensationInfo, Issue, IssueState } from "@/types";
 // import SolLogo from "@/node_modules/cryptocurrency-icons/svg/black/sol.svg";
 
+import axios from "axios";
+import { API_ENDPOINT } from "@/constants";
+import {
+  DATA_API_ROUTE,
+  ISSUE_API_ROUTE,
+  NEW_ISSUE_API_ROUTE,
+} from "@/server/src/constants";
+import { convertToQueryParams, deepCopy } from "@/utils";
+import { last } from "lodash";
+const AUTHOR_SELECTOR = ".author.text-bold.Link--secondary";
 interface PullRequestProps {
-  issueProp: Issue;
+  issue: Issue;
 }
 enum DistributionState {
   FUND = "Mark for Review",
   FUNDING = "Marked for Review",
-  FUNDED = "Edit Distribution",
+  FUNDED = "Awaiting Review",
   ERROR = "Error",
 }
 
-const currentContributors: ContributorCompensationInfo[] = [
-  {
-    pubkey: "BuxU7uwwkoobF8p4Py7nRoTgxWRJfni8fc4U3YKGEXKs",
-    name: "jacksturt",
-    picture: "https://avatars.githubusercontent.com/u/117492794?s=60&v=4",
-    amount: 1,
-  },
-];
-
-export const PullRequest = ({ issueProp }: PullRequestProps) => {
-  const [issue, setIssue] = useState(issueProp);
-  const [buttonText, setButtonText] = useState(DistributionState.FUND);
+export const PullRequest = ({ issue }: PullRequestProps) => {
+  const [buttonText, setButtonText] = useState(
+    issue.state === IssueState.IN_PROGRESS
+      ? DistributionState.FUND
+      : DistributionState.FUNDED
+  );
   console.log(issue);
-  useEffect(() => {
-    if (!issue.fundingSplit) {
-      const newSplit = [{ ...currentContributors[0], amount: issue.amount }];
-      const newIssue = {
-        ...issue,
-        fundingSplit: newSplit,
-        state: IssueState.AWAITING_REVIEW,
-      };
-      console.log(issue, newIssue, newSplit);
-      setIssue(newIssue);
-      chrome.runtime.sendMessage({
-        message: "update_issue_info",
-        issue: newIssue,
-      });
-    }
-  }, []);
   const onClick = useCallback(async () => {
-    setButtonText(DistributionState.FUNDING);
-
-    // chrome.runtime.sendMessage(
-    //   {
-    //     message: "set_pull_request_split",
-    //     issue: issue,
-    //   },
-    //   (response) => {
-    //     if (response.message === "issue_updated") {
-    //       setButtonText(DistributionState.FUNDED);
-    //       setIssue(response.issue);
-    //     }
-    //   }
-    // );
+    setButtonText(DistributionState.FUNDED);
+    axios.put(
+      `${API_ENDPOINT}${DATA_API_ROUTE}/${ISSUE_API_ROUTE}?${convertToQueryParams(
+        {
+          ...issue,
+          state: IssueState.AWAITING_REVIEW,
+        }
+      )}`
+    );
   }, [issue]);
+  console.log(issue);
   return (
     <>
       <div className="funded-issue-upper">
@@ -67,7 +51,7 @@ export const PullRequest = ({ issueProp }: PullRequestProps) => {
         {!issue.paid && (
           <>
             <div className="lancer-funded-amount">
-              {`Issue Payout: ${issue.amount}`}
+              {`Issue Payout: ${issue.amount?.toFixed(4)}`}
               {/* <SolLogo className="sol-logo-small" /> */}
 
               <button
@@ -100,8 +84,17 @@ export const PullRequest = ({ issueProp }: PullRequestProps) => {
               className={classnames(
                 "confirm-button",
                 "hug",
-                "margin-left-auto"
+                "margin-left-auto",
+                {
+                  disabled:
+                    issue.state !== IssueState.NEW &&
+                    issue.state !== IssueState.IN_PROGRESS,
+                }
               )}
+              disabled={
+                issue.state !== IssueState.NEW &&
+                issue.state !== IssueState.IN_PROGRESS
+              }
               onClick={(e) => {
                 onClick();
                 e.preventDefault();
@@ -111,36 +104,40 @@ export const PullRequest = ({ issueProp }: PullRequestProps) => {
             </button>
           )}
         </div>
-        {issue.fundingSplit && (
+        {issue.pullNumber && (
           <div className="fund-split-outer">
-            {issue.fundingSplit.map((split) => (
-              <div className="fund-split-wrapper-cs" key={split.pubkey}>
-                <img className="contributor-picture-sm" src={split.picture} />
-                <div className="contributor-name">{split.name}</div>
-                <div className="contributor-amount">
-                  {`${split.amount.toFixed(4)}`}
-                  {/* <SolLogo className="sol-logo-small" /> */}
-                </div>
-                {split.signature && (
-                  <button
-                    className={classnames(
-                      "confirm-button",
-                      "hug",
-                      "margin-left-4"
-                    )}
-                    onClick={(e) => {
-                      window.open(
-                        `https://solscan.io/tx/${split.signature}?cluster=devnet`,
-                        "_blank"
-                      );
-                      e.preventDefault();
-                    }}
-                  >
-                    View
-                  </button>
-                )}
+            <div className="fund-split-wrapper-cs" key={issue.pubkey}>
+              <img
+                className="contributor-picture-sm"
+                src={`https://avatars.githubusercontent.com/u/${
+                  issue.githubId.split("|")[1]
+                }?s=60&v=4`}
+              />
+              <div className="contributor-name">{issue.author}</div>
+              <div className="contributor-amount">
+                {`${issue.amount?.toFixed(4)}`}
+                {/* <SolLogo className="sol-logo-small" /> */}
               </div>
-            ))}
+              {issue.payoutHash && (
+                <button
+                  className={classnames(
+                    "confirm-button",
+                    "hug",
+                    "margin-left-4"
+                  )}
+                  onClick={(e) => {
+                    window.open(
+                      `https://solscan.io/tx/${issue.payoutHash}?cluster=devnet`,
+                      "_blank"
+                    );
+                    e.preventDefault();
+                  }}
+                >
+                  View
+                </button>
+              )}
+            </div>
+            )
           </div>
         )}
       </>

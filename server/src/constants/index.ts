@@ -1,3 +1,6 @@
+// DATA
+export const DATA_API_ROUTE = "data"
+
 // USER
 export const ACCOUNT_API_ROUTE = "account";
 
@@ -9,6 +12,8 @@ export const NEW_ISSUE_API_ROUTE = "new_issue";
 export const PULL_REQUEST_API_ROUTE = "pull_request";
 export const NEW_PULL_REQUEST_API_ROUTE = "new_pull_request";
 export const LINK_PULL_REQUEST_API_ROUTE = "link_pull_request";
+export const FULL_PULL_REQUEST_API_ROUTE = "full_pull_request";
+export const MERGE_PULL_REQUEST_API_ROUTE = "merge_pull_request";
 
 // ACCOUNT ISSUE
 

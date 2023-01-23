@@ -17,10 +17,17 @@ import { Buffer } from "buffer";
 import { Issue } from "@/types";
 import { useLocation } from "react-router-dom";
 import { useWeb3Auth } from "@/providers";
-const secretKey = Uint8Array.from(keypair);
 const TO_DEVNET_PUBKEY_SOL = "Ea1ndgjbtivGgGdmVNAe1EqyhhHrSjEv12hPqZ4WXp19";
 import { WALLET_ADAPTERS } from "@web3auth/base";
 import { Loader } from "@/components";
+import axios from "axios";
+import { API_ENDPOINT } from "@/constants";
+import {
+  DATA_API_ROUTE,
+  ISSUE_API_ROUTE,
+  NEW_ISSUE_API_ROUTE,
+} from "@/server/src/constants";
+import { convertToQueryParams } from "@/utils";
 
 const REACT_APP_AUTH0_DOMAIN = "https://dev-kgvm1sxe.us.auth0.com";
 const REACT_APP_RWA_CLIENTID = "ZaU1oZzvlb06tZC8UXtTvTM9KSBY9pzk";
@@ -52,10 +59,7 @@ export const ConfirmFunding = ({ issue, port }: ConfirmFundingProps) => {
   const token = jwt == null ? "" : jwt;
 
   const [buttonText, setButtonText] = useState(ApprovalState.APPROVE);
-  const keyPair = Keypair.fromSecretKey(secretKey);
   const [sendHash, setSendHash] = useState<string>();
-  const { connection } = useConnection();
-  const toPubKey = new PublicKey(TO_DEVNET_PUBKEY_SOL);
 
   useEffect(() => {
     handleAuthLogin();
@@ -70,17 +74,38 @@ export const ConfirmFunding = ({ issue, port }: ConfirmFundingProps) => {
         issue.amount,
         TO_DEVNET_PUBKEY_SOL
       );
+      const newIssue = { ...issue, hash: signature };
       console.log("sig", signature);
       setButtonText(ApprovalState.APPROVED);
       setSendHash(signature);
       console.log("msg", {
         request: "confirmed",
-        issue: { ...issue, hash: signature },
+        issue: newIssue,
       });
       port.postMessage({
         request: "confirmed",
-        issue: { ...issue, hash: signature },
+        issue: newIssue,
       });
+      const accountId = (await getUserInfo()).verifierId;
+      const solanaKey = (await provider.getAccounts())[0];
+      const accountLogin = (
+        await axios.get(
+          `https://api.github.com/user/${accountId.split("|")[1]}`
+        )
+      ).data.login;
+      console.log(newIssue, accountId, solanaKey);
+      axios.post(
+        `${API_ENDPOINT}${DATA_API_ROUTE}/${NEW_ISSUE_API_ROUTE}?${convertToQueryParams(
+          {
+            ...newIssue,
+            fundingAmount: newIssue.amount,
+            fundingHash: newIssue.hash,
+            githubId: accountId,
+            solanaKey: solanaKey,
+            githubLogin: accountLogin,
+          }
+        )}`
+      );
     } catch (e) {
       setButtonText(ApprovalState.ERROR);
       console.error(e);
@@ -104,7 +129,7 @@ export const ConfirmFunding = ({ issue, port }: ConfirmFundingProps) => {
     <div className="confirm-funding-wrapper">
       <div className="logo-wrapper">{/* <ReactLogo className="logo" /> */}</div>
       <div className="confirm-title">
-        {`Would you like fund this issue with ${issue.amount}`}
+        {`Would you like fund this issue with ${issue.amount.toFixed(4)}`}
         {/* <SolLogo className="solana-logo" /> */}
       </div>
 

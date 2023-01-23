@@ -33,10 +33,10 @@ export const FundIssue = () => {
     }
     setButtonText(FundingState.FUNDING);
     const splitURL = window.document.URL.split("/");
-    const repoName = `${splitURL[3]}.${splitURL[4]}`;
     const newIssue: Issue = {
       amount: solAmount,
-      repo: repoName,
+      org: splitURL[3],
+      repo: splitURL[4],
       title: issueTitle,
       state: IssueState.NEW,
     };

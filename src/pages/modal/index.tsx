@@ -1,18 +1,7 @@
 import { Web3Provider } from "@/providers";
 import { useEffect, useState } from "react";
 import { FundingSplit } from "@/components";
-
-export type Issue = {
-  amount: number;
-  hash?: string;
-  title: string;
-  issueNumber?: string;
-  repo: string;
-  fundingSplit?: ContributorCompensationInfo[];
-  paid?: boolean;
-  state: IssueState;
-  type?: IssueType;
-};
+import { Issue } from "@/src/types";
 
 export type ContributorCompensationInfo = {
   pubkey: string;
@@ -50,11 +39,7 @@ const ModalApp = () => {
     });
   }, []);
   if (issue && popupType) {
-    return popupType === "split" ? (
-      <FundingSplit issue={issue} port={port} />
-    ) : (
-      <Web3Provider issue={issue} port={port} popup={popupType} />
-    );
+    <Web3Provider issue={issue} port={port} popup={popupType} />;
   }
   return <div>hi</div>;
 };

@@ -43,7 +43,7 @@ const updateIssueInfo = (issue: Issue, sendResponse: (response: any) => void) =>
     }
     const fundedIssues = data.fundedIssues;
     const issueIndex = fundedIssues.findIndex((_issue: Issue) => {
-      return _issue.repo === issue.repo && _issue.title === issue.title;
+      return _issue.repo === issue.repo && _issue.title === issue.title && _issue.org === issue.org
     });
     console.log("issue", issueIndex);
     if (issueIndex >= 0) {
@@ -91,7 +91,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       console.log(fundedIssues, request);
       const issueInfo = fundedIssues.find((issue: Issue) => {
         return (
-          issue.repo === request.repo &&
+          issue.repo === request.repo && issue.org === request.org &&
           (issue.title === request.title ||
             issue.issueNumber === request.issueNumber)
         );

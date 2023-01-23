@@ -84,7 +84,7 @@ export const BountyFeed = ({ issues }: BountyFeedProps) => {
               <img className="bounty-photo" src={getIssueLogo(i)} />
               <h1 className="contributor-amount">
                 {/* REWARD */}
-                {`${issue.amount} `}
+                {`${issue.amount.toFixed(4)} `}
                 {/* <SolLogo className="solana-logo" /> */}
               </h1>
               <div className="issue-state-wrapper">

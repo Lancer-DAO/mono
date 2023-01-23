@@ -1,14 +1,14 @@
 import { useCallback, useState, useEffect } from "react";
 import classnames from "classnames";
-import { Issue } from "@/types";
+import { Issue, IssueState } from "@/types";
 
 interface ExistingIssueFundsProps {
   issue: Issue;
 }
 enum DistributionState {
-  FUND = "Send Funds",
-  FUNDING = "Sending Funds",
-  FUNDED = "Sent Funds",
+  FUND = "Approve",
+  FUNDING = "Approving",
+  FUNDED = "Approved",
   ERROR = "Error",
 }
 
@@ -17,8 +17,6 @@ export const ExistingIssueFunds = ({ issue }: ExistingIssueFundsProps) => {
 
   const onClick = useCallback(async () => {
     setButtonText(DistributionState.FUNDING);
-    const splitURL = window.document.URL.split("/");
-    const repoName = `${splitURL[3]}.${splitURL[4]}`;
 
     chrome.runtime.sendMessage(
       {
@@ -41,7 +39,7 @@ export const ExistingIssueFunds = ({ issue }: ExistingIssueFundsProps) => {
         {!issue.paid && (
           <>
             <div className="lancer-funded-amount">
-              {`Issue Payout: ${issue.amount}`}
+              {`Issue Payout: ${issue.amount.toFixed(4)}`}
             </div>
             <button
               className={"confirm-button"}
@@ -59,39 +57,44 @@ export const ExistingIssueFunds = ({ issue }: ExistingIssueFundsProps) => {
         )}
       </div>
 
-      {issue.fundingSplit && (
+      {issue.pullNumber && (
         <>
           <div className="lancer-funded-amount">
-            {issue.paid ? "Funds Sent to Contributors" : "Funding Split Set"}
+            {issue.state === IssueState.APPROVED
+              ? "Funds Sent to Contributors"
+              : "Awaiting Approval"}
           </div>
           <div className="fund-split-outer">
-            {issue.fundingSplit.map((split) => (
-              <div className="fund-split-wrapper-cs" key={split.pubkey}>
-                <img className="contributor-picture-sm" src={split.picture} />
-                <div className="contributor-name">{split.name}</div>
-                <div className="contributor-amount">
-                  {`${split.amount.toFixed(4)}`}{" "}
-                </div>
-                {split.signature && (
-                  <button
-                    className={classnames(
-                      "confirm-button",
-                      "hug",
-                      "margin-left-4"
-                    )}
-                    onClick={(e) => {
-                      window.open(
-                        `https://solscan.io/tx/${split.signature}?cluster=devnet`,
-                        "_blank"
-                      );
-                      e.preventDefault();
-                    }}
-                  >
-                    View
-                  </button>
-                )}
+            <div className="fund-split-wrapper-cs" key={issue.pubkey}>
+              <img
+                className="contributor-picture-sm"
+                src={`https://avatars.githubusercontent.com/u/${
+                  issue.githubId.split("|")[1]
+                }?s=60&v=4`}
+              />
+              <div className="contributor-name">{issue.author}</div>
+              <div className="contributor-amount">
+                {`${issue.amount.toFixed(4)}`}{" "}
               </div>
-            ))}
+              {issue.payoutHash && (
+                <button
+                  className={classnames(
+                    "confirm-button",
+                    "hug",
+                    "margin-left-4"
+                  )}
+                  onClick={(e) => {
+                    window.open(
+                      `https://solscan.io/tx/${issue.payoutHash}?cluster=devnet`,
+                      "_blank"
+                    );
+                    e.preventDefault();
+                  }}
+                >
+                  View
+                </button>
+              )}
+            </div>
           </div>
           {!issue.paid && (
             <button

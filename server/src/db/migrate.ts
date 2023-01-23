@@ -11,6 +11,7 @@ const account = `CREATE TABLE account (
     is_admin BOOLEAN NOT NULL,
     verified BOOLEAN NOT NULL,
     github_id VARCHAR NOT NULL,
+    github_login VARCHAR NOT NULL,
 		name VARCHAR,
 		discord VARCHAR,
 		twitter VARCHAR,
@@ -21,7 +22,7 @@ const account = `CREATE TABLE account (
 const issue = `CREATE TABLE issue (
     uuid UUID DEFAULT uuid_generate_v4 (),
 		funding_hash VARCHAR,
-    funding_amount DECIMAL(20),
+    funding_amount DECIMAL(10,10),
     title VARCHAR,
     repo VARCHAR,
     org VARCHAR,
@@ -38,6 +39,7 @@ const pullRequest = `CREATE TABLE pull_request (
   org VARCHAR,
   pull_number DECIMAL(20),
   issue_uuid UUID,
+  payout_hash VARCHAR,
   CONSTRAINT fk_issue_pr FOREIGN KEY(issue_uuid) REFERENCES issue(uuid),
   PRIMARY KEY (uuid)
 );`;
@@ -56,7 +58,7 @@ const accountPullRequestAssoc = `CREATE TABLE account_pull_request (
   PRIMARY KEY (account_uuid, pull_request_uuid),
   CONSTRAINT fk_account FOREIGN KEY(account_uuid) REFERENCES account(uuid),
   CONSTRAINT fk_pull_request FOREIGN KEY(pull_request_uuid) REFERENCES pull_request(uuid),
-  amount DECIMAL(20)
+  amount DECIMAL(10,10)
 );`;
 
 export async function migrate() {

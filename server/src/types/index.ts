@@ -5,13 +5,15 @@ dayjs.extend(timezone);
 
 // USER
 export interface AccountInsertParams extends AccountGetParams {
-  solanaKey: PublicKey;
+  solanaKey?: PublicKey;
   verified?: boolean;
   isAdmin?: boolean;
+  githubId?: string;
+
 }
 
 export interface AccountGetParams {
-  githubId: string;
+  githubLogin: string;
 }
 
 // ISSUE
@@ -22,7 +24,7 @@ fundingAmount: number
 }
 
 export interface IssueGetParams {
-  title: string,
+  title?: string,
   repo: string,
   org: string,
   issueNumber?: number
@@ -36,7 +38,7 @@ export interface IssueUpdateParams extends IssueGetParams {
 // PULL REQUEST
 
 export interface PullRequestInsertParams extends PullRequestGetParams {
-  title: string,
+  title?: string,
   }
 
   export interface PullRequestGetParams {
@@ -44,6 +46,14 @@ export interface PullRequestInsertParams extends PullRequestGetParams {
     org: string,
     pullNumber: number
 
+  }
+
+  export interface PullRequestUpdateParams extends PullRequestGetParams{
+    payoutHash: string
+  }
+
+  export interface NewPullRequestParams extends PullRequestInsertParams, AccountGetParams {
+    issueNumber: number
   }
 
   export interface LinkPullRequestParams extends PullRequestGetParams, IssueGetParams {}
@@ -57,28 +67,8 @@ export interface AccountPullRequestGetParams extends AccountGetParams, PullReque
   amount: number
 }
 export interface AccountPullRequestNewParams extends AccountInsertParams, PullRequestInsertParams {
+  issueNumber: number,
   amount: number
 }
 
-
-export interface RaffleParams {
-  raffleKey: PublicKey;
-  raffleType: RaffleType;
-  raffleMint?: PublicKey;
-  maxTickets?: number;
-  expiration?: dayjs.Dayjs;
-  hidden?: boolean;
-}
-
-export type RaffleType = "1 of 1" | "Whitelist" | "Edition" | "Commission";
-
-// RAFFLE ENTRY
-
-export interface GetRaffleEntryParams {
-  userKey: PublicKey;
-  raffleKey: PublicKey;
-}
-
-export interface RaffleEntryParams extends GetRaffleEntryParams {
-  count: number;
-}
+export interface GetFullPullRequest extends LinkPullRequestParams, AccountGetParams {}

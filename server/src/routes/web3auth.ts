@@ -36,7 +36,7 @@ router.get("/callback", (req, res) => {
       const id_token = JSON.parse(data)["id_token"];
       var decoded = jwt_decode(id_token);
       console.log('jwt', decoded)
-      const redirect_url = process.env.FRONT_ENDPOINT + id_token;
+      const redirect_url = process.env.EXTENSION_ENDPOINT + id_token;
       res.redirect(redirect_url);
     });
   });

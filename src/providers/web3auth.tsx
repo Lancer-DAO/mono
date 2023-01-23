@@ -297,6 +297,7 @@ export const Web3AuthProvider: FunctionComponent<IWeb3AuthState> = ({
     const user = await web3Auth.getUserInfo();
     uiConsole(user);
     console.log(user);
+    return user;
   };
 
   const getGH = async () => {

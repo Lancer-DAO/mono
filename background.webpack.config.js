@@ -32,6 +32,7 @@ module.exports = {
         "@/constants": path.resolve(__dirname,"./src/constants/index.ts"),
         "@/content": path.resolve(__dirname,"./src/content"),
         "@/pages": path.resolve(__dirname,"./src/pages/index.ts"),
+        "@/server": path.resolve(__dirname,"./server"),
         "@/styles": path.resolve(__dirname,"./src/styles"),
         "@/types": path.resolve(__dirname,"./src/types/index.ts"),
         "@/utils": path.resolve(__dirname,"./src/utils/index.ts")
