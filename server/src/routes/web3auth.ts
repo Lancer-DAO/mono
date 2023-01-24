@@ -9,12 +9,23 @@ import { Octokit } from 'octokit';
 import jwt_decode from "jwt-decode";
 const router = Router();
 
+const convertToSpaces = (str: string) :string => {
+  return str.replace(/\.space\./g, ' ')
+}
+
 // USERS
 
 router.get("/callback", (req, res) => {
     //when a request from auth0 is received we get auth code as query param
-    console.log('calling back')
+    console.log('calling back', req.query)
     const authCode = req.query.code;
+    const issueDataRaw = convertToSpaces(req.query.issueData as string);
+    const issueParts = issueDataRaw.replace(/:/g, '=').split(',')
+    console.log(issueParts)
+    const issueAmount = `&${issueParts[0]}`;
+    const issueRepo = `&${issueParts[1]}`;
+    const issueOrg = `&${issueParts[2]}`;
+    const issueTitle = `&${issueParts[3]}`;
     var options = {
       method: "POST",
       url: process.env.AUTH_URL || '',
@@ -32,11 +43,10 @@ router.get("/callback", (req, res) => {
     //to get id_token we need to send post req to auth0
     request(options, function (error, response, data) {
       if (error) throw new Error(error);
-      console.log(data)
       const id_token = JSON.parse(data)["id_token"];
       var decoded = jwt_decode(id_token);
       console.log('jwt', decoded)
-      const redirect_url = process.env.EXTENSION_ENDPOINT + id_token;
+      const redirect_url = process.env.FRONT_ENDPOINT + id_token + issueAmount + issueOrg + issueRepo + issueTitle;
       res.redirect(redirect_url);
     });
   });

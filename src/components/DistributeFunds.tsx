@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import keypair from "../../second_wallet.json";
 
 import {
@@ -19,11 +19,13 @@ import axios from "axios";
 import { API_ENDPOINT } from "@/constants";
 import {
   DATA_API_ROUTE,
+  FULL_PULL_REQUEST_API_ROUTE,
   ISSUE_API_ROUTE,
   MERGE_PULL_REQUEST_API_ROUTE,
   NEW_ISSUE_API_ROUTE,
 } from "@/server/src/constants";
 import { convertToQueryParams, deepCopy } from "@/utils";
+import { useLocation } from "react-router-dom";
 // import { ReactComponent as ReactLogo } from "../logo.svg";
 // import { ReactComponent as SolLogo } from "../../node_modules/cryptocurrency-icons/svg/white/sol.svg";
 
@@ -36,14 +38,46 @@ enum ApprovalState {
   ERROR = "Error",
 }
 
-interface DistributeFundingProps {
-  port: chrome.runtime.Port;
-  issue: Issue;
-}
-
-export const DistributeFunding = ({ issue, port }: DistributeFundingProps) => {
+export const DistributeFunding = () => {
   const [buttonText, setButtonText] = useState(ApprovalState.APPROVE);
   const keyPair = Keypair.fromSecretKey(secretKey);
+  const [issue, setIssue] = useState<Issue>(undefined);
+  const search = useLocation().search;
+  const params = new URLSearchParams(search);
+  const issueParams = {
+    repo: params.get("repo"),
+    org: params.get("org"),
+    issueNumber: params.get("issueNumber"),
+    pullNumber: params.get("pullNumber"),
+    author: params.get("author"),
+  };
+  useEffect(() => {
+    axios
+      .get(
+        `${API_ENDPOINT}${DATA_API_ROUTE}/${FULL_PULL_REQUEST_API_ROUTE}?${convertToQueryParams(
+          issueParams
+        )}`
+      )
+      .then((response) => {
+        const rawIssue = response.data;
+
+        const issue = {
+          ...rawIssue,
+          hash: rawIssue.funding_hash,
+          amount: parseFloat(rawIssue.funding_amount),
+          pullNumber: rawIssue.pull_number,
+          issueNumber: rawIssue.issue_number,
+          githubId: rawIssue.github_id,
+          payoutHash: rawIssue.payout_hash,
+          author: rawIssue.github_login,
+          pubkey: rawIssue.solana_pubkey,
+        };
+        if (rawIssue.payout_hash) {
+          setButtonText(ApprovalState.APPROVED);
+        }
+        setIssue(issue);
+      });
+  }, []);
 
   const { connection } = useConnection();
 
@@ -86,7 +120,7 @@ export const DistributeFunding = ({ issue, port }: DistributeFundingProps) => {
     }
   }, [issue, buttonText]);
 
-  return (
+  return issue ? (
     <div className="confirm-funding-wrapper">
       <div className="logo-wrapper">{/* <ReactLogo className="logo" /> */}</div>
       <div className="confirm-title">{`Would you like to approve the closing pull request? Doing so will compensate the contributors as shown.`}</div>
@@ -143,5 +177,7 @@ export const DistributeFunding = ({ issue, port }: DistributeFundingProps) => {
         {buttonText}
       </button>
     </div>
+  ) : (
+    <></>
   );
 };

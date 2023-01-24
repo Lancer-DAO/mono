@@ -41,18 +41,10 @@ export const FundIssue = () => {
       state: IssueState.NEW,
     };
 
-    chrome.runtime.sendMessage(
-      {
-        message: "fund_issue",
-        issue: newIssue,
-      },
-      (response) => {
-        if (response.message === "confirmed") {
-          setButtonText(FundingState.FUNDED);
-          setSendHash(response.hash);
-        }
-      }
-    );
+    chrome.runtime.sendMessage({
+      message: "fund_issue",
+      issue: newIssue,
+    });
   }, [solAmount, buttonText, issueTitle]);
 
   return (

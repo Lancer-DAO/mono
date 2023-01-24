@@ -1,4 +1,3 @@
-import { Web3Provider } from "@/providers";
 import { useEffect, useState } from "react";
 import { FundingSplit } from "@/components";
 import { Issue } from "@/src/types";
@@ -28,19 +27,6 @@ export enum IssueType {
 }
 
 const ModalApp = () => {
-  const [issue, setIssue] = useState<Issue>();
-  const [popupType, setPopupType] = useState<string>();
-  var port = chrome.runtime.connect({ name: "popup" });
-  useEffect(() => {
-    port.postMessage({ request: "funding_data" });
-    port.onMessage.addListener(function (msg) {
-      setIssue(msg.issue);
-      setPopupType(msg.popupType);
-    });
-  }, []);
-  if (issue && popupType) {
-    <Web3Provider issue={issue} port={port} popup={popupType} />;
-  }
   return <div>hi</div>;
 };
 export default ModalApp;

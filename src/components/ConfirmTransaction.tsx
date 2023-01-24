@@ -3,18 +3,7 @@ import keypair from "../../test-keypair.json";
 // import { ReactComponent as ReactLogo } from "../logo.svg";
 // import { ReactComponent as SolLogo } from "../../node_modules/cryptocurrency-icons/svg/white/sol.svg";
 
-import {
-  Keypair,
-  PublicKey,
-  SystemProgram,
-  LAMPORTS_PER_SOL,
-  Transaction,
-  Connection,
-  sendAndConfirmTransaction,
-} from "@solana/web3.js";
-import { useConnection } from "@solana/wallet-adapter-react";
-import { Buffer } from "buffer";
-import { Issue } from "@/types";
+import { Issue, IssueState } from "@/types";
 import { useLocation } from "react-router-dom";
 import { useWeb3Auth } from "@/providers";
 const TO_DEVNET_PUBKEY_SOL = "Ea1ndgjbtivGgGdmVNAe1EqyhhHrSjEv12hPqZ4WXp19";
@@ -39,12 +28,7 @@ enum ApprovalState {
   ERROR = "Error",
 }
 
-interface ConfirmFundingProps {
-  port: chrome.runtime.Port;
-  issue: Issue;
-}
-
-export const ConfirmFunding = ({ issue, port }: ConfirmFundingProps) => {
+export const ConfirmFunding = () => {
   const {
     provider,
     loginRWA,
@@ -54,9 +38,16 @@ export const ConfirmFunding = ({ issue, port }: ConfirmFundingProps) => {
     isWeb3AuthInit,
   } = useWeb3Auth();
   const search = useLocation().search;
-  const rwaURL = `${REACT_APP_AUTH0_DOMAIN}/authorize?scope=openid&response_type=code&client_id=${REACT_APP_RWA_CLIENTID}&redirect_uri=${REACT_APP_BACKEND_SERVER_API}&state=STATE`;
-  const jwt = new URLSearchParams(search).get("token");
+  const params = new URLSearchParams(search);
+  const jwt = params.get("token");
   const token = jwt == null ? "" : jwt;
+  const issue = {
+    amount: parseFloat(params.get("amount")),
+    repo: params.get("repo"),
+    org: params.get("org"),
+    title: params.get("title"),
+    state: IssueState.NEW,
+  };
 
   const [buttonText, setButtonText] = useState(ApprovalState.APPROVE);
   const [sendHash, setSendHash] = useState<string>();
@@ -79,10 +70,6 @@ export const ConfirmFunding = ({ issue, port }: ConfirmFundingProps) => {
       setButtonText(ApprovalState.APPROVED);
       setSendHash(signature);
       console.log("msg", {
-        request: "confirmed",
-        issue: newIssue,
-      });
-      port.postMessage({
         request: "confirmed",
         issue: newIssue,
       });
@@ -118,6 +105,10 @@ export const ConfirmFunding = ({ issue, port }: ConfirmFundingProps) => {
       if (token !== "") {
         await loginRWA(WALLET_ADAPTERS.OPENLOGIN, "jwt", token);
       } else {
+        const issueData = `?issueData=amount:${issue.amount},repo:${issue.repo},org:${issue.org},title:${issue.title}`;
+        const rwaURL = `${REACT_APP_AUTH0_DOMAIN}/authorize?scope=openid&response_type=code&client_id=${REACT_APP_RWA_CLIENTID}&redirect_uri=${`${REACT_APP_BACKEND_SERVER_API}${issueData}`}&state=STATE`;
+        console.log(rwaURL);
+        debugger;
         window.location.href = rwaURL;
       }
     } finally {
