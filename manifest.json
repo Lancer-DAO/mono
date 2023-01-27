@@ -7,10 +7,6 @@
     "http://localhost:3000/*",
     "https://github.com/*"
   ],
-  "action": {
-    "default_title": "Lancer",
-    "default_popup": "popup.html"
-  },
   "permissions": [
     "storage",
     "activeTab",

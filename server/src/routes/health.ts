@@ -5,9 +5,10 @@ const router = Router();
 
 router.get("/db-connection", async (req, res) => {
   try {
-    await DB.query("SELECT $1::text as message", ["Hello world!"]);
+    await DB.raw("SELECT 1+1 as result");
     res.send("successfully connected to db.");
   } catch (err) {
+    console.log(err)
     res.send("error connecting to db.");
   }
 });

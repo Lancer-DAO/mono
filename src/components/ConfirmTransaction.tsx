@@ -20,7 +20,7 @@ import { convertToQueryParams } from "@/utils";
 
 const REACT_APP_AUTH0_DOMAIN = "https://dev-kgvm1sxe.us.auth0.com";
 const REACT_APP_RWA_CLIENTID = "ZaU1oZzvlb06tZC8UXtTvTM9KSBY9pzk";
-const REACT_APP_BACKEND_SERVER_API = "http://localhost:3001/callback";
+const REACT_APP_BACKEND_SERVER_API = "https://api-dot-lancer-api-375702.uc.r.appspot.com/callback";
 enum ApprovalState {
   APPROVE = "Approve",
   APPROVING = "Approving",

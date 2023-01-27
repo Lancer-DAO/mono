@@ -22,7 +22,8 @@ export const ExistingIssueFunds = ({ issue }: ExistingIssueFundsProps) => {
       {
         message: "distribute_pull_request_split",
         issue: issue,
-      },
+        windowWidth: window.innerWidth
+    },
       (response) => {
         if (response.message === "confirmed") {
           setButtonText(DistributionState.FUNDED);

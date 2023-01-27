@@ -44,6 +44,7 @@ export const FundIssue = () => {
     chrome.runtime.sendMessage({
       message: "fund_issue",
       issue: newIssue,
+      windowWidth: window.innerWidth
     });
   }, [solAmount, buttonText, issueTitle]);
 

@@ -7,10 +7,10 @@ const convertSpaces = (str: string) :string => {
 
 const WINDOW_LAYOUT: chrome.windows.CreateData = {
   url: '',
-  type: "panel",
+  type: "normal",
   height: 920,
   width: 520,
-  left: 4720,
+  left: 0,
   top: 0,
 };
 
@@ -20,12 +20,14 @@ chrome.runtime.onMessage.addListener((request) => {
   if (request.message === "fund_issue") {
     chrome.windows.create({
       ...WINDOW_LAYOUT,
+      left: request.windowWidth - 520,
       url: `http://localhost:3000/fund?${convertSpaces(convertToQueryParams(request.issue))}`
     })
     return true;
   }  else if (request.message === "distribute_pull_request_split") {
     chrome.windows.create({
       ...WINDOW_LAYOUT,
+      left: request.windowWidth - 520,
       url: `http://localhost:3000/approve?${convertToQueryParams(request.issue)}`
     })
     return true;

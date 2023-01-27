@@ -26,13 +26,13 @@ dayjs.extend(timezone);
 export const insertAccount = async (params: AccountInsertParams) => {
   let query = `INSERT INTO account (github_login,${params.githubId &&  'github_id, '}${ params.solanaKey && 'solana_pubkey,'} verified, is_admin)`;
   query += ` VALUES ('${params.githubLogin}',${params.githubId && ` '${params.githubId}',`}${params.solanaKey && ` '${params.solanaKey.toString()}',`} ${!!params.verified}, ${!!params.isAdmin})`;
-  const result = await DB.query(query);
+  const result = await DB.raw(query);
   return result;
 };
 
 export const getAccount = async (params: AccountGetParams) => {
   let query = `SELECT * FROM account where github_login='${params.githubLogin}'`;
-  const result = await DB.query(query);
+  const result = await DB.raw(query);
   return result.rows.length > 0 ? result.rows[0] : {message: 'NOT FOUND'};
 };
 
@@ -49,7 +49,7 @@ export const insertIssue = async (params: IssueInsertParams) => {
     params.fundingAmount
   });`;
   console.log(query);
-  const result = await DB.query(query);
+  const result = await DB.raw(query);
   return result;
 };
 
@@ -60,7 +60,7 @@ export const getIssueByTitle = async (params: IssueGetParams) => {
   query += ` AND org='${params.org}'`
   query += ` AND title='${params.title}'`
   console.log(query);
-  const result = await DB.query(query);
+  const result = await DB.raw(query);
   return result.rows.length > 0 ? result.rows[0] : {message: 'NOT FOUND'};
 };
 
@@ -71,7 +71,7 @@ export const getIssueByNumber = async (params: IssueGetParams) => {
   query += ` AND org='${params.org}'`
   query += ` AND issue_number=${params.issueNumber}`
   console.log(query);
-  const result = await DB.query(query);
+  const result = await DB.raw(query);
   return result.rows.length > 0 ? result.rows[0] : {message: 'NOT FOUND'};
 };
 
@@ -82,7 +82,7 @@ export const updateIssueNumber = async (params: IssueGetParams) => {
   query += ` AND org='${params.org}'`
   query += ` AND title='${params.title}'`
   console.log(query);
-  const result = await DB.query(query);
+  const result = await DB.raw(query);
   return result;
 };
 
@@ -93,7 +93,7 @@ export const updateIssueState = async (params: IssueUpdateParams) => {
   query += ` AND org='${params.org}'`
   query += ` AND issue_number='${params.issueNumber}'`
   console.log(query);
-  const result = await DB.query(query);
+  const result = await DB.raw(query);
   return result;
 };
 
@@ -110,7 +110,7 @@ export const insertPullRequest = async (params: PullRequestInsertParams) => {
     params.pullNumber
   });`;
   console.log(query);
-  const result = await DB.query(query);
+  const result = await DB.raw(query);
   return result;
 };
 
@@ -121,7 +121,7 @@ export const getPullRequestByNumber = async (params: PullRequestGetParams) => {
   query += ` AND org='${params.org}'`
   query += ` AND pull_number=${params.pullNumber}`
   console.log(query);
-  const result = await DB.query(query);
+  const result = await DB.raw(query);
   return result.rows.length > 0 ? result.rows[0] : {message: 'NOT FOUND'};
 };
 
@@ -133,7 +133,7 @@ export const updatePullRequestPayout = async (params: PullRequestUpdateParams) =
     query += ` AND org='${params.org}'`
     query += ` AND pull_number=${params.pullNumber}`
   console.log(query);
-  const result = await DB.query(query);
+  const result = await DB.raw(query);
   return result;
 };
 
@@ -147,7 +147,7 @@ export const insertAccountIssue = async (params: AccountIssueGetParams) => {
     account.uuid
   }', '${issue.uuid}');`;
   console.log(query);
-  const result = await DB.query(query);
+  const result = await DB.raw(query);
   return result;
 };
 
@@ -160,7 +160,7 @@ export const getAccountIssue = async (params: AccountIssueGetParams) => {
   query += `account_uuid='${account.uuid}'`
   query += ` AND issue_uuid='${issue.uuid}';`
   console.log(query);
-  const result = await DB.query(query);
+  const result = await DB.raw(query);
   return result.rows.length > 0 ? result.rows[0] : {message: 'NOT FOUND'};
 };
 
@@ -174,7 +174,7 @@ export const insertAccountPullRequest = async (params: AccountPullRequestNewPara
     account.uuid
   }', '${pullRequest.uuid}', ${params.amount});`;
   console.log(query);
-  const result = await DB.query(query);
+  const result = await DB.raw(query);
   return result;
 };
 
@@ -187,7 +187,7 @@ export const getAccountPullRequest = async (params: AccountPullRequestGetParams)
   query += `account_uuid='${account.uuid}'`
   query += ` AND pull_request_uuid='${pullRequest.uuid}';`
   console.log(query);
-  const result = await DB.query(query);
+  const result = await DB.raw(query);
   return result.rows.length > 0 ? result.rows[0] : {message: 'NOT FOUND'};
 };
 
@@ -209,7 +209,7 @@ export const newAccountIssue = async (params: AccountIssueNewParams) => {
     account.uuid
   }', '${issue.uuid}');`;
   console.log(query);
-  const result = await DB.query(query);
+  const result = await DB.raw(query);
   return result;
 };
 
@@ -235,14 +235,14 @@ export const newPullRequest = async (params: NewPullRequestParams) => {
   query += ` VALUES ('${
     account.uuid
   }', '${pullRequest.uuid}', ${issue.funding_amount});`;
-  await DB.query(query);
+  await DB.raw(query);
 
   }
   if(issue.state !== 'in_progress') {
 
     let query = `UPDATE issue set state='in_progress' where uuid='${issue.uuid}';`
     console.log(query);
-  await DB.query(query);
+  await DB.raw(query);
 
   }
 
@@ -265,7 +265,7 @@ export const linkPullRequest = async (params: LinkPullRequestParams) => {
     issue.uuid
   }' where uuid='${pullRequest.uuid}'`;
   console.log(query);
-  const result = await DB.query(query);
+  const result = await DB.raw(query);
   return result;
 };
 
@@ -284,7 +284,7 @@ export const getFullPullRequestByNumber = async (params: GetFullPullRequest) => 
   query += ` AND pr.org='${params.org}'`
   query += ` AND pr.pull_number=${params.pullNumber}`
   console.log(query);
-  const result = await DB.query(query);
+  const result = await DB.raw(query);
   return result.rows.length > 0 ? result.rows[0] : {message: 'NOT FOUND'};
 };
 
@@ -298,6 +298,6 @@ export const getAllIssues = async () => {
   query += ` LEFT OUTER JOIN account as a`
   query += ` ON ai.account_uuid = a.uuid`
   console.log(query);
-  const result = await DB.query(query);
+  const result = await DB.raw(query);
   return result.rows.length > 0 ? result.rows : {message: 'NOT FOUND'};
 };

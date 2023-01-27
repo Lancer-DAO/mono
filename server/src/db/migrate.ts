@@ -62,14 +62,14 @@ const accountPullRequestAssoc = `CREATE TABLE account_pull_request (
 );`;
 
 export async function migrate() {
-  await DB.query("begin", []);
-  await DB.query(uuid_ext, []);
-  await DB.query(account, []);
-  await DB.query(issue, []);
-  await DB.query(pullRequest, []);
-  await DB.query(accountIssueAssoc, []);
-  await DB.query(accountPullRequestAssoc, []);
-  await DB.query("commit", []);
+  await DB.raw("begin", []);
+  await DB.raw(uuid_ext, []);
+  await DB.raw(account, []);
+  await DB.raw(issue, []);
+  await DB.raw(pullRequest, []);
+  await DB.raw(accountIssueAssoc, []);
+  await DB.raw(accountPullRequestAssoc, []);
+  await DB.raw("commit", []);
 }
 
 migrate();

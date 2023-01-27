@@ -1,1 +1,1 @@
-export const API_ENDPOINT = 'http://localhost:3001/'
+export const API_ENDPOINT = 'https://api-dot-lancer-api-375702.uc.r.appspot.com/'
