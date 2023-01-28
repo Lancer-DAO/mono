@@ -73,6 +73,9 @@ body {
 
     &.disabled {
       background-color: gray;
+      &:hover {
+        cursor: not-allowed;
+      }
     }
   }
 
@@ -209,4 +212,16 @@ body {
   .loading-text {
     color: white;
     margin-right: 6px;
+  }
+
+  .confirm-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .error-text {
+    color: red;
   }

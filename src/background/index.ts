@@ -21,14 +21,14 @@ chrome.runtime.onMessage.addListener((request) => {
     chrome.windows.create({
       ...WINDOW_LAYOUT,
       left: request.windowWidth - 520,
-      url: `http://localhost:3000/fund?${convertSpaces(convertToQueryParams(request.issue))}`
+      url: `https://app-dot-lancer-api-375702.uc.r.appspot.com/fund?${convertSpaces(convertToQueryParams(request.issue))}`
     })
     return true;
   }  else if (request.message === "distribute_pull_request_split") {
     chrome.windows.create({
       ...WINDOW_LAYOUT,
       left: request.windowWidth - 520,
-      url: `http://localhost:3000/approve?${convertToQueryParams(request.issue)}`
+      url: `https://app-dot-lancer-api-375702.uc.r.appspot.com/approve?${convertToQueryParams(request.issue)}`
     })
     return true;
   }

@@ -30,6 +30,8 @@ const solanaProvider = (provider: SafeEventEmitterProvider, uiConsole: (...args:
       const accounts = await solanaWallet.requestAccounts();
       const balance = await conn.getBalance(new PublicKey(accounts[0]));
       uiConsole("Solana balance", balance);
+      console.log('balance', balance)
+      return balance;
     } catch (error) {
       console.error("Error", error);
       uiConsole("error", error);

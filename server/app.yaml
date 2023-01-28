@@ -6,4 +6,4 @@ env_variables:
   CLIENT_ID: ZaU1oZzvlb06tZC8UXtTvTM9KSBY9pzk 
   CLIENT_SECRET:  ih8ukIVP2oG717kVS64wXTmfvV0omklFD42zLe4ANEhpObdQAwRlb2e0CrqdLWjZ
   REDIRECT_URI: https://api-dot-lancer-api-375702.uc.r.appspot.com
-  FRONT_ENDPOINT: http://localhost:3000/fund?token=
+  FRONT_ENDPOINT: https://app-dot-lancer-api-375702.uc.r.appspot.com/fund?token=

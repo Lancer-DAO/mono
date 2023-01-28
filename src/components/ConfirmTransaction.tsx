@@ -8,7 +8,7 @@ import { useLocation } from "react-router-dom";
 import { useWeb3Auth } from "@/providers";
 const TO_DEVNET_PUBKEY_SOL = "Ea1ndgjbtivGgGdmVNAe1EqyhhHrSjEv12hPqZ4WXp19";
 import { WALLET_ADAPTERS } from "@web3auth/base";
-import { Loader } from "@/components";
+import { Loader, PubKey } from "@/components";
 import axios from "axios";
 import { API_ENDPOINT } from "@/constants";
 import {
@@ -17,10 +17,13 @@ import {
   NEW_ISSUE_API_ROUTE,
 } from "@/server/src/constants";
 import { convertToQueryParams } from "@/utils";
+import { LAMPORTS_PER_SOL, PublicKey } from "@solana/web3.js";
+import classNames from "classnames";
 
 const REACT_APP_AUTH0_DOMAIN = "https://dev-kgvm1sxe.us.auth0.com";
 const REACT_APP_RWA_CLIENTID = "ZaU1oZzvlb06tZC8UXtTvTM9KSBY9pzk";
 const REACT_APP_BACKEND_SERVER_API = "https://api-dot-lancer-api-375702.uc.r.appspot.com/callback";
+const REACT_APP_BACKEND_SERVER_API_DEV = "http://localhost:3001/callback";
 enum ApprovalState {
   APPROVE = "Approve",
   APPROVING = "Approving",
@@ -36,6 +39,7 @@ export const ConfirmFunding = () => {
     signAndSendTransaction,
     setIsLoading,
     isWeb3AuthInit,
+    getBalance
   } = useWeb3Auth();
   const search = useLocation().search;
   const params = new URLSearchParams(search);
@@ -51,6 +55,23 @@ export const ConfirmFunding = () => {
 
   const [buttonText, setButtonText] = useState(ApprovalState.APPROVE);
   const [sendHash, setSendHash] = useState<string>();
+  const [balance, setBalance] = useState(0.0)
+  const [solanaKey, setSolanaKey] = useState();
+
+  useEffect(() => {
+    const getWalletBalance = async () => {
+
+    const walletBalance = await getBalance();
+    if (provider) {
+
+    const solanaKey = (await provider.getAccounts())[0];
+    setSolanaKey(solanaKey);
+    }
+    console.log('balacnce', walletBalance)
+    setBalance(walletBalance / LAMPORTS_PER_SOL)
+    }
+    getWalletBalance()
+  }, [getBalance, balance, isWeb3AuthInit, provider])
 
   useEffect(() => {
     handleAuthLogin();
@@ -74,7 +95,6 @@ export const ConfirmFunding = () => {
         issue: newIssue,
       });
       const accountId = (await getUserInfo()).verifierId;
-      const solanaKey = (await provider.getAccounts())[0];
       const accountLogin = (
         await axios.get(
           `https://api.github.com/user/${accountId.split("|")[1]}`
@@ -97,7 +117,7 @@ export const ConfirmFunding = () => {
       setButtonText(ApprovalState.ERROR);
       console.error(e);
     }
-  }, [issue, buttonText, signAndSendTransaction, isWeb3AuthInit]);
+  }, [issue, signAndSendTransaction, isWeb3AuthInit, solanaKey, getUserInfo]);
 
   const handleAuthLogin = async () => {
     try {
@@ -125,12 +145,27 @@ export const ConfirmFunding = () => {
       </div>
 
       {provider ? (
+        <div className="confirm-wrapper">
+          <div>
+            {`Current Wallet: `}
+            {solanaKey && <PubKey pubKey={new PublicKey(solanaKey)}/>}
+          </div>
+          <div>
+            {`Balance: ${balance} SOL`}
+          </div>
+          {balance < issue.amount &&
+          
+          <div className="error-text">
+            Please send more funds to your wallet.
+          </div>
+          }
         <button
           disabled={
             buttonText === ApprovalState.APPROVED ||
-            buttonText === ApprovalState.ERROR
+            buttonText === ApprovalState.ERROR || balance < issue.amount
           }
-          className={"confirm-button"}
+          className={classNames("confirm-button", {disabled: buttonText === ApprovalState.APPROVED ||
+            buttonText === ApprovalState.ERROR || balance < issue.amount})}
           onClick={(e) => {
             onClick();
             e.preventDefault();
@@ -138,6 +173,7 @@ export const ConfirmFunding = () => {
         >
           {buttonText}
         </button>
+          </div>
       ) : (
         <div className="loading-wrapper">
           <div className="loading-text"> Connecting to Web3Auth</div>

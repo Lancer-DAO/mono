@@ -48,7 +48,7 @@ export interface IWeb3AuthContext {
   getUserInfo: () => Promise<any>;
   signMessage: () => Promise<any>;
   getAccounts: () => Promise<any>;
-  getBalance: () => Promise<any>;
+  getBalance: () => Promise<number>;
   signTransaction: () => Promise<void>;
   signAndSendTransaction: (
     amount: number,
@@ -78,7 +78,7 @@ export const Web3AuthContext = createContext<IWeb3AuthContext>({
   getUserInfo: async () => {},
   signMessage: async () => {},
   getAccounts: async () => {},
-  getBalance: async () => {},
+  getBalance: async () => 0,
   signTransaction: async () => {},
   signAndSendTransaction: async () => "",
   getGH: async () => {},
@@ -327,9 +327,9 @@ export const Web3AuthProvider: FunctionComponent<IWeb3AuthState> = ({
     if (!provider) {
       console.log("provider not initialized yet");
       uiConsole("provider not initialized yet");
-      return;
+      return 0.0;
     }
-    await provider.getBalance();
+    return await provider.getBalance();
   };
 
   const signMessage = async () => {
