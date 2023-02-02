@@ -3,14 +3,13 @@ import { IssueState } from "@/types";
 import { PullRequest } from "@/components";
 
 import axios, { AxiosResponse } from "axios";
-import { API_ENDPOINT } from "@/constants";
 import {
   DATA_API_ROUTE,
   PULL_REQUEST_API_ROUTE,
   NEW_PULL_REQUEST_API_ROUTE,
   FULL_PULL_REQUEST_API_ROUTE,
 } from "@/server/src/constants";
-import { convertToQueryParams } from "@/utils";
+import { convertToQueryParams, getApiEndpointExtenstion } from "@/utils";
 const AUTHOR_SELECTOR = ".author.text-bold.Link--secondary";
 
 const WRAPPER_CLASSNAME = "funded-issue-wrapper";
@@ -42,7 +41,7 @@ const insertPR = (response) => {
 
 const maybeGetPR = (splitURL, issueNumber, author) =>
   axios.get(
-    `${API_ENDPOINT}${DATA_API_ROUTE}/${FULL_PULL_REQUEST_API_ROUTE}?${convertToQueryParams(
+    `${getApiEndpointExtenstion()}${DATA_API_ROUTE}/${FULL_PULL_REQUEST_API_ROUTE}?${convertToQueryParams(
       {
         org: splitURL[3],
         repo: splitURL[4],
@@ -68,7 +67,7 @@ export const insertPullRequest = (splitURL: string[]) => {
         if (response.data.message === "NOT FOUND") {
           axios
             .post(
-              `${API_ENDPOINT}${DATA_API_ROUTE}/${NEW_PULL_REQUEST_API_ROUTE}?${convertToQueryParams(
+              `${getApiEndpointExtenstion()}${DATA_API_ROUTE}/${NEW_PULL_REQUEST_API_ROUTE}?${convertToQueryParams(
                 {
                   org: splitURL[3],
                   repo: splitURL[4],

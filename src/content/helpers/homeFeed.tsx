@@ -1,22 +1,21 @@
 import * as ReactDOM from "react-dom/client";
 import { BountyFeed } from "@/components";
 import axios, { AxiosResponse } from "axios";
-import { API_ENDPOINT } from "@/constants";
 import {
   DATA_API_ROUTE,
   FULL_PULL_REQUEST_API_ROUTE,
   ISSUE_API_ROUTE,
   NEW_ISSUE_API_ROUTE,
 } from "@/server/src/constants";
-import { convertToQueryParams } from "@/utils";
+import { convertToQueryParams, getApiEndpointExtenstion } from "@/utils";
 const LIST_ITEM_ID = "bounty-list-item";
 
 const getIssues = () =>
-  axios.get(`${API_ENDPOINT}${DATA_API_ROUTE}/${ISSUE_API_ROUTE}s`);
+  axios.get(`${getApiEndpointExtenstion()}${DATA_API_ROUTE}/${ISSUE_API_ROUTE}s`);
 
 export const insertHomeFeed = () => {
   const existingWrapper = window.document.getElementById(LIST_ITEM_ID);
-  console.log("existing", existingWrapper);
+  console.log("feed", existingWrapper, getApiEndpointExtenstion());
   if (existingWrapper) {
     return;
   }
@@ -72,7 +71,7 @@ export const insertHomeFeed = () => {
   if (feedEle) {
     const listItem = window.document.createElement("li");
     listItem.className = `d-inline-flex`;
-    listItem.role = "presentation";
+    listItem.setAttribute('role', "presentation");
     listItem.setAttribute("data-view-component", "true");
     listItem.id = LIST_ITEM_ID;
     feedEle.appendChild(listItem);

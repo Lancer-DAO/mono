@@ -50,7 +50,7 @@ const solanaProvider = (provider: SafeEventEmitterProvider, uiConsole: (...args:
   };
 
   const signAndSendTransaction = async (amount: number, receipient: string): Promise<string> => {
-    try {
+    
       const conn = await getConnection();
       console.log(-1)
       const solWeb3 = new SolanaWallet(provider);
@@ -62,7 +62,7 @@ const solanaProvider = (provider: SafeEventEmitterProvider, uiConsole: (...args:
       const TransactionInstruction = SystemProgram.transfer({
         fromPubkey: pubKey,
         toPubkey: new PublicKey(receipient),
-        lamports: amount * LAMPORTS_PER_SOL,
+        lamports: Math.round(amount * LAMPORTS_PER_SOL),
       });
 
       const txInfo = {
@@ -86,10 +86,7 @@ const solanaProvider = (provider: SafeEventEmitterProvider, uiConsole: (...args:
 
       uiConsole("blockhash", blockhash, "transaction", transaction, "signature", signature, 'data', 'hi');
       return signature.signature;
-    } catch (error) {
-      console.error("Error", error);
-      uiConsole("error", error);
-    }
+    
   };
 
   const signTransaction = async (): Promise<void> => {

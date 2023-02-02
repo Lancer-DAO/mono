@@ -16,7 +16,6 @@ import { Issue, ContributorCompensationInfo, IssueState } from "@/types";
 import { PubKey } from "../../src/components/PublicKey";
 import classNames from "classnames";
 import axios from "axios";
-import { API_ENDPOINT } from "@/constants";
 import {
   DATA_API_ROUTE,
   FULL_PULL_REQUEST_API_ROUTE,
@@ -24,7 +23,7 @@ import {
   MERGE_PULL_REQUEST_API_ROUTE,
   NEW_ISSUE_API_ROUTE,
 } from "@/server/src/constants";
-import { convertToQueryParams, deepCopy } from "@/utils";
+import { convertToQueryParams, deepCopy, getApiEndpoint } from "@/utils";
 import { useLocation } from "react-router-dom";
 // import { ReactComponent as ReactLogo } from "../logo.svg";
 // import { ReactComponent as SolLogo } from "../../node_modules/cryptocurrency-icons/svg/white/sol.svg";
@@ -54,7 +53,7 @@ export const DistributeFunding = () => {
   useEffect(() => {
     axios
       .get(
-        `${API_ENDPOINT}${DATA_API_ROUTE}/${FULL_PULL_REQUEST_API_ROUTE}?${convertToQueryParams(
+        `${getApiEndpoint()}${DATA_API_ROUTE}/${FULL_PULL_REQUEST_API_ROUTE}?${convertToQueryParams(
           issueParams
         )}`
       )
@@ -107,7 +106,7 @@ export const DistributeFunding = () => {
       // const data = await resp.json();
       setButtonText(ApprovalState.APPROVED);
       axios.post(
-        `${API_ENDPOINT}${DATA_API_ROUTE}/${MERGE_PULL_REQUEST_API_ROUTE}?${convertToQueryParams(
+        `${getApiEndpoint()}${DATA_API_ROUTE}/${MERGE_PULL_REQUEST_API_ROUTE}?${convertToQueryParams(
           {
             ...issue,
             payoutHash: signature,

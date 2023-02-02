@@ -1,38 +1,50 @@
-import { convertToQueryParams } from "@/utils";
-import { Issue } from "@/types";
-
-const convertSpaces = (str: string) :string => {
-  return str.replace(/ /g, '.space.')
-}
+import { convertToQueryParams, getAppEndpointExtenstion } from "@/utils";
+const NEW_ISSUE_INFO_KEY = 'fundingIssueInfo'
 
 const WINDOW_LAYOUT: chrome.windows.CreateData = {
   url: '',
   type: "normal",
   height: 920,
-  width: 520,
+  width: 500,
   left: 0,
   top: 0,
 };
 
 
-chrome.runtime.onMessage.addListener((request) => {
+chrome.runtime.onMessage.addListener(async (request, sender) => {
   console.log('request', request)
   if (request.message === "fund_issue") {
+    const newIssue = {fundingIssueInfo: request.issue}
+    console.log('newIssue', newIssue)
+    await chrome.storage.local.set(newIssue);
     chrome.windows.create({
       ...WINDOW_LAYOUT,
-      left: request.windowWidth - 520,
-      url: `https://app-dot-lancer-api-375702.uc.r.appspot.com/fund?${convertSpaces(convertToQueryParams(request.issue))}`
+      // left: request.windowWidth - 520,
+      url: `${getAppEndpointExtenstion()}fund?extension_id=${sender.id}`,
     })
     return true;
   }  else if (request.message === "distribute_pull_request_split") {
+    chrome.storage.local.set({"distributeFundsInfo": request.issue});
     chrome.windows.create({
       ...WINDOW_LAYOUT,
-      left: request.windowWidth - 520,
-      url: `https://app-dot-lancer-api-375702.uc.r.appspot.com/approve?${convertToQueryParams(request.issue)}`
+      // left: request.windowWidth - 520,
+      url: `${getAppEndpointExtenstion()}approve?${convertToQueryParams(request.issue)}`
     })
     return true;
   }
 });
+
+chrome.runtime.onMessageExternal.addListener(
+  function(request, sender, sendResponse) {
+    if(request.route === 'newIssueFundingInfo') {
+      chrome.storage.local.get(NEW_ISSUE_INFO_KEY, (data) => {
+        console.log(data)
+        sendResponse({'issue': data[NEW_ISSUE_INFO_KEY]})
+      })
+    } else {
+      sendResponse({'connected': 'true'})
+    }
+  });
 
 
 chrome.webNavigation.onHistoryStateUpdated.addListener(function(details) {

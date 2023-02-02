@@ -1,10 +1,11 @@
 {
-  "name": "auth0-express-webapp-sample",
+  "name": "lancer-api",
   "scripts": {
     "lint": "eslint",
     "start": "node ./dist/server.js",
     "migrate": "ts-node ./src/db/migrate.ts",
-    "dev": "concurrently \"npx tsc --watch\" \"nodemon -q dist/server.js\"",
+    "migrate-dev": "NODE_ENV=development ts-node ./src/db/migrate.ts",
+    "dev": "concurrently \"npx tsc --watch\" \"NODE_ENV=development nodemon -q dist/server.js\"",
     "build": "npx tsc"
   },
   "dependencies": {

@@ -10,20 +10,17 @@ const TO_DEVNET_PUBKEY_SOL = "Ea1ndgjbtivGgGdmVNAe1EqyhhHrSjEv12hPqZ4WXp19";
 import { WALLET_ADAPTERS } from "@web3auth/base";
 import { Loader, PubKey } from "@/components";
 import axios from "axios";
-import { API_ENDPOINT } from "@/constants";
 import {
   DATA_API_ROUTE,
   ISSUE_API_ROUTE,
   NEW_ISSUE_API_ROUTE,
 } from "@/server/src/constants";
-import { convertToQueryParams } from "@/utils";
+import { convertToQueryParams, getApiEndpoint } from "@/utils";
 import { LAMPORTS_PER_SOL, PublicKey } from "@solana/web3.js";
 import classNames from "classnames";
 
 const REACT_APP_AUTH0_DOMAIN = "https://dev-kgvm1sxe.us.auth0.com";
 const REACT_APP_RWA_CLIENTID = "ZaU1oZzvlb06tZC8UXtTvTM9KSBY9pzk";
-const REACT_APP_BACKEND_SERVER_API = "https://api-dot-lancer-api-375702.uc.r.appspot.com/callback";
-const REACT_APP_BACKEND_SERVER_API_DEV = "http://localhost:3001/callback";
 enum ApprovalState {
   APPROVE = "Approve",
   APPROVING = "Approving",
@@ -41,22 +38,36 @@ export const ConfirmFunding = () => {
     isWeb3AuthInit,
     getBalance
   } = useWeb3Auth();
+  const [issue, setIssue] = useState<Issue>(undefined);
   const search = useLocation().search;
   const params = new URLSearchParams(search);
   const jwt = params.get("token");
   const token = jwt == null ? "" : jwt;
-  const issue = {
-    amount: parseFloat(params.get("amount")),
-    repo: params.get("repo"),
-    org: params.get("org"),
-    title: params.get("title"),
-    state: IssueState.NEW,
-  };
+  
 
   const [buttonText, setButtonText] = useState(ApprovalState.APPROVE);
   const [sendHash, setSendHash] = useState<string>();
   const [balance, setBalance] = useState(0.0)
   const [solanaKey, setSolanaKey] = useState();
+  const [errorText, setErrorText] = useState<string>(undefined)
+
+  useEffect(() => {
+    let extensionId = window.localStorage.getItem("lancerExtensionId");
+    if(!extensionId) {
+      extensionId = params.get('extension_id');
+      window.localStorage.setItem("lancerExtensionId", extensionId)
+    }
+    console.log('extension_id', extensionId)
+    chrome.runtime.sendMessage(
+      extensionId,
+      {'route': 'newIssueFundingInfo'},
+      (response) => {
+        console.log(response)
+        setIssue(response.issue)
+      }
+    )
+    // console.log('issueInfo', issueInfo)
+  }, [])
 
   useEffect(() => {
     const getWalletBalance = async () => {
@@ -71,6 +82,7 @@ export const ConfirmFunding = () => {
     setBalance(walletBalance / LAMPORTS_PER_SOL)
     }
     getWalletBalance()
+
   }, [getBalance, balance, isWeb3AuthInit, provider])
 
   useEffect(() => {
@@ -81,6 +93,7 @@ export const ConfirmFunding = () => {
   const onClick = useCallback(async () => {
     try {
       setButtonText(ApprovalState.APPROVING);
+    console.log()
 
       const signature = await signAndSendTransaction(
         issue.amount,
@@ -102,7 +115,7 @@ export const ConfirmFunding = () => {
       ).data.login;
       console.log(newIssue, accountId, solanaKey);
       axios.post(
-        `${API_ENDPOINT}${DATA_API_ROUTE}/${NEW_ISSUE_API_ROUTE}?${convertToQueryParams(
+        `${getApiEndpoint()}${DATA_API_ROUTE}/${NEW_ISSUE_API_ROUTE}?${convertToQueryParams(
           {
             ...newIssue,
             fundingAmount: newIssue.amount,
@@ -115,7 +128,7 @@ export const ConfirmFunding = () => {
       );
     } catch (e) {
       setButtonText(ApprovalState.ERROR);
-      console.error(e);
+      setErrorText(e.toString())
     }
   }, [issue, signAndSendTransaction, isWeb3AuthInit, solanaKey, getUserInfo]);
 
@@ -125,10 +138,9 @@ export const ConfirmFunding = () => {
       if (token !== "") {
         await loginRWA(WALLET_ADAPTERS.OPENLOGIN, "jwt", token);
       } else {
-        const issueData = `?issueData=amount:${issue.amount},repo:${issue.repo},org:${issue.org},title:${issue.title}`;
-        const rwaURL = `${REACT_APP_AUTH0_DOMAIN}/authorize?scope=openid&response_type=code&client_id=${REACT_APP_RWA_CLIENTID}&redirect_uri=${`${REACT_APP_BACKEND_SERVER_API}${issueData}`}&state=STATE`;
+        const rwaURL = `${REACT_APP_AUTH0_DOMAIN}/authorize?scope=openid&response_type=code&client_id=${REACT_APP_RWA_CLIENTID}&redirect_uri=${`${getApiEndpoint()}callback`}&state=STATE`;
         console.log(rwaURL);
-        debugger;
+        // debugger;
         window.location.href = rwaURL;
       }
     } finally {
@@ -138,6 +150,10 @@ export const ConfirmFunding = () => {
 
   return (
     <div className="confirm-funding-wrapper">
+      {issue === undefined ? <div className="loading-text">
+        Loading Issue Info
+      </div> : 
+      <>
       <div className="logo-wrapper">{/* <ReactLogo className="logo" /> */}</div>
       <div className="confirm-title">
         {`Would you like fund this issue with ${issue.amount.toFixed(4)} SOL`}
@@ -159,12 +175,15 @@ export const ConfirmFunding = () => {
             Please send more funds to your wallet.
           </div>
           }
+          {errorText && <div className="error-text">
+            {errorText}
+          </div>}
         <button
           disabled={
             buttonText === ApprovalState.APPROVED ||
             buttonText === ApprovalState.ERROR || balance < issue.amount
           }
-          className={classNames("confirm-button", {disabled: buttonText === ApprovalState.APPROVED ||
+          className={classNames("confirm-button", {disabled: 
             buttonText === ApprovalState.ERROR || balance < issue.amount})}
           onClick={(e) => {
             onClick();
@@ -196,6 +215,8 @@ export const ConfirmFunding = () => {
           View Transaction
         </button>
       )}
+      </>}
+      
     </div>
   );
 };

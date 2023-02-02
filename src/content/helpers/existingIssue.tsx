@@ -1,14 +1,13 @@
 import * as ReactDOM from "react-dom/client";
 import { ExistingIssueFunds } from "@/components";
 import axios, { AxiosResponse } from "axios";
-import { API_ENDPOINT } from "@/constants";
 import {
   DATA_API_ROUTE,
   FULL_PULL_REQUEST_API_ROUTE,
   ISSUE_API_ROUTE,
   NEW_ISSUE_API_ROUTE,
 } from "@/server/src/constants";
-import { convertToQueryParams } from "@/utils";
+import { convertToQueryParams, getApiEndpointExtenstion } from "@/utils";
 import { Issue } from "@/types";
 const WRAPPER_CLASSNAME = "funded-issue-wrapper";
 const assigneeSelector =
@@ -19,7 +18,7 @@ const authorSelector = ".author.Link--primary.text-bold";
 
 const maybeGetPR = (splitURL, pullNumber, author) =>
   axios.get(
-    `${API_ENDPOINT}${DATA_API_ROUTE}/${FULL_PULL_REQUEST_API_ROUTE}?${convertToQueryParams(
+    `${getApiEndpointExtenstion()}${DATA_API_ROUTE}/${FULL_PULL_REQUEST_API_ROUTE}?${convertToQueryParams(
       {
         org: splitURL[3],
         repo: splitURL[4],
@@ -58,7 +57,7 @@ export const insertIssue = (response, splitURL) => {
       };
       delete newIssue.state;
       axios.put(
-        `${API_ENDPOINT}${DATA_API_ROUTE}/${ISSUE_API_ROUTE}?${convertToQueryParams(
+        `${getApiEndpointExtenstion()}${DATA_API_ROUTE}/${ISSUE_API_ROUTE}?${convertToQueryParams(
           newIssue
         )}`
       );
@@ -88,7 +87,7 @@ export const insertExistingIssue = (splitURL: string[]) => {
     } else {
       axios
         .get(
-          `${API_ENDPOINT}${DATA_API_ROUTE}/${ISSUE_API_ROUTE}?${convertToQueryParams(
+          `${getApiEndpointExtenstion()}${DATA_API_ROUTE}/${ISSUE_API_ROUTE}?${convertToQueryParams(
             {
               org: splitURL[3],
               repo: splitURL[4],

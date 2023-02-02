@@ -4,13 +4,12 @@ import { ContributorCompensationInfo, Issue, IssueState } from "@/types";
 // import SolLogo from "@/node_modules/cryptocurrency-icons/svg/black/sol.svg";
 
 import axios from "axios";
-import { API_ENDPOINT } from "@/constants";
 import {
   DATA_API_ROUTE,
   ISSUE_API_ROUTE,
   NEW_ISSUE_API_ROUTE,
 } from "@/server/src/constants";
-import { convertToQueryParams, deepCopy } from "@/utils";
+import { convertToQueryParams, deepCopy, getApiEndpoint, getApiEndpointExtenstion } from "@/utils";
 import { last } from "lodash";
 const AUTHOR_SELECTOR = ".author.text-bold.Link--secondary";
 interface PullRequestProps {
@@ -33,7 +32,7 @@ export const PullRequest = ({ issue }: PullRequestProps) => {
   const onClick = useCallback(async () => {
     setButtonText(DistributionState.FUNDED);
     axios.put(
-      `${API_ENDPOINT}${DATA_API_ROUTE}/${ISSUE_API_ROUTE}?${convertToQueryParams(
+      `${getApiEndpointExtenstion()}${DATA_API_ROUTE}/${ISSUE_API_ROUTE}?${convertToQueryParams(
         {
           ...issue,
           state: IssueState.AWAITING_REVIEW,

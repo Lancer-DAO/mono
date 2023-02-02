@@ -40,6 +40,7 @@ export const FundIssue = () => {
       title: issueTitle,
       state: IssueState.NEW,
     };
+    window.localStorage.setItem('fundingIssueInfo', JSON.stringify(newIssue))
 
     chrome.runtime.sendMessage({
       message: "fund_issue",
