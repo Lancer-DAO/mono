@@ -33,6 +33,7 @@ module.exports = {
         "@/constants": path.resolve(__dirname,"./src/constants/index.ts"),
         "@/pages": path.resolve(__dirname,"./src/pages/index.ts"),
         "@/providers": path.resolve(__dirname,"./src/providers/index.ts"),
+        "@/server": path.resolve(__dirname,"./server"),
         "@/styles": path.resolve(__dirname,"./src/styles"),
         "@/types": path.resolve(__dirname,"./src/types/index.ts"),
         "@/utils": path.resolve(__dirname,"./src/utils/index.ts")
@@ -52,6 +53,9 @@ module.exports = {
     filename: 'content.js',
     path: path.resolve(__dirname, 'extension'),
   },
+  optimization: {
+    minimize: false
+},
   plugins:
     [new webpack.ProvidePlugin({
       process: "process/browser",

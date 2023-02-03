@@ -21,6 +21,8 @@ import { getWalletProvider, IWalletProvider } from "./walletProvider";
 import { APP_CONFIG_TYPE } from "../config/appConfig";
 
 export const REACT_APP_CLIENT_ID =
+  "BPMZUkEx6a1aHvk2h_4efBlAJNMlPGvpTOy7qIkz4cbtF_l1IHuZ7KMqsLNPTtDGDItHBMxR6peSZc8Mf-0Oj6U";
+export const REACT_APP_CLIENT_ID_DEV =
   "BO2j8ZVZjLmRpGqhclE_xcPdWjGMZYMsDy5ZWgZ7FJSA-zJ2U4huIQAKKuKDe8BSABl60EQXjbFhnx78et4leB0";
 export const REACT_APP_VERIFIER = "lancer0";
 export const REACT_APP_AUTH0_DOMAIN = "https://dev-kgvm1sxe.us.auth0.com";
@@ -48,7 +50,7 @@ export interface IWeb3AuthContext {
   getUserInfo: () => Promise<any>;
   signMessage: () => Promise<any>;
   getAccounts: () => Promise<any>;
-  getBalance: () => Promise<any>;
+  getBalance: () => Promise<number>;
   signTransaction: () => Promise<void>;
   signAndSendTransaction: (
     amount: number,
@@ -78,7 +80,7 @@ export const Web3AuthContext = createContext<IWeb3AuthContext>({
   getUserInfo: async () => {},
   signMessage: async () => {},
   getAccounts: async () => {},
-  getBalance: async () => {},
+  getBalance: async () => 0,
   signTransaction: async () => {},
   signAndSendTransaction: async () => "",
   getGH: async () => {},
@@ -155,10 +157,9 @@ export const Web3AuthProvider: FunctionComponent<IWeb3AuthState> = ({
       try {
         setIsLoading(true);
         // get your client id from https://dashboard.web3auth.io by registering a plug and play application.
-        const clientId =
-          REACT_APP_CLIENT_ID ||
-          "BMuAPXdFXaK94pUgfNluIEBPMTiwWKQz0h8AkCtf4Rzxv4bNLwsTRXSlt5OlB6KSpP_jYFhzloMf2XhUYADB3JE";
-        // const clientId = REACT_APP_CLIENT_ID ||  "BKPxkCtfC9gZ5dj-eg-W6yb5Xfr3XkxHuGZl2o2Bn8gKQ7UYike9Dh6c-_LaXlUN77x0cBoPwcSx-IVm0llVsLA";
+        // const clientId = process.env.NODE_ENV === 'development' ?
+        //   REACT_APP_CLIENT_ID: REACT_APP_CLIENT_ID_DEV;
+        const clientId = REACT_APP_CLIENT_ID;
 
         const web3AuthInstance = new Web3AuthCore({
           chainConfig: currentChainConfig,
@@ -297,6 +298,7 @@ export const Web3AuthProvider: FunctionComponent<IWeb3AuthState> = ({
     const user = await web3Auth.getUserInfo();
     uiConsole(user);
     console.log(user);
+    return user;
   };
 
   const getGH = async () => {
@@ -326,9 +328,9 @@ export const Web3AuthProvider: FunctionComponent<IWeb3AuthState> = ({
     if (!provider) {
       console.log("provider not initialized yet");
       uiConsole("provider not initialized yet");
-      return;
+      return 0.0;
     }
-    await provider.getBalance();
+    return await provider.getBalance();
   };
 
   const signMessage = async () => {

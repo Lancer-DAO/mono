@@ -4,10 +4,15 @@ export type Issue = {
     title: string;
     issueNumber?: string;
     repo: string;
-    fundingSplit?: ContributorCompensationInfo[];
+    org: string;
     paid?: boolean;
     state: IssueState;
     type?: IssueType;
+    author?: string;
+    pubkey?: string;
+    pullNumber?: number;
+    githubId?: string;
+    payoutHash?: string;
   };
 
   export type ContributorCompensationInfo = {

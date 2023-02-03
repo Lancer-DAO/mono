@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import keypair from "../../second_wallet.json";
 
 import {
@@ -15,6 +15,16 @@ import { Buffer } from "buffer";
 import { Issue, ContributorCompensationInfo, IssueState } from "@/types";
 import { PubKey } from "../../src/components/PublicKey";
 import classNames from "classnames";
+import axios from "axios";
+import {
+  DATA_API_ROUTE,
+  FULL_PULL_REQUEST_API_ROUTE,
+  ISSUE_API_ROUTE,
+  MERGE_PULL_REQUEST_API_ROUTE,
+  NEW_ISSUE_API_ROUTE,
+} from "@/server/src/constants";
+import { convertToQueryParams, deepCopy, getApiEndpoint, getSolscanAddress } from "@/utils";
+import { useLocation } from "react-router-dom";
 // import { ReactComponent as ReactLogo } from "../logo.svg";
 // import { ReactComponent as SolLogo } from "../../node_modules/cryptocurrency-icons/svg/white/sol.svg";
 
@@ -27,103 +37,128 @@ enum ApprovalState {
   ERROR = "Error",
 }
 
-interface DistributeFundingProps {
-  port: chrome.runtime.Port;
-  issue: Issue;
-}
-
-export const DistributeFunding = ({ issue, port }: DistributeFundingProps) => {
+export const DistributeFunding = () => {
   const [buttonText, setButtonText] = useState(ApprovalState.APPROVE);
-  const [issueFunding, setIssueFunding] = useState(issue.fundingSplit);
   const keyPair = Keypair.fromSecretKey(secretKey);
+  console.log('pub', keyPair.publicKey.toString())
+
+  const [issue, setIssue] = useState<Issue>(undefined);
+  const search = useLocation().search;
+  const params = new URLSearchParams(search);
+  const issueParams = {
+    repo: params.get("repo"),
+    org: params.get("org"),
+    issueNumber: params.get("issueNumber"),
+    pullNumber: params.get("pullNumber"),
+    author: params.get("author"),
+  };
+  useEffect(() => {
+    axios
+      .get(
+        `${getApiEndpoint()}${DATA_API_ROUTE}/${FULL_PULL_REQUEST_API_ROUTE}?${convertToQueryParams(
+          issueParams
+        )}`
+      )
+      .then((response) => {
+        const rawIssue = response.data;
+
+        const issue = {
+          ...rawIssue,
+          hash: rawIssue.funding_hash,
+          amount: parseFloat(rawIssue.funding_amount),
+          pullNumber: rawIssue.pull_number,
+          issueNumber: rawIssue.issue_number,
+          githubId: rawIssue.github_id,
+          payoutHash: rawIssue.payout_hash,
+          author: rawIssue.github_login,
+          pubkey: rawIssue.solana_pubkey,
+        };
+        if (rawIssue.payout_hash) {
+          setButtonText(ApprovalState.APPROVED);
+        }
+        setIssue(issue);
+      });
+  }, []);
 
   const { connection } = useConnection();
 
   const onClick = useCallback(async () => {
     try {
       setButtonText(ApprovalState.APPROVING);
-      const signatures: ContributorCompensationInfo[] = [];
-      const sendAllTx = issue.fundingSplit?.map(async (split) => {
-        const lamports = Math.trunc(LAMPORTS_PER_SOL * split.amount);
-        const toPubKey = new PublicKey(split.pubkey);
+      const lamports = Math.trunc(LAMPORTS_PER_SOL * issue.amount);
+      const toPubKey = new PublicKey(issue.pubkey);
 
-        const transaction = new Transaction().add(
-          SystemProgram.transfer({
-            fromPubkey: keyPair.publicKey,
-            toPubkey: toPubKey,
-            lamports,
-          })
-        );
+      const transaction = new Transaction().add(
+        SystemProgram.transfer({
+          fromPubkey: keyPair.publicKey,
+          toPubkey: toPubKey,
+          lamports,
+        })
+      );
 
-        const signature = await sendAndConfirmTransaction(
-          connection,
-          transaction,
-          [keyPair]
-        );
-        signatures.push({ ...split, signature: signature });
-      });
-      if (sendAllTx) {
-        await Promise.all(sendAllTx);
-        // const resp = await fetch(
-        //   "http://localhost:3001/ghToken?user_id=github|117492794&repo=github-app&org=Lancer-DAO&pull_number=23"
-        // );
+      const signature = await sendAndConfirmTransaction(
+        connection,
+        transaction,
+        [keyPair]
+      );
 
-        // const data = await resp.json();
-        setButtonText(ApprovalState.APPROVED);
-        port.postMessage({
-          request: "funds_distributed",
-          issue: {
+      setButtonText(ApprovalState.APPROVED);
+      axios.post(
+        `${getApiEndpoint()}${DATA_API_ROUTE}/${MERGE_PULL_REQUEST_API_ROUTE}?${
+          convertToQueryParams(
+          {
             ...issue,
-            paid: true,
-            fundingSplit: signatures,
-            state: IssueState.APPROVED,
-          },
-        });
-        setIssueFunding(signatures);
-      }
+            payoutHash: signature,
+          }
+        )
+      }`
+      );
     } catch (e) {
       setButtonText(ApprovalState.ERROR);
       console.error(e);
     }
   }, [issue, buttonText]);
 
-  return (
+  return issue ? (
     <div className="confirm-funding-wrapper">
       <div className="logo-wrapper">{/* <ReactLogo className="logo" /> */}</div>
       <div className="confirm-title">{`Would you like to approve the closing pull request? Doing so will compensate the contributors as shown.`}</div>
-      {issueFunding && (
+      {issue.pullNumber && (
         <div className="fund-split-outer">
-          {issueFunding.map((split) => (
-            <div className="fund-split-wrapper" key={split.pubkey}>
-              <img className="contributor-picture" src={split.picture} />
-              <div className="contributor-name">{split.name}</div>
+          <div className="fund-split-wrapper" key={issue.pubkey}>
+            <img
+              className="contributor-picture"
+              src={`https://avatars.githubusercontent.com/u/${
+                issue.githubId.split("|")[1]
+              }?s=60&v=4`}
+            />
+            <div className="contributor-name">{issue.author}</div>
 
-              <div className="contributor-amount">
-                {`${split.amount.toFixed(4)} `}
-                {/* <SolLogo className="solana-logo" /> */}
-              </div>
-              {split.signature && (
-                <button
-                  className={classNames(
-                    "confirm-button",
-                    "hug",
-                    "left-margin",
-                    "y-padded"
-                  )}
-                  onClick={(e) => {
-                    typeof window &&
-                      window.open(
-                        `https://solscan.io/tx/${split.signature}?cluster=devnet`,
-                        "_blank"
-                      );
-                    e.preventDefault();
-                  }}
-                >
-                  View
-                </button>
-              )}
+            <div className="contributor-amount">
+              {`${issue.amount.toFixed(4)} SOL`}
+              {/* <SolLogo className="solana-logo" /> */}
             </div>
-          ))}
+            {issue.payoutHash && (
+              <button
+                className={classNames(
+                  "confirm-button",
+                  "hug",
+                  "left-margin",
+                  "y-padded"
+                )}
+                onClick={(e) => {
+                  typeof window &&
+                    window.open(
+                      getSolscanAddress(issue.payoutHash),
+                      "_blank"
+                    );
+                  e.preventDefault();
+                }}
+              >
+                View
+              </button>
+            )}
+          </div>
         </div>
       )}
 
@@ -141,5 +176,8 @@ export const DistributeFunding = ({ issue, port }: DistributeFundingProps) => {
         {buttonText}
       </button>
     </div>
+  ) : (
+    <>
+    </>
   );
 };

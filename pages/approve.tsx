@@ -1,8 +1,4 @@
-import dynamic from "next/dynamic";
-
-const PopupApp = dynamic(() => import("../src/pages/popup/index"), {
-  ssr: true,
-});
+import App from "@/src/pages/approve";
 import Head from "next/head";
 
 export default function Home() {
@@ -13,7 +9,7 @@ export default function Home() {
         <meta name="description" content="Lancer Github Extension" />
       </Head>
       <main>
-        <PopupApp />
+        <App />
       </main>
     </>
   );

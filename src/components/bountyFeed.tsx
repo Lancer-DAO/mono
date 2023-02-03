@@ -17,35 +17,6 @@ interface BountyFeedProps {
   issues: Issue[];
 }
 
-const getIssueTypeLabel = (type: IssueType): string => {
-  switch (type) {
-    case IssueType.BUG:
-      return "FIX";
-    case IssueType.TEST:
-      return "TEST";
-    case IssueType.FEATURE:
-      return "CREATE";
-    case IssueType.DOCUMENTATION:
-      return "DOCUMENT";
-  }
-};
-
-const getIssueStateProgress = (state: IssueState): number => {
-  switch (state) {
-    case IssueState.NEW:
-      return 0;
-    case IssueState.IN_PROGRESS:
-      return 25;
-    case IssueState.AWAITING_REVIEW:
-      return 50;
-    case IssueState.APPROVED:
-      return 75;
-    case IssueState.COMPLETE:
-    case IssueState.CANCELED:
-      return 100;
-  }
-};
-
 const getIssueLogo = (i: number): string => {
   if (i % 4 === 0) {
     return "https://avatars.githubusercontent.com/u/91104561?v=4";
@@ -72,19 +43,21 @@ export const BountyFeed = ({ issues }: BountyFeedProps) => {
           return (
             <a
               className="bounty"
-              href={`https://github.com/${issue.repo.replace(
-                ".",
-                "/"
-              )}/issues/${issue.issueNumber}`}
+              href={`https://github.com/${issue.org}/${issue.repo}/issues/${issue.issueNumber}`}
               about="_blank"
               key={issue.title}
             >
               {/* {issue.type && <h1>{getIssueTypeLabel(issue.type)}</h1>} */}
               <h1 className="issue-title">{issue.title}</h1>
-              <img className="bounty-photo" src={getIssueLogo(i)} />
+              <img
+                className="contributor-picture"
+                src={`https://avatars.githubusercontent.com/u/${
+                  issue.githubId.split("|")[1]
+                }?s=60&v=4`}
+              />
               <h1 className="contributor-amount">
                 {/* REWARD */}
-                {`${issue.amount} `}
+                {`${issue.amount.toFixed(4)} SOL`}
                 {/* <SolLogo className="solana-logo" /> */}
               </h1>
               <div className="issue-state-wrapper">
@@ -99,10 +72,10 @@ export const BountyFeed = ({ issues }: BountyFeedProps) => {
 
               <a
                 className="funded-by"
-                href={`https://github.com/${issue.repo.split(".")[0]}}`}
+                href={`https://github.com/${issue.org}}`}
                 about="_blank"
               >
-                {`Sponsored by: ${issue.repo.split(".")[0]}`}
+                {`Sponsored by: ${issue.org}`}
               </a>
             </a>
           );

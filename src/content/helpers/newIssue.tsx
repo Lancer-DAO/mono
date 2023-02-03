@@ -1,7 +1,6 @@
 import * as React from "react";
 import * as ReactDOM from "react-dom/client";
 import { FundIssue } from "@/components";
-// import Web3Provider from './providers/web3Provider'
 const WRAPPER_CLASSNAME = "fund-issue-wrapper";
 
 export const insertFund = () => {

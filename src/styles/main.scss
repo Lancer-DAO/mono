@@ -104,14 +104,22 @@ body {
     margin-right: 10px;
   }
 
-  .contributor-name {
-    width: 120px;
+  .contributor-picture {
+    height: 75px;
+    width: 75px;
+    border-radius: 50%;
     margin-right: 10px;
+  }
+
+  .contributor-name {
+    margin-right: 10px;
+    color: var(--color-fg-muted);
   }
 
   .contributor-amount {
     display: flex;
     align-items: center;
+    color: var(--color-fg-muted);
   }
 
   .bounty-header-logo {

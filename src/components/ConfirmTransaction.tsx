@@ -3,28 +3,26 @@ import keypair from "../../test-keypair.json";
 // import { ReactComponent as ReactLogo } from "../logo.svg";
 // import { ReactComponent as SolLogo } from "../../node_modules/cryptocurrency-icons/svg/white/sol.svg";
 
-import {
-  Keypair,
-  PublicKey,
-  SystemProgram,
-  LAMPORTS_PER_SOL,
-  Transaction,
-  Connection,
-  sendAndConfirmTransaction,
-} from "@solana/web3.js";
-import { useConnection } from "@solana/wallet-adapter-react";
-import { Buffer } from "buffer";
-import { Issue } from "@/types";
+
+import { Issue, IssueState } from "@/types";
 import { useLocation } from "react-router-dom";
 import { useWeb3Auth } from "@/providers";
-const secretKey = Uint8Array.from(keypair);
-const TO_DEVNET_PUBKEY_SOL = "Ea1ndgjbtivGgGdmVNAe1EqyhhHrSjEv12hPqZ4WXp19";
 import { WALLET_ADAPTERS } from "@web3auth/base";
-import { Loader } from "@/components";
+import { Loader, PubKey } from "@/components";
+import axios from "axios";
+import {
+  DATA_API_ROUTE,
+  ISSUE_API_ROUTE,
+  NEW_ISSUE_API_ROUTE,
+} from "@/server/src/constants";
+import { convertToQueryParams, getApiEndpoint, getSolscanAddress } from "@/utils";
+import { Keypair, LAMPORTS_PER_SOL, PublicKey } from "@solana/web3.js";
+import classNames from "classnames";
 
 const REACT_APP_AUTH0_DOMAIN = "https://dev-kgvm1sxe.us.auth0.com";
 const REACT_APP_RWA_CLIENTID = "ZaU1oZzvlb06tZC8UXtTvTM9KSBY9pzk";
-const REACT_APP_BACKEND_SERVER_API = "http://localhost:3001/callback";
+const secretKey = Uint8Array.from(keypair);
+const keyPair = Keypair.fromSecretKey(secretKey);
 enum ApprovalState {
   APPROVE = "Approve",
   APPROVING = "Approving",
@@ -32,12 +30,7 @@ enum ApprovalState {
   ERROR = "Error",
 }
 
-interface ConfirmFundingProps {
-  port: chrome.runtime.Port;
-  issue: Issue;
-}
-
-export const ConfirmFunding = ({ issue, port }: ConfirmFundingProps) => {
+export const ConfirmFunding = () => {
   const {
     provider,
     loginRWA,
@@ -45,17 +38,55 @@ export const ConfirmFunding = ({ issue, port }: ConfirmFundingProps) => {
     signAndSendTransaction,
     setIsLoading,
     isWeb3AuthInit,
+    getBalance,
+    logout
   } = useWeb3Auth();
+  const [issue, setIssue] = useState<Issue>(undefined);
   const search = useLocation().search;
-  const rwaURL = `${REACT_APP_AUTH0_DOMAIN}/authorize?scope=openid&response_type=code&client_id=${REACT_APP_RWA_CLIENTID}&redirect_uri=${REACT_APP_BACKEND_SERVER_API}&state=STATE`;
-  const jwt = new URLSearchParams(search).get("token");
+  const params = new URLSearchParams(search);
+  const jwt = params.get("token");
   const token = jwt == null ? "" : jwt;
+  
 
   const [buttonText, setButtonText] = useState(ApprovalState.APPROVE);
-  const keyPair = Keypair.fromSecretKey(secretKey);
   const [sendHash, setSendHash] = useState<string>();
-  const { connection } = useConnection();
-  const toPubKey = new PublicKey(TO_DEVNET_PUBKEY_SOL);
+  const [balance, setBalance] = useState(0.0)
+  const [solanaKey, setSolanaKey] = useState();
+  const [errorText, setErrorText] = useState<string>(undefined)
+
+  useEffect(() => {
+    let extensionId = window.localStorage.getItem("lancerExtensionId");
+    if(!extensionId || extensionId === 'null') {
+      extensionId = params.get('extension_id');
+      window.localStorage.setItem("lancerExtensionId", extensionId)
+    }
+    console.log('extension_id', extensionId)
+    chrome.runtime.sendMessage(
+      extensionId,
+      {'route': 'newIssueFundingInfo'},
+      (response) => {
+        console.log(response)
+        setIssue(response.issue)
+      }
+    )
+    // console.log('issueInfo', issueInfo)
+  }, [])
+
+  useEffect(() => {
+    const getWalletBalance = async () => {
+
+    const walletBalance = await getBalance();
+    if (provider) {
+
+    const solanaKey = (await provider.getAccounts())[0];
+    setSolanaKey(solanaKey);
+    }
+    console.log('balacnce', walletBalance)
+    setBalance(walletBalance / LAMPORTS_PER_SOL)
+    }
+    getWalletBalance()
+
+  }, [getBalance, balance, isWeb3AuthInit, provider])
 
   useEffect(() => {
     handleAuthLogin();
@@ -65,27 +96,44 @@ export const ConfirmFunding = ({ issue, port }: ConfirmFundingProps) => {
   const onClick = useCallback(async () => {
     try {
       setButtonText(ApprovalState.APPROVING);
+    console.log()
 
       const signature = await signAndSendTransaction(
         issue.amount,
-        TO_DEVNET_PUBKEY_SOL
+        keyPair.publicKey.toString()
       );
+      const newIssue = { ...issue, hash: signature };
       console.log("sig", signature);
       setButtonText(ApprovalState.APPROVED);
       setSendHash(signature);
       console.log("msg", {
         request: "confirmed",
-        issue: { ...issue, hash: signature },
+        issue: newIssue,
       });
-      port.postMessage({
-        request: "confirmed",
-        issue: { ...issue, hash: signature },
-      });
+      const accountId = (await getUserInfo()).verifierId;
+      const accountLogin = (
+        await axios.get(
+          `https://api.github.com/user/${accountId.split("|")[1]}`
+        )
+      ).data.login;
+      console.log(newIssue, accountId, solanaKey);
+      axios.post(
+        `${getApiEndpoint()}${DATA_API_ROUTE}/${NEW_ISSUE_API_ROUTE}?${convertToQueryParams(
+          {
+            ...newIssue,
+            fundingAmount: newIssue.amount,
+            fundingHash: newIssue.hash,
+            githubId: accountId,
+            solanaKey: solanaKey,
+            githubLogin: accountLogin,
+          }
+        )}`
+      );
     } catch (e) {
       setButtonText(ApprovalState.ERROR);
-      console.error(e);
+      setErrorText(e.toString())
     }
-  }, [issue, buttonText, signAndSendTransaction, isWeb3AuthInit]);
+  }, [issue, signAndSendTransaction, isWeb3AuthInit, solanaKey, getUserInfo]);
 
   const handleAuthLogin = async () => {
     try {
@@ -93,6 +141,9 @@ export const ConfirmFunding = ({ issue, port }: ConfirmFundingProps) => {
       if (token !== "") {
         await loginRWA(WALLET_ADAPTERS.OPENLOGIN, "jwt", token);
       } else {
+        const rwaURL = `${REACT_APP_AUTH0_DOMAIN}/authorize?scope=openid&response_type=code&client_id=${REACT_APP_RWA_CLIENTID}&redirect_uri=${`${getApiEndpoint()}callback`}&state=STATE`;
+        console.log(rwaURL);
+        // debugger;
         window.location.href = rwaURL;
       }
     } finally {
@@ -102,19 +153,41 @@ export const ConfirmFunding = ({ issue, port }: ConfirmFundingProps) => {
 
   return (
     <div className="confirm-funding-wrapper">
+      {issue === undefined ? <div className="loading-text">
+        Loading Issue Info
+      </div> : 
+      <>
       <div className="logo-wrapper">{/* <ReactLogo className="logo" /> */}</div>
       <div className="confirm-title">
-        {`Would you like fund this issue with ${issue.amount}`}
+        {`Would you like fund this issue with ${issue.amount.toFixed(4)} SOL`}
         {/* <SolLogo className="solana-logo" /> */}
       </div>
 
       {provider ? (
+        <div className="confirm-wrapper">
+          <div>
+            {`Current Wallet: `}
+            {solanaKey && <PubKey pubKey={new PublicKey(solanaKey)}/>}
+          </div>
+          <div>
+            {`Balance: ${balance} SOL`}
+          </div>
+          {balance < issue.amount &&
+          
+          <div className="error-text">
+            Please send more funds to your wallet.
+          </div>
+          }
+          {errorText && <div className="error-text">
+            {errorText}
+          </div>}
         <button
           disabled={
             buttonText === ApprovalState.APPROVED ||
-            buttonText === ApprovalState.ERROR
+            buttonText === ApprovalState.ERROR || balance < issue.amount
           }
-          className={"confirm-button"}
+          className={classNames("confirm-button", {disabled: 
+            buttonText === ApprovalState.ERROR || balance < issue.amount})}
           onClick={(e) => {
             onClick();
             e.preventDefault();
@@ -122,6 +195,7 @@ export const ConfirmFunding = ({ issue, port }: ConfirmFundingProps) => {
         >
           {buttonText}
         </button>
+          </div>
       ) : (
         <div className="loading-wrapper">
           <div className="loading-text"> Connecting to Web3Auth</div>
@@ -135,7 +209,7 @@ export const ConfirmFunding = ({ issue, port }: ConfirmFundingProps) => {
           onClick={(e) => {
             typeof window &&
               window.open(
-                `https://solscan.io/tx/${sendHash}?cluster=devnet`,
+                getSolscanAddress(sendHash),
                 "_blank"
               );
             e.preventDefault();
@@ -144,6 +218,8 @@ export const ConfirmFunding = ({ issue, port }: ConfirmFundingProps) => {
           View Transaction
         </button>
       )}
+      </>}
+      
     </div>
   );
 };

@@ -44,8 +44,8 @@ body {
   }
 
   .confirm-funding-wrapper {
-    height: 820px;
-    width: 440px;
+    height: 100%;
+    width: 100%;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -73,6 +73,9 @@ body {
 
     &.disabled {
       background-color: gray;
+      &:hover {
+        cursor: not-allowed;
+      }
     }
   }
 
@@ -209,4 +212,17 @@ body {
   .loading-text {
     color: white;
     margin-right: 6px;
+  }
+
+  .confirm-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    gap: 8px;
+    color: white;
+  }
+
+  .error-text {
+    color: red;
   }

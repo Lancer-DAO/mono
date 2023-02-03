@@ -3,7 +3,7 @@ import solanaProvider from "./solanaProvider";
 
 export interface IWalletProvider {
   getAccounts: () => Promise<any>;
-  getBalance: () => Promise<any>;
+  getBalance: () => Promise<number>;
   signAndSendTransaction: (amount: number, receipient: string) => Promise<string>;
   signTransaction: () => Promise<void>;
   signMessage: () => Promise<void>;

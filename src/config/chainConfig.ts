@@ -12,10 +12,10 @@ export const CHAIN_CONFIG = {
   } as CustomChainConfig,
   solana: {
     chainNamespace: CHAIN_NAMESPACES.SOLANA,
-    rpcTarget: "https://api.devnet.solana.com",
+    rpcTarget: "https://winter-necessary-smoke.solana-mainnet.discover.quiknode.pro",
     blockExplorer: "https://explorer.solana.com/",
     chainId: "0x3",
-    displayName: "Solana Devnet",
+    displayName: "Solana",
     ticker: "SOL",
     tickerName: "Solana",
   } as CustomChainConfig,

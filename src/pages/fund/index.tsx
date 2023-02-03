@@ -1,34 +1,25 @@
 import { useEffect, useState } from "react";
+import { ConfirmFunding, Setting } from "@/components";
+
 import {
   WEB3AUTH_NETWORK_TYPE,
   CHAIN_CONFIG_TYPE,
   APP_CONFIG_TYPE,
 } from "@/config";
-import { Web3AuthProvider, Web3Provider } from "@/providers";
-import { Setting } from "@/components";
+import { Web3AuthProvider } from "@/providers";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
-import { Issue } from "@/types";
-// import MainRWA from "./components/MainRWA";
 
 function App() {
-  const [issue, setIssue] = useState<Issue>();
-  const [popupType, setPopupType] = useState<string>();
   const [web3AuthNetwork, setWeb3AuthNetwork] =
-    useState<WEB3AUTH_NETWORK_TYPE>("testnet");
+    useState<WEB3AUTH_NETWORK_TYPE>("cyan");
+  const [ready, setReady] = useState(false);
   const [chain, setChain] = useState<CHAIN_CONFIG_TYPE>("solana");
   const [app, setApp] = useState<APP_CONFIG_TYPE>("SPA");
+  useEffect(() => setReady(true), []);
   useEffect(() => {
     setApp(window.sessionStorage.getItem("app") as APP_CONFIG_TYPE);
   }, [app]);
-  var port = chrome.runtime.connect({ name: "popup" });
-  useEffect(() => {
-    port.postMessage({ request: "funding_data" });
-    port.onMessage.addListener(function (msg) {
-      setIssue(msg.issue);
-      setPopupType(msg.popupType);
-    });
-  }, []);
-  if (issue && popupType) {
+  if (ready) {
     return (
       <div>
         <Web3AuthProvider
@@ -37,7 +28,7 @@ function App() {
           app={app}
         >
           <Router>
-            <Web3Provider issue={issue} port={port} popup={popupType} />
+            <ConfirmFunding />
           </Router>
         </Web3AuthProvider>
       </div>
