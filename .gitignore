@@ -35,6 +35,7 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 extension
+lancer-extension.tar.gz
 second_wallet.json
 test-keypair.json
 .env
