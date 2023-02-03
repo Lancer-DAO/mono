@@ -5,5 +5,5 @@ env_variables:
   AUTH_URL: https://dev-kgvm1sxe.us.auth0.com/oauth/token
   CLIENT_ID: ZaU1oZzvlb06tZC8UXtTvTM9KSBY9pzk 
   CLIENT_SECRET:  ih8ukIVP2oG717kVS64wXTmfvV0omklFD42zLe4ANEhpObdQAwRlb2e0CrqdLWjZ
-  REDIRECT_URI: https://api-dot-lancer-api-375702.uc.r.appspot.com
-  FRONT_ENDPOINT: https://app-dot-lancer-api-375702.uc.r.appspot.com/fund?token=
+  REDIRECT_URI: https://api.lancer.so
+  FRONT_ENDPOINT: https://app.lancer.so/fund?token=

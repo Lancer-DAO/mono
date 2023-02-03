@@ -1,6 +1,7 @@
 import { useCallback, useState, useEffect } from "react";
 import classnames from "classnames";
 import { Issue, IssueState } from "@/types";
+import { getSolscanAddress } from "@/utils";
 
 interface ExistingIssueFundsProps {
   issue: Issue;
@@ -50,7 +51,7 @@ export const ExistingIssueFunds = ({ issue }: ExistingIssueFundsProps) => {
               )}
               onClick={(e) => {
                 window.open(
-                  `https://solscan.io/tx/${issue.hash}?cluster=devnet`,
+                  getSolscanAddress(issue.hash),
                   "_blank"
                 );
                 e.preventDefault();
@@ -89,7 +90,7 @@ export const ExistingIssueFunds = ({ issue }: ExistingIssueFundsProps) => {
                   )}
                   onClick={(e) => {
                     window.open(
-                      `https://solscan.io/tx/${issue.payoutHash}?cluster=devnet`,
+                      getSolscanAddress(issue.payoutHash),
                       "_blank"
                     );
                     e.preventDefault();

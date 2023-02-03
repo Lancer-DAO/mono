@@ -11,7 +11,7 @@ import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 
 function App() {
   const [web3AuthNetwork, setWeb3AuthNetwork] =
-    useState<WEB3AUTH_NETWORK_TYPE>("testnet");
+    useState<WEB3AUTH_NETWORK_TYPE>("cyan");
   const [ready, setReady] = useState(false);
   const [chain, setChain] = useState<CHAIN_CONFIG_TYPE>("solana");
   const [app, setApp] = useState<APP_CONFIG_TYPE>("SPA");

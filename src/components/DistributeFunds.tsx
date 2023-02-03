@@ -23,7 +23,7 @@ import {
   MERGE_PULL_REQUEST_API_ROUTE,
   NEW_ISSUE_API_ROUTE,
 } from "@/server/src/constants";
-import { convertToQueryParams, deepCopy, getApiEndpoint } from "@/utils";
+import { convertToQueryParams, deepCopy, getApiEndpoint, getSolscanAddress } from "@/utils";
 import { useLocation } from "react-router-dom";
 // import { ReactComponent as ReactLogo } from "../logo.svg";
 // import { ReactComponent as SolLogo } from "../../node_modules/cryptocurrency-icons/svg/white/sol.svg";
@@ -40,6 +40,8 @@ enum ApprovalState {
 export const DistributeFunding = () => {
   const [buttonText, setButtonText] = useState(ApprovalState.APPROVE);
   const keyPair = Keypair.fromSecretKey(secretKey);
+  console.log('pub', keyPair.publicKey.toString())
+
   const [issue, setIssue] = useState<Issue>(undefined);
   const search = useLocation().search;
   const params = new URLSearchParams(search);
@@ -99,19 +101,17 @@ export const DistributeFunding = () => {
         transaction,
         [keyPair]
       );
-      // const resp = await fetch(
-      //   "http://localhost:3001/ghToken?user_id=github|117492794&repo=github-app&org=Lancer-DAO&pull_number=23"
-      // );
 
-      // const data = await resp.json();
       setButtonText(ApprovalState.APPROVED);
       axios.post(
-        `${getApiEndpoint()}${DATA_API_ROUTE}/${MERGE_PULL_REQUEST_API_ROUTE}?${convertToQueryParams(
+        `${getApiEndpoint()}${DATA_API_ROUTE}/${MERGE_PULL_REQUEST_API_ROUTE}?${
+          convertToQueryParams(
           {
             ...issue,
             payoutHash: signature,
           }
-        )}`
+        )
+      }`
       );
     } catch (e) {
       setButtonText(ApprovalState.ERROR);
@@ -149,7 +149,7 @@ export const DistributeFunding = () => {
                 onClick={(e) => {
                   typeof window &&
                     window.open(
-                      `https://solscan.io/tx/${issue.payoutHash}?cluster=devnet`,
+                      getSolscanAddress(issue.payoutHash),
                       "_blank"
                     );
                   e.preventDefault();
@@ -177,6 +177,7 @@ export const DistributeFunding = () => {
       </button>
     </div>
   ) : (
-    <></>
+    <>
+    </>
   );
 };

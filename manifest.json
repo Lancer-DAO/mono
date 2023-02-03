@@ -6,7 +6,8 @@
   "host_permissions": [
     "http://localhost:3000/*",
     "https://github.com/*",
-    "https://app-dot-lancer-api-375702.uc.r.appspot.com/*"
+    "https://app-dot-lancer-api-375702.uc.r.appspot.com/*",
+    "https://app.lancer.so/*"
   ],
   "permissions": [
     "storage",
@@ -20,7 +21,9 @@
     "service_worker": "background.js"
   },"externally_connectable": {
     "matches": ["http://localhost:3000/*", 
-    "https://app-dot-lancer-api-375702.uc.r.appspot.com/*"]
+    "https://app-dot-lancer-api-375702.uc.r.appspot.com/*",
+    "https://app.lancer.so/*"
+  ]
   },
   "content_scripts": [
     {

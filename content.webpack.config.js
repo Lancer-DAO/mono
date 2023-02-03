@@ -53,6 +53,9 @@ module.exports = {
     filename: 'content.js',
     path: path.resolve(__dirname, 'extension'),
   },
+  optimization: {
+    minimize: false
+},
   plugins:
     [new webpack.ProvidePlugin({
       process: "process/browser",

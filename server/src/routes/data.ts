@@ -306,6 +306,7 @@ router.get(`/${FULL_PULL_REQUEST_API_ROUTE}`, async function (req, res, next) {
 router.post(`/${MERGE_PULL_REQUEST_API_ROUTE}`, (req, res) => {
   //when a request from auth0 is received we get auth code as query param
 
+  // console.log(req.query)
   var pull_number = parseInt(req.query.pullNumber as string);
   var issue_number = parseInt(req.query.issueNumber as string);
   var org = req.query.org as string;
@@ -330,11 +331,14 @@ router.post(`/${MERGE_PULL_REQUEST_API_ROUTE}`, (req, res) => {
       url: `https://dev-kgvm1sxe.us.auth0.com/api/v2/users/${github_id}`,
       headers: {'content-type': 'application/x-www-form-urlencoded', 'Authorization': `Bearer ${code}`},
     };
+    // console.log('options', options)
 
     axios.request(options).then(function (response) {
+      // console.log('axios', response)
 
     const gh_token = response.data.identities[0].access_token;
-    console.log(gh_token)
+    console.log('token', response.data)
+    // console.log(gh_token)
     const octokit = new Octokit({
       auth: gh_token,
     });
@@ -343,7 +347,7 @@ router.post(`/${MERGE_PULL_REQUEST_API_ROUTE}`, (req, res) => {
       repo: repo,
       pull_number: pull_number
     }).then((resp) => {
-      console.log(resp)
+      // console.log(resp)
       updateIssueState({
         org: org,
         repo: repo,
@@ -362,16 +366,16 @@ router.post(`/${MERGE_PULL_REQUEST_API_ROUTE}`, (req, res) => {
 
       console.error(error);
 
-      return res.status(error.status).send({message: error})
+      return res.status(500).send({message: error})
     })
     }).catch(function (error) {
       console.error(error);
 
-      return res.status(error.status).send({message: error})
+      return res.status(500).send({message: error})
     })
   }).catch(function (error) {
     console.error(error);
-    return res.status(error.status).send({message: error})
+    return res.status(500).send({message: error})
 
   });
 });

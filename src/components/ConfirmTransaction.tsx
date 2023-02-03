@@ -3,10 +3,10 @@ import keypair from "../../test-keypair.json";
 // import { ReactComponent as ReactLogo } from "../logo.svg";
 // import { ReactComponent as SolLogo } from "../../node_modules/cryptocurrency-icons/svg/white/sol.svg";
 
+
 import { Issue, IssueState } from "@/types";
 import { useLocation } from "react-router-dom";
 import { useWeb3Auth } from "@/providers";
-const TO_DEVNET_PUBKEY_SOL = "Ea1ndgjbtivGgGdmVNAe1EqyhhHrSjEv12hPqZ4WXp19";
 import { WALLET_ADAPTERS } from "@web3auth/base";
 import { Loader, PubKey } from "@/components";
 import axios from "axios";
@@ -15,12 +15,14 @@ import {
   ISSUE_API_ROUTE,
   NEW_ISSUE_API_ROUTE,
 } from "@/server/src/constants";
-import { convertToQueryParams, getApiEndpoint } from "@/utils";
-import { LAMPORTS_PER_SOL, PublicKey } from "@solana/web3.js";
+import { convertToQueryParams, getApiEndpoint, getSolscanAddress } from "@/utils";
+import { Keypair, LAMPORTS_PER_SOL, PublicKey } from "@solana/web3.js";
 import classNames from "classnames";
 
 const REACT_APP_AUTH0_DOMAIN = "https://dev-kgvm1sxe.us.auth0.com";
 const REACT_APP_RWA_CLIENTID = "ZaU1oZzvlb06tZC8UXtTvTM9KSBY9pzk";
+const secretKey = Uint8Array.from(keypair);
+const keyPair = Keypair.fromSecretKey(secretKey);
 enum ApprovalState {
   APPROVE = "Approve",
   APPROVING = "Approving",
@@ -36,7 +38,8 @@ export const ConfirmFunding = () => {
     signAndSendTransaction,
     setIsLoading,
     isWeb3AuthInit,
-    getBalance
+    getBalance,
+    logout
   } = useWeb3Auth();
   const [issue, setIssue] = useState<Issue>(undefined);
   const search = useLocation().search;
@@ -53,7 +56,7 @@ export const ConfirmFunding = () => {
 
   useEffect(() => {
     let extensionId = window.localStorage.getItem("lancerExtensionId");
-    if(!extensionId) {
+    if(!extensionId || extensionId === 'null') {
       extensionId = params.get('extension_id');
       window.localStorage.setItem("lancerExtensionId", extensionId)
     }
@@ -97,7 +100,7 @@ export const ConfirmFunding = () => {
 
       const signature = await signAndSendTransaction(
         issue.amount,
-        TO_DEVNET_PUBKEY_SOL
+        keyPair.publicKey.toString()
       );
       const newIssue = { ...issue, hash: signature };
       console.log("sig", signature);
@@ -206,7 +209,7 @@ export const ConfirmFunding = () => {
           onClick={(e) => {
             typeof window &&
               window.open(
-                `https://solscan.io/tx/${sendHash}?cluster=devnet`,
+                getSolscanAddress(sendHash),
                 "_blank"
               );
             e.preventDefault();

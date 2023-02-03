@@ -9,7 +9,7 @@ import {
   ISSUE_API_ROUTE,
   NEW_ISSUE_API_ROUTE,
 } from "@/server/src/constants";
-import { convertToQueryParams, deepCopy, getApiEndpoint, getApiEndpointExtenstion } from "@/utils";
+import { convertToQueryParams, deepCopy, getApiEndpoint, getApiEndpointExtenstion, getSolscanAddress } from "@/utils";
 import { last } from "lodash";
 const AUTHOR_SELECTOR = ".author.text-bold.Link--secondary";
 interface PullRequestProps {
@@ -61,7 +61,7 @@ export const PullRequest = ({ issue }: PullRequestProps) => {
                 )}
                 onClick={(e) => {
                   window.open(
-                    `https://solscan.io/tx/${issue.hash}?cluster=devnet`,
+                    getSolscanAddress(issue.hash),
                     "_blank"
                   );
                   e.preventDefault();
@@ -124,7 +124,7 @@ export const PullRequest = ({ issue }: PullRequestProps) => {
                   )}
                   onClick={(e) => {
                     window.open(
-                      `https://solscan.io/tx/${issue.payoutHash}?cluster=devnet`,
+                      getSolscanAddress(issue.payoutHash),
                       "_blank"
                     );
                     e.preventDefault();
