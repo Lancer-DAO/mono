@@ -16,21 +16,21 @@ interface PullRequestProps {
   issue: Issue;
 }
 enum DistributionState {
-  FUND = "Mark for Review",
-  FUNDING = "Marked for Review",
-  FUNDED = "Awaiting Review",
+  DRAFT = "Mark for Review",
+  PAID = "Approved",
+  REVIEW = "Awaiting Review",
   ERROR = "Error",
 }
 
 export const PullRequest = ({ issue }: PullRequestProps) => {
   const [buttonText, setButtonText] = useState(
     issue.state === IssueState.IN_PROGRESS
-      ? DistributionState.FUND
-      : DistributionState.FUNDED
+      ? DistributionState.DRAFT 
+      : issue.state === IssueState.AWAITING_REVIEW ? DistributionState.REVIEW : DistributionState.PAID
   );
   console.log(issue);
   const onClick = useCallback(async () => {
-    setButtonText(DistributionState.FUNDED);
+    setButtonText(DistributionState.REVIEW);
     axios.put(
       `${getApiEndpointExtenstion()}${DATA_API_ROUTE}/${ISSUE_API_ROUTE}?${convertToQueryParams(
         {
@@ -76,9 +76,9 @@ export const PullRequest = ({ issue }: PullRequestProps) => {
 
       <>
         <div className="lancer-funded-amount">
-          {issue.paid ? "Funds Sent to Contributors" : "Funds Ready to Send"}
+          {issue.state === IssueState.APPROVED ? "Funds Sent to Contributors" : "Funds Ready to Send"}
 
-          {!issue.paid && (
+          {issue.state !== IssueState.APPROVED && (
             <button
               className={classnames(
                 "confirm-button",
@@ -120,7 +120,7 @@ export const PullRequest = ({ issue }: PullRequestProps) => {
                   className={classnames(
                     "confirm-button",
                     "hug",
-                    "margin-left-4"
+                    "margin-left-auto"
                   )}
                   onClick={(e) => {
                     window.open(
@@ -134,7 +134,6 @@ export const PullRequest = ({ issue }: PullRequestProps) => {
                 </button>
               )}
             </div>
-            )
           </div>
         )}
       </>

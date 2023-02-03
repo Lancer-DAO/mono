@@ -25,6 +25,7 @@ const insertPR = (response) => {
     const issue = {
       ...pullRequestRaw,
       issueNumber: pullRequestRaw.issue_number,
+      pullNumber: pullRequestRaw.pull_number,
       amount: parseFloat(pullRequestRaw.funding_amount),
       hash: pullRequestRaw.funding_hash,
       githubId: pullRequestRaw.github_id,
