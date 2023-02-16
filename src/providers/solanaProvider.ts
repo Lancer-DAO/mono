@@ -2,6 +2,7 @@ import { CustomChainConfig, SafeEventEmitterProvider } from "@web3auth/base";
 import { Connection, LAMPORTS_PER_SOL, PublicKey, SystemProgram, Transaction, Keypair } from "@solana/web3.js";
 import { SolanaWallet } from "@web3auth/solana-provider";
 import { IWalletProvider } from "./walletProvider";
+import {createAssociatedTokenAccountInstruction, createTransferInstruction, getAccount, getAssociatedTokenAddress, getMint} from "@solana/spl-token"
 
 const solanaProvider = (provider: SafeEventEmitterProvider, uiConsole: (...args: unknown[]) => void): IWalletProvider => {
   const solanaWallet = new SolanaWallet(provider);
@@ -49,21 +50,48 @@ const solanaProvider = (provider: SafeEventEmitterProvider, uiConsole: (...args:
     }
   };
 
-  const signAndSendTransaction = async (amount: number, receipient: string): Promise<string> => {
+  const signAndSendTransaction = async (amount: number, receipient: string, mint?: PublicKey): Promise<string> => {
     
       const conn = await getConnection();
       console.log(-1)
       const solWeb3 = new SolanaWallet(provider);
       const pubKeyArr = await solWeb3.requestAccounts();
       const pubKey = new PublicKey(pubKeyArr[0])
+      const toPubkey = new PublicKey(receipient);
 
       const {blockhash, lastValidBlockHeight} = (await conn.getLatestBlockhash());
 
-      const TransactionInstruction = SystemProgram.transfer({
-        fromPubkey: pubKey,
-        toPubkey: new PublicKey(receipient),
-        lamports: Math.round(amount * LAMPORTS_PER_SOL),
-      });
+      let TransactionInstruction;
+
+      if(!mint) {
+        TransactionInstruction = SystemProgram.transfer({
+          fromPubkey: pubKey,
+          toPubkey: toPubkey,
+          lamports: Math.round(amount * LAMPORTS_PER_SOL),
+        });
+      } else {
+        const tokenMint = await getMint(conn, mint);
+        const actualAmount = BigInt(amount) * BigInt(Math.pow(10, tokenMint.decimals));
+        const toTokenAddress = await getAssociatedTokenAddress(mint, toPubkey);
+        const fromTokenAddress = await getAssociatedTokenAddress(mint, pubKey);
+        const fromTokenAccount = await getAccount(conn, fromTokenAddress);
+        if(!fromTokenAccount.isInitialized) {
+
+          const createToken = await createAssociatedTokenAccountInstruction(
+            pubKey,
+            fromTokenAddress,
+            toPubkey,
+            mint
+          );
+        }
+
+        TransactionInstruction = createTransferInstruction(
+          fromTokenAddress,
+          toTokenAddress,
+          pubKey,
+          amount,
+        );
+      }
 
       const txInfo = {
         /** The transaction fee payer */

@@ -22,13 +22,17 @@ const account = `CREATE TABLE account (
 const issue = `CREATE TABLE issue (
     uuid UUID DEFAULT uuid_generate_v4 (),
 		funding_hash VARCHAR,
-    funding_amount DECIMAL(10,10),
+    funding_amount DECIMAL(20,10),
+    funding_mint VARCHAR,
     title VARCHAR,
     repo VARCHAR,
     org VARCHAR,
     issue_number DECIMAL(20),
     state VARCHAR,
     type VARCHAR,
+    estimated_time DECIMAL(10, 2),
+    private BOOLEAN,
+    tags VARCHAR[],
     PRIMARY KEY (uuid)
 );`;
 

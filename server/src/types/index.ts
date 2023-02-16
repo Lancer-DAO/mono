@@ -20,7 +20,11 @@ export interface AccountGetParams {
 
 export interface IssueInsertParams extends IssueGetParams {
 fundingHash: string,
-fundingAmount: number
+fundingAmount: number,
+fundingMint: string,
+tags: string[],
+private: boolean,
+estimatedTime: number,
 }
 
 export interface IssueGetParams {

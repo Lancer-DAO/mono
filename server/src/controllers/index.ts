@@ -36,17 +36,25 @@ export const getAccount = async (params: AccountGetParams) => {
   return result.rows.length > 0 ? result.rows[0] : {message: 'NOT FOUND'};
 };
 
-// RAFFLE
+// ISSUE
 
 export const insertIssue = async (params: IssueInsertParams) => {
   let query =
-    "INSERT INTO issue (funding_hash, title, repo, org, state, funding_amount)";
+    "INSERT INTO issue (funding_hash, title, repo, org, state, funding_amount, funding_mint, estimated_time, private, tags)";
   query += ` VALUES ('${params.fundingHash}', '${
     params.title
   }', '${params.repo}', '${
     params.org
   }', 'new', ${
     params.fundingAmount
+  }, '${
+    params.fundingMint
+  }', ${
+    params.estimatedTime
+  }, ${
+    params.private
+  }, ${
+    `'{${params.tags.map((tag) => `"${tag}"`).join(", ")}}'`
   });`;
   console.log(query);
   const result = await DB.raw(query);
@@ -297,7 +305,7 @@ export const getAllIssues = async () => {
   query += ` ON i.uuid = ai.issue_uuid`
   query += ` LEFT OUTER JOIN account as a`
   query += ` ON ai.account_uuid = a.uuid`
-  console.log(query);
+  console.log('yo');
   const result = await DB.raw(query);
   return result.rows.length > 0 ? result.rows : {message: 'NOT FOUND'};
 };

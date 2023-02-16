@@ -19,6 +19,7 @@ import { CHAIN_CONFIG, CHAIN_CONFIG_TYPE } from "../config/chainConfig";
 import { WEB3AUTH_NETWORK_TYPE } from "../config/web3AuthNetwork";
 import { getWalletProvider, IWalletProvider } from "./walletProvider";
 import { APP_CONFIG_TYPE } from "../config/appConfig";
+import { PublicKey } from "@solana/web3.js";
 
 export const REACT_APP_CLIENT_ID =
   "BPMZUkEx6a1aHvk2h_4efBlAJNMlPGvpTOy7qIkz4cbtF_l1IHuZ7KMqsLNPTtDGDItHBMxR6peSZc8Mf-0Oj6U";
@@ -54,7 +55,8 @@ export interface IWeb3AuthContext {
   signTransaction: () => Promise<void>;
   signAndSendTransaction: (
     amount: number,
-    recipient: string
+    recipient: string,
+    mint?: PublicKey
   ) => Promise<string>;
   getGH: () => Promise<void>;
 }
@@ -252,6 +254,7 @@ export const Web3AuthProvider: FunctionComponent<IWeb3AuthState> = ({
     jwt_token: string
   ) => {
     try {
+      // debugger;
       setIsLoading(true);
       if (!web3Auth) {
         console.log("web3auth not initialized yet");
@@ -295,6 +298,7 @@ export const Web3AuthProvider: FunctionComponent<IWeb3AuthState> = ({
       uiConsole("web3auth not initialized yet");
       return;
     }
+    debugger;
     const user = await web3Auth.getUserInfo();
     uiConsole(user);
     console.log(user);
@@ -353,14 +357,15 @@ export const Web3AuthProvider: FunctionComponent<IWeb3AuthState> = ({
 
   const signAndSendTransaction = async (
     amount: number,
-    recipient: string
+    recipient: string,
+    mint?: PublicKey
   ): Promise<string> => {
     if (!provider) {
       console.log("provider not initialized yet");
       uiConsole("provider not initialized yet");
       return "";
     }
-    return await provider.signAndSendTransaction(amount, recipient);
+    return await provider.signAndSendTransaction(amount, recipient, mint);
   };
 
   const uiConsole = (...args: unknown[]): void => {

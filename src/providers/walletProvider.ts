@@ -1,10 +1,11 @@
+import { PublicKey } from "@solana/web3.js";
 import { SafeEventEmitterProvider } from "@web3auth/base";
 import solanaProvider from "./solanaProvider";
 
 export interface IWalletProvider {
   getAccounts: () => Promise<any>;
   getBalance: () => Promise<number>;
-  signAndSendTransaction: (amount: number, receipient: string) => Promise<string>;
+  signAndSendTransaction: (amount: number, receipient: string, mint?: PublicKey) => Promise<string>;
   signTransaction: () => Promise<void>;
   signMessage: () => Promise<void>;
 }
