@@ -165,7 +165,7 @@ export const Web3AuthProvider: FunctionComponent<IWeb3AuthState> = ({
 
         const web3AuthInstance = new Web3AuthCore({
           chainConfig: currentChainConfig,
-          clientId: REACT_APP_RWA_CLIENTID,
+          clientId: clientId,
         });
         subscribeAuthEvents(web3AuthInstance);
         if (sessionStorage.getItem("app") === null) {
@@ -299,7 +299,7 @@ export const Web3AuthProvider: FunctionComponent<IWeb3AuthState> = ({
       uiConsole("web3auth not initialized yet");
       return;
     }
-    debugger;
+    // debugger;
     const user = await web3Auth.getUserInfo();
     uiConsole(user);
     console.log(user);

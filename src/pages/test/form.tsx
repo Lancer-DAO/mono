@@ -63,20 +63,20 @@ const DEFAULT_MINTS = [
 const DEFAULT_MINT_NAMES = DEFAULT_MINTS.map((mint) => mint.name);
 
 const Form = () => {
-  //   const {
-  //     provider,
-  //     loginRWA,
-  //     getUserInfo,
-  //     signAndSendTransaction,
-  //     setIsLoading,
-  //     isWeb3AuthInit,
-  //     getBalance,
-  //     logout,
-  //   } = useWeb3Auth();
+  const {
+    provider,
+    loginRWA,
+    getUserInfo,
+    signAndSendTransaction,
+    setIsLoading,
+    isWeb3AuthInit,
+    getBalance,
+    logout,
+  } = useWeb3Auth();
   const search = useLocation().search;
   const [repositories, setRepositories] = useState<any[]>();
   const [repo, setRepo] = useState<any>();
-  const [userId, setUserId] = useState<string>("github|117492794");
+  const [userId, setUserId] = useState<string>();
   const params = new URLSearchParams(search);
   const jwt = params.get("token");
   const token = jwt == null ? "" : jwt;
@@ -94,40 +94,40 @@ const Form = () => {
   });
 
   useEffect(() => {
-    // handleAuthLogin();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  });
-
-  useEffect(() => {
-    // if (isWeb3AuthInit) {
-    const getUserOrgs = async () => {
-      //   const userInfo = await getUserInfo();
-      //   console.log("user", userInfo);
-      //   const userId = userInfo.verifierId;
-      //   setUserId(userId);
-
-      axios
-        .get(
-          `${getApiEndpoint()}${DATA_API_ROUTE}/${ACCOUNT_API_ROUTE}/organizations?${convertToQueryParams(
-            { githubId: userId }
-          )}`
-        )
-        .then((resp) => {
-          console.log(resp);
-          setRepositories(resp.data.data);
-        });
-    };
-    getUserOrgs();
-    // }
+    handleAuthLogin();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  useEffect(() => {
+    if (isWeb3AuthInit) {
+      const getUserOrgs = async () => {
+        const userInfo = await getUserInfo();
+        console.log("user", userInfo);
+        const userId = userInfo.verifierId;
+        setUserId(userId);
+
+        axios
+          .get(
+            `${getApiEndpoint()}${DATA_API_ROUTE}/${ACCOUNT_API_ROUTE}/organizations?${convertToQueryParams(
+              { githubId: userId }
+            )}`
+          )
+          .then((resp) => {
+            console.log(resp);
+            setRepositories(resp.data.data);
+          });
+      };
+      getUserOrgs();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isWeb3AuthInit]);
 
   const handleAuthLogin = async () => {
     try {
       //   debugger;
-      //   setIsLoading(true);
+      setIsLoading(true);
       if (token !== "") {
-        // await loginRWA(WALLET_ADAPTERS.OPENLOGIN, "jwt", token);
+        await loginRWA(WALLET_ADAPTERS.OPENLOGIN, "jwt", token);
       } else {
         const rwaURL = `${REACT_APP_AUTH0_DOMAIN}/authorize?scope=openid&response_type=code&client_id=${REACT_APP_CLIENTID}&redirect_uri=${`${getApiEndpoint()}callback`}&state=STATE`;
         console.log(rwaURL);
@@ -135,7 +135,7 @@ const Form = () => {
         window.location.href = rwaURL;
       }
     } finally {
-      //   setIsLoading(false);
+      setIsLoading(false);
     }
   };
 
@@ -201,95 +201,10 @@ const Form = () => {
         }
       );
     const sendEscrow = async (issue: number) => {
-      const connection = new Connection(clusterApiUrl("devnet"));
-      const { blockhash, lastValidBlockHeight } =
-        await connection.getLatestBlockhash();
-
-      let TransactionInstruction;
-      const mint = formData.mintAddress
-        ? new PublicKey(formData.mintAddress)
-        : undefined;
-
-      if (!mint) {
-        TransactionInstruction = SystemProgram.transfer({
-          fromPubkey: fromKeyPair.publicKey,
-          toPubkey: keyPair.publicKey,
-          lamports: Math.round(formData.paymentAmount * LAMPORTS_PER_SOL),
-        });
-      } else {
-        // debugger;
-        const tokenMint = await getMint(connection, mint);
-        const actualAmount = BigInt(
-          formData.paymentAmount * Math.pow(10, tokenMint.decimals)
-        );
-        const toTokenAddress = await getAssociatedTokenAddress(
-          mint,
-          keyPair.publicKey
-        );
-        const fromTokenAddress = await getAssociatedTokenAddress(
-          mint,
-          fromKeyPair.publicKey
-        );
-        // debugger;
-        try {
-          console.log("try");
-          const fromTokenAccount = await getAccount(
-            connection,
-            fromTokenAddress
-          );
-          console.log("fromTA", fromTokenAccount.address.toString());
-        } catch (e) {
-          console.log("catch");
-          if (e instanceof TokenAccountNotFoundError) {
-            const createToken = await createAssociatedTokenAccountInstruction(
-              fromKeyPair.publicKey,
-              fromTokenAddress,
-              fromKeyPair.publicKey,
-              mint
-            );
-            const txInfo = {
-              /** The transaction fee payer */
-              feePayer: fromKeyPair.publicKey,
-              /** A recent blockhash */
-              blockhash: blockhash,
-              /** the last block chain can advance to before tx is exportd expired */
-              lastValidBlockHeight: lastValidBlockHeight,
-            };
-
-            const transaction = new Transaction(txInfo).add(createToken);
-            const signature = await sendAndConfirmTransaction(
-              connection,
-              transaction,
-              [fromKeyPair]
-            );
-            console.log("created token account", signature);
-          } else {
-            console.error(e);
-          }
-        }
-        // debugger;
-        TransactionInstruction = createTransferInstruction(
-          fromTokenAddress,
-          toTokenAddress,
-          fromKeyPair.publicKey,
-          actualAmount
-        );
-      }
-
-      const txInfo = {
-        /** The transaction fee payer */
-        feePayer: fromKeyPair.publicKey,
-        /** A recent blockhash */
-        blockhash: blockhash,
-        /** the last block chain can advance to before tx is exportd expired */
-        lastValidBlockHeight: lastValidBlockHeight,
-      };
-
-      const transaction = new Transaction(txInfo).add(TransactionInstruction);
-      const signature = await sendAndConfirmTransaction(
-        connection,
-        transaction,
-        [fromKeyPair]
+      const signature = await provider.signAndSendTransaction(
+        formData.paymentAmount,
+        keyPair.publicKey.toString(),
+        formData.mintAddress ? new PublicKey(formData.mintAddress) : undefined
       );
 
       console.log("sig", signature);
@@ -304,9 +219,9 @@ const Form = () => {
       );
       // debugger
     };
-    // const issueResponse = await createIssue();
-    // console.log("issueres", issueResponse);
-    // await sendEscrow(issueResponse.data.issue.number);
+    const issueResponse = await createIssue();
+    console.log("issueres", issueResponse);
+    await sendEscrow(issueResponse.data.issue.number);
 
     console.log(formData); // do something with form data
   };

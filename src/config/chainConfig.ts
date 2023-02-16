@@ -1,4 +1,6 @@
+import { clusterApiUrl } from "@solana/web3.js";
 import { CHAIN_NAMESPACES, CustomChainConfig } from "@web3auth/base";
+import { IS_MAINNET } from "../constants/web3";
 
 export const CHAIN_CONFIG = {
   mainnet: {
@@ -12,7 +14,7 @@ export const CHAIN_CONFIG = {
   } as CustomChainConfig,
   solana: {
     chainNamespace: CHAIN_NAMESPACES.SOLANA,
-    rpcTarget: "https://winter-necessary-smoke.solana-mainnet.discover.quiknode.pro",
+    rpcTarget: IS_MAINNET ? "https://winter-necessary-smoke.solana-mainnet.discover.quiknode.pro" : clusterApiUrl('devnet'),
     blockExplorer: "https://explorer.solana.com/",
     chainId: "0x3",
     displayName: "Solana",

@@ -2,7 +2,7 @@ import { CustomChainConfig, SafeEventEmitterProvider } from "@web3auth/base";
 import { Connection, LAMPORTS_PER_SOL, PublicKey, SystemProgram, Transaction, Keypair } from "@solana/web3.js";
 import { SolanaWallet } from "@web3auth/solana-provider";
 import { IWalletProvider } from "./walletProvider";
-import {createAssociatedTokenAccountInstruction, createTransferInstruction, getAccount, getAssociatedTokenAddress, getMint} from "@solana/spl-token"
+import {createAssociatedTokenAccountInstruction, createTransferInstruction, getAccount, getAssociatedTokenAddress, getMint, TokenAccountNotFoundError} from "@solana/spl-token"
 
 const solanaProvider = (provider: SafeEventEmitterProvider, uiConsole: (...args: unknown[]) => void): IWalletProvider => {
   const solanaWallet = new SolanaWallet(provider);
@@ -53,8 +53,7 @@ const solanaProvider = (provider: SafeEventEmitterProvider, uiConsole: (...args:
   const signAndSendTransaction = async (amount: number, receipient: string, mint?: PublicKey): Promise<string> => {
     
       const conn = await getConnection();
-      const solWeb3 = new SolanaWallet(provider);
-      const pubKeyArr = await solWeb3.requestAccounts();
+      const pubKeyArr = await solanaWallet.requestAccounts();
       const pubKey = new PublicKey(pubKeyArr[0])
       const toPubkey = new PublicKey(receipient);
 
@@ -62,35 +61,53 @@ const solanaProvider = (provider: SafeEventEmitterProvider, uiConsole: (...args:
 
       let TransactionInstruction;
 
-      if(!mint) {
+      // if (!mint) {
         TransactionInstruction = SystemProgram.transfer({
           fromPubkey: pubKey,
           toPubkey: toPubkey,
           lamports: Math.round(amount * LAMPORTS_PER_SOL),
         });
-      } else {
-        const tokenMint = await getMint(conn, mint);
-        const actualAmount = BigInt(amount) * BigInt(Math.pow(10, tokenMint.decimals));
-        const toTokenAddress = await getAssociatedTokenAddress(mint, toPubkey);
-        const fromTokenAddress = await getAssociatedTokenAddress(mint, pubKey);
-        const fromTokenAccount = await getAccount(conn, fromTokenAddress);
-        if(!fromTokenAccount.isInitialized) {
-
-          const createToken = await createAssociatedTokenAccountInstruction(
-            pubKey,
-            fromTokenAddress,
-            toPubkey,
-            mint
-          );
-        }
-
-        TransactionInstruction = createTransferInstruction(
-          fromTokenAddress,
-          toTokenAddress,
-          pubKey,
-          amount,
-        );
-      }
+      // } else {
+      //   // debugger;
+      //   const tokenMint = await getMint(conn, mint);
+      //   const actualAmount = BigInt(
+      //     amount * Math.pow(10, tokenMint.decimals)
+      //   );
+      //   const toTokenAddress = await getAssociatedTokenAddress(
+      //     mint,
+      //     toPubkey
+      //   );
+      //   const fromTokenAddress = await getAssociatedTokenAddress(
+      //     mint,
+      //     pubKey
+      //   );
+      //   // debugger;
+      //   try {
+      //     console.log("try");
+      //     const fromTokenAccount = await getAccount(
+      //       conn,
+      //       fromTokenAddress
+      //     );
+      //     if (fromTokenAccount.amount < (amount * Math.pow(10, tokenMint.decimals))) {
+      //       return `Not enough tokens to fund this issue`;
+      //     }
+      //     console.log("fromTA", fromTokenAccount.address.toString());
+      //   } catch (e) {
+      //     console.log("catch");
+      //     if (e instanceof TokenAccountNotFoundError) {
+      //       return `Please initialize and fund ${fromTokenAddress.toString()} by sending tokens of the chose mint to ${pubKey.toString()}`
+      //     } else {
+      //       console.error(e);
+      //     }
+      //   }
+      //   // debugger;
+      //   TransactionInstruction = createTransferInstruction(
+      //     fromTokenAddress,
+      //     toTokenAddress,
+      //     pubKey,
+      //     actualAmount
+      //   );
+      // }
 
       const txInfo = {
         /** The transaction fee payer */
@@ -102,18 +119,20 @@ const solanaProvider = (provider: SafeEventEmitterProvider, uiConsole: (...args:
       }
 
       const transaction = new Transaction(txInfo).add(TransactionInstruction);
+
+const signedTx = await solanaWallet.signAndSendTransaction(transaction);
+console.log(signedTx.signature);
       // debugger
 
-      const signature = await (await solWeb3.signAndSendTransaction(transaction));
+      // const signature = await (await solWeb3.signAndSendTransaction(transaction));
 
       // const resp = await fetch('http://localhost:3001/ghToken?user_id=github|117492794&repo=github-app&org=Lancer-DAO&pull_number=18')
 
       // const data = await resp.json()
       // console.log(data)
 
-      uiConsole("blockhash", blockhash, "transaction", transaction, "signature", signature, 'data', 'hi');
-      return signature.signature;
-    
+      // uiConsole("blockhash", blockhash, "transaction", transaction, "signature", signature, 'data', 'hi');
+      return signedTx.signature;
   };
 
   const signTransaction = async (): Promise<void> => {
