@@ -1,5 +1,5 @@
 import * as ReactDOM from "react-dom/client";
-import { ExistingIssueFunds } from "@/components";
+import { ExistingIssueFunds } from "../components/existingIssueFunds";
 import axios, { AxiosResponse } from "axios";
 import {
   DATA_API_ROUTE,
@@ -8,7 +8,6 @@ import {
   NEW_ISSUE_API_ROUTE,
 } from "@/server/src/constants";
 import { convertToQueryParams, getApiEndpointExtenstion } from "@/utils";
-import { Issue } from "@/types";
 const WRAPPER_CLASSNAME = "funded-issue-wrapper";
 const assigneeSelector =
   ".discussion-sidebar-item.sidebar-assignee.js-discussion-sidebar-item";

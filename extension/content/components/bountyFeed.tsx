@@ -17,19 +17,6 @@ interface BountyFeedProps {
   issues: Issue[];
 }
 
-const getIssueLogo = (i: number): string => {
-  if (i % 4 === 0) {
-    return "https://avatars.githubusercontent.com/u/91104561?v=4";
-  }
-  if (i % 4 === 1) {
-    return "https://avatars.githubusercontent.com/u/117492794?s=16&v=4";
-  }
-  if (i % 4 === 2) {
-    return "https://avatars.githubusercontent.com/u/119355107?s=16&v=4";
-  }
-  return "https://avatars.githubusercontent.com/u/119980205?s=16&v=4";
-};
-
 export const BountyFeed = ({ issues }: BountyFeedProps) => {
   return (
     <div className="bounty-tab">

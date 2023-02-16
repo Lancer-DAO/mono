@@ -1,4 +1,4 @@
-export * from "./bountyFeed"
+export * from "../../extension/content/components/bountyFeed"
 export * from "./ConfirmTransaction"
 export * from "./DistributeFunds"
 export * from "./existingIssueFunds"

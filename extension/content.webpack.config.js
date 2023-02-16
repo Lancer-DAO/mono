@@ -2,7 +2,7 @@ const path = require('path');
 const webpack = require("webpack");
 
 module.exports = {
-  entry: './src/content/index.ts',
+  entry: './content/index.ts',
   module: {
     rules: [
       {
@@ -25,18 +25,11 @@ module.exports = {
   resolve: {
     extensions: ['.tsx', '.ts', '.js'],
     alias: {
-        "@/*": path.resolve(__dirname,"./"),
-        "@/assets":  path.resolve(__dirname, "./src/assets"),
-        "@/atoms": path.resolve(__dirname,"./src/atoms/index.ts"),
-        "@/background": path.resolve(__dirname,"./src/background/index.ts"),
-        "@/components": path.resolve(__dirname,"./src/components/index.ts"),
-        "@/constants": path.resolve(__dirname,"./src/constants/index.ts"),
-        "@/pages": path.resolve(__dirname,"./src/pages/index.ts"),
-        "@/providers": path.resolve(__dirname,"./src/providers/index.ts"),
-        "@/server": path.resolve(__dirname,"./server"),
-        "@/styles": path.resolve(__dirname,"./src/styles"),
-        "@/types": path.resolve(__dirname,"./src/types/index.ts"),
-        "@/utils": path.resolve(__dirname,"./src/utils/index.ts")
+        "@/constants": path.resolve(__dirname,"../src/constants/index.ts"),
+        "@/server": path.resolve(__dirname,"../server"),
+        "@/styles": path.resolve(__dirname,"../src/styles"),
+        "@/types": path.resolve(__dirname,"../src/types/index.ts"),
+        "@/utils": path.resolve(__dirname,"../src/utils/index.ts")
     },
 
     fallback: {
@@ -51,7 +44,7 @@ module.exports = {
   },
   output: {
     filename: 'content.js',
-    path: path.resolve(__dirname, 'extension'),
+    path: path.resolve(__dirname, 'dist'),
   },
   optimization: {
     minimize: false

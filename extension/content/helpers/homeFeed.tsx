@@ -1,5 +1,5 @@
 import * as ReactDOM from "react-dom/client";
-import { BountyFeed } from "@/components";
+import { BountyFeed } from "../components/bountyFeed";
 import axios, { AxiosResponse } from "axios";
 import {
   DATA_API_ROUTE,

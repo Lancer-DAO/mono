@@ -1,11 +1,9 @@
 import * as ReactDOM from "react-dom/client";
-import { IssueState } from "@/types";
-import { PullRequest } from "@/components";
+import { PullRequest } from "../components/pullRequest";
 
 import axios, { AxiosResponse } from "axios";
 import {
   DATA_API_ROUTE,
-  PULL_REQUEST_API_ROUTE,
   NEW_PULL_REQUEST_API_ROUTE,
   FULL_PULL_REQUEST_API_ROUTE,
 } from "@/server/src/constants";
