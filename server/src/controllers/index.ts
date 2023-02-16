@@ -40,8 +40,8 @@ export const getAccount = async (params: AccountGetParams) => {
 
 export const insertIssue = async (params: IssueInsertParams) => {
   let query =
-    "INSERT INTO issue (funding_hash, title, repo, org, state, funding_amount, funding_mint, estimated_time, private, tags)";
-  query += ` VALUES ('${params.fundingHash}', '${
+    "INSERT INTO issue (issue_number, title, repo, org, state, funding_amount, funding_mint, estimated_time, private, tags)";
+  query += ` VALUES (${params.issueNumber}, '${
     params.title
   }', '${params.repo}', '${
     params.org
@@ -97,6 +97,17 @@ export const updateIssueNumber = async (params: IssueGetParams) => {
 export const updateIssueState = async (params: IssueUpdateParams) => {
   let query =
     `UPDATE issue SET state='${params.state}' where `;
+  query += `repo='${params.repo}'`
+  query += ` AND org='${params.org}'`
+  query += ` AND issue_number='${params.issueNumber}'`
+  console.log(query);
+  const result = await DB.raw(query);
+  return result;
+};
+
+export const updateIssueHash = async (params: IssueUpdateParams) => {
+  let query =
+    `UPDATE issue SET funding_hash='${params.hash}' where `;
   query += `repo='${params.repo}'`
   query += ` AND org='${params.org}'`
   query += ` AND issue_number='${params.issueNumber}'`
@@ -210,6 +221,7 @@ export const newAccountIssue = async (params: AccountIssueNewParams) => {
     console.log((await insertAccount(params)).rows)
     account = await getAccount(params);
   }
+  console.log('issue', issue)
 
   let query =
     "INSERT INTO account_issue (account_uuid, issue_uuid)";
@@ -217,7 +229,13 @@ export const newAccountIssue = async (params: AccountIssueNewParams) => {
     account.uuid
   }', '${issue.uuid}');`;
   console.log(query);
-  const result = await DB.raw(query);
+  await DB.raw(query);
+  const result = {
+    message: "Issue Created",
+    issue: {
+      number: issue.issue_number
+    }
+  }
   return result;
 };
 

@@ -53,7 +53,6 @@ const solanaProvider = (provider: SafeEventEmitterProvider, uiConsole: (...args:
   const signAndSendTransaction = async (amount: number, receipient: string, mint?: PublicKey): Promise<string> => {
     
       const conn = await getConnection();
-      console.log(-1)
       const solWeb3 = new SolanaWallet(provider);
       const pubKeyArr = await solWeb3.requestAccounts();
       const pubKey = new PublicKey(pubKeyArr[0])

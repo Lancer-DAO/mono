@@ -11,7 +11,9 @@ import { convertToQueryParams, getApiEndpointExtenstion } from "@/utils";
 const LIST_ITEM_ID = "bounty-list-item";
 
 const getIssues = () =>
-  axios.get(`${getApiEndpointExtenstion()}${DATA_API_ROUTE}/${ISSUE_API_ROUTE}s`);
+  axios.get(
+    `${getApiEndpointExtenstion()}${DATA_API_ROUTE}/${ISSUE_API_ROUTE}s`
+  );
 
 export const insertHomeFeed = () => {
   const existingWrapper = window.document.getElementById(LIST_ITEM_ID);
@@ -51,7 +53,7 @@ export const insertHomeFeed = () => {
           });
           const footerEle = window.document.querySelector(footerSelector);
           const bodyEle = window.document.querySelector(".bounty-tab");
-
+          console.log(issues);
           if (footerEle && !bodyEle) {
             const feedItem = window.document.createElement("div");
             feedItem.className = "feed-wrapper";
@@ -71,7 +73,7 @@ export const insertHomeFeed = () => {
   if (feedEle) {
     const listItem = window.document.createElement("li");
     listItem.className = `d-inline-flex`;
-    listItem.setAttribute('role', "presentation");
+    listItem.setAttribute("role", "presentation");
     listItem.setAttribute("data-view-component", "true");
     listItem.id = LIST_ITEM_ID;
     feedEle.appendChild(listItem);

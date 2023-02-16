@@ -18,13 +18,34 @@ import {
   ACCOUNT_API_ROUTE,
   DATA_API_ROUTE,
   GITHUB_ISSUE_API_ROUTE,
+  ISSUE_API_ROUTE,
   NEW_ISSUE_API_ROUTE,
 } from "@/server/src/constants";
-import { Keypair, PublicKey } from "@solana/web3.js";
+import {
+  Connection,
+  Keypair,
+  PublicKey,
+  clusterApiUrl,
+  SystemProgram,
+  LAMPORTS_PER_SOL,
+  Transaction,
+  sendAndConfirmTransaction,
+} from "@solana/web3.js";
 import keypair from "../../../test-keypair.json";
+import fromKeypair from "../../../second_wallet.json";
+import {
+  createAssociatedTokenAccountInstruction,
+  createTransferInstruction,
+  getAccount,
+  getAssociatedTokenAddress,
+  getMint,
+  TokenAccountNotFoundError,
+} from "@solana/spl-token";
 
 const secretKey = Uint8Array.from(keypair);
 const keyPair = Keypair.fromSecretKey(secretKey);
+const fromSecretKey = Uint8Array.from(fromKeypair);
+const fromKeyPair = Keypair.fromSecretKey(fromSecretKey);
 const DEFAULT_MINTS = [
   {
     name: "SOL",
@@ -32,29 +53,30 @@ const DEFAULT_MINTS = [
   },
   {
     name: "USDC",
-    mint: new PublicKey(IS_MAINNET ? MAINNET_USDC_MINT : DEVNET_USDC_MINT),
+    mint: DEVNET_USDC_MINT,
   },
   {
     name: "BONK",
-    mint: new PublicKey(BONK_MINT),
+    mint: BONK_MINT,
   },
 ];
+const DEFAULT_MINT_NAMES = DEFAULT_MINTS.map((mint) => mint.name);
 
 const Form = () => {
-  const {
-    provider,
-    loginRWA,
-    getUserInfo,
-    signAndSendTransaction,
-    setIsLoading,
-    isWeb3AuthInit,
-    getBalance,
-    logout,
-  } = useWeb3Auth();
+  //   const {
+  //     provider,
+  //     loginRWA,
+  //     getUserInfo,
+  //     signAndSendTransaction,
+  //     setIsLoading,
+  //     isWeb3AuthInit,
+  //     getBalance,
+  //     logout,
+  //   } = useWeb3Auth();
   const search = useLocation().search;
   const [repositories, setRepositories] = useState<any[]>();
   const [repo, setRepo] = useState<any>();
-  const [userId, setUserId] = useState<string>();
+  const [userId, setUserId] = useState<string>("github|117492794");
   const params = new URLSearchParams(search);
   const jwt = params.get("token");
   const token = jwt == null ? "" : jwt;
@@ -68,42 +90,44 @@ const Form = () => {
     isPrivate: false,
     paymentType: "spl",
     paymentAmount: 0,
+    mintAddress: "",
   });
 
   useEffect(() => {
-    handleAuthLogin();
+    // handleAuthLogin();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   });
 
   useEffect(() => {
-    if (isWeb3AuthInit) {
-      const getUserOrgs = async () => {
-        const userInfo = await getUserInfo();
-        console.log("user", userInfo);
-        const userId = userInfo.verifierId;
-        setUserId(userId);
-        axios
-          .get(
-            `${getApiEndpoint()}${DATA_API_ROUTE}/${ACCOUNT_API_ROUTE}/organizations?${convertToQueryParams(
-              { githubId: userId }
-            )}`
-          )
-          .then((resp) => {
-            console.log(resp);
-            setRepositories(resp.data.data);
-          });
-      };
-      getUserOrgs();
-    }
+    // if (isWeb3AuthInit) {
+    const getUserOrgs = async () => {
+      //   const userInfo = await getUserInfo();
+      //   console.log("user", userInfo);
+      //   const userId = userInfo.verifierId;
+      //   setUserId(userId);
+
+      axios
+        .get(
+          `${getApiEndpoint()}${DATA_API_ROUTE}/${ACCOUNT_API_ROUTE}/organizations?${convertToQueryParams(
+            { githubId: userId }
+          )}`
+        )
+        .then((resp) => {
+          console.log(resp);
+          setRepositories(resp.data.data);
+        });
+    };
+    getUserOrgs();
+    // }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isWeb3AuthInit]);
+  }, []);
 
   const handleAuthLogin = async () => {
     try {
       //   debugger;
-      setIsLoading(true);
+      //   setIsLoading(true);
       if (token !== "") {
-        await loginRWA(WALLET_ADAPTERS.OPENLOGIN, "jwt", token);
+        // await loginRWA(WALLET_ADAPTERS.OPENLOGIN, "jwt", token);
       } else {
         const rwaURL = `${REACT_APP_AUTH0_DOMAIN}/authorize?scope=openid&response_type=code&client_id=${REACT_APP_CLIENTID}&redirect_uri=${`${getApiEndpoint()}callback`}&state=STATE`;
         console.log(rwaURL);
@@ -111,7 +135,7 @@ const Form = () => {
         window.location.href = rwaURL;
       }
     } finally {
-      setIsLoading(false);
+      //   setIsLoading(false);
     }
   };
 
@@ -160,27 +184,130 @@ const Form = () => {
 
     const createIssue = async () =>
       axios.post(
-        `${getApiEndpoint()}${DATA_API_ROUTE}/${NEW_ISSUE_API_ROUTE}`,
+        `${getApiEndpoint()}${DATA_API_ROUTE}/${GITHUB_ISSUE_API_ROUTE}`,
         {
           githubId: userId,
+          githubLogin: "jacksturt",
           org: repo.full_name.split("/")[0],
           repo: repo.full_name.split("/")[1],
           title: formData.issueTitle,
           description: formData.issueDescription,
           fundingHash: "",
           fundingAmount: formData.paymentAmount,
-          fundingMint: "",
+          fundingMint: formData.mintAddress ? "" : formData.mintAddress,
           tags: formData.requirements,
-          private: formData.isPrivate,
+          private: formData.isPrivate || repo ? repo.private : false,
           estimatedTime: formData.estimatedTime,
         }
       );
-    // createIssue()
-    const signature = await signAndSendTransaction(
-      formData.paymentAmount,
-      keyPair.publicKey.toString(),
-      new PublicKey(DEVNET_USDC_MINT)
-    );
+    const sendEscrow = async (issue: number) => {
+      const connection = new Connection(clusterApiUrl("devnet"));
+      const { blockhash, lastValidBlockHeight } =
+        await connection.getLatestBlockhash();
+
+      let TransactionInstruction;
+      const mint = formData.mintAddress
+        ? new PublicKey(formData.mintAddress)
+        : undefined;
+
+      if (!mint) {
+        TransactionInstruction = SystemProgram.transfer({
+          fromPubkey: fromKeyPair.publicKey,
+          toPubkey: keyPair.publicKey,
+          lamports: Math.round(formData.paymentAmount * LAMPORTS_PER_SOL),
+        });
+      } else {
+        // debugger;
+        const tokenMint = await getMint(connection, mint);
+        const actualAmount = BigInt(
+          formData.paymentAmount * Math.pow(10, tokenMint.decimals)
+        );
+        const toTokenAddress = await getAssociatedTokenAddress(
+          mint,
+          keyPair.publicKey
+        );
+        const fromTokenAddress = await getAssociatedTokenAddress(
+          mint,
+          fromKeyPair.publicKey
+        );
+        // debugger;
+        try {
+          console.log("try");
+          const fromTokenAccount = await getAccount(
+            connection,
+            fromTokenAddress
+          );
+          console.log("fromTA", fromTokenAccount.address.toString());
+        } catch (e) {
+          console.log("catch");
+          if (e instanceof TokenAccountNotFoundError) {
+            const createToken = await createAssociatedTokenAccountInstruction(
+              fromKeyPair.publicKey,
+              fromTokenAddress,
+              fromKeyPair.publicKey,
+              mint
+            );
+            const txInfo = {
+              /** The transaction fee payer */
+              feePayer: fromKeyPair.publicKey,
+              /** A recent blockhash */
+              blockhash: blockhash,
+              /** the last block chain can advance to before tx is exportd expired */
+              lastValidBlockHeight: lastValidBlockHeight,
+            };
+
+            const transaction = new Transaction(txInfo).add(createToken);
+            const signature = await sendAndConfirmTransaction(
+              connection,
+              transaction,
+              [fromKeyPair]
+            );
+            console.log("created token account", signature);
+          } else {
+            console.error(e);
+          }
+        }
+        // debugger;
+        TransactionInstruction = createTransferInstruction(
+          fromTokenAddress,
+          toTokenAddress,
+          fromKeyPair.publicKey,
+          actualAmount
+        );
+      }
+
+      const txInfo = {
+        /** The transaction fee payer */
+        feePayer: fromKeyPair.publicKey,
+        /** A recent blockhash */
+        blockhash: blockhash,
+        /** the last block chain can advance to before tx is exportd expired */
+        lastValidBlockHeight: lastValidBlockHeight,
+      };
+
+      const transaction = new Transaction(txInfo).add(TransactionInstruction);
+      const signature = await sendAndConfirmTransaction(
+        connection,
+        transaction,
+        [fromKeyPair]
+      );
+
+      console.log("sig", signature);
+      axios.put(
+        `${getApiEndpoint()}${DATA_API_ROUTE}/${ISSUE_API_ROUTE}/funding_hash`,
+        {
+          org: repo.full_name.split("/")[0],
+          repo: repo.full_name.split("/")[1],
+          issueNumber: issue,
+          hash: signature,
+        }
+      );
+      // debugger
+    };
+    // const issueResponse = await createIssue();
+    // console.log("issueres", issueResponse);
+    // await sendEscrow(issueResponse.data.issue.number);
+
     console.log(formData); // do something with form data
   };
 
@@ -215,7 +342,6 @@ const Form = () => {
               <div>Loading Your Projects</div>
             )}
           </div>
-          )
         </div>
         <div className="form-cell">
           <label className="form-label">Issue Title</label>
@@ -306,6 +432,15 @@ const Form = () => {
             <RadioWithCustomInput
               options={[...DEFAULT_MINTS.map((mint) => mint.name), "Other"]}
               defaultOption="SOL"
+              setOption={(option) => {
+                const mintAddress = DEFAULT_MINT_NAMES.includes(option)
+                  ? DEFAULT_MINTS.find((mint) => mint.name === option).mint
+                  : option;
+                setFormData({
+                  ...formData,
+                  mintAddress: mintAddress,
+                });
+              }}
             />
           </div>
           <div className="form-cell">

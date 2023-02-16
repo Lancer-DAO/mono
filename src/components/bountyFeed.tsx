@@ -39,7 +39,7 @@ export const BountyFeed = ({ issues }: BountyFeedProps) => {
         <div className="bounty-header-title">Lancer Bounty Feed</div>
       </div>
       <div className="bounty-tab-body">
-        {issues.map((issue, i) => {
+        {issues.map((issue) => {
           return (
             <a
               className="bounty"
@@ -52,7 +52,7 @@ export const BountyFeed = ({ issues }: BountyFeedProps) => {
               <img
                 className="contributor-picture"
                 src={`https://avatars.githubusercontent.com/u/${
-                  issue.githubId.split("|")[1]
+                  issue.githubId?.split("|")[1]
                 }?s=60&v=4`}
               />
               <h1 className="contributor-amount">

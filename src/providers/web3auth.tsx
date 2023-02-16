@@ -165,6 +165,7 @@ export const Web3AuthProvider: FunctionComponent<IWeb3AuthState> = ({
 
         const web3AuthInstance = new Web3AuthCore({
           chainConfig: currentChainConfig,
+          clientId: REACT_APP_RWA_CLIENTID,
         });
         subscribeAuthEvents(web3AuthInstance);
         if (sessionStorage.getItem("app") === null) {

@@ -3,20 +3,23 @@ import { useState } from "react";
 type Props = {
   options: string[];
   defaultOption: string;
+  setOption: (string) => void;
 };
 
-const RadioWithCustomInput = ({ options, defaultOption }: Props) => {
+const RadioWithCustomInput = ({ options, defaultOption, setOption }: Props) => {
   const [selectedOption, setSelectedOption] = useState(defaultOption);
   const [customInputValue, setCustomInputValue] = useState("");
 
   const handleOptionChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSelectedOption(event.target.value);
+    setOption(event.target.value);
   };
 
   const handleCustomInputChange = (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
     setCustomInputValue(event.target.value);
+    setOption(event.target.value);
   };
 
   const showCustomInput = selectedOption === "Other";

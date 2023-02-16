@@ -35,7 +35,8 @@ export interface IssueGetParams {
 }
 
 export interface IssueUpdateParams extends IssueGetParams {
-  state: string
+  state?: string
+  hash?: string
   }
 
 

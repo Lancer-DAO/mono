@@ -6,6 +6,8 @@ import {
   updateIssueNumber,
   updateIssueState,
   getAllIssues,
+  updateIssueHash,
+  newAccountIssue,
 } from "../../controllers";
 import {
     GITHUB_ISSUE_API_ROUTE,
@@ -48,8 +50,9 @@ router.post(`/${GITHUB_ISSUE_API_ROUTE}`, async function (req, res, next) {
         req.body
     );
     console.log(issueCreationResp)
+        const issueNumber = issueCreationResp.data.number;
     return res.json(
-        issueCreationResp
+        await newAccountIssue({...requestData, issueNumber: issueNumber})
     );
   } catch (err) {
     next(err);
@@ -113,5 +116,16 @@ router.put(`/${ISSUE_API_ROUTE}`, async function (req, res, next) {
     next(err);
   }
 });
+
+router.put(`/${ISSUE_API_ROUTE}/funding_hash`, async function (req, res, next) {
+    try {
+      const requestData = req.body;
+        return res.json(
+          await updateIssueHash(requestData)
+        );
+    } catch (err) {
+      next(err);
+    }
+  });
 
 export default router
