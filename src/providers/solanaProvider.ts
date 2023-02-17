@@ -61,53 +61,53 @@ const solanaProvider = (provider: SafeEventEmitterProvider, uiConsole: (...args:
 
       let TransactionInstruction;
 
-      // if (!mint) {
+      if (!mint) {
         TransactionInstruction = SystemProgram.transfer({
           fromPubkey: pubKey,
           toPubkey: toPubkey,
           lamports: Math.round(amount * LAMPORTS_PER_SOL),
         });
-      // } else {
-      //   // debugger;
-      //   const tokenMint = await getMint(conn, mint);
-      //   const actualAmount = BigInt(
-      //     amount * Math.pow(10, tokenMint.decimals)
-      //   );
-      //   const toTokenAddress = await getAssociatedTokenAddress(
-      //     mint,
-      //     toPubkey
-      //   );
-      //   const fromTokenAddress = await getAssociatedTokenAddress(
-      //     mint,
-      //     pubKey
-      //   );
-      //   // debugger;
-      //   try {
-      //     console.log("try");
-      //     const fromTokenAccount = await getAccount(
-      //       conn,
-      //       fromTokenAddress
-      //     );
-      //     if (fromTokenAccount.amount < (amount * Math.pow(10, tokenMint.decimals))) {
-      //       return `Not enough tokens to fund this issue`;
-      //     }
-      //     console.log("fromTA", fromTokenAccount.address.toString());
-      //   } catch (e) {
-      //     console.log("catch");
-      //     if (e instanceof TokenAccountNotFoundError) {
-      //       return `Please initialize and fund ${fromTokenAddress.toString()} by sending tokens of the chose mint to ${pubKey.toString()}`
-      //     } else {
-      //       console.error(e);
-      //     }
-      //   }
-      //   // debugger;
-      //   TransactionInstruction = createTransferInstruction(
-      //     fromTokenAddress,
-      //     toTokenAddress,
-      //     pubKey,
-      //     actualAmount
-      //   );
-      // }
+      } else {
+        // debugger;
+        const tokenMint = await getMint(conn, mint);
+        const actualAmount = BigInt(
+          amount * Math.pow(10, tokenMint.decimals)
+        );
+        const toTokenAddress = await getAssociatedTokenAddress(
+          mint,
+          toPubkey
+        );
+        const fromTokenAddress = await getAssociatedTokenAddress(
+          mint,
+          pubKey
+        );
+        // debugger;
+        try {
+          console.log("try");
+          const fromTokenAccount = await getAccount(
+            conn,
+            fromTokenAddress
+          );
+          if (fromTokenAccount.amount < (amount * Math.pow(10, tokenMint.decimals))) {
+            return `Not enough tokens to fund this issue`;
+          }
+          console.log("fromTA", fromTokenAccount.address.toString());
+        } catch (e) {
+          console.log("catch");
+          if (e instanceof TokenAccountNotFoundError) {
+            return `Please initialize and fund ${fromTokenAddress.toString()} by sending tokens of the chose mint to ${pubKey.toString()}`
+          } else {
+            console.error(e);
+          }
+        }
+        // debugger;
+        TransactionInstruction = createTransferInstruction(
+          fromTokenAddress,
+          toTokenAddress,
+          pubKey,
+          actualAmount
+        );
+      }
 
       const txInfo = {
         /** The transaction fee payer */
