@@ -100,4 +100,54 @@ router.get("/callback", (req, res) => {
     });
   });
 
+  const getUsersWithSameVerifiedEmail = async  (sub: string, email: string, code: string) => {
+    return await axios.request({
+      url: `${process.env.BASE_URL}api/v2/users`,
+      headers: {'content-type': 'application/x-www-form-urlencoded', 'Authorization': `Bearer ${code}`},
+      params: {
+        search_engine: "v3",
+        q: `email:"<%= "${email}" %>" AND email_verified:true"`,
+    } ,
+  });}
+
+  router.get("/sharedAccountsByEmail",
+    (req, res) => {
+      const user_id = req.query.user_id as string;
+      var options = {
+        method: 'POST',
+        url: 'https://dev-kgvm1sxe.us.auth0.com/oauth/token',
+        headers: {'content-type': 'application/x-www-form-urlencoded'},
+        data: new URLSearchParams({
+          grant_type: 'client_credentials',
+          client_id: process.env.CLIENT_ID || '', //auth0 clientID
+          client_secret: process.env.CLIENT_SECRET || '', //auth0 client secret
+          audience: `${process.env.BASE_URL}api/v2/`
+        })
+      };
+      axios.request(options).then(function (response) {
+        var code = response.data.access_token
+        var options = {
+          method: 'GET',
+          url: `https://dev-kgvm1sxe.us.auth0.com/api/v2/users/${user_id}`,
+          headers: {'content-type': 'application/x-www-form-urlencoded', 'Authorization': `Bearer ${code}`},
+        };
+  
+        axios.request(options).then( async (response) => {
+          console.log(response.data)
+          const email = response.data.email;
+          const accounts = await getUsersWithSameVerifiedEmail(user_id, email, code)
+          console.log(accounts)
+        }).catch(function (error) {
+          console.error(error);
+  
+          return res.status(error.status).send({message: error})
+        })
+      }).catch(function (error) {
+        console.error(error);
+        return res.status(error.status).send({message: error})
+  
+      });
+    }
+  )
+
 export default router;

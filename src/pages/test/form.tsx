@@ -96,7 +96,7 @@ const Form = () => {
   useEffect(() => {
     handleAuthLogin();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [isWeb3AuthInit]);
 
   useEffect(() => {
     if (isWeb3AuthInit) {
@@ -107,15 +107,25 @@ const Form = () => {
         setUserId(userId);
 
         axios
-          .get(
-            `${getApiEndpoint()}${DATA_API_ROUTE}/${ACCOUNT_API_ROUTE}/organizations?${convertToQueryParams(
-              { githubId: userId }
-            )}`
-          )
+          .get(`${getApiEndpoint()}sharedAccountsByEmail`, {
+            params: {
+              user_id: userId,
+            },
+          })
           .then((resp) => {
             console.log(resp);
             setRepositories(resp.data.data);
           });
+        // axios
+        //   .get(
+        //     `${getApiEndpoint()}${DATA_API_ROUTE}/${ACCOUNT_API_ROUTE}/organizations?${convertToQueryParams(
+        //       { githubId: userId }
+        //     )}`
+        //   )
+        //   .then((resp) => {
+        //     console.log(resp);
+        //     setRepositories(resp.data.data);
+        //   });
       };
       getUserOrgs();
     }

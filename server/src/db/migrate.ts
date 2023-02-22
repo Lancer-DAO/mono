@@ -16,6 +16,7 @@ const account = `CREATE TABLE account (
 		discord VARCHAR,
 		twitter VARCHAR,
 		instagram VARCHAR,
+    email VARCHAR,
     PRIMARY KEY (uuid)
 );`;
 
