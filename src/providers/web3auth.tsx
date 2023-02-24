@@ -168,8 +168,8 @@ export const Web3AuthProvider: FunctionComponent<IWeb3AuthState> = ({
           clientId: clientId,
         });
         subscribeAuthEvents(web3AuthInstance);
-        if (sessionStorage.getItem("app") === null) {
-          sessionStorage.setItem("app", "SPA");
+        if (sessionStorage.getItem("app") !== "RWA") {
+          sessionStorage.setItem("app", "RWA");
         }
         // if (sessionStorage.getItem("app") === "SPA") {
         //   console.log('app')
@@ -242,6 +242,7 @@ export const Web3AuthProvider: FunctionComponent<IWeb3AuthState> = ({
           verifierIdField: "sub",
         },
       });
+      console.log("provider", provider);
       setWalletProvider(localProvider!);
     } catch (error) {
       console.log("error", error);
@@ -285,16 +286,16 @@ export const Web3AuthProvider: FunctionComponent<IWeb3AuthState> = ({
       return;
     }
     await web3Auth.logout();
-    if (sessionStorage.getItem("app") === "RWA") {
-      window.open(REACT_APP_AUTH0_DOMAIN + "/v2/logout?federated");
-    }
+    // if (sessionStorage.getItem("app") === "RWA") {
+    window.location.href = REACT_APP_AUTH0_DOMAIN + "/v2/logout?federated";
+    // }
     setProvider(null);
     window.sessionStorage.clear();
     window.location.href = "/";
   };
 
   const getUserInfo = async () => {
-    if (!web3Auth) {
+    if (!web3Auth || !web3Auth.provider) {
       console.log("web3auth not initialized yet");
       uiConsole("web3auth not initialized yet");
       return;
@@ -326,7 +327,7 @@ export const Web3AuthProvider: FunctionComponent<IWeb3AuthState> = ({
       uiConsole("provider not initialized yet");
       return;
     }
-    await provider.getAccounts();
+    return await provider.getAccounts();
   };
 
   const getBalance = async () => {

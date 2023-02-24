@@ -16,7 +16,7 @@ const solanaProvider = (provider: SafeEventEmitterProvider, uiConsole: (...args:
   const getAccounts = async (): Promise<string[]> => {
     try {
       const acc = await solanaWallet.requestAccounts();
-      uiConsole("Solana accounts", acc);
+      console.log("Solana accounts", acc);
       return acc;
     } catch (error) {
       console.error("Error", error);

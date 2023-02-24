@@ -41,6 +41,7 @@ import {
   getMint,
   TokenAccountNotFoundError,
 } from "@solana/spl-token";
+import { userInfo } from "os";
 
 const secretKey = Uint8Array.from(keypair);
 const keyPair = Keypair.fromSecretKey(secretKey);
@@ -62,6 +63,13 @@ const DEFAULT_MINTS = [
 ];
 const DEFAULT_MINT_NAMES = DEFAULT_MINTS.map((mint) => mint.name);
 
+enum WEB3_INIT_STATE {
+  GETTING_TOKEN = "getting_token",
+  INITIALIZING = "initializing",
+  GETTING_USER = "getting_user",
+  READY = "ready",
+}
+
 const Form = () => {
   const {
     provider,
@@ -71,12 +79,16 @@ const Form = () => {
     setIsLoading,
     isWeb3AuthInit,
     getBalance,
+    getAccounts,
     logout,
   } = useWeb3Auth();
   const search = useLocation().search;
   const [repositories, setRepositories] = useState<any[]>();
   const [repo, setRepo] = useState<any>();
-  const [userId, setUserId] = useState<string>();
+  const [user, setUser] = useState<any>();
+  const [web3AuthState, setWeb3AuthState] = useState(
+    WEB3_INIT_STATE.GETTING_TOKEN
+  );
   const params = new URLSearchParams(search);
   const jwt = params.get("token");
   const token = jwt == null ? "" : jwt;
@@ -94,50 +106,53 @@ const Form = () => {
   });
 
   useEffect(() => {
-    handleAuthLogin();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  useEffect(() => {
-    if (isWeb3AuthInit) {
-      const getUserOrgs = async () => {
-        const userInfo = await getUserInfo();
-        console.log("user", userInfo);
-        const userId = userInfo.verifierId;
-        setUserId(userId);
-
-        axios
-          .get(
-            `${getApiEndpoint()}${DATA_API_ROUTE}/${ACCOUNT_API_ROUTE}/organizations?${convertToQueryParams(
-              { githubId: userId }
-            )}`
-          )
-          .then((resp) => {
-            console.log(resp);
-            setRepositories(resp.data.data);
-          });
-      };
-      getUserOrgs();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isWeb3AuthInit]);
-
-  const handleAuthLogin = async () => {
-    try {
-      //   debugger;
-      setIsLoading(true);
-      if (token !== "") {
-        await loginRWA(WALLET_ADAPTERS.OPENLOGIN, "jwt", token);
-      } else {
-        const rwaURL = `${REACT_APP_AUTH0_DOMAIN}/authorize?scope=openid&response_type=code&client_id=${REACT_APP_CLIENTID}&redirect_uri=${`${getApiEndpoint()}callback`}&state=STATE`;
-        console.log(rwaURL);
+    const handleAuthLogin = async () => {
+      try {
         // debugger;
-        window.location.href = rwaURL;
+        if (token !== "") {
+          if (web3AuthState === WEB3_INIT_STATE.GETTING_USER) {
+            const getUser = async () => {
+              const userInfo = await getUserInfo();
+              console.log("user", userInfo);
+              setUser(userInfo);
+              const userId = userInfo.verifierId;
+
+              axios
+                .get(
+                  `${getApiEndpoint()}${DATA_API_ROUTE}/${ACCOUNT_API_ROUTE}/organizations?${convertToQueryParams(
+                    { githubId: userId }
+                  )}`
+                )
+                .then((resp) => {
+                  console.log(resp);
+                  setRepositories(resp.data.data);
+                });
+            };
+            getUser();
+            setWeb3AuthState(WEB3_INIT_STATE.READY);
+          } else {
+            await loginRWA(WALLET_ADAPTERS.OPENLOGIN, "jwt", token);
+            setWeb3AuthState(WEB3_INIT_STATE.GETTING_USER);
+          }
+        } else {
+          const rwaURL = `${REACT_APP_AUTH0_DOMAIN}/authorize?scope=openid&response_type=code&client_id=${REACT_APP_CLIENTID}&redirect_uri=${`${getApiEndpoint()}callback`}&state=STATE`;
+          console.log(rwaURL);
+          // debugger;
+          window.location.href = rwaURL;
+          setWeb3AuthState(WEB3_INIT_STATE.INITIALIZING);
+        }
+      } catch (e) {
+        console.error(e);
       }
-    } finally {
-      setIsLoading(false);
+    };
+    if (web3AuthState !== WEB3_INIT_STATE.READY && isWeb3AuthInit) {
+      handleAuthLogin();
+    } else {
+      //   logout();
     }
-  };
+    // sessionStorage.clear();
+    // window.open(REACT_APP_AUTH0_DOMAIN + "/v2/logout?federated");
+  }, [web3AuthState, isWeb3AuthInit, getUserInfo, getAccounts]);
 
   const handleChange = (event) => {
     setFormData({
@@ -182,12 +197,14 @@ const Form = () => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    const createIssue = async () =>
-      axios.post(
+    const createIssue = async () => {
+      const accounts = await getAccounts();
+      return axios.post(
         `${getApiEndpoint()}${DATA_API_ROUTE}/${GITHUB_ISSUE_API_ROUTE}`,
         {
-          githubId: userId,
+          githubId: user.verifierId,
           githubLogin: "jacksturt",
+          solanaKey: accounts[0].toString(),
           org: repo.full_name.split("/")[0],
           repo: repo.full_name.split("/")[1],
           title: formData.issueTitle,
@@ -200,6 +217,8 @@ const Form = () => {
           estimatedTime: formData.estimatedTime,
         }
       );
+    };
+
     const sendEscrow = async (issue: number) => {
       const signature = await provider.signAndSendTransaction(
         formData.paymentAmount,

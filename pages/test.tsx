@@ -1,4 +1,4 @@
-import App from "@/src/pages/test";
+import App from "@/src/pages/fund";
 import Head from "next/head";
 
 export default function Home() {

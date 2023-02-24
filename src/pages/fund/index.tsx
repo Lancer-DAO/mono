@@ -8,6 +8,7 @@ import {
 } from "@/config";
 import { Web3AuthProvider } from "@/providers";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import Form from "./form";
 
 function App() {
   const [web3AuthNetwork, setWeb3AuthNetwork] =
@@ -28,7 +29,7 @@ function App() {
           app={app}
         >
           <Router>
-            <ConfirmFunding />
+            <Form />
           </Router>
         </Web3AuthProvider>
       </div>
