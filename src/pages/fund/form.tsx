@@ -211,7 +211,7 @@ const Form = () => {
           description: formData.issueDescription,
           fundingHash: "",
           fundingAmount: formData.paymentAmount,
-          fundingMint: formData.mintAddress ? "" : formData.mintAddress,
+          fundingMint: formData.mintAddress ? formData.mintAddress : "",
           tags: formData.requirements,
           private: formData.isPrivate || repo ? repo.private : false,
           estimatedTime: formData.estimatedTime,

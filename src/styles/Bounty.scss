@@ -1,0 +1,224 @@
+
+body {
+    background-color: #111;
+    color: #eee;
+  }
+
+  .bounty-table {
+    display: grid;
+    grid-template-columns: 250px 1fr;
+    padding: 0px 80px;
+  }
+  
+  .issue-list {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+  }
+  
+  .issue-card {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: space-between;
+    width: 300px;
+    height: 300px;
+    margin: 10px;
+    padding: 20px;
+    background-color: #222;
+    border-radius: 20px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+    color: white;
+    text-decoration: none;
+  }
+  
+  .issue-header {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+  }
+  
+  .issue-title, .issue-amount {
+    font-size: 1.2em;
+    font-weight: bold;
+    text-align: center;
+  }
+  
+  .issue-details {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: flex-start;
+  }
+  
+  .issue-repo {
+    font-size: 0.9em;
+  }
+  
+  .issue-org {
+    font-size: 0.9em;
+  }
+  
+  .issue-state {
+    font-size: 0.9em;
+    text-transform: uppercase;
+    text-align: center;
+  }
+  
+  .issue-state.open {
+    background-color: #22bb22;
+  }
+  
+  .issue-state.closed {
+    background-color: #ff4136;
+  }
+  
+  .issue-state.in-progress {
+    background-color: #f7b32b;
+  }
+  
+  .issue-state.blocked {
+    background-color: #7f8c8d;
+  }
+  
+  .issue-mint {
+    font-size: 0.9em;
+  }
+  
+  .issue-tags {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .tag {
+    margin: 2px;
+    padding: 2px 5px;
+    background-color: #555;
+    border-radius: 10px;
+    font-size: 0.8em;
+  }
+  
+  .issue-estimated-time {
+    font-size: 0.9em;
+    text-align: center;
+  }
+  
+  .issue-actions {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .issue-footer {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+  }
+
+  .bounty-filters {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: space-around;
+    row-gap: 20px;
+  }
+
+  .dropdown {
+    position: relative;
+    display: inline-block;
+    margin-right: 10px;
+    width: 200px;
+  }
+  
+  .dropdown__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    background-color: #f5f5f5;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  .dropdown__selected {
+    color: #555;
+    font-size: 14px;
+    overflow: hidden;
+    white-space: nowrap;
+  text-overflow: ellipsis;
+  }
+  
+  .dropdown__icon {
+    font-size: 14px;
+    color: #555;
+  }
+  
+  .dropdown__icon.open {
+    transform: rotate(-180deg);
+  }
+  
+  .dropdown__options {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    max-height: 200px;
+    overflow-y: auto;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.2);
+  }
+  
+  .dropdown__option {
+    display: flex;
+    align-items: center;
+    padding: 5px 10px;
+    font-size: 14px;
+    color: #555;
+    cursor: pointer;
+  }
+  
+  .dropdown__option input[type="checkbox"] {
+    margin-right: 10px;
+  }
+  
+  .dropdown__option:hover {
+    background-color: #f5f5f5;
+  }
+  
+  .dropdown__option input[type="checkbox"]:checked + span {
+    text-decoration: line-through;
+    color: #ccc;
+  }
+  
+.filter-section {
+  display: flex;
+  flex-direction: column;
+  row-gap: 10px;
+}
+
+
+.range-slider {
+  width: 188px;
+  margin-left: 6px;
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.range-bounds {
+  display: flex;
+  width: 200px;
+  justify-content: space-between;
+  margin-bottom: -10px;
+}

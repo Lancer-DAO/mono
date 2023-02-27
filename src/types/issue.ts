@@ -1,3 +1,5 @@
+import { PublicKey } from "@solana/web3.js";
+
 export type Issue = {
     amount: number;
     hash?: string;
@@ -13,6 +15,9 @@ export type Issue = {
     pullNumber?: number;
     githubId?: string;
     payoutHash?: string;
+    mint?: PublicKey;
+    tags: string[];
+    estimatedTime: number;
   };
 
   export type ContributorCompensationInfo = {
