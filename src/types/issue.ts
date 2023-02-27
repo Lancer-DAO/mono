@@ -18,6 +18,7 @@ export type Issue = {
     mint?: PublicKey;
     tags: string[];
     estimatedTime: number;
+    description?: string;
   };
 
   export type ContributorCompensationInfo = {

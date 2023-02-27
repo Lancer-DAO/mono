@@ -14,7 +14,7 @@ const LabeledTwoThumbs: React.FC<LabeledTwoThumbsProps> = ({
 }) => {
   const MIN = bounds[0];
   const MAX = bounds[1];
-  const [values, setValues] = React.useState([MIN, MAX]);
+  const [values, setValues] = React.useState<[number, number]>([MIN, MAX]);
   return (
     <div className="range-slider">
       <Range
@@ -23,8 +23,8 @@ const LabeledTwoThumbs: React.FC<LabeledTwoThumbsProps> = ({
         min={MIN}
         max={MAX}
         onChange={(values) => {
-          setValues(values);
-          setBounds(values);
+          setValues(values as [number, number]);
+          setBounds(values as [number, number]);
         }}
         renderTrack={({ props, children }) => (
           <div
