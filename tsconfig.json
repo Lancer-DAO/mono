@@ -45,6 +45,9 @@
       "@/hooks": [
         "./src/hooks/index.ts"
       ],
+      "@/onChain": [
+        "./src/onChain/index.ts"
+      ],
       "@/pages": [
         "./src/pages"
       ],
