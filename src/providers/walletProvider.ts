@@ -11,7 +11,5 @@ export interface IWalletProvider {
 }
 
 export const getWalletProvider = (chain: string, provider: SafeEventEmitterProvider, uiConsole: any): IWalletProvider => {
-  if (chain === "solana") {
     return solanaProvider(provider, uiConsole);
-  }
 };
