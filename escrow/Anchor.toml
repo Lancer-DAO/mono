@@ -1,5 +1,5 @@
 [features]
-seeds = false
+seeds = true
 skip-lint = false
 [programs.localnet]
 mono_program = "DYMY9uf1t4vvSnHxJZJor74xjb67v7fuMTWBCxcknXj8"

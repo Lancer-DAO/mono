@@ -83,7 +83,9 @@ export const Web3AuthContext = createContext<IWeb3AuthContext>({
   getAccounts: async () => {},
   getBalance: async () => 0,
   signTransaction: async () => {},
-  signAndSendTransaction: async () => "",
+  signAndSendTransaction: async () => {
+    return "";
+  },
   getWallet: () => null,
   getGH: async () => {},
 });

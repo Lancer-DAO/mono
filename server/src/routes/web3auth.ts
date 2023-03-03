@@ -15,6 +15,7 @@ router.get("/callback", (req, res) => {
     //when a request from auth0 is received we get auth code as query param
     console.log('calling back', req.query)
     const authCode = req.query.code;
+    const referrer = req.query.referrer as string;
     var options = {
       method: "POST",
       url: process.env.AUTH_URL || '',
@@ -35,7 +36,7 @@ router.get("/callback", (req, res) => {
       const id_token = JSON.parse(data)["id_token"];
       var decoded = jwt_decode(id_token);
       console.log('jwt', decoded)
-      const redirect_url = process.env.FRONT_ENDPOINT + id_token;
+      const redirect_url = process.env.FRONT_ENDPOINT + referrer + `${referrer.includes('?') ? '&' : '?'}token=` + id_token;
       res.redirect(redirect_url);
     });
   });

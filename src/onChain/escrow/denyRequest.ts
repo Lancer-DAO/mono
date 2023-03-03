@@ -1,4 +1,4 @@
-import { getEndpont } from "@/src/utils";
+import { getEndpoint } from "@/src/utils";
 import {
   Connection,
   Keypair,
@@ -22,9 +22,9 @@ import MonoProgramJSON from "@/escrow/sdk/idl/mono_program.json";
 import { getFeatureFundingAccount, MyWallet } from "@/src/onChain";
 
 
-export const denyRequestFFA = async (creator: Keypair,submitter: PublicKey, featureAccount: PublicKey ) => {
-      const wallet = new MyWallet(creator);
-      const anchorConn = new Connection(getEndpont());
+export const denyRequestFFA = async (creator: PublicKey,submitter: PublicKey, featureAccount: PublicKey, signAndSendTransaction: (tx: Transaction) => Promise<string>,  getWallet: () => MyWallet | null ) => {
+      const wallet = getWallet();
+      const anchorConn = new Connection(getEndpoint());
 
       const provider = new AnchorProvider(anchorConn, wallet, {});
       const program = new Program<MonoProgram>(
@@ -32,16 +32,27 @@ export const denyRequestFFA = async (creator: Keypair,submitter: PublicKey, feat
         new PublicKey(MONO_DEVNET),
         provider
       );
-      const acc = await getFeatureFundingAccount(featureAccount);
+      const acc = await getFeatureFundingAccount(featureAccount, program);
+
 
       let approveSubmitterIx = await denyRequestInstruction(
         acc.unixTimestamp,
-        creator.publicKey,
+        creator,
         submitter,
         program
       )
 
-      const tx = await provider.sendAndConfirm(new Transaction().add(approveSubmitterIx), [creator]);
-        console.log(tx);
+      const {blockhash, lastValidBlockHeight} = (await anchorConn.getLatestBlockhash());
+      const txInfo = {
+                /** The transaction fee payer */
+                feePayer: creator,
+                /** A recent blockhash */
+                blockhash: blockhash,
+                /** the last block chain can advance to before tx is exportd expired */
+                lastValidBlockHeight: lastValidBlockHeight,
+              }
+      const tx = await signAndSendTransaction(
+        new Transaction(txInfo).add(approveSubmitterIx)
+      ); console.log(tx);
 
   };

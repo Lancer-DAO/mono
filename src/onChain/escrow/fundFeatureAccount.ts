@@ -1,4 +1,4 @@
-import { getEndpont } from "@/src/utils";
+import { getEndpoint } from "@/src/utils";
 import {
   Connection,
   Keypair,
@@ -27,7 +27,7 @@ import { findFeatureTokenAccount } from "@/escrow/sdk/pda";
 
 export const fundFFA = async (creator: PublicKey, baseAmount: number, featureAccount: PublicKey, signAndSendTransaction: (tx: Transaction)=> Promise<string>, getWallet: () => MyWallet | null) => {
   const wallet = getWallet();
-  const connection = new Connection(getEndpont());
+  const connection = new Connection(getEndpoint());
 
   const provider = new AnchorProvider(connection, wallet, {});
   const program = new Program<MonoProgram>(

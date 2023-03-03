@@ -22,6 +22,6 @@ export const getMintName = (mint?: PublicKey) => {
   return 'SOL'
 }
 
-export const getEndpont = () => {
+export const getEndpoint = () => {
   return IS_MAINNET ? MAINNET_RPC: clusterApiUrl("devnet");
 }

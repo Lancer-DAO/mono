@@ -43,6 +43,7 @@ import {
 } from "@solana/spl-token";
 import { userInfo } from "os";
 import { createFFA, fundFFA } from "@/src/onChain";
+import { WEB3_INIT_STATE } from "@/src/types";
 
 const secretKey = Uint8Array.from(keypair);
 const keyPair = Keypair.fromSecretKey(secretKey);
@@ -63,13 +64,6 @@ const DEFAULT_MINTS = [
   },
 ];
 const DEFAULT_MINT_NAMES = DEFAULT_MINTS.map((mint) => mint.name);
-
-enum WEB3_INIT_STATE {
-  GETTING_TOKEN = "getting_token",
-  INITIALIZING = "initializing",
-  GETTING_USER = "getting_user",
-  READY = "ready",
-}
 
 const Form = () => {
   const web3auth = useWeb3Auth();
@@ -138,7 +132,7 @@ const Form = () => {
             setWeb3AuthState(WEB3_INIT_STATE.GETTING_USER);
           }
         } else {
-          const rwaURL = `${REACT_APP_AUTH0_DOMAIN}/authorize?scope=openid&response_type=code&client_id=${REACT_APP_CLIENTID}&redirect_uri=${`${getApiEndpoint()}callback`}&state=STATE`;
+          const rwaURL = `${REACT_APP_AUTH0_DOMAIN}/authorize?scope=openid&response_type=code&client_id=${REACT_APP_CLIENTID}&redirect_uri=${`${getApiEndpoint()}callback?referrer=fund`}&state=STATE`;
           console.log(rwaURL);
           // debugger;
           window.location.href = rwaURL;
@@ -242,7 +236,7 @@ const Form = () => {
         }
       );
 
-      const signature = fundFFA(
+      const signature = await fundFFA(
         creator,
         formData.paymentAmount,
         escrowKey,
@@ -261,12 +255,10 @@ const Form = () => {
       );
     };
 
-    // const issueResponse = await createIssue();
-    // console.log("issueres", issueResponse);
-    // await createAndFundEscrow(issueResponse.data.issue.number);
-    await createAndFundEscrow(96);
-
-    // await sendEscrow(86);
+    const issueResponse = await createIssue();
+    console.log("issueres", issueResponse);
+    await createAndFundEscrow(issueResponse.data.issue.number);
+    // await createAndFundEscrow(96);
 
     console.log(formData); // do something with form data
   };

@@ -1,6 +1,6 @@
 import * as anchor from "@project-serum/anchor";
 import { AnchorError, Program } from "@project-serum/anchor";
-import { ASSOCIATED_TOKEN_PROGRAM_ID, createSyncNativeInstruction, getAccount, getOrCreateAssociatedTokenAccount, NATIVE_MINT, TOKEN_2022_PROGRAM_ID, TOKEN_PROGRAM_ID } from "@solana/spl-token";
+import { ASSOCIATED_TOKEN_PROGRAM_ID, createAccount, createInitializeAccount3Instruction, createSyncNativeInstruction, getAccount, getOrCreateAssociatedTokenAccount, NATIVE_MINT, TOKEN_2022_PROGRAM_ID, TOKEN_PROGRAM_ID } from "@solana/spl-token";
 import { MonoProgram } from "../sdk/types/mono_program";
 import  MonoProgramJSON  from "../sdk/idl/mono_program.json";
 import { MONO_DEVNET, WSOL_ADDRESS } from "../sdk/constants";
@@ -10,7 +10,7 @@ import { findFeatureAccount, findFeatureTokenAccount, findProgramAuthority } fro
 import { addApprovedSubmittersInstruction, approveRequestInstruction, cancelFeatureInstruction, createFeatureFundingAccountInstruction, denyRequestInstruction, fundFeatureInstruction, removeApprovedSubmittersInstruction, submitRequestInstruction, voteToCancelInstruction } from "../sdk/instructions";
 import { assert } from "chai";
 
-describe("create feature account", () => {
+describe("integration tests", () => {
   // Configure the client to use the local cluster.
   anchor.setProvider(anchor.AnchorProvider.env());
   const provider =  anchor.getProvider() as anchor.AnchorProvider;
@@ -544,9 +544,11 @@ describe("create feature account", () => {
           ).toString()
         );
 
-        let closed_account = await provider.connection.getBalance(feature_token_account);
+        let closed_token_account = await provider.connection.getBalance(feature_token_account);
+        let closed_data_account = await provider.connection.getBalance(feature_data_account);
    
-        assert.equal(0, parseInt(closed_account.toString()));
+        assert.equal(0, parseInt(closed_data_account.toString()));
+        assert.equal(0, parseInt(closed_token_account.toString()));
   })
 
   it ("test denyRequest", async () => {
@@ -772,6 +774,7 @@ describe("create feature account", () => {
           acc.unixTimestamp,
           creator.publicKey,
           creator.publicKey,
+          true,
           program
         );
         tx = await provider.sendAndConfirm(new Transaction().add(voteToCancelIx), [creator]);
@@ -789,6 +792,7 @@ describe("create feature account", () => {
           acc.unixTimestamp,
           creator.publicKey,
           submitter.publicKey,
+          true,
           program
         );
         tx = await provider.sendAndConfirm(new Transaction().add(voteToCancelIx), [submitter]);
@@ -908,6 +912,7 @@ describe("create feature account", () => {
           acc.unixTimestamp,
           creator.publicKey,
           creator.publicKey,
+          true,
           program
         );
 
@@ -937,7 +942,6 @@ describe("create feature account", () => {
             program
           );
           tx = await provider.sendAndConfirm(new Transaction().add(denyRequestIx), [creator])
-
           await program.methods.cancelFeature()
           .accounts({
             creator: creator.publicKey,
@@ -952,11 +956,53 @@ describe("create feature account", () => {
           assert.equal((error as AnchorError).error.errorMessage, "Cannot Cancel Feature")
         }
 
+        // creator votes to not cancel feature(voteToCancel)
+        try{
+          let voteToCancelIxBySubmitter = await voteToCancelInstruction(
+              acc.unixTimestamp,
+              creator.publicKey,
+              submitter.publicKey,
+              false,
+              program
+            );
+          let creatorRevotesToCancelIx = await voteToCancelInstruction(
+            acc.unixTimestamp,
+            creator.publicKey,
+            creator.publicKey,
+            false,
+            program
+          );
+
+            tx = await provider.sendAndConfirm(
+              new Transaction().add(voteToCancelIxByCreator).add(voteToCancelIxBySubmitter).add(creatorRevotesToCancelIx), 
+              [creator, submitter]
+            );
+ 
+            acc = await program.account.featureDataAccount.fetch(accounts[0].pubkey);
+            assert.equal(acc.payoutCancel, false);
+            assert.equal(acc.funderCancel, false);
+            assert.equal(acc.requestSubmitted, false)
+ 
+
+            await program.methods.cancelFeature()
+              .accounts({
+              creator: creator.publicKey,
+              creatorTokenAccount: creator_wsol_account.address,
+              featureDataAccount: feature_data_account,
+              featureTokenAccount: feature_token_account,
+              programAuthority: program_authority,
+              tokenProgram: TOKEN_PROGRAM_ID
+            }).signers([creator]).rpc()
+      }catch(err)
+      {
+        assert.equal((err as AnchorError).error.errorMessage, "Cannot Cancel Feature")
+      }
         // submitter votes to cancel Feature(VoteToCancel)
         let voteToCancelIxBySubmitter = await voteToCancelInstruction(
           acc.unixTimestamp,
           creator.publicKey,
           submitter.publicKey,
+          true,
           program
         );
 
@@ -985,9 +1031,11 @@ describe("create feature account", () => {
             WSOL_AMOUNT + parseInt(creator_token_account_before_balance.value.amount)
           ).toString()
         );
-        let closed_account = await provider.connection.getBalance(feature_token_account);
+        let closed_token_account = await provider.connection.getBalance(feature_token_account);
+        let closed_data_account = await provider.connection.getBalance(feature_data_account);
    
-        assert.equal(0, parseInt(closed_account.toString()));
+        assert.equal(0, parseInt(closed_data_account.toString()));
+        assert.equal(0, parseInt(closed_token_account.toString()));
 
   })
 

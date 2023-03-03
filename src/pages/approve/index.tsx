@@ -6,10 +6,10 @@ import { ConnectionProvider } from "@solana/wallet-adapter-react";
 import { clusterApiUrl } from "@solana/web3.js";
 import "@solana/wallet-adapter-react-ui/styles.css";
 import { MAINNET_RPC, IS_MAINNET } from "@/constants";
-import { getEndpont } from "@/src/utils";
+import { getEndpoint } from "@/src/utils";
 
 function App() {
-  const endpoint = getEndpont();
+  const endpoint = getEndpoint();
 
   const [ready, setReady] = useState(false);
   useEffect(() => setReady(true), []);

@@ -120,7 +120,7 @@ export const updateIssueHash = async (params: IssueUpdateParams) => {
 
 export const updateIssueEscrowKey = async (params: IssueUpdateParams) => {
   let query =
-    `UPDATE issue SET escrow_key='${params.escrow_key}' where `;
+    `UPDATE issue SET escrow_key='${params.escrowKey}' where `;
   query += `repo='${params.repo}'`
   query += ` AND org='${params.org}'`
   query += ` AND issue_number='${params.issueNumber}'`
@@ -342,7 +342,7 @@ export const getAllIssues = async () => {
 
 export const getIssueByUuid = async (uuid: string) => {
   let query =
-    "SELECT i.uuid, i.tags, i.estimated_time, i.title, i.funding_amount, i.funding_mint, i.issue_number, i.funding_hash, i.org, i.repo, i.state, a.github_login, a.github_id "
+    "SELECT i.description, i.escrow_key, i.uuid, i.tags, i.estimated_time, i.title, i.funding_amount, i.funding_mint, i.issue_number, i.funding_hash, i.org, i.repo, i.state, a.github_login, a.github_id, a.solana_pubkey "
 
   query += ` from issue as i`
   query += ` LEFT OUTER JOIN account_issue as ai`

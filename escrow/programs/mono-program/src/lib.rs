@@ -48,9 +48,9 @@ pub mod mono_program {
         deny_request::handler(ctx)
     }
 
-    pub fn vote_to_cancel(ctx: Context<VoteToCancel>) -> Result<()>
+    pub fn vote_to_cancel(ctx: Context<VoteToCancel>, is_cancel: bool) -> Result<()>
     {
-        vote_to_cancel::handler(ctx)
+        vote_to_cancel::handler(ctx, is_cancel)
     }
 
     pub fn cancel_feature(ctx: Context<CancelFeature>) -> Result<()>

@@ -13,7 +13,7 @@ import {
     createSyncNativeInstruction,
     ASSOCIATED_TOKEN_PROGRAM_ID
   } from "@solana/spl-token";
-
+  
   import {
     Keypair,
     LAMPORTS_PER_SOL,
@@ -26,7 +26,8 @@ import {
     TransactionInstruction,
   } from '@solana/web3.js';
 import { findFeatureAccount, findFeatureTokenAccount, findProgramAuthority } from "./pda";
-
+import { WSOL_ADDRESS } from "./constants";
+  
 
 export const createFeatureFundingAccountInstruction = async(
   mint: PublicKey,
@@ -36,17 +37,17 @@ export const createFeatureFundingAccountInstruction = async(
   const timestamp = Date.now().toString();
   console.log("timestamp = ", timestamp);
   const [feature_account] = await findFeatureAccount(
-      timestamp,
-      creator,
+      timestamp, 
+      creator, 
       program
   );
   const [feature_token_account] = await findFeatureTokenAccount(
-      timestamp,
+      timestamp, 
       creator,
-      mint,
+      mint, 
       program,
   );
-
+  
   const [program_authority] = await findProgramAuthority(
       program,
   );
@@ -54,7 +55,7 @@ export const createFeatureFundingAccountInstruction = async(
   return await program.methods.createFeatureFundingAccount(timestamp).
       accounts({
           creator: creator,
-          fundsMint: mint,
+          fundsMint: WSOL_ADDRESS,
           featureDataAccount: feature_account,
           featureTokenAccount: feature_token_account,
           programAuthority: program_authority,
@@ -95,7 +96,7 @@ export const fundFeatureInstruction = async (
     .accounts({
       creator: creator,
       creatorTokenAccount: creator_token_account,
-      fundsMint: mint,
+      fundsMint: WSOL_ADDRESS,
       featureDataAccount: feature_data_account,
       featureTokenAccount: feature_token_account,
       programAuthority: program_authority,
@@ -205,9 +206,9 @@ export const approveRequestInstruction = async (
   );
 
   const [feature_token_account] = await findFeatureTokenAccount(
-    timestamp,
+    timestamp, 
     creator,
-    mint,
+    mint, 
     program,
   );
 
@@ -232,6 +233,7 @@ export const voteToCancelInstruction = async (
   timestamp: string,
   creator: PublicKey,
   voter: PublicKey,
+  isCancel: boolean,
   program: Program<MonoProgram>
 ): Promise<TransactionInstruction> =>  {
 
@@ -241,7 +243,7 @@ export const voteToCancelInstruction = async (
     program
   );
 
-  return await program.methods.voteToCancel()
+  return await program.methods.voteToCancel(isCancel)
   .accounts({
     creator: creator,
     voter: voter,
@@ -263,9 +265,9 @@ export const cancelFeatureInstruction = async (
     program
   );
   const [feature_token_account] = await findFeatureTokenAccount(
-    timestamp,
+    timestamp, 
     creator,
-    mint,
+    mint, 
     program,
 );
 

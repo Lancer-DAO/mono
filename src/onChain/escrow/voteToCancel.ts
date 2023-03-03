@@ -1,4 +1,4 @@
-import { getEndpont } from "@/src/utils";
+import { getEndpoint } from "@/src/utils";
 import {
   Connection,
   Keypair,
@@ -23,9 +23,9 @@ import { getFeatureFundingAccount, MyWallet } from "@/src/onChain";
 import { DEVNET_USDC_MINT } from "@/src/constants";
 
 
-export const voteToCancelFFA = async (creator: Keypair,voter: Keypair, featureAccount: PublicKey ) => {
-      const wallet = new MyWallet(creator);
-      const anchorConn = new Connection(getEndpont());
+export const voteToCancelFFA = async (creator: PublicKey, voter: PublicKey, featureAccount: PublicKey, signAndSendTransaction: (tx: Transaction) => Promise<string>,  getWallet: () => MyWallet | null ) => {
+      const wallet = getWallet();
+      const anchorConn = new Connection(getEndpoint());
 
       const provider = new AnchorProvider(anchorConn, wallet, {});
       const program = new Program<MonoProgram>(
@@ -33,16 +33,28 @@ export const voteToCancelFFA = async (creator: Keypair,voter: Keypair, featureAc
         new PublicKey(MONO_DEVNET),
         provider
       );
-      const acc = await getFeatureFundingAccount(creator, featureAccount);
+            const acc = await getFeatureFundingAccount(featureAccount, program);
 
+        // debugger;
       let approveSubmitterIx = await voteToCancelInstruction(
         acc.unixTimestamp,
-        creator.publicKey,
-        voter.publicKey,
+        creator,
+        voter,
+        voter.toString() === creator.toString() ? acc.funderCancel : acc.payoutCancel,
         program
       )
 
-      const tx = await provider.sendAndConfirm(new Transaction().add(approveSubmitterIx), [voter]);
-        console.log(tx);
+      const {blockhash, lastValidBlockHeight} = (await anchorConn.getLatestBlockhash());
+      const txInfo = {
+                /** The transaction fee payer */
+                feePayer: creator,
+                /** A recent blockhash */
+                blockhash: blockhash,
+                /** the last block chain can advance to before tx is exportd expired */
+                lastValidBlockHeight: lastValidBlockHeight,
+              }
+      const tx = await signAndSendTransaction(
+        new Transaction(txInfo).add(approveSubmitterIx)
+      );  console.log(tx);
 
   };

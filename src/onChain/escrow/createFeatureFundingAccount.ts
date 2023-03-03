@@ -1,4 +1,4 @@
-import { getEndpont } from "@/src/utils";
+import { getEndpoint } from "@/src/utils";
 import {
   Connection,
   Keypair,
@@ -28,7 +28,7 @@ import { MyWallet } from "@/src/onChain";
 export const createFFA = async (creator: PublicKey, signAndSendTransaction: (tx: Transaction)=> Promise<string>, getWallet: () => MyWallet | null) => {
 
   const wallet = getWallet();
-  const connection = new Connection(getEndpont());
+  const connection = new Connection(getEndpoint());
 
   const provider = new AnchorProvider(connection, wallet, {});
   const program = new Program<MonoProgram>(

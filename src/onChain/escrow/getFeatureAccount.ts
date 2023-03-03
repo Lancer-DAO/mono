@@ -1,4 +1,4 @@
-import { getEndpont } from "@/src/utils";
+import { getEndpoint } from "@/src/utils";
 import {
   Connection,
   Keypair,
