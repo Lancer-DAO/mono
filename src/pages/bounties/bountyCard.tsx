@@ -1,18 +1,20 @@
 import { Issue } from "@/src/types";
 import { getMintName } from "@/src/utils";
 import { capitalize } from "lodash";
+import { useRouter } from "next/router";
+import Link from "next/link";
 
 interface BountyCardProps {
   issue: Issue;
 }
 
 export const BountyCard = ({ issue }: BountyCardProps) => {
+  const router = useRouter();
   return (
-    <a
-      className="issue-card"
-      href={`https://github.com/${issue.org}/${issue.repo}/issues/${issue.issueNumber}`}
-      target="_blank"
+    <Link
+      href={`/bounty?id=${issue.uuid}`}
       rel="noreferrer"
+      className="issue-card"
     >
       <div className="issue-header">
         <img
@@ -41,19 +43,22 @@ export const BountyCard = ({ issue }: BountyCardProps) => {
 
       <div className="issue-footer">
         <div className="issue-tags">
-          {issue.tags.map((tag, index) => (
-            <div className="tag" key={index}>
-              {capitalize(tag)}
-            </div>
-          ))}
+          {issue.tags &&
+            issue.tags.map((tag, index) => (
+              <div className="tag" key={index}>
+                {capitalize(tag)}
+              </div>
+            ))}
         </div>
         <div className="issue-footer-right">
           <div className={`issue-state ${issue.state}`}>{issue.state}</div>
-          <div className="issue-estimated-time">
-            {issue.estimatedTime} hours
-          </div>
+          {!Number.isNaN(issue.estimatedTime) && (
+            <div className="issue-estimated-time">
+              {issue.estimatedTime} hours
+            </div>
+          )}
         </div>
       </div>
-    </a>
+    </Link>
   );
 };

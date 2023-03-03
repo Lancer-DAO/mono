@@ -1,4 +1,4 @@
-import App from "@/src/pages/bounties";
+import App from "@/src/pages/bounty";
 import Head from "next/head";
 import { useEffect, useState } from "react";
 import { BrowserRouter as Router } from "react-router-dom";

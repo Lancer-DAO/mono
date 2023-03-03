@@ -42,6 +42,7 @@ import {
   TokenAccountNotFoundError,
 } from "@solana/spl-token";
 import { userInfo } from "os";
+import { createFFA, fundFFA } from "@/src/onChain";
 
 const secretKey = Uint8Array.from(keypair);
 const keyPair = Keypair.fromSecretKey(secretKey);
@@ -71,6 +72,7 @@ enum WEB3_INIT_STATE {
 }
 
 const Form = () => {
+  const web3auth = useWeb3Auth();
   const {
     provider,
     loginRWA,
@@ -81,7 +83,8 @@ const Form = () => {
     getBalance,
     getAccounts,
     logout,
-  } = useWeb3Auth();
+    getWallet,
+  } = web3auth;
   const search = useLocation().search;
   const [repositories, setRepositories] = useState<any[]>();
   const [repo, setRepo] = useState<any>();
@@ -219,14 +222,34 @@ const Form = () => {
       );
     };
 
-    const sendEscrow = async (issue: number) => {
-      const signature = await provider.signAndSendTransaction(
-        formData.paymentAmount,
-        keyPair.publicKey.toString(),
-        formData.mintAddress ? new PublicKey(formData.mintAddress) : undefined
+    const createAndFundEscrow = async (issue: number) => {
+      const accounts = await getAccounts();
+      const creator = new PublicKey(accounts[0]);
+      const escrowKey = await createFFA(
+        creator,
+        signAndSendTransaction,
+        getWallet
       );
 
-      console.log("sig", signature);
+      console.log("sig", escrowKey.toString());
+      await axios.put(
+        `${getApiEndpoint()}${DATA_API_ROUTE}/${ISSUE_API_ROUTE}/escrow_key`,
+        {
+          org: repo.full_name.split("/")[0],
+          repo: repo.full_name.split("/")[1],
+          issueNumber: issue,
+          escrowKey: escrowKey.toString(),
+        }
+      );
+
+      const signature = fundFFA(
+        creator,
+        formData.paymentAmount,
+        escrowKey,
+        signAndSendTransaction,
+        getWallet
+      );
+
       axios.put(
         `${getApiEndpoint()}${DATA_API_ROUTE}/${ISSUE_API_ROUTE}/funding_hash`,
         {
@@ -236,11 +259,12 @@ const Form = () => {
           hash: signature,
         }
       );
-      // debugger
     };
-    const issueResponse = await createIssue();
-    console.log("issueres", issueResponse);
-    await sendEscrow(issueResponse.data.issue.number);
+
+    // const issueResponse = await createIssue();
+    // console.log("issueres", issueResponse);
+    // await createAndFundEscrow(issueResponse.data.issue.number);
+    await createAndFundEscrow(96);
 
     // await sendEscrow(86);
 

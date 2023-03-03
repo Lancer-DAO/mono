@@ -25,6 +25,7 @@ fundingMint: string,
 tags: string[],
 private: boolean,
 estimatedTime: number,
+description: string
 }
 
 export interface IssueGetParams {
@@ -37,6 +38,7 @@ export interface IssueGetParams {
 export interface IssueUpdateParams extends IssueGetParams {
   state?: string
   hash?: string
+  escrow_key?: string
   }
 
 

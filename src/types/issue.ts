@@ -19,7 +19,10 @@ export type Issue = {
     tags: string[];
     estimatedTime: number;
     description?: string;
+    uuid?: string;
+    escrowKey?: string;
   };
+
 
   export type ContributorCompensationInfo = {
     pubkey: string;

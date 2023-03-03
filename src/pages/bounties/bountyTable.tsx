@@ -50,7 +50,7 @@ export const IssueList = ({
 
     const issueTags = issue.tags || [];
     const commonTags = issueTags.filter((tag) => filters.tags.includes(tag));
-    if (commonTags.length === 0) {
+    if (commonTags.length === 0 && tags.length !== 0) {
       return false;
     }
 

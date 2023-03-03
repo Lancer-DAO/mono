@@ -24,16 +24,7 @@ import { MyWallet } from "@/src/onChain";
 import { findFeatureAccount, findFeatureTokenAccount } from "@/escrow/sdk/pda";
 
 
-export const getFeatureFundingAccount = async (creator: Keypair, featureAccount: PublicKey ) => {
-      const wallet = new MyWallet(creator);
-      const anchorConn = new Connection(getEndpont());
-
-      const provider = new AnchorProvider(anchorConn, wallet, {});
-      const program = new Program<MonoProgram>(
-        MonoProgramJSON as unknown as MonoProgram,
-        new PublicKey(MONO_DEVNET),
-        provider
-      );
+export const getFeatureFundingAccount = async (featureAccount: PublicKey, program: Program<MonoProgram>) => {
       const acc = await program.account.featureDataAccount.fetch(featureAccount);
       return acc;
   };

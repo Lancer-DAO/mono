@@ -32,7 +32,7 @@ export const denyRequestFFA = async (creator: Keypair,submitter: PublicKey, feat
         new PublicKey(MONO_DEVNET),
         provider
       );
-      const acc = await getFeatureFundingAccount(creator, featureAccount);
+      const acc = await getFeatureFundingAccount(featureAccount);
 
       let approveSubmitterIx = await denyRequestInstruction(
         acc.unixTimestamp,

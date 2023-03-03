@@ -3,9 +3,14 @@ import { Connection, LAMPORTS_PER_SOL, PublicKey, SystemProgram, Transaction, Ke
 import { SolanaWallet } from "@web3auth/solana-provider";
 import { IWalletProvider } from "./walletProvider";
 import {createAssociatedTokenAccountInstruction, createTransferInstruction, getAccount, getAssociatedTokenAddress, getMint, TokenAccountNotFoundError} from "@solana/spl-token"
+import { MyWallet } from "@/src/onChain";
 
 const solanaProvider = (provider: SafeEventEmitterProvider, uiConsole: (...args: unknown[]) => void): IWalletProvider => {
-  const solanaWallet = new SolanaWallet(provider);
+  const solanaWallet = new MyWallet(provider);
+
+  const setPubKey = (pk: PublicKey) => {
+    solanaWallet.pk = pk;
+  }
 
   const getConnection = async (): Promise<Connection> => {
     const connectionConfig = await solanaWallet.request<CustomChainConfig>({ method: "solana_provider_config", params: [] });
@@ -50,89 +55,10 @@ const solanaProvider = (provider: SafeEventEmitterProvider, uiConsole: (...args:
     }
   };
 
-  const signAndSendTransaction = async (amount: number, receipient: string, mint?: PublicKey): Promise<string> => {
-    
-      const conn = await getConnection();
-      const pubKeyArr = await solanaWallet.requestAccounts();
-      const pubKey = new PublicKey(pubKeyArr[0])
-      const toPubkey = new PublicKey(receipient);
-
-      const {blockhash, lastValidBlockHeight} = (await conn.getLatestBlockhash());
-
-      let TransactionInstruction;
-
-      if (!mint) {
-        TransactionInstruction = SystemProgram.transfer({
-          fromPubkey: pubKey,
-          toPubkey: toPubkey,
-          lamports: Math.round(amount * LAMPORTS_PER_SOL),
-        });
-      } else {
-        // debugger;
-        const tokenMint = await getMint(conn, mint);
-        const actualAmount = BigInt(
-          amount * Math.pow(10, tokenMint.decimals)
-        );
-        const toTokenAddress = await getAssociatedTokenAddress(
-          mint,
-          toPubkey
-        );
-        const fromTokenAddress = await getAssociatedTokenAddress(
-          mint,
-          pubKey
-        );
-        // debugger;
-        try {
-          console.log("try");
-          const fromTokenAccount = await getAccount(
-            conn,
-            fromTokenAddress
-          );
-          if (fromTokenAccount.amount < (amount * Math.pow(10, tokenMint.decimals))) {
-            return `Not enough tokens to fund this issue`;
-          }
-          console.log("fromTA", fromTokenAccount.address.toString());
-        } catch (e) {
-          console.log("catch");
-          if (e instanceof TokenAccountNotFoundError) {
-            return `Please initialize and fund ${fromTokenAddress.toString()} by sending tokens of the chose mint to ${pubKey.toString()}`
-          } else {
-            console.error(e);
-          }
-        }
-        // debugger;
-        TransactionInstruction = createTransferInstruction(
-          fromTokenAddress,
-          toTokenAddress,
-          pubKey,
-          actualAmount
-        );
-      }
-
-      const txInfo = {
-        /** The transaction fee payer */
-        feePayer: pubKey,
-        /** A recent blockhash */
-        blockhash: blockhash,
-        /** the last block chain can advance to before tx is exportd expired */
-        lastValidBlockHeight: lastValidBlockHeight,
-      }
-
-      const transaction = new Transaction(txInfo).add(TransactionInstruction);
-
-const signedTx = await solanaWallet.signAndSendTransaction(transaction);
-console.log(signedTx.signature);
-      // debugger
-
-      // const signature = await (await solWeb3.signAndSendTransaction(transaction));
-
-      // const resp = await fetch('http://localhost:3001/ghToken?user_id=github|117492794&repo=github-app&org=Lancer-DAO&pull_number=18')
-
-      // const data = await resp.json()
-      // console.log(data)
-
-      // uiConsole("blockhash", blockhash, "transaction", transaction, "signature", signature, 'data', 'hi');
-      return signedTx.signature;
+  const signAndSendTransaction = async (transaction: Transaction): Promise<string> => {
+    const signedTx = await solanaWallet.signAndSendTransaction(transaction);
+    console.log(signedTx.signature);
+     return signedTx.signature;
   };
 
   const signTransaction = async (): Promise<void> => {
@@ -156,7 +82,11 @@ console.log(signedTx.signature);
     }
   };
 
-  return { getAccounts, getBalance, signMessage, signAndSendTransaction, signTransaction };
+  const getWallet=(): MyWallet => {
+    return solanaWallet;
+  }
+
+  return { getAccounts, getBalance, signMessage, signAndSendTransaction, signTransaction, getWallet, setPubKey };
 };
 
 export default solanaProvider;

@@ -18,34 +18,43 @@ import { MonoProgram } from "@/escrow/sdk/types/mono_program";
 import {
   createFeatureFundingAccountInstruction,
 } from "@/escrow/sdk/instructions";
+import { SolanaWallet } from "@web3auth/solana-provider";
 
 import MonoProgramJSON from "@/escrow/sdk/idl/mono_program.json";
 import { DEVNET_USDC_MINT } from "@/src/constants";
 import { MyWallet } from "@/src/onChain";
 
 
-export const createFFA = async (creator: Keypair) => {
-      const wallet = new MyWallet(creator);
-      const anchorConn = new Connection(getEndpont());
+export const createFFA = async (creator: PublicKey, signAndSendTransaction: (tx: Transaction)=> Promise<string>, getWallet: () => MyWallet | null) => {
 
-      const anchorProvider = new AnchorProvider(anchorConn, wallet, {});
-      const program = new Program<MonoProgram>(
-        MonoProgramJSON as unknown as MonoProgram,
-        new PublicKey(MONO_DEVNET),
-        anchorProvider
-      );
+  const wallet = getWallet();
+  const connection = new Connection(getEndpont());
+
+  const provider = new AnchorProvider(connection, wallet, {});
+  const program = new Program<MonoProgram>(
+    MonoProgramJSON as unknown as MonoProgram,
+    new PublicKey(MONO_DEVNET),
+    provider
+  );
       const ix = await createFeatureFundingAccountInstruction(
         new PublicKey(DEVNET_USDC_MINT),
-        creator.publicKey,
+        creator,
         program
       );
-
-      const tx = await anchorProvider.sendAndConfirm(
-        new Transaction().add(ix),
-        [creator]
+      const {blockhash, lastValidBlockHeight} = (await connection.getLatestBlockhash());
+      const txInfo = {
+                /** The transaction fee payer */
+                feePayer: creator,
+                /** A recent blockhash */
+                blockhash: blockhash,
+                /** the last block chain can advance to before tx is exportd expired */
+                lastValidBlockHeight: lastValidBlockHeight,
+              }
+      const tx = await signAndSendTransaction(
+        new Transaction(txInfo).add(ix)
       );
       console.log("createFFA transaction signature", tx);
-      const accounts = await anchorProvider.connection.getParsedProgramAccounts(
+      const accounts = await connection.getParsedProgramAccounts(
         program.programId, // new PublicKey("TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA")
         {
           filters: [
@@ -55,15 +64,11 @@ export const createFFA = async (creator: Keypair) => {
             {
               memcmp: {
                 offset: 8, // number of bytes
-                bytes: creator.publicKey.toBase58(), // base58 encoded string
+                bytes: creator.toBase58(), // base58 encoded string
               },
             },
           ],
         }
       );
-      const acc = await program.account.featureDataAccount.fetch(
-        accounts[0].pubkey
-      );
-      console.log(acc);
-        return acc;
+        return accounts[0].pubkey
   };

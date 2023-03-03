@@ -40,7 +40,7 @@ export const getAccount = async (params: AccountGetParams) => {
 
 export const insertIssue = async (params: IssueInsertParams) => {
   let query =
-    "INSERT INTO issue (issue_number, title, repo, org, state, funding_amount, funding_mint, estimated_time, private, tags)";
+    "INSERT INTO issue (issue_number, title, repo, org, state, funding_amount, funding_mint, estimated_time, private, tags, description)";
   query += ` VALUES (${params.issueNumber}, '${
     params.title
   }', '${params.repo}', '${
@@ -55,7 +55,9 @@ export const insertIssue = async (params: IssueInsertParams) => {
     params.private
   }, ${
     `'{${params.tags.map((tag) => `"${tag}"`).join(", ")}}'`
-  });`;
+  }, '${
+    params.description
+  }');`;
   console.log(query);
   const result = await DB.raw(query);
   return result;
@@ -108,6 +110,17 @@ export const updateIssueState = async (params: IssueUpdateParams) => {
 export const updateIssueHash = async (params: IssueUpdateParams) => {
   let query =
     `UPDATE issue SET funding_hash='${params.hash}' where `;
+  query += `repo='${params.repo}'`
+  query += ` AND org='${params.org}'`
+  query += ` AND issue_number='${params.issueNumber}'`
+  console.log(query);
+  const result = await DB.raw(query);
+  return result;
+};
+
+export const updateIssueEscrowKey = async (params: IssueUpdateParams) => {
+  let query =
+    `UPDATE issue SET escrow_key='${params.escrow_key}' where `;
   query += `repo='${params.repo}'`
   query += ` AND org='${params.org}'`
   query += ` AND issue_number='${params.issueNumber}'`
@@ -316,14 +329,27 @@ export const getFullPullRequestByNumber = async (params: GetFullPullRequest) => 
 
 export const getAllIssues = async () => {
   let query =
-    "SELECT i.tags, i.estimated_time, i.title, i.funding_amount, i.funding_mint, i.issue_number, i.funding_hash, i.org, i.repo, i.state, a.github_login, a.github_id "
+    "SELECT i.uuid, i.tags, i.estimated_time, i.title, i.funding_amount, i.funding_mint, i.issue_number, i.funding_hash, i.org, i.repo, i.state, a.github_login, a.github_id "
 
   query += ` from issue as i`
   query += ` LEFT OUTER JOIN account_issue as ai`
   query += ` ON i.uuid = ai.issue_uuid`
   query += ` LEFT OUTER JOIN account as a`
   query += ` ON ai.account_uuid = a.uuid`
-  console.log('yo');
   const result = await DB.raw(query);
   return result.rows.length > 0 ? result.rows : {message: 'NOT FOUND'};
+};
+
+export const getIssueByUuid = async (uuid: string) => {
+  let query =
+    "SELECT i.uuid, i.tags, i.estimated_time, i.title, i.funding_amount, i.funding_mint, i.issue_number, i.funding_hash, i.org, i.repo, i.state, a.github_login, a.github_id "
+
+  query += ` from issue as i`
+  query += ` LEFT OUTER JOIN account_issue as ai`
+  query += ` ON i.uuid = ai.issue_uuid`
+  query += ` LEFT OUTER JOIN account as a`
+  query += ` ON ai.account_uuid = a.uuid`
+  query += ` WHERE i.uuid = '${uuid}'`
+  const result = await DB.raw(query);
+  return result.rows.length > 0 ? result.rows[0] : {message: 'NOT FOUND'};
 };

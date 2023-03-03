@@ -25,29 +25,38 @@ import { getFeatureFundingAccount, MyWallet } from "@/src/onChain";
 import { findFeatureTokenAccount } from "@/escrow/sdk/pda";
 
 
-export const fundFFA = async (creator: Keypair, baseAmount: number, featureAccount: PublicKey) => {
-      const wallet = new MyWallet(creator);
-      const anchorConn = new Connection(getEndpont());
-      const amount = baseAmount * Math.pow(10, 6)
+export const fundFFA = async (creator: PublicKey, baseAmount: number, featureAccount: PublicKey, signAndSendTransaction: (tx: Transaction)=> Promise<string>, getWallet: () => MyWallet | null) => {
+  const wallet = getWallet();
+  const connection = new Connection(getEndpont());
 
-      const provider = new AnchorProvider(anchorConn, wallet, {});
-      const program = new Program<MonoProgram>(
-        MonoProgramJSON as unknown as MonoProgram,
-        new PublicKey(MONO_DEVNET),
-        provider
-      );
-      const acc = await getFeatureFundingAccount(creator, featureAccount);
+  const provider = new AnchorProvider(connection, wallet, {});
+  const program = new Program<MonoProgram>(
+    MonoProgramJSON as unknown as MonoProgram,
+    new PublicKey(MONO_DEVNET),
+    provider
+  );
+      const amount = baseAmount * Math.pow(10, 6)
+      const acc = await getFeatureFundingAccount(featureAccount, program);
 
     // check balaance before funding feature
     let fund_feature_ix = await fundFeatureInstruction(
       amount,
       acc.unixTimestamp,
-      creator.publicKey,
+      creator,
       new PublicKey(DEVNET_USDC_MINT),
       program
     );
+    const {blockhash, lastValidBlockHeight} = (await connection.getLatestBlockhash());
+      const txInfo = {
+                /** The transaction fee payer */
+                feePayer: creator,
+                /** A recent blockhash */
+                blockhash: blockhash,
+                /** the last block chain can advance to before tx is exportd expired */
+                lastValidBlockHeight: lastValidBlockHeight,
+              }
 
-      const tx2 = await provider.sendAndConfirm(new Transaction().add(fund_feature_ix), [creator]);
+      const tx2 = await signAndSendTransaction(new Transaction(txInfo).add(fund_feature_ix));
       console.log(tx2);
 
   };

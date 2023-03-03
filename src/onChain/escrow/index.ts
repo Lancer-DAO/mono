@@ -1,5 +1,6 @@
 import { Keypair, PublicKey, Transaction } from "@solana/web3.js";
-import { Wallet } from "@project-serum/anchor";
+import { SafeEventEmitterProvider } from "@web3auth/base";
+import { SolanaWallet } from "@web3auth/solana-provider";
 
 export * from "./createFeatureFundingAccount"
 export * from "./fundFeatureAccount"
@@ -14,24 +15,17 @@ export * from "./cancelEscrow"
 
 // Anchor's default export sometimes throws an error saying there is no constructor, so
 // make a wrapper class here to avoid the error.
-export class MyWallet implements Wallet {
-    constructor(readonly payer: Keypair) {
-      this.payer = payer;
+export class MyWallet extends SolanaWallet {
+    pk: PublicKey;
+    constructor(readonly provider: SafeEventEmitterProvider) {
+      super(provider);
     }
 
-    async signTransaction(tx: Transaction): Promise<Transaction> {
-      tx.partialSign(this.payer);
-      return tx;
-    }
-
-    async signAllTransactions(txs: Transaction[]): Promise<Transaction[]> {
-      return txs.map((t) => {
-        t.partialSign(this.payer);
-        return t;
-      });
+    set pubkey(pk: PublicKey) {
+      this.pk = pk;
     }
 
     get publicKey(): PublicKey {
-      return this.payer.publicKey;
+      return this.pk;
     }
   }

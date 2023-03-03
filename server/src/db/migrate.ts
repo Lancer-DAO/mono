@@ -24,6 +24,7 @@ const issue = `CREATE TABLE issue (
 		funding_hash VARCHAR,
     funding_amount DECIMAL(20,10),
     funding_mint VARCHAR,
+    escrow_key VARCHAR,
     title VARCHAR,
     repo VARCHAR,
     org VARCHAR,
@@ -33,6 +34,7 @@ const issue = `CREATE TABLE issue (
     estimated_time DECIMAL(10, 2),
     private BOOLEAN,
     tags VARCHAR[],
+    description text,
     PRIMARY KEY (uuid)
 );`;
 

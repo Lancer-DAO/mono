@@ -1,4 +1,3 @@
-import { IssueList } from "./bountyTable";
 import { useEffect, useState } from "react";
 import { Issue, IssueState } from "@/types";
 import { PublicKey } from "@solana/web3.js";
@@ -10,22 +9,23 @@ import {
   getUniqueItems,
 } from "@/src/utils";
 import { DATA_API_ROUTE, ISSUE_API_ROUTE } from "@/server/src/constants";
+import { useRouter } from "next/router";
+import Bounty from "@/src/pages/bounty/bounty";
 
-const getIssues = () =>
+const getIssue = (uuid: string) =>
   axios.get(
-    `${getApiEndpointExtenstion()}${DATA_API_ROUTE}/${ISSUE_API_ROUTE}s`
+    `${getApiEndpointExtenstion()}${DATA_API_ROUTE}/${ISSUE_API_ROUTE}?id=${uuid}`
   );
 
 function App() {
-  const [issues, setIssues] = useState();
-  const [tags, setTags] = useState<string[]>([]);
-  const [mints, setMints] = useState<string[]>([]);
-  const [orgs, setOrgs] = useState<string[]>([]);
-  const [bounds, setTimeBounds] = useState<[number, number]>([0, 10]);
+  const router = useRouter();
+  const { id } = router.query;
+  const [issue, setIssue] = useState();
   useEffect(() => {
-    getIssues().then((response) => {
-      const issues = response.data.map((rawIssue) => {
-        return {
+    if (id !== undefined) {
+      getIssue(id as string).then((response) => {
+        const rawIssue = response.data;
+        const issue = {
           ...rawIssue,
           hash: rawIssue.funding_hash,
           amount: parseFloat(rawIssue.funding_amount),
@@ -42,40 +42,12 @@ function App() {
           description:
             "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Blandit libero volutpat sed cras ornare. Dignissim cras tincidunt lobortis feugiat vivamus at augue eget arcu. A erat nam at lectus urna. Mattis aliquam faucibus purus in massa tempor. A lacus vestibulum sed arcu. Id venenatis a condimentum vitae sapien. Eu lobortis elementum nibh tellus molestie nunc non blandit. Massa sapien faucibus et molestie. Sollicitudin ac orci phasellus egestas tellus rutrum tellus pellentesque eu. Dis parturient montes nascetur ridiculus mus mauris vitae. Tortor posuere ac ut consequat semper viverra nam.",
         };
+        console.log("issue", issue);
+        setIssue(issue);
       });
-      setIssues(issues);
-      const allTags = issues
-        .map((issue) => issue.tags)
-        .reduce(
-          (accumulator, currentValue) => [
-            ...accumulator,
-            ...(currentValue ? currentValue : []),
-          ],
-          []
-        );
-      setTags(getUniqueItems(allTags));
-      setOrgs(getUniqueItems(issues.map((issue) => issue.org)));
-      setMints(getUniqueItems(issues.map((issue) => getMintName(issue.mint))));
-      const allTimes = issues.map((issue) => issue.estimatedTime);
-      const maxTime = Math.max(...allTimes) || 10;
-      const minTime = Math.min(...allTimes) || 0;
-      setTimeBounds([minTime, maxTime]);
-    });
-  }, []);
-  return (
-    issues && (
-      <div>
-        <h1 className="page-header">Bounties</h1>
-        <IssueList
-          issues={issues}
-          mints={mints}
-          orgs={orgs}
-          tags={tags}
-          timeBounds={bounds}
-        />
-      </div>
-    )
-  );
+    }
+  }, [id]);
+  return issue && <Bounty issue={issue} />;
 }
 
 export default App;

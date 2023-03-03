@@ -8,6 +8,8 @@ import {
   getAllIssues,
   updateIssueHash,
   newAccountIssue,
+  getIssueByUuid,
+  updateIssueEscrowKey,
 } from "../../controllers";
 import {
     GITHUB_ISSUE_API_ROUTE,
@@ -30,11 +32,12 @@ router.post(`/${ISSUE_API_ROUTE}`, async function (req, res, next) {
            fundingAmount: parseFloat(req.query.fundingAmount as string),
            title: req.query.title as string,
            repo: req.query.repo as string,
-           org: req.query.org as string, 
+           org: req.query.org as string,
            fundingMint: req.query.org as string,
            tags: req.query.tags as string[],
            private: req.query.private === 'true',
            estimatedTime: parseFloat(req.query.estimatedTime as string),
+           description: req.query.description as string
           })
       );
     } catch (err) {
@@ -61,7 +64,13 @@ router.post(`/${GITHUB_ISSUE_API_ROUTE}`, async function (req, res, next) {
 
 router.get(`/${ISSUE_API_ROUTE}`, async function (req, res, next) {
   try {
-    if(req.query.issueNumber) {
+    if(req.query.id) {
+      console.log(req.query)
+      return res.json(
+        await getIssueByUuid(req.query.id as string)
+      );
+    }
+    else if(req.query.issueNumber) {
       return res.json(
         await getIssueByNumber({
            title: req.query.title as string,
@@ -122,6 +131,18 @@ router.put(`/${ISSUE_API_ROUTE}/funding_hash`, async function (req, res, next) {
       const requestData = req.body;
         return res.json(
           await updateIssueHash(requestData)
+        );
+    } catch (err) {
+      next(err);
+    }
+  });
+
+
+  router.put(`/${ISSUE_API_ROUTE}/escrow_key`, async function (req, res, next) {
+    try {
+      const requestData = req.body;
+        return res.json(
+          await updateIssueEscrowKey(requestData)
         );
     } catch (err) {
       next(err);
