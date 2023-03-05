@@ -21,6 +21,7 @@ export type Issue = {
     description?: string;
     uuid?: string;
     escrowKey?: string;
+    timestamp?:string;
   };
 
 
@@ -34,10 +35,12 @@ export type Issue = {
 
   export enum IssueState {
     NEW = "new",
+    ACCEPTING_APPLICATIONS = "accepting_applications",
     IN_PROGRESS = "in_progress",
     AWAITING_REVIEW = "awaiting_review",
     APPROVED = "approved",
     COMPLETE = "complete",
+    VOTING_TO_CANCEL = "voting_to_cancel",
     CANCELED = "canceled",
   }
 

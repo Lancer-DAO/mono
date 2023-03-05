@@ -127,7 +127,7 @@ export const Web3AuthProvider: FunctionComponent<IWeb3AuthState> = ({
       );
       setTimeout(async function () {
         setProvider(walletProvider);
-        walletProvider.setPubKey(await walletProvider.getAccounts()[0]);
+        setweb3authinit(true);
       }, 1000);
     },
     [chain]
@@ -215,7 +215,6 @@ export const Web3AuthProvider: FunctionComponent<IWeb3AuthState> = ({
         web3AuthInstance.configureAdapter(adapter);
         await web3AuthInstance.init();
         setWeb3Auth(web3AuthInstance);
-        setweb3authinit(true);
         // }
       } catch (error) {
         console.error(error);

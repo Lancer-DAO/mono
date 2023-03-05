@@ -129,6 +129,17 @@ export const updateIssueEscrowKey = async (params: IssueUpdateParams) => {
   return result;
 };
 
+export const updateIssueTimestamp = async (params: IssueUpdateParams) => {
+  let query =
+    `UPDATE issue SET unix_timestamp='${params.timestamp}' where `;
+  query += `repo='${params.repo}'`
+  query += ` AND org='${params.org}'`
+  query += ` AND issue_number='${params.issueNumber}'`
+  console.log(query);
+  const result = await DB.raw(query);
+  return result;
+};
+
 // PULL REQUEST
 
 export const insertPullRequest = async (params: PullRequestInsertParams) => {
@@ -342,7 +353,7 @@ export const getAllIssues = async () => {
 
 export const getIssueByUuid = async (uuid: string) => {
   let query =
-    "SELECT i.description, i.escrow_key, i.uuid, i.tags, i.estimated_time, i.title, i.funding_amount, i.funding_mint, i.issue_number, i.funding_hash, i.org, i.repo, i.state, a.github_login, a.github_id, a.solana_pubkey "
+    "SELECT i.unix_timestamp, i.description, i.escrow_key, i.uuid, i.tags, i.estimated_time, i.title, i.funding_amount, i.funding_mint, i.issue_number, i.funding_hash, i.org, i.repo, i.state, a.github_login, a.github_id, a.solana_pubkey "
 
   query += ` from issue as i`
   query += ` LEFT OUTER JOIN account_issue as ai`

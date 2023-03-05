@@ -8,8 +8,8 @@ import {
   REACT_APP_AUTH0_DOMAIN,
   REACT_APP_CLIENTID,
 } from "@/src/constants";
-import { getApiEndpoint } from "@/src/utils";
-import { Keypair, PublicKey } from "@solana/web3.js";
+import { getApiEndpoint, getEndpoint } from "@/src/utils";
+import { Connection, Keypair, PublicKey, Transaction } from "@solana/web3.js";
 import keypair from "../../../test-keypair.json";
 import submitterKeypair from "../../../second_wallet.json";
 import {
@@ -24,6 +24,11 @@ import {
   voteToCancelFFA,
   cancelFFA,
 } from "@/src/onChain";
+import { AnchorProvider, Program, Wallet } from "@project-serum/anchor";
+import { MonoProgram } from "@/escrow/sdk/types/mono_program";
+import MonoProgramJSON from "@/escrow/sdk/idl/mono_program.json";
+import { MONO_DEVNET } from "@/escrow/sdk/constants";
+import { createFeatureFundingAccountInstruction } from "@/escrow/sdk/instructions";
 
 const secretKey = Uint8Array.from(keypair);
 const keyPair = Keypair.fromSecretKey(secretKey);
@@ -52,50 +57,108 @@ enum WEB3_INIT_STATE {
   READY = "ready",
 }
 
+export class TestWallet implements Wallet {
+  constructor(readonly payer: Keypair) {
+    this.payer = payer;
+  }
+
+  async signTransaction(tx: Transaction): Promise<Transaction> {
+    tx.partialSign(this.payer);
+    return tx;
+  }
+
+  async signAllTransactions(txs: Transaction[]): Promise<Transaction[]> {
+    return txs.map((t) => {
+      t.partialSign(this.payer);
+      return t;
+    });
+  }
+
+  get publicKey(): PublicKey {
+    return this.payer.publicKey;
+  }
+}
+
 const Escrow = () => {
   const getFFAClick = async () => {
-    const acc = await getFeatureFundingAccount(keyPair, ffa);
-    console.log(acc);
+    // const acc = await getFeatureFundingAccount(keyPair, ffa);
+    // console.log(acc);
   };
 
   const createFFAClick = async () => {
-    createFFA(keyPair);
+    const wallet = new TestWallet(keyPair);
+    const connection = new Connection(getEndpoint());
+
+    const provider = new AnchorProvider(connection, wallet, {});
+    const program = new Program<MonoProgram>(
+      MonoProgramJSON as unknown as MonoProgram,
+      new PublicKey(MONO_DEVNET),
+      provider
+    );
+    try {
+      const ix = await createFeatureFundingAccountInstruction(
+        new PublicKey(DEVNET_USDC_MINT),
+        keyPair.publicKey,
+        program
+      );
+      const tx = await provider.sendAndConfirm(new Transaction().add(ix));
+      console.log("createFFA transaction signature", tx);
+    } catch (e) {
+      console.error(e);
+    }
+    const accounts = await connection.getParsedProgramAccounts(
+      program.programId, // new PublicKey("TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA")
+      {
+        filters: [
+          {
+            dataSize: 288, // number of bytes
+          },
+          {
+            memcmp: {
+              offset: 8, // number of bytes
+              bytes: keyPair.publicKey.toBase58(), // base58 encoded string
+            },
+          },
+        ],
+      }
+    );
+    return accounts[0].pubkey;
   };
 
   const fundFFAClick = async () => {
-    fundFFA(keyPair, 0.01, ffa);
+    // fundFFA(keyPair, 0.01, ffa);
   };
 
   const addSubmitterFFAClick = async () => {
-    addSubmitterFFA(keyPair, submitterKeyPair.publicKey, ffa);
+    // addSubmitterFFA(keyPair, submitterKeyPair.publicKey, ffa);
   };
 
   const removeSubmitterFFAClick = async () => {
-    removeSubmitterFFA(keyPair, submitterKeyPair.publicKey, ffa);
+    // removeSubmitterFFA(keyPair, submitterKeyPair.publicKey, ffa);
   };
 
   const submitFFAClick = async () => {
-    submitRequestFFA(keyPair, submitterKeyPair, ffa);
+    // submitRequestFFA(keyPair, submitterKeyPair, ffa);
   };
 
   const denyRequestFFAClick = async () => {
-    denyRequestFFA(keyPair, submitterKeyPair.publicKey, ffa);
+    // denyRequestFFA(keyPair, submitterKeyPair.publicKey, ffa);
   };
 
   const approveRequestFFAClick = async () => {
-    approveRequestFFA(keyPair, submitterKeyPair.publicKey, ffa);
+    // approveRequestFFA(keyPair, submitterKeyPair.publicKey, ffa);
   };
 
   const voteToCancelCreatorFFAClick = async () => {
-    voteToCancelFFA(keyPair, keyPair, ffa);
+    // voteToCancelFFA(keyPair, keyPair, ffa);
   };
 
   const voteToCancelSubmitterFFAClick = async () => {
-    voteToCancelFFA(keyPair, submitterKeyPair, ffa);
+    // voteToCancelFFA(keyPair, submitterKeyPair, ffa);
   };
 
   const cancelSubmitterFFAClick = async () => {
-    cancelFFA(keyPair, ffa);
+    // cancelFFA(keyPair, ffa);
   };
   return (
     <div className="form-container">

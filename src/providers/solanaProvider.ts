@@ -9,7 +9,7 @@ const solanaProvider = (provider: SafeEventEmitterProvider, uiConsole: (...args:
   const solanaWallet = new MyWallet(provider);
 
   const setPubKey = (pk: PublicKey) => {
-    solanaWallet.pk = pk;
+    solanaWallet.pubkey = pk
   }
 
   const getConnection = async (): Promise<Connection> => {
@@ -21,6 +21,9 @@ const solanaProvider = (provider: SafeEventEmitterProvider, uiConsole: (...args:
   const getAccounts = async (): Promise<string[]> => {
     try {
       const acc = await solanaWallet.requestAccounts();
+      if(!solanaWallet.publicKey) {
+        solanaWallet.pubkey = new PublicKey(acc[0])
+      }
       console.log("Solana accounts", acc);
       return acc;
     } catch (error) {
@@ -56,9 +59,14 @@ const solanaProvider = (provider: SafeEventEmitterProvider, uiConsole: (...args:
   };
 
   const signAndSendTransaction = async (transaction: Transaction): Promise<string> => {
-    const signedTx = await solanaWallet.signAndSendTransaction(transaction);
-    console.log(signedTx.signature);
-     return signedTx.signature;
+    try {
+
+      const signedTx = await solanaWallet.signAndSendTransaction(transaction);
+      console.log(signedTx.signature);
+       return signedTx.signature;
+    } catch (e) {
+      console.error(e)
+    }
   };
 
   const signTransaction = async (): Promise<void> => {

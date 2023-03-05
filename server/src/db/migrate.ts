@@ -35,6 +35,7 @@ const issue = `CREATE TABLE issue (
     private BOOLEAN,
     tags VARCHAR[],
     description text,
+    unix_timestamp VARCHAR,
     PRIMARY KEY (uuid)
 );`;
 

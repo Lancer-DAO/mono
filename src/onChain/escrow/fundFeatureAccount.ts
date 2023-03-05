@@ -58,5 +58,5 @@ export const fundFFA = async (creator: PublicKey, baseAmount: number, featureAcc
 
       const tx2 = await signAndSendTransaction(new Transaction(txInfo).add(fund_feature_ix));
       console.log(tx2);
-
+              return tx2;
   };

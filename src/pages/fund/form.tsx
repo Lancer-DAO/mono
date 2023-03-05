@@ -12,7 +12,7 @@ import {
   REACT_APP_AUTH0_DOMAIN,
   REACT_APP_CLIENTID,
 } from "@/src/constants";
-import { convertToQueryParams, getApiEndpoint } from "@/src/utils";
+import { convertToQueryParams, getApiEndpoint, getEndpoint } from "@/src/utils";
 import axios from "axios";
 import {
   ACCOUNT_API_ROUTE,
@@ -44,12 +44,17 @@ import {
 import { userInfo } from "os";
 import { createFFA, fundFFA } from "@/src/onChain";
 import { WEB3_INIT_STATE } from "@/src/types";
+import { AnchorProvider, Program } from "@project-serum/anchor";
+import { MonoProgram } from "@/escrow/sdk/types/mono_program";
+import { MONO_DEVNET } from "@/escrow/sdk/constants";
+import MonoProgramJSON from "@/escrow/sdk/idl/mono_program.json";
+import Base58 from "base-58";
 
 const secretKey = Uint8Array.from(keypair);
 const keyPair = Keypair.fromSecretKey(secretKey);
 const fromSecretKey = Uint8Array.from(fromKeypair);
 const fromKeyPair = Keypair.fromSecretKey(fromSecretKey);
-const DEFAULT_MINTS = [
+export const DEFAULT_MINTS = [
   {
     name: "SOL",
     mint: undefined,
@@ -63,7 +68,7 @@ const DEFAULT_MINTS = [
     mint: BONK_MINT,
   },
 ];
-const DEFAULT_MINT_NAMES = DEFAULT_MINTS.map((mint) => mint.name);
+export const DEFAULT_MINT_NAMES = DEFAULT_MINTS.map((mint) => mint.name);
 
 const Form = () => {
   const web3auth = useWeb3Auth();
@@ -217,48 +222,31 @@ const Form = () => {
     };
 
     const createAndFundEscrow = async (issue: number) => {
+      console.log("submit");
       const accounts = await getAccounts();
       const creator = new PublicKey(accounts[0]);
-      const escrowKey = await createFFA(
+      const timestamp = await createFFA(
         creator,
         signAndSendTransaction,
         getWallet
       );
+      // const timestamp = "1678054848253";
 
-      console.log("sig", escrowKey.toString());
       await axios.put(
-        `${getApiEndpoint()}${DATA_API_ROUTE}/${ISSUE_API_ROUTE}/escrow_key`,
+        `${getApiEndpoint()}${DATA_API_ROUTE}/${ISSUE_API_ROUTE}/timestamp`,
         {
           org: repo.full_name.split("/")[0],
           repo: repo.full_name.split("/")[1],
           issueNumber: issue,
-          escrowKey: escrowKey.toString(),
-        }
-      );
-
-      const signature = await fundFFA(
-        creator,
-        formData.paymentAmount,
-        escrowKey,
-        signAndSendTransaction,
-        getWallet
-      );
-
-      axios.put(
-        `${getApiEndpoint()}${DATA_API_ROUTE}/${ISSUE_API_ROUTE}/funding_hash`,
-        {
-          org: repo.full_name.split("/")[0],
-          repo: repo.full_name.split("/")[1],
-          issueNumber: issue,
-          hash: signature,
+          timestamp: timestamp,
         }
       );
     };
 
-    const issueResponse = await createIssue();
-    console.log("issueres", issueResponse);
-    await createAndFundEscrow(issueResponse.data.issue.number);
-    // await createAndFundEscrow(96);
+    // const issueResponse = await createIssue();
+    // console.log("issueres", issueResponse);
+    // await createAndFundEscrow(issueResponse.data.issue.number);
+    await createAndFundEscrow(98);
 
     console.log(formData); // do something with form data
   };

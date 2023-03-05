@@ -39,6 +39,7 @@ export interface IssueUpdateParams extends IssueGetParams {
   state?: string
   hash?: string
   escrowKey?: string
+  timestamp?: string
   }
 
 

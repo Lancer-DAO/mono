@@ -23,7 +23,7 @@ import { SolanaWallet } from "@web3auth/solana-provider";
 import MonoProgramJSON from "@/escrow/sdk/idl/mono_program.json";
 import { DEVNET_USDC_MINT } from "@/src/constants";
 import { MyWallet } from "@/src/onChain";
-
+import Base58 from 'base-58'
 
 export const createFFA = async (creator: PublicKey, signAndSendTransaction: (tx: Transaction)=> Promise<string>, getWallet: () => MyWallet | null) => {
 
@@ -36,10 +36,13 @@ export const createFFA = async (creator: PublicKey, signAndSendTransaction: (tx:
     new PublicKey(MONO_DEVNET),
     provider
   );
+  const timestamp = Date.now().toString();
+  console.log("timestamp = ", timestamp);
       const ix = await createFeatureFundingAccountInstruction(
         new PublicKey(DEVNET_USDC_MINT),
         creator,
-        program
+        program,
+        timestamp
       );
       const {blockhash, lastValidBlockHeight} = (await connection.getLatestBlockhash());
       const txInfo = {
@@ -53,22 +56,6 @@ export const createFFA = async (creator: PublicKey, signAndSendTransaction: (tx:
       const tx = await signAndSendTransaction(
         new Transaction(txInfo).add(ix)
       );
-      console.log("createFFA transaction signature", tx);
-      const accounts = await connection.getParsedProgramAccounts(
-        program.programId, // new PublicKey("TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA")
-        {
-          filters: [
-            {
-              dataSize: 288, // number of bytes
-            },
-            {
-              memcmp: {
-                offset: 8, // number of bytes
-                bytes: creator.toBase58(), // base58 encoded string
-              },
-            },
-          ],
-        }
-      );
-        return accounts[0].pubkey
+      // console.log("createFFA transaction signature", tx);
+      return timestamp;
   };
