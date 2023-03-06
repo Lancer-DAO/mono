@@ -21,18 +21,11 @@ import { addApprovedSubmittersInstruction, approveRequestInstruction, denyReques
 import MonoProgramJSON from "@/escrow/sdk/idl/mono_program.json";
 import { getFeatureFundingAccount, MyWallet } from "@/src/onChain";
 import { DEVNET_USDC_MINT } from "@/src/constants";
+import { LancerWallet } from "@/src/providers/lancerProvider";
 
 
-export const voteToCancelFFA = async (creator: PublicKey, voter: PublicKey, featureAccount: PublicKey, signAndSendTransaction: (tx: Transaction) => Promise<string>,  getWallet: () => MyWallet | null ) => {
-      const wallet = getWallet();
-      const anchorConn = new Connection(getEndpoint());
+export const voteToCancelFFA = async (creator: PublicKey, voter: PublicKey, featureAccount: PublicKey, wallet: LancerWallet, anchor: AnchorProvider, program: Program<MonoProgram>) => {
 
-      const provider = new AnchorProvider(anchorConn, wallet, {});
-      const program = new Program<MonoProgram>(
-        MonoProgramJSON as unknown as MonoProgram,
-        new PublicKey(MONO_DEVNET),
-        provider
-      );
             const acc = await getFeatureFundingAccount(featureAccount, program);
 
         // debugger;
@@ -44,7 +37,7 @@ export const voteToCancelFFA = async (creator: PublicKey, voter: PublicKey, feat
         program
       )
 
-      const {blockhash, lastValidBlockHeight} = (await anchorConn.getLatestBlockhash());
+      const {blockhash, lastValidBlockHeight} = (await anchor.connection.getLatestBlockhash());
       const txInfo = {
                 /** The transaction fee payer */
                 feePayer: creator,
@@ -53,7 +46,7 @@ export const voteToCancelFFA = async (creator: PublicKey, voter: PublicKey, feat
                 /** the last block chain can advance to before tx is exportd expired */
                 lastValidBlockHeight: lastValidBlockHeight,
               }
-      const tx = await signAndSendTransaction(
+      const tx = await wallet.signAndSendTransaction(
         new Transaction(txInfo).add(approveSubmitterIx)
       );  console.log(tx);
 

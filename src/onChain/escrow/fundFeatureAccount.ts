@@ -23,18 +23,11 @@ import MonoProgramJSON from "@/escrow/sdk/idl/mono_program.json";
 import { DEVNET_USDC_MINT } from "@/src/constants";
 import { getFeatureFundingAccount, MyWallet } from "@/src/onChain";
 import { findFeatureTokenAccount } from "@/escrow/sdk/pda";
+import { LancerWallet } from "@/src/providers/lancerProvider";
 
 
-export const fundFFA = async (creator: PublicKey, baseAmount: number, featureAccount: PublicKey, signAndSendTransaction: (tx: Transaction)=> Promise<string>, getWallet: () => MyWallet | null) => {
-  const wallet = getWallet();
-  const connection = new Connection(getEndpoint());
+export const fundFFA = async (creator: PublicKey, baseAmount: number, featureAccount: PublicKey, wallet: LancerWallet, anchor: AnchorProvider, program: Program<MonoProgram>) => {
 
-  const provider = new AnchorProvider(connection, wallet, {});
-  const program = new Program<MonoProgram>(
-    MonoProgramJSON as unknown as MonoProgram,
-    new PublicKey(MONO_DEVNET),
-    provider
-  );
       const amount = baseAmount * Math.pow(10, 6)
       const acc = await getFeatureFundingAccount(featureAccount, program);
 
@@ -46,7 +39,7 @@ export const fundFFA = async (creator: PublicKey, baseAmount: number, featureAcc
       new PublicKey(DEVNET_USDC_MINT),
       program
     );
-    const {blockhash, lastValidBlockHeight} = (await connection.getLatestBlockhash());
+    const {blockhash, lastValidBlockHeight} = (await anchor.connection.getLatestBlockhash());
       const txInfo = {
                 /** The transaction fee payer */
                 feePayer: creator,
@@ -56,7 +49,7 @@ export const fundFFA = async (creator: PublicKey, baseAmount: number, featureAcc
                 lastValidBlockHeight: lastValidBlockHeight,
               }
 
-      const tx2 = await signAndSendTransaction(new Transaction(txInfo).add(fund_feature_ix));
+      const tx2 = await wallet.signAndSendTransaction(new Transaction(txInfo).add(fund_feature_ix));
       console.log(tx2);
               return tx2;
   };

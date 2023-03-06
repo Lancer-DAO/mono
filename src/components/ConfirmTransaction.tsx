@@ -3,7 +3,6 @@ import keypair from "../../test-keypair.json";
 // import { ReactComponent as ReactLogo } from "../logo.svg";
 // import { ReactComponent as SolLogo } from "../../node_modules/cryptocurrency-icons/svg/white/sol.svg";
 
-
 import { Issue, IssueState } from "@/types";
 import { useLocation } from "react-router-dom";
 import { useWeb3Auth } from "@/providers";
@@ -15,7 +14,11 @@ import {
   ISSUE_API_ROUTE,
   NEW_ISSUE_API_ROUTE,
 } from "@/server/src/constants";
-import { convertToQueryParams, getApiEndpoint, getSolscanAddress } from "@/utils";
+import {
+  convertToQueryParams,
+  getApiEndpoint,
+  getSolscanAddress,
+} from "@/utils";
 import { Keypair, LAMPORTS_PER_SOL, PublicKey } from "@solana/web3.js";
 import classNames from "classnames";
 
@@ -39,54 +42,50 @@ export const ConfirmFunding = () => {
     setIsLoading,
     isWeb3AuthInit,
     getBalance,
-    logout
+    logout,
   } = useWeb3Auth();
   const [issue, setIssue] = useState<Issue>(undefined);
   const search = useLocation().search;
   const params = new URLSearchParams(search);
   const jwt = params.get("token");
   const token = jwt == null ? "" : jwt;
-  
 
   const [buttonText, setButtonText] = useState(ApprovalState.APPROVE);
   const [sendHash, setSendHash] = useState<string>();
-  const [balance, setBalance] = useState(0.0)
+  const [balance, setBalance] = useState(0.0);
   const [solanaKey, setSolanaKey] = useState();
-  const [errorText, setErrorText] = useState<string>(undefined)
+  const [errorText, setErrorText] = useState<string>(undefined);
 
   useEffect(() => {
     let extensionId = window.localStorage.getItem("lancerExtensionId");
-    if(!extensionId || extensionId === 'null') {
-      extensionId = params.get('extension_id');
-      window.localStorage.setItem("lancerExtensionId", extensionId)
+    if (!extensionId || extensionId === "null") {
+      extensionId = params.get("extension_id");
+      window.localStorage.setItem("lancerExtensionId", extensionId);
     }
-    console.log('extension_id', extensionId)
+    console.log("extension_id", extensionId);
     chrome.runtime.sendMessage(
       extensionId,
-      {'route': 'newIssueFundingInfo'},
+      { route: "newIssueFundingInfo" },
       (response) => {
-        console.log(response)
-        setIssue(response.issue)
+        console.log(response);
+        setIssue(response.issue);
       }
-    )
+    );
     // console.log('issueInfo', issueInfo)
-  }, [])
+  }, []);
 
   useEffect(() => {
     const getWalletBalance = async () => {
-
-    const walletBalance = await getBalance();
-    if (provider) {
-
-    const solanaKey = (await provider.getAccounts())[0];
-    setSolanaKey(solanaKey);
-    }
-    console.log('balacnce', walletBalance)
-    setBalance(walletBalance / LAMPORTS_PER_SOL)
-    }
-    getWalletBalance()
-
-  }, [getBalance, balance, isWeb3AuthInit, provider])
+      const walletBalance = await getBalance();
+      if (provider) {
+        const solanaKey = (await provider.getAccounts())[0];
+        setSolanaKey(solanaKey);
+      }
+      console.log("balacnce", walletBalance);
+      setBalance(walletBalance / LAMPORTS_PER_SOL);
+    };
+    getWalletBalance();
+  }, [getBalance, balance, isWeb3AuthInit, provider]);
 
   useEffect(() => {
     handleAuthLogin();
@@ -96,9 +95,9 @@ export const ConfirmFunding = () => {
   const onClick = useCallback(async () => {
     try {
       setButtonText(ApprovalState.APPROVING);
-    console.log()
+      console.log();
 
-      const signature = await signAndSendTransaction(
+      const signature = await wallet.signAndSendTransaction(
         issue.amount,
         keyPair.publicKey.toString()
       );
@@ -131,7 +130,7 @@ export const ConfirmFunding = () => {
       );
     } catch (e) {
       setButtonText(ApprovalState.ERROR);
-      setErrorText(e.toString())
+      setErrorText(e.toString());
     }
   }, [issue, signAndSendTransaction, isWeb3AuthInit, solanaKey, getUserInfo]);
 
@@ -153,73 +152,78 @@ export const ConfirmFunding = () => {
 
   return (
     <div className="confirm-funding-wrapper">
-      {issue === undefined ? <div className="loading-text">
-        Loading Issue Info
-      </div> : 
-      <>
-      <div className="logo-wrapper">{/* <ReactLogo className="logo" /> */}</div>
-      <div className="confirm-title">
-        {`Would you like fund this issue with ${issue.amount.toFixed(4)} SOL`}
-        {/* <SolLogo className="solana-logo" /> */}
-      </div>
-
-      {provider ? (
-        <div className="confirm-wrapper">
-          <div>
-            {`Current Wallet: `}
-            {solanaKey && <PubKey pubKey={new PublicKey(solanaKey)}/>}
-          </div>
-          <div>
-            {`Balance: ${balance} SOL`}
-          </div>
-          {balance < issue.amount &&
-          
-          <div className="error-text">
-            Please send more funds to your wallet.
-          </div>
-          }
-          {errorText && <div className="error-text">
-            {errorText}
-          </div>}
-        <button
-          disabled={
-            buttonText === ApprovalState.APPROVED ||
-            buttonText === ApprovalState.ERROR || balance < issue.amount
-          }
-          className={classNames("confirm-button", {disabled: 
-            buttonText === ApprovalState.ERROR || balance < issue.amount})}
-          onClick={(e) => {
-            onClick();
-            e.preventDefault();
-          }}
-        >
-          {buttonText}
-        </button>
-          </div>
+      {issue === undefined ? (
+        <div className="loading-text">Loading Issue Info</div>
       ) : (
-        <div className="loading-wrapper">
-          <div className="loading-text"> Connecting to Web3Auth</div>
-          <Loader height={16} width={16} strokeWidth={3} color={"#14bb88"} />
-        </div>
-      )}
+        <>
+          <div className="logo-wrapper">
+            {/* <ReactLogo className="logo" /> */}
+          </div>
+          <div className="confirm-title">
+            {`Would you like fund this issue with ${issue.amount.toFixed(
+              4
+            )} SOL`}
+            {/* <SolLogo className="solana-logo" /> */}
+          </div>
 
-      {sendHash && (
-        <button
-          className={"confirm-button"}
-          onClick={(e) => {
-            typeof window &&
-              window.open(
-                getSolscanAddress(sendHash),
-                "_blank"
-              );
-            e.preventDefault();
-          }}
-        >
-          View Transaction
-        </button>
+          {provider ? (
+            <div className="confirm-wrapper">
+              <div>
+                {`Current Wallet: `}
+                {solanaKey && <PubKey pubKey={new PublicKey(solanaKey)} />}
+              </div>
+              <div>{`Balance: ${balance} SOL`}</div>
+              {balance < issue.amount && (
+                <div className="error-text">
+                  Please send more funds to your wallet.
+                </div>
+              )}
+              {errorText && <div className="error-text">{errorText}</div>}
+              <button
+                disabled={
+                  buttonText === ApprovalState.APPROVED ||
+                  buttonText === ApprovalState.ERROR ||
+                  balance < issue.amount
+                }
+                className={classNames("confirm-button", {
+                  disabled:
+                    buttonText === ApprovalState.ERROR ||
+                    balance < issue.amount,
+                })}
+                onClick={(e) => {
+                  onClick();
+                  e.preventDefault();
+                }}
+              >
+                {buttonText}
+              </button>
+            </div>
+          ) : (
+            <div className="loading-wrapper">
+              <div className="loading-text"> Connecting to Web3Auth</div>
+              <Loader
+                height={16}
+                width={16}
+                strokeWidth={3}
+                color={"#14bb88"}
+              />
+            </div>
+          )}
+
+          {sendHash && (
+            <button
+              className={"confirm-button"}
+              onClick={(e) => {
+                typeof window &&
+                  window.open(getSolscanAddress(sendHash), "_blank");
+                e.preventDefault();
+              }}
+            >
+              View Transaction
+            </button>
+          )}
+        </>
       )}
-      </>}
-      
     </div>
   );
 };

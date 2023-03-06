@@ -38,6 +38,7 @@ import { MonoProgram } from "@/escrow/sdk/types/mono_program";
 import Base58 from "base-58";
 import RadioWithCustomInput from "@/src/pages/fund/RadioWithCustomInput";
 import { DEFAULT_MINTS, DEFAULT_MINT_NAMES } from "@/src/pages/fund/form";
+import { useLancer } from "@/src/providers/lancerProvider";
 
 interface Props {
   issue: Issue;
@@ -56,28 +57,8 @@ const SideBarSection: React.FC<{ title: string; children: ReactNode }> = ({
 };
 
 const Bounty: React.FC<Props> = ({ issue }) => {
-  const web3auth = useWeb3Auth();
-  const {
-    provider,
-    loginRWA,
-    getUserInfo,
-    signAndSendTransaction,
-    setIsLoading,
-    isWeb3AuthInit,
-    getBalance,
-    getAccounts,
-    logout,
-    getWallet,
-  } = web3auth;
-  const [user, setUser] = useState<PublicKey>();
-  const search = useLocation().search;
+  const { wallet, anchor, program, user } = useLancer();
   const creator = new PublicKey(issue.pubkey);
-  const params = new URLSearchParams(search);
-  const jwt = params.get("token");
-  const token = jwt == null ? "" : jwt;
-  const [web3AuthState, setWeb3AuthState] = useState(
-    WEB3_INIT_STATE.GETTING_TOKEN
-  );
 
   const [formData, setFormData] = useState({
     organizationName: "",
@@ -92,42 +73,6 @@ const Bounty: React.FC<Props> = ({ issue }) => {
     mintAddress: "",
   });
   const ffa = issue.escrowKey ? new PublicKey(issue.escrowKey) : undefined;
-  useEffect(() => {
-    const handleAuthLogin = async () => {
-      try {
-        // debugger;
-        if (token !== "" && web3AuthState !== WEB3_INIT_STATE.READY) {
-          if (
-            web3AuthState === WEB3_INIT_STATE.GETTING_USER &&
-            isWeb3AuthInit
-          ) {
-            const user = (await getAccounts())[0];
-            console.log(user);
-            setUser(new PublicKey(user));
-            setWeb3AuthState(WEB3_INIT_STATE.READY);
-          } else {
-            await loginRWA(WALLET_ADAPTERS.OPENLOGIN, "jwt", token);
-            setWeb3AuthState(WEB3_INIT_STATE.GETTING_USER);
-          }
-        } else {
-          const rwaURL = `${REACT_APP_AUTH0_DOMAIN}/authorize?scope=openid&response_type=code&client_id=${REACT_APP_CLIENTID}&redirect_uri=${`${getApiEndpoint()}callback?referrer=bounty?id=${
-            issue.uuid
-          }`}&state=STATE`;
-          console.log(rwaURL);
-          // debugger;
-          window.location.href = rwaURL;
-          setWeb3AuthState(WEB3_INIT_STATE.INITIALIZING);
-        }
-      } catch (e) {
-        console.error(e);
-      }
-    };
-    if (web3AuthState !== WEB3_INIT_STATE.READY) {
-      handleAuthLogin();
-    }
-    // sessionStorage.clear();
-    // window.open(REACT_APP_AUTH0_DOMAIN + "/v2/logout?federated");
-  }, [web3AuthState, isWeb3AuthInit, getAccounts]);
 
   const descriptionMarkup = () => {
     const markdown = marked.parse(issue.description, { breaks: true });
@@ -137,16 +82,7 @@ const Bounty: React.FC<Props> = ({ issue }) => {
   const fundFeature = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    const wallet = getWallet();
-    const connection = new Connection(getEndpoint());
-
-    const provider = new AnchorProvider(connection, wallet, {});
-    const program = new Program<MonoProgram>(
-      MonoProgramJSON as unknown as MonoProgram,
-      new PublicKey(MONO_DEVNET),
-      provider
-    );
-    const accounts = await connection.getParsedProgramAccounts(
+    const accounts = await anchor.connection.getParsedProgramAccounts(
       program.programId, // new PublicKey("TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA")
       {
         filters: [
@@ -170,8 +106,6 @@ const Bounty: React.FC<Props> = ({ issue }) => {
     );
 
     const escrowKey = accounts[0].pubkey;
-
-    console.log("escrow", escrowKey.toString());
     await axios.put(
       `${getApiEndpoint()}${DATA_API_ROUTE}/${ISSUE_API_ROUTE}/escrow_key`,
       {
@@ -186,8 +120,9 @@ const Bounty: React.FC<Props> = ({ issue }) => {
       creator,
       formData.paymentAmount,
       escrowKey,
-      signAndSendTransaction,
-      getWallet
+      wallet,
+      anchor,
+      program
     );
 
     axios.put(
@@ -210,7 +145,7 @@ const Bounty: React.FC<Props> = ({ issue }) => {
 
   const addSubmitterFFAClick = async () => {
     // debugger;
-    addSubmitterFFA(creator, creator, ffa, signAndSendTransaction, getWallet);
+    addSubmitterFFA(creator, creator, ffa, wallet, anchor, program);
     if (issue.state === IssueState.NEW) {
       axios.put(
         `${getApiEndpoint()}${DATA_API_ROUTE}/${ISSUE_API_ROUTE}/state`,
@@ -225,61 +160,40 @@ const Bounty: React.FC<Props> = ({ issue }) => {
   };
 
   const removeSubmitterFFAClick = async () => {
-    await removeSubmitterFFA(
-      creator,
-      creator,
-      ffa,
-      signAndSendTransaction,
-      getWallet
-    );
+    await removeSubmitterFFA(creator, creator, ffa, wallet, anchor, program);
 
-    const wallet = getWallet();
-    const anchorConn = new Connection(getEndpoint());
-
-    const provider = new AnchorProvider(anchorConn, wallet, {});
-    const program = new Program<MonoProgram>(
-      MonoProgramJSON as unknown as MonoProgram,
-      new PublicKey(MONO_DEVNET),
-      provider
-    );
     const acc = getFeatureFundingAccount(ffa, program);
+    const submitters = (await acc).approvedSubmitters.map((submitter) =>
+      submitter.toString()
+    );
   };
 
   const submitFFAClick = async () => {
-    submitRequestFFA(creator, user, ffa, signAndSendTransaction, getWallet);
+    submitRequestFFA(creator, user.publicKey, ffa, wallet, anchor, program);
   };
 
   const denyRequestFFAClick = async () => {
-    denyRequestFFA(creator, creator, ffa, signAndSendTransaction, getWallet);
+    denyRequestFFA(creator, creator, ffa, wallet, anchor, program);
   };
 
   const approveRequestFFAClick = async () => {
-    approveRequestFFA(creator, creator, ffa, signAndSendTransaction, getWallet);
+    approveRequestFFA(creator, creator, ffa, wallet, anchor, program);
   };
 
   const voteToCancelCreatorFFAClick = async () => {
-    voteToCancelFFA(creator, creator, ffa, signAndSendTransaction, getWallet);
+    voteToCancelFFA(creator, creator, ffa, wallet, anchor, program);
   };
 
   const voteToCancelSubmitterFFAClick = async () => {
-    voteToCancelFFA(creator, user, ffa, signAndSendTransaction, getWallet);
+    voteToCancelFFA(creator, user.publicKey, ffa, wallet, anchor, program);
   };
 
   const cancelSubmitterFFAClick = async () => {
-    cancelFFA(creator, ffa, signAndSendTransaction, getWallet);
+    cancelFFA(creator, ffa, wallet, anchor, program);
   };
 
   const getFFAClick = async () => {
     console.log("creator", creator.toString());
-    const wallet = getWallet();
-    const anchorConn = new Connection(getEndpoint());
-
-    const provider = new AnchorProvider(anchorConn, wallet, {});
-    const program = new Program<MonoProgram>(
-      MonoProgramJSON as unknown as MonoProgram,
-      new PublicKey(MONO_DEVNET),
-      provider
-    );
     const acc = await getFeatureFundingAccount(ffa, program);
     acc.approvedSubmitters.forEach((sub) => console.log(sub.toString()));
     console.log(acc);
@@ -380,7 +294,7 @@ const Bounty: React.FC<Props> = ({ issue }) => {
               </button>
             </div>
           </form>
-          {web3AuthState === WEB3_INIT_STATE.READY && false && (
+          {false && (
             <div>
               <button onClick={() => getFFAClick()}>Get FFA</button>
 

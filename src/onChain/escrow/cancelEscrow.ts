@@ -21,18 +21,11 @@ import { addApprovedSubmittersInstruction, approveRequestInstruction, cancelFeat
 import MonoProgramJSON from "@/escrow/sdk/idl/mono_program.json";
 import { getFeatureFundingAccount, MyWallet } from "@/src/onChain";
 import { DEVNET_USDC_MINT } from "@/src/constants";
+import { LancerWallet } from "@/src/providers/lancerProvider";
 
 
-export const cancelFFA = async (creator: PublicKey, featureAccount: PublicKey , signAndSendTransaction: (tx: Transaction) => Promise<string>,  getWallet: () => MyWallet | null ) => {
-      const wallet = getWallet();
-      const anchorConn = new Connection(getEndpoint());
+export const cancelFFA = async (creator: PublicKey, featureAccount: PublicKey , wallet: LancerWallet, anchor: AnchorProvider, program: Program<MonoProgram>) => {
 
-      const provider = new AnchorProvider(anchorConn, wallet, {});
-      const program = new Program<MonoProgram>(
-        MonoProgramJSON as unknown as MonoProgram,
-        new PublicKey(MONO_DEVNET),
-        provider
-      );
       const acc = await getFeatureFundingAccount(featureAccount, program);
 
       const tokenAddress = await getAssociatedTokenAddress(
@@ -47,7 +40,7 @@ export const cancelFFA = async (creator: PublicKey, featureAccount: PublicKey , 
         program
       )
 
-      const {blockhash, lastValidBlockHeight} = (await anchorConn.getLatestBlockhash());
+      const {blockhash, lastValidBlockHeight} = (await anchor.connection.getLatestBlockhash());
       const txInfo = {
                 /** The transaction fee payer */
                 feePayer: creator,
@@ -56,7 +49,7 @@ export const cancelFFA = async (creator: PublicKey, featureAccount: PublicKey , 
                 /** the last block chain can advance to before tx is exportd expired */
                 lastValidBlockHeight: lastValidBlockHeight,
               }
-      const tx = await signAndSendTransaction(
+      const tx = await wallet.signAndSendTransaction(
         new Transaction(txInfo).add(approveSubmitterIx)
       );
         console.log(tx)

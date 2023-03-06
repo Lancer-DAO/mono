@@ -53,7 +53,7 @@ export const createFFA = async (creator: PublicKey, signAndSendTransaction: (tx:
                 /** the last block chain can advance to before tx is exportd expired */
                 lastValidBlockHeight: lastValidBlockHeight,
               }
-      const tx = await signAndSendTransaction(
+      const tx = await wallet.signAndSendTransaction(
         new Transaction(txInfo).add(ix)
       );
       // console.log("createFFA transaction signature", tx);

@@ -10,12 +10,10 @@ export interface IWalletProvider {
   getAccounts: () => Promise<any>;
   getBalance: () => Promise<number>;
   signAndSendTransaction: (transaction: Transaction) => Promise<string>;
-  signTransaction: () => Promise<void>;
-  signMessage: () => Promise<void>;
   getWallet: () => MyWallet;
   setPubKey: (pk: PublicKey) => void;
 }
 
-export const getWalletProvider = (chain: string, provider: SafeEventEmitterProvider, uiConsole: any): IWalletProvider => {
-    return solanaProvider(provider, uiConsole);
+export const getWalletProvider = (provider: SafeEventEmitterProvider): IWalletProvider => {
+    return solanaProvider(provider);
 };
