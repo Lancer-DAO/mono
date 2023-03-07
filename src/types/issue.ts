@@ -1,4 +1,34 @@
-import { PublicKey } from "@solana/web3.js";
+import { MonoProgram } from "@/escrow/sdk/types/mono_program";
+import { Program } from "@project-serum/anchor";
+import { AccountInfo, ParsedAccountData, PublicKey } from "@solana/web3.js";
+
+export type Submitter = {
+  githubLogin: string
+  githubId: string
+  pubkey: PublicKey
+  uuid: string
+  account: string
+  isCreator: boolean
+  isSubmitter: boolean
+  isApprovedSubmitter: boolean
+}
+
+export type EscrowContract = {
+  approvedSubmitters: PublicKey [];
+  creator: PublicKey;
+  currentSubmitter: PublicKey;
+  funderCancel: boolean;
+  fundsDataAccountBump: number;
+  fundsMint: PublicKey;
+  fundsTokenAccount: PublicKey;
+  fundsTokenAccountBump: number;
+  noOfSubmitters: number;
+  payoutAccount: PublicKey;
+  payoutCancel: boolean;
+  programAuthorityBump: number;
+  requestSubmitter: boolean;
+  unixTimestamp: string;
+}
 
 export type Issue = {
     amount: number;
@@ -20,8 +50,13 @@ export type Issue = {
     estimatedTime: number;
     description?: string;
     uuid?: string;
-    escrowKey?: string;
+    escrowKey?: PublicKey;
     timestamp?:string;
+    creator?: Submitter;
+    submitter?: Submitter;
+    approvedSubmitters?: Submitter[];
+    requestedSubmitters?: Submitter[];
+    escrowContract: EscrowContract
   };
 
 

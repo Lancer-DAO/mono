@@ -41,6 +41,7 @@ export interface IssueUpdateParams extends IssueGetParams {
   mint?: string,
   escrowKey?: string
   timestamp?: string
+  uuid?:string;
   }
 
 
@@ -69,6 +70,11 @@ export interface PullRequestInsertParams extends PullRequestGetParams {
 
   // ACCOUNT ISSUE
   export interface AccountIssueGetParams extends AccountGetParams, IssueGetParams {}
+  export interface AccountIssueUpdateParams extends AccountGetParams, IssueGetParams {
+    isSubmitter?: boolean;
+    isApprovedSubmitter?: boolean;
+  }
+
   export interface AccountIssueNewParams extends AccountInsertParams, IssueInsertParams {}
 
 // ACCOUNT PULL REQUEST

@@ -22,11 +22,12 @@ import MonoProgramJSON from "@/escrow/sdk/idl/mono_program.json";
 import { getFeatureFundingAccount, MyWallet } from "@/src/onChain";
 import { DEVNET_USDC_MINT } from "@/src/constants";
 import { LancerWallet } from "@/src/providers/lancerProvider";
+import { EscrowContract } from "@/src/types";
 
 
-export const approveRequestFFA = async (creator: PublicKey,submitter: PublicKey, featureAccount: PublicKey, wallet: LancerWallet, anchor: AnchorProvider, program: Program<MonoProgram>) => {
+export const approveRequestFFA = async (creator: PublicKey,submitter: PublicKey, acc: EscrowContract, wallet: LancerWallet, anchor: AnchorProvider, program: Program<MonoProgram>) => {
 
-      const acc = await getFeatureFundingAccount(featureAccount, program);
+
       const tokenAddress = await getAssociatedTokenAddress(
         new PublicKey(DEVNET_USDC_MINT),
         submitter

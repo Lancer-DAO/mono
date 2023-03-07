@@ -37,6 +37,7 @@ router.get("/callback", (req, res) => {
       var decoded = jwt_decode(id_token);
       console.log('jwt', decoded)
       const redirect_url = process.env.FRONT_ENDPOINT + referrer + `${referrer.includes('?') ? '&' : '?'}token=` + id_token;
+      console.log(redirect_url)
       res.redirect(redirect_url);
     });
   });

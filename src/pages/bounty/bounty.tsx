@@ -1,9 +1,10 @@
 import {
   ACCOUNT_API_ROUTE,
+  ACCOUNT_ISSUE_API_ROUTE,
   DATA_API_ROUTE,
   ISSUE_API_ROUTE,
 } from "@/server/src/constants";
-import { REACT_APP_CLIENTID } from "@/src/constants";
+import { DEVNET_USDC_MINT, REACT_APP_CLIENTID } from "@/src/constants";
 import {
   addSubmitterFFA,
   approveRequestFFA,
@@ -23,7 +24,7 @@ import {
   getMintName,
   getSolscanAddress,
 } from "@/src/utils";
-import { Issue, IssueState, WEB3_INIT_STATE } from "@/types";
+import { EscrowContract, Issue, IssueState, WEB3_INIT_STATE } from "@/types";
 import { Connection, PublicKey } from "@solana/web3.js";
 import { WALLET_ADAPTERS } from "@web3auth/base";
 import axios from "axios";
@@ -39,10 +40,12 @@ import Base58 from "base-58";
 import RadioWithCustomInput from "@/src/pages/fund/RadioWithCustomInput";
 import { DEFAULT_MINTS, DEFAULT_MINT_NAMES } from "@/src/pages/fund/form";
 import { useLancer } from "@/src/providers/lancerProvider";
-
-interface Props {
-  issue: Issue;
-}
+import FundBounty from "@/src/pages/bounty/components/fundBounty";
+import RequestToSubmit from "@/src/pages/bounty/components/requestToSubmit";
+import SubmitterSection from "@/src/pages/bounty/components/submitterSection";
+import SubmitRequest from "@/src/pages/bounty/components/submitRequest";
+import ReviewRequest from "@/src/pages/bounty/components/reviewRequest";
+import VoterSection from "@/src/pages/bounty/components/voteToCancel";
 
 const SideBarSection: React.FC<{ title: string; children: ReactNode }> = ({
   title,
@@ -56,148 +59,134 @@ const SideBarSection: React.FC<{ title: string; children: ReactNode }> = ({
   );
 };
 
-const Bounty: React.FC<Props> = ({ issue }) => {
-  const { wallet, anchor, program, user } = useLancer();
+const Bounty: React.FC = () => {
+  const { wallet, anchor, program, user, issue, setIssue } = useLancer();
+  const [isLoading, setIsLoading] = useState(false);
+  if (!issue) {
+    return <></>;
+  }
   const creator = new PublicKey(issue.pubkey);
+  useEffect(() => {
+    const getEscrowContract = async () => {
+      let escrowKey = issue.escrowKey;
+      if (!escrowKey) {
+        const accounts = await anchor.connection.getParsedProgramAccounts(
+          program.programId, // new PublicKey("TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA")
+          {
+            filters: [
+              {
+                dataSize: 288, // number of bytes
+              },
+              {
+                memcmp: {
+                  offset: 8, // number of bytes
+                  bytes: creator.toBase58(), // base58 encoded string
+                },
+              },
+              {
+                memcmp: {
+                  offset: 275, // number of bytes
+                  bytes: Base58.encode(Buffer.from(issue.timestamp)), // base58 encoded string
+                },
+              },
+            ],
+          }
+        );
 
-  const [formData, setFormData] = useState({
-    organizationName: "",
-    repositoryName: "",
-    issueTitle: "",
-    issueDescription: "",
-    requirements: [],
-    estimatedTime: "",
-    isPrivate: false,
-    paymentType: "spl",
-    paymentAmount: 0,
-    mintAddress: "",
-  });
-  const ffa = issue.escrowKey ? new PublicKey(issue.escrowKey) : undefined;
+        escrowKey = accounts[0].pubkey;
+
+        axios.put(
+          `${getApiEndpoint()}${DATA_API_ROUTE}/${ISSUE_API_ROUTE}/escrow_key`,
+          {
+            org: issue.org,
+            repo: issue.repo,
+            issueNumber: issue.issueNumber,
+            escrowKey: escrowKey.toString(),
+          }
+        );
+      }
+      const escrowContract = await getFeatureFundingAccount(escrowKey, program);
+      setIssue({
+        ...issue,
+        escrowContract: escrowContract as unknown as EscrowContract,
+      });
+    };
+    if (
+      !issue.escrowContract &&
+      program &&
+      !isLoading &&
+      issue.creator &&
+      issue.state !== IssueState.COMPLETE
+    ) {
+      setIsLoading(true);
+      console.log("hi");
+      getEscrowContract();
+    }
+  }, [program, isLoading, issue]);
+
+  const getAvailableCommands = () => {
+    const availableCommands = [];
+    console.log(user, issue);
+    if (!user || !issue) {
+      return [];
+    }
+    const isSubmitter = issue.submitter && issue.submitter.uuid === user.uuid;
+    const isCreator = issue.creator.uuid === user.uuid;
+    const isApprovedSubmitter =
+      issue.approvedSubmitters.findIndex(
+        (submitter) => submitter.uuid === user.uuid
+      ) > -1;
+    if (issue.state === IssueState.NEW && issue.creator.uuid === user.uuid) {
+      availableCommands.push(<FundBounty />);
+    }
+    console.log(isSubmitter, isCreator, isApprovedSubmitter);
+    if (
+      issue.state === IssueState.ACCEPTING_APPLICATIONS ||
+      (issue.state === IssueState.IN_PROGRESS &&
+        !isApprovedSubmitter &&
+        issue.approvedSubmitters.length < 3)
+    ) {
+      availableCommands.push(<RequestToSubmit />);
+    }
+
+    if (issue.approvedSubmitters.length > 0) {
+      issue.approvedSubmitters.forEach((submitter) => {
+        if (!submitter.isSubmitter) {
+          availableCommands.push(
+            <SubmitterSection submitter={submitter} type="approved" />
+          );
+        }
+      });
+    }
+
+    if (issue.requestedSubmitters.length > 0) {
+      issue.requestedSubmitters.forEach((submitter) => {
+        availableCommands.push(
+          <SubmitterSection submitter={submitter} type="requested" />
+        );
+      });
+    }
+    console.log(issue.state, isApprovedSubmitter);
+    if (issue.state === IssueState.IN_PROGRESS && isApprovedSubmitter) {
+      availableCommands.push(<SubmitRequest />);
+    }
+    if (
+      issue.state === IssueState.AWAITING_REVIEW &&
+      issue.creator.uuid === user.uuid
+    ) {
+      availableCommands.push(<ReviewRequest />);
+    }
+    if (issue.state !== IssueState.COMPLETE && (isCreator || isSubmitter)) {
+      availableCommands.push(<VoterSection />);
+    }
+    return availableCommands;
+  };
 
   const descriptionMarkup = () => {
     const markdown = marked.parse(issue.description, { breaks: true });
     return { __html: markdown };
   };
 
-  const fundFeature = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-
-    const accounts = await anchor.connection.getParsedProgramAccounts(
-      program.programId, // new PublicKey("TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA")
-      {
-        filters: [
-          {
-            dataSize: 288, // number of bytes
-          },
-          {
-            memcmp: {
-              offset: 8, // number of bytes
-              bytes: creator.toBase58(), // base58 encoded string
-            },
-          },
-          {
-            memcmp: {
-              offset: 275, // number of bytes
-              bytes: Base58.encode(Buffer.from(issue.timestamp)), // base58 encoded string
-            },
-          },
-        ],
-      }
-    );
-
-    const escrowKey = accounts[0].pubkey;
-    await axios.put(
-      `${getApiEndpoint()}${DATA_API_ROUTE}/${ISSUE_API_ROUTE}/escrow_key`,
-      {
-        org: issue.org,
-        repo: issue.repo,
-        issueNumber: issue.issueNumber,
-        escrowKey: escrowKey.toString(),
-      }
-    );
-
-    const signature = await fundFFA(
-      creator,
-      formData.paymentAmount,
-      escrowKey,
-      wallet,
-      anchor,
-      program
-    );
-
-    axios.put(
-      `${getApiEndpoint()}${DATA_API_ROUTE}/${ISSUE_API_ROUTE}/funding_hash`,
-      {
-        org: issue.org,
-        repo: issue.repo,
-        issueNumber: issue.issueNumber,
-        hash: signature,
-      }
-    );
-  };
-
-  const handleChange = (event) => {
-    setFormData({
-      ...formData,
-      [event.target.name]: event.target.value,
-    });
-  };
-
-  const addSubmitterFFAClick = async () => {
-    // debugger;
-    addSubmitterFFA(creator, creator, ffa, wallet, anchor, program);
-    if (issue.state === IssueState.NEW) {
-      axios.put(
-        `${getApiEndpoint()}${DATA_API_ROUTE}/${ISSUE_API_ROUTE}/state`,
-        {
-          org: issue.org,
-          repo: issue.repo,
-          issueNumber: issue,
-          state: IssueState.ACCEPTING_APPLICATIONS,
-        }
-      );
-    }
-  };
-
-  const removeSubmitterFFAClick = async () => {
-    await removeSubmitterFFA(creator, creator, ffa, wallet, anchor, program);
-
-    const acc = getFeatureFundingAccount(ffa, program);
-    const submitters = (await acc).approvedSubmitters.map((submitter) =>
-      submitter.toString()
-    );
-  };
-
-  const submitFFAClick = async () => {
-    submitRequestFFA(creator, user.publicKey, ffa, wallet, anchor, program);
-  };
-
-  const denyRequestFFAClick = async () => {
-    denyRequestFFA(creator, creator, ffa, wallet, anchor, program);
-  };
-
-  const approveRequestFFAClick = async () => {
-    approveRequestFFA(creator, creator, ffa, wallet, anchor, program);
-  };
-
-  const voteToCancelCreatorFFAClick = async () => {
-    voteToCancelFFA(creator, creator, ffa, wallet, anchor, program);
-  };
-
-  const voteToCancelSubmitterFFAClick = async () => {
-    voteToCancelFFA(creator, user.publicKey, ffa, wallet, anchor, program);
-  };
-
-  const cancelSubmitterFFAClick = async () => {
-    cancelFFA(creator, ffa, wallet, anchor, program);
-  };
-
-  const getFFAClick = async () => {
-    console.log("creator", creator.toString());
-    const acc = await getFeatureFundingAccount(ffa, program);
-    acc.approvedSubmitters.forEach((sub) => console.log(sub.toString()));
-    console.log(acc);
-  };
   return (
     <div className="bounty-page">
       <h2 className="bounty-title">{issue.title}</h2>
@@ -212,16 +201,18 @@ const Bounty: React.FC<Props> = ({ issue }) => {
           <SideBarSection title="Estimated Time">
             <div>{issue.estimatedTime} hours</div>
           </SideBarSection>
-          <SideBarSection title="Escrow Account">
-            <a
-              className="issue-creator"
-              href={getSolscanAddress(issue.escrowKey)}
-              target="_blank"
-              rel="noreferrer"
-            >
-              Escrow Account
-            </a>
-          </SideBarSection>
+          {issue.escrowKey && (
+            <SideBarSection title="Escrow Account">
+              <a
+                className="issue-creator"
+                href={getSolscanAddress(issue.escrowKey.toString())}
+                target="_blank"
+                rel="noreferrer"
+              >
+                Escrow Account
+              </a>
+            </SideBarSection>
+          )}
 
           <SideBarSection title="State">
             <div className={`issue-state ${issue.state} text-start`}>
@@ -234,97 +225,8 @@ const Bounty: React.FC<Props> = ({ issue }) => {
             className="bounty-description-markup"
             dangerouslySetInnerHTML={descriptionMarkup()}
           />
-          <form
-            className="form"
-            style={{ width: "1000px" }}
-            onSubmit={fundFeature}
-          >
-            <div className="form-subtitle">Payment Information</div>
-            <div className="form-row-grid grid-1-1-1">
-              <div className="form-cell">
-                <label className="form-label">Payment Type</label>
-                <select
-                  name="paymentType"
-                  value={formData.paymentType}
-                  onChange={handleChange}
-                  className="form-select"
-                >
-                  <option value="spl">SPL Token</option>
-                  <option value="stripe" disabled={true}>
-                    Stripe (Coming Soon)
-                  </option>
-                  <option value="paypal" disabled={true}>
-                    PayPal (Coming Soon)
-                  </option>
-                  <option value="coinbase" disabled={true}>
-                    Coinbase (Coming Soon)
-                  </option>
-                </select>
-              </div>
-              <div className="form-cell">
-                <label className="form-label">Payment Token</label>
-                <RadioWithCustomInput
-                  options={[...DEFAULT_MINTS.map((mint) => mint.name), "Other"]}
-                  defaultOption="SOL"
-                  setOption={(option) => {
-                    const mintAddress = DEFAULT_MINT_NAMES.includes(option)
-                      ? DEFAULT_MINTS.find((mint) => mint.name === option).mint
-                      : option;
-                    setFormData({
-                      ...formData,
-                      mintAddress: mintAddress,
-                    });
-                  }}
-                />
-              </div>
-              <div className="form-cell">
-                <label className="form-label">Payment Amount</label>
-                <input
-                  type="number"
-                  name="paymentAmount"
-                  value={formData.paymentAmount}
-                  onChange={handleChange}
-                  className="form-input"
-                />
-              </div>
-            </div>
-            <div className="submit-wrapper">
-              <button type="submit" className="form-submit">
-                Submit
-              </button>
-            </div>
-          </form>
-          {false && (
-            <div>
-              <button onClick={() => getFFAClick()}>Get FFA</button>
 
-              <button onClick={() => addSubmitterFFAClick()}>
-                Add Submitter FFA
-              </button>
-              <button onClick={() => removeSubmitterFFAClick()}>
-                Remove Submitter FFA
-              </button>
-              <button onClick={() => submitFFAClick()}>
-                Submit Request FFA
-              </button>
-              <button onClick={() => denyRequestFFAClick()}>
-                Deny Request FFA
-              </button>
-              <button onClick={() => approveRequestFFAClick()}>
-                Approve Request FFA
-              </button>
-              <button onClick={() => voteToCancelCreatorFFAClick()}>
-                Cancel Creator FFA
-              </button>
-
-              <button onClick={() => voteToCancelSubmitterFFAClick()}>
-                Cancel Submitter FFA
-              </button>
-              <button onClick={() => cancelSubmitterFFAClick()}>
-                Cancel FFA
-              </button>
-            </div>
-          )}
+          <>{...getAvailableCommands()}</>
         </div>
         <div className="bounty-right-side">
           <SideBarSection title="Creator">
@@ -337,9 +239,11 @@ const Bounty: React.FC<Props> = ({ issue }) => {
               {issue.org}/{issue.repo}
             </a>
           </SideBarSection>
-          <SideBarSection title="Author">
-            <div>{issue.author}</div>
-          </SideBarSection>
+          {issue.creator && (
+            <SideBarSection title="Author">
+              <div>{issue.creator.githubLogin}</div>
+            </SideBarSection>
+          )}
           <SideBarSection title="GitHub Links">
             <div className="bounty-github-links">
               <a

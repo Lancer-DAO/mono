@@ -4,6 +4,7 @@ import {
   insertAccountIssue,
   getAccountIssue,
   newAccountIssue,
+  updateAccountIssue,
 } from "../../controllers";
 import {
   ACCOUNT_ISSUE_API_ROUTE,
@@ -20,13 +21,9 @@ const router = Router();
 
 router.post(`/${ACCOUNT_ISSUE_API_ROUTE}`, async function (req, res, next) {
   try {
+    const data = req.body;
     return res.json(
-      await insertAccountIssue({
-         title: req.query.title as string,
-         repo: req.query.repo as string,
-         org: req.query.org as string,
-         githubLogin: req.query.githubLogin as string,
-        })
+      await insertAccountIssue(data)
     );
   } catch (err) {
     next(err);
@@ -41,6 +38,17 @@ router.get(`/${ACCOUNT_ISSUE_API_ROUTE}`, async function (req, res, next) {
          repo: req.query.repo as string,
          org: req.query.org as string,githubLogin: req.query.githubLogin as string,
         })
+    );
+  } catch (err) {
+    next(err);
+  }
+});
+
+router.put(`/${ACCOUNT_ISSUE_API_ROUTE}`, async function (req, res, next) {
+  try {
+    const data = await req.body;
+    return res.json(
+      await updateAccountIssue(data)
     );
   } catch (err) {
     next(err);

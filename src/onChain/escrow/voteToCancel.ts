@@ -22,11 +22,11 @@ import MonoProgramJSON from "@/escrow/sdk/idl/mono_program.json";
 import { getFeatureFundingAccount, MyWallet } from "@/src/onChain";
 import { DEVNET_USDC_MINT } from "@/src/constants";
 import { LancerWallet } from "@/src/providers/lancerProvider";
+import { EscrowContract } from "@/src/types";
 
 
-export const voteToCancelFFA = async (creator: PublicKey, voter: PublicKey, featureAccount: PublicKey, wallet: LancerWallet, anchor: AnchorProvider, program: Program<MonoProgram>) => {
+export const voteToCancelFFA = async (creator: PublicKey, voter: PublicKey, acc: EscrowContract, wallet: LancerWallet, anchor: AnchorProvider, program: Program<MonoProgram>) => {
 
-            const acc = await getFeatureFundingAccount(featureAccount, program);
 
         // debugger;
       let approveSubmitterIx = await voteToCancelInstruction(

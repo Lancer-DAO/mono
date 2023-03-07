@@ -21,11 +21,11 @@ import { addApprovedSubmittersInstruction, denyRequestInstruction, fundFeatureIn
 import MonoProgramJSON from "@/escrow/sdk/idl/mono_program.json";
 import { getFeatureFundingAccount, MyWallet } from "@/src/onChain";
 import { LancerWallet } from "@/src/providers/lancerProvider";
+import { EscrowContract } from "@/src/types";
 
 
-export const denyRequestFFA = async (creator: PublicKey,submitter: PublicKey, featureAccount: PublicKey, wallet: LancerWallet, anchor: AnchorProvider, program: Program<MonoProgram>) => {
+export const denyRequestFFA = async (creator: PublicKey,submitter: PublicKey, acc: EscrowContract, wallet: LancerWallet, anchor: AnchorProvider, program: Program<MonoProgram>) => {
 
-      const acc = await getFeatureFundingAccount(featureAccount, program);
 
 
       let approveSubmitterIx = await denyRequestInstruction(

@@ -23,11 +23,11 @@ import { DEVNET_USDC_MINT } from "@/src/constants";
 import { getFeatureFundingAccount, MyWallet } from "@/src/onChain";
 import { findFeatureAccount, findFeatureTokenAccount } from "@/escrow/sdk/pda";
 import { LancerWallet } from "@/src/providers/lancerProvider";
+import { EscrowContract } from "@/src/types";
 
 
-export const addSubmitterFFA = async (creator: PublicKey, submitter: PublicKey, featureAccount: PublicKey, wallet: LancerWallet, anchor: AnchorProvider, program: Program<MonoProgram>) => {
+export const addSubmitterFFA = async (creator: PublicKey, submitter: PublicKey, acc: EscrowContract, wallet: LancerWallet, anchor: AnchorProvider, program: Program<MonoProgram>) => {
 
-      const acc = await getFeatureFundingAccount(featureAccount, program);
       let approveSubmitterIx = await addApprovedSubmittersInstruction(
         acc.unixTimestamp,
         creator,

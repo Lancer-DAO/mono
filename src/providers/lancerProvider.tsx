@@ -43,6 +43,7 @@ export const REACT_APP_SPA_CLIENTID = "ZaU1oZzvlb06tZC8UXtTvTM9KSBY9pzk";
 export const REACT_APP_RWA_CLIENTID = "ZaU1oZzvlb06tZC8UXtTvTM9KSBY9pzk";
 export const REACT_APP_BACKEND_SERVER_API = "http://localhost:3001/callback";
 import MonoProgramJSON from "@/escrow/sdk/idl/mono_program.json";
+import { Issue } from "@/src/types";
 
 export class LancerWallet extends SolanaWallet {
   pk: PublicKey;
@@ -73,21 +74,25 @@ export interface User {
   githugLogin: string;
   name: string;
   token: string;
+  uuid?: string;
 }
 
 export interface ILancerContext {
   user: User;
+  issue: Issue;
   loginState: LOGIN_STATE;
   anchor: AnchorProvider;
   program: Program<MonoProgram>;
   web3Auth: Web3AuthCore;
   wallet: LancerWallet;
+  setIssue: (issue: Issue) => void;
   login: () => Promise<void>;
   logout: () => Promise<void>;
 }
 
 export const LancerContext = createContext<ILancerContext>({
   user: null,
+  issue: null,
   loginState: "logged_out",
   anchor: null,
   program: null,
@@ -95,6 +100,7 @@ export const LancerContext = createContext<ILancerContext>({
   wallet: null,
   login: async () => {},
   logout: async () => {},
+  setIssue: () => null,
 });
 
 export function useLancer(): ILancerContext {
@@ -104,21 +110,25 @@ export function useLancer(): ILancerContext {
 interface ILancerState {
   children?: React.ReactNode;
   referrer: string;
+  issueProp?: Issue;
 }
 interface ILancerProps {
   children?: ReactNode;
   referrer: string;
+  issueProp?: Issue;
 }
 
 export const LancerProvider: FunctionComponent<ILancerState> = ({
   children,
   referrer,
+  issueProp,
 }: ILancerProps) => {
   const [anchor, setAnchor] = useState<AnchorProvider | null>(null);
   const [program, setProgram] = useState<Program<MonoProgram> | null>(null);
   const [wallet, setWallet] = useState<LancerWallet | null>(null);
   const [web3Auth, setWeb3Auth] = useState<Web3AuthCore | null>(null);
   const [user, setUser] = useState<User | null>(null);
+  const [issue, setIssue] = useState<Issue | null>(issueProp);
   const [loginState, setLoginState] = useState<LOGIN_STATE | null>(
     "logged_out"
   );
@@ -308,6 +318,8 @@ export const LancerProvider: FunctionComponent<ILancerState> = ({
     loginState,
     login,
     logout,
+    issue,
+    setIssue,
   };
   return (
     <LancerContext.Provider value={contextProvider}>
