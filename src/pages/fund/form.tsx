@@ -49,6 +49,7 @@ import { MonoProgram } from "@/escrow/sdk/types/mono_program";
 import { MONO_DEVNET } from "@/escrow/sdk/constants";
 import MonoProgramJSON from "@/escrow/sdk/idl/mono_program.json";
 import Base58 from "base-58";
+import { useLancer } from "@/src/providers/lancerProvider";
 
 const secretKey = Uint8Array.from(keypair);
 const keyPair = Keypair.fromSecretKey(secretKey);
@@ -71,29 +72,10 @@ export const DEFAULT_MINTS = [
 export const DEFAULT_MINT_NAMES = DEFAULT_MINTS.map((mint) => mint.name);
 
 const Form = () => {
-  const web3auth = useWeb3Auth();
-  const {
-    provider,
-    loginRWA,
-    getUserInfo,
-    signAndSendTransaction,
-    setIsLoading,
-    isWeb3AuthInit,
-    getBalance,
-    getAccounts,
-    logout,
-    getWallet,
-  } = web3auth;
-  const search = useLocation().search;
+  const { user, program, anchor, wallet } = useLancer();
+
   const [repositories, setRepositories] = useState<any[]>();
   const [repo, setRepo] = useState<any>();
-  const [user, setUser] = useState<any>();
-  const [web3AuthState, setWeb3AuthState] = useState(
-    WEB3_INIT_STATE.GETTING_TOKEN
-  );
-  const params = new URLSearchParams(search);
-  const jwt = params.get("token");
-  const token = jwt == null ? "" : jwt;
   const [formData, setFormData] = useState({
     organizationName: "",
     repositoryName: "",
@@ -102,59 +84,22 @@ const Form = () => {
     requirements: [],
     estimatedTime: "",
     isPrivate: false,
-    paymentType: "spl",
-    paymentAmount: 0,
-    mintAddress: "",
   });
 
   useEffect(() => {
-    const handleAuthLogin = async () => {
-      try {
-        // debugger;
-        if (token !== "") {
-          if (web3AuthState === WEB3_INIT_STATE.GETTING_USER) {
-            const getUser = async () => {
-              const userInfo = await getUserInfo();
-              console.log("user", userInfo);
-              setUser(userInfo);
-              const userId = userInfo.verifierId;
-
-              axios
-                .get(
-                  `${getApiEndpoint()}${DATA_API_ROUTE}/${ACCOUNT_API_ROUTE}/organizations?${convertToQueryParams(
-                    { githubId: userId }
-                  )}`
-                )
-                .then((resp) => {
-                  console.log(resp);
-                  setRepositories(resp.data.data);
-                });
-            };
-            getUser();
-            setWeb3AuthState(WEB3_INIT_STATE.READY);
-          } else {
-            await loginRWA(WALLET_ADAPTERS.OPENLOGIN, "jwt", token);
-            setWeb3AuthState(WEB3_INIT_STATE.GETTING_USER);
-          }
-        } else {
-          const rwaURL = `${REACT_APP_AUTH0_DOMAIN}/authorize?scope=openid&response_type=code&client_id=${REACT_APP_CLIENTID}&redirect_uri=${`${getApiEndpoint()}callback?referrer=fund`}&state=STATE`;
-          console.log(rwaURL);
-          // debugger;
-          window.location.href = rwaURL;
-          setWeb3AuthState(WEB3_INIT_STATE.INITIALIZING);
-        }
-      } catch (e) {
-        console.error(e);
-      }
-    };
-    if (web3AuthState !== WEB3_INIT_STATE.READY && isWeb3AuthInit) {
-      handleAuthLogin();
-    } else {
-      //   logout();
+    if (user?.githubId) {
+      axios
+        .get(
+          `${getApiEndpoint()}${DATA_API_ROUTE}/${ACCOUNT_API_ROUTE}/organizations?${convertToQueryParams(
+            { githubId: user.githubId }
+          )}`
+        )
+        .then((resp) => {
+          console.log(resp);
+          setRepositories(resp.data.data);
+        });
     }
-    // sessionStorage.clear();
-    // window.open(REACT_APP_AUTH0_DOMAIN + "/v2/logout?federated");
-  }, [web3AuthState, isWeb3AuthInit, getUserInfo, getAccounts]);
+  }, [user]);
 
   const handleChange = (event) => {
     setFormData({
@@ -200,20 +145,16 @@ const Form = () => {
     e.preventDefault();
 
     const createIssue = async () => {
-      const accounts = await getAccounts();
       return axios.post(
         `${getApiEndpoint()}${DATA_API_ROUTE}/${GITHUB_ISSUE_API_ROUTE}`,
         {
-          githubId: user.verifierId,
+          githubId: user.githubId,
           githubLogin: "jacksturt",
-          solanaKey: accounts[0].toString(),
+          solanaKey: user.publicKey.toString(),
           org: repo.full_name.split("/")[0],
           repo: repo.full_name.split("/")[1],
           title: formData.issueTitle,
           description: formData.issueDescription,
-          fundingHash: "",
-          fundingAmount: formData.paymentAmount,
-          fundingMint: formData.mintAddress ? formData.mintAddress : "",
           tags: formData.requirements,
           private: formData.isPrivate || repo ? repo.private : false,
           estimatedTime: formData.estimatedTime,
@@ -221,32 +162,29 @@ const Form = () => {
       );
     };
 
-    const createAndFundEscrow = async (issue: number) => {
+    const createAndFundEscrow = async (issue: {
+      number: number;
+      uuid: string;
+    }) => {
       console.log("submit");
-      const accounts = await getAccounts();
-      const creator = new PublicKey(accounts[0]);
-      const timestamp = await createFFA(
-        creator,
-        signAndSendTransaction,
-        getWallet
-      );
+      const creator = user.publicKey;
+      const timestamp = await createFFA(creator, wallet, anchor, program);
       // const timestamp = "1678054848253";
-
       await axios.put(
         `${getApiEndpoint()}${DATA_API_ROUTE}/${ISSUE_API_ROUTE}/timestamp`,
         {
           org: repo.full_name.split("/")[0],
           repo: repo.full_name.split("/")[1],
-          issueNumber: issue,
+          issueNumber: issue.number,
           timestamp: timestamp,
         }
       );
+      window.location.replace(`/bounty?id=${issue.uuid}`);
     };
 
-    // const issueResponse = await createIssue();
-    // console.log("issueres", issueResponse);
-    // await createAndFundEscrow(issueResponse.data.issue.number);
-    await createAndFundEscrow(98);
+    const issueResponse = await createIssue();
+    console.log("issueres", issueResponse);
+    await createAndFundEscrow(issueResponse.data.issue);
 
     console.log(formData); // do something with form data
   };
@@ -343,55 +281,6 @@ const Form = () => {
                 className="form-checkbox"
               />
             </div>
-          </div>
-        </div>
-        <div className="form-subtitle">Payment Information</div>
-        <div className="form-row-grid grid-1-1-1">
-          <div className="form-cell">
-            <label className="form-label">Payment Type</label>
-            <select
-              name="paymentType"
-              value={formData.paymentType}
-              onChange={handleChange}
-              className="form-select"
-            >
-              <option value="spl">SPL Token</option>
-              <option value="stripe" disabled={true}>
-                Stripe (Coming Soon)
-              </option>
-              <option value="paypal" disabled={true}>
-                PayPal (Coming Soon)
-              </option>
-              <option value="coinbase" disabled={true}>
-                Coinbase (Coming Soon)
-              </option>
-            </select>
-          </div>
-          <div className="form-cell">
-            <label className="form-label">Payment Token</label>
-            <RadioWithCustomInput
-              options={[...DEFAULT_MINTS.map((mint) => mint.name), "Other"]}
-              defaultOption="SOL"
-              setOption={(option) => {
-                const mintAddress = DEFAULT_MINT_NAMES.includes(option)
-                  ? DEFAULT_MINTS.find((mint) => mint.name === option).mint
-                  : option;
-                setFormData({
-                  ...formData,
-                  mintAddress: mintAddress,
-                });
-              }}
-            />
-          </div>
-          <div className="form-cell">
-            <label className="form-label">Payment Amount</label>
-            <input
-              type="number"
-              name="paymentAmount"
-              value={formData.paymentAmount}
-              onChange={handleChange}
-              className="form-input"
-            />
           </div>
         </div>
         <div className="submit-wrapper">

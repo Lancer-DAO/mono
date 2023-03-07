@@ -8,20 +8,18 @@ export interface AccountInsertParams extends AccountGetParams {
   solanaKey?: PublicKey;
   verified?: boolean;
   isAdmin?: boolean;
-  githubId?: string;
 
 }
 
 export interface AccountGetParams {
-  githubLogin: string;
+  githubId?: string;
+  githubLogin?: string;
 }
 
 // ISSUE
 
 export interface IssueInsertParams extends IssueGetParams {
-fundingHash: string,
-fundingAmount: number,
-fundingMint: string,
+
 tags: string[],
 private: boolean,
 estimatedTime: number,
@@ -29,6 +27,7 @@ description: string
 }
 
 export interface IssueGetParams {
+
   title?: string,
   repo: string,
   org: string,
@@ -37,7 +36,9 @@ export interface IssueGetParams {
 
 export interface IssueUpdateParams extends IssueGetParams {
   state?: string
-  hash?: string
+  hash?: string,
+  amount?: number,
+  mint?: string,
   escrowKey?: string
   timestamp?: string
   }

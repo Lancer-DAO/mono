@@ -32,7 +32,7 @@ router.post(`/${ACCOUNT_API_ROUTE}`, async function (req, res, next) {
 router.get(`/${ACCOUNT_API_ROUTE}`, async function (req, res, next) {
   try {
     return res.json(
-      await getAccount({ githubLogin: req.query.githubLogin as string, })
+      await getAccount({ githubId: req.query.githubId as string, })
     );
   } catch (err) {
     next(err);
@@ -61,10 +61,10 @@ router.get(`/${ACCOUNT_API_ROUTE}/organizations`, (req, res) => {
         headers: {'content-type': 'application/x-www-form-urlencoded', 'Authorization': `Bearer ${code}`},
       };
       // console.log('options', options)
-  
+
       axios.request(options).then(function (response) {
         // console.log('axios', response)
-  
+
       const gh_token = response.data.identities[0].access_token;
       const username = response.data.nickname;
       console.log('token', response.data)
@@ -74,23 +74,23 @@ router.get(`/${ACCOUNT_API_ROUTE}/organizations`, (req, res) => {
       });
       octokit.request('GET /user/repos', {
       }).then((resp) => {
-  
+
         return res.status(200).json({message: 'Organizations Found', data: resp.data})
       }).catch((error) => {
-  
+
         console.error(error);
-  
+
         return res.status(500).send({message: error})
       })
       }).catch(function (error) {
         console.error(error);
-  
+
         return res.status(500).send({message: error})
       })
     }).catch(function (error) {
       console.error(error);
       return res.status(500).send({message: error})
-  
+
     });
   });
 

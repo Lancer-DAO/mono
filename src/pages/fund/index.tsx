@@ -9,6 +9,7 @@ import {
 import { Web3AuthProvider } from "@/providers";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import Form from "./form";
+import { LancerProvider } from "@/src/providers/lancerProvider";
 
 function App() {
   const [web3AuthNetwork, setWeb3AuthNetwork] =
@@ -23,15 +24,11 @@ function App() {
   if (ready) {
     return (
       <div>
-        <Web3AuthProvider
-          chain={chain}
-          web3AuthNetwork={web3AuthNetwork}
-          app={app}
-        >
-          <Router>
+        <Router>
+          <LancerProvider referrer="fund">
             <Form />
-          </Router>
-        </Web3AuthProvider>
+          </LancerProvider>
+        </Router>
       </div>
     );
   }

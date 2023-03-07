@@ -125,21 +125,31 @@ export const LancerProvider: FunctionComponent<ILancerState> = ({
   const search = useLocation().search;
   const params = new URLSearchParams(search);
   const jwt = params.get("token");
-  const setWalletProvider = useCallback(
-    (web3authProvider: SafeEventEmitterProvider) => {
-      const walletProvider = new LancerWallet(web3authProvider);
-      setTimeout(async function () {
-        const accounts = await walletProvider.requestAccounts();
-        walletProvider.pk = new PublicKey(accounts[0]);
-        setWallet(walletProvider);
-        setLoginState("getting_user");
-      }, 1000);
-    },
-    []
-  );
+  const setWalletProvider = useCallback(async () => {
+    let provider = web3Auth.provider;
+    if (!provider) {
+      provider = await web3Auth.connectTo(WALLET_ADAPTERS.OPENLOGIN, {
+        loginProvider: "jwt",
+        extraLoginOptions: {
+          id_token: jwt,
+          domain: REACT_APP_AUTH0_DOMAIN,
+          verifierIdField: "sub",
+        },
+      });
+    }
+    console.log("setting provider");
+    const walletProvider = new LancerWallet(provider);
+    setTimeout(async function () {
+      console.log(walletProvider);
+      const accounts = await walletProvider.requestAccounts();
+      walletProvider.pk = new PublicKey(accounts[0]);
+      setWallet(walletProvider);
+      setLoginState("getting_user");
+    }, 1000);
+  }, [web3Auth]);
 
   useEffect(() => {
-    console.log("hi");
+    console.log("hi", loginState);
     const subscribeAuthEvents = (web3auth: Web3AuthCore) => {
       // Can subscribe to all ADAPTER_EVENTS and LOGIN_MODAL_EVENTS
       web3auth.on(ADAPTER_EVENTS.CONNECTED, (data: unknown) => {
@@ -174,7 +184,8 @@ export const LancerProvider: FunctionComponent<ILancerState> = ({
           clientId: clientId,
         });
         subscribeAuthEvents(web3AuthInstance);
-        // alert(sessionStorage.getItem('app'))
+        console.log("adapter");
+
         const adapter = new OpenloginAdapter({
           adapterSettings: {
             network: "cyan",
@@ -190,16 +201,15 @@ export const LancerProvider: FunctionComponent<ILancerState> = ({
             },
           },
         });
+        console.log("configure");
 
         web3AuthInstance.configureAdapter(adapter);
+        console.log("init");
 
         await web3AuthInstance.init();
 
         setWeb3Auth(web3AuthInstance);
-
-        const localProvider = await web3AuthInstance.provider;
         setLoginState("initializing_wallet");
-        setWalletProvider(localProvider!);
       } catch (error) {
         console.error(error);
       }
@@ -211,11 +221,17 @@ export const LancerProvider: FunctionComponent<ILancerState> = ({
         `${getApiEndpoint()}${DATA_API_ROUTE}/${ACCOUNT_API_ROUTE}`,
         {
           params: {
-            githubLogin: web3AuthUser.verifier,
+            githubId: web3AuthUser.verifierId,
           },
         }
       );
-      setUser(user.data);
+      console.log("user", user.data);
+      setUser({
+        ...user.data,
+        githubId: user.data.github_id,
+        githubLogin: user.data.github_login,
+        publicKey: new PublicKey(user.data.solana_pubkey),
+      });
       setLoginState("initializing_anchor");
     };
     if (jwt === "" || jwt === null) {
@@ -228,6 +244,8 @@ export const LancerProvider: FunctionComponent<ILancerState> = ({
       (loginState === "logged_out" || loginState === "retrieving_jwt")
     ) {
       init();
+    } else if (loginState === "initializing_wallet") {
+      setWalletProvider();
     } else if (loginState === "getting_user") {
       getUser();
     } else if (loginState === "initializing_anchor") {

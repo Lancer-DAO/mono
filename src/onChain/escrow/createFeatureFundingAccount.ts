@@ -24,18 +24,10 @@ import MonoProgramJSON from "@/escrow/sdk/idl/mono_program.json";
 import { DEVNET_USDC_MINT } from "@/src/constants";
 import { MyWallet } from "@/src/onChain";
 import Base58 from 'base-58'
+import { LancerWallet } from "@/src/providers/lancerProvider";
 
-export const createFFA = async (creator: PublicKey, signAndSendTransaction: (tx: Transaction)=> Promise<string>, getWallet: () => MyWallet | null) => {
+export const createFFA = async (creator: PublicKey, wallet: LancerWallet, anchor: AnchorProvider, program: Program<MonoProgram>) => {
 
-  const wallet = getWallet();
-  const connection = new Connection(getEndpoint());
-
-  const provider = new AnchorProvider(connection, wallet, {});
-  const program = new Program<MonoProgram>(
-    MonoProgramJSON as unknown as MonoProgram,
-    new PublicKey(MONO_DEVNET),
-    provider
-  );
   const timestamp = Date.now().toString();
   console.log("timestamp = ", timestamp);
       const ix = await createFeatureFundingAccountInstruction(
@@ -44,7 +36,7 @@ export const createFFA = async (creator: PublicKey, signAndSendTransaction: (tx:
         program,
         timestamp
       );
-      const {blockhash, lastValidBlockHeight} = (await connection.getLatestBlockhash());
+      const {blockhash, lastValidBlockHeight} = (await anchor.connection.getLatestBlockhash());
       const txInfo = {
                 /** The transaction fee payer */
                 feePayer: creator,

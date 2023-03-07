@@ -31,7 +31,7 @@ export const insertAccount = async (params: AccountInsertParams) => {
 };
 
 export const getAccount = async (params: AccountGetParams) => {
-  let query = `SELECT * FROM account where github_login='${params.githubLogin}'`;
+  let query = `SELECT * FROM account where github_id='${params.githubId}' or github_login='${params.githubLogin}'`;
   const result = await DB.raw(query);
   return result.rows.length > 0 ? result.rows[0] : {message: 'NOT FOUND'};
 };
@@ -40,16 +40,12 @@ export const getAccount = async (params: AccountGetParams) => {
 
 export const insertIssue = async (params: IssueInsertParams) => {
   let query =
-    "INSERT INTO issue (issue_number, title, repo, org, state, funding_amount, funding_mint, estimated_time, private, tags, description)";
+    "INSERT INTO issue (issue_number, title, repo, org, state, estimated_time, private, tags, description)";
   query += ` VALUES (${params.issueNumber}, '${
     params.title
   }', '${params.repo}', '${
     params.org
   }', 'new', ${
-    params.fundingAmount
-  }, '${
-    params.fundingMint
-  }', ${
     params.estimatedTime
   }, ${
     params.private
@@ -109,7 +105,7 @@ export const updateIssueState = async (params: IssueUpdateParams) => {
 
 export const updateIssueHash = async (params: IssueUpdateParams) => {
   let query =
-    `UPDATE issue SET funding_hash='${params.hash}' where `;
+    `UPDATE issue SET funding_hash='${params.hash}', funding_amount='${params.amount}', funding_mint='${params.mint}' where `;
   query += `repo='${params.repo}'`
   query += ` AND org='${params.org}'`
   query += ` AND issue_number='${params.issueNumber}'`
@@ -257,7 +253,8 @@ export const newAccountIssue = async (params: AccountIssueNewParams) => {
   const result = {
     message: "Issue Created",
     issue: {
-      number: issue.issue_number
+      number: issue.issue_number,
+      uuid: issue.uuid
     }
   }
   return result;

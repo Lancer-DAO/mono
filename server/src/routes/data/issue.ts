@@ -29,12 +29,9 @@ router.post(`/${ISSUE_API_ROUTE}`, async function (req, res, next) {
     try {
       return res.json(
         await insertIssue({
-          fundingHash: req.query.fundingHash as string,
-           fundingAmount: parseFloat(req.query.fundingAmount as string),
            title: req.query.title as string,
            repo: req.query.repo as string,
            org: req.query.org as string,
-           fundingMint: req.query.org as string,
            tags: req.query.tags as string[],
            private: req.query.private === 'true',
            estimatedTime: parseFloat(req.query.estimatedTime as string),
