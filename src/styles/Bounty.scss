@@ -258,6 +258,7 @@ body {
 
 .bounty-content {
   display: grid;
+  width: 100%;
   grid-template-columns: 200px 1fr 200px;
   column-gap: 10px;
 }
@@ -287,4 +288,8 @@ body {
   margin-bottom: 8px;
   padding-bottom: 8px;
   border-bottom: rgba(256, 256, 256, 0.5) solid 1px;
+}
+
+.bounty-center {
+  width: 100%;
 }

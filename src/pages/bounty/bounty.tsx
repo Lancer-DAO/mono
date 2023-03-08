@@ -30,7 +30,14 @@ import { WALLET_ADAPTERS } from "@web3auth/base";
 import axios from "axios";
 import { capitalize } from "lodash";
 import { marked } from "marked";
-import { ReactElement, ReactNode, useEffect, useState } from "react";
+import {
+  ReactElement,
+  ReactNode,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 import { useLocation } from "react-router-dom";
 import { AnchorProvider, Program, Wallet } from "@project-serum/anchor";
 import MonoProgramJSON from "@/escrow/sdk/idl/mono_program.json";
@@ -39,7 +46,7 @@ import { MonoProgram } from "@/escrow/sdk/types/mono_program";
 import Base58 from "base-58";
 import RadioWithCustomInput from "@/src/pages/fund/RadioWithCustomInput";
 import { DEFAULT_MINTS, DEFAULT_MINT_NAMES } from "@/src/pages/fund/form";
-import { useLancer } from "@/src/providers/lancerProvider";
+import { useLancer, User } from "@/src/providers/lancerProvider";
 import FundBounty from "@/src/pages/bounty/components/fundBounty";
 import RequestToSubmit from "@/src/pages/bounty/components/requestToSubmit";
 import SubmitterSection from "@/src/pages/bounty/components/submitterSection";
@@ -59,128 +66,90 @@ const SideBarSection: React.FC<{ title: string; children: ReactNode }> = ({
   );
 };
 
+const getAvailableCommands = (issue: Issue, user: User) => {
+  const availableCommands = [];
+  console.log(user, issue);
+  if (!issue) {
+    return null;
+  }
+
+  if (!user) {
+    return [<div>Loading User Info</div>];
+  }
+  if (
+    issue.state === IssueState.NEW &&
+    (!issue.escrowKey || !issue.escrowContract)
+  ) {
+    return [<div>Creating Escrow Contract</div>];
+  }
+  const isSubmitter = issue.submitter && issue.submitter.uuid === user.uuid;
+  const isCreator = issue.creator.uuid === user.uuid;
+  const isApprovedSubmitter =
+    issue.approvedSubmitters.findIndex(
+      (submitter) => submitter.uuid === user.uuid
+    ) > -1;
+  if (issue.state === IssueState.NEW && issue.creator.uuid === user.uuid) {
+    availableCommands.push(<FundBounty />);
+  }
+  console.log(isSubmitter, isCreator, isApprovedSubmitter);
+  if (
+    issue.state === IssueState.ACCEPTING_APPLICATIONS ||
+    (issue.state === IssueState.IN_PROGRESS &&
+      !isApprovedSubmitter &&
+      issue.approvedSubmitters.length < 3)
+  ) {
+    availableCommands.push(<RequestToSubmit />);
+  }
+
+  if (issue.approvedSubmitters.length > 0) {
+    issue.approvedSubmitters.forEach((submitter) => {
+      if (!submitter.isSubmitter) {
+        availableCommands.push(
+          <SubmitterSection submitter={submitter} type="approved" />
+        );
+      }
+    });
+  }
+
+  if (issue.requestedSubmitters.length > 0) {
+    issue.requestedSubmitters.forEach((submitter) => {
+      availableCommands.push(
+        <SubmitterSection submitter={submitter} type="requested" />
+      );
+    });
+  }
+  console.log(issue.state, isApprovedSubmitter);
+  if (issue.state === IssueState.IN_PROGRESS && isApprovedSubmitter) {
+    availableCommands.push(<SubmitRequest />);
+  }
+  if (
+    issue.state === IssueState.AWAITING_REVIEW &&
+    issue.creator.uuid === user.uuid
+  ) {
+    availableCommands.push(<ReviewRequest />);
+  }
+  if (issue.state !== IssueState.COMPLETE && (isCreator || isSubmitter)) {
+    availableCommands.push(<VoterSection />);
+  }
+  console.log(availableCommands);
+  return availableCommands;
+};
+
 const Bounty: React.FC = () => {
-  const { wallet, anchor, program, user, issue, setIssue } = useLancer();
-  const [isLoading, setIsLoading] = useState(false);
+  const { user, issue, issueLoadingState } = useLancer();
+  const [availableCommands, setAvailableCommands] = useState([]);
+
+  useEffect(() => {
+    console.log(user, issue, issueLoadingState);
+    const commands = getAvailableCommands(issue, user);
+    if (!commands) {
+      return;
+    }
+    setAvailableCommands(commands);
+  }, [user?.uuid, issue, issueLoadingState]);
   if (!issue) {
     return <></>;
   }
-  const creator = new PublicKey(issue.pubkey);
-  useEffect(() => {
-    const getEscrowContract = async () => {
-      let escrowKey = issue.escrowKey;
-      if (!escrowKey) {
-        const accounts = await anchor.connection.getParsedProgramAccounts(
-          program.programId, // new PublicKey("TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA")
-          {
-            filters: [
-              {
-                dataSize: 288, // number of bytes
-              },
-              {
-                memcmp: {
-                  offset: 8, // number of bytes
-                  bytes: creator.toBase58(), // base58 encoded string
-                },
-              },
-              {
-                memcmp: {
-                  offset: 275, // number of bytes
-                  bytes: Base58.encode(Buffer.from(issue.timestamp)), // base58 encoded string
-                },
-              },
-            ],
-          }
-        );
-
-        escrowKey = accounts[0].pubkey;
-
-        axios.put(
-          `${getApiEndpoint()}${DATA_API_ROUTE}/${ISSUE_API_ROUTE}/escrow_key`,
-          {
-            org: issue.org,
-            repo: issue.repo,
-            issueNumber: issue.issueNumber,
-            escrowKey: escrowKey.toString(),
-          }
-        );
-      }
-      const escrowContract = await getFeatureFundingAccount(escrowKey, program);
-      setIssue({
-        ...issue,
-        escrowContract: escrowContract as unknown as EscrowContract,
-      });
-    };
-    if (
-      !issue.escrowContract &&
-      program &&
-      !isLoading &&
-      issue.creator &&
-      issue.state !== IssueState.COMPLETE
-    ) {
-      setIsLoading(true);
-      console.log("hi");
-      getEscrowContract();
-    }
-  }, [program, isLoading, issue]);
-
-  const getAvailableCommands = () => {
-    const availableCommands = [];
-    console.log(user, issue);
-    if (!user || !issue) {
-      return [];
-    }
-    const isSubmitter = issue.submitter && issue.submitter.uuid === user.uuid;
-    const isCreator = issue.creator.uuid === user.uuid;
-    const isApprovedSubmitter =
-      issue.approvedSubmitters.findIndex(
-        (submitter) => submitter.uuid === user.uuid
-      ) > -1;
-    if (issue.state === IssueState.NEW && issue.creator.uuid === user.uuid) {
-      availableCommands.push(<FundBounty />);
-    }
-    console.log(isSubmitter, isCreator, isApprovedSubmitter);
-    if (
-      issue.state === IssueState.ACCEPTING_APPLICATIONS ||
-      (issue.state === IssueState.IN_PROGRESS &&
-        !isApprovedSubmitter &&
-        issue.approvedSubmitters.length < 3)
-    ) {
-      availableCommands.push(<RequestToSubmit />);
-    }
-
-    if (issue.approvedSubmitters.length > 0) {
-      issue.approvedSubmitters.forEach((submitter) => {
-        if (!submitter.isSubmitter) {
-          availableCommands.push(
-            <SubmitterSection submitter={submitter} type="approved" />
-          );
-        }
-      });
-    }
-
-    if (issue.requestedSubmitters.length > 0) {
-      issue.requestedSubmitters.forEach((submitter) => {
-        availableCommands.push(
-          <SubmitterSection submitter={submitter} type="requested" />
-        );
-      });
-    }
-    console.log(issue.state, isApprovedSubmitter);
-    if (issue.state === IssueState.IN_PROGRESS && isApprovedSubmitter) {
-      availableCommands.push(<SubmitRequest />);
-    }
-    if (
-      issue.state === IssueState.AWAITING_REVIEW &&
-      issue.creator.uuid === user.uuid
-    ) {
-      availableCommands.push(<ReviewRequest />);
-    }
-    if (issue.state !== IssueState.COMPLETE && (isCreator || isSubmitter)) {
-      availableCommands.push(<VoterSection />);
-    }
-    return availableCommands;
-  };
 
   const descriptionMarkup = () => {
     const markdown = marked.parse(issue.description, { breaks: true });
@@ -220,13 +189,13 @@ const Bounty: React.FC = () => {
             </div>
           </SideBarSection>
         </div>
-        <div>
+        <div className="bounty-center">
           <div
             className="bounty-description-markup"
             dangerouslySetInnerHTML={descriptionMarkup()}
           />
 
-          <>{...getAvailableCommands()}</>
+          <>{...availableCommands}</>
         </div>
         <div className="bounty-right-side">
           <SideBarSection title="Creator">

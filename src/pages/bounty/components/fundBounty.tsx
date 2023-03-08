@@ -7,10 +7,11 @@ import { useState } from "react";
 import RadioWithCustomInput from "@/src/pages/fund/RadioWithCustomInput";
 import { DEFAULT_MINTS, DEFAULT_MINT_NAMES } from "@/src/pages/fund/form";
 import { useLancer } from "@/src/providers/lancerProvider";
+import { IssueState } from "@/src/types";
 
 const FundBounty: React.FC = () => {
-  const { wallet, anchor, program, user, issue } = useLancer();
-  if (!issue) {
+  const { wallet, anchor, program, setIssue, issue } = useLancer();
+  if (!issue || !issue.escrowContract) {
     return <></>;
   }
 
@@ -22,11 +23,10 @@ const FundBounty: React.FC = () => {
 
   const fundFeature = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    debugger;
     const signature = await fundFFA(
       issue.creator.pubkey,
       formData.paymentAmount,
-      issue.escrowKey,
+      issue.escrowContract,
       wallet,
       anchor,
       program
@@ -38,11 +38,16 @@ const FundBounty: React.FC = () => {
         org: issue.org,
         repo: issue.repo,
         issueNumber: issue.issueNumber,
-        hash: signature,
+        hash: signature.signature,
         amount: formData.paymentAmount,
         mint: DEVNET_USDC_MINT,
       }
     );
+
+    setIssue({
+      ...issue,
+      state: IssueState.ACCEPTING_APPLICATIONS,
+    });
   };
 
   const handleChange = (event) => {

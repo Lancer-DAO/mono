@@ -16,7 +16,22 @@ import {
 export type SubmitterSectionType = "approved" | "requested";
 
 const SubmitRequest: React.FC = () => {
-  const { issue, wallet, anchor, program, user } = useLancer();
+  const {
+    issue,
+    wallet,
+    anchor,
+    program,
+    user,
+    setIssue,
+    setIssueLoadingState,
+  } = useLancer();
+  // debugger;
+  if (
+    issue.escrowContract?.currentSubmitter.toString() !==
+    "11111111111111111111111111111111"
+  ) {
+    return <div>Processing Denial</div>;
+  }
 
   const submitRequest = async () => {
     try {
@@ -44,6 +59,11 @@ const SubmitRequest: React.FC = () => {
           state: IssueState.AWAITING_REVIEW,
         }
       );
+      setIssue({
+        ...issue,
+        state: IssueState.AWAITING_REVIEW,
+      });
+      setIssueLoadingState("getting_contract");
     } catch (e) {
       console.error(e);
     }

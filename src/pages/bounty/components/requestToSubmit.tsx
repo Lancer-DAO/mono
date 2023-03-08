@@ -10,7 +10,10 @@ import { addSubmitterFFA } from "@/src/onChain";
 import { IssueState } from "@/src/types";
 
 const RequestToSubmit: React.FC = () => {
-  const { user, issue, wallet, program, anchor } = useLancer();
+  const { user, issue, wallet, program, anchor, setIssue } = useLancer();
+  if (!issue.escrowContract) {
+    return <></>;
+  }
 
   const requestToSubmit = async () => {
     if (issue.creator.uuid === user.uuid) {
@@ -22,7 +25,6 @@ const RequestToSubmit: React.FC = () => {
         anchor,
         program
       );
-      debugger;
       axios.put(
         `${getApiEndpoint()}${DATA_API_ROUTE}/${ACCOUNT_ISSUE_API_ROUTE}`,
         { accountId: user.uuid, issueId: issue.uuid, isApprovedSubmitter: true }
@@ -35,7 +37,12 @@ const RequestToSubmit: React.FC = () => {
     }
 
     axios.put(`${getApiEndpoint()}${DATA_API_ROUTE}/${ISSUE_API_ROUTE}/state`, {
-      issueId: issue.uuid,
+      uuid: issue.uuid,
+      state: IssueState.IN_PROGRESS,
+    });
+
+    setIssue({
+      ...issue,
       state: IssueState.IN_PROGRESS,
     });
   };

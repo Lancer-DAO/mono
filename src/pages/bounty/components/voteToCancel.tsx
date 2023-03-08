@@ -1,11 +1,12 @@
 import {
   ACCOUNT_ISSUE_API_ROUTE,
   DATA_API_ROUTE,
+  ISSUE_API_ROUTE,
 } from "@/server/src/constants";
 import { getApiEndpoint } from "@/src/utils";
 import axios from "axios";
 import { useLancer } from "@/src/providers/lancerProvider";
-import { Submitter } from "@/src/types";
+import { IssueState, Submitter } from "@/src/types";
 import {
   addSubmitterFFA,
   cancelFFA,
@@ -16,7 +17,7 @@ import {
 export type SubmitterSectionType = "approved" | "requested";
 
 const VoterSection: React.FC = () => {
-  const { issue, wallet, anchor, program, user } = useLancer();
+  const { issue, wallet, anchor, program, user, setIssue } = useLancer();
   if (user.uuid === issue.creator.uuid && !issue.submitter) {
     const cancelEscrow = async () => {
       cancelFFA(
@@ -26,6 +27,18 @@ const VoterSection: React.FC = () => {
         anchor,
         program
       );
+
+      axios.put(
+        `${getApiEndpoint()}${DATA_API_ROUTE}/${ISSUE_API_ROUTE}/state`,
+        {
+          uuid: issue.uuid,
+          state: IssueState.CANCELED,
+        }
+      );
+      setIssue({
+        ...issue,
+        state: IssueState.CANCELED,
+      });
     };
 
     return (

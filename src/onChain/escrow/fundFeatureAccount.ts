@@ -24,12 +24,12 @@ import { DEVNET_USDC_MINT } from "@/src/constants";
 import { getFeatureFundingAccount, MyWallet } from "@/src/onChain";
 import { findFeatureTokenAccount } from "@/escrow/sdk/pda";
 import { LancerWallet } from "@/src/providers/lancerProvider";
+import { EscrowContract } from "@/src/types";
 
 
-export const fundFFA = async (creator: PublicKey, baseAmount: number, featureAccount: PublicKey, wallet: LancerWallet, anchor: AnchorProvider, program: Program<MonoProgram>) => {
+export const fundFFA = async (creator: PublicKey, baseAmount: number, acc: EscrowContract, wallet: LancerWallet, anchor: AnchorProvider, program: Program<MonoProgram>) => {
 
       const amount = baseAmount * Math.pow(10, 6)
-      const acc = await getFeatureFundingAccount(featureAccount, program);
 
     // check balaance before funding feature
     let fund_feature_ix = await fundFeatureInstruction(

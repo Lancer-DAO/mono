@@ -59,7 +59,7 @@ export const insertIssue = async (params: IssueInsertParams) => {
   }, ${
     `'{${params.tags.map((tag) => `"${tag}"`).join(", ")}}'`
   }, '${
-    params.description
+    params.description.replace("'", "\'")
   }');`;
   console.log(query);
   const result = await DB.raw(query);
