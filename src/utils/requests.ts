@@ -1,15 +1,15 @@
-import { API_ENDPOINT, API_ENDPOINT_DEV, APP_ENDPOINT, APP_ENDPOINT_DEV, EXTENSION_DEV } from "@/constants";
+import { API_ENDPOINT, API_ENDPOINT_DEV, APP_ENDPOINT, APP_ENDPOINT_DEV, EXTENSION_DEV, IS_LOCAL_API, IS_LOCAL_APP } from "@/constants";
 
 export const convertToQueryParams = (obj: Object) => {
     return Object.keys(obj).map(key => key + '=' + obj[key]).join('&');
 }
 
 export const getAppEndpoint = (): string => {
-    return process.env.NODE_ENV === 'development' ? APP_ENDPOINT_DEV : APP_ENDPOINT;
+    return IS_LOCAL_APP ? APP_ENDPOINT_DEV : APP_ENDPOINT;
 }
 
 export const getApiEndpoint = (): string => {
-    return process.env.NODE_ENV === 'development' ? API_ENDPOINT_DEV : API_ENDPOINT;
+    return IS_LOCAL_API ? API_ENDPOINT_DEV : API_ENDPOINT;
 }
 
 export const getApiEndpointExtenstion = (): string => {

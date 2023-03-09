@@ -5,7 +5,7 @@ dayjs.extend(timezone);
 
 // USER
 export interface AccountInsertParams extends AccountGetParams {
-  solanaKey?: PublicKey;
+  solanaKey?: string;
   verified?: boolean;
   isAdmin?: boolean;
 

@@ -25,11 +25,13 @@ dayjs.extend(timezone);
 // USERS
 
 export const insertAccount = async (params: AccountInsertParams) => {
-  let query = `INSERT INTO account (github_login,${params.githubId ?  'github_id, ': ''}${ params.solanaKey && 'solana_pubkey,'} verified, is_admin)`;
-  query += ` VALUES ('${params.githubLogin}',${params.githubId ? ` '${params.githubId}',`: ''}${params.solanaKey && ` '${params.solanaKey.toString()}',`} ${!!params.verified}, ${!!params.isAdmin})`;
+  let query = `INSERT INTO account (github_login, github_id, solana_pubkey)`;
+  query += ` VALUES ('${params.githubLogin}', '${params.githubId}', '${params.solanaKey}')`;
   const result = await DB.raw(query);
-  return result;
+  console.log(result[0])
+  return result[0];
 };
+
 
 export const getAccount = async (params: AccountGetParams) => {
   let query = `SELECT * FROM account where github_id='${params.githubId}' or github_login='${params.githubLogin}'`;

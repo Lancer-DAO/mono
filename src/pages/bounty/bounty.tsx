@@ -16,7 +16,6 @@ import {
   submitRequestFFA,
   voteToCancelFFA,
 } from "@/src/onChain";
-import { REACT_APP_AUTH0_DOMAIN, useWeb3Auth } from "@/src/providers";
 import {
   convertToQueryParams,
   getApiEndpoint,
@@ -74,13 +73,13 @@ const getAvailableCommands = (issue: Issue, user: User) => {
   }
 
   if (!user) {
-    return [<div>Loading User Info</div>];
+    return [<div key="loading-user">Loading User Info</div>];
   }
   if (
     issue.state === IssueState.NEW &&
     (!issue.escrowKey || !issue.escrowContract)
   ) {
-    return [<div>Creating Escrow Contract</div>];
+    return [<div key="creating-escrow">Creating Escrow Contract</div>];
   }
   const isSubmitter = issue.submitter && issue.submitter.uuid === user.uuid;
   const isCreator = issue.creator.uuid === user.uuid;
@@ -89,7 +88,7 @@ const getAvailableCommands = (issue: Issue, user: User) => {
       (submitter) => submitter.uuid === user.uuid
     ) > -1;
   if (issue.state === IssueState.NEW && issue.creator.uuid === user.uuid) {
-    availableCommands.push(<FundBounty />);
+    availableCommands.push(<FundBounty key="fund-bounty" />);
   }
   console.log(isSubmitter, isCreator, isApprovedSubmitter);
   if (
@@ -98,14 +97,18 @@ const getAvailableCommands = (issue: Issue, user: User) => {
       !isApprovedSubmitter &&
       issue.approvedSubmitters.length < 3)
   ) {
-    availableCommands.push(<RequestToSubmit />);
+    availableCommands.push(<RequestToSubmit key={`request-submit`} />);
   }
 
   if (issue.approvedSubmitters.length > 0) {
     issue.approvedSubmitters.forEach((submitter) => {
       if (!submitter.isSubmitter) {
         availableCommands.push(
-          <SubmitterSection submitter={submitter} type="approved" />
+          <SubmitterSection
+            submitter={submitter}
+            type="approved"
+            key={`approved-submitters-${submitter.uuid}`}
+          />
         );
       }
     });
@@ -114,22 +117,26 @@ const getAvailableCommands = (issue: Issue, user: User) => {
   if (issue.requestedSubmitters.length > 0) {
     issue.requestedSubmitters.forEach((submitter) => {
       availableCommands.push(
-        <SubmitterSection submitter={submitter} type="requested" />
+        <SubmitterSection
+          submitter={submitter}
+          type="requested"
+          key={`requested-submitters-${submitter.uuid}`}
+        />
       );
     });
   }
   console.log(issue.state, isApprovedSubmitter);
   if (issue.state === IssueState.IN_PROGRESS && isApprovedSubmitter) {
-    availableCommands.push(<SubmitRequest />);
+    availableCommands.push(<SubmitRequest key={`submit-request`} />);
   }
   if (
     issue.state === IssueState.AWAITING_REVIEW &&
     issue.creator.uuid === user.uuid
   ) {
-    availableCommands.push(<ReviewRequest />);
+    availableCommands.push(<ReviewRequest key={`review-request`} />);
   }
   if (issue.state !== IssueState.COMPLETE && (isCreator || isSubmitter)) {
-    availableCommands.push(<VoterSection />);
+    availableCommands.push(<VoterSection key={`voter-section`} />);
   }
   console.log(availableCommands);
   return availableCommands;

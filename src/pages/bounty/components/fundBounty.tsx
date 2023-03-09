@@ -3,23 +3,55 @@ import { DEVNET_USDC_MINT } from "@/src/constants";
 import { fundFFA } from "@/src/onChain";
 import { getApiEndpoint } from "@/src/utils";
 import axios from "axios";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import RadioWithCustomInput from "@/src/pages/fund/RadioWithCustomInput";
 import { DEFAULT_MINTS, DEFAULT_MINT_NAMES } from "@/src/pages/fund/form";
 import { useLancer } from "@/src/providers/lancerProvider";
 import { IssueState } from "@/src/types";
+import {
+  createAssociatedTokenAccountInstruction,
+  getAccount,
+  createMint,
+  mintToChecked,
+  getAssociatedTokenAddress,
+  getMint,
+  TOKEN_PROGRAM_ID,
+  NATIVE_MINT,
+  createSyncNativeInstruction,
+  ASSOCIATED_TOKEN_PROGRAM_ID,
+} from "@solana/spl-token";
+import { PublicKey } from "@solana/web3.js";
+import { PubKey } from "@/src/components";
 
 const FundBounty: React.FC = () => {
-  const { wallet, anchor, program, setIssue, issue } = useLancer();
-  if (!issue || !issue.escrowContract) {
-    return <></>;
-  }
-
+  const { wallet, anchor, program, setIssue, issue, user } = useLancer();
   const [formData, setFormData] = useState({
     paymentType: "spl",
     paymentAmount: 0,
-    mintAddress: "",
+    mintAddress: DEVNET_USDC_MINT,
   });
+  const [userBalance, setUserBalance] = useState("0.0");
+  useEffect(() => {
+    const getWalletBalance = async () => {
+      const mintKey = new PublicKey(formData.mintAddress);
+      const token_account = await getAssociatedTokenAddress(
+        mintKey,
+        user.publicKey
+      );
+      const account = await getAccount(anchor.connection, token_account);
+      const mint = await getMint(anchor.connection, mintKey);
+      const decimals = Math.pow(10, mint.decimals);
+      console.log(account.amount);
+      const balance = account.amount / BigInt(decimals);
+      setUserBalance(balance.toString());
+    };
+    if (user?.publicKey && anchor?.connection) {
+      getWalletBalance();
+    }
+  }, [user?.publicKey, formData.mintAddress, anchor]);
+  if (!issue || !issue.escrowContract) {
+    return <></>;
+  }
 
   const fundFeature = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -58,6 +90,15 @@ const FundBounty: React.FC = () => {
   };
   return (
     <form className="form" style={{ width: "1000px" }} onSubmit={fundFeature}>
+      <div className="User Balance">User Balance: {userBalance}</div>
+      <PubKey pubKey={user.publicKey} />
+      <a
+        href="https://staging.coinflow.cash/faucet"
+        target={"_blank"}
+        rel="noreferrer"
+      >
+        Request Airdrop
+      </a>
       <div className="form-subtitle">Payment Information</div>
       <div className="form-row-grid grid-1-1-1">
         <div className="form-cell">

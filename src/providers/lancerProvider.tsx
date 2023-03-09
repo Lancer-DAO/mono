@@ -18,14 +18,17 @@ import {
 } from "react";
 import { CHAIN_CONFIG, CHAIN_CONFIG_TYPE } from "../config/chainConfig";
 import { WEB3AUTH_NETWORK_TYPE } from "../config/web3AuthNetwork";
-import { getWalletProvider, IWalletProvider } from "./walletProvider";
 import { APP_CONFIG_TYPE } from "../config/appConfig";
-import { Connection, PublicKey, Transaction } from "@solana/web3.js";
+import {
+  Connection,
+  LAMPORTS_PER_SOL,
+  PublicKey,
+  Transaction,
+} from "@solana/web3.js";
 import { SolanaWallet } from "@web3auth/solana-provider";
 import { getFeatureFundingAccount, MyWallet } from "@/src/onChain";
 import { AnchorProvider, Program } from "@project-serum/anchor";
 import { MonoProgram } from "@/escrow/sdk/types/mono_program";
-import solanaProvider from "@/src/providers/solanaProvider";
 import {
   getApiEndpoint,
   getApiEndpointExtenstion,
@@ -144,19 +147,14 @@ const getEscrowContract = async (issue: Issue, program, anchor) => {
 };
 const getIssue = (uuid: string) =>
   axios.get(
-    `${getApiEndpointExtenstion()}${DATA_API_ROUTE}/${ISSUE_API_ROUTE}?id=${uuid}`
+    `${getApiEndpoint()}${DATA_API_ROUTE}/${ISSUE_API_ROUTE}?id=${uuid}`
   );
 
 const getAccounts = (uuid: string) =>
   axios.get(
-    `${getApiEndpointExtenstion()}${DATA_API_ROUTE}/${ISSUE_API_ROUTE}/accounts?id=${uuid}`
+    `${getApiEndpoint()}${DATA_API_ROUTE}/${ISSUE_API_ROUTE}/accounts?id=${uuid}`
   );
-export const queryIssue = async (
-  id: string,
-  program,
-  setIssue: (issue: Issue) => void,
-  anchor
-) => {
+export const queryIssue = async (id: string) => {
   try {
     const issueResponse = await getIssue(id as string);
 
@@ -212,7 +210,6 @@ export const queryIssue = async (
           )
       ),
     };
-    setIssue(newIssue);
     return newIssue;
   } catch (e) {
     console.error(e);
@@ -275,6 +272,7 @@ export const LancerProvider: FunctionComponent<ILancerState> = ({
   const [web3Auth, setWeb3Auth] = useState<Web3AuthCore | null>(null);
   const [user, setUser] = useState<User | null>(null);
   const [issue, setIssue] = useState<Issue | null>(null);
+  const [delayGetUser, setDelayGetUser] = useState(false);
   const [loginState, setLoginState] = useState<LOGIN_STATE | null>(
     "logged_out"
   );
@@ -350,7 +348,7 @@ export const LancerProvider: FunctionComponent<ILancerState> = ({
           adapterSettings: {
             network: "cyan",
             clientId,
-            uxMode: "redirect",
+            uxMode: "popup",
             loginConfig: {
               jwt: {
                 name: "rwa Auth0 Login",
@@ -385,15 +383,60 @@ export const LancerProvider: FunctionComponent<ILancerState> = ({
           },
         }
       );
-      console.log("user", user.data);
-      setUser({
-        ...user.data,
-        githubId: user.data.github_id,
-        githubLogin: user.data.github_login,
-        publicKey: new PublicKey(user.data.solana_pubkey),
-      });
-      setLoginState("initializing_anchor");
+      if (user.data.message === "NOT FOUND") {
+        if (delayGetUser) {
+          return;
+        }
+
+        if (!wallet.publicKey) {
+          setDelayGetUser(true);
+          setTimeout(() => {
+            setDelayGetUser(false);
+          }, 1000);
+        } else {
+          console.log(web3AuthUser);
+          await axios.post(
+            `${getApiEndpoint()}${DATA_API_ROUTE}/${ACCOUNT_API_ROUTE}`,
+            {
+              githubId: web3AuthUser.verifierId,
+              solanaKey: wallet.publicKey.toString(),
+            }
+          );
+          const user = await axios.get(
+            `${getApiEndpoint()}${DATA_API_ROUTE}/${ACCOUNT_API_ROUTE}`,
+            {
+              params: {
+                githubId: web3AuthUser.verifierId,
+              },
+            }
+          );
+          const connection = new Connection(getEndpoint());
+
+          const airdrop = await connection.requestAirdrop(
+            wallet.publicKey,
+            LAMPORTS_PER_SOL
+          );
+          console.log("user", user.data, airdrop);
+          setUser({
+            ...user.data,
+            githubId: user.data.github_id,
+            githubLogin: user.data.github_login,
+            publicKey: new PublicKey(user.data.solana_pubkey),
+          });
+          setLoginState("initializing_anchor");
+        }
+      } else {
+        console.log("user", user.data);
+        setUser({
+          ...user.data,
+          githubId: user.data.github_id,
+          githubLogin: user.data.github_login,
+          publicKey: new PublicKey(user.data.solana_pubkey),
+        });
+        setLoginState("initializing_anchor");
+      }
     };
+    // debugger;
     if (jwt === "" || jwt === null) {
       const rwaURL = `${REACT_APP_AUTH0_DOMAIN}/authorize?scope=openid&response_type=code&client_id=${REACT_APP_CLIENTID}&redirect_uri=${`${getApiEndpoint()}callback?referrer=${referrer}`}&state=STATE`;
       setLoginState("retrieving_jwt");
@@ -425,6 +468,9 @@ export const LancerProvider: FunctionComponent<ILancerState> = ({
   }, [
     jwt,
     loginState,
+    wallet?.pubkey,
+    delayGetUser,
+    setDelayGetUser,
     setWalletProvider,
     setAnchor,
     setProgram,
@@ -504,7 +550,8 @@ export const LancerProvider: FunctionComponent<ILancerState> = ({
   useEffect(() => {
     const query = async () => {
       setIssueLoadingState("getting_issue");
-      await queryIssue(issueId as string, program, setIssue, anchor);
+      const issue = await queryIssue(issueId as string);
+      setIssue(issue);
       setIssueLoadingState("getting_contract");
     };
     if (issueId !== undefined && anchor && program) {

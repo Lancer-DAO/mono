@@ -11,6 +11,7 @@ import dayjs from "dayjs";
 import timezone from "dayjs/plugin/timezone";
 import axios from "axios";
 import { Octokit } from "octokit";
+import { getGitHubUser } from "../../controllers/github";
 dayjs.extend(timezone);
 
 const router = Router();
@@ -19,10 +20,18 @@ const router = Router();
 
 router.post(`/${ACCOUNT_API_ROUTE}`, async function (req, res, next) {
   try {
+    const body = await req.body;
+    const githubId= body.githubId as string;
+    const solanaKey = body.solanaKey as string;
+    const githubData = await getGitHubUser(githubId);
+    const insertData = {
+      githubId: githubId,
+      solanaKey: solanaKey,
+      githubLogin: githubData.data.nickname,
+    }
+    console.log(insertData)
     return res.json(
-      await insertAccount({ githubLogin: req.query.githubLogin as string,
-        githubId: req.query.githubId as string,
-        solanaKey: new PublicKey(req.query.solana_key as string) })
+      await insertAccount(insertData)
     );
   } catch (err) {
     next(err);

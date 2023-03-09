@@ -8,8 +8,8 @@ const uuid_ext = "CREATE EXTENSION IF NOT EXISTS \"uuid-ossp\";";
 const account = `CREATE TABLE account (
     uuid UUID DEFAULT uuid_generate_v4 (),
     solana_pubkey VARCHAR,
-    is_admin BOOLEAN NOT NULL,
-    verified BOOLEAN NOT NULL,
+    is_admin BOOLEAN,
+    verified BOOLEAN,
     github_id VARCHAR NOT NULL,
     github_login VARCHAR NOT NULL,
 		name VARCHAR,

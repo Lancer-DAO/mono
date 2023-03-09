@@ -7,6 +7,10 @@ export const shortenPublicKey = (key: PublicKey) => {
 };
 
 export const getSolscanAddress = (hash: string) => {
+  return `https://solscan.io/account/${hash}${IS_MAINNET ? '' : '?cluster=devnet'}`
+}
+
+export const getSolscanTX = (hash: string) => {
   return `https://solscan.io/tx/${hash}${IS_MAINNET ? '' : '?cluster=devnet'}`
 }
 

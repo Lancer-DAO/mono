@@ -1,12 +1,10 @@
 import { useEffect, useState } from "react";
-import { ConfirmFunding, Setting } from "@/components";
 
 import {
   WEB3AUTH_NETWORK_TYPE,
   CHAIN_CONFIG_TYPE,
   APP_CONFIG_TYPE,
 } from "@/config";
-import { Web3AuthProvider } from "@/providers";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import Form from "./form";
 import { LancerProvider } from "@/src/providers/lancerProvider";

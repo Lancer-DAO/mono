@@ -17,7 +17,6 @@ import {
   CHAIN_CONFIG_TYPE,
   WEB3AUTH_NETWORK_TYPE,
 } from "@/src/config";
-import { Web3AuthProvider } from "@/src/providers";
 import { LancerProvider, useLancer } from "@/src/providers/lancerProvider";
 import { getFeatureFundingAccount } from "@/src/onChain";
 

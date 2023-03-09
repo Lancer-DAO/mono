@@ -7,7 +7,6 @@
       "DOM.Iterable",
       "ESNext"
     ],
-    "types": ["mocha", "chai"],
     "allowJs": false,
     "skipLibCheck": true,
     "esModuleInterop": true,
@@ -67,7 +66,6 @@
         "./src/utils/index.ts"
       ]
     },
-    "outDir": "./extension",
     "noEmit": false,
     "incremental": true
   },
@@ -77,6 +75,8 @@
     "**/*.tsx"
   ],
   "exclude": [
-    "node_modules"
+    "node_modules",
+    "escrow",
+    "extension"
   ]
 }

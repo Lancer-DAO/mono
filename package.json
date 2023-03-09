@@ -7,6 +7,7 @@
     "background": "webpack --config background.webpack.config.js",
     "background-dev": "NODE_ENV=development webpack --config background.webpack.config.js",
     "build": "rm -rf ./build && NODE_ENV=production next build",
+    "build-pc": "rm -rf ./build && next build",
     "export": "next export",
     "compile": "yarn background && yarn content && cp manifest.json extension",
     "compile-dev": "yarn background-dev && yarn content",

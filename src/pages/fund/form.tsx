@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { marked } from "marked";
 import RadioWithCustomInput from "./RadioWithCustomInput";
-import { useWeb3Auth } from "@/src/providers";
 import { useLocation } from "react-router-dom";
 import { WALLET_ADAPTERS } from "@web3auth/base";
 import {
@@ -149,7 +148,7 @@ const Form = () => {
         `${getApiEndpoint()}${DATA_API_ROUTE}/${GITHUB_ISSUE_API_ROUTE}`,
         {
           githubId: user.githubId,
-          githubLogin: "jacksturt",
+          githubLogin: user.githugLogin,
           solanaKey: user.publicKey.toString(),
           org: repo.full_name.split("/")[0],
           repo: repo.full_name.split("/")[1],
