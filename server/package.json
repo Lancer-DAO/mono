@@ -5,6 +5,7 @@
     "start": "node ./dist/server.js",
     "migrate": "ts-node ./src/db/migrate.ts",
     "migrate-dev": "NODE_ENV=development ts-node ./src/db/migrate.ts",
+    "dev-pc": "concurrently \"npx tsc --watch\" \"nodemon -q dist/server.js\"",
     "dev": "concurrently \"npx tsc --watch\" \"NODE_ENV=development nodemon -q dist/server.js\"",
     "build": "npx tsc"
   },
@@ -16,7 +17,7 @@
     "express": "^4.18.1",
     "http-errors": "~2.0.0",
     "jwt-decode": "3.1.2",
-    "knex":"2.4.2",
+    "knex": "2.4.2",
     "pg": "^8.7.1",
     "pg-promise": "^10.11.1",
     "request": "^2.88.2",

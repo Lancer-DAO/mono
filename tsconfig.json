@@ -29,9 +29,6 @@
       "@/atoms": [
         "./src/atoms/index.ts"
       ],
-      "@/background": [
-        "./src/background/index.ts"
-      ],
       "@/components": [
         "./src/components/index.ts"
       ],
@@ -42,10 +39,13 @@
         "./src/constants/index.ts"
       ],
       "@/helpers": [
-        "./src/content/helpers/index.ts"
+        "extension/content/helpers/index.ts"
       ],
       "@/hooks": [
         "./src/hooks/index.ts"
+      ],
+      "@/onChain": [
+        "./src/onChain/index.ts"
       ],
       "@/pages": [
         "./src/pages"
@@ -66,7 +66,6 @@
         "./src/utils/index.ts"
       ]
     },
-    "outDir": "./extension",
     "noEmit": false,
     "incremental": true
   },
@@ -76,6 +75,8 @@
     "**/*.tsx"
   ],
   "exclude": [
-    "node_modules"
+    "node_modules",
+    "escrow",
+    "extension"
   ]
 }

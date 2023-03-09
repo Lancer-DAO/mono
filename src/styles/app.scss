@@ -145,12 +145,7 @@ body {
     margin-bottom: 16px;
   }
 
-  .contributor-picture {
-    height: 40px;
-    width: 40px;
-    border-radius: 50%;
-    margin-right: 10px;
-  }
+  
 
   .contributor-name {
     width: 150px;
@@ -225,4 +220,9 @@ body {
 
   .error-text {
     color: red;
+  }
+
+  .page-header {
+    width: 100%;
+    text-align: center;
   }

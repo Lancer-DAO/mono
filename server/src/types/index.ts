@@ -5,25 +5,29 @@ dayjs.extend(timezone);
 
 // USER
 export interface AccountInsertParams extends AccountGetParams {
-  solanaKey?: PublicKey;
+  solanaKey?: string;
   verified?: boolean;
   isAdmin?: boolean;
-  githubId?: string;
 
 }
 
 export interface AccountGetParams {
-  githubLogin: string;
+  githubId?: string;
+  githubLogin?: string;
 }
 
 // ISSUE
 
 export interface IssueInsertParams extends IssueGetParams {
-fundingHash: string,
-fundingAmount: number
+
+tags: string[],
+private: boolean,
+estimatedTime: number,
+description: string
 }
 
 export interface IssueGetParams {
+
   title?: string,
   repo: string,
   org: string,
@@ -31,7 +35,13 @@ export interface IssueGetParams {
 }
 
 export interface IssueUpdateParams extends IssueGetParams {
-  state: string
+  state?: string
+  hash?: string,
+  amount?: number,
+  mint?: string,
+  escrowKey?: string
+  timestamp?: string
+  uuid?:string;
   }
 
 
@@ -60,6 +70,11 @@ export interface PullRequestInsertParams extends PullRequestGetParams {
 
   // ACCOUNT ISSUE
   export interface AccountIssueGetParams extends AccountGetParams, IssueGetParams {}
+  export interface AccountIssueUpdateParams extends AccountGetParams, IssueGetParams {
+    isSubmitter?: boolean;
+    isApprovedSubmitter?: boolean;
+  }
+
   export interface AccountIssueNewParams extends AccountInsertParams, IssueInsertParams {}
 
 // ACCOUNT PULL REQUEST

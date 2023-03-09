@@ -6,6 +6,7 @@ export const ACCOUNT_API_ROUTE = "account";
 
 // ISSUE
 export const ISSUE_API_ROUTE = "issue";
+export const GITHUB_ISSUE_API_ROUTE = "github_issue";
 export const NEW_ISSUE_API_ROUTE = "new_issue";
 
 // PULL REQUEST

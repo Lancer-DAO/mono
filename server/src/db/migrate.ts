@@ -8,8 +8,8 @@ const uuid_ext = "CREATE EXTENSION IF NOT EXISTS \"uuid-ossp\";";
 const account = `CREATE TABLE account (
     uuid UUID DEFAULT uuid_generate_v4 (),
     solana_pubkey VARCHAR,
-    is_admin BOOLEAN NOT NULL,
-    verified BOOLEAN NOT NULL,
+    is_admin BOOLEAN,
+    verified BOOLEAN,
     github_id VARCHAR NOT NULL,
     github_login VARCHAR NOT NULL,
 		name VARCHAR,
@@ -22,13 +22,20 @@ const account = `CREATE TABLE account (
 const issue = `CREATE TABLE issue (
     uuid UUID DEFAULT uuid_generate_v4 (),
 		funding_hash VARCHAR,
-    funding_amount DECIMAL(10,10),
+    funding_amount DECIMAL(20,10),
+    funding_mint VARCHAR,
+    escrow_key VARCHAR,
     title VARCHAR,
     repo VARCHAR,
     org VARCHAR,
     issue_number DECIMAL(20),
     state VARCHAR,
     type VARCHAR,
+    estimated_time DECIMAL(10, 2),
+    private BOOLEAN,
+    tags VARCHAR[],
+    description text,
+    unix_timestamp VARCHAR,
     PRIMARY KEY (uuid)
 );`;
 
@@ -48,6 +55,9 @@ const accountIssueAssoc = `CREATE TABLE account_issue (
   account_uuid UUID,
   issue_uuid UUID,
   PRIMARY KEY (account_uuid, issue_uuid),
+  is_creator BOOLEAN,
+  is_approved_submitter BOOLEAN,
+  is_submitter BOOLEAN,
   CONSTRAINT fk_account FOREIGN KEY(account_uuid) REFERENCES account(uuid),
   CONSTRAINT fk_issue FOREIGN KEY(issue_uuid) REFERENCES issue(uuid)
 );`;
