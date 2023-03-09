@@ -25,6 +25,7 @@
     "replace": "sed -i 's+/_next+/next+g' extension/next/static/chunks/*.js && sed -i 's+/_next+/next+g' extension/next/static/chunks/pages/*.js && sed -i 's+/_next+/next+g' extension/next/static/css/*.css && sed -i 's+/_next+/next+g' extension/server/chunks/*.js && sed -i 's+/_next+/next+g' extension/server/pages/*.html && sed -i 's+/_next+/next+g' extension/server/pages/*.js && sed -i 's+/_next+/next+g' extension/*.html"
   },
   "dependencies": {
+    "@coinflowlabs/react": "1.2.0",
     "@next/font": "13.1.2",
     "@project-serum/anchor": "^0.26.0",
     "@solana/spl-token": "0.3.7",

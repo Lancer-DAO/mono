@@ -73,6 +73,7 @@ export const fundFeatureInstruction = async (
   mint: PublicKey,
   program: Program<MonoProgram>
 ): Promise<TransactionInstruction> => {
+  console.log('time',timestamp)
   const [feature_data_account] = await findFeatureAccount(
     timestamp,
     creator,
@@ -89,6 +90,7 @@ export const fundFeatureInstruction = async (
   const [program_authority] = await findProgramAuthority(program);
 
   const creator_token_account = await getAssociatedTokenAddress(mint, creator);
+  console.log('token_accounts', creator_token_account.toString(), feature_token_account.toString(), program)
 
   return await program.methods.fundFeature(new anchor.BN(amount))
     .accounts({

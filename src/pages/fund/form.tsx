@@ -150,8 +150,8 @@ const Form = () => {
           githubId: user.githubId,
           githubLogin: user.githugLogin,
           solanaKey: user.publicKey.toString(),
-          org: repo.full_name.split("/")[0],
-          repo: repo.full_name.split("/")[1],
+          org: repo ? repo.full_name.split("/")[0] : "Lancer-DAO",
+          repo: repo ? repo.full_name.split("/")[1] : "github-app",
           title: formData.issueTitle,
           description: formData.issueDescription,
           tags: formData.requirements,
@@ -172,8 +172,8 @@ const Form = () => {
       await axios.put(
         `${getApiEndpoint()}${DATA_API_ROUTE}/${ISSUE_API_ROUTE}/timestamp`,
         {
-          org: repo.full_name.split("/")[0],
-          repo: repo.full_name.split("/")[1],
+          org: repo ? repo.full_name.split("/")[0] : "Lancer-DAO",
+          repo: repo ? repo.full_name.split("/")[1] : "github-app",
           issueNumber: issue.number,
           timestamp: timestamp,
         }
@@ -208,7 +208,7 @@ const Form = () => {
                 onChange={handleChangeRepo}
                 className="form-select"
               >
-                <option value="">--Select Project--</option>
+                <option value="Lancer-DAO/github-app">Demo Repo</option>
                 {repositories.map((project) => (
                   <option value={project.full_name} key={project.full_name}>
                     {project.full_name}
