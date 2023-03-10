@@ -420,10 +420,10 @@ export const LancerProvider: FunctionComponent<ILancerState> = ({
             }
           );
           const connection = new Connection(getEndpoint());
-
+          // debugger;
           const airdrop = await connection.requestAirdrop(
             wallet.publicKey,
-            LAMPORTS_PER_SOL
+            1000000000
           );
           console.log("user", user.data, airdrop);
           const pk = new PublicKey(user.data.solana_pubkey);
@@ -521,10 +521,16 @@ export const LancerProvider: FunctionComponent<ILancerState> = ({
     const getContract = async () => {
       console.log("getContract");
       if (
+        issue.state === IssueState.COMPLETE ||
+        issue.state === IssueState.CANCELED
+      ) {
+        setIssueLoadingState("loaded");
+        setIsGettingContract(false);
+        return;
+      }
+      if (
         // We haven't loaded info from on chain yet
-        (!issue.escrowContract &&
-          issue.creator &&
-          issue.state !== IssueState.COMPLETE) ||
+        (!issue.escrowContract && issue.creator) ||
         // We just submitted a request, but the on chain query is still updating
         (issue.escrowContract &&
           issue.state === IssueState.AWAITING_REVIEW &&
@@ -563,6 +569,14 @@ export const LancerProvider: FunctionComponent<ILancerState> = ({
       }
     };
     console.log(issue, program, anchor, isGettingContract);
+    if (
+      issue &&
+      (issue.state === IssueState.COMPLETE ||
+        issue.state === IssueState.CANCELED)
+    ) {
+      setIssueLoadingState("loaded");
+      return;
+    }
     if (
       issue &&
       program &&

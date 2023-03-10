@@ -380,13 +380,15 @@ export const getAllIssues = async () => {
 
 export const getIssueByUuid = async (uuid: string) => {
   let query =
-    "SELECT i.unix_timestamp, i.description, i.escrow_key, i.uuid, i.tags, i.estimated_time, i.title, i.funding_amount, i.funding_mint, i.issue_number, i.funding_hash, i.org, i.repo, i.state, a.github_login, a.github_id, a.solana_pubkey, a.uuid as author "
+    "SELECT pr.pull_number, i.unix_timestamp, i.description, i.escrow_key, i.uuid, i.tags, i.estimated_time, i.title, i.funding_amount, i.funding_mint, i.issue_number, i.funding_hash, i.org, i.repo, i.state, a.github_login, a.github_id, a.solana_pubkey, a.uuid as author "
 
   query += ` from issue as i`
   query += ` LEFT OUTER JOIN account_issue as ai`
   query += ` ON i.uuid = ai.issue_uuid`
   query += ` LEFT OUTER JOIN account as a`
   query += ` ON ai.account_uuid = a.uuid`
+  query += ` LEFT OUTER JOIN pull_request as pr`
+  query += ` ON pr.issue_uuid = i.uuid`
   query += ` WHERE i.uuid = '${uuid}' and ai.is_creator=true`
   const result = await DB.raw(query);
   return result.rows.length > 0 ? result.rows[0] : {message: 'NOT FOUND'};

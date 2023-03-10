@@ -14,7 +14,7 @@ export const CHAIN_CONFIG = {
   } as CustomChainConfig,
   solana: {
     chainNamespace: CHAIN_NAMESPACES.SOLANA,
-    rpcTarget: IS_MAINNET ? "https://winter-necessary-smoke.solana-mainnet.discover.quiknode.pro" : "https://rpc-devnet.helius.xyz/?api-key=2f915565-3608-4451-9150-4e72f50f10c2",
+    rpcTarget: IS_MAINNET ? "https://winter-necessary-smoke.solana-mainnet.discover.quiknode.pro" : clusterApiUrl('devnet'),
     blockExplorer: "https://explorer.solana.com/",
     chainId: "0x3",
     displayName: "Solana",

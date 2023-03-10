@@ -2,6 +2,7 @@ import {
   ACCOUNT_ISSUE_API_ROUTE,
   DATA_API_ROUTE,
   ISSUE_API_ROUTE,
+  MERGE_PULL_REQUEST_API_ROUTE,
 } from "@/server/src/constants";
 import { getApiEndpoint } from "@/src/utils";
 import axios from "axios";
@@ -11,31 +12,30 @@ import { approveRequestFFA, denyRequestFFA } from "@/src/onChain";
 
 const ReviewRequest: React.FC = () => {
   const { issue, wallet, anchor, program, setIssue } = useLancer();
-  if (
-    !issue.escrowContract ||
-    !issue.submitter ||
-    issue.escrowContract.currentSubmitter.toString() ===
-      "11111111111111111111111111111111"
-  ) {
-    // debugger;
-    return <div>Processing Submission</div>;
-  }
+  // if (
+  //   !issue.escrowContract ||
+  //   !issue.submitter ||
+  //   issue.escrowContract.currentSubmitter.toString() ===
+  //     "11111111111111111111111111111111"
+  // ) {
+  //   // debugger;
+  //   return <div>Processing Submission</div>;
+  // }
 
   const approveSubmission = async () => {
     try {
-      await approveRequestFFA(
-        issue.creator.pubkey,
-        issue.submitter.pubkey,
-        issue.escrowContract,
-        wallet,
-        anchor,
-        program
-      );
-      axios.put(
-        `${getApiEndpoint()}${DATA_API_ROUTE}/${ISSUE_API_ROUTE}/state`,
+      // await approveRequestFFA(
+      //   issue.creator.pubkey,
+      //   issue.submitter.pubkey,
+      //   issue.escrowContract,
+      //   wallet,
+      //   anchor,
+      //   program
+      // );
+      axios.post(
+        `${getApiEndpoint()}${DATA_API_ROUTE}/${MERGE_PULL_REQUEST_API_ROUTE}`,
         {
           uuid: issue.uuid,
-          state: IssueState.COMPLETE,
         }
       );
       setIssue({

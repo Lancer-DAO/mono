@@ -87,6 +87,10 @@ const getAvailableCommands = (issue: Issue, user: User) => {
     issue.approvedSubmitters.findIndex(
       (submitter) => submitter.uuid === user.uuid
     ) > -1;
+  const isRequestedSubmitter =
+    issue.requestedSubmitters.findIndex(
+      (submitter) => submitter.uuid === user.uuid
+    ) > -1;
   if (issue.state === IssueState.NEW && issue.creator.uuid === user.uuid) {
     availableCommands.push(<FundBounty key="fund-bounty" />);
   }
@@ -95,12 +99,13 @@ const getAvailableCommands = (issue: Issue, user: User) => {
     issue.state === IssueState.ACCEPTING_APPLICATIONS ||
     (issue.state === IssueState.IN_PROGRESS &&
       !isApprovedSubmitter &&
-      issue.approvedSubmitters.length < 3)
+      issue.approvedSubmitters.length < 3 &&
+      !isRequestedSubmitter)
   ) {
     availableCommands.push(<RequestToSubmit key={`request-submit`} />);
   }
 
-  if (issue.approvedSubmitters.length > 0) {
+  if (issue.approvedSubmitters.length > 0 && isCreator) {
     issue.approvedSubmitters.forEach((submitter) => {
       if (!submitter.isSubmitter) {
         availableCommands.push(
@@ -114,7 +119,7 @@ const getAvailableCommands = (issue: Issue, user: User) => {
     });
   }
 
-  if (issue.requestedSubmitters.length > 0) {
+  if (issue.requestedSubmitters.length > 0 && isCreator) {
     issue.requestedSubmitters.forEach((submitter) => {
       availableCommands.push(
         <SubmitterSection
@@ -124,6 +129,14 @@ const getAvailableCommands = (issue: Issue, user: User) => {
         />
       );
     });
+  }
+
+  if (isRequestedSubmitter && !isApprovedSubmitter) {
+    availableCommands.push(<div>Submission Request Pending</div>);
+  }
+
+  if (!isRequestedSubmitter && isApprovedSubmitter && !isSubmitter) {
+    availableCommands.push(<div>Your request to submit has been approved</div>);
   }
   console.log(issue.state, isApprovedSubmitter);
   if (issue.state === IssueState.IN_PROGRESS && isApprovedSubmitter) {
