@@ -344,7 +344,7 @@ export const LancerProvider: FunctionComponent<ILancerState> = ({
         // get your client id from https://dashboard.web3auth.io by registering a plug and play application.
         // const clientId = process.env.NODE_ENV === 'development' ?
         //   REACT_APP_CLIENT_ID: REACT_APP_CLIENT_ID_DEV;
-        const clientId = REACT_APP_CLIENT_ID;
+        const clientId = REACT_APP_CLIENT_ID_DEV;
 
         const web3AuthInstance = new Web3AuthCore({
           chainConfig: currentChainConfig,
@@ -355,7 +355,7 @@ export const LancerProvider: FunctionComponent<ILancerState> = ({
 
         const adapter = new OpenloginAdapter({
           adapterSettings: {
-            network: "cyan",
+            network: "testnet",
             clientId,
             uxMode: "popup",
             loginConfig: {
@@ -489,6 +489,7 @@ export const LancerProvider: FunctionComponent<ILancerState> = ({
       const signMessage = async (message: string | Uint8Array) => {
         return await rpc.signMessage(message);
       };
+      console.log("pk%5", wallet.pk.toString());
       const coinflowWallet: SolanaWalletContextState = {
         wallet: null,
         connected: true,

@@ -367,7 +367,7 @@ export const getFullPullRequestByNumber = async (params: GetFullPullRequest) => 
 
 export const getAllIssues = async () => {
   let query =
-    "SELECT i.uuid, i.tags, i.estimated_time, i.title, i.funding_amount, i.funding_mint, i.issue_number, i.funding_hash, i.org, i.repo, i.state, a.github_login, a.github_id "
+    "SELECT i.description, i.uuid, i.tags, i.estimated_time, i.title, i.funding_amount, i.funding_mint, i.issue_number, i.funding_hash, i.org, i.repo, i.state, a.github_login, a.github_id "
 
   query += ` from issue as i`
   query += ` LEFT OUTER JOIN account_issue as ai`

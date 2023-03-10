@@ -50,7 +50,7 @@ export default class SolanaRpc {
 
   sendTransaction = async (transaction: Transaction): Promise<string> => {
     const solanaWallet = new SolanaWallet(this.provider);
-
+    debugger;
     const {signature} = await solanaWallet.signAndSendTransaction(transaction);
 
     return signature;
@@ -58,6 +58,7 @@ export default class SolanaRpc {
 
   signTransaction = async <T extends Transaction | VersionedTransaction>(transaction: T): Promise<T> =>  {
     const solanaWallet = new SolanaWallet(this.provider);
+    // debugger;
 
     return await solanaWallet.signTransaction(transaction);
   };

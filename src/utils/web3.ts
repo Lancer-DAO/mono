@@ -27,5 +27,5 @@ export const getMintName = (mint?: PublicKey) => {
 }
 
 export const getEndpoint = () => {
-  return IS_MAINNET ? MAINNET_RPC: clusterApiUrl("devnet");
+  return IS_MAINNET ? MAINNET_RPC: "https://rpc-devnet.helius.xyz/?api-key=2f915565-3608-4451-9150-4e72f50f10c2";
 }
