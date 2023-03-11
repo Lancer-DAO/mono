@@ -20,17 +20,25 @@ import {
   createSyncNativeInstruction,
   ASSOCIATED_TOKEN_PROGRAM_ID,
 } from "@solana/spl-token";
-import { PublicKey } from "@solana/web3.js";
+import { PublicKey, Transaction } from "@solana/web3.js";
 import { PubKey } from "@/src/components";
+import {
+  CoinflowPurchase,
+  SolanaWalletContextState,
+} from "@coinflowlabs/react";
+import { WalletContextState } from "@solana/wallet-adapter-react";
+import Coinflow from "@/src/pages/bounty/components/coinflowPurchase";
 
 const FundBounty: React.FC = () => {
-  const { wallet, anchor, program, setIssue, issue, user } = useLancer();
+  const { wallet, anchor, program, setIssue, issue, user, coinflowWallet } =
+    useLancer();
   const [formData, setFormData] = useState({
     paymentType: "spl",
     paymentAmount: 0,
     mintAddress: DEVNET_USDC_MINT,
   });
   const [userBalance, setUserBalance] = useState("0.0");
+  const [fundTx, setFundTx] = useState<Transaction>(null);
   useEffect(() => {
     const getWalletBalance = async () => {
       const mintKey = new PublicKey(formData.mintAddress);
@@ -49,28 +57,57 @@ const FundBounty: React.FC = () => {
       getWalletBalance();
     }
   }, [user?.publicKey, formData.mintAddress, anchor]);
-  if (!issue || !issue.escrowContract) {
+  useEffect(() => {
+    const getFundTransaction = async () => {
+      console.log(
+        "accounts#%",
+        issue.creator.pubkey.toString(),
+        issue.escrowContract.unixTimestamp
+      );
+      const tx = await fundFFA(
+        issue.creator.pubkey,
+        formData.paymentAmount,
+        issue.escrowContract,
+        wallet,
+        anchor,
+        program
+      );
+      setFundTx(tx);
+    };
+    if (
+      issue?.creator &&
+      issue?.escrowContract?.unixTimestamp &&
+      anchor &&
+      wallet &&
+      program
+    ) {
+      getFundTransaction();
+    }
+  }, [
+    !!issue?.creator,
+    !!issue?.escrowContract,
+    !!anchor,
+    !!wallet,
+    !!program,
+  ]);
+  if (
+    !issue ||
+    !issue.escrowContract ||
+    !wallet ||
+    !anchor ||
+    !coinflowWallet
+  ) {
     return <></>;
   }
 
-  const fundFeature = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const signature = await fundFFA(
-      issue.creator.pubkey,
-      formData.paymentAmount,
-      issue.escrowContract,
-      wallet,
-      anchor,
-      program
-    );
-
+  const onSuccess = () => {
     axios.put(
       `${getApiEndpoint()}${DATA_API_ROUTE}/${ISSUE_API_ROUTE}/funding_hash`,
       {
         org: issue.org,
         repo: issue.repo,
         issueNumber: issue.issueNumber,
-        hash: signature.signature,
+        hash: "",
         amount: formData.paymentAmount,
         mint: DEVNET_USDC_MINT,
       }
@@ -89,7 +126,7 @@ const FundBounty: React.FC = () => {
     });
   };
   return (
-    <form className="form" style={{ width: "1000px" }} onSubmit={fundFeature}>
+    <div className="form" style={{ width: "1000px" }}>
       <div className="User Balance">User Balance: {userBalance}</div>
       <PubKey pubKey={user.publicKey} />
       <a
@@ -101,7 +138,7 @@ const FundBounty: React.FC = () => {
       </a>
       <div className="form-subtitle">Payment Information</div>
       <div className="form-row-grid grid-1-1-1">
-        <div className="form-cell">
+        {/* <div className="form-cell">
           <label className="form-label">Payment Type</label>
           <select
             name="paymentType"
@@ -136,7 +173,7 @@ const FundBounty: React.FC = () => {
               });
             }}
           />
-        </div>
+        </div> */}
         <div className="form-cell">
           <label className="form-label">Payment Amount</label>
           <input
@@ -148,12 +185,14 @@ const FundBounty: React.FC = () => {
           />
         </div>
       </div>
-      <div className="submit-wrapper">
-        <button type="submit" className="form-submit">
-          Submit
-        </button>
-      </div>
-    </form>
+      {fundTx && (
+        <Coinflow
+          transaction={fundTx}
+          onSuccess={onSuccess}
+          amount={formData.paymentAmount}
+        />
+      )}
+    </div>
   );
 };
 

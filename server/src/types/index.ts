@@ -29,8 +29,8 @@ description: string
 export interface IssueGetParams {
 
   title?: string,
-  repo: string,
-  org: string,
+  repo?: string,
+  org?: string,
   issueNumber?: number
 }
 
@@ -52,8 +52,8 @@ export interface PullRequestInsertParams extends PullRequestGetParams {
   }
 
   export interface PullRequestGetParams {
-    repo: string,
-    org: string,
+    repo?: string,
+    org?: string,
     pullNumber: number
 
   }

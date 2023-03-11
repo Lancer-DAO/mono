@@ -2,6 +2,7 @@ import {
   ACCOUNT_ISSUE_API_ROUTE,
   DATA_API_ROUTE,
   ISSUE_API_ROUTE,
+  MERGE_PULL_REQUEST_API_ROUTE,
 } from "@/server/src/constants";
 import { getApiEndpoint } from "@/src/utils";
 import axios from "axios";
@@ -17,7 +18,6 @@ const ReviewRequest: React.FC = () => {
     issue.escrowContract.currentSubmitter.toString() ===
       "11111111111111111111111111111111"
   ) {
-    // debugger;
     return <div>Processing Submission</div>;
   }
 
@@ -31,11 +31,10 @@ const ReviewRequest: React.FC = () => {
         anchor,
         program
       );
-      axios.put(
-        `${getApiEndpoint()}${DATA_API_ROUTE}/${ISSUE_API_ROUTE}/state`,
+      axios.post(
+        `${getApiEndpoint()}${DATA_API_ROUTE}/${MERGE_PULL_REQUEST_API_ROUTE}`,
         {
           uuid: issue.uuid,
-          state: IssueState.COMPLETE,
         }
       );
       setIssue({

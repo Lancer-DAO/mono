@@ -9,6 +9,8 @@ import {
     newPullRequest,
     getFullPullRequestByNumber,
     updatePullRequestPayout,
+    getIssueById,
+    getIssueByUuid,
   } from "../../controllers";
   import {
     ACCOUNT_PULL_REQUEST_API_ROUTE,
@@ -85,16 +87,22 @@ router.get(`/${FULL_PULL_REQUEST_API_ROUTE}`, async function (req, res, next) {
   }
 });
 
-router.post(`/${MERGE_PULL_REQUEST_API_ROUTE}`, (req, res) => {
+router.post(`/${MERGE_PULL_REQUEST_API_ROUTE}`, async (req, res) => {
   //when a request from auth0 is received we get auth code as query param
+  const data = await req.body
+  const issue = await getIssueByUuid(data.uuid)
 
-  // console.log(req.query)
-  var pull_number = parseInt(req.query.pullNumber as string);
-  var issue_number = parseInt(req.query.issueNumber as string);
-  var org = req.query.org as string;
-  var repo = req.query.repo as string;
-  var payoutHash = req.query.payoutHash as string;
-  var github_id = req.query.githubId;
+  console.log(issue)
+  var pull_number = issue.pull_number;
+  var org = issue.org;
+  var repo = issue.repo;
+  var github_id = issue.github_id;
+
+  updateIssueState({
+    uuid: data.uuid,
+    state: 'complete'
+  })
+  return res.json([])
   var options = {
     method: 'POST',
     url: 'https://dev-kgvm1sxe.us.auth0.com/oauth/token',
@@ -131,16 +139,8 @@ router.post(`/${MERGE_PULL_REQUEST_API_ROUTE}`, (req, res) => {
     }).then((resp) => {
       // console.log(resp)
       updateIssueState({
-        org: org,
-        repo: repo,
-        issueNumber: issue_number,
-        state: 'approved'
-      })
-      updatePullRequestPayout({
-        org: org,
-        repo: repo,
-        pullNumber: pull_number,
-        payoutHash: payoutHash
+        uuid: data.uuid,
+        state: 'complete'
       })
 
       return res.status(200).json({message: 'Pull Request Merged', data: resp.data})

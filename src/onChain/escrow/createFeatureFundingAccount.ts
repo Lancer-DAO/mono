@@ -49,7 +49,6 @@ export const createFFA = async (creator: PublicKey, wallet: LancerWallet, anchor
         new Transaction(txInfo).add(ix)
       );
       console.log("createFFA transaction signature", tx);
-      debugger;
 
       return timestamp;
   };

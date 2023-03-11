@@ -14,6 +14,7 @@ import {
   useCallback,
   useContext,
   useEffect,
+  useMemo,
   useState,
 } from "react";
 import { CHAIN_CONFIG, CHAIN_CONFIG_TYPE } from "../config/chainConfig";
@@ -24,6 +25,7 @@ import {
   LAMPORTS_PER_SOL,
   PublicKey,
   Transaction,
+  VersionedTransaction,
 } from "@solana/web3.js";
 import { SolanaWallet } from "@web3auth/solana-provider";
 import { getFeatureFundingAccount, MyWallet } from "@/src/onChain";
@@ -44,6 +46,7 @@ import {
 } from "@/server/src/constants";
 import { MONO_DEVNET } from "@/escrow/sdk/constants";
 import Base58 from "base-58";
+import RPC from "./solanaRPC";
 
 export const REACT_APP_CLIENT_ID =
   "BPMZUkEx6a1aHvk2h_4efBlAJNMlPGvpTOy7qIkz4cbtF_l1IHuZ7KMqsLNPTtDGDItHBMxR6peSZc8Mf-0Oj6U";
@@ -56,6 +59,7 @@ export const REACT_APP_RWA_CLIENTID = "ZaU1oZzvlb06tZC8UXtTvTM9KSBY9pzk";
 export const REACT_APP_BACKEND_SERVER_API = "http://localhost:3001/callback";
 import MonoProgramJSON from "@/escrow/sdk/idl/mono_program.json";
 import { EscrowContract, Issue, IssueState, Submitter } from "@/src/types";
+import { SolanaWalletContextState } from "@coinflowlabs/react";
 
 export class LancerWallet extends SolanaWallet {
   pk: PublicKey;
@@ -225,6 +229,7 @@ export interface ILancerContext {
   web3Auth: Web3AuthCore;
   wallet: LancerWallet;
   issueLoadingState: ISSUE_LOAD_STATE;
+  coinflowWallet: SolanaWalletContextState;
   setIssue: (issue: Issue) => void;
   setIssueLoadingState: (state: ISSUE_LOAD_STATE) => void;
   login: () => Promise<void>;
@@ -240,6 +245,7 @@ export const LancerContext = createContext<ILancerContext>({
   web3Auth: null,
   wallet: null,
   issueLoadingState: "initializing",
+  coinflowWallet: null,
   login: async () => {},
   logout: async () => {},
   setIssue: () => null,
@@ -282,6 +288,9 @@ export const LancerProvider: FunctionComponent<ILancerState> = ({
   const jwt = params.get("token");
   const [issueLoadingState, setIssueLoadingState] =
     useState<ISSUE_LOAD_STATE>("initializing");
+  const [publicKey, setPublicKey] = useState<PublicKey | null>(null);
+  const connected = useMemo(() => !!publicKey, [publicKey]);
+  const [coinflowWallet, setCoinflowWallet] = useState(null);
 
   const setWalletProvider = useCallback(async () => {
     let provider = web3Auth.provider;
@@ -335,7 +344,7 @@ export const LancerProvider: FunctionComponent<ILancerState> = ({
         // get your client id from https://dashboard.web3auth.io by registering a plug and play application.
         // const clientId = process.env.NODE_ENV === 'development' ?
         //   REACT_APP_CLIENT_ID: REACT_APP_CLIENT_ID_DEV;
-        const clientId = REACT_APP_CLIENT_ID;
+        const clientId = REACT_APP_CLIENT_ID_DEV;
 
         const web3AuthInstance = new Web3AuthCore({
           chainConfig: currentChainConfig,
@@ -346,7 +355,7 @@ export const LancerProvider: FunctionComponent<ILancerState> = ({
 
         const adapter = new OpenloginAdapter({
           adapterSettings: {
-            network: "cyan",
+            network: "testnet",
             clientId,
             uxMode: "popup",
             loginConfig: {
@@ -411,18 +420,20 @@ export const LancerProvider: FunctionComponent<ILancerState> = ({
             }
           );
           const connection = new Connection(getEndpoint());
-
+          // debugger;
           const airdrop = await connection.requestAirdrop(
             wallet.publicKey,
-            LAMPORTS_PER_SOL
+            1000000000
           );
           console.log("user", user.data, airdrop);
+          const pk = new PublicKey(user.data.solana_pubkey);
           setUser({
             ...user.data,
             githubId: user.data.github_id,
             githubLogin: user.data.github_login,
-            publicKey: new PublicKey(user.data.solana_pubkey),
+            publicKey: pk,
           });
+          setPublicKey(pk);
           setLoginState("initializing_anchor");
         }
       } else {
@@ -462,6 +473,32 @@ export const LancerProvider: FunctionComponent<ILancerState> = ({
       );
       setAnchor(provider);
       setProgram(program);
+
+      const rpc = new RPC(web3Auth.provider);
+      const sendTransaction = async (transaction: Transaction) => {
+        return await rpc.sendTransaction(transaction);
+      };
+
+      const signTransaction = async <
+        T extends Transaction | VersionedTransaction
+      >(
+        transaction: T
+      ): Promise<T> => {
+        return await rpc.signTransaction(transaction);
+      };
+      const signMessage = async (message: string | Uint8Array) => {
+        return await rpc.signMessage(message);
+      };
+      console.log("pk%5", wallet.pk.toString());
+      const coinflowWallet: SolanaWalletContextState = {
+        wallet: null,
+        connected: true,
+        publicKey: wallet.pk,
+        sendTransaction,
+        signMessage,
+        signTransaction,
+      };
+      setCoinflowWallet(coinflowWallet);
       setLoginState("ready");
       console.log("Lancer Ready!");
     }
@@ -484,10 +521,16 @@ export const LancerProvider: FunctionComponent<ILancerState> = ({
     const getContract = async () => {
       console.log("getContract");
       if (
+        issue.state === IssueState.COMPLETE ||
+        issue.state === IssueState.CANCELED
+      ) {
+        setIssueLoadingState("loaded");
+        setIsGettingContract(false);
+        return;
+      }
+      if (
         // We haven't loaded info from on chain yet
-        (!issue.escrowContract &&
-          issue.creator &&
-          issue.state !== IssueState.COMPLETE) ||
+        (!issue.escrowContract && issue.creator) ||
         // We just submitted a request, but the on chain query is still updating
         (issue.escrowContract &&
           issue.state === IssueState.AWAITING_REVIEW &&
@@ -526,6 +569,14 @@ export const LancerProvider: FunctionComponent<ILancerState> = ({
       }
     };
     console.log(issue, program, anchor, isGettingContract);
+    if (
+      issue &&
+      (issue.state === IssueState.COMPLETE ||
+        issue.state === IssueState.CANCELED)
+    ) {
+      setIssueLoadingState("loaded");
+      return;
+    }
     if (
       issue &&
       program &&
@@ -598,6 +649,7 @@ export const LancerProvider: FunctionComponent<ILancerState> = ({
     setIssue,
     issueLoadingState,
     setIssueLoadingState,
+    coinflowWallet,
   };
   return (
     <LancerContext.Provider value={contextProvider}>

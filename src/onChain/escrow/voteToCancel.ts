@@ -40,7 +40,7 @@ export const voteToCancelFFA = async (creator: PublicKey, voter: PublicKey, acc:
       const {blockhash, lastValidBlockHeight} = (await anchor.connection.getLatestBlockhash());
       const txInfo = {
                 /** The transaction fee payer */
-                feePayer: creator,
+                feePayer: voter,
                 /** A recent blockhash */
                 blockhash: blockhash,
                 /** the last block chain can advance to before tx is exportd expired */

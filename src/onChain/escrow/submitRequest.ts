@@ -28,7 +28,7 @@ import { EscrowContract } from "@/src/types";
 
 export const submitRequestFFA = async (creator: PublicKey,submitter: PublicKey, acc: EscrowContract, wallet: LancerWallet, anchor: AnchorProvider, program: Program<MonoProgram>) => {
 
-
+// debugger;
         const tokenAddress = await getAssociatedTokenAddress(
             new PublicKey(DEVNET_USDC_MINT),
             submitter
@@ -44,7 +44,7 @@ export const submitRequestFFA = async (creator: PublicKey,submitter: PublicKey, 
       const {blockhash, lastValidBlockHeight} = (await anchor.connection.getLatestBlockhash());
       const txInfo = {
                 /** The transaction fee payer */
-                feePayer: creator,
+                feePayer: submitter,
                 /** A recent blockhash */
                 blockhash: blockhash,
                 /** the last block chain can advance to before tx is exportd expired */

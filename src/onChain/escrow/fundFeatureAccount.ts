@@ -30,6 +30,7 @@ import { EscrowContract } from "@/src/types";
 export const fundFFA = async (creator: PublicKey, baseAmount: number, acc: EscrowContract, wallet: LancerWallet, anchor: AnchorProvider, program: Program<MonoProgram>) => {
 
       const amount = baseAmount * Math.pow(10, 6)
+      console.log('token', acc.fundsTokenAccount.toString())
 
     // check balaance before funding feature
     let fund_feature_ix = await fundFeatureInstruction(
@@ -49,7 +50,5 @@ export const fundFFA = async (creator: PublicKey, baseAmount: number, acc: Escro
                 lastValidBlockHeight: lastValidBlockHeight,
               }
 
-      const tx2 = await wallet.signAndSendTransaction(new Transaction(txInfo).add(fund_feature_ix));
-      console.log(tx2);
-              return tx2;
+      return new Transaction(txInfo).add(fund_feature_ix)
   };

@@ -1109,6 +1109,15 @@
     eventemitter3 "^4.0.7"
     uuid "^8.3.2"
 
+"@coinflowlabs/react@1.2.0":
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/@coinflowlabs/react/-/react-1.2.0.tgz#ff7655cfe93b96a5d2cef38911214b3250753cce"
+  integrity sha512-8GzrLVsg8Vl7FKVvBgy26oY1u4wmp80wRFcMA3nwqNGPNTxTXtuKErxdoGlqaaztfJYkNBeS9vAXaM158PWpJQ==
+  dependencies:
+    "@solana/web3.js" "^1.73.3"
+    bn.js "^5.2.1"
+    bs58 "^5.0.0"
+
 "@coral-xyz/borsh@^0.26.0":
   version "0.26.0"
   resolved "https://registry.yarnpkg.com/@coral-xyz/borsh/-/borsh-0.26.0.tgz#d054f64536d824634969e74138f9f7c52bbbc0d5"
@@ -3257,7 +3266,7 @@
     "@wallet-standard/app" "^1.0.0"
     "@wallet-standard/base" "^1.0.0"
 
-"@solana/web3.js@1.73.3", "@solana/web3.js@^1.68.0":
+"@solana/web3.js@1.73.3", "@solana/web3.js@^1.68.0", "@solana/web3.js@^1.73.3":
   version "1.73.3"
   resolved "https://registry.yarnpkg.com/@solana/web3.js/-/web3.js-1.73.3.tgz#60e6bd68f6f364d4be360b1e0a03a0a68468a029"
   integrity sha512-vHRMo589XEIpoujpE2sZZ1aMZvfA1ImKfNxobzEFyMb+H5j6mRRUXfdgWD0qJ0sm11e5BcBC7HPeRXJB+7f3Lg==

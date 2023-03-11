@@ -39,8 +39,9 @@ function App() {
           mint: rawIssue.funding_mint
             ? new PublicKey(rawIssue.funding_mint)
             : undefined,
-          description:
-            "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Blandit libero volutpat sed cras ornare. Dignissim cras tincidunt lobortis feugiat vivamus at augue eget arcu. A erat nam at lectus urna. Mattis aliquam faucibus purus in massa tempor. A lacus vestibulum sed arcu. Id venenatis a condimentum vitae sapien. Eu lobortis elementum nibh tellus molestie nunc non blandit. Massa sapien faucibus et molestie. Sollicitudin ac orci phasellus egestas tellus rutrum tellus pellentesque eu. Dis parturient montes nascetur ridiculus mus mauris vitae. Tortor posuere ac ut consequat semper viverra nam.",
+          description: rawIssue.description
+            ? rawIssue.description
+            : "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Blandit libero volutpat sed cras ornare. Dignissim cras tincidunt lobortis feugiat vivamus at augue eget arcu. A erat nam at lectus urna. Mattis aliquam faucibus purus in massa tempor. A lacus vestibulum sed arcu. Id venenatis a condimentum vitae sapien. Eu lobortis elementum nibh tellus molestie nunc non blandit. Massa sapien faucibus et molestie. Sollicitudin ac orci phasellus egestas tellus rutrum tellus pellentesque eu. Dis parturient montes nascetur ridiculus mus mauris vitae. Tortor posuere ac ut consequat semper viverra nam.",
         };
       });
       setIssues(issues);
@@ -59,7 +60,7 @@ function App() {
       const allTimes = issues.map((issue) => issue.estimatedTime);
       const maxTime = Math.max(...allTimes) || 10;
       const minTime = Math.min(...allTimes) || 0;
-      setTimeBounds([minTime, maxTime]);
+      setTimeBounds([minTime, maxTime === minTime ? maxTime + 1 : maxTime]);
     });
   }, []);
   return (
