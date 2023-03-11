@@ -5,7 +5,7 @@ import {
     insertFund,
     insertPullRequest,
   } from "./helpers";
-  import "@/styles/main.scss";
+  import "./extension.scss";
 
   let currentPage = "";
   const insertIntoPage = () => {

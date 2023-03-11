@@ -5,7 +5,7 @@ import { PublicKey } from "@solana/web3.js";
 import { DEVNET_USDC_MINT } from "@/src/constants/web3";
 import axios from "axios";
 import {
-  getApiEndpointExtenstion,
+  getApiEndpointExtension,
   getMintName,
   getUniqueItems,
 } from "@/src/utils";
@@ -13,7 +13,7 @@ import { DATA_API_ROUTE, ISSUE_API_ROUTE } from "@/server/src/constants";
 
 const getIssues = () =>
   axios.get(
-    `${getApiEndpointExtenstion()}${DATA_API_ROUTE}/${ISSUE_API_ROUTE}s`
+    `${getApiEndpointExtension()}${DATA_API_ROUTE}/${ISSUE_API_ROUTE}s`
   );
 
 function App() {
