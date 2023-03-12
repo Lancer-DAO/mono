@@ -154,6 +154,11 @@ const getIssue = (uuid: string) =>
     `${getApiEndpoint()}${DATA_API_ROUTE}/${ISSUE_API_ROUTE}?id=${uuid}`
   );
 
+const getIssues = () =>
+  axios.get(
+    `${getApiEndpointExtenstion()}${DATA_API_ROUTE}/${ISSUE_API_ROUTE}s`
+  );
+
 const getAccounts = (uuid: string) =>
   axios.get(
     `${getApiEndpoint()}${DATA_API_ROUTE}/${ISSUE_API_ROUTE}/accounts?id=${uuid}`
@@ -220,9 +225,42 @@ export const queryIssue = async (id: string) => {
   }
 };
 
+export const queryIssues = async () => {
+  try {
+    const issueResponse = await getIssues();
+
+    const rawIssues = issueResponse.data;
+    const issues = rawIssues.map((rawIssue) => {
+      return {
+        ...rawIssue,
+        hash: rawIssue.funding_hash,
+        amount: parseFloat(rawIssue.funding_amount),
+        pullNumber: rawIssue.pull_number,
+        issueNumber: rawIssue.issue_number,
+        githubId: rawIssue.github_id,
+        payoutHash: rawIssue.payout_hash,
+        authorGithub: rawIssue.github_login,
+        pubkey: rawIssue.solana_pubkey,
+        escrowKey: rawIssue.escrow_key && new PublicKey(rawIssue.escrow_key),
+        estimatedTime: parseFloat(rawIssue.estimated_time),
+        mint: rawIssue.funding_mint
+          ? new PublicKey(rawIssue.funding_mint)
+          : undefined,
+        timestamp: rawIssue.unix_timestamp,
+        description: rawIssue.description,
+      };
+    });
+
+    return issues;
+  } catch (e) {
+    console.error(e);
+  }
+};
+
 export interface ILancerContext {
   user: User;
   issue: Issue;
+  issues: Issue[];
   loginState: LOGIN_STATE;
   anchor: AnchorProvider;
   program: Program<MonoProgram>;
@@ -239,6 +277,7 @@ export interface ILancerContext {
 export const LancerContext = createContext<ILancerContext>({
   user: null,
   issue: null,
+  issues: [],
   loginState: "logged_out",
   anchor: null,
   program: null,
@@ -278,6 +317,7 @@ export const LancerProvider: FunctionComponent<ILancerState> = ({
   const [web3Auth, setWeb3Auth] = useState<Web3AuthCore | null>(null);
   const [user, setUser] = useState<User | null>(null);
   const [issue, setIssue] = useState<Issue | null>(null);
+  const [issues, setIssues] = useState<Issue[] | null>(null);
   const [delayGetUser, setDelayGetUser] = useState(false);
   const [loginState, setLoginState] = useState<LOGIN_STATE | null>(
     "logged_out"
@@ -610,6 +650,15 @@ export const LancerProvider: FunctionComponent<ILancerState> = ({
     }
   }, [issueId, anchor, program, issue?.state]);
 
+  useEffect(() => {
+    const query = async () => {
+      setIssueLoadingState("getting_issues");
+      const issues = await queryIssues();
+      setIssues(issues);
+    };
+    query();
+  }, []);
+
   const login = async () => {
     console.log("hi");
     const rwaURL = `${REACT_APP_AUTH0_DOMAIN}/authorize?scope=openid&response_type=code&client_id=${REACT_APP_CLIENTID}&redirect_uri=${`${getApiEndpoint()}callback?referrer=${referrer}`}&state=STATE`;
@@ -646,6 +695,7 @@ export const LancerProvider: FunctionComponent<ILancerState> = ({
     login,
     logout,
     issue,
+    issues,
     setIssue,
     issueLoadingState,
     setIssueLoadingState,
