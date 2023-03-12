@@ -1,8 +1,4 @@
-.form-container {
-  width: 1000px;
-  margin: 0 auto;
-  margin-top: 40px;
-}
+
 
 .form-title {
   width: 100%;
@@ -101,8 +97,9 @@
 
 .markdown-preview {
   flex: 2;
-  height: 100px;
-  min-height: 100px;
+  height: 100px;    min-height: 170px;
+  margin-bottom: 10px;
+
   width: 100%;
   background-color: white;
   color: black;

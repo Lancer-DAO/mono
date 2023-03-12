@@ -49,6 +49,7 @@ import { MONO_DEVNET } from "@/escrow/sdk/constants";
 import MonoProgramJSON from "@/escrow/sdk/idl/mono_program.json";
 import Base58 from "base-58";
 import { useLancer } from "@/src/providers/lancerProvider";
+import classnames from "classnames";
 
 const secretKey = Uint8Array.from(keypair);
 const keyPair = Keypair.fromSecretKey(secretKey);
@@ -84,6 +85,12 @@ const Form = () => {
     estimatedTime: "",
     isPrivate: false,
   });
+  const [isOpen, setIsOpen] = useState(false);
+
+  const [isPreview, setIsPreview] = useState(false);
+
+  const toggleOpen = () => setIsOpen(!isOpen);
+  const togglePreview = () => setIsPreview(!isPreview);
 
   useEffect(() => {
     if (user?.githubId) {
@@ -107,8 +114,7 @@ const Form = () => {
     });
   };
 
-  const handleChangeRepo = (event) => {
-    const repoFullName = event.target.value;
+  const handleChangeRepo = (repoFullName: string) => {
     const repo = repositories.find((_repo) => _repo.full_name === repoFullName);
     setRepo(repo);
   };
@@ -116,7 +122,7 @@ const Form = () => {
   const handleCheckboxChange = (event) => {
     setFormData({
       ...formData,
-      [event.target.name]: event.target.checked,
+      isPrivate: !formData.isPrivate,
     });
   };
 
@@ -190,103 +196,170 @@ const Form = () => {
 
   return (
     <div className="form-container">
-      <div className="form-title">Create New Lancer Issue</div>
-      <form
-        className="form"
-        style={{ width: "1000px" }}
-        onSubmit={handleSubmit}
-      >
-        <div className="form-subtitle">GitHub Issue Information</div>
-        <div className="form-row-grid">
-          <div className="form-cell">
-            <label className="form-label">Project</label>
-
-            {repositories ? (
-              <select
-                name="project"
-                value={repo ? repo.full_name : ""}
-                onChange={handleChangeRepo}
-                className="form-select"
+      <form className="form" onSubmit={handleSubmit}>
+        <>
+          <div id="job-information" className="form-layout-flex">
+            <h2
+              id="w-node-a3d1ad77-e5aa-114b-bcd7-cde3db1bb746-0ae9cdc2"
+              className="form-subtitle"
+            >
+              New Lancer Bounty
+            </h2>
+            <div
+              id="w-node-_11ff66e2-bb63-3205-39c9-a48a569518d9-0ae9cdc2"
+              className="input-container-full-width"
+            >
+              <div
+                data-delay="0"
+                data-hover="false"
+                id="w-node-b1521c3c-4fa1-4011-ae36-88dcb6e746fb-0ae9cdc2"
+                className="w-dropdown"
+                onClick={toggleOpen}
               >
-                <option value="Lancer-DAO/github-app">Demo Repo</option>
-                {repositories.map((project) => (
-                  <option value={project.full_name} key={project.full_name}>
-                    {project.full_name}
-                  </option>
-                ))}
-              </select>
-            ) : (
-              <div>Loading Your Projects</div>
-            )}
-          </div>
-        </div>
-        <div className="form-cell">
-          <label className="form-label">Issue Title</label>
-          <input
-            type="text"
-            name="issueTitle"
-            value={formData.issueTitle}
-            onChange={handleChange}
-            className="form-input"
-          />
-        </div>
-        <div className="form-cell">
-          <label className="form-label">Issue Description</label>
-          <textarea
-            name="issueDescription"
-            value={formData.issueDescription}
-            onChange={handleDescriptionChange}
-            className="form-textarea"
-          />
-        </div>
-        <div className="form-cell">
-          <label className="form-label">Preview</label>
-          <div
-            className="markdown-preview"
-            dangerouslySetInnerHTML={previewMarkup()}
-          />
-        </div>
-        <div className="form-subtitle">Additional Lancer Information</div>
-        <div className="form-row-grid grid-1-1">
-          <div className="form-cell">
-            <label className="form-label">Tags (comma-separated list)</label>
-            <input
-              type="text"
-              name="requirements"
-              value={formData.requirements}
-              onChange={handleRequirementsChange}
-              className="form-input"
-            />
-          </div>
-          <div className="form-row-grid grid-1-1">
-            <div className="form-cell">
-              <label className="form-label">Estimated Time (hours)</label>
+                <main className="dropdown-toggle-2 w-dropdown-toggle">
+                  <div className="w-icon-dropdown-toggle"></div>
+                  <div>
+                    {repositories ? (
+                      repo ? (
+                        repo.full_name
+                      ) : (
+                        <div>
+                          Select Project <span className="color-red">* </span>
+                        </div>
+                      )
+                    ) : (
+                      "Loading Repositories"
+                    )}
+                  </div>
+                </main>
+                {isOpen && repositories && (
+                  <div className="w-dropdown-list">
+                    {repositories.map((project) => (
+                      <div
+                        onClick={() => handleChangeRepo(project.full_name)}
+                        key={project.full_name}
+                        className="w-dropdown-link"
+                      >
+                        {project.full_name}
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+            <div>
+              <label>
+                Issue Title<span className="color-red">*</span>
+              </label>
               <input
                 type="text"
+                className="input w-input"
+                name="issueTitle"
+                placeholder="Ex. Add New Feature "
+                id="Issue"
+                value={formData.issueTitle}
+                onChange={handleChange}
+              />
+            </div>
+            <div>
+              <label className="field-label-2">
+                Est. Time to Completion<span className="color-red">*</span>
+              </label>
+              <input
+                type="number"
+                className="input w-input"
                 name="estimatedTime"
                 value={formData.estimatedTime}
                 onChange={handleChange}
-                className="form-input"
+                placeholder="Ex. 3 (hours)"
+                id="Issue-Description"
               />
             </div>
-            <div className="form-cell">
-              <label className="form-label">Private Issue</label>
+            <div>
+              <label className="field-label">
+                Coding Languages<span className="color-red">* </span>
+              </label>
               <input
-                type="checkbox"
-                name="isPrivate"
-                disabled={repo ? repo.private : false}
-                checked={formData.isPrivate || repo ? repo.private : false}
-                onChange={handleCheckboxChange}
-                className="form-checkbox"
+                type="text"
+                className="input w-input"
+                name="requirements"
+                value={formData.requirements}
+                onChange={handleRequirementsChange}
+                placeholder="list seperated by commas"
+                id="Job-Location-2"
               />
             </div>
+            <div
+              id="w-node-_19e3179a-ebf7-e568-5dcf-3c0e607846d8-0ae9cdc2"
+              className="input-container-full-width"
+            >
+              <div className="description-label">
+                <label>
+                  Description<span className="color-red">*</span>
+                </label>
+                <button
+                  className="button-primary hug no-box-shadow"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    togglePreview();
+                  }}
+                >
+                  {isPreview ? "Edit" : "Preview"}
+                </button>
+              </div>
+              {isPreview ? (
+                <div
+                  className="markdown-preview"
+                  dangerouslySetInnerHTML={previewMarkup()}
+                />
+              ) : (
+                <textarea
+                  id="Job-Description"
+                  name="issueDescription"
+                  value={formData.issueDescription}
+                  onChange={handleDescriptionChange}
+                  placeholder="Provide a step by step breakdown of what is needed to complete the task. Include criteria that will determine success. **Markdown Supported** "
+                  className="textarea w-input"
+                />
+              )}
+            </div>
+            <div className="required-helper">
+              <span className="color-red">* </span> Required
+            </div>
+            <label className="w-checkbox checkbox-field-2">
+              <div
+                className={classnames(
+                  "w-checkbox-input w-checkbox-input--inputType-custom checkbox",
+                  {
+                    checked: formData.isPrivate || repo ? repo.private : false,
+                    disabled: repo ? repo.private : false,
+                  }
+                )}
+                onChange={handleCheckboxChange}
+              />
+
+              <label className="check-label">Is this a Private Issue?</label>
+              <p className="check-paragraph">
+                Only GitHub collaborators will have access to see this.
+              </p>
+            </label>
+            <input
+              type="submit"
+              value="Submit"
+              data-wait="Please wait..."
+              id="w-node-ab1d78c4-cf4d-d38a-1a64-ef9c503727ac-0ae9cdc2"
+              className={classnames("button-primary issue-submit", {
+                disabled:
+                  !repo ||
+                  !formData.issueTitle ||
+                  !formData.estimatedTime ||
+                  !formData.requirements ||
+                  !formData.issueDescription ||
+                  formData.requirements?.length === 0,
+              })}
+            />
           </div>
-        </div>
-        <div className="submit-wrapper">
-          <button type="submit" className="form-submit">
-            Submit
-          </button>
-        </div>
+        </>
       </form>
     </div>
   );

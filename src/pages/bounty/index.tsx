@@ -19,6 +19,7 @@ import {
 } from "@/src/config";
 import { LancerProvider, useLancer } from "@/src/providers/lancerProvider";
 import { getFeatureFundingAccount } from "@/src/onChain";
+import { PageLayout } from "@/src/layouts";
 
 function App() {
   const router = useRouter();
@@ -27,7 +28,9 @@ function App() {
   return (
     id !== undefined && (
       <LancerProvider referrer={`bounty?id=${id}`} issueId={id as string}>
-        <Bounty />
+        <PageLayout>
+          <Bounty />
+        </PageLayout>
       </LancerProvider>
     )
   );
