@@ -378,6 +378,16 @@ export const getAllIssues = async () => {
   return result.rows.length > 0 ? result.rows : {message: 'NOT FOUND'};
 };
 
+export const getAllIssuesForRepo = async (org:string, repo:string) => {
+  let query =
+    "SELECT issue_number"
+
+  query += ` from issue as i`
+  query += ` WHERE org='${org}' and repo ='${repo}'`
+  const result = await DB.raw(query);
+  return result.rows.length > 0 ? result.rows : {message: 'NOT FOUND'};
+};
+
 export const getIssueByUuid = async (uuid: string) => {
   let query =
     "SELECT pr.pull_number, i.unix_timestamp, i.description, i.escrow_key, i.uuid, i.tags, i.estimated_time, i.title, i.funding_amount, i.funding_mint, i.issue_number, i.funding_hash, i.org, i.repo, i.state, a.github_login, a.github_id, a.solana_pubkey, a.uuid as author "

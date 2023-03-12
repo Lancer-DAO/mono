@@ -35,7 +35,7 @@ function App() {
                     data-w-id="3f54d410-1b35-353e-143c-2d9fcf61c440"
                     className="heading-size-1"
                   >
-                    Create an issue on Github with attached Lancer Bounty
+                    Create or Link a Github issue with an attached Lancer Bounty
                   </h1>
                   <p
                     data-w-id="e4920e8f-9360-7b18-dba3-32770e1bf1b4"

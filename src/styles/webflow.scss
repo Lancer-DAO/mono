@@ -2777,11 +2777,16 @@
     display: grid;
     grid-template-columns: 1fr 2fr;
     width: 100%;
-    padding-top: 20px;
-    padding-left: 15%;
-    padding-right: 15%;
     justify-content: center;
     column-gap: 40px;
+  }
+
+  .page-content {
+
+    width: 100%;
+    padding-top: 40px;
+    padding-left: 15%;
+    padding-right: 15%;
   }
 
   .description-label {
@@ -4704,23 +4709,7 @@
     color: #fff;
   }
 
-  .companies-card {
-    padding: 32px 24px 48px;
-    border-radius: 24px;
-    background-color: #fff;
-    box-shadow: 0 6px 12px 0 rgba(21, 60, 245, 0.05), 0 2px 6px 0 rgba(5, 21, 46, 0.02), 0 -2px 6px 0 rgba(36, 52, 128, 0.03);
-    -webkit-transition: box-shadow 400ms ease, -webkit-transform 400ms ease;
-    transition: box-shadow 400ms ease, -webkit-transform 400ms ease;
-    transition: box-shadow 400ms ease, transform 400ms ease;
-    transition: box-shadow 400ms ease, transform 400ms ease, -webkit-transform 400ms ease;
-  }
 
-  .companies-card:hover {
-    box-shadow: 0 8px 16px 0 rgba(21, 60, 245, 0.08), 0 3px 8px 0 rgba(5, 21, 46, 0.04), 0 -3px 8px 0 rgba(36, 52, 128, 0.06);
-    -webkit-transform: translate(0px, -8px);
-    -ms-transform: translate(0px, -8px);
-    transform: translate(0px, -8px);
-  }
 
   .grid-4-columns {
     display: -ms-grid;
@@ -4744,6 +4733,7 @@
   .company-card-link-wrapper {
     color: #47505c;
     text-decoration: none;
+    width: 100%;
   }
 
   .company-card-link-wrapper:hover {
@@ -5347,6 +5337,18 @@
     color: #14bb88;
     font-size: 24px;
     line-height: 32px;
+    &.unselected {
+        color: gray;
+    }
+  }
+
+  .hover-effect:hover {
+    cursor: pointer;
+    color: #14bb88
+  }
+
+  .issue-creation-type {
+    display: flex;
   }
 
   .input-container-full-width {
@@ -11937,7 +11939,6 @@
     float: left;
     width: 100%;
     min-height: 1px;
-    padding-left: 10px;
     padding-right: 10px;
   }
   .w-col .w-col {
@@ -12521,6 +12522,8 @@
     position: absolute;
     background: #dddddd;
     min-width: 100%;
+    max-height: 210px;
+    overflow-y: scroll;
   }
   .w-dropdown-link {
     padding: 10px 20px;
@@ -13214,4 +13217,148 @@
   }
   .w-condition-invisible {
     display: none !important;
+  }
+
+
+  .companies-card {
+    padding: 30px;
+    border-radius: 24px;
+    background-color: #fff;
+    box-shadow: 0 6px 12px 0 rgba(21, 60, 245, 0.05), 0 2px 6px 0 rgba(5, 21, 46, 0.02), 0 -2px 6px 0 rgba(36, 52, 128, 0.03);
+    -webkit-transition: box-shadow 400ms ease, -webkit-transform 400ms ease;
+    transition: box-shadow 400ms ease, -webkit-transform 400ms ease;
+    transition: box-shadow 400ms ease, transform 400ms ease;
+    transition: box-shadow 400ms ease, transform 400ms ease, -webkit-transform 400ms ease;
+  }
+
+  .companies-card:hover {
+    box-shadow: 0 8px 16px 0 rgba(21, 60, 245, 0.08), 0 3px 8px 0 rgba(5, 21, 46, 0.04), 0 -3px 8px 0 rgba(36, 52, 128, 0.06);
+    -webkit-transform: translate(0px, -8px);
+    -ms-transform: translate(0px, -8px);
+    transform: translate(0px, -8px);
+  }
+
+  .list-2 {
+    position: relative;
+    display: -ms-grid;
+    display: grid;
+    max-height: 186vh;
+    margin-bottom: 20px;
+    padding: 10px;
+    grid-auto-columns: 1fr;
+    grid-column-gap: 16px;
+    grid-row-gap: 16px;
+    grid-template-areas: ".";
+    -ms-grid-columns: 1fr 16px 1fr 16px 1fr;
+    grid-template-columns: 1fr 1fr 1fr;
+    -ms-grid-rows: auto;
+    grid-template-rows: auto;
+    font-size: 15px;
+    text-align: center;
+  }
+
+
+  .tag-list {
+    display: flex;
+    column-gap: 10px;
+  }
+  .tag-item {
+    border-style: solid;
+    border-width: 3px;
+    font-size: 14px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.2);
+    text-align: center;
+    padding-left: 8px;
+    padding-right: 8px;
+    width: fit-content;
+
+    &:nth-child(3n) {
+      border-color: #153cf5;
+
+    }
+    &:nth-child(3n + 1) {
+      border-color: #14bb88;
+
+      }
+      &:nth-child(3n + 2) {
+        border-color: red;
+
+        }
+  }
+
+  .bounty-card-funder {
+    display: flex;
+    align-items: flex-start;
+    justify-content: flex-start;
+    column-gap: 8px;
+  }
+
+  .no-padding-margin {
+    margin: 0px;
+    padding: 0px;
+  }
+
+  .bounty-funder-text {
+    div, h3 {
+      line-height: 18px;
+    }
+    h3 {
+      font-size: 18px;
+    }
+    div {
+      font-size: 16px;
+    }
+  }
+
+  .bounty-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    height: 36px;
+    width: 100%;
+  }
+
+  .bounty-funding {
+    display: flex;
+    align-items: flex-start;
+
+    h3 {
+      line-height: 36px;
+      font-size: 28px;
+      margin-right: 10px;
+      vertical-align: text-top;
+      margin-top: -2px;
+
+    }
+    svg {
+    border-radius: 50%;    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3);
+
+    }
+  }
+
+  .estimated-time-wrapper {
+    display: flex;
+    column-gap: 10px;
+    align-items: center;
+    div {
+      line-height: 38px;
+    }
+  }
+
+  .bounty-card-content {
+    width: 100%;
+  }
+
+  .bounty-markdown-preview {
+    margin-top: 10px;
+    min-height: 200px;
+  }
+
+  .spacer-filled {
+    width: 100%;
+    margin: 20px 10px;
+    height: 1px !important;
+    // background-color:  #14bb88;
+    background-image: linear-gradient(90deg, white, rgba(20,187,136, 0.5), white);
   }

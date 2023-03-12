@@ -10,6 +10,8 @@ import {
   getUniqueItems,
 } from "@/src/utils";
 import { DATA_API_ROUTE, ISSUE_API_ROUTE } from "@/server/src/constants";
+import { LancerBounty } from "@/src/pages/bounties/lancerBounty";
+import { PageLayout } from "@/src/layouts";
 
 const getIssues = () =>
   axios.get(
@@ -66,14 +68,15 @@ function App() {
   return (
     issues && (
       <div>
-        <h1 className="page-header">Bounties</h1>
-        <IssueList
-          issues={issues}
-          mints={mints}
-          orgs={orgs}
-          tags={tags}
-          timeBounds={bounds}
-        />
+        <PageLayout>
+          <IssueList
+            issues={issues}
+            mints={mints}
+            orgs={orgs}
+            tags={tags}
+            timeBounds={bounds}
+          />
+        </PageLayout>
       </div>
     )
   );

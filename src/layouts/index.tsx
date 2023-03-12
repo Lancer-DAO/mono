@@ -5,7 +5,7 @@ export const PageLayout: React.FC<{ children: ReactNode }> = ({ children }) => {
   return (
     <div>
       <Header />
-      {children}
+      <div className="page-content">{children}</div>
     </div>
   );
 };

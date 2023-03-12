@@ -59,7 +59,14 @@ const Dropdown: React.FC<Props> = ({ options, selected, onChange }) => {
         </div>
         <div className={`dropdown__icon ${isOpen ? "open" : ""}`}>▾</div>
       </div>
-      {isOpen && <div className="dropdown__options">{renderOptions()}</div>}
+      {isOpen && (
+        <div
+          className="dropdown__options"
+          onMouseLeave={() => setIsOpen(false)}
+        >
+          {renderOptions()}
+        </div>
+      )}
     </div>
   );
 };

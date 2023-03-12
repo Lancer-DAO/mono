@@ -1,5 +1,5 @@
 import MultiSelectDropdown from "@/src/components/MultiSelectDropdown";
-import { ISSUE_STATES } from "@/src/constants";
+import { TABLE_ISSUE_STATES } from "@/src/constants";
 import { getMintName } from "@/src/utils";
 import { Issue, IssueState } from "@/types";
 import { useState } from "react";
@@ -7,6 +7,7 @@ import { capitalize } from "lodash";
 import RangeSlider from "@/src/components/RangeSlider";
 import { BountyCard } from "./bountyCard";
 import { BountyFilters } from "./bountyFilters";
+import { LancerBounty } from "@/src/pages/bounties/lancerBounty";
 interface IssueList {
   issues: Issue[];
   mints: string[];
@@ -35,7 +36,7 @@ export const IssueList = ({
     tags: tags,
     orgs: orgs,
     estimatedTimeBounds: timeBounds,
-    states: ISSUE_STATES,
+    states: TABLE_ISSUE_STATES,
   });
 
   const filteredIssues = issues.filter((issue) => {
@@ -69,6 +70,9 @@ export const IssueList = ({
   });
   return (
     <div className="bounty-table">
+      <div className="empty-cell" />
+      <h1 className="page-header">Bounties</h1>
+
       <BountyFilters
         mints={mints}
         tags={tags}
@@ -79,7 +83,8 @@ export const IssueList = ({
       />
       <div className="issue-list">
         {filteredIssues.map((issue, index) => (
-          <BountyCard issue={issue} key={index} />
+          // <BountyCard issue={issue} key={index} />
+          <LancerBounty issue={issue} key={index} />
         ))}
       </div>
     </div>

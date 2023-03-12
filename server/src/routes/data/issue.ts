@@ -47,12 +47,15 @@ router.post(`/${ISSUE_API_ROUTE}`, async function (req, res, next) {
 router.post(`/${GITHUB_ISSUE_API_ROUTE}`, async function (req, res, next) {
   try {
     const requestData = req.body;
-    console.log('data',requestData)
+    let issueNumber = requestData.issueNumber;
+    if(requestData.createNewIssue) {
+      console.log('data',requestData)
     const issueCreationResp = await createGithubIssue(
         req.body
     );
     console.log(issueCreationResp)
-        const issueNumber = issueCreationResp.data.number;
+        issueNumber = issueCreationResp.data.number;
+    }
     return res.json(
         await newAccountIssue({...requestData, issueNumber: issueNumber})
     );
