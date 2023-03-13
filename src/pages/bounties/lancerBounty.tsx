@@ -15,7 +15,10 @@ export const LancerBounty = ({ issue }: { issue: Issue }) => {
       role="listitem"
       className="companies-card"
     >
-      <a href="#" className="company-card-link-wrapper w-inline-block">
+      <a
+        href={`/bounty?id=${issue.uuid}`}
+        className="company-card-link-wrapper w-inline-block"
+      >
         <div className="bounty-card-content">
           <div className="w-row">
             <h2 className="heading no-padding-margin">{issue.title}</h2>

@@ -5053,9 +5053,9 @@
     -webkit-align-items: start;
     -ms-flex-align: start;
     align-items: start;
+    justify-content: center;
     grid-column-gap: 48px;
-    -ms-grid-columns: 2.4fr 1fr;
-    grid-template-columns: 2.4fr 1fr;
+    grid-template-columns: 600px 400px;
     -ms-grid-rows: auto;
     grid-template-rows: auto;
   }
@@ -5132,10 +5132,9 @@
   }
 
   .job-post-date {
-    margin-bottom: 18px;
+    margin-bottom: 0px;
     color: #858c95;
-    line-height: 20px;
-    text-align: right;
+    line-height: 18px;
   }
 
   .job-post-middle {
@@ -5161,6 +5160,7 @@
     -webkit-align-items: center;
     -ms-flex-align: center;
     align-items: center;
+    justify-content: center;
   }
 
   .job-post-info-icon {
@@ -5180,6 +5180,12 @@
     line-height: 18px;
     letter-spacing: 0.12em;
     text-transform: uppercase;
+    &.icon-left {
+      margin-left: 10px;
+    }
+    &.icon-right {
+      margin-right: 10px;
+    }
   }
 
   .job-post-bottom {
@@ -7626,9 +7632,6 @@
   }
 
   @media screen and (min-width: 1440px) {
-    .container-default {
-      max-width: 1300px;
-    }
 
     .footer-grid {
       grid-column-gap: 110px;
@@ -8866,10 +8869,7 @@
       line-height: 32px;
     }
 
-    .job-post-date {
-      margin-right: 10px;
-      margin-bottom: 0px;
-    }
+
 
     .job-post-date-container {
       display: none;
@@ -8888,6 +8888,7 @@
       -webkit-flex: 1;
       -ms-flex: 1;
       flex: 1;
+      margin-left: 20px !important;
     }
 
     .job-post-middle {
@@ -9391,8 +9392,10 @@
     }
 
     .container-default {
-      padding-right: 16px;
-      padding-left: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
     }
 
     .container-medium {
@@ -9789,9 +9792,7 @@
       grid-template-columns: 1fr;
     }
 
-    .grid-job-post-top {
-      grid-row-gap: 32px;
-    }
+
 
     .job-post-primary-info {
       -webkit-box-orient: vertical;
@@ -9799,11 +9800,10 @@
       -webkit-flex-direction: column;
       -ms-flex-direction: column;
       flex-direction: column;
+      align-items: center;
+      justify-content: center;
     }
 
-    .job-post-date {
-      margin-bottom: 24px;
-    }
 
     .job-post-date-container {
       -webkit-box-orient: vertical;
@@ -13361,4 +13361,19 @@
     height: 1px !important;
     // background-color:  #14bb88;
     background-image: linear-gradient(90deg, white, rgba(20,187,136, 0.5), white);
+  }
+
+  .margin-x-auto {
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .bounty-fund-with-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .bounty-page-title-section{
+    margin-left: 20px;
   }

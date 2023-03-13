@@ -163,7 +163,6 @@ export const IssueList = () => {
       />
       <div className="issue-list">
         {filteredIssues.map((issue, index) => (
-          // <BountyCard issue={issue} key={index} />
           <LancerBounty issue={issue} key={index} />
         ))}
       </div>

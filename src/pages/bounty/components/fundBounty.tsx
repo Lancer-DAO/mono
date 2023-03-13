@@ -138,42 +138,6 @@ const FundBounty: React.FC = () => {
       </a>
       <div className="form-subtitle">Payment Information</div>
       <div className="form-row-grid grid-1-1-1">
-        {/* <div className="form-cell">
-          <label className="form-label">Payment Type</label>
-          <select
-            name="paymentType"
-            value={formData.paymentType}
-            onChange={handleChange}
-            className="form-select"
-          >
-            <option value="spl">SPL Token</option>
-            <option value="stripe" disabled={true}>
-              Stripe (Coming Soon)
-            </option>
-            <option value="paypal" disabled={true}>
-              PayPal (Coming Soon)
-            </option>
-            <option value="coinbase" disabled={true}>
-              Coinbase (Coming Soon)
-            </option>
-          </select>
-        </div>
-        <div className="form-cell">
-          <label className="form-label">Payment Token</label>
-          <RadioWithCustomInput
-            options={[...DEFAULT_MINTS.map((mint) => mint.name), "Other"]}
-            defaultOption="SOL"
-            setOption={(option) => {
-              const mintAddress = DEFAULT_MINT_NAMES.includes(option)
-                ? DEFAULT_MINTS.find((mint) => mint.name === option).mint
-                : option;
-              setFormData({
-                ...formData,
-                mintAddress: mintAddress,
-              });
-            }}
-          />
-        </div> */}
         <div className="form-cell">
           <label className="form-label">Payment Amount</label>
           <input
