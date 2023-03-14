@@ -56,9 +56,4 @@ import {
 
   insertIntoPage();
 
-  chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-    console.log("page update", request);
-    if (request.message === "page_update") {
-      insertIntoPage();
-    }
-  });
+
