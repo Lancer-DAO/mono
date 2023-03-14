@@ -52,7 +52,6 @@ import { MonoProgram } from "@/escrow/sdk/types/mono_program";
 import Base58 from "base-58";
 import RadioWithCustomInput from "@/src/pages/fund/RadioWithCustomInput";
 import { useLancer } from "@/src/providers/lancerProvider";
-import FundBounty from "@/src/pages/bounty/components/fundBounty";
 import RequestToSubmit from "@/src/pages/bounty/components/requestToSubmit";
 import SubmitterSection from "@/src/pages/bounty/components/submitterSection";
 import SubmitRequest from "@/src/pages/bounty/components/submitRequest";
