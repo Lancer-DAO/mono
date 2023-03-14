@@ -52,7 +52,6 @@ import { MonoProgram } from "@/escrow/sdk/types/mono_program";
 import Base58 from "base-58";
 import RadioWithCustomInput from "@/src/pages/fund/RadioWithCustomInput";
 import { useLancer } from "@/src/providers/lancerProvider";
-import RequestToSubmit from "@/src/pages/bounty/components/requestToSubmit";
 import SubmitterSection from "@/src/pages/bounty/components/submitterSection";
 import SubmitRequest from "@/src/pages/bounty/components/submitRequest";
 import ReviewRequest from "@/src/pages/bounty/components/reviewRequest";
@@ -197,7 +196,7 @@ const Bounty: React.FC = () => {
                 <div>
                   <label className="field-label-5">Denied Requesters</label>
                   {issue.deniedRequesters.map((submitter) => (
-                    <ContributorInfo user={submitter} />
+                    <ContributorInfo user={submitter} key={submitter.uuid} />
                   ))}
                 </div>
               )}
@@ -237,7 +236,7 @@ const Bounty: React.FC = () => {
                   <div>
                     <label className="field-label-5">Changes Requested</label>
                     {issue.changesRequestedSubmitters.map((submitter) => (
-                      <ContributorInfo user={submitter} />
+                      <ContributorInfo user={submitter} key={submitter.uuid} />
                     ))}
                   </div>
                 )}
@@ -245,7 +244,7 @@ const Bounty: React.FC = () => {
                 <div>
                   <label className="field-label-5">Denied Submitters</label>
                   {issue.deniedSubmitters.map((submitter) => (
-                    <ContributorInfo user={submitter} />
+                    <ContributorInfo user={submitter} key={submitter.uuid} />
                   ))}
                 </div>
               )}
@@ -259,7 +258,7 @@ const Bounty: React.FC = () => {
                 <div>
                   <label className="field-label-5">Voting To Cancel</label>
                   {issue.cancelVoters.map((submitter) => (
-                    <ContributorInfo user={submitter} />
+                    <ContributorInfo user={submitter} key={submitter.uuid} />
                   ))}
                 </div>
               )}
@@ -269,7 +268,7 @@ const Bounty: React.FC = () => {
                     Votes Needed to Cancel
                   </label>
                   {issue.needsToVote.map((submitter) => (
-                    <ContributorInfo user={submitter} />
+                    <ContributorInfo user={submitter} key={submitter.uuid} />
                   ))}
                 </div>
               )}

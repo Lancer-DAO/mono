@@ -7,9 +7,10 @@ import knex from 'knex';
 export const DB = knex({
   client: 'pg',
   connection: {
-    host : '0.0.0.0',
+    host : '/cloudsql/lancer-api-375702:us-central1:dev-lancer-db',
     debug:  true,
-    user : 'developer',
+    user : 'postgres',
     password : 'developer',
-    database : 'developer'
-  }})
+    database : 'postgres'
+  }
+})

@@ -1,3 +1,4 @@
+import Link from "next/link";
 import Logo from "../assets/Logo";
 
 export const Header = () => {
@@ -13,20 +14,20 @@ export const Header = () => {
       className="header w-nav"
     >
       <div className="container-default container-header w-container">
-        <a href="/" className="brand w-nav-brand">
+        <Link href="/" className="brand w-nav-brand">
           <Logo width="auto" height="90px" />
-        </a>
+        </Link>
         <div className="header-right">
-          <a href="/create" className="button-primary">
+          <Link href="/create" className="button-primary">
             New Bounty
-          </a>
-          <a href="/my_bounties" className="button-primary">
+          </Link>
+          <Link href="/my_bounties" className="button-primary">
             My bounties
-          </a>
-          <a href="/bounties" className="button-primary">
+          </Link>
+          <Link href="/bounties" className="button-primary">
             All bounties
-          </a>
-          <a
+          </Link>
+          <Link
             href="/account"
             data-node-type="commerce-cart-open-link"
             className="w-commerce-commercecartopenlink cart-buttno w-inline-block"
@@ -36,7 +37,7 @@ export const Header = () => {
               width="50"
               alt="Bag - Jobs Webflow Template"
             />
-          </a>
+          </Link>
         </div>
       </div>
     </div>

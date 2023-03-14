@@ -31,7 +31,6 @@ export const IssueList: React.FC<{ isMyBounties: boolean }> = ({
   isMyBounties,
 }) => {
   const { user, issues } = useLancer();
-  if (!issues) return <></>;
   const [tags, setTags] = useState<string[]>([]);
   const [mints, setMints] = useState<string[]>([]);
   const [orgs, setOrgs] = useState<string[]>([]);
@@ -46,7 +45,7 @@ export const IssueList: React.FC<{ isMyBounties: boolean }> = ({
     relationships: ISSUE_USER_RELATIONSHIP,
   });
   useEffect(() => {
-    if (issues.length !== 0) {
+    if (issues?.length !== 0) {
       const allTags = issues
         .map((issue) => issue.tags)
         .reduce(
@@ -83,6 +82,7 @@ export const IssueList: React.FC<{ isMyBounties: boolean }> = ({
       });
     }
   }, [issues]);
+  if (!issues) return <></>;
 
   const filteredIssues = issues.filter((issue) => {
     // debugger;
