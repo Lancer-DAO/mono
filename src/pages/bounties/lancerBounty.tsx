@@ -2,8 +2,13 @@ import USDC from "../../assets/USDC";
 import { Clock } from "react-feather";
 import { marked } from "marked";
 import { Issue } from "@/src/types";
+import { useLocation } from "react-router-dom";
 
 export const LancerBounty = ({ issue }: { issue: Issue }) => {
+  const search = useLocation().search;
+
+  const params = new URLSearchParams(search);
+  const jwt = params.get("token");
   const previewMarkup = () => {
     const markdown = marked.parse(issue.description, { breaks: true });
     return { __html: markdown };
@@ -16,7 +21,7 @@ export const LancerBounty = ({ issue }: { issue: Issue }) => {
       className="companies-card"
     >
       <a
-        href={`/bounty?id=${issue.uuid}`}
+        href={`/bounty?id=${issue.uuid}${jwt ? `&token=${jwt}` : ""}`}
         className="company-card-link-wrapper w-inline-block"
       >
         <div className="bounty-card-content">

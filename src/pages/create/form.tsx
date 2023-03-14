@@ -15,6 +15,7 @@ import fromKeypair from "../../../second_wallet.json";
 import { createFFA, fundFFA } from "@/src/onChain";
 import { useLancer } from "@/src/providers/lancerProvider";
 import classnames from "classnames";
+import { useLocation } from "react-router-dom";
 export const DEFAULT_MINTS = [
   {
     name: "SOL",
@@ -33,6 +34,11 @@ export const DEFAULT_MINT_NAMES = DEFAULT_MINTS.map((mint) => mint.name);
 
 const Form = () => {
   const { user, program, anchor, wallet } = useLancer();
+
+  const search = useLocation().search;
+
+  const params = new URLSearchParams(search);
+  const jwt = params.get("token");
   const [creationType, setCreationType] = useState<"new" | "existing">("new");
   const [repositories, setRepositories] = useState<any[]>();
   const [issues, setIssues] = useState<any[]>();
@@ -194,7 +200,7 @@ const Form = () => {
           timestamp: timestamp,
         }
       );
-      window.location.replace(`/fund?id=${issue.uuid}`);
+      window.location.replace(`/fund?id=${issue.uuid}&token=${jwt}`);
     };
     if (creationType === "new") {
       const issueResponse = await createIssueNew();

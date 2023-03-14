@@ -21,6 +21,7 @@ import {
 import { getApiEndpoint } from "@/src/utils";
 import axios from "axios";
 import classNames from "classnames";
+import { useState } from "react";
 
 export const BountyActions = () => {
   const {
@@ -33,9 +34,9 @@ export const BountyActions = () => {
     setUser,
     setIssueLoadingState,
   } = useLancer();
+  const [hoveredButton, setHoveredButton] = useState("none");
   console.log("rerendering");
   if (!user?.relations || !issue?.escrowContract) {
-    // debugger;
     return <></>;
   }
   const requestToSubmit = async () => {
@@ -399,14 +400,31 @@ export const BountyActions = () => {
           </button>
         )}
         {user.isApprovedSubmitter && !issue.currentSubmitter && (
-          <button
-            className={classNames("button-primary")}
-            onClick={() => {
-              submitRequest();
+          <div
+            className="hover-tooltip-wrapper"
+            onMouseEnter={() => {
+              setHoveredButton("submit");
+            }}
+            onMouseLeave={() => {
+              setHoveredButton("none");
             }}
           >
-            Submit
-          </button>
+            <button
+              className={classNames("button-primary", {
+                disabled: !issue.pullNumber,
+              })}
+              onClick={() => {
+                submitRequest();
+              }}
+            >
+              Submit
+            </button>
+            {hoveredButton === "submit" && (
+              <div className="hover-tooltip">
+                Please open a PR closing this issue before submitting
+              </div>
+            )}
+          </div>
         )}
         {user.isCurrentSubmitter && !user.isCreator && (
           <button className={classNames("button-primary disabled")}>

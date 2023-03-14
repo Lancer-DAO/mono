@@ -118,6 +118,8 @@ const Bounty: React.FC = () => {
                   <a
                     href={`https://github.com/${issue.org}`}
                     className="job-post-company-name"
+                    target="_blank"
+                    rel="noreferrer"
                   >
                     {issue.org}
                   </a>
@@ -125,7 +127,14 @@ const Bounty: React.FC = () => {
                     {issue.state.split("_").join(" ")}
                   </div>
                 </div>
-                <h1 className="job-post-title">{issue.title}</h1>
+                <a
+                  className="job-post-title"
+                  href={`https://github.com/${issue.org}/${issue.repo}/issues/${issue.issueNumber}`}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  {issue.title}
+                </a>
                 <div className="bounty-title-row-1">
                   <div className="job-post-date">
                     {`${dayjs
@@ -184,6 +193,27 @@ const Bounty: React.FC = () => {
             id="w-node-_272b1d4e-bae1-2928-a444-208d5db4485b-fde9cdb1"
             className="w-form"
           >
+            <div className="contributors-section">
+              <h2>Links</h2>
+              {issue.issueNumber && (
+                <a
+                  href={`https://github.com/${issue.org}/${issue.repo}/issues/${issue.issueNumber}`}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  GitHub Issue
+                </a>
+              )}
+              {issue.pullNumber && (
+                <a
+                  href={`https://github.com/${issue.org}/${issue.repo}/issues/${issue.pullNumber}`}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  GitHub Pull Request
+                </a>
+              )}
+            </div>
             <div className="contributors-section">
               <h2>Contributors</h2>
               {issue && (

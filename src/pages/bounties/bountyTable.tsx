@@ -45,7 +45,7 @@ export const IssueList: React.FC<{ isMyBounties: boolean }> = ({
     relationships: ISSUE_USER_RELATIONSHIP,
   });
   useEffect(() => {
-    if (issues?.length !== 0) {
+    if (issues && issues.length !== 0) {
       const allTags = issues
         .map((issue) => issue.tags)
         .reduce(

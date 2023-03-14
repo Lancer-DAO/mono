@@ -1,7 +1,12 @@
 import Link from "next/link";
+import { useLocation } from "react-router-dom";
 import Logo from "../assets/Logo";
 
 export const Header = () => {
+  const search = useLocation().search;
+
+  const params = new URLSearchParams(search);
+  const jwt = params.get("token");
   return (
     <div
       data-collapse="medium"
@@ -18,17 +23,26 @@ export const Header = () => {
           <Logo width="auto" height="90px" />
         </Link>
         <div className="header-right">
-          <Link href="/create" className="button-primary">
+          <Link
+            href={`/create${jwt ? `?token=${jwt}` : ""}`}
+            className="button-primary"
+          >
             New Bounty
           </Link>
-          <Link href="/my_bounties" className="button-primary">
+          <Link
+            href={`/my_bounties${jwt ? `?token=${jwt}` : ""}`}
+            className="button-primary"
+          >
             My bounties
           </Link>
-          <Link href="/bounties" className="button-primary">
+          <Link
+            href={`/bounties${jwt ? `?token=${jwt}` : ""}`}
+            className="button-primary"
+          >
             All bounties
           </Link>
           <Link
-            href="/account"
+            href={`/account${jwt ? `?token=${jwt}` : ""}`}
             data-node-type="commerce-cart-open-link"
             className="w-commerce-commercecartopenlink cart-buttno w-inline-block"
           >

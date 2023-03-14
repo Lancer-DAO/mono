@@ -5348,6 +5348,10 @@
     &.unselected {
         color: gray;
     }
+    &.disabled {
+      color: grey;
+      pointer-events: none;
+      }
   }
 
   .hover-effect:hover {
@@ -13435,3 +13439,20 @@
     align-items: center;
     row-gap: 20px;
   }
+
+
+  .hover-tooltip-wrapper{
+    position: relative;
+  }
+
+  .hover-tooltip {
+    position: absolute;
+    top: -30px;
+    left: 0px;
+    width: 600px;
+    color: red;
+    }
+
+    .job-post-title {
+      color: black;
+    }

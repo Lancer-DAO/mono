@@ -95,10 +95,11 @@ const Form = () => {
                     <div
                       className={classnames("form-subtitle hover-effect", {
                         unselected: fundingType !== "wallet",
+                        disabled: true,
                       })}
                       onClick={() => setFundingType("wallet")}
                     >
-                      Pay With Phantom Wallet
+                      Pay With Phantom Wallet (Coming Soon)
                     </div>
                   </div>
 
