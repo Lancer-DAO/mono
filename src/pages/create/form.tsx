@@ -16,6 +16,7 @@ import { createFFA, fundFFA } from "@/src/onChain";
 import { useLancer } from "@/src/providers/lancerProvider";
 import classnames from "classnames";
 import { useLocation } from "react-router-dom";
+import { LoadingBar } from "@/src/components/LoadingBar";
 export const DEFAULT_MINTS = [
   {
     name: "SOL",
@@ -57,6 +58,7 @@ const Form = () => {
   const [isOpenIssue, setIsOpenIssue] = useState(false);
 
   const [isPreview, setIsPreview] = useState(false);
+  const [isSubmittingIssue, setIsSubmittingIssue] = useState(false);
 
   const toggleOpenRepo = () => setIsOpenRepo(!isOpenRepo);
   const toggleOpenIssue = () => setIsOpenIssue(!isOpenIssue);
@@ -143,7 +145,7 @@ const Form = () => {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
+    setIsSubmittingIssue(true);
     const createIssueNew = async () => {
       return axios.post(
         `${getApiEndpoint()}${DATA_API_ROUTE}/${GITHUB_ISSUE_API_ROUTE}`,
@@ -234,46 +236,46 @@ const Form = () => {
               id="w-node-_11ff66e2-bb63-3205-39c9-a48a569518d9-0ae9cdc2"
               className="input-container-full-width"
             >
-              <div
-                data-delay="0"
-                data-hover="false"
-                id="w-node-b1521c3c-4fa1-4011-ae36-88dcb6e746fb-0ae9cdc2"
-                className="w-dropdown"
-                onClick={toggleOpenRepo}
-              >
-                <main className="dropdown-toggle-2 w-dropdown-toggle">
-                  <div className="w-icon-dropdown-toggle"></div>
-                  <div>
-                    {repositories ? (
-                      repo ? (
+              {!repositories ? (
+                <LoadingBar title="Loading Repositories" />
+              ) : (
+                <div
+                  data-delay="0"
+                  data-hover="false"
+                  id="w-node-b1521c3c-4fa1-4011-ae36-88dcb6e746fb-0ae9cdc2"
+                  className="w-dropdown"
+                  onClick={toggleOpenRepo}
+                >
+                  <main className="dropdown-toggle-2 w-dropdown-toggle">
+                    <div className="w-icon-dropdown-toggle"></div>
+                    <div>
+                      {repo ? (
                         repo.full_name
                       ) : (
                         <div>
                           Select Project <span className="color-red">* </span>
                         </div>
-                      )
-                    ) : (
-                      "Loading Repositories"
-                    )}
-                  </div>
-                </main>
-                {isOpenRepo && repositories && (
-                  <div
-                    className="w-dropdown-list"
-                    onMouseLeave={() => setIsOpenRepo(false)}
-                  >
-                    {repositories.map((project) => (
-                      <div
-                        onClick={() => handleChangeRepo(project.full_name)}
-                        key={project.full_name}
-                        className="w-dropdown-link"
-                      >
-                        {project.full_name}
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
+                      )}
+                    </div>
+                  </main>
+                  {isOpenRepo && repositories && (
+                    <div
+                      className="w-dropdown-list"
+                      onMouseLeave={() => setIsOpenRepo(false)}
+                    >
+                      {repositories.map((project) => (
+                        <div
+                          onClick={() => handleChangeRepo(project.full_name)}
+                          key={project.full_name}
+                          className="w-dropdown-link"
+                        >
+                          {project.full_name}
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
             {repo && (
               <div className="issue-creation-type">
@@ -398,21 +400,25 @@ const Form = () => {
                   </p>
                 </label>
 
-                <input
-                  type="submit"
-                  value="Submit"
-                  data-wait="Please wait..."
-                  id="w-node-ab1d78c4-cf4d-d38a-1a64-ef9c503727ac-0ae9cdc2"
-                  className={classnames("button-primary issue-submit", {
-                    disabled:
-                      !repo ||
-                      !formData.issueTitle ||
-                      !formData.estimatedTime ||
-                      !formData.requirements ||
-                      !formData.issueDescription ||
-                      formData.requirements?.length === 0,
-                  })}
-                />
+                {isSubmittingIssue ? (
+                  <LoadingBar title="Creating Lancer Bounty" />
+                ) : (
+                  <input
+                    type="submit"
+                    value="Submit"
+                    data-wait="Please wait..."
+                    id="w-node-ab1d78c4-cf4d-d38a-1a64-ef9c503727ac-0ae9cdc2"
+                    className={classnames("button-primary issue-submit", {
+                      disabled:
+                        !repo ||
+                        !formData.issueTitle ||
+                        !formData.estimatedTime ||
+                        !formData.requirements ||
+                        !formData.issueDescription ||
+                        formData.requirements?.length === 0,
+                    })}
+                  />
+                )}
               </>
             )}
             {repo && creationType === "existing" && (
@@ -493,18 +499,22 @@ const Form = () => {
                     id="Job-Location-2"
                   />
                 </div>
-                <input
-                  type="submit"
-                  value="Submit"
-                  data-wait="Please wait..."
-                  id="w-node-ab1d78c4-cf4d-d38a-1a64-ef9c503727ac-0ae9cdc2"
-                  className={classnames("button-primary issue-submit", {
-                    disabled:
-                      !issue ||
-                      !formData.estimatedTime ||
-                      !formData.requirements,
-                  })}
-                />
+                {isSubmittingIssue ? (
+                  <LoadingBar title="Creating Lancer Bounty" />
+                ) : (
+                  <input
+                    type="submit"
+                    value="Submit"
+                    data-wait="Please wait..."
+                    id="w-node-ab1d78c4-cf4d-d38a-1a64-ef9c503727ac-0ae9cdc2"
+                    className={classnames("button-primary issue-submit", {
+                      disabled:
+                        !issue ||
+                        !formData.estimatedTime ||
+                        !formData.requirements,
+                    })}
+                  />
+                )}
               </>
             )}
           </div>

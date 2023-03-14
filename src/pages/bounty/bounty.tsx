@@ -78,16 +78,18 @@ const SideBarSection: React.FC<{ title: string; children: ReactNode }> = ({
 };
 
 const Bounty: React.FC = () => {
-  const { user, issue, setIssueLoadingState } = useLancer();
-  // const [pollIssue, setPollIssue] = useState(false);
-  // useEffect(() => {
-  //   const setFuturePoll = () => {
-  //     setIssueLoadingState("getting_issue");
-  //     console.log("polling issue");
-  //     setTimeout(() => setFuturePoll(), 5000);
-  //   };
-  //   setFuturePoll();
-  // }, [setIssueLoadingState]);
+  const { user, issue, setForceGetIssue } = useLancer();
+  const [pollId, setPollId] = useState(null);
+  useEffect(() => {
+    const setFuturePoll = () => {
+      setForceGetIssue(true);
+      setPollId(setTimeout(() => setFuturePoll(), 5000));
+    };
+    if (!pollId) {
+      setPollId(setTimeout(() => setFuturePoll(), 5000));
+    }
+  }, []);
+
   if (!user || !issue) {
     return <></>;
   }

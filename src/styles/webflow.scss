@@ -13456,3 +13456,17 @@
     .job-post-title {
       color: black;
     }
+
+    .loading-bar{
+      display: flex;
+      width: 100%;
+      align-items: center;
+      justify-content: center;
+      column-gap: 20px;
+    }
+
+    .loading-bar-title{
+      color: #14bb88;
+      line-height: 28px;
+      font-size: 28px;
+    }

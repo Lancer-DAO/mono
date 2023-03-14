@@ -51,6 +51,7 @@ import Base58 from "base-58";
 import { useLancer } from "@/src/providers/lancerProvider";
 import classnames from "classnames";
 import FundBounty from "./fundBounty";
+import { LoadingBar } from "@/src/components/LoadingBar";
 
 const Form = () => {
   const { user, program, anchor, wallet, issue } = useLancer();
@@ -79,7 +80,7 @@ const Form = () => {
               </h2>
               {issue.state === IssueState.NEW &&
               (!issue.escrowKey || !issue.escrowContract) ? (
-                <div key="creating-escrow">Creating Escrow Contract</div>
+                <LoadingBar title="Loading On Chain Details" />
               ) : (
                 <>
                   <div className="issue-creation-type">

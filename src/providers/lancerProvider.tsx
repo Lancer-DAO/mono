@@ -31,11 +31,7 @@ import { SolanaWallet } from "@web3auth/solana-provider";
 import { getFeatureFundingAccount, MyWallet } from "@/src/onChain";
 import { AnchorProvider, Program } from "@project-serum/anchor";
 import { MonoProgram } from "@/escrow/sdk/types/mono_program";
-import {
-  getApiEndpoint,
-  getApiEndpointExtension,
-  getEndpoint,
-} from "@/src/utils";
+import { getApiEndpoint, getEndpoint } from "@/src/utils";
 import { REACT_APP_CLIENTID } from "@/src/constants";
 import { useLocation } from "react-router-dom";
 import axios from "axios";
@@ -154,7 +150,7 @@ const getIssue = (uuid: string) =>
 
 const getIssues = (account?: string) =>
   axios.get(
-    `${getApiEndpointExtenstion()}${DATA_API_ROUTE}/${ISSUE_API_ROUTE}s${
+    `${getApiEndpoint()}${DATA_API_ROUTE}/${ISSUE_API_ROUTE}s${
       account ? `?uuid=${account}` : ""
     }`
   );
@@ -340,6 +336,7 @@ export interface ILancerContext {
   coinflowWallet: SolanaWalletContextState;
   setIssue: (issue: Issue) => void;
   setUser: (user: User) => void;
+  setForceGetIssue: (force: boolean) => void;
   setIssueLoadingState: (state: ISSUE_LOAD_STATE) => void;
   login: () => Promise<void>;
   logout: () => Promise<void>;
@@ -359,6 +356,7 @@ export const LancerContext = createContext<ILancerContext>({
   login: async () => {},
   logout: async () => {},
   setIssue: () => null,
+  setForceGetIssue: () => null,
   setUser: () => null,
   setIssueLoadingState: (state: ISSUE_LOAD_STATE) => null,
 });
@@ -403,6 +401,7 @@ export const LancerProvider: FunctionComponent<ILancerState> = ({
   const [publicKey, setPublicKey] = useState<PublicKey | null>(null);
   const connected = useMemo(() => !!publicKey, [publicKey]);
   const [coinflowWallet, setCoinflowWallet] = useState(null);
+  const [forceGetIssue, setForceGetIssue] = useState(true);
 
   const setWalletProvider = useCallback(async () => {
     let provider = web3Auth.provider;
@@ -749,10 +748,11 @@ export const LancerProvider: FunctionComponent<ILancerState> = ({
       }
       setIssueLoadingState("getting_contract");
     };
-    if (issueId !== undefined && anchor && program) {
+    if (issueId !== undefined && anchor && program && forceGetIssue) {
+      setForceGetIssue(false)
       query();
     }
-  }, [issueId, anchor, program, issue?.state, !!user, setUser]);
+  }, [issueId, anchor, program, issue?.state, !!user, setUser, forceGetIssue, setForceGetIssue]);
 
   useEffect(() => {
     const query = async () => {
@@ -808,6 +808,7 @@ export const LancerProvider: FunctionComponent<ILancerState> = ({
     issueLoadingState,
     setIssueLoadingState,
     coinflowWallet,
+    setForceGetIssue,
   };
   return (
     <LancerContext.Provider value={contextProvider}>

@@ -34,20 +34,30 @@ const SubmitterSection: React.FC<SubmitterSectionProps> = ({
       case "approved":
         {
           try {
-            await removeSubmitterFFA(
-              issue.creator.publicKey,
-              submitter.publicKey,
-              issue.escrowContract,
-              wallet,
-              anchor,
-              program
+            // await removeSubmitterFFA(
+            //   issue.creator.publicKey,
+            //   submitter.publicKey,
+            //   issue.escrowContract,
+            //   wallet,
+            //   anchor,
+            //   program
+            // );
+            submitter.relations.push(
+              ISSUE_ACCOUNT_RELATIONSHIP.RequestedSubmitter
             );
+            const index = user.relations.indexOf(
+              ISSUE_ACCOUNT_RELATIONSHIP.ApprovedSubmitter
+            );
+
+            if (index !== -1) {
+              user.relations.splice(index, 1);
+            }
             axios.put(
               `${getApiEndpoint()}${DATA_API_ROUTE}/${ACCOUNT_ISSUE_API_ROUTE}`,
               {
                 issueId: issue.uuid,
                 accountId: submitter.uuid,
-                isApprovedSubmitter: false,
+                relations: [ISSUE_ACCOUNT_RELATIONSHIP.RequestedSubmitter],
               }
             );
           } catch (e) {

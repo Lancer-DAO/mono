@@ -4,6 +4,7 @@ import {
   ISSUE_API_ROUTE,
   MERGE_PULL_REQUEST_API_ROUTE,
 } from "@/server/src/constants";
+import { LoadingBar } from "@/src/components/LoadingBar";
 import {
   addSubmitterFFA,
   approveRequestFFA,
@@ -33,11 +34,15 @@ export const BountyActions = () => {
     setIssue,
     setUser,
     setIssueLoadingState,
+    issueLoadingState,
   } = useLancer();
   const [hoveredButton, setHoveredButton] = useState("none");
   console.log("rerendering");
-  if (!user?.relations || !issue?.escrowContract) {
-    return <></>;
+  if (
+    (!user?.relations || !issue?.escrowContract) &&
+    issueLoadingState === "loaded"
+  ) {
+    return <LoadingBar title="Loading On Chain Details" />;
   }
   const requestToSubmit = async () => {
     if (user.isCreator) {
@@ -419,7 +424,7 @@ export const BountyActions = () => {
             >
               Submit
             </button>
-            {hoveredButton === "submit" && (
+            {hoveredButton === "submit" && !issue.pullNumber && (
               <div className="hover-tooltip">
                 Please open a PR closing this issue before submitting
               </div>
