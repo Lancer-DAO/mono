@@ -5,7 +5,7 @@ import {
     insertFund,
     insertPullRequest,
   } from "./helpers";
-  import "@/styles/main.scss";
+  import "./extension.scss";
 
   let currentPage = "";
   const insertIntoPage = () => {
@@ -56,9 +56,4 @@ import {
 
   insertIntoPage();
 
-  chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-    console.log("page update", request);
-    if (request.message === "page_update") {
-      insertIntoPage();
-    }
-  });
+

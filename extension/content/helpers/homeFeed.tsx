@@ -7,17 +7,18 @@ import {
   ISSUE_API_ROUTE,
   NEW_ISSUE_API_ROUTE,
 } from "@/server/src/constants";
-import { convertToQueryParams, getApiEndpointExtenstion } from "@/utils";
+import { getApiEndpointExtension } from "../utils";
+import { Issue } from "../types";
 const LIST_ITEM_ID = "bounty-list-item";
 
 const getIssues = () =>
   axios.get(
-    `${getApiEndpointExtenstion()}${DATA_API_ROUTE}/${ISSUE_API_ROUTE}s`
+    `${getApiEndpointExtension()}${DATA_API_ROUTE}/${ISSUE_API_ROUTE}s`
   );
 
 export const insertHomeFeed = () => {
   const existingWrapper = window.document.getElementById(LIST_ITEM_ID);
-  console.log("feed", existingWrapper, getApiEndpointExtenstion());
+  console.log("feed", existingWrapper, getApiEndpointExtension());
   if (existingWrapper) {
     return;
   }
@@ -38,7 +39,7 @@ export const insertHomeFeed = () => {
       tabIndex={-2}
       onClick={() => {
         getIssues().then((response) => {
-          const issues = response.data.map((rawIssue) => {
+          const issues: Issue[] = response.data.map((rawIssue) => {
             return {
               ...rawIssue,
               hash: rawIssue.funding_hash,

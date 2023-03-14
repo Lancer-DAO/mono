@@ -56,15 +56,9 @@ router.get(`/${ACCOUNT_PULL_REQUEST_API_ROUTE}`, async function (req, res, next)
 
 router.post(`/${NEW_PULL_REQUEST_API_ROUTE}`, async function (req, res, next) {
   try {
+    const data = await req.body;
     return res.json(
-      await newPullRequest({
-         title: req.query.title as string,
-         repo: req.query.repo as string,
-         org: req.query.org as string,
-         pullNumber: parseInt(req.query.pullNumber as string),
-         githubLogin: req.query.githubLogin as string,
-         issueNumber: parseInt(req.query.issueNumber as string)
-        })
+      await newPullRequest(data)
     );
   } catch (err) {
     next(err);
