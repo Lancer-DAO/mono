@@ -17,6 +17,12 @@ export const Header = () => {
           <Logo width="auto" height="90px" />
         </a>
         <div className="header-right">
+          <a href="/create" className="button-primary">
+            New Bounty
+          </a>
+          <a href="/bounties" className="button-primary">
+            My bounties
+          </a>
           <a href="/bounties" className="button-primary">
             All bounties
           </a>

@@ -2,7 +2,10 @@ import { PublicKey } from "@solana/web3.js";
 import React from "react";
 import { shortenPublicKey } from "@/utils";
 
-export const PubKey: React.FC<{ pubKey: PublicKey }> = ({ pubKey }) => {
+export const PubKey: React.FC<{ pubKey: PublicKey; full?: boolean }> = ({
+  pubKey,
+  full,
+}) => {
   const addy = pubKey.toString();
 
   return (
@@ -13,7 +16,7 @@ export const PubKey: React.FC<{ pubKey: PublicKey }> = ({ pubKey }) => {
       }}
       className="public-key"
     >
-      {shortenPublicKey(pubKey)}
+      {full ? `Solana Address: ${pubKey}` : shortenPublicKey(pubKey)}
     </div>
   );
 };
