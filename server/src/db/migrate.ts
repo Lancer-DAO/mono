@@ -55,9 +55,7 @@ const accountIssueAssoc = `CREATE TABLE account_issue (
   account_uuid UUID,
   issue_uuid UUID,
   PRIMARY KEY (account_uuid, issue_uuid),
-  is_creator BOOLEAN,
-  is_approved_submitter BOOLEAN,
-  is_submitter BOOLEAN,
+  relations VARCHAR[],
   CONSTRAINT fk_account FOREIGN KEY(account_uuid) REFERENCES account(uuid),
   CONSTRAINT fk_issue FOREIGN KEY(issue_uuid) REFERENCES issue(uuid)
 );`;

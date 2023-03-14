@@ -48,6 +48,7 @@
     "concurrently": "7.6.0",
     "cors": "2.8.5",
     "cryptocurrency-icons": "0.18.1",
+    "dayjs": "1.11.7",
     "deepcopy": "2.1.0",
     "dotenv": "^16.0.1",
     "eslint": "8.31.0",

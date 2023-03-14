@@ -23,7 +23,13 @@ import {
   getMintName,
   getSolscanAddress,
 } from "@/src/utils";
-import { EscrowContract, Issue, IssueState, WEB3_INIT_STATE } from "@/types";
+import {
+  EscrowContract,
+  Issue,
+  IssueState,
+  User,
+  WEB3_INIT_STATE,
+} from "@/types";
 import { Connection, PublicKey } from "@solana/web3.js";
 import { WALLET_ADAPTERS } from "@web3auth/base";
 import axios from "axios";
@@ -44,8 +50,7 @@ import { MONO_DEVNET } from "@/escrow/sdk/constants";
 import { MonoProgram } from "@/escrow/sdk/types/mono_program";
 import Base58 from "base-58";
 import RadioWithCustomInput from "@/src/pages/fund/RadioWithCustomInput";
-import { DEFAULT_MINTS, DEFAULT_MINT_NAMES } from "@/src/pages/fund/form";
-import { useLancer, User } from "@/src/providers/lancerProvider";
+import { useLancer } from "@/src/providers/lancerProvider";
 import FundBounty from "@/src/pages/bounty/components/fundBounty";
 import RequestToSubmit from "@/src/pages/bounty/components/requestToSubmit";
 import SubmitterSection from "@/src/pages/bounty/components/submitterSection";
@@ -81,7 +86,8 @@ const getAvailableCommands = (issue: Issue, user: User) => {
   ) {
     return [<div key="creating-escrow">Creating Escrow Contract</div>];
   }
-  const isSubmitter = issue.submitter && issue.submitter.uuid === user.uuid;
+  const isSubmitter =
+    issue.currentSubmitter && issue.currentSubmitter.uuid === user.uuid;
   const isCreator = issue.creator.uuid === user.uuid;
   const isApprovedSubmitter =
     issue.approvedSubmitters.findIndex(
@@ -105,19 +111,19 @@ const getAvailableCommands = (issue: Issue, user: User) => {
     availableCommands.push(<RequestToSubmit key={`request-submit`} />);
   }
 
-  if (issue.approvedSubmitters.length > 0 && isCreator) {
-    issue.approvedSubmitters.forEach((submitter) => {
-      if (!submitter.isSubmitter) {
-        availableCommands.push(
-          <SubmitterSection
-            submitter={submitter}
-            type="approved"
-            key={`approved-submitters-${submitter.uuid}`}
-          />
-        );
-      }
-    });
-  }
+  // if (issue.approvedSubmitters.length > 0 && isCreator) {
+  //   issue.approvedSubmitters.forEach((submitter) => {
+  //     if (!submitter.isSubmitter) {
+  //       availableCommands.push(
+  //         <SubmitterSection
+  //           submitter={submitter}
+  //           type="approved"
+  //           key={`approved-submitters-${submitter.uuid}`}
+  //         />
+  //       );
+  //     }
+  //   });
+  // }
 
   if (issue.requestedSubmitters.length > 0 && isCreator) {
     issue.requestedSubmitters.forEach((submitter) => {

@@ -14,7 +14,7 @@ const ReviewRequest: React.FC = () => {
   const { issue, wallet, anchor, program, setIssue } = useLancer();
   if (
     !issue.escrowContract ||
-    !issue.submitter ||
+    !issue.currentSubmitter ||
     issue.escrowContract.currentSubmitter.toString() ===
       "11111111111111111111111111111111"
   ) {
@@ -24,8 +24,8 @@ const ReviewRequest: React.FC = () => {
   const approveSubmission = async () => {
     try {
       await approveRequestFFA(
-        issue.creator.pubkey,
-        issue.submitter.pubkey,
+        issue.creator.publicKey,
+        issue.currentSubmitter.publicKey,
         issue.escrowContract,
         wallet,
         anchor,
@@ -49,8 +49,8 @@ const ReviewRequest: React.FC = () => {
   const denySubmission = async () => {
     try {
       await denyRequestFFA(
-        issue.creator.pubkey,
-        issue.submitter.pubkey,
+        issue.creator.publicKey,
+        issue.currentSubmitter.publicKey,
         issue.escrowContract,
         wallet,
         anchor,
@@ -60,7 +60,7 @@ const ReviewRequest: React.FC = () => {
         `${getApiEndpoint()}${DATA_API_ROUTE}/${ACCOUNT_ISSUE_API_ROUTE}`,
         {
           issueId: issue.uuid,
-          accountId: issue.submitter.uuid,
+          accountId: issue.currentSubmitter.uuid,
           isSubmitter: false,
           isApprovedSubmitter: true,
         }
@@ -82,7 +82,9 @@ const ReviewRequest: React.FC = () => {
   };
   return (
     <div>
-      {issue.submitter && <div>{issue.submitter.githubLogin}</div>}
+      {issue.currentSubmitter && (
+        <div>{issue.currentSubmitter.githubLogin}</div>
+      )}
       <button onClick={() => approveSubmission()}>{"Approve"}</button>
       <button onClick={() => denySubmission()}>{"Deny"}</button>
     </div>

@@ -148,7 +148,7 @@ const Form = () => {
         `${getApiEndpoint()}${DATA_API_ROUTE}/${GITHUB_ISSUE_API_ROUTE}`,
         {
           githubId: user.githubId,
-          githubLogin: user.githugLogin,
+          githubLogin: user.githubLogin,
           solanaKey: user.publicKey.toString(),
           org: repo ? repo.full_name.split("/")[0] : "Lancer-DAO",
           repo: repo ? repo.full_name.split("/")[1] : "github-app",

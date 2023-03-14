@@ -2,15 +2,42 @@ import { MonoProgram } from "@/escrow/sdk/types/mono_program";
 import { Program } from "@project-serum/anchor";
 import { AccountInfo, ParsedAccountData, PublicKey } from "@solana/web3.js";
 
-export type Submitter = {
-  githubLogin: string
-  githubId: string
-  pubkey: PublicKey
-  uuid: string
-  account: string
-  isCreator: boolean
-  isSubmitter: boolean
-  isApprovedSubmitter: boolean
+export enum ISSUE_ACCOUNT_RELATIONSHIP {
+  Creator = 'creator',
+  RequestedSubmitter = 'requested_submitter',
+  DeniedRequester = 'denied_requester',
+  ApprovedSubmitter = 'approved_submitter',
+  CurrentSubmitter = 'current_submitter',
+  DeniedSubmitter = 'denied_submitter',
+  ChangesRequestedSubmitter = 'changes_requested_submitter',
+  Completer = 'completer',
+  VotingCancel = 'voting_cancel'
+}
+
+export interface AccountCommon {
+  publicKey: PublicKey;
+  githubId: string;
+  githubLogin: string;
+  name: string;
+  uuid: string;
+  relations?: ISSUE_ACCOUNT_RELATIONSHIP[];
+}
+
+export interface Contributor extends AccountCommon  {
+  relations: ISSUE_ACCOUNT_RELATIONSHIP[];
+}
+
+export interface User extends AccountCommon  {
+  token?: string;
+  isCreator?: boolean,
+  isRequestedSubmitter?: boolean,
+  isDeniedRequester?: boolean,
+  isApprovedSubmitter?: boolean,
+  isCurrentSubmitter?: boolean,
+  isDeniedSubmitter?: boolean,
+  isChangesRequestedSubmitter?: boolean,
+  isCompleter?: boolean,
+  isVotingCancel?: boolean
 }
 
 export type EscrowContract = {
@@ -52,10 +79,17 @@ export type Issue = {
     uuid?: string;
     escrowKey?: PublicKey;
     timestamp?:string;
-    creator?: Submitter;
-    submitter?: Submitter;
-    approvedSubmitters?: Submitter[];
-    requestedSubmitters?: Submitter[];
+    allContributors?: Contributor[];
+    creator?: Contributor;
+    requestedSubmitters?: Contributor[];
+    deniedRequesters?: Contributor[];
+    approvedSubmitters?: Contributor[];
+    currentSubmitter?: Contributor;
+    deniedSubmitters?: Contributor[];
+    changesRequestedSubmitters?: Contributor[];
+    completer?: Contributor;
+    cancelVoters?: Contributor[];
+    needsToVote?: Contributor[];
     escrowContract: EscrowContract
   };
 

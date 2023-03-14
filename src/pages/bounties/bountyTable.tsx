@@ -65,7 +65,10 @@ export const IssueList = () => {
       const allTimes = issues.map((issue) => issue.estimatedTime);
       const maxTime = Math.max(...allTimes) || 10;
       const minTime = Math.min(...allTimes) || 0;
-      const timeBounds = [minTime, maxTime === minTime ? maxTime + 1 : maxTime];
+      const timeBounds: [number, number] = [
+        minTime,
+        maxTime === minTime ? maxTime + 1 : maxTime,
+      ];
       console.log(timeBounds);
       setTimeBounds(timeBounds);
       setFilters({
@@ -106,7 +109,8 @@ export const IssueList = () => {
     }
     if (user && issue.creator) {
       debugger;
-      const isSubmitter = issue.submitter && issue.submitter.uuid === user.uuid;
+      const isSubmitter =
+        issue.currentSubmitter && issue.currentSubmitter.uuid === user.uuid;
       const isCreator = issue.creator.uuid === user.uuid;
       const isApprovedSubmitter =
         issue.approvedSubmitters.findIndex(

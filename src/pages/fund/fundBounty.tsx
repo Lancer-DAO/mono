@@ -12,7 +12,6 @@ import {
   getMint,
 } from "@solana/spl-token";
 import { PublicKey, Transaction } from "@solana/web3.js";
-import { PubKey } from "@/src/components";
 import Coinflow from "@/src/pages/bounty/components/coinflowPurchase";
 
 const FundBounty: React.FC<{ amount: number }> = ({
@@ -22,18 +21,17 @@ const FundBounty: React.FC<{ amount: number }> = ({
 }) => {
   const { wallet, anchor, program, setIssue, issue, coinflowWallet } =
     useLancer();
-  const [isFunded, setIsFunded] = useState(false);
 
   const [fundTx, setFundTx] = useState<Transaction>(null);
   useEffect(() => {
     const getFundTransaction = async () => {
       console.log(
         "accounts#%",
-        issue.creator.pubkey.toString(),
+        issue.creator.publicKey.toString(),
         issue.escrowContract.unixTimestamp
       );
       const tx = await fundFFA(
-        issue.creator.pubkey,
+        issue.creator.publicKey,
         amount,
         issue.escrowContract,
         wallet,
@@ -85,20 +83,10 @@ const FundBounty: React.FC<{ amount: number }> = ({
       ...issue,
       state: IssueState.ACCEPTING_APPLICATIONS,
     });
-    setIsFunded(true);
+    window.location.replace(`/bounty?id=${issue.uuid}`);
   };
   return (
     <div className="bounty-fund-with-card">
-      {isFunded && (
-        <button
-          className="button-primary margin-x-auto"
-          onClick={() => {
-            window.location.replace(`/bounty?id=${issue.uuid}`);
-          }}
-        >
-          View Bounty Page
-        </button>
-      )}
       {fundTx && amount && (
         <Coinflow transaction={fundTx} onSuccess={onSuccess} amount={amount} />
       )}

@@ -53,6 +53,14 @@
 
   }
 
+  .contributor-picture-small {
+    height: 20px;
+    width: 20px;
+    border-radius: 50%;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3);
+
+  }
+
   .issue-header-right, .issue-footer-right {
     display: flex;
     flex-direction: column;

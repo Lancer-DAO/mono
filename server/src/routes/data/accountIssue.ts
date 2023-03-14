@@ -47,6 +47,7 @@ router.get(`/${ACCOUNT_ISSUE_API_ROUTE}`, async function (req, res, next) {
 router.put(`/${ACCOUNT_ISSUE_API_ROUTE}`, async function (req, res, next) {
   try {
     const data = await req.body;
+    console.log(data)
     return res.json(
       await updateAccountIssue(data)
     );

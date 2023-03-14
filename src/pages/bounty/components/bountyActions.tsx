@@ -1,0 +1,490 @@
+import {
+  ACCOUNT_ISSUE_API_ROUTE,
+  DATA_API_ROUTE,
+  ISSUE_API_ROUTE,
+  MERGE_PULL_REQUEST_API_ROUTE,
+} from "@/server/src/constants";
+import {
+  addSubmitterFFA,
+  approveRequestFFA,
+  cancelFFA,
+  denyRequestFFA,
+  submitRequestFFA,
+  voteToCancelFFA,
+} from "@/src/onChain";
+import { useLancer } from "@/src/providers";
+import {
+  Contributor,
+  IssueState,
+  ISSUE_ACCOUNT_RELATIONSHIP,
+} from "@/src/types";
+import { getApiEndpoint } from "@/src/utils";
+import axios from "axios";
+import classNames from "classnames";
+
+export const BountyActions = () => {
+  const {
+    user,
+    issue,
+    wallet,
+    anchor,
+    program,
+    setIssue,
+    setUser,
+    setIssueLoadingState,
+  } = useLancer();
+  console.log("rerendering");
+  if (!user?.relations || !issue?.escrowContract) {
+    // debugger;
+    return <></>;
+  }
+  const requestToSubmit = async () => {
+    if (user.isCreator) {
+      await addSubmitterFFA(
+        issue.creator.publicKey,
+        issue.creator.publicKey,
+        issue.escrowContract,
+        wallet,
+        anchor,
+        program
+      );
+      user.relations.push(ISSUE_ACCOUNT_RELATIONSHIP.ApprovedSubmitter);
+      axios.put(
+        `${getApiEndpoint()}${DATA_API_ROUTE}/${ACCOUNT_ISSUE_API_ROUTE}`,
+        { accountId: user.uuid, issueId: issue.uuid, relations: user.relations }
+      );
+
+      setIssue({
+        ...issue,
+        state: IssueState.IN_PROGRESS,
+        approvedSubmitters: [...issue.approvedSubmitters, issue.creator],
+      });
+      setUser({
+        ...user,
+        isApprovedSubmitter: true,
+        relations: user.relations,
+      });
+      setIssueLoadingState("getting_contract");
+    } else {
+      axios.post(
+        `${getApiEndpoint()}${DATA_API_ROUTE}/${ACCOUNT_ISSUE_API_ROUTE}`,
+        {
+          accountId: user.uuid,
+          issueId: issue.uuid,
+          relations: [ISSUE_ACCOUNT_RELATIONSHIP.RequestedSubmitter],
+        }
+      );
+
+      setIssue({
+        ...issue,
+        state: IssueState.IN_PROGRESS,
+        requestedSubmitters: [
+          ...issue.requestedSubmitters,
+          user as Contributor,
+        ],
+      });
+      setUser({
+        ...user,
+        isRequestedSubmitter: true,
+        relations: [ISSUE_ACCOUNT_RELATIONSHIP.RequestedSubmitter],
+      });
+    }
+
+    axios.put(`${getApiEndpoint()}${DATA_API_ROUTE}/${ISSUE_API_ROUTE}/state`, {
+      uuid: issue.uuid,
+      state: IssueState.IN_PROGRESS,
+    });
+  };
+
+  const submitRequest = async () => {
+    try {
+      await submitRequestFFA(
+        issue.creator.publicKey,
+        user.publicKey,
+        issue.escrowContract,
+        wallet,
+        anchor,
+        program
+      );
+      user.relations.push(ISSUE_ACCOUNT_RELATIONSHIP.CurrentSubmitter);
+      const index = user.relations.indexOf(
+        ISSUE_ACCOUNT_RELATIONSHIP.ApprovedSubmitter
+      );
+
+      if (index !== -1) {
+        user.relations.splice(index, 1);
+      }
+
+      const index2 = user.relations.indexOf(
+        ISSUE_ACCOUNT_RELATIONSHIP.ChangesRequestedSubmitter
+      );
+
+      if (index2 !== -1) {
+        user.relations.splice(index2, 1);
+      }
+
+      axios.put(
+        `${getApiEndpoint()}${DATA_API_ROUTE}/${ACCOUNT_ISSUE_API_ROUTE}`,
+        {
+          issueId: issue.uuid,
+          accountId: user.uuid,
+          relations: user.relations,
+        }
+      );
+      axios.put(
+        `${getApiEndpoint()}${DATA_API_ROUTE}/${ISSUE_API_ROUTE}/state`,
+        {
+          uuid: issue.uuid,
+          state: IssueState.AWAITING_REVIEW,
+        }
+      );
+      setIssue({
+        ...issue,
+        state: IssueState.AWAITING_REVIEW,
+      });
+      setIssueLoadingState("getting_contract");
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  const approveSubmission = async () => {
+    try {
+      await approveRequestFFA(
+        issue.creator.publicKey,
+        issue.currentSubmitter.publicKey,
+        issue.escrowContract,
+        wallet,
+        anchor,
+        program
+      );
+      axios.post(
+        `${getApiEndpoint()}${DATA_API_ROUTE}/${MERGE_PULL_REQUEST_API_ROUTE}`,
+        {
+          uuid: issue.uuid,
+        }
+      );
+      issue.currentSubmitter.relations.push(
+        ISSUE_ACCOUNT_RELATIONSHIP.Completer
+      );
+      const index = issue.currentSubmitter.relations.indexOf(
+        ISSUE_ACCOUNT_RELATIONSHIP.CurrentSubmitter
+      );
+
+      if (index !== -1) {
+        issue.currentSubmitter.relations.splice(index, 1);
+      }
+      axios.put(
+        `${getApiEndpoint()}${DATA_API_ROUTE}/${ACCOUNT_ISSUE_API_ROUTE}`,
+        {
+          issueId: issue.uuid,
+          accountId: issue.currentSubmitter.uuid,
+          relations: issue.currentSubmitter.relations,
+        }
+      );
+      setIssue({
+        ...issue,
+        state: IssueState.COMPLETE,
+        currentSubmitter: null,
+        completer: issue.currentSubmitter,
+      });
+      setIssueLoadingState("getting_contract");
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  const requestChangesSubmission = async () => {
+    try {
+      await denyRequestFFA(
+        issue.creator.publicKey,
+        issue.currentSubmitter.publicKey,
+        issue.escrowContract,
+        wallet,
+        anchor,
+        program
+      );
+      issue.currentSubmitter.relations.push(
+        ISSUE_ACCOUNT_RELATIONSHIP.ChangesRequestedSubmitter
+      );
+      const index = issue.currentSubmitter.relations.indexOf(
+        ISSUE_ACCOUNT_RELATIONSHIP.CurrentSubmitter
+      );
+
+      if (index !== -1) {
+        issue.currentSubmitter.relations.splice(index, 1);
+      }
+      axios.put(
+        `${getApiEndpoint()}${DATA_API_ROUTE}/${ACCOUNT_ISSUE_API_ROUTE}`,
+        {
+          issueId: issue.uuid,
+          accountId: issue.currentSubmitter.uuid,
+          relations: issue.currentSubmitter.relations,
+        }
+      );
+      axios.put(
+        `${getApiEndpoint()}${DATA_API_ROUTE}/${ISSUE_API_ROUTE}/state`,
+        {
+          uuid: issue.uuid,
+          state: IssueState.IN_PROGRESS,
+        }
+      );
+      setIssue({
+        ...issue,
+        state: IssueState.IN_PROGRESS,
+        currentSubmitter: null,
+        changesRequestedSubmitters: [issue.currentSubmitter],
+      });
+      setIssueLoadingState("getting_contract");
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  const denySubmission = async () => {
+    try {
+      await denyRequestFFA(
+        issue.creator.publicKey,
+        issue.currentSubmitter.publicKey,
+        issue.escrowContract,
+        wallet,
+        anchor,
+        program
+      );
+      debugger;
+      issue.currentSubmitter.relations.push(
+        ISSUE_ACCOUNT_RELATIONSHIP.DeniedSubmitter
+      );
+      const index = issue.currentSubmitter.relations.indexOf(
+        ISSUE_ACCOUNT_RELATIONSHIP.CurrentSubmitter
+      );
+
+      if (index !== -1) {
+        issue.currentSubmitter.relations.splice(index, 1);
+      }
+      axios.put(
+        `${getApiEndpoint()}${DATA_API_ROUTE}/${ACCOUNT_ISSUE_API_ROUTE}`,
+        {
+          issueId: issue.uuid,
+          accountId: issue.currentSubmitter.uuid,
+          relations: issue.currentSubmitter.relations,
+        }
+      );
+      axios.put(
+        `${getApiEndpoint()}${DATA_API_ROUTE}/${ISSUE_API_ROUTE}/state`,
+        {
+          uuid: issue.uuid,
+          state: IssueState.IN_PROGRESS,
+        }
+      );
+
+      setIssue({
+        ...issue,
+        state: IssueState.IN_PROGRESS,
+        currentSubmitter: null,
+        deniedSubmitters: [issue.currentSubmitter],
+      });
+      setIssueLoadingState("getting_contract");
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  const cancelEscrow = async () => {
+    await cancelFFA(
+      issue.creator.publicKey,
+      issue.escrowContract,
+      wallet,
+      anchor,
+      program
+    );
+
+    axios.put(`${getApiEndpoint()}${DATA_API_ROUTE}/${ISSUE_API_ROUTE}/state`, {
+      uuid: issue.uuid,
+      state: IssueState.CANCELED,
+    });
+    setIssue({
+      ...issue,
+      state: IssueState.CANCELED,
+    });
+  };
+
+  const handleVote = async () => {
+    try {
+      if (user.isCreator) {
+        await voteToCancelFFA(
+          issue.creator.publicKey,
+          issue.creator.publicKey,
+          issue.escrowContract,
+          wallet,
+          anchor,
+          program
+        );
+      } else if (user.isCurrentSubmitter) {
+        await voteToCancelFFA(
+          issue.creator.publicKey,
+          user.publicKey,
+          issue.escrowContract,
+          wallet,
+          anchor,
+          program
+        );
+      }
+      user.relations.push(ISSUE_ACCOUNT_RELATIONSHIP.VotingCancel);
+      setUser({
+        ...user,
+        relations: user.relations,
+        isVotingCancel: true,
+      });
+      const index = issue.needsToVote.findIndex(
+        (voter) => voter.uuid === user.uuid
+      );
+
+      if (index !== -1) {
+        issue.needsToVote.splice(index, 1);
+      }
+      axios.put(
+        `${getApiEndpoint()}${DATA_API_ROUTE}/${ACCOUNT_ISSUE_API_ROUTE}`,
+        {
+          issueId: issue.uuid,
+          accountId: user.uuid,
+          relations: user.relations,
+        }
+      );
+      setIssue({
+        ...issue,
+        needsToVote: issue.needsToVote,
+        cancelVoters: [...issue.cancelVoters, user as Contributor],
+      });
+      setIssueLoadingState("getting_contract");
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  return (
+    <div className="bounty-buttons">
+      <>
+        {user.relations.length === 0 && (
+          <button
+            className={classNames("button-primary")}
+            onClick={() => {
+              requestToSubmit();
+            }}
+          >
+            Apply
+          </button>
+        )}
+        {user.isCreator &&
+          (user.isVotingCancel
+            ? user.relations.length === 2
+            : user.relations.length === 1) && (
+            <button
+              className={classNames("button-primary")}
+              onClick={() => {
+                requestToSubmit();
+              }}
+            >
+              Allow Self Submission
+            </button>
+          )}
+        {user.isRequestedSubmitter && (
+          <button className={classNames("button-primary disabled")}>
+            Request Pending
+          </button>
+        )}
+        {user.isDeniedRequester && (
+          <button className={classNames("button-primary disabled")}>
+            Submission Request Denied
+          </button>
+        )}
+        {user.isApprovedSubmitter && !issue.currentSubmitter && (
+          <button
+            className={classNames("button-primary")}
+            onClick={() => {
+              submitRequest();
+            }}
+          >
+            Submit
+          </button>
+        )}
+        {user.isCurrentSubmitter && !user.isCreator && (
+          <button className={classNames("button-primary disabled")}>
+            Submission Pending Review
+          </button>
+        )}
+        {user.isDeniedSubmitter && (
+          <button className={classNames("button-primary disabled")}>
+            Submission Denied
+          </button>
+        )}
+        {user.isChangesRequestedSubmitter && (
+          <button
+            className={classNames("button-primary")}
+            onClick={() => {
+              submitRequest();
+            }}
+          >
+            Re-Submit
+          </button>
+        )}
+        {user.isCreator && issue.currentSubmitter && (
+          <button
+            className={classNames("button-primary")}
+            onClick={() => {
+              approveSubmission();
+            }}
+          >
+            Approve
+          </button>
+        )}
+        {user.isCreator && issue.currentSubmitter && (
+          <button
+            className={classNames("button-primary")}
+            onClick={() => {
+              requestChangesSubmission();
+            }}
+          >
+            Request Changes
+          </button>
+        )}
+        {user.isCreator && issue.currentSubmitter && (
+          <button
+            className={classNames("button-primary")}
+            onClick={() => {
+              denySubmission();
+            }}
+          >
+            Deny
+          </button>
+        )}
+        {(user.isCreator ||
+          user.isCurrentSubmitter ||
+          user.isDeniedSubmitter ||
+          user.isChangesRequestedSubmitter ||
+          user.isVotingCancel) && (
+          <button
+            className={classNames("button-primary", {
+              disabled: user.isVotingCancel,
+            })}
+            onClick={() => {
+              handleVote();
+            }}
+          >
+            {`${user.isVotingCancel ? "Voted To Cancel" : "Vote To Cancel"}`}
+          </button>
+        )}
+        {user.isCreator && issue.needsToVote.length === 0 && (
+          <button
+            className={classNames("button-primary")}
+            onClick={() => {
+              cancelEscrow();
+            }}
+          >
+            Cancel Bounty
+          </button>
+        )}
+      </>
+    </div>
+  );
+};

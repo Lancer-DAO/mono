@@ -13376,4 +13376,52 @@
 
   .bounty-page-title-section{
     margin-left: 20px;
+    width: 100%;
+  }
+
+  .bounty-buttons {
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .contributor-info{
+    display: flex;
+    align-items: center;
+  }
+
+  .contributor-name {
+    margin-left: 10px;
+  }
+
+  .submitter-section {
+    display: flex;
+    align-items: center;
+    column-gap: 10px;
+  }
+
+  .empty-submitter-cell{
+    width: 32px;
+    height: 20px;
+  }
+
+  .contributors-section {
+    display: flex;
+    flex-direction: column;
+    row-gap: 20px;
+  }
+
+  .bounty-buttons {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    column-gap: 10px;
+    row-gap: 10px;
+  }
+
+  .bounty-title-row-1 {
+    display: flex;
+    flex-direction: row;
+    width:100%;
+    justify-content: space-between;
+    align-items: center;
   }

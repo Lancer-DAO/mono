@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { EscrowContract, Issue, IssueState, Submitter } from "@/types";
+import { EscrowContract, Issue, IssueState, Contributor } from "@/types";
 import { PublicKey } from "@solana/web3.js";
 import { DEVNET_USDC_MINT } from "@/src/constants/web3";
 import axios from "axios";

@@ -6,8 +6,8 @@ export const shortenPublicKey = (key: PublicKey) => {
   return `${key.toString().slice(0, 4)}...${key.toString().slice(-4)}`;
 };
 
-export const getSolscanAddress = (hash: string) => {
-  return `https://solscan.io/account/${hash}${IS_MAINNET ? '' : '?cluster=devnet'}`
+export const getSolscanAddress = (pubkey: PublicKey) => {
+  return `https://solscan.io/account/${pubkey.toString()}${IS_MAINNET ? '' : '?cluster=devnet'}`
 }
 
 export const getSolscanTX = (hash: string) => {

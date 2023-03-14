@@ -6,7 +6,7 @@ import {
 import { getApiEndpoint } from "@/src/utils";
 import axios from "axios";
 import { useLancer } from "@/src/providers/lancerProvider";
-import { IssueState, Submitter } from "@/src/types";
+import { IssueState, Contributor } from "@/src/types";
 import {
   addSubmitterFFA,
   cancelFFA,
@@ -18,10 +18,10 @@ export type SubmitterSectionType = "approved" | "requested";
 
 const VoterSection: React.FC = () => {
   const { issue, wallet, anchor, program, user, setIssue } = useLancer();
-  if (user.uuid === issue.creator.uuid && !issue.submitter) {
+  if (user.uuid === issue.creator.uuid && !issue.currentSubmitter) {
     const cancelEscrow = async () => {
       cancelFFA(
-        issue.creator.pubkey,
+        issue.creator.publicKey,
         issue.escrowContract,
         wallet,
         anchor,
@@ -51,8 +51,8 @@ const VoterSection: React.FC = () => {
   const handleVote = async () => {
     if (user.uuid === issue.creator.uuid) {
       voteToCancelFFA(
-        issue.creator.pubkey,
-        issue.creator.pubkey,
+        issue.creator.publicKey,
+        issue.creator.publicKey,
         issue.escrowContract,
         wallet,
         anchor,
@@ -60,7 +60,7 @@ const VoterSection: React.FC = () => {
       );
     } else {
       voteToCancelFFA(
-        issue.creator.pubkey,
+        issue.creator.publicKey,
         user.publicKey,
         issue.escrowContract,
         wallet,

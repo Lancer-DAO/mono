@@ -197,10 +197,10 @@ export const insertAccountIssue = async (params: {accountId: string, issueId: st
   const account = await getAccountById(params.accountId)
 
   let query =
-    "INSERT INTO account_issue (account_uuid, issue_uuid, is_creator)";
+    "INSERT INTO account_issue (account_uuid, issue_uuid, relations)";
   query += ` VALUES ('${
     account.uuid
-  }', '${issue.uuid}', false);`;
+  }', '${issue.uuid}', '{"requested_submitter"}');`;
   console.log(query);
   const result = await DB.raw(query);
   return result;
@@ -211,7 +211,8 @@ export const updateAccountIssue = async (params: AccountIssueUpdateParams & {acc
   const account = await getAccountById(params.accountId)
 
   let query =
-  `UPDATE account_issue set is_submitter=${!!params.isSubmitter}, is_approved_submitter=${!!params.isApprovedSubmitter}`;
+  `UPDATE account_issue set relations='{${params.relations.map((relation) => `"${relation}"`).join(", ")}}'`;
+
   query += ` WHERE account_uuid='${
     account.uuid
   }' and  issue_uuid='${issue.uuid}';`;
@@ -274,10 +275,10 @@ export const newAccountIssue = async (params: AccountIssueNewParams) => {
   console.log('issue', issue)
 
   let query =
-    "INSERT INTO account_issue (account_uuid, issue_uuid, is_creator)";
+    "INSERT INTO account_issue (account_uuid, issue_uuid, relations)";
   query += ` VALUES ('${
     account.uuid
-  }', '${issue.uuid}', true);`;
+  }', '${issue.uuid}', '{"creator"}');`;
   console.log(query);
   await DB.raw(query);
   const result = {
@@ -367,13 +368,9 @@ export const getFullPullRequestByNumber = async (params: GetFullPullRequest) => 
 
 export const getAllIssues = async () => {
   let query =
-    "SELECT pr.pull_number, i.unix_timestamp, i.description, i.escrow_key, i.uuid, i.tags, i.estimated_time, i.title, i.funding_amount, i.funding_mint, i.issue_number, i.funding_hash, i.org, i.repo, i.state, a.github_login, a.github_id, a.solana_pubkey, a.uuid as author "
+    "SELECT pr.pull_number, i.unix_timestamp, i.description, i.escrow_key, i.uuid, i.tags, i.estimated_time, i.title, i.funding_amount, i.funding_mint, i.issue_number, i.funding_hash, i.org, i.repo, i.state "
 
   query += ` from issue as i`
-  query += ` LEFT OUTER JOIN account_issue as ai`
-  query += ` ON i.uuid = ai.issue_uuid`
-  query += ` LEFT OUTER JOIN account as a`
-  query += ` ON ai.account_uuid = a.uuid`
   query += ` LEFT OUTER JOIN pull_request as pr`
   query += ` ON pr.issue_uuid = i.uuid`
   const result = await DB.raw(query);
@@ -392,23 +389,19 @@ export const getAllIssuesForRepo = async (org:string, repo:string) => {
 
 export const getIssueByUuid = async (uuid: string) => {
   let query =
-    "SELECT pr.pull_number, i.unix_timestamp, i.description, i.escrow_key, i.uuid, i.tags, i.estimated_time, i.title, i.funding_amount, i.funding_mint, i.issue_number, i.funding_hash, i.org, i.repo, i.state, a.github_login, a.github_id, a.solana_pubkey, a.uuid as author "
+    "SELECT pr.pull_number, i.unix_timestamp, i.description, i.escrow_key, i.uuid, i.tags, i.estimated_time, i.title, i.funding_amount, i.funding_mint, i.issue_number, i.funding_hash, i.org, i.repo, i.state "
 
   query += ` from issue as i`
-  query += ` LEFT OUTER JOIN account_issue as ai`
-  query += ` ON i.uuid = ai.issue_uuid`
-  query += ` LEFT OUTER JOIN account as a`
-  query += ` ON ai.account_uuid = a.uuid`
   query += ` LEFT OUTER JOIN pull_request as pr`
   query += ` ON pr.issue_uuid = i.uuid`
-  query += ` WHERE i.uuid = '${uuid}' and ai.is_creator=true`
+  query += ` WHERE i.uuid = '${uuid}'`
   const result = await DB.raw(query);
   return result.rows.length > 0 ? result.rows[0] : {message: 'NOT FOUND'};
 };
 
 export const getAccountsForIssue = async (uuid: string) => {
   let query =
-    "SELECT a.github_login, a.github_id, a.solana_pubkey, a.uuid, ai.is_creator, ai.is_submitter, ai.is_approved_submitter "
+    "SELECT a.github_login, a.github_id, a.solana_pubkey, ai.account_uuid, ai.relations "
 
   query += ` from issue as i`
   query += ` LEFT OUTER JOIN account_issue as ai`
