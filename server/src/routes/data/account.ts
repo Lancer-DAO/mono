@@ -144,7 +144,8 @@ router.get(`/${ACCOUNT_API_ROUTE}/organizations`, (req, res) => {
         owner: org,
         repo: repo
       }).then(async (resp) => {
-        const issues = (await getAllIssuesForRepo(org, repo)).map((issue: { issue_number: string; }) => parseInt(issue.issue_number))
+        const rawIssues = await getAllIssuesForRepo(org, repo)
+        const issues = rawIssues.message ? [] : rawIssues.map((issue: { issue_number: string; }) => parseInt(issue.issue_number))
         console.log(issues)
         const remainingIssues = resp.data.filter((issue) => !issues.includes(issue.number))
         return res.status(200).json({message: 'Issues Found', data: remainingIssues})

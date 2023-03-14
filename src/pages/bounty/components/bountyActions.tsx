@@ -39,6 +39,12 @@ export const BountyActions = () => {
   const [hoveredButton, setHoveredButton] = useState("none");
   console.log("rerendering");
   if (
+    issue &&
+    (issue.state === IssueState.CANCELED || issue.state === IssueState.COMPLETE)
+  ) {
+    return <></>;
+  }
+  if (
     (!user?.relations || !issue?.escrowContract) &&
     issueLoadingState === "loaded"
   ) {
@@ -164,10 +170,11 @@ export const BountyActions = () => {
         anchor,
         program
       );
-      axios.post(
+      await axios.post(
         `${getApiEndpoint()}${DATA_API_ROUTE}/${MERGE_PULL_REQUEST_API_ROUTE}`,
         {
           uuid: issue.uuid,
+          githubId: user.githubId,
         }
       );
       issue.currentSubmitter.relations.push(

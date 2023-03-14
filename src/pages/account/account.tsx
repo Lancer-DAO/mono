@@ -30,26 +30,40 @@ import Coinflow from "./coinflowOfframp";
 import { PageLayout } from "@/src/layouts";
 
 const FundBounty: React.FC = () => {
-  const { wallet, anchor, program, setIssue, issue, user, coinflowWallet } =
-    useLancer();
+  const {
+    wallet,
+    anchor,
+    program,
+    setIssue,
+    issue,
+    user,
+    coinflowWallet,
+    logout,
+  } = useLancer();
   const [userSOLBalance, setUserSOLBalance] = useState("0.0");
   const [userUSDCBalance, setUserUSDCBalance] = useState("0.0");
   const [aidropSignature, setAirdropSignature] = useState("");
 
   useEffect(() => {
     const getWalletUSDCBalance = async () => {
-      const mintKey = new PublicKey(DEVNET_USDC_MINT);
-      const token_account = await getAssociatedTokenAddress(
-        mintKey,
-        user.publicKey
-      );
-      const account = await getAccount(anchor.connection, token_account);
-      const mint = await getMint(anchor.connection, mintKey);
-      const decimals = Math.pow(10, mint.decimals);
-      console.log(account.amount);
-      const balance = account.amount / BigInt(decimals);
-      setUserUSDCBalance(balance.toString());
+      try {
+        const mintKey = new PublicKey(DEVNET_USDC_MINT);
+        const token_account = await getAssociatedTokenAddress(
+          mintKey,
+          user.publicKey
+        );
+        const account = await getAccount(anchor.connection, token_account);
+        const mint = await getMint(anchor.connection, mintKey);
+        const decimals = Math.pow(10, mint.decimals);
+        console.log(account.amount);
+        const balance = account.amount / BigInt(decimals);
+        setUserUSDCBalance(balance.toString());
+      } catch (e) {
+        console.log(e);
+        setUserUSDCBalance("Account Not Initialized. Please Use the Faucet");
+      }
     };
+
     if (user?.publicKey && anchor?.connection) {
       getWalletUSDCBalance();
     }
@@ -80,6 +94,7 @@ const FundBounty: React.FC = () => {
     anchor && (
       <PageLayout>
         <div className="account-page-wrapper">
+          {user?.githubLogin && <div>GitHub User: {user.githubLogin}</div>}
           <PubKey pubKey={user.publicKey} full />
           <div className="User Balance">User SOL Balance: {userSOLBalance}</div>
           <button className="button-primary" onClick={() => requestAirdrop()}>
@@ -104,6 +119,9 @@ const FundBounty: React.FC = () => {
           >
             USDC Faucet
           </a>
+          <button className="button-primary" onClick={() => logout()}>
+            Logout
+          </button>
         </div>
       </PageLayout>
     )

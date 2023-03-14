@@ -99,7 +99,7 @@ export const IssueList: React.FC<{ isMyBounties: boolean }> = ({
           });
         });
     }
-  }, [user]);
+  }, [user?.githubId]);
   if (!issues) return <></>;
 
   const filteredIssues = issues.filter((issue) => {

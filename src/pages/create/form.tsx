@@ -79,7 +79,7 @@ const Form = () => {
           });
         });
     }
-  }, [user]);
+  }, [user?.githubId]);
 
   useEffect(() => {
     if (user?.githubId && repo) {
@@ -99,7 +99,7 @@ const Form = () => {
           setIssues(resp.data.data);
         });
     }
-  }, [user, repo]);
+  }, [repo]);
 
   const handleChange = (event) => {
     setFormData({

@@ -3,12 +3,7 @@ import { EscrowContract, Issue, IssueState, Contributor } from "@/types";
 import { PublicKey } from "@solana/web3.js";
 import { DEVNET_USDC_MINT } from "@/src/constants/web3";
 import axios from "axios";
-import {
-  getApiEndpoint,
-  getApiEndpointExtension,
-  getMintName,
-  getUniqueItems,
-} from "@/src/utils";
+import { getApiEndpoint, getMintName, getUniqueItems } from "@/src/utils";
 import { DATA_API_ROUTE, ISSUE_API_ROUTE } from "@/server/src/constants";
 import { useRouter } from "next/router";
 import Bounty from "@/src/pages/bounty/bounty";

@@ -90,13 +90,12 @@ router.post(`/${MERGE_PULL_REQUEST_API_ROUTE}`, async (req, res) => {
   var pull_number = issue.pull_number;
   var org = issue.org;
   var repo = issue.repo;
-  var github_id = issue.github_id;
+  var github_id = data.githubId;
 
   updateIssueState({
     uuid: data.uuid,
     state: 'complete'
   })
-  return res.json([])
   var options = {
     method: 'POST',
     url: 'https://dev-kgvm1sxe.us.auth0.com/oauth/token',

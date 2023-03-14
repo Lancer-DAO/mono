@@ -19,8 +19,15 @@ const FundBounty: React.FC<{ amount: number }> = ({
 }: {
   amount: number;
 }) => {
-  const { wallet, anchor, program, setIssue, issue, coinflowWallet } =
-    useLancer();
+  const {
+    wallet,
+    anchor,
+    program,
+    setIssue,
+    issue,
+    coinflowWallet,
+    setForceGetIssue,
+  } = useLancer();
 
   const [fundTx, setFundTx] = useState<Transaction>(null);
   useEffect(() => {
@@ -83,6 +90,7 @@ const FundBounty: React.FC<{ amount: number }> = ({
       ...issue,
       state: IssueState.ACCEPTING_APPLICATIONS,
     });
+    setForceGetIssue(true);
     window.location.replace(`/bounty?id=${issue.uuid}`);
   };
   return (

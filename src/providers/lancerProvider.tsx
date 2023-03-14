@@ -285,12 +285,12 @@ export const queryIssues = async (user: User, referrer?: string) => {
       };
     });
     const user_repos_names = user.repos.map((repo) => repo.full_name);
-    issues.filter((issue) => {
+    const filteredIssues = issues.filter((issue) => {
       const full_name = `${issue.org}/${issue.repo}`;
       return user_repos_names.includes(full_name) || !issue.private;
     });
 
-    return issues;
+    return filteredIssues;
   } catch (e) {
     console.error(e);
   }
