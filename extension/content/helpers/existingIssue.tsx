@@ -7,7 +7,8 @@ import {
   ISSUE_API_ROUTE,
   NEW_ISSUE_API_ROUTE,
 } from "@/server/src/constants";
-import { convertToQueryParams, getApiEndpointExtenstion } from "@/utils";
+import { getApiEndpointExtension } from "../utils";
+import { Issue, IssueState } from "../types";
 const WRAPPER_CLASSNAME = "funded-issue-wrapper";
 const assigneeSelector =
   ".discussion-sidebar-item.sidebar-assignee.js-discussion-sidebar-item";
@@ -15,52 +16,37 @@ const linkedPRSelector = ".Link--primary.f4.text-bold.markdown-title";
 const innerPRSpanSelector = ".color-fg-muted.text-normal";
 const authorSelector = ".author.Link--primary.text-bold";
 
-const maybeGetPR = (splitURL, pullNumber, author) =>
+const getPR = (splitURL, pullNumber, author) =>
   axios.get(
-    `${getApiEndpointExtenstion()}${DATA_API_ROUTE}/${FULL_PULL_REQUEST_API_ROUTE}?${convertToQueryParams(
-      {
+    `${getApiEndpointExtension()}${DATA_API_ROUTE}/${FULL_PULL_REQUEST_API_ROUTE}`,
+    {
+      params: {
         org: splitURL[3],
         repo: splitURL[4],
         pullNumber: pullNumber,
         issueNumber: splitURL[6],
         githubLogin: author,
-      }
-    )}`
+      },
+    }
   );
 
-export const insertIssue = (response, splitURL) => {
+export const insertIssue = (response) => {
   const assigneeEle = window.document.querySelectorAll(assigneeSelector)[0];
   const rawIssue = response.data;
 
-  const issue = {
+  const issue: Issue = {
     ...rawIssue,
-    hash: rawIssue.funding_hash,
     amount: parseFloat(rawIssue.funding_amount),
+    mint: rawIssue.funding_mint,
     pullNumber: rawIssue.pull_number,
-    issueNumber: rawIssue.issue_number,
-    githubId: rawIssue.github_id,
-    payoutHash: rawIssue.payout_hash,
-    author: rawIssue.github_login,
-    pubkey: rawIssue.solana_pubkey,
   };
-  if (assigneeEle) {
+  debugger;
+  if (assigneeEle && issue?.uuid && issue.state !== IssueState.NEW) {
     const fundingWrapper = window.document.createElement("div");
     fundingWrapper.className = WRAPPER_CLASSNAME;
     assigneeEle.insertAdjacentElement("afterend", fundingWrapper);
     const fundingInner = ReactDOM.createRoot(fundingWrapper);
     fundingInner.render(<ExistingIssueFunds issue={issue} />);
-    if (!issue.issueNumber) {
-      const newIssue = {
-        ...issue,
-        issueNumber: splitURL[6],
-      };
-      delete newIssue.state;
-      axios.put(
-        `${getApiEndpointExtenstion()}${DATA_API_ROUTE}/${ISSUE_API_ROUTE}?${convertToQueryParams(
-          newIssue
-        )}`
-      );
-    }
   }
 };
 
@@ -69,9 +55,6 @@ export const insertExistingIssue = (splitURL: string[]) => {
     `.${WRAPPER_CLASSNAME}`
   );
   if (!existingWrapper) {
-    const issueTitle = window.document.querySelectorAll(
-      ".js-issue-title.markdown-title"
-    )[0].innerHTML;
     const prNumberRawWrapper =
       window.document.querySelectorAll(linkedPRSelector)[0];
     if (prNumberRawWrapper) {
@@ -80,22 +63,23 @@ export const insertExistingIssue = (splitURL: string[]) => {
         .innerHTML.split("#")[1];
       const author = window.document.querySelector(authorSelector).innerHTML;
 
-      maybeGetPR(splitURL, parseInt(prNumberRaw), author).then((resp) => {
-        insertIssue(resp, splitURL);
+      getPR(splitURL, parseInt(prNumberRaw), author).then((resp) => {
+        insertIssue(resp);
       });
     } else {
       axios
         .get(
-          `${getApiEndpointExtenstion()}${DATA_API_ROUTE}/${ISSUE_API_ROUTE}?${convertToQueryParams(
-            {
+          `${getApiEndpointExtension()}${DATA_API_ROUTE}/${ISSUE_API_ROUTE}`,
+          {
+            params: {
               org: splitURL[3],
               repo: splitURL[4],
-              title: issueTitle,
-            }
-          )}`
+              issueNumber: splitURL[6],
+            },
+          }
         )
         .then((response: AxiosResponse<any, any>) => {
-          insertIssue(response, splitURL);
+          insertIssue(response);
         });
     }
   }

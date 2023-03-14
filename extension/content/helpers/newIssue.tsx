@@ -4,12 +4,7 @@ import { FundIssue } from "../components/fundIssue";
 const WRAPPER_CLASSNAME = "fund-issue-wrapper";
 
 export const insertFund = () => {
-  // @ts-ignore
-  // debugger;
   window.name = "extension-window";
-  // local raffle
-  // const titleInputSelector = 'mantine-container';
-  // const titleInputEle = window.document.getElementById(titleInputSelector);
 
   // github issue
   const titleSelector =

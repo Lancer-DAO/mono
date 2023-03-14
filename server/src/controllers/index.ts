@@ -309,10 +309,10 @@ export const newPullRequest = async (params: NewPullRequestParams) => {
   if(linkedPr.message === 'NOT FOUND') {
 
     let query =
-    "INSERT INTO account_pull_request (account_uuid, pull_request_uuid, amount)";
+    "INSERT INTO account_pull_request (account_uuid, pull_request_uuid)";
   query += ` VALUES ('${
     account.uuid
-  }', '${pullRequest.uuid}', ${issue.funding_amount});`;
+  }', '${pullRequest.uuid}');`;
   await DB.raw(query);
 
   }
@@ -349,7 +349,7 @@ export const linkPullRequest = async (params: LinkPullRequestParams) => {
 
 export const getFullPullRequestByNumber = async (params: GetFullPullRequest) => {
   let query =
-    "SELECT pr.payout_hash, pr.org, pr.repo, i.state, i.funding_amount, a.solana_pubkey, i.issue_number, pr.pull_number, i.funding_hash, a.github_login, a.github_id "
+    "SELECT i.uuid, pr.payout_hash, pr.org, pr.repo, i.state, i.funding_amount, a.solana_pubkey, i.issue_number, pr.pull_number, i.funding_hash, a.github_login, a.github_id "
 
   query += ` from pull_request as pr`
   query += ` LEFT OUTER JOIN account_pull_request as apr`

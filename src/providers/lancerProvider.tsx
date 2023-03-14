@@ -33,7 +33,7 @@ import { AnchorProvider, Program } from "@project-serum/anchor";
 import { MonoProgram } from "@/escrow/sdk/types/mono_program";
 import {
   getApiEndpoint,
-  getApiEndpointExtenstion,
+  getApiEndpointExtension,
   getEndpoint,
 } from "@/src/utils";
 import { REACT_APP_CLIENTID } from "@/src/constants";

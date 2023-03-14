@@ -5,7 +5,7 @@ import { DEVNET_USDC_MINT } from "@/src/constants/web3";
 import axios from "axios";
 import {
   getApiEndpoint,
-  getApiEndpointExtenstion,
+  getApiEndpointExtension,
   getMintName,
   getUniqueItems,
 } from "@/src/utils";

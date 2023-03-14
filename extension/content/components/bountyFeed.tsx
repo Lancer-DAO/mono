@@ -1,17 +1,6 @@
-import { useCallback, useState, useEffect } from "react";
-import classnames from "classnames";
-// import Logo from "@/assets/logo.svg";
-import { Issue, IssueState, IssueType } from "@/types";
+import { Issue } from "../types";
 import { capitalize } from "lodash";
-// import SolLogo from "@/node_modules/cryptocurrency-icons/svg/black/sol.svg";
-// import { ProgressBar } from "@/atoms";
-
-enum FundingState {
-  FUND = "Fund",
-  FUNDING = "Funding",
-  FUNDED = "Funded",
-  ERROR = "Error",
-}
+import { getMintName } from "../utils";
 
 interface BountyFeedProps {
   issues: Issue[];
@@ -34,36 +23,51 @@ export const BountyFeed = ({ issues }: BountyFeedProps) => {
               about="_blank"
               key={issue.title}
             >
-              {/* {issue.type && <h1>{getIssueTypeLabel(issue.type)}</h1>} */}
-              <h1 className="issue-title">{issue.title}</h1>
-              <img
-                className="contributor-picture"
-                src={`https://avatars.githubusercontent.com/u/${
-                  issue.githubId?.split("|")[1]
-                }?s=60&v=4`}
-              />
-              <h1 className="contributor-amount">
-                {/* REWARD */}
-                {`${issue.amount.toFixed(4)} SOL`}
-                {/* <SolLogo className="solana-logo" /> */}
-              </h1>
-              <div className="issue-state-wrapper">
-                <div className={classnames("issue-state")}>
-                  {issue.state
-                    .split("_")
-                    .map((s) => capitalize(s))
-                    .join(" ")}
+              <div className="issue-header">
+                <img
+                  className="contributor-picture"
+                  src={`https://avatars.githubusercontent.com/u/${117492794}?s=60&v=4`}
+                />
+                <div className="issue-header-right">
+                  <div className="issue-amount">
+                    ${issue.amount} ({getMintName(issue.mint)})
+                  </div>
+
+                  <a
+                    className="issue-creator"
+                    href={`https://github.com/${issue.org}/${issue.repo}`}
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    {issue.org}/{issue.repo}
+                  </a>
                 </div>
-                {/* <ProgressBar value={getIssueStateProgress(issue.state)} /> */}
+              </div>
+              <div className="issue-body">
+                <div className="issue-title">{issue.title}</div>
+                <div className="issue-description">{issue.description}</div>
               </div>
 
-              <a
-                className="funded-by"
-                href={`https://github.com/${issue.org}}`}
-                about="_blank"
-              >
-                {`Sponsored by: ${issue.org}`}
-              </a>
+              <div className="issue-footer">
+                <div className="issue-tags">
+                  {issue.tags &&
+                    issue.tags.map((tag, index) => (
+                      <div className="tag" key={index}>
+                        {capitalize(tag)}
+                      </div>
+                    ))}
+                </div>
+                <div className="issue-footer-right">
+                  <div className={`issue-state ${issue.state}`}>
+                    {issue.state}
+                  </div>
+                  {!Number.isNaN(issue.estimatedTime) && (
+                    <div className="issue-estimated-time">
+                      {issue.estimatedTime} hours
+                    </div>
+                  )}
+                </div>
+              </div>
             </a>
           );
         })}
