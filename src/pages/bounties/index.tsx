@@ -14,14 +14,14 @@ import { LancerBounty } from "@/src/pages/bounties/lancerBounty";
 import { PageLayout } from "@/src/layouts";
 import { LancerProvider } from "@/src/providers";
 
-function App() {
+const App: React.FC<{ isMyBounties?: boolean }> = ({ isMyBounties }) => {
   return (
-    <LancerProvider referrer={`bounties`}>
+    <LancerProvider referrer={isMyBounties ? `my_bounties` : `bounties`}>
       <PageLayout>
-        <IssueList />
+        <IssueList isMyBounties={isMyBounties} />
       </PageLayout>
     </LancerProvider>
   );
-}
+};
 
 export default App;

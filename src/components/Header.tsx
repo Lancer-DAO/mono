@@ -20,7 +20,7 @@ export const Header = () => {
           <a href="/create" className="button-primary">
             New Bounty
           </a>
-          <a href="/bounties" className="button-primary">
+          <a href="/my_bounties" className="button-primary">
             My bounties
           </a>
           <a href="/bounties" className="button-primary">

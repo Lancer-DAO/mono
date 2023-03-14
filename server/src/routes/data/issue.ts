@@ -12,6 +12,7 @@ import {
   updateIssueEscrowKey,
   updateIssueTimestamp,
   getAccountsForIssue,
+  getAllIssuesForUser,
 } from "../../controllers";
 import {
     GITHUB_ISSUE_API_ROUTE,
@@ -107,11 +108,19 @@ router.get(`/${ISSUE_API_ROUTE}/accounts`, async function (req, res, next) {
 
 router.get(`/${ISSUE_API_ROUTE}s`, async function (req, res, next) {
   try {
-    return res.json(await getAllIssues())
+    if(req.query.uuid) {
+      return res.json(await getAllIssuesForUser(req.query.uuid as string))
+
+    } else {
+      return res.json(await getAllIssues())
+
+    }
   } catch (err) {
     next(err);
   }
 });
+
+
 
 router.put(`/${ISSUE_API_ROUTE}/state`, async function (req, res, next) {
   try {

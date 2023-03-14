@@ -377,6 +377,21 @@ export const getAllIssues = async () => {
   return result.rows.length > 0 ? result.rows : {message: 'NOT FOUND'};
 };
 
+export const getAllIssuesForUser = async (uuid: string) => {
+  let query =
+    "SELECT pr.pull_number, i.unix_timestamp, i.description, i.escrow_key, i.uuid, i.tags, i.estimated_time, i.title, i.funding_amount, i.funding_mint, i.issue_number, i.funding_hash, i.org, i.repo, i.state, ai.relations "
+
+  query += ` from issue as i`
+  query += ` LEFT OUTER JOIN pull_request as pr`
+  query += ` ON pr.issue_uuid = i.uuid`
+  query += ` LEFT OUTER JOIN account_issue as ai`
+  query += ` ON ai.issue_uuid = i.uuid`
+  query += ` WHERE ai.account_uuid = '${uuid}'`
+  console.log(query)
+  const result = await DB.raw(query);
+  return result.rows.length > 0 ? result.rows : {message: 'NOT FOUND'};
+};
+
 export const getAllIssuesForRepo = async (org:string, repo:string) => {
   let query =
     "SELECT issue_number"

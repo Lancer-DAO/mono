@@ -152,9 +152,11 @@ const getIssue = (uuid: string) =>
     `${getApiEndpoint()}${DATA_API_ROUTE}/${ISSUE_API_ROUTE}?id=${uuid}`
   );
 
-const getIssues = () =>
+const getIssues = (account?: string) =>
   axios.get(
-    `${getApiEndpointExtenstion()}${DATA_API_ROUTE}/${ISSUE_API_ROUTE}s`
+    `${getApiEndpointExtenstion()}${DATA_API_ROUTE}/${ISSUE_API_ROUTE}s${
+      account ? `?uuid=${account}` : ""
+    }`
   );
 
 const getAccounts = (uuid: string) =>
@@ -259,9 +261,9 @@ export const queryIssue = async (id: string) => {
   }
 };
 
-export const queryIssues = async () => {
+export const queryIssues = async (account?: string) => {
   try {
-    const issueResponse = await getIssues();
+    const issueResponse = await getIssues(account);
 
     const rawIssues = issueResponse.data;
     const issues = rawIssues.map((rawIssue) => {
@@ -754,11 +756,15 @@ export const LancerProvider: FunctionComponent<ILancerState> = ({
 
   useEffect(() => {
     const query = async () => {
-      const issues = await queryIssues();
+      const issues = await queryIssues(
+        referrer === "my_bounties" ? user.uuid : undefined
+      );
       setIssues(issues);
     };
-    query();
-  }, []);
+    if (referrer !== "my_bounties" || user?.uuid) {
+      query();
+    }
+  }, [user]);
 
   const login = async () => {
     console.log("hi");

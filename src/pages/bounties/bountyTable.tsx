@@ -27,7 +27,9 @@ export type Filters = {
   relationships: string[];
 };
 
-export const IssueList = () => {
+export const IssueList: React.FC<{ isMyBounties: boolean }> = ({
+  isMyBounties,
+}) => {
   const { user, issues } = useLancer();
   if (!issues) return <></>;
   const [tags, setTags] = useState<string[]>([]);
@@ -155,7 +157,7 @@ export const IssueList = () => {
   return (
     <div className="bounty-table">
       <div className="empty-cell" />
-      <h1 className="page-header">Bounties</h1>
+      <h1 className="page-header">{`${isMyBounties ? "My " : ""}Bounties`}</h1>
 
       <BountyFilters
         mints={mints}
