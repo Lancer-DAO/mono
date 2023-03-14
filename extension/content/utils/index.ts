@@ -16,7 +16,7 @@ export const getAppEndpointExtension = (): string => {
 }
 export const getMintName = (mint?: PublicKey) => {
     if(!mint){
-      return 'SOL'
+      return 'USDC'
     }
     const mintString = mint.toString()
     if(mintString === DEVNET_USDC_MINT || mintString === MAINNET_USDC_MINT) {

@@ -9,7 +9,7 @@ import {
 } from "@/server/src/constants";
 import { getApiEndpointExtension } from "../utils";
 import { Issue, IssueState } from "../types";
-const WRAPPER_CLASSNAME = "funded-issue-wrapper";
+const WRAPPER_CLASSNAME = "discussion-sidebar-item js-discussion-sidebar-item";
 const assigneeSelector =
   ".discussion-sidebar-item.sidebar-assignee.js-discussion-sidebar-item";
 const linkedPRSelector = ".Link--primary.f4.text-bold.markdown-title";
@@ -40,7 +40,6 @@ export const insertIssue = (response) => {
     mint: rawIssue.funding_mint,
     pullNumber: rawIssue.pull_number,
   };
-  debugger;
   if (assigneeEle && issue?.uuid && issue.state !== IssueState.NEW) {
     const fundingWrapper = window.document.createElement("div");
     fundingWrapper.className = WRAPPER_CLASSNAME;

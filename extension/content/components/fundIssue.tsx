@@ -3,15 +3,14 @@ import { getAppEndpointExtension } from "../utils";
 export const FundIssue = () => {
   return (
     <>
-      <div className="fund-issue-upper">
-        <a
-          href={`${getAppEndpointExtension()}/fund`}
-          target="_blank"
-          rel="noreferrer"
-        >
-          Create New Issue With Lancer
-        </a>
-      </div>
+      <a
+        href={`${getAppEndpointExtension()}/fund`}
+        target="_blank"
+        rel="noreferrer"
+        className="btn-primary btn ml-2"
+      >
+        Create New Issue With Lancer
+      </a>
     </>
   );
 };
