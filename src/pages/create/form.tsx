@@ -34,14 +34,13 @@ export const DEFAULT_MINTS = [
 export const DEFAULT_MINT_NAMES = DEFAULT_MINTS.map((mint) => mint.name);
 
 const Form = () => {
-  const { user, program, anchor, wallet } = useLancer();
+  const { user, program, anchor, wallet, setUser } = useLancer();
 
   const search = useLocation().search;
 
   const params = new URLSearchParams(search);
   const jwt = params.get("token");
   const [creationType, setCreationType] = useState<"new" | "existing">("new");
-  const [repositories, setRepositories] = useState<any[]>();
   const [issues, setIssues] = useState<any[]>();
   const [repo, setRepo] = useState<any>();
   const [issue, setIssue] = useState<any>();
@@ -74,7 +73,10 @@ const Form = () => {
         )
         .then((resp) => {
           console.log(resp);
-          setRepositories(resp.data.data);
+          setUser({
+            ...user,
+            repos: resp.data.data,
+          });
         });
     }
   }, [user]);
@@ -107,7 +109,7 @@ const Form = () => {
   };
 
   const handleChangeRepo = (repoFullName: string) => {
-    const repo = repositories.find((_repo) => _repo.full_name === repoFullName);
+    const repo = user.repos.find((_repo) => _repo.full_name === repoFullName);
     setRepo(repo);
   };
 
@@ -236,7 +238,7 @@ const Form = () => {
               id="w-node-_11ff66e2-bb63-3205-39c9-a48a569518d9-0ae9cdc2"
               className="input-container-full-width"
             >
-              {!repositories ? (
+              {!user?.repos ? (
                 <LoadingBar title="Loading Repositories" />
               ) : (
                 <div
@@ -258,12 +260,12 @@ const Form = () => {
                       )}
                     </div>
                   </main>
-                  {isOpenRepo && repositories && (
+                  {isOpenRepo && user?.repos && (
                     <div
                       className="w-dropdown-list"
                       onMouseLeave={() => setIsOpenRepo(false)}
                     >
-                      {repositories.map((project) => (
+                      {user.repos.map((project) => (
                         <div
                           onClick={() => handleChangeRepo(project.full_name)}
                           key={project.full_name}

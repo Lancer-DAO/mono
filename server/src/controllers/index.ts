@@ -368,7 +368,7 @@ export const getFullPullRequestByNumber = async (params: GetFullPullRequest) => 
 
 export const getAllIssues = async () => {
   let query =
-    "SELECT pr.pull_number, i.unix_timestamp, i.description, i.escrow_key, i.uuid, i.tags, i.estimated_time, i.title, i.funding_amount, i.funding_mint, i.issue_number, i.funding_hash, i.org, i.repo, i.state "
+    "SELECT pr.pull_number, i.private, i.unix_timestamp, i.description, i.escrow_key, i.uuid, i.tags, i.estimated_time, i.title, i.funding_amount, i.funding_mint, i.issue_number, i.funding_hash, i.org, i.repo, i.state "
 
   query += ` from issue as i`
   query += ` LEFT OUTER JOIN pull_request as pr`
@@ -379,7 +379,7 @@ export const getAllIssues = async () => {
 
 export const getAllIssuesForUser = async (uuid: string) => {
   let query =
-    "SELECT pr.pull_number, i.unix_timestamp, i.description, i.escrow_key, i.uuid, i.tags, i.estimated_time, i.title, i.funding_amount, i.funding_mint, i.issue_number, i.funding_hash, i.org, i.repo, i.state, ai.relations "
+    "SELECT pr.pull_number, i.private, i.unix_timestamp, i.description, i.escrow_key, i.uuid, i.tags, i.estimated_time, i.title, i.funding_amount, i.funding_mint, i.issue_number, i.funding_hash, i.org, i.repo, i.state, ai.relations "
 
   query += ` from issue as i`
   query += ` LEFT OUTER JOIN pull_request as pr`

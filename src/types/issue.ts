@@ -38,6 +38,7 @@ export interface User extends AccountCommon  {
   isChangesRequestedSubmitter?: boolean,
   isCompleter?: boolean,
   isVotingCancel?: boolean
+  repos?: any[];
 }
 
 export type EscrowContract = {
@@ -66,6 +67,7 @@ export type Issue = {
     org: string;
     paid?: boolean;
     state: IssueState;
+    private?: boolean;
     type?: IssueType;
     author?: string;
     pubkey?: string;

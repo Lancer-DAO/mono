@@ -1,6 +1,6 @@
 import MultiSelectDropdown from "@/src/components/MultiSelectDropdown";
 import { TABLE_ISSUE_STATES } from "@/src/constants";
-import { getMintName, getUniqueItems } from "@/src/utils";
+import { getApiEndpoint, getMintName, getUniqueItems } from "@/src/utils";
 import { Issue, IssueState } from "@/types";
 import { useState } from "react";
 import { capitalize } from "lodash";
@@ -10,6 +10,8 @@ import { BountyFilters } from "./bountyFilters";
 import { LancerBounty } from "@/src/pages/bounties/lancerBounty";
 import { useLancer } from "@/src/providers";
 import { useEffect } from "react";
+import axios from "axios";
+import { ACCOUNT_API_ROUTE, DATA_API_ROUTE } from "@/server/src/constants";
 export const ISSUE_USER_RELATIONSHIP = [
   "Creator",
   "Requested Submitter",
@@ -30,7 +32,7 @@ export type Filters = {
 export const IssueList: React.FC<{ isMyBounties: boolean }> = ({
   isMyBounties,
 }) => {
-  const { user, issues } = useLancer();
+  const { user, issues, setUser } = useLancer();
   const [tags, setTags] = useState<string[]>([]);
   const [mints, setMints] = useState<string[]>([]);
   const [orgs, setOrgs] = useState<string[]>([]);
@@ -82,6 +84,22 @@ export const IssueList: React.FC<{ isMyBounties: boolean }> = ({
       });
     }
   }, [issues]);
+  useEffect(() => {
+    if (user?.githubId) {
+      axios
+        .get(
+          `${getApiEndpoint()}${DATA_API_ROUTE}/${ACCOUNT_API_ROUTE}/organizations`,
+          { params: { githubId: user.githubId } }
+        )
+        .then((resp) => {
+          console.log(resp);
+          setUser({
+            ...user,
+            repos: resp.data.data,
+          });
+        });
+    }
+  }, [user]);
   if (!issues) return <></>;
 
   const filteredIssues = issues.filter((issue) => {

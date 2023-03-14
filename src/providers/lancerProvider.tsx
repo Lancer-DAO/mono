@@ -257,12 +257,14 @@ export const queryIssue = async (id: string) => {
   }
 };
 
-export const queryIssues = async (account?: string) => {
+export const queryIssues = async (user: User, referrer?: string) => {
   try {
-    const issueResponse = await getIssues(account);
+    const issueResponse = await getIssues(
+      referrer === "my_bounties" ? user.uuid : undefined
+    );
 
     const rawIssues = issueResponse.data;
-    const issues = rawIssues.map((rawIssue) => {
+    const issues: Issue[] = rawIssues.map((rawIssue) => {
       return {
         ...rawIssue,
         hash: rawIssue.funding_hash,
@@ -281,6 +283,11 @@ export const queryIssues = async (account?: string) => {
         timestamp: rawIssue.unix_timestamp,
         description: rawIssue.description,
       };
+    });
+    const user_repos_names = user.repos.map((repo) => repo.full_name);
+    issues.filter((issue) => {
+      const full_name = `${issue.org}/${issue.repo}`;
+      return user_repos_names.includes(full_name) || !issue.private;
     });
 
     return issues;
@@ -749,22 +756,29 @@ export const LancerProvider: FunctionComponent<ILancerState> = ({
       setIssueLoadingState("getting_contract");
     };
     if (issueId !== undefined && anchor && program && forceGetIssue) {
-      setForceGetIssue(false)
+      setForceGetIssue(false);
       query();
     }
-  }, [issueId, anchor, program, issue?.state, !!user, setUser, forceGetIssue, setForceGetIssue]);
+  }, [
+    issueId,
+    anchor,
+    program,
+    issue?.state,
+    !!user,
+    setUser,
+    forceGetIssue,
+    setForceGetIssue,
+  ]);
 
   useEffect(() => {
     const query = async () => {
-      const issues = await queryIssues(
-        referrer === "my_bounties" ? user.uuid : undefined
-      );
+      const issues = await queryIssues(user, referrer);
       setIssues(issues);
     };
-    if (referrer !== "my_bounties" || user?.uuid) {
+    if (user?.uuid && user?.repos) {
       query();
     }
-  }, [user]);
+  }, [user, referrer]);
 
   const login = async () => {
     console.log("hi");
