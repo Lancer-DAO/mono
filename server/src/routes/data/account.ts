@@ -48,7 +48,8 @@ router.get(`/${ACCOUNT_API_ROUTE}`, async function (req, res, next) {
 });
 
 router.get(`/${ACCOUNT_API_ROUTE}/organizations`, (req, res) => {
-    //when a request from auth0 is received we get auth code as query param
+    // first, get the auth0 token
+
     var github_id = req.query.githubId;
     var options = {
       method: 'POST',
@@ -68,6 +69,7 @@ router.get(`/${ACCOUNT_API_ROUTE}/organizations`, (req, res) => {
         url: `https://dev-kgvm1sxe.us.auth0.com/api/v2/users/${github_id}`,
         headers: {'content-type': 'application/x-www-form-urlencoded', 'Authorization': `Bearer ${code}`},
       };
+    // next, get the github access token
 
       axios.request(options).then(function (response) {
 
@@ -76,6 +78,8 @@ router.get(`/${ACCOUNT_API_ROUTE}/organizations`, (req, res) => {
       const octokit = new Octokit({
         auth: gh_token,
       });
+    // finally, talk to github using the token
+
       octokit.request('GET /user/repos', {
       }).then((resp) => {
 
@@ -99,7 +103,8 @@ router.get(`/${ACCOUNT_API_ROUTE}/organizations`, (req, res) => {
   });
 
   router.get(`/${ACCOUNT_API_ROUTE}/organization/repository_issues`, (req, res) => {
-    //when a request from auth0 is received we get auth code as query param
+    // first, get the auth0 token
+
     var github_id = req.query.githubId;
     var repo = req.query.repo as string;
     var org = req.query.org as string;
@@ -121,6 +126,7 @@ router.get(`/${ACCOUNT_API_ROUTE}/organizations`, (req, res) => {
         url: `https://dev-kgvm1sxe.us.auth0.com/api/v2/users/${github_id}`,
         headers: {'content-type': 'application/x-www-form-urlencoded', 'Authorization': `Bearer ${code}`},
       };
+    // next, get the github user info
 
       axios.request(options).then(function (response) {
 
@@ -129,6 +135,8 @@ router.get(`/${ACCOUNT_API_ROUTE}/organizations`, (req, res) => {
       const octokit = new Octokit({
         auth: gh_token,
       });
+    // finally, talk to github using the token
+
       octokit.request('GET /repos/{owner}/{repo}/issues', {
         owner: org,
         repo: repo

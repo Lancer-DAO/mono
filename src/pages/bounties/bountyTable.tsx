@@ -43,6 +43,11 @@ export const IssueList: React.FC<{ isMyBounties: boolean }> = ({
     relationships: ISSUE_USER_RELATIONSHIP,
   });
   useEffect(() => {
+    // Get the meta-info off all issues that are used for filters. Specifically
+    // - all tags for issues
+    // - all orgs posting issues
+    // - all payout mints
+    // - upper and lower bounds of estimated time completion
     if (issues && issues.length !== 0) {
       const allTags = issues
         .map((issue) => issue.tags)
@@ -80,8 +85,10 @@ export const IssueList: React.FC<{ isMyBounties: boolean }> = ({
       });
     }
   }, [issues]);
+
   useEffect(() => {
     if (user?.githubId) {
+      // get the organizations the user is part of, so we know which private issues they can see
       axios
         .get(
           `${getApiEndpoint()}${DATA_API_ROUTE}/${ACCOUNT_API_ROUTE}/organizations`,
@@ -99,7 +106,6 @@ export const IssueList: React.FC<{ isMyBounties: boolean }> = ({
   if (!issues) return <LoadingBar title="Loading Issues" />;
 
   const filteredIssues = issues.filter((issue) => {
-    // debugger;
     if (!filters.mints.includes(getMintName(issue.mint))) {
       return false;
     }
@@ -121,48 +127,6 @@ export const IssueList: React.FC<{ isMyBounties: boolean }> = ({
       issue.estimatedTime < filters.estimatedTimeBounds[0] ||
       issue.estimatedTime > filters.estimatedTimeBounds[1]
     ) {
-      return false;
-    }
-    if (user && issue.creator) {
-      debugger;
-      const isSubmitter =
-        issue.currentSubmitter && issue.currentSubmitter.uuid === user.uuid;
-      const isCreator = issue.creator.uuid === user.uuid;
-      const isApprovedSubmitter =
-        issue.approvedSubmitters?.findIndex(
-          (submitter) => submitter.uuid === user.uuid
-        ) || -1 > -1;
-      const isRequestedSubmitter =
-        issue.requestedSubmitters?.findIndex(
-          (submitter) => submitter.uuid === user.uuid
-        ) || -1 > -1;
-      if (isSubmitter && filters.relationships.includes("Submitter")) {
-        return true;
-      }
-      if (isCreator && filters.relationships.includes("Creator")) {
-        return true;
-      }
-      if (
-        isApprovedSubmitter &&
-        filters.relationships.includes("Approved Submitter")
-      ) {
-        return true;
-      }
-      if (
-        isRequestedSubmitter &&
-        filters.relationships.includes("Requested Submitter")
-      ) {
-        return true;
-      }
-      if (
-        !isSubmitter &&
-        !isCreator &&
-        !isApprovedSubmitter &&
-        !isRequestedSubmitter &&
-        filters.relationships.includes("None")
-      ) {
-        return true;
-      }
       return false;
     }
 

@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
 
-import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import { BrowserRouter as Router } from "react-router-dom";
 import Form from "./form";
 import { LancerProvider } from "@/src/providers/lancerProvider";
 import { PageLayout } from "@/src/layouts";
 
 function App() {
+  // Placed before router component to ensure window is defined
   const [ready, setReady] = useState(false);
   useEffect(() => setReady(true), []);
   if (ready) {

@@ -2,9 +2,8 @@ import * as ReactDOM from "react-dom/client";
 import { FundIssue } from "../components/fundIssue";
 const WRAPPER_CLASSNAME = "fund-issue-wrapper";
 
+// Insert a link to our creation page under the bounty title input
 export const insertFund = () => {
-  window.name = "extension-window";
-
   // github issue
   const titleSelector =
     ".mb-3.p-0.p-md-2.mb-md-0.rounded-top-2.color-bg-default";

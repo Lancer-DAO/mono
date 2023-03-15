@@ -2,8 +2,6 @@ import { Inter } from "@next/font/google";
 import { BrowserRouter as Router } from "react-router-dom";
 import { useEffect, useState } from "react";
 
-const inter = Inter({ subsets: ["latin"] });
-
 const Redirect = () => {
   useEffect(() => {
     window.location.replace("https://home.lancer.so");
@@ -12,6 +10,7 @@ const Redirect = () => {
 };
 
 export default function Home() {
+  // Placed before router component to ensure window is defined
   const [ready, setReady] = useState(false);
   useEffect(() => setReady(true), []);
 

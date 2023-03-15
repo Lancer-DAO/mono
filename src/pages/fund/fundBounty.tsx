@@ -6,12 +6,7 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { useLancer } from "@/src/providers/lancerProvider";
 import { IssueState } from "@/src/types";
-import {
-  getAccount,
-  getAssociatedTokenAddress,
-  getMint,
-} from "@solana/spl-token";
-import { PublicKey, Transaction } from "@solana/web3.js";
+import { Transaction } from "@solana/web3.js";
 import Coinflow from "@/src/pages/bounty/components/coinflowPurchase";
 
 const FundBounty: React.FC<{ amount: number }> = ({

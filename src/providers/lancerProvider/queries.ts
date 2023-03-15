@@ -16,7 +16,26 @@ import {
     Contributor,
     User,
   } from "@/src/types";
-export const getEscrowContract = async (issue: Issue, program, anchor) => {
+
+
+const getIssue = (uuid: string) =>
+  axios.get(
+    `${getApiEndpoint()}${DATA_API_ROUTE}/${ISSUE_API_ROUTE}?id=${uuid}`
+  );
+
+const getIssues = (account?: string) =>
+  axios.get(
+    `${getApiEndpoint()}${DATA_API_ROUTE}/${ISSUE_API_ROUTE}s${
+      account ? `?uuid=${account}` : ""
+    }`
+  );
+
+const getAccounts = (uuid: string) =>
+  axios.get(
+    `${getApiEndpoint()}${DATA_API_ROUTE}/${ISSUE_API_ROUTE}/accounts?id=${uuid}`
+  );
+
+  export const getEscrowContract = async (issue: Issue, program, anchor) => {
     let escrowKey = issue.escrowKey;
     if (!escrowKey) {
       const accounts = await anchor.connection.getParsedProgramAccounts(
@@ -66,22 +85,6 @@ export const getEscrowContract = async (issue: Issue, program, anchor) => {
     return newIssue;
   };
 
-const getIssue = (uuid: string) =>
-  axios.get(
-    `${getApiEndpoint()}${DATA_API_ROUTE}/${ISSUE_API_ROUTE}?id=${uuid}`
-  );
-
-const getIssues = (account?: string) =>
-  axios.get(
-    `${getApiEndpoint()}${DATA_API_ROUTE}/${ISSUE_API_ROUTE}s${
-      account ? `?uuid=${account}` : ""
-    }`
-  );
-
-const getAccounts = (uuid: string) =>
-  axios.get(
-    `${getApiEndpoint()}${DATA_API_ROUTE}/${ISSUE_API_ROUTE}/accounts?id=${uuid}`
-  );
 export const queryIssue = async (id: string) => {
   try {
     const issueResponse = await getIssue(id as string);
@@ -182,7 +185,6 @@ export const queryIssue = async (id: string) => {
 
 export const queryIssues = async (user: User, referrer?: string) => {
   try {
-    debugger;
     const issueResponse = await getIssues(
       referrer === "my_bounties" ? user.uuid : undefined
     );
@@ -208,6 +210,7 @@ export const queryIssues = async (user: User, referrer?: string) => {
         description: rawIssue.description,
       };
     });
+    // filter out private issues that the user is not a part of
     const user_repos_names = user.repos.map((repo) => repo.full_name);
     const filteredIssues = issues.filter((issue) => {
       const full_name = `${issue.org}/${issue.repo}`;

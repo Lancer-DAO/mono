@@ -3,6 +3,7 @@ import { Clock } from "react-feather";
 import { marked } from "marked";
 import { Issue } from "@/src/types";
 import { useLocation } from "react-router-dom";
+import Logo from "@/src/assets/Logo";
 
 export const LancerBounty = ({ issue }: { issue: Issue }) => {
   const search = useLocation().search;
@@ -54,10 +55,10 @@ export const LancerBounty = ({ issue }: { issue: Issue }) => {
 
           <div className="bounty-footer">
             <div className="bounty-card-funder">
-              <img
-                className="contributor-picture"
-                src={`https://avatars.githubusercontent.com/u/${117492794}?s=60&v=4`}
-              />
+              <div className="contributor-picture">
+                <Logo width="auto" height="36px" />
+              </div>
+
               <div className="bounty-funder-text">
                 <h3 className="no-padding-margin">{issue.org}</h3>
                 <div>{issue.repo}</div>

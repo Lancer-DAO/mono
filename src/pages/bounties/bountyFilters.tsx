@@ -95,30 +95,6 @@ export const BountyFilters = ({
           }}
         />
       </div>
-
-      {/* <div className="filter-section">
-        <label>Relation To Me</label>
-        <MultiSelectDropdown
-          options={ISSUE_USER_RELATIONSHIP.map((relationship) => {
-            return {
-              value: relationship,
-              label: relationship,
-            };
-          })}
-          selected={filters.relationships.map((relationships) => {
-            return {
-              value: relationships,
-              label: relationships,
-            };
-          })}
-          onChange={(options) => {
-            setFilters({
-              ...filters,
-              relationships: options.map((option) => option.value),
-            });
-          }}
-        />
-      </div> */}
       <div className="filter-section">
         <label>States</label>
         <MultiSelectDropdown

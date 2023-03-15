@@ -10,6 +10,7 @@ import dayjs from "dayjs";
 import localizedFormat from "dayjs/plugin/localizedFormat";
 import { ContributorInfo } from "@/src/components/ContributorInfo";
 import { BountyActions } from "@/src/pages/bounty/components/bountyActions";
+import Logo from "@/src/assets/Logo";
 dayjs.extend(localizedFormat);
 
 const Bounty: React.FC = () => {
@@ -46,10 +47,9 @@ const Bounty: React.FC = () => {
               id="w-node-_9d97a6aa-31d5-1276-53c2-e76c8908f876-fde9cdb1"
               className="job-post-primary-info"
             >
-              <img
-                className="contributor-picture-large"
-                src={`https://avatars.githubusercontent.com/u/${117492794}?s=60&v=4`}
-              />
+              <div className="contributor-picture-large">
+                <Logo width="100px" height="100px" />
+              </div>
               <div className="bounty-page-title-section">
                 <div className="bounty-title-row-1">
                   <a

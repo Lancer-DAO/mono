@@ -56,6 +56,9 @@ const getUserRelations = (
   issue: Issue,
   userContributor: Contributor
 ) => {
+  // Check and flag all relations the user has to the current issue
+  // saves time since these checks only need to happen once, instead of
+  // whenever used in code
   const newUser: User = {
     ...user,
     relations: userContributor.relations,
@@ -160,8 +163,9 @@ export const LancerProvider: FunctionComponent<ILancerState> = ({
       });
     }
     const walletProvider = new LancerWallet(provider);
+    // Give the lancer wallet enough time to connect and initialize
+    // before trying to request accounts
     setTimeout(async function () {
-      console.log(walletProvider);
       const accounts = await walletProvider.requestAccounts();
       walletProvider.pk = new PublicKey(accounts[0]);
       setWallet(walletProvider);
@@ -174,9 +178,7 @@ export const LancerProvider: FunctionComponent<ILancerState> = ({
 
     async function init() {
       try {
-        // get your client id from https://dashboard.web3auth.io by registering a plug and play application.
-        // const clientId = process.env.NODE_ENV === 'development' ?
-        //   REACT_APP_CLIENT_ID: REACT_APP_CLIENT_ID_DEV;
+        // First, start the connection with web3Auth
         const clientId = REACT_APP_CLIENT_ID_DEV;
 
         const web3AuthInstance = new Web3AuthCore({
@@ -211,6 +213,9 @@ export const LancerProvider: FunctionComponent<ILancerState> = ({
     }
 
     const getUser = async () => {
+      // Once we have initialized web3 and constructed our LancerWallet
+      // we should get the user information from the backend
+      // and populate our user data
       const web3AuthUser = await web3Auth.getUserInfo();
       const user = await axios.get(
         `${getApiEndpoint()}${DATA_API_ROUTE}/${ACCOUNT_API_ROUTE}`,
@@ -221,17 +226,19 @@ export const LancerProvider: FunctionComponent<ILancerState> = ({
         }
       );
       if (user.data.message === "NOT FOUND") {
+        // this is a newly logged in user
         if (delayGetUser) {
           return;
         }
-
+        // we want to wait until the wallet has set the public key
+        // since this needs to be sent to the backend on creation
         if (!wallet.publicKey) {
           setDelayGetUser(true);
           setTimeout(() => {
             setDelayGetUser(false);
           }, 1000);
         } else {
-          console.log(web3AuthUser);
+          // create our new user on the backend
           await axios.post(
             `${getApiEndpoint()}${DATA_API_ROUTE}/${ACCOUNT_API_ROUTE}`,
             {
@@ -248,6 +255,7 @@ export const LancerProvider: FunctionComponent<ILancerState> = ({
             }
           );
           const connection = new Connection(getEndpoint());
+          //   airdrop 1 SOL to the new user's wallet so they can sign TX
           const airdrop = await connection.requestAirdrop(
             wallet.publicKey,
             1000000000
@@ -269,6 +277,8 @@ export const LancerProvider: FunctionComponent<ILancerState> = ({
           githubLogin: user.data.github_login,
           publicKey: new PublicKey(user.data.solana_pubkey),
         };
+        // If we already have a currently loaded issue,
+        // get all relations the user has to the issue
         if (
           issue?.allContributors &&
           issue.allContributors
@@ -285,6 +295,7 @@ export const LancerProvider: FunctionComponent<ILancerState> = ({
       }
     };
     if (jwt === "" || jwt === null) {
+      // If there is not JWT, then we need to request one from Auth0
       const rwaURL = `${REACT_APP_AUTH0_DOMAIN}/authorize?scope=openid&response_type=code&client_id=${REACT_APP_CLIENTID}&redirect_uri=${`${getApiEndpoint()}callback?referrer=${referrer}`}&state=STATE`;
       setLoginState("retrieving_jwt");
       window.location.href = rwaURL;
@@ -292,12 +303,19 @@ export const LancerProvider: FunctionComponent<ILancerState> = ({
       jwt !== "" &&
       (loginState === "logged_out" || loginState === "retrieving_jwt")
     ) {
+      // if we have the jwt, but have not logged in, then we need to
+      // pass the jwt to the backend and log in. then we can initialize
+      //   web3auth on the frontend
       init();
     } else if (loginState === "initializing_wallet") {
+      // now that we initialized web3auth, we need to set up the wallet and provider
       setWalletProvider();
     } else if (loginState === "getting_user") {
+      // now that we have the web3auth info, get any other info from the backend
       getUser();
     } else if (loginState === "initializing_anchor") {
+      // now that we have everything, we can initialize our anchor provider and coinflow wallet
+
       const connection = new Connection(getEndpoint());
 
       const provider = new AnchorProvider(connection, wallet, {});
@@ -333,6 +351,7 @@ export const LancerProvider: FunctionComponent<ILancerState> = ({
         signTransaction,
       };
       setCoinflowWallet(coinflowWallet);
+      //   we are now ready to have fun!
       setLoginState("ready");
     }
   }, [
@@ -352,6 +371,8 @@ export const LancerProvider: FunctionComponent<ILancerState> = ({
 
   useEffect(() => {
     const getContract = async () => {
+      // if the contract is completed or canceled, the account will be closed and this
+      // will cause an error
       if (
         issue.state === IssueState.COMPLETE ||
         issue.state === IssueState.CANCELED
@@ -374,10 +395,14 @@ export const LancerProvider: FunctionComponent<ILancerState> = ({
           issue.escrowContract.currentSubmitter.toString() !==
             "11111111111111111111111111111111")
       ) {
+        // set this so we only send one request at a time
         setIsGettingContract(true);
 
         const newIssue = await getEscrowContract(issue, program, anchor);
-
+        // if we are in one of the below states, then there is a mismatch
+        // between the backend and what is on chain. This usually happens
+        // when a change occurs on chain and in the backend, and the changes
+        // are not reflected on chain yet
         if (
           !newIssue ||
           (issue.cancelVoters.length === 0 &&
@@ -431,8 +456,10 @@ export const LancerProvider: FunctionComponent<ILancerState> = ({
   useEffect(() => {
     const query = async () => {
       setIssueLoadingState("getting_issue");
+      //   get information on the current issue from the backend
       const issue = await queryIssue(issueId as string);
       setIssue(issue);
+      //   if the user is loaded, then get all relations to the current issue
       if (
         user?.uuid &&
         issue?.allContributors
@@ -468,6 +495,7 @@ export const LancerProvider: FunctionComponent<ILancerState> = ({
 
   useEffect(() => {
     const query = async () => {
+      // either get all issues, or issues the current user has a relation with
       const issues = await queryIssues(user, referrer);
       setIssues(issues);
     };
