@@ -1,5 +1,4 @@
 import { Router } from "express";
-import { PublicKey } from "@solana/web3.js";
 import {
   insertAccountIssue,
   getAccountIssue,
@@ -12,7 +11,6 @@ import {
 } from "../../constants";
 import dayjs from "dayjs";
 import timezone from "dayjs/plugin/timezone";
-import { createGithubIssue } from "../../controllers/github";
 dayjs.extend(timezone);
 
 const router = Router();
@@ -47,7 +45,6 @@ router.get(`/${ACCOUNT_ISSUE_API_ROUTE}`, async function (req, res, next) {
 router.put(`/${ACCOUNT_ISSUE_API_ROUTE}`, async function (req, res, next) {
   try {
     const data = await req.body;
-    console.log(data)
     return res.json(
       await updateAccountIssue(data)
     );
@@ -58,15 +55,8 @@ router.put(`/${ACCOUNT_ISSUE_API_ROUTE}`, async function (req, res, next) {
 
 router.post(`/${NEW_ISSUE_API_ROUTE}`, async function (req, res, next) {
   try {
-    console.log(req.query)
       const requestData = req.body;
-      console.log('data',requestData)
-      // const issueCreationResp = await createGithubIssue(
-      //     req.body
-      // );
-      // console.log(issueCreationResp)
-      // const fullIssueData = {...requestData, issueNumber: issueCreationResp.data.number, githubLogin: issueCreationResp.data.user?.login}
-    return res.json(
+      return res.json(
       await newAccountIssue(requestData)
     );
   } catch (err) {

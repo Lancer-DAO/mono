@@ -1,4 +1,3 @@
-import * as React from "react";
 import * as ReactDOM from "react-dom/client";
 import { FundIssue } from "../components/fundIssue";
 const WRAPPER_CLASSNAME = "fund-issue-wrapper";

@@ -5,7 +5,6 @@ import {
   DATA_API_ROUTE,
   FULL_PULL_REQUEST_API_ROUTE,
   ISSUE_API_ROUTE,
-  NEW_ISSUE_API_ROUTE,
 } from "@/server/src/constants";
 import { getApiEndpointExtension } from "../utils";
 import { Issue, IssueState } from "../types";

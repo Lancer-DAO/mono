@@ -3,7 +3,6 @@ import {
   insertIssue,
   getIssueByNumber,
   getIssueByTitle,
-  updateIssueNumber,
   updateIssueState,
   getAllIssues,
   updateIssueHash,
@@ -50,11 +49,9 @@ router.post(`/${GITHUB_ISSUE_API_ROUTE}`, async function (req, res, next) {
     const requestData = req.body;
     let issueNumber = requestData.issueNumber;
     if(requestData.createNewIssue) {
-      console.log('data',requestData)
     const issueCreationResp = await createGithubIssue(
         req.body
     );
-    console.log(issueCreationResp)
         issueNumber = issueCreationResp.data.number;
     }
     return res.json(
@@ -68,7 +65,6 @@ router.post(`/${GITHUB_ISSUE_API_ROUTE}`, async function (req, res, next) {
 router.get(`/${ISSUE_API_ROUTE}`, async function (req, res, next) {
   try {
     if(req.query.id) {
-      console.log(req.query)
       return res.json(
         await getIssueByUuid(req.query.id as string)
       );
@@ -97,7 +93,6 @@ router.get(`/${ISSUE_API_ROUTE}`, async function (req, res, next) {
 
 router.get(`/${ISSUE_API_ROUTE}/accounts`, async function (req, res, next) {
   try {
-      console.log(req.query)
       return res.json(
         await getAccountsForIssue(req.query.id as string)
       );
