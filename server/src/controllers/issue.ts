@@ -120,6 +120,7 @@ export const getAllIssues = async () => {
     query += ` from issue as i`
     query += ` LEFT OUTER JOIN pull_request as pr`
     query += ` ON pr.issue_uuid = i.uuid`
+    query += ` ORDER BY i.unix_timestamp DESC`
     console.log(query);
     const result = await DB.raw(query);
     return result.rows.length > 0 ? result.rows : {message: 'NOT FOUND'};
@@ -135,6 +136,8 @@ export const getAllIssues = async () => {
     query += ` LEFT OUTER JOIN account_issue as ai`
     query += ` ON ai.issue_uuid = i.uuid`
     query += ` WHERE ai.account_uuid = '${uuid}'`
+    query += ` ORDER BY i.unix_timestamp DESC`
+
     console.log(query)
     const result = await DB.raw(query);
     return result.rows.length > 0 ? result.rows : {message: 'NOT FOUND'};

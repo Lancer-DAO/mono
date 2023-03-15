@@ -1,8 +1,4 @@
-import {
-  ADAPTER_EVENTS,
-  SafeEventEmitterProvider,
-  WALLET_ADAPTERS,
-} from "@web3auth/base";
+import { ADAPTER_EVENTS, WALLET_ADAPTERS } from "@web3auth/base";
 import { Web3AuthCore } from "@web3auth/core";
 import { OpenloginAdapter } from "@web3auth/openlogin-adapter";
 import {
@@ -15,30 +11,36 @@ import {
   useMemo,
   useState,
 } from "react";
-import { CHAIN_CONFIG } from "../config/chainConfig";
+import { CHAIN_CONFIG } from "../../config/chainConfig";
 import {
   Connection,
   PublicKey,
   Transaction,
   VersionedTransaction,
 } from "@solana/web3.js";
-import { SolanaWallet } from "@web3auth/solana-provider";
-import { getFeatureFundingAccount, MyWallet } from "@/src/onChain";
 import { AnchorProvider, Program } from "@project-serum/anchor";
 import { MonoProgram } from "@/escrow/sdk/types/mono_program";
 import { getApiEndpoint, getEndpoint } from "@/src/utils";
 import { REACT_APP_CLIENTID } from "@/src/constants";
 import { useLocation } from "react-router-dom";
 import axios from "axios";
-import {
-  ACCOUNT_API_ROUTE,
-  DATA_API_ROUTE,
-  ISSUE_API_ROUTE,
-} from "@/server/src/constants";
+import { ACCOUNT_API_ROUTE, DATA_API_ROUTE } from "@/server/src/constants";
 import { MONO_DEVNET } from "@/escrow/sdk/constants";
-import Base58 from "base-58";
-import RPC from "./solanaRPC";
-
+import RPC from "../solanaRPC";
+import MonoProgramJSON from "@/escrow/sdk/idl/mono_program.json";
+import { Issue, IssueState, Contributor, User } from "@/src/types";
+import { SolanaWalletContextState } from "@coinflowlabs/react";
+import {
+  ILancerContext,
+  ISSUE_LOAD_STATE,
+  LancerWallet,
+  LOGIN_STATE,
+} from "@/src/providers/lancerProvider/types";
+import {
+  getEscrowContract,
+  queryIssue,
+  queryIssues,
+} from "@/src/providers/lancerProvider/queries";
 export const REACT_APP_CLIENT_ID =
   "BPMZUkEx6a1aHvk2h_4efBlAJNMlPGvpTOy7qIkz4cbtF_l1IHuZ7KMqsLNPTtDGDItHBMxR6peSZc8Mf-0Oj6U";
 export const REACT_APP_CLIENT_ID_DEV =
@@ -47,248 +49,7 @@ export const REACT_APP_VERIFIER = "lancer0";
 export const REACT_APP_AUTH0_DOMAIN = "https://dev-kgvm1sxe.us.auth0.com";
 export const REACT_APP_SPA_CLIENTID = "ZaU1oZzvlb06tZC8UXtTvTM9KSBY9pzk";
 export const REACT_APP_RWA_CLIENTID = "ZaU1oZzvlb06tZC8UXtTvTM9KSBY9pzk";
-import MonoProgramJSON from "@/escrow/sdk/idl/mono_program.json";
-import {
-  EscrowContract,
-  Issue,
-  IssueState,
-  ISSUE_ACCOUNT_RELATIONSHIP,
-  Contributor,
-  User,
-} from "@/src/types";
-import { SolanaWalletContextState } from "@coinflowlabs/react";
-
-export class LancerWallet extends SolanaWallet {
-  pk: PublicKey;
-  constructor(readonly provider: SafeEventEmitterProvider) {
-    super(provider);
-  }
-
-  set pubkey(pk: PublicKey) {
-    this.pk = pk;
-  }
-
-  get publicKey(): PublicKey {
-    return this.pk;
-  }
-}
-
-type LOGIN_STATE =
-  | "logged_out"
-  | "retrieving_jwt"
-  | "initializing_wallet"
-  | "getting_user"
-  | "initializing_anchor"
-  | "ready";
-
-type ISSUE_LOAD_STATE =
-  | "initializing"
-  | "getting_issue"
-  | "getting_submitters"
-  | "getting_contract"
-  | "loaded";
-
-const getEscrowContract = async (issue: Issue, program, anchor) => {
-  let escrowKey = issue.escrowKey;
-  if (!escrowKey) {
-    const accounts = await anchor.connection.getParsedProgramAccounts(
-      program.programId, // new PublicKey("TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA")
-      {
-        filters: [
-          {
-            dataSize: 288, // number of bytes
-          },
-          {
-            memcmp: {
-              offset: 8, // number of bytes
-              bytes: issue.creator.publicKey.toBase58(), // base58 encoded string
-            },
-          },
-          {
-            memcmp: {
-              offset: 275, // number of bytes
-              bytes: Base58.encode(Buffer.from(issue.timestamp)), // base58 encoded string
-            },
-          },
-        ],
-      }
-    );
-    if (accounts.length === 0) {
-      return;
-    }
-
-    escrowKey = accounts[0].pubkey;
-
-    axios.put(
-      `${getApiEndpoint()}${DATA_API_ROUTE}/${ISSUE_API_ROUTE}/escrow_key`,
-      {
-        org: issue.org,
-        repo: issue.repo,
-        issueNumber: issue.issueNumber,
-        escrowKey: escrowKey.toString(),
-      }
-    );
-  }
-  const escrowContract = await getFeatureFundingAccount(escrowKey, program);
-  const newIssue = {
-    ...issue,
-    escrowContract: escrowContract as unknown as EscrowContract,
-    escrowKey: escrowKey,
-  };
-  return newIssue;
-};
-const getIssue = (uuid: string) =>
-  axios.get(
-    `${getApiEndpoint()}${DATA_API_ROUTE}/${ISSUE_API_ROUTE}?id=${uuid}`
-  );
-
-const getIssues = (account?: string) =>
-  axios.get(
-    `${getApiEndpoint()}${DATA_API_ROUTE}/${ISSUE_API_ROUTE}s${
-      account ? `?uuid=${account}` : ""
-    }`
-  );
-
-const getAccounts = (uuid: string) =>
-  axios.get(
-    `${getApiEndpoint()}${DATA_API_ROUTE}/${ISSUE_API_ROUTE}/accounts?id=${uuid}`
-  );
-export const queryIssue = async (id: string) => {
-  try {
-    const issueResponse = await getIssue(id as string);
-
-    const rawIssue = issueResponse.data;
-    const issue: Issue = {
-      ...rawIssue,
-      hash: rawIssue.funding_hash,
-      amount: parseFloat(rawIssue.funding_amount),
-      pullNumber: rawIssue.pull_number,
-      issueNumber: rawIssue.issue_number,
-      githubId: rawIssue.github_id,
-      payoutHash: rawIssue.payout_hash,
-      authorGithub: rawIssue.github_login,
-      pubkey: rawIssue.solana_pubkey,
-      escrowKey: rawIssue.escrow_key && new PublicKey(rawIssue.escrow_key),
-      estimatedTime: parseFloat(rawIssue.estimated_time),
-      mint: rawIssue.funding_mint
-        ? new PublicKey(rawIssue.funding_mint)
-        : undefined,
-      timestamp: rawIssue.unix_timestamp,
-      description:
-        rawIssue.description ||
-        "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Blandit libero volutpat sed cras ornare. Dignissim cras tincidunt lobortis feugiat vivamus at augue eget arcu. A erat nam at lectus urna. Mattis aliquam faucibus purus in massa tempor. A lacus vestibulum sed arcu. Id venenatis a condimentum vitae sapien. Eu lobortis elementum nibh tellus molestie nunc non blandit. Massa sapien faucibus et molestie. Sollicitudin ac orci phasellus egestas tellus rutrum tellus pellentesque eu. Dis parturient montes nascetur ridiculus mus mauris vitae. Tortor posuere ac ut consequat semper viverra nam.",
-    };
-    console.log("issue", issue);
-    // setIssue(issue);
-    const accountsResponse = await getAccounts(id as string);
-    const rawAccounts = accountsResponse.data;
-    const accounts: Contributor[] = rawAccounts.map((account) => {
-      return {
-        ...account,
-        githubLogin: account.github_login,
-        githubId: account.github_id,
-        publicKey: new PublicKey(account.solana_pubkey),
-        uuid: account.account_uuid,
-      };
-    });
-
-    const newIssue: Issue = {
-      ...issue,
-      allContributors: accounts,
-      creator: accounts.find((submitter) =>
-        submitter.relations.includes(ISSUE_ACCOUNT_RELATIONSHIP.Creator)
-      ),
-      requestedSubmitters: accounts.filter((submitter) =>
-        submitter.relations.includes(
-          ISSUE_ACCOUNT_RELATIONSHIP.RequestedSubmitter
-        )
-      ),
-      deniedRequesters: accounts.filter((submitter) =>
-        submitter.relations.includes(ISSUE_ACCOUNT_RELATIONSHIP.DeniedRequester)
-      ),
-      approvedSubmitters: accounts.filter((submitter) =>
-        submitter.relations.includes(
-          ISSUE_ACCOUNT_RELATIONSHIP.ApprovedSubmitter
-        )
-      ),
-      currentSubmitter: accounts.find((submitter) =>
-        submitter.relations.includes(
-          ISSUE_ACCOUNT_RELATIONSHIP.CurrentSubmitter
-        )
-      ),
-      deniedSubmitters: accounts.filter((submitter) =>
-        submitter.relations.includes(ISSUE_ACCOUNT_RELATIONSHIP.DeniedSubmitter)
-      ),
-      changesRequestedSubmitters: accounts.filter((submitter) =>
-        submitter.relations.includes(
-          ISSUE_ACCOUNT_RELATIONSHIP.ChangesRequestedSubmitter
-        )
-      ),
-      completer: accounts.find((submitter) =>
-        submitter.relations.includes(ISSUE_ACCOUNT_RELATIONSHIP.Completer)
-      ),
-      cancelVoters: accounts.filter((submitter) =>
-        submitter.relations.includes(ISSUE_ACCOUNT_RELATIONSHIP.VotingCancel)
-      ),
-      needsToVote: accounts.filter(
-        (submitter) =>
-          !submitter.relations.includes(
-            ISSUE_ACCOUNT_RELATIONSHIP.VotingCancel
-          ) &&
-          submitter.relations.some((relation) =>
-            [
-              ISSUE_ACCOUNT_RELATIONSHIP.Creator,
-              ISSUE_ACCOUNT_RELATIONSHIP.CurrentSubmitter,
-              ISSUE_ACCOUNT_RELATIONSHIP.DeniedSubmitter,
-              ISSUE_ACCOUNT_RELATIONSHIP.ChangesRequestedSubmitter,
-            ].includes(relation)
-          )
-      ),
-    };
-    return newIssue;
-  } catch (e) {
-    console.error(e);
-  }
-};
-
-export const queryIssues = async (user: User, referrer?: string) => {
-  try {
-    const issueResponse = await getIssues(
-      referrer === "my_bounties" ? user.uuid : undefined
-    );
-
-    const rawIssues = issueResponse.data;
-    const issues: Issue[] = rawIssues.map((rawIssue) => {
-      return {
-        ...rawIssue,
-        hash: rawIssue.funding_hash,
-        amount: parseFloat(rawIssue.funding_amount),
-        pullNumber: rawIssue.pull_number,
-        issueNumber: rawIssue.issue_number,
-        githubId: rawIssue.github_id,
-        payoutHash: rawIssue.payout_hash,
-        authorGithub: rawIssue.github_login,
-        pubkey: rawIssue.solana_pubkey,
-        escrowKey: rawIssue.escrow_key && new PublicKey(rawIssue.escrow_key),
-        estimatedTime: parseFloat(rawIssue.estimated_time),
-        mint: rawIssue.funding_mint
-          ? new PublicKey(rawIssue.funding_mint)
-          : undefined,
-        timestamp: rawIssue.unix_timestamp,
-        description: rawIssue.description,
-      };
-    });
-    const user_repos_names = user.repos.map((repo) => repo.full_name);
-    const filteredIssues = issues.filter((issue) => {
-      const full_name = `${issue.org}/${issue.repo}`;
-      return user_repos_names.includes(full_name) || !issue.private;
-    });
-
-    return filteredIssues;
-  } catch (e) {
-    console.error(e);
-  }
-};
+export * from "./types";
 
 const getUserRelations = (
   user: User,
@@ -320,28 +81,8 @@ const getUserRelations = (
       .map((contributor) => contributor.uuid)
       .includes(user.uuid),
   };
-  // debugger;
   return newUser;
 };
-
-export interface ILancerContext {
-  user: User;
-  issue: Issue;
-  issues: Issue[];
-  loginState: LOGIN_STATE;
-  anchor: AnchorProvider;
-  program: Program<MonoProgram>;
-  web3Auth: Web3AuthCore;
-  wallet: LancerWallet;
-  issueLoadingState: ISSUE_LOAD_STATE;
-  coinflowWallet: SolanaWalletContextState;
-  setIssue: (issue: Issue) => void;
-  setUser: (user: User) => void;
-  setForceGetIssue: (force: boolean) => void;
-  setIssueLoadingState: (state: ISSUE_LOAD_STATE) => void;
-  login: () => Promise<void>;
-  logout: () => Promise<void>;
-}
 
 export const LancerContext = createContext<ILancerContext>({
   user: null,
@@ -397,8 +138,10 @@ export const LancerProvider: FunctionComponent<ILancerState> = ({
   const search = useLocation().search;
   const params = new URLSearchParams(search);
   const jwt = params.get("token");
+  type NewType = ISSUE_LOAD_STATE;
+
   const [issueLoadingState, setIssueLoadingState] =
-    useState<ISSUE_LOAD_STATE>("initializing");
+    useState<NewType>("initializing");
   const [publicKey, setPublicKey] = useState<PublicKey | null>(null);
   const connected = useMemo(() => !!publicKey, [publicKey]);
   const [coinflowWallet, setCoinflowWallet] = useState(null);
@@ -416,7 +159,6 @@ export const LancerProvider: FunctionComponent<ILancerState> = ({
         },
       });
     }
-    console.log("setting provider");
     const walletProvider = new LancerWallet(provider);
     setTimeout(async function () {
       console.log(walletProvider);
@@ -428,27 +170,6 @@ export const LancerProvider: FunctionComponent<ILancerState> = ({
   }, [web3Auth]);
 
   useEffect(() => {
-    console.log("hi", loginState);
-    const subscribeAuthEvents = (web3auth: Web3AuthCore) => {
-      // Can subscribe to all ADAPTER_EVENTS and LOGIN_MODAL_EVENTS
-      web3auth.on(ADAPTER_EVENTS.CONNECTED, (data: unknown) => {
-        console.log("Yeah!, you are successfully logged in", data);
-      });
-
-      web3auth.on(ADAPTER_EVENTS.CONNECTING, () => {
-        console.log("connecting");
-      });
-
-      web3auth.on(ADAPTER_EVENTS.DISCONNECTED, () => {
-        console.log("disconnected");
-        setUser(null);
-      });
-
-      web3auth.on(ADAPTER_EVENTS.ERRORED, (error) => {
-        console.error("some error or user has cancelled login request", error);
-      });
-    };
-
     const currentChainConfig = CHAIN_CONFIG["solana"];
 
     async function init() {
@@ -462,9 +183,6 @@ export const LancerProvider: FunctionComponent<ILancerState> = ({
           chainConfig: currentChainConfig,
           clientId: clientId,
         });
-        subscribeAuthEvents(web3AuthInstance);
-        console.log("adapter");
-
         const adapter = new OpenloginAdapter({
           adapterSettings: {
             network: "testnet",
@@ -480,10 +198,8 @@ export const LancerProvider: FunctionComponent<ILancerState> = ({
             },
           },
         });
-        console.log("configure");
 
         web3AuthInstance.configureAdapter(adapter);
-        console.log("init");
 
         await web3AuthInstance.init();
 
@@ -532,12 +248,10 @@ export const LancerProvider: FunctionComponent<ILancerState> = ({
             }
           );
           const connection = new Connection(getEndpoint());
-          // debugger;
           const airdrop = await connection.requestAirdrop(
             wallet.publicKey,
             1000000000
           );
-          console.log("user", user.data, airdrop);
           const pk = new PublicKey(user.data.solana_pubkey);
           setUser({
             ...user.data,
@@ -549,7 +263,6 @@ export const LancerProvider: FunctionComponent<ILancerState> = ({
           setLoginState("initializing_anchor");
         }
       } else {
-        console.log("user", user.data);
         let newUser = {
           ...user.data,
           githubId: user.data.github_id,
@@ -565,18 +278,15 @@ export const LancerProvider: FunctionComponent<ILancerState> = ({
           const userContributor = issue.allContributors.find(
             (contributor) => contributor.uuid === newUser.uuid
           );
-          console.log("new");
           newUser = getUserRelations(newUser, issue, userContributor);
         }
         setUser(newUser);
         setLoginState("initializing_anchor");
       }
     };
-    // debugger;
     if (jwt === "" || jwt === null) {
       const rwaURL = `${REACT_APP_AUTH0_DOMAIN}/authorize?scope=openid&response_type=code&client_id=${REACT_APP_CLIENTID}&redirect_uri=${`${getApiEndpoint()}callback?referrer=${referrer}`}&state=STATE`;
       setLoginState("retrieving_jwt");
-      // debugger;
       window.location.href = rwaURL;
     } else if (
       jwt !== "" &&
@@ -614,7 +324,6 @@ export const LancerProvider: FunctionComponent<ILancerState> = ({
       const signMessage = async (message: string | Uint8Array) => {
         return await rpc.signMessage(message);
       };
-      console.log("pk%5", wallet.pk.toString());
       const coinflowWallet: SolanaWalletContextState = {
         wallet: null,
         connected: true,
@@ -625,7 +334,6 @@ export const LancerProvider: FunctionComponent<ILancerState> = ({
       };
       setCoinflowWallet(coinflowWallet);
       setLoginState("ready");
-      console.log("Lancer Ready!");
     }
   }, [
     jwt,
@@ -643,9 +351,7 @@ export const LancerProvider: FunctionComponent<ILancerState> = ({
   ]);
 
   useEffect(() => {
-    console.log("useEffect", issue);
     const getContract = async () => {
-      console.log("getContract");
       if (
         issue.state === IssueState.COMPLETE ||
         issue.state === IssueState.CANCELED
@@ -672,7 +378,6 @@ export const LancerProvider: FunctionComponent<ILancerState> = ({
 
         const newIssue = await getEscrowContract(issue, program, anchor);
 
-        console.log("contract_result", newIssue);
         if (
           !newIssue ||
           (issue.cancelVoters.length === 0 &&
@@ -684,8 +389,6 @@ export const LancerProvider: FunctionComponent<ILancerState> = ({
             newIssue.escrowContract.currentSubmitter.toString() !==
               "11111111111111111111111111111111")
         ) {
-          console.log("timedout");
-
           setTimeout(() => {
             setIsGettingContract(false);
           }, 2000);
@@ -696,7 +399,6 @@ export const LancerProvider: FunctionComponent<ILancerState> = ({
         }
       }
     };
-    console.log(issue, program, anchor, isGettingContract);
     if (
       issue &&
       (issue.state === IssueState.COMPLETE ||
@@ -775,10 +477,7 @@ export const LancerProvider: FunctionComponent<ILancerState> = ({
   }, [user, referrer]);
 
   const login = async () => {
-    console.log("hi");
     const rwaURL = `${REACT_APP_AUTH0_DOMAIN}/authorize?scope=openid&response_type=code&client_id=${REACT_APP_CLIENTID}&redirect_uri=${`${getApiEndpoint()}callback?referrer=${referrer}`}&state=STATE`;
-    setLoginState("retrieving_jwt");
-    // debugger;
     window.location.href = rwaURL;
   };
 

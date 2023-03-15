@@ -7,6 +7,7 @@ import { useLancer } from "@/src/providers";
 import { useEffect } from "react";
 import axios from "axios";
 import { ACCOUNT_API_ROUTE, DATA_API_ROUTE } from "@/server/src/constants";
+import { LoadingBar } from "@/src/components";
 export const ISSUE_USER_RELATIONSHIP = [
   "Creator",
   "Requested Submitter",
@@ -95,7 +96,7 @@ export const IssueList: React.FC<{ isMyBounties: boolean }> = ({
         });
     }
   }, [user?.githubId]);
-  if (!issues) return <></>;
+  if (!issues) return <LoadingBar title="Loading Issues" />;
 
   const filteredIssues = issues.filter((issue) => {
     // debugger;
