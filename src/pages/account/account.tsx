@@ -1,45 +1,19 @@
-import { DATA_API_ROUTE, ISSUE_API_ROUTE } from "@/server/src/constants";
 import { DEVNET_USDC_MINT } from "@/src/constants";
-import { fundFFA } from "@/src/onChain";
-import { getApiEndpoint, getSolscanTX } from "@/src/utils";
-import axios from "axios";
-import { useCallback, useEffect, useState } from "react";
-import RadioWithCustomInput from "@/src/pages/fund/RadioWithCustomInput";
+import { getSolscanTX } from "@/src/utils";
+import { useEffect, useState } from "react";
 import { useLancer } from "@/src/providers/lancerProvider";
-import { IssueState } from "@/src/types";
 import {
-  createAssociatedTokenAccountInstruction,
   getAccount,
-  createMint,
-  mintToChecked,
   getAssociatedTokenAddress,
   getMint,
-  TOKEN_PROGRAM_ID,
-  NATIVE_MINT,
-  createSyncNativeInstruction,
-  ASSOCIATED_TOKEN_PROGRAM_ID,
 } from "@solana/spl-token";
-import { PublicKey, Transaction } from "@solana/web3.js";
+import { PublicKey } from "@solana/web3.js";
 import { PubKey } from "@/src/components";
-import {
-  CoinflowPurchase,
-  SolanaWalletContextState,
-} from "@coinflowlabs/react";
-import { WalletContextState } from "@solana/wallet-adapter-react";
 import Coinflow from "./coinflowOfframp";
 import { PageLayout } from "@/src/layouts";
 
 const FundBounty: React.FC = () => {
-  const {
-    wallet,
-    anchor,
-    program,
-    setIssue,
-    issue,
-    user,
-    coinflowWallet,
-    logout,
-  } = useLancer();
+  const { wallet, anchor, user, logout } = useLancer();
   const [userSOLBalance, setUserSOLBalance] = useState("0.0");
   const [userUSDCBalance, setUserUSDCBalance] = useState("0.0");
   const [aidropSignature, setAirdropSignature] = useState("");

@@ -6,12 +6,7 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { useLancer } from "@/src/providers/lancerProvider";
 import { IssueState } from "@/src/types";
-import {
-  getAccount,
-  getAssociatedTokenAddress,
-  getMint,
-} from "@solana/spl-token";
-import { PublicKey, Transaction } from "@solana/web3.js";
+import { Transaction } from "@solana/web3.js";
 import Coinflow from "@/src/pages/bounty/components/coinflowPurchase";
 
 const FundBounty: React.FC<{ amount: number }> = ({
@@ -32,11 +27,6 @@ const FundBounty: React.FC<{ amount: number }> = ({
   const [fundTx, setFundTx] = useState<Transaction>(null);
   useEffect(() => {
     const getFundTransaction = async () => {
-      console.log(
-        "accounts#%",
-        issue.creator.publicKey.toString(),
-        issue.escrowContract.unixTimestamp
-      );
       const tx = await fundFFA(
         issue.creator.publicKey,
         amount,

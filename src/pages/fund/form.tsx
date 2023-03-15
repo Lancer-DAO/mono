@@ -1,60 +1,13 @@
-import { useEffect, useState } from "react";
-import { marked } from "marked";
-import RadioWithCustomInput from "./RadioWithCustomInput";
-import { useLocation } from "react-router-dom";
-import { WALLET_ADAPTERS } from "@web3auth/base";
-import {
-  BONK_MINT,
-  DEVNET_USDC_MINT,
-  IS_MAINNET,
-  MAINNET_USDC_MINT,
-  REACT_APP_AUTH0_DOMAIN,
-  REACT_APP_CLIENTID,
-} from "@/src/constants";
-import { convertToQueryParams, getApiEndpoint, getEndpoint } from "@/src/utils";
-import axios from "axios";
-import {
-  ACCOUNT_API_ROUTE,
-  DATA_API_ROUTE,
-  GITHUB_ISSUE_API_ROUTE,
-  ISSUE_API_ROUTE,
-  NEW_ISSUE_API_ROUTE,
-} from "@/server/src/constants";
-import {
-  Connection,
-  Keypair,
-  PublicKey,
-  clusterApiUrl,
-  SystemProgram,
-  LAMPORTS_PER_SOL,
-  Transaction,
-  sendAndConfirmTransaction,
-} from "@solana/web3.js";
-import keypair from "../../../test-keypair.json";
-import fromKeypair from "../../../second_wallet.json";
-import {
-  createAssociatedTokenAccountInstruction,
-  createTransferInstruction,
-  getAccount,
-  getAssociatedTokenAddress,
-  getMint,
-  TokenAccountNotFoundError,
-} from "@solana/spl-token";
-import { userInfo } from "os";
-import { createFFA, fundFFA } from "@/src/onChain";
-import { IssueState, WEB3_INIT_STATE } from "@/src/types";
-import { AnchorProvider, Program } from "@project-serum/anchor";
-import { MonoProgram } from "@/escrow/sdk/types/mono_program";
-import { MONO_DEVNET } from "@/escrow/sdk/constants";
-import MonoProgramJSON from "@/escrow/sdk/idl/mono_program.json";
-import Base58 from "base-58";
+import { useState } from "react";
+
+import { IssueState } from "@/src/types";
 import { useLancer } from "@/src/providers/lancerProvider";
 import classnames from "classnames";
 import FundBounty from "./fundBounty";
 import { LoadingBar } from "@/src/components/LoadingBar";
 
 const Form = () => {
-  const { user, program, anchor, wallet, issue } = useLancer();
+  const { issue } = useLancer();
   const [formData, setFormData] = useState({
     fundingAmount: null,
   });

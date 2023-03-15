@@ -1,28 +1,14 @@
-import { getEndpoint } from "@/src/utils";
 import {
-  Connection,
-  Keypair,
   PublicKey,
-  SystemProgram,
-  LAMPORTS_PER_SOL,
   Transaction,
 } from "@solana/web3.js";
-import {
-  createSyncNativeInstruction,
-  getAccount,
-  getAssociatedTokenAddress,
-} from "@solana/spl-token";
-import { AnchorProvider, Program, Wallet } from "@project-serum/anchor";
-import { MONO_DEVNET } from "@/escrow/sdk/constants";
+import { AnchorProvider, Program } from "@project-serum/anchor";
 import { MonoProgram } from "@/escrow/sdk/types/mono_program";
 import {
-  createFeatureFundingAccountInstruction, fundFeatureInstruction,
+   fundFeatureInstruction,
 } from "@/escrow/sdk/instructions";
 
-import MonoProgramJSON from "@/escrow/sdk/idl/mono_program.json";
 import { DEVNET_USDC_MINT } from "@/src/constants";
-import { getFeatureFundingAccount, MyWallet } from "@/src/onChain";
-import { findFeatureTokenAccount } from "@/escrow/sdk/pda";
 import { LancerWallet } from "@/src/providers/lancerProvider";
 import { EscrowContract } from "@/src/types";
 
@@ -30,7 +16,6 @@ import { EscrowContract } from "@/src/types";
 export const fundFFA = async (creator: PublicKey, baseAmount: number, acc: EscrowContract, wallet: LancerWallet, anchor: AnchorProvider, program: Program<MonoProgram>) => {
 
       const amount = baseAmount * Math.pow(10, 6)
-      console.log('token', acc.fundsTokenAccount.toString())
 
     // check balaance before funding feature
     let fund_feature_ix = await fundFeatureInstruction(

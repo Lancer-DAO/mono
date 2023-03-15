@@ -1,27 +1,12 @@
-import { getEndpoint } from "@/src/utils";
 import {
-  Connection,
-  Keypair,
   PublicKey,
-  SystemProgram,
-  LAMPORTS_PER_SOL,
   Transaction,
 } from "@solana/web3.js";
-import {
-  createSyncNativeInstruction,
-  getAccount,
-  getAssociatedTokenAddress,
-} from "@solana/spl-token";
-import { AnchorProvider, Program, Wallet } from "@project-serum/anchor";
-import { MONO_DEVNET } from "@/escrow/sdk/constants";
+import { AnchorProvider, Program} from "@project-serum/anchor";
 import { MonoProgram } from "@/escrow/sdk/types/mono_program";
-import { addApprovedSubmittersInstruction, fundFeatureInstruction,
+import { addApprovedSubmittersInstruction,
 } from "@/escrow/sdk/instructions";
 
-import MonoProgramJSON from "@/escrow/sdk/idl/mono_program.json";
-import { DEVNET_USDC_MINT } from "@/src/constants";
-import { getFeatureFundingAccount, MyWallet } from "@/src/onChain";
-import { findFeatureAccount, findFeatureTokenAccount } from "@/escrow/sdk/pda";
 import { LancerWallet } from "@/src/providers/lancerProvider";
 import { EscrowContract } from "@/src/types";
 
@@ -48,5 +33,4 @@ export const addSubmitterFFA = async (creator: PublicKey, submitter: PublicKey, 
       const tx = await wallet.signAndSendTransaction(
         new Transaction(txInfo).add(approveSubmitterIx)
       );
-        console.log(tx)
   };

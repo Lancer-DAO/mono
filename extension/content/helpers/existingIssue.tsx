@@ -5,7 +5,6 @@ import {
   DATA_API_ROUTE,
   FULL_PULL_REQUEST_API_ROUTE,
   ISSUE_API_ROUTE,
-  NEW_ISSUE_API_ROUTE,
 } from "@/server/src/constants";
 import { getApiEndpointExtension } from "../utils";
 import { Issue, IssueState } from "../types";
@@ -30,6 +29,7 @@ const getPR = (splitURL, pullNumber, author) =>
     }
   );
 
+// Insert our component into the right side of the issue page after getting the issue info
 export const insertIssue = (response) => {
   const assigneeEle = window.document.querySelectorAll(assigneeSelector)[0];
   const rawIssue = response.data;
@@ -49,6 +49,7 @@ export const insertIssue = (response) => {
   }
 };
 
+// Check if there is a connected lancer issue, and if so, insert our widget on the right side
 export const insertExistingIssue = (splitURL: string[]) => {
   const existingWrapper = window.document.querySelector(
     `.${WRAPPER_CLASSNAME}`

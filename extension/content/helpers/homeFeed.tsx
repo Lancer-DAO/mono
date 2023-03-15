@@ -1,29 +1,14 @@
 import * as ReactDOM from "react-dom/client";
-import { BountyFeed } from "../components/bountyFeed";
-import axios, { AxiosResponse } from "axios";
-import {
-  DATA_API_ROUTE,
-  FULL_PULL_REQUEST_API_ROUTE,
-  ISSUE_API_ROUTE,
-  NEW_ISSUE_API_ROUTE,
-} from "@/server/src/constants";
 import { getApiEndpointExtension, getAppEndpointExtension } from "../utils";
-import { Issue } from "../types";
 const LIST_ITEM_ID = "bounty-list-item";
 
-const getIssues = () =>
-  axios.get(
-    `${getApiEndpointExtension()}${DATA_API_ROUTE}/${ISSUE_API_ROUTE}s`
-  );
-
+// Add a button to the home page that links to the lancer bounty feed
 export const insertHomeFeed = () => {
   const existingWrapper = window.document.getElementById(LIST_ITEM_ID);
   console.log("feed", existingWrapper, getApiEndpointExtension());
   if (existingWrapper) {
     return;
   }
-  const footerSelector =
-    ".d-flex.flex-items-between.footer.container-lg.my-5.px-0";
 
   const buttonEle = (
     <a

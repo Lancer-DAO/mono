@@ -17,6 +17,7 @@ const issueSelector = ".issue-link.js-issue-link";
 const assigneeSelector =
   ".discussion-sidebar-item.sidebar-assignee.js-discussion-sidebar-item";
 
+// actually insert the component in the page
 const insertPR = (response) => {
   const assigneeEle = window.document.querySelectorAll(assigneeSelector)[0];
   if (assigneeEle && response.data) {
@@ -53,6 +54,9 @@ const maybeGetPR = (splitURL, issueNumber, author) =>
     }
   );
 
+// Check if this PR is closing an Issue linked to lancer. If so, either
+// - get a link to that lancer issue and provide it
+// - create a PR in the lancer backend and link it to the lancer issue
 export const insertPullRequest = (splitURL: string[]) => {
   const issueNumber = window.document
     .querySelectorAll(issueSelector)[0]

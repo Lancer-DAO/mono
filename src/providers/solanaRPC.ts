@@ -2,6 +2,9 @@ import {Connection, PublicKey, Transaction, VersionedTransaction} from '@solana/
 import {CustomChainConfig, SafeEventEmitterProvider} from '@web3auth/base';
 import {SolanaWallet} from '@web3auth/solana-provider';
 
+// This Code came from the wonderful team at Coinflow!
+// Check them out at https://coinflow.cash/
+
 export default class SolanaRpc {
   private provider: SafeEventEmitterProvider;
 

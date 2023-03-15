@@ -37,7 +37,6 @@ export const BountyActions = () => {
     issueLoadingState,
   } = useLancer();
   const [hoveredButton, setHoveredButton] = useState("none");
-  console.log("rerendering");
   if (
     issue &&
     (issue.state === IssueState.CANCELED || issue.state === IssueState.COMPLETE)
@@ -52,6 +51,7 @@ export const BountyActions = () => {
   }
   const requestToSubmit = async () => {
     if (user.isCreator) {
+      // If we are the creator, then skip requesting and add self as approved
       await addSubmitterFFA(
         issue.creator.publicKey,
         issue.creator.publicKey,
@@ -78,6 +78,7 @@ export const BountyActions = () => {
       });
       setIssueLoadingState("getting_contract");
     } else {
+      // Request to submit. Does not interact on chain
       axios.post(
         `${getApiEndpoint()}${DATA_API_ROUTE}/${ACCOUNT_ISSUE_API_ROUTE}`,
         {
@@ -118,6 +119,8 @@ export const BountyActions = () => {
         anchor,
         program
       );
+      // If we are moved to the current submitter, then we should move out of the approved
+      // submitter state. We can only move to completer, changes requested, or denied from here
       user.relations.push(ISSUE_ACCOUNT_RELATIONSHIP.CurrentSubmitter);
       const index = user.relations.indexOf(
         ISSUE_ACCOUNT_RELATIONSHIP.ApprovedSubmitter
@@ -177,6 +180,7 @@ export const BountyActions = () => {
           githubId: user.githubId,
         }
       );
+      // move the submitter to the completer
       issue.currentSubmitter.relations.push(
         ISSUE_ACCOUNT_RELATIONSHIP.Completer
       );
@@ -217,6 +221,9 @@ export const BountyActions = () => {
         anchor,
         program
       );
+      // Deny the request on chain, but save that the user made a request.
+      // Being denied by the contract does not block further submissions, just
+      // free up other submitters to submit while changes are being made
       issue.currentSubmitter.relations.push(
         ISSUE_ACCOUNT_RELATIONSHIP.ChangesRequestedSubmitter
       );
@@ -264,7 +271,8 @@ export const BountyActions = () => {
         anchor,
         program
       );
-      debugger;
+      // Deny the submission on chain, and prevent the submitter from making
+      // any more requests
       issue.currentSubmitter.relations.push(
         ISSUE_ACCOUNT_RELATIONSHIP.DeniedSubmitter
       );
@@ -325,6 +333,7 @@ export const BountyActions = () => {
   const handleVote = async () => {
     try {
       if (user.isCreator) {
+        // If we are the creator, vote to cancel as creator
         await voteToCancelFFA(
           issue.creator.publicKey,
           issue.creator.publicKey,
@@ -334,6 +343,7 @@ export const BountyActions = () => {
           program
         );
       } else if (user.isCurrentSubmitter) {
+        // If we are the submitter, vote to cancel as submitter
         await voteToCancelFFA(
           issue.creator.publicKey,
           user.publicKey,
@@ -343,6 +353,8 @@ export const BountyActions = () => {
           program
         );
       }
+      // If we are neither (request submitted or denied), then we still need
+      // to vote to cancel, but this information is store off-chain (for now).
       user.relations.push(ISSUE_ACCOUNT_RELATIONSHIP.VotingCancel);
       setUser({
         ...user,

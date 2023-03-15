@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { marked } from "marked";
-import { BONK_MINT, DEVNET_USDC_MINT } from "@/src/constants";
-import { convertToQueryParams, getApiEndpoint, getEndpoint } from "@/src/utils";
+import { convertToQueryParams, getApiEndpoint } from "@/src/utils";
 import axios from "axios";
 import {
   ACCOUNT_API_ROUTE,
@@ -9,29 +8,11 @@ import {
   GITHUB_ISSUE_API_ROUTE,
   ISSUE_API_ROUTE,
 } from "@/server/src/constants";
-import { Keypair } from "@solana/web3.js";
-import keypair from "../../../test-keypair.json";
-import fromKeypair from "../../../second_wallet.json";
-import { createFFA, fundFFA } from "@/src/onChain";
+import { createFFA } from "@/src/onChain";
 import { useLancer } from "@/src/providers/lancerProvider";
 import classnames from "classnames";
 import { useLocation } from "react-router-dom";
 import { LoadingBar } from "@/src/components/LoadingBar";
-export const DEFAULT_MINTS = [
-  {
-    name: "SOL",
-    mint: undefined,
-  },
-  {
-    name: "USDC",
-    mint: DEVNET_USDC_MINT,
-  },
-  {
-    name: "BONK",
-    mint: BONK_MINT,
-  },
-];
-export const DEFAULT_MINT_NAMES = DEFAULT_MINTS.map((mint) => mint.name);
 
 const Form = () => {
   const { user, program, anchor, wallet, setUser } = useLancer();
@@ -83,6 +64,9 @@ const Form = () => {
 
   useEffect(() => {
     if (user?.githubId && repo) {
+      // once we choose a repo, get all the issues for that repo
+      // that are not linked to a lancer bounty. The user can choose
+      // to link a bounty to one of these issues
       axios
         .get(
           `${getApiEndpoint()}${DATA_API_ROUTE}/${ACCOUNT_API_ROUTE}/organization/repository_issues`,
@@ -148,6 +132,7 @@ const Form = () => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsSubmittingIssue(true);
+    // Create a new github issue
     const createIssueNew = async () => {
       return axios.post(
         `${getApiEndpoint()}${DATA_API_ROUTE}/${GITHUB_ISSUE_API_ROUTE}`,
@@ -167,6 +152,7 @@ const Form = () => {
       );
     };
 
+    // link an existing github issue
     const createIssueExisting = async () => {
       return axios.post(
         `${getApiEndpoint()}${DATA_API_ROUTE}/${GITHUB_ISSUE_API_ROUTE}`,
@@ -187,6 +173,7 @@ const Form = () => {
       );
     };
 
+    // create and link an escrow contract to the issue
     const createAndFundEscrow = async (issue: {
       number: number;
       uuid: string;
@@ -194,7 +181,6 @@ const Form = () => {
       console.log("submit");
       const creator = user.publicKey;
       const timestamp = await createFFA(creator, wallet, anchor, program);
-      // const timestamp = "1678054848253";
       await axios.put(
         `${getApiEndpoint()}${DATA_API_ROUTE}/${ISSUE_API_ROUTE}/timestamp`,
         {
@@ -215,8 +201,6 @@ const Form = () => {
       console.log("issueres", issueResponse);
       await createAndFundEscrow(issueResponse.data.issue);
     }
-
-    console.log(formData); // do something with form data
   };
 
   return (

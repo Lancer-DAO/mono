@@ -1,9 +1,7 @@
 import { Router } from "express";
-import { PublicKey } from "@solana/web3.js";
 import {
   insertAccount,
   getAccount,
-  getAllIssues,
   getAllIssuesForRepo,
 } from "../../controllers";
 import {
@@ -31,7 +29,6 @@ router.post(`/${ACCOUNT_API_ROUTE}`, async function (req, res, next) {
       solanaKey: solanaKey,
       githubLogin: githubData.data.nickname,
     }
-    console.log(insertData)
     return res.json(
       await insertAccount(insertData)
     );
@@ -51,7 +48,8 @@ router.get(`/${ACCOUNT_API_ROUTE}`, async function (req, res, next) {
 });
 
 router.get(`/${ACCOUNT_API_ROUTE}/organizations`, (req, res) => {
-    //when a request from auth0 is received we get auth code as query param
+    // first, get the auth0 token
+
     var github_id = req.query.githubId;
     var options = {
       method: 'POST',
@@ -71,18 +69,17 @@ router.get(`/${ACCOUNT_API_ROUTE}/organizations`, (req, res) => {
         url: `https://dev-kgvm1sxe.us.auth0.com/api/v2/users/${github_id}`,
         headers: {'content-type': 'application/x-www-form-urlencoded', 'Authorization': `Bearer ${code}`},
       };
-      // console.log('options', options)
+    // next, get the github access token
 
       axios.request(options).then(function (response) {
-        // console.log('axios', response)
 
       const gh_token = response.data.identities[0].access_token;
       const username = response.data.nickname;
-      console.log('token', response.data)
-      // console.log(gh_token)
       const octokit = new Octokit({
         auth: gh_token,
       });
+    // finally, talk to github using the token
+
       octokit.request('GET /user/repos', {
       }).then((resp) => {
 
@@ -106,7 +103,8 @@ router.get(`/${ACCOUNT_API_ROUTE}/organizations`, (req, res) => {
   });
 
   router.get(`/${ACCOUNT_API_ROUTE}/organization/repository_issues`, (req, res) => {
-    //when a request from auth0 is received we get auth code as query param
+    // first, get the auth0 token
+
     var github_id = req.query.githubId;
     var repo = req.query.repo as string;
     var org = req.query.org as string;
@@ -128,25 +126,23 @@ router.get(`/${ACCOUNT_API_ROUTE}/organizations`, (req, res) => {
         url: `https://dev-kgvm1sxe.us.auth0.com/api/v2/users/${github_id}`,
         headers: {'content-type': 'application/x-www-form-urlencoded', 'Authorization': `Bearer ${code}`},
       };
-      // console.log('options', options)
+    // next, get the github user info
 
       axios.request(options).then(function (response) {
-        // console.log('axios', response)
 
       const gh_token = response.data.identities[0].access_token;
       const username = response.data.nickname;
-      console.log('token', response.data)
-      // console.log(gh_token)
       const octokit = new Octokit({
         auth: gh_token,
       });
+    // finally, talk to github using the token
+
       octokit.request('GET /repos/{owner}/{repo}/issues', {
         owner: org,
         repo: repo
       }).then(async (resp) => {
         const rawIssues = await getAllIssuesForRepo(org, repo)
         const issues = rawIssues.message ? [] : rawIssues.map((issue: { issue_number: string; }) => parseInt(issue.issue_number))
-        console.log(issues)
         const remainingIssues = resp.data.filter((issue) => !issues.includes(issue.number))
         return res.status(200).json({message: 'Issues Found', data: remainingIssues})
       }).catch((error) => {

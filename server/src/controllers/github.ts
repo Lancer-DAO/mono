@@ -6,6 +6,7 @@ interface CreateGithubIssueParams {
 }
 
 export const createGithubIssue = async (data: CreateGithubIssueParams) => {
+    // first, get the auth0 token
     const auth0Options = {
       method: 'POST',
       url: 'https://dev-kgvm1sxe.us.auth0.com/oauth/token',
@@ -20,6 +21,7 @@ export const createGithubIssue = async (data: CreateGithubIssueParams) => {
     const auth0Data = await axios.request(auth0Options);
     const access_token = auth0Data.data.access_token;
 
+    // next, get the github access token
     const githubOptions = {
         method: 'GET',
         url: `https://dev-kgvm1sxe.us.auth0.com/api/v2/users/${data.githubId}`,
@@ -28,10 +30,10 @@ export const createGithubIssue = async (data: CreateGithubIssueParams) => {
 
       const githubData = await axios.request(githubOptions)
 
-        // console.log('axios', response)
 
       const gh_token = githubData.data.identities[0].access_token;
-      // console.log(gh_token)
+
+    // finally, talk to github using the token
       const octokit = new Octokit({
         auth: gh_token,
       });
@@ -45,6 +47,8 @@ export const createGithubIssue = async (data: CreateGithubIssueParams) => {
   }
 
   export const getGitHubUser = async (githubId: string) => {
+// first, get the auth0 token
+
     const auth0Options = {
       method: 'POST',
       url: 'https://dev-kgvm1sxe.us.auth0.com/oauth/token',
@@ -58,7 +62,7 @@ export const createGithubIssue = async (data: CreateGithubIssueParams) => {
     };
     const auth0Data = await axios.request(auth0Options);
     const access_token = auth0Data.data.access_token;
-    console.log('token', access_token)
+    // next, get the github user info
 
     const githubOptions = {
         method: 'GET',
@@ -66,10 +70,8 @@ export const createGithubIssue = async (data: CreateGithubIssueParams) => {
         headers: {'content-type': 'application/x-www-form-urlencoded', 'Authorization': `Bearer ${access_token}`},
       };
 
-      console.log('options',githubOptions)
 
       const githubData = await axios.request(githubOptions)
-      console.log('data', githubData)
 
         return githubData;
   }

@@ -1,26 +1,12 @@
-import { getEndpoint } from "@/src/utils";
 import {
-  Connection,
-  Keypair,
   PublicKey,
-  SystemProgram,
-  LAMPORTS_PER_SOL,
   Transaction,
 } from "@solana/web3.js";
-import {
-  createSyncNativeInstruction,
-  getAccount,
-  getAssociatedTokenAddress,
-} from "@solana/spl-token";
-import { AnchorProvider, Program, Wallet } from "@project-serum/anchor";
-import { MONO_DEVNET } from "@/escrow/sdk/constants";
+import { AnchorProvider, Program } from "@project-serum/anchor";
 import { MonoProgram } from "@/escrow/sdk/types/mono_program";
-import { addApprovedSubmittersInstruction, approveRequestInstruction, denyRequestInstruction, fundFeatureInstruction, voteToCancelInstruction,
+import { voteToCancelInstruction,
 } from "@/escrow/sdk/instructions";
 
-import MonoProgramJSON from "@/escrow/sdk/idl/mono_program.json";
-import { getFeatureFundingAccount, MyWallet } from "@/src/onChain";
-import { DEVNET_USDC_MINT } from "@/src/constants";
 import { LancerWallet } from "@/src/providers/lancerProvider";
 import { EscrowContract } from "@/src/types";
 
@@ -28,7 +14,6 @@ import { EscrowContract } from "@/src/types";
 export const voteToCancelFFA = async (creator: PublicKey, voter: PublicKey, acc: EscrowContract, wallet: LancerWallet, anchor: AnchorProvider, program: Program<MonoProgram>) => {
 
 
-        // debugger;
       let approveSubmitterIx = await voteToCancelInstruction(
         acc.unixTimestamp,
         creator,

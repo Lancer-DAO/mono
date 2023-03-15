@@ -13,7 +13,6 @@ const router = Router();
 
 router.get("/callback", (req, res) => {
     //when a request from auth0 is received we get auth code as query param
-    console.log('calling back', req.query)
     const authCode = req.query.code;
     const referrer = req.query.referrer as string;
     var options = {
@@ -35,9 +34,7 @@ router.get("/callback", (req, res) => {
       if (error) throw new Error(error);
       const id_token = JSON.parse(data)["id_token"];
       var decoded = jwt_decode(id_token);
-      console.log('jwt', decoded)
       const redirect_url = process.env.FRONT_ENDPOINT + referrer + `${referrer.includes('?') ? '&' : '?'}token=` + id_token;
-      console.log(redirect_url)
       res.redirect(redirect_url);
     });
   });
@@ -49,7 +46,6 @@ router.get("/callback", (req, res) => {
     var org = req.query.org as string;
     var repo = req.query.repo as string;
     var user_id = req.query.user_id;
-    console.log('ghtoken')
     var options = {
       method: 'POST',
       url: 'https://dev-kgvm1sxe.us.auth0.com/oauth/token',
@@ -72,7 +68,6 @@ router.get("/callback", (req, res) => {
       axios.request(options).then(function (response) {
 
       const gh_token = response.data.identities[0].access_token;
-      console.log(gh_token)
       const octokit = new Octokit({
         auth: gh_token,
       });
@@ -81,7 +76,6 @@ router.get("/callback", (req, res) => {
         repo: repo,
         pull_number: pull_number
       }).then((resp) => {
-        console.log(resp)
 
         return res.status(200).json({message: 'token acquired', data: response.data})
       }).catch((error) => {

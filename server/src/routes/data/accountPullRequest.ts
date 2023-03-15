@@ -8,8 +8,6 @@ import {
     getAccountPullRequest,
     newPullRequest,
     getFullPullRequestByNumber,
-    updatePullRequestPayout,
-    getIssueById,
     getIssueByUuid,
   } from "../../controllers";
   import {
@@ -86,7 +84,6 @@ router.post(`/${MERGE_PULL_REQUEST_API_ROUTE}`, async (req, res) => {
   const data = await req.body
   const issue = await getIssueByUuid(data.uuid)
 
-  console.log(issue)
   var pull_number = issue.pull_number;
   var org = issue.org;
   var repo = issue.repo;
@@ -114,14 +111,10 @@ router.post(`/${MERGE_PULL_REQUEST_API_ROUTE}`, async (req, res) => {
       url: `https://dev-kgvm1sxe.us.auth0.com/api/v2/users/${github_id}`,
       headers: {'content-type': 'application/x-www-form-urlencoded', 'Authorization': `Bearer ${code}`},
     };
-    // console.log('options', options)
 
     axios.request(options).then(function (response) {
-      // console.log('axios', response)
 
     const gh_token = response.data.identities[0].access_token;
-    console.log('token', response.data)
-    // console.log(gh_token)
     const octokit = new Octokit({
       auth: gh_token,
     });
@@ -130,7 +123,6 @@ router.post(`/${MERGE_PULL_REQUEST_API_ROUTE}`, async (req, res) => {
       repo: repo,
       pull_number: pull_number
     }).then((resp) => {
-      // console.log(resp)
       updateIssueState({
         uuid: data.uuid,
         state: 'complete'
