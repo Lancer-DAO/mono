@@ -119,6 +119,7 @@ const FundBounty: React.FC = () => {
           >
             USDC Faucet
           </a>
+          <Coinflow />
           <button className="button-primary" onClick={() => logout()}>
             Logout
           </button>

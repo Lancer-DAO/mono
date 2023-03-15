@@ -80,9 +80,11 @@ export const insertPullRequest = (splitURL: string[]) => {
               }
             )
             .then(() => {
-              maybeGetPR(splitURL, issueNumber, author).then((response) =>
-                insertPR(response)
-              );
+              setTimeout(() => {
+                maybeGetPR(splitURL, issueNumber, author).then((response) =>
+                  insertPR(response)
+                );
+              }, 4000);
             });
         } else {
           insertPR(response);
