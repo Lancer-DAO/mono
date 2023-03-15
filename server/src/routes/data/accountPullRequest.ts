@@ -84,7 +84,6 @@ router.post(`/${MERGE_PULL_REQUEST_API_ROUTE}`, async (req, res) => {
   const data = await req.body
   const issue = await getIssueByUuid(data.uuid)
 
-  console.log(issue)
   var pull_number = issue.pull_number;
   var org = issue.org;
   var repo = issue.repo;
@@ -116,7 +115,6 @@ router.post(`/${MERGE_PULL_REQUEST_API_ROUTE}`, async (req, res) => {
     axios.request(options).then(function (response) {
 
     const gh_token = response.data.identities[0].access_token;
-    console.log('token', response.data)
     const octokit = new Octokit({
       auth: gh_token,
     });

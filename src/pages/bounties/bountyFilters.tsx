@@ -3,7 +3,6 @@ import RangeSlider from "@/src/components/RangeSlider";
 import { ISSUE_STATES } from "@/src/constants";
 import { capitalize } from "lodash";
 import { Filters } from "./bountyTable";
-import { ISSUE_USER_RELATIONSHIP } from "./bountyTable";
 
 interface BountyFiltersProps {
   mints: string[];

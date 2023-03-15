@@ -10,6 +10,8 @@ export const LancerBounty = ({ issue }: { issue: Issue }) => {
   const params = new URLSearchParams(search);
   const jwt = params.get("token");
   const previewMarkup = () => {
+    if (!issue.description) return { __html: "<div/>" };
+
     const markdown = marked.parse(issue.description, { breaks: true });
     return { __html: markdown };
   };

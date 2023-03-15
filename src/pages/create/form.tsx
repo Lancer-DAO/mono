@@ -9,29 +9,11 @@ import {
   GITHUB_ISSUE_API_ROUTE,
   ISSUE_API_ROUTE,
 } from "@/server/src/constants";
-import { Keypair } from "@solana/web3.js";
-import keypair from "../../../test-keypair.json";
-import fromKeypair from "../../../second_wallet.json";
-import { createFFA, fundFFA } from "@/src/onChain";
+import { createFFA } from "@/src/onChain";
 import { useLancer } from "@/src/providers/lancerProvider";
 import classnames from "classnames";
 import { useLocation } from "react-router-dom";
 import { LoadingBar } from "@/src/components/LoadingBar";
-export const DEFAULT_MINTS = [
-  {
-    name: "SOL",
-    mint: undefined,
-  },
-  {
-    name: "USDC",
-    mint: DEVNET_USDC_MINT,
-  },
-  {
-    name: "BONK",
-    mint: BONK_MINT,
-  },
-];
-export const DEFAULT_MINT_NAMES = DEFAULT_MINTS.map((mint) => mint.name);
 
 const Form = () => {
   const { user, program, anchor, wallet, setUser } = useLancer();

@@ -32,11 +32,6 @@ const FundBounty: React.FC<{ amount: number }> = ({
   const [fundTx, setFundTx] = useState<Transaction>(null);
   useEffect(() => {
     const getFundTransaction = async () => {
-      console.log(
-        "accounts#%",
-        issue.creator.publicKey.toString(),
-        issue.escrowContract.unixTimestamp
-      );
       const tx = await fundFFA(
         issue.creator.publicKey,
         amount,

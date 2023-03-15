@@ -2,10 +2,8 @@ import {
   ADAPTER_EVENTS,
   SafeEventEmitterProvider,
   WALLET_ADAPTERS,
-  WALLET_ADAPTER_TYPE,
 } from "@web3auth/base";
 import { Web3AuthCore } from "@web3auth/core";
-import type { LOGIN_PROVIDER_TYPE } from "@toruslabs/openlogin";
 import { OpenloginAdapter } from "@web3auth/openlogin-adapter";
 import {
   createContext,
@@ -17,12 +15,9 @@ import {
   useMemo,
   useState,
 } from "react";
-import { CHAIN_CONFIG, CHAIN_CONFIG_TYPE } from "../config/chainConfig";
-import { WEB3AUTH_NETWORK_TYPE } from "../config/web3AuthNetwork";
-import { APP_CONFIG_TYPE } from "../config/appConfig";
+import { CHAIN_CONFIG } from "../config/chainConfig";
 import {
   Connection,
-  LAMPORTS_PER_SOL,
   PublicKey,
   Transaction,
   VersionedTransaction,

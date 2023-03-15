@@ -1,11 +1,6 @@
-import MultiSelectDropdown from "@/src/components/MultiSelectDropdown";
 import { TABLE_ISSUE_STATES } from "@/src/constants";
 import { getApiEndpoint, getMintName, getUniqueItems } from "@/src/utils";
-import { Issue, IssueState } from "@/types";
 import { useState } from "react";
-import { capitalize } from "lodash";
-import RangeSlider from "@/src/components/RangeSlider";
-import { BountyCard } from "./bountyCard";
 import { BountyFilters } from "./bountyFilters";
 import { LancerBounty } from "@/src/pages/bounties/lancerBounty";
 import { useLancer } from "@/src/providers";
@@ -133,13 +128,13 @@ export const IssueList: React.FC<{ isMyBounties: boolean }> = ({
         issue.currentSubmitter && issue.currentSubmitter.uuid === user.uuid;
       const isCreator = issue.creator.uuid === user.uuid;
       const isApprovedSubmitter =
-        issue.approvedSubmitters.findIndex(
+        issue.approvedSubmitters?.findIndex(
           (submitter) => submitter.uuid === user.uuid
-        ) > -1;
+        ) || -1 > -1;
       const isRequestedSubmitter =
-        issue.requestedSubmitters.findIndex(
+        issue.requestedSubmitters?.findIndex(
           (submitter) => submitter.uuid === user.uuid
-        ) > -1;
+        ) || -1 > -1;
       if (isSubmitter && filters.relationships.includes("Submitter")) {
         return true;
       }

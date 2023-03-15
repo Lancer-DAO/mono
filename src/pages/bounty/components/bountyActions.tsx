@@ -37,7 +37,6 @@ export const BountyActions = () => {
     issueLoadingState,
   } = useLancer();
   const [hoveredButton, setHoveredButton] = useState("none");
-  console.log("rerendering");
   if (
     issue &&
     (issue.state === IssueState.CANCELED || issue.state === IssueState.COMPLETE)

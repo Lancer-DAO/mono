@@ -1,20 +1,9 @@
-import { useEffect, useState } from "react";
-
-import {
-  WEB3AUTH_NETWORK_TYPE,
-  CHAIN_CONFIG_TYPE,
-  APP_CONFIG_TYPE,
-} from "@/config";
-import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import Form from "./form";
 import { LancerProvider } from "@/src/providers/lancerProvider";
 import { PageLayout } from "@/src/layouts";
 import { useRouter } from "next/router";
 
 function App() {
-  const [ready, setReady] = useState(false);
-  useEffect(() => setReady(true), []);
-
   const router = useRouter();
   const { id } = router.query;
   if (id) {
