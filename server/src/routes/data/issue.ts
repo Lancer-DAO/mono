@@ -12,6 +12,7 @@ import {
   updateIssueEscrowKey,
   updateIssueTimestamp,
   getAccountsForIssue,
+  getAllIssuesForUser,
 } from "../../controllers";
 import {
     GITHUB_ISSUE_API_ROUTE,
@@ -47,12 +48,15 @@ router.post(`/${ISSUE_API_ROUTE}`, async function (req, res, next) {
 router.post(`/${GITHUB_ISSUE_API_ROUTE}`, async function (req, res, next) {
   try {
     const requestData = req.body;
-    console.log('data',requestData)
+    let issueNumber = requestData.issueNumber;
+    if(requestData.createNewIssue) {
+      console.log('data',requestData)
     const issueCreationResp = await createGithubIssue(
         req.body
     );
     console.log(issueCreationResp)
-        const issueNumber = issueCreationResp.data.number;
+        issueNumber = issueCreationResp.data.number;
+    }
     return res.json(
         await newAccountIssue({...requestData, issueNumber: issueNumber})
     );
@@ -104,11 +108,19 @@ router.get(`/${ISSUE_API_ROUTE}/accounts`, async function (req, res, next) {
 
 router.get(`/${ISSUE_API_ROUTE}s`, async function (req, res, next) {
   try {
-    return res.json(await getAllIssues())
+    if(req.query.uuid) {
+      return res.json(await getAllIssuesForUser(req.query.uuid as string))
+
+    } else {
+      return res.json(await getAllIssues())
+
+    }
   } catch (err) {
     next(err);
   }
 });
+
+
 
 router.put(`/${ISSUE_API_ROUTE}/state`, async function (req, res, next) {
   try {

@@ -71,8 +71,7 @@ export interface PullRequestInsertParams extends PullRequestGetParams {
   // ACCOUNT ISSUE
   export interface AccountIssueGetParams extends AccountGetParams, IssueGetParams {}
   export interface AccountIssueUpdateParams extends AccountGetParams, IssueGetParams {
-    isSubmitter?: boolean;
-    isApprovedSubmitter?: boolean;
+    relations: string[];
   }
 
   export interface AccountIssueNewParams extends AccountInsertParams, IssueInsertParams {}

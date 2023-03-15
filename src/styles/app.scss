@@ -118,11 +118,6 @@ body {
     align-items: center;
   }
 
-  .hug {
-    width: fit-content;
-    padding: 0px 10px;
-    margin-bottom: 0px;
-  }
 
   .add-input {
     margin-right: 8px;
@@ -145,7 +140,7 @@ body {
     margin-bottom: 16px;
   }
 
-  
+
 
   .contributor-name {
     width: 150px;
@@ -225,4 +220,6 @@ body {
   .page-header {
     width: 100%;
     text-align: center;
+    color: #14bb88;
+    margin-bottom: 30px;
   }

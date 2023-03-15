@@ -5,7 +5,6 @@ import { getApiEndpoint } from "@/src/utils";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import RadioWithCustomInput from "@/src/pages/fund/RadioWithCustomInput";
-import { DEFAULT_MINTS, DEFAULT_MINT_NAMES } from "@/src/pages/fund/form";
 import { useLancer } from "@/src/providers/lancerProvider";
 import { IssueState } from "@/src/types";
 import {

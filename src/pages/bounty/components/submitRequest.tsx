@@ -6,7 +6,7 @@ import {
 import { getApiEndpoint } from "@/src/utils";
 import axios from "axios";
 import { useLancer } from "@/src/providers/lancerProvider";
-import { IssueState, Submitter } from "@/src/types";
+import { IssueState, Contributor } from "@/src/types";
 import {
   addSubmitterFFA,
   removeSubmitterFFA,
@@ -36,7 +36,7 @@ const SubmitRequest: React.FC = () => {
   const submitRequest = async () => {
     try {
       await submitRequestFFA(
-        issue.creator.pubkey,
+        issue.creator.publicKey,
         user.publicKey,
         issue.escrowContract,
         wallet,

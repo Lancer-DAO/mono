@@ -33,7 +33,7 @@ export const voteToCancelFFA = async (creator: PublicKey, voter: PublicKey, acc:
         acc.unixTimestamp,
         creator,
         voter,
-        voter.toString() === creator.toString() ? acc.funderCancel : acc.payoutCancel,
+        true,
         program
       )
 

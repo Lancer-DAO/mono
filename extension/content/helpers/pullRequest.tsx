@@ -11,8 +11,7 @@ import { getApiEndpointExtension } from "../utils";
 import { Issue } from "../types";
 const AUTHOR_SELECTOR = ".author.text-bold.Link--secondary";
 const TITLE_SELECTOR = ".js-issue-title.markdown-title";
-
-const WRAPPER_CLASSNAME = "funded-issue-wrapper";
+const WRAPPER_CLASSNAME = "discussion-sidebar-item js-discussion-sidebar-item";
 
 const issueSelector = ".issue-link.js-issue-link";
 const assigneeSelector =
@@ -81,9 +80,11 @@ export const insertPullRequest = (splitURL: string[]) => {
               }
             )
             .then(() => {
-              maybeGetPR(splitURL, issueNumber, author).then((response) =>
-                insertPR(response)
-              );
+              setTimeout(() => {
+                maybeGetPR(splitURL, issueNumber, author).then((response) =>
+                  insertPR(response)
+                );
+              }, 4000);
             });
         } else {
           insertPR(response);

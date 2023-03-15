@@ -31,11 +31,7 @@ import { SolanaWallet } from "@web3auth/solana-provider";
 import { getFeatureFundingAccount, MyWallet } from "@/src/onChain";
 import { AnchorProvider, Program } from "@project-serum/anchor";
 import { MonoProgram } from "@/escrow/sdk/types/mono_program";
-import {
-  getApiEndpoint,
-  getApiEndpointExtension,
-  getEndpoint,
-} from "@/src/utils";
+import { getApiEndpoint, getEndpoint } from "@/src/utils";
 import { REACT_APP_CLIENTID } from "@/src/constants";
 import { useLocation } from "react-router-dom";
 import axios from "axios";
@@ -56,9 +52,15 @@ export const REACT_APP_VERIFIER = "lancer0";
 export const REACT_APP_AUTH0_DOMAIN = "https://dev-kgvm1sxe.us.auth0.com";
 export const REACT_APP_SPA_CLIENTID = "ZaU1oZzvlb06tZC8UXtTvTM9KSBY9pzk";
 export const REACT_APP_RWA_CLIENTID = "ZaU1oZzvlb06tZC8UXtTvTM9KSBY9pzk";
-export const REACT_APP_BACKEND_SERVER_API = "http://localhost:3001/callback";
 import MonoProgramJSON from "@/escrow/sdk/idl/mono_program.json";
-import { EscrowContract, Issue, IssueState, Submitter } from "@/src/types";
+import {
+  EscrowContract,
+  Issue,
+  IssueState,
+  ISSUE_ACCOUNT_RELATIONSHIP,
+  Contributor,
+  User,
+} from "@/src/types";
 import { SolanaWalletContextState } from "@coinflowlabs/react";
 
 export class LancerWallet extends SolanaWallet {
@@ -91,15 +93,6 @@ type ISSUE_LOAD_STATE =
   | "getting_contract"
   | "loaded";
 
-export interface User {
-  publicKey: PublicKey;
-  githubId: string;
-  githugLogin: string;
-  name: string;
-  token: string;
-  uuid?: string;
-}
-
 const getEscrowContract = async (issue: Issue, program, anchor) => {
   let escrowKey = issue.escrowKey;
   if (!escrowKey) {
@@ -113,7 +106,7 @@ const getEscrowContract = async (issue: Issue, program, anchor) => {
           {
             memcmp: {
               offset: 8, // number of bytes
-              bytes: issue.creator.pubkey.toBase58(), // base58 encoded string
+              bytes: issue.creator.publicKey.toBase58(), // base58 encoded string
             },
           },
           {
@@ -154,6 +147,13 @@ const getIssue = (uuid: string) =>
     `${getApiEndpoint()}${DATA_API_ROUTE}/${ISSUE_API_ROUTE}?id=${uuid}`
   );
 
+const getIssues = (account?: string) =>
+  axios.get(
+    `${getApiEndpoint()}${DATA_API_ROUTE}/${ISSUE_API_ROUTE}s${
+      account ? `?uuid=${account}` : ""
+    }`
+  );
+
 const getAccounts = (uuid: string) =>
   axios.get(
     `${getApiEndpoint()}${DATA_API_ROUTE}/${ISSUE_API_ROUTE}/accounts?id=${uuid}`
@@ -187,30 +187,66 @@ export const queryIssue = async (id: string) => {
     // setIssue(issue);
     const accountsResponse = await getAccounts(id as string);
     const rawAccounts = accountsResponse.data;
-    const accounts: Submitter[] = rawAccounts.map((account) => {
+    const accounts: Contributor[] = rawAccounts.map((account) => {
       return {
         ...account,
         githubLogin: account.github_login,
         githubId: account.github_id,
-        pubkey: new PublicKey(account.solana_pubkey),
-        isCreator: !!account.is_creator,
-        isSubmitter: !!account.is_submitter,
-        isApprovedSubmitter: !!account.is_approved_submitter,
+        publicKey: new PublicKey(account.solana_pubkey),
+        uuid: account.account_uuid,
       };
     });
-    const newIssue = {
+
+    const newIssue: Issue = {
       ...issue,
-      creator: accounts.find((submitter) => submitter.isCreator),
-      submitter: accounts.find((submitter) => submitter.isSubmitter),
-      approvedSubmitters: accounts.filter(
-        (submitter) => submitter.isApprovedSubmitter
+      allContributors: accounts,
+      creator: accounts.find((submitter) =>
+        submitter.relations.includes(ISSUE_ACCOUNT_RELATIONSHIP.Creator)
       ),
-      requestedSubmitters: accounts.filter(
+      requestedSubmitters: accounts.filter((submitter) =>
+        submitter.relations.includes(
+          ISSUE_ACCOUNT_RELATIONSHIP.RequestedSubmitter
+        )
+      ),
+      deniedRequesters: accounts.filter((submitter) =>
+        submitter.relations.includes(ISSUE_ACCOUNT_RELATIONSHIP.DeniedRequester)
+      ),
+      approvedSubmitters: accounts.filter((submitter) =>
+        submitter.relations.includes(
+          ISSUE_ACCOUNT_RELATIONSHIP.ApprovedSubmitter
+        )
+      ),
+      currentSubmitter: accounts.find((submitter) =>
+        submitter.relations.includes(
+          ISSUE_ACCOUNT_RELATIONSHIP.CurrentSubmitter
+        )
+      ),
+      deniedSubmitters: accounts.filter((submitter) =>
+        submitter.relations.includes(ISSUE_ACCOUNT_RELATIONSHIP.DeniedSubmitter)
+      ),
+      changesRequestedSubmitters: accounts.filter((submitter) =>
+        submitter.relations.includes(
+          ISSUE_ACCOUNT_RELATIONSHIP.ChangesRequestedSubmitter
+        )
+      ),
+      completer: accounts.find((submitter) =>
+        submitter.relations.includes(ISSUE_ACCOUNT_RELATIONSHIP.Completer)
+      ),
+      cancelVoters: accounts.filter((submitter) =>
+        submitter.relations.includes(ISSUE_ACCOUNT_RELATIONSHIP.VotingCancel)
+      ),
+      needsToVote: accounts.filter(
         (submitter) =>
-          !(
-            submitter.isApprovedSubmitter ||
-            submitter.isSubmitter ||
-            submitter.isCreator
+          !submitter.relations.includes(
+            ISSUE_ACCOUNT_RELATIONSHIP.VotingCancel
+          ) &&
+          submitter.relations.some((relation) =>
+            [
+              ISSUE_ACCOUNT_RELATIONSHIP.Creator,
+              ISSUE_ACCOUNT_RELATIONSHIP.CurrentSubmitter,
+              ISSUE_ACCOUNT_RELATIONSHIP.DeniedSubmitter,
+              ISSUE_ACCOUNT_RELATIONSHIP.ChangesRequestedSubmitter,
+            ].includes(relation)
           )
       ),
     };
@@ -220,9 +256,83 @@ export const queryIssue = async (id: string) => {
   }
 };
 
+export const queryIssues = async (user: User, referrer?: string) => {
+  try {
+    const issueResponse = await getIssues(
+      referrer === "my_bounties" ? user.uuid : undefined
+    );
+
+    const rawIssues = issueResponse.data;
+    const issues: Issue[] = rawIssues.map((rawIssue) => {
+      return {
+        ...rawIssue,
+        hash: rawIssue.funding_hash,
+        amount: parseFloat(rawIssue.funding_amount),
+        pullNumber: rawIssue.pull_number,
+        issueNumber: rawIssue.issue_number,
+        githubId: rawIssue.github_id,
+        payoutHash: rawIssue.payout_hash,
+        authorGithub: rawIssue.github_login,
+        pubkey: rawIssue.solana_pubkey,
+        escrowKey: rawIssue.escrow_key && new PublicKey(rawIssue.escrow_key),
+        estimatedTime: parseFloat(rawIssue.estimated_time),
+        mint: rawIssue.funding_mint
+          ? new PublicKey(rawIssue.funding_mint)
+          : undefined,
+        timestamp: rawIssue.unix_timestamp,
+        description: rawIssue.description,
+      };
+    });
+    const user_repos_names = user.repos.map((repo) => repo.full_name);
+    const filteredIssues = issues.filter((issue) => {
+      const full_name = `${issue.org}/${issue.repo}`;
+      return user_repos_names.includes(full_name) || !issue.private;
+    });
+
+    return filteredIssues;
+  } catch (e) {
+    console.error(e);
+  }
+};
+
+const getUserRelations = (
+  user: User,
+  issue: Issue,
+  userContributor: Contributor
+) => {
+  const newUser: User = {
+    ...user,
+    relations: userContributor.relations,
+    isCreator: user.uuid === issue.creator.uuid,
+    isRequestedSubmitter: issue.requestedSubmitters
+      .map((contributor) => contributor.uuid)
+      .includes(user.uuid),
+    isDeniedRequester: issue.deniedRequesters
+      .map((contributor) => contributor.uuid)
+      .includes(user.uuid),
+    isApprovedSubmitter: issue.approvedSubmitters
+      .map((contributor) => contributor.uuid)
+      .includes(user.uuid),
+    isCurrentSubmitter: user.uuid === issue.currentSubmitter?.uuid,
+    isDeniedSubmitter: issue.deniedSubmitters
+      .map((contributor) => contributor.uuid)
+      .includes(user.uuid),
+    isChangesRequestedSubmitter: issue.changesRequestedSubmitters
+      .map((contributor) => contributor.uuid)
+      .includes(user.uuid),
+    isCompleter: user.uuid === issue.completer?.uuid,
+    isVotingCancel: issue.cancelVoters
+      .map((contributor) => contributor.uuid)
+      .includes(user.uuid),
+  };
+  // debugger;
+  return newUser;
+};
+
 export interface ILancerContext {
   user: User;
   issue: Issue;
+  issues: Issue[];
   loginState: LOGIN_STATE;
   anchor: AnchorProvider;
   program: Program<MonoProgram>;
@@ -231,6 +341,8 @@ export interface ILancerContext {
   issueLoadingState: ISSUE_LOAD_STATE;
   coinflowWallet: SolanaWalletContextState;
   setIssue: (issue: Issue) => void;
+  setUser: (user: User) => void;
+  setForceGetIssue: (force: boolean) => void;
   setIssueLoadingState: (state: ISSUE_LOAD_STATE) => void;
   login: () => Promise<void>;
   logout: () => Promise<void>;
@@ -239,6 +351,7 @@ export interface ILancerContext {
 export const LancerContext = createContext<ILancerContext>({
   user: null,
   issue: null,
+  issues: [],
   loginState: "logged_out",
   anchor: null,
   program: null,
@@ -249,6 +362,8 @@ export const LancerContext = createContext<ILancerContext>({
   login: async () => {},
   logout: async () => {},
   setIssue: () => null,
+  setForceGetIssue: () => null,
+  setUser: () => null,
   setIssueLoadingState: (state: ISSUE_LOAD_STATE) => null,
 });
 
@@ -278,6 +393,7 @@ export const LancerProvider: FunctionComponent<ILancerState> = ({
   const [web3Auth, setWeb3Auth] = useState<Web3AuthCore | null>(null);
   const [user, setUser] = useState<User | null>(null);
   const [issue, setIssue] = useState<Issue | null>(null);
+  const [issues, setIssues] = useState<Issue[] | null>(null);
   const [delayGetUser, setDelayGetUser] = useState(false);
   const [loginState, setLoginState] = useState<LOGIN_STATE | null>(
     "logged_out"
@@ -291,6 +407,7 @@ export const LancerProvider: FunctionComponent<ILancerState> = ({
   const [publicKey, setPublicKey] = useState<PublicKey | null>(null);
   const connected = useMemo(() => !!publicKey, [publicKey]);
   const [coinflowWallet, setCoinflowWallet] = useState(null);
+  const [forceGetIssue, setForceGetIssue] = useState(true);
 
   const setWalletProvider = useCallback(async () => {
     let provider = web3Auth.provider;
@@ -438,12 +555,25 @@ export const LancerProvider: FunctionComponent<ILancerState> = ({
         }
       } else {
         console.log("user", user.data);
-        setUser({
+        let newUser = {
           ...user.data,
           githubId: user.data.github_id,
           githubLogin: user.data.github_login,
           publicKey: new PublicKey(user.data.solana_pubkey),
-        });
+        };
+        if (
+          issue?.allContributors &&
+          issue.allContributors
+            .map((contributor) => contributor.uuid)
+            .includes(newUser)
+        ) {
+          const userContributor = issue.allContributors.find(
+            (contributor) => contributor.uuid === newUser.uuid
+          );
+          console.log("new");
+          newUser = getUserRelations(newUser, issue, userContributor);
+        }
+        setUser(newUser);
         setLoginState("initializing_anchor");
       }
     };
@@ -504,6 +634,7 @@ export const LancerProvider: FunctionComponent<ILancerState> = ({
     }
   }, [
     jwt,
+    issue,
     loginState,
     wallet?.pubkey,
     delayGetUser,
@@ -549,10 +680,12 @@ export const LancerProvider: FunctionComponent<ILancerState> = ({
         console.log("contract_result", newIssue);
         if (
           !newIssue ||
-          (newIssue.state === IssueState.AWAITING_REVIEW &&
+          (issue.cancelVoters.length === 0 &&
+            newIssue.state === IssueState.AWAITING_REVIEW &&
             newIssue.escrowContract.currentSubmitter.toString() ===
               "11111111111111111111111111111111") ||
-          (newIssue.state === IssueState.IN_PROGRESS &&
+          (issue.cancelVoters.length === 0 &&
+            newIssue.state === IssueState.IN_PROGRESS &&
             newIssue.escrowContract.currentSubmitter.toString() !==
               "11111111111111111111111111111111")
         ) {
@@ -603,12 +736,48 @@ export const LancerProvider: FunctionComponent<ILancerState> = ({
       setIssueLoadingState("getting_issue");
       const issue = await queryIssue(issueId as string);
       setIssue(issue);
+      if (
+        user?.uuid &&
+        issue?.allContributors
+          .map((contributor) => contributor.uuid)
+          .includes(user.uuid)
+      ) {
+        const userContributor = issue.allContributors.find(
+          (contributor) => contributor.uuid === user.uuid
+        );
+
+        const updatedUser = getUserRelations(user, issue, userContributor);
+
+        setUser(updatedUser);
+      } else {
+        setUser({ ...user, relations: [] });
+      }
       setIssueLoadingState("getting_contract");
     };
-    if (issueId !== undefined && anchor && program) {
+    if (issueId !== undefined && anchor && program && forceGetIssue) {
+      setForceGetIssue(false);
       query();
     }
-  }, [issueId, anchor, program, issue?.state]);
+  }, [
+    issueId,
+    anchor,
+    program,
+    issue?.state,
+    !!user,
+    setUser,
+    forceGetIssue,
+    setForceGetIssue,
+  ]);
+
+  useEffect(() => {
+    const query = async () => {
+      const issues = await queryIssues(user, referrer);
+      setIssues(issues);
+    };
+    if (user?.uuid && user?.repos) {
+      query();
+    }
+  }, [user, referrer]);
 
   const login = async () => {
     console.log("hi");
@@ -642,14 +811,17 @@ export const LancerProvider: FunctionComponent<ILancerState> = ({
     anchor,
     program,
     user,
+    setUser,
     loginState,
     login,
     logout,
     issue,
+    issues,
     setIssue,
     issueLoadingState,
     setIssueLoadingState,
     coinflowWallet,
+    setForceGetIssue,
   };
   return (
     <LancerContext.Provider value={contextProvider}>

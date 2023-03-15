@@ -3,6 +3,7 @@ import RangeSlider from "@/src/components/RangeSlider";
 import { ISSUE_STATES } from "@/src/constants";
 import { capitalize } from "lodash";
 import { Filters } from "./bountyTable";
+import { ISSUE_USER_RELATIONSHIP } from "./bountyTable";
 
 interface BountyFiltersProps {
   mints: string[];
@@ -50,7 +51,7 @@ export const BountyFilters = ({
         />
       </div>
       <div className="filter-section">
-        <label>Bounty Creators</label>
+        <label>Creators</label>
         <MultiSelectDropdown
           options={orgs.map((org) => {
             return {
@@ -73,7 +74,7 @@ export const BountyFilters = ({
         />
       </div>
       <div className="filter-section">
-        <label>Bounty Tags</label>
+        <label>Tags</label>
         <MultiSelectDropdown
           options={tags.map((tag) => {
             return {
@@ -95,8 +96,32 @@ export const BountyFilters = ({
           }}
         />
       </div>
+
+      {/* <div className="filter-section">
+        <label>Relation To Me</label>
+        <MultiSelectDropdown
+          options={ISSUE_USER_RELATIONSHIP.map((relationship) => {
+            return {
+              value: relationship,
+              label: relationship,
+            };
+          })}
+          selected={filters.relationships.map((relationships) => {
+            return {
+              value: relationships,
+              label: relationships,
+            };
+          })}
+          onChange={(options) => {
+            setFilters({
+              ...filters,
+              relationships: options.map((option) => option.value),
+            });
+          }}
+        />
+      </div> */}
       <div className="filter-section">
-        <label>Bounty States</label>
+        <label>States</label>
         <MultiSelectDropdown
           options={ISSUE_STATES.map((state) => {
             return {
@@ -130,12 +155,14 @@ export const BountyFilters = ({
           <div>{timeBounds[0]}</div>
           <div>{timeBounds[1]}</div>
         </div>
-        <RangeSlider
-          bounds={timeBounds}
-          setBounds={(bounds) => {
-            setFilters({ ...filters, estimatedTimeBounds: bounds });
-          }}
-        />
+        {timeBounds[0] !== 0 && (
+          <RangeSlider
+            bounds={timeBounds}
+            setBounds={(bounds) => {
+              setFilters({ ...filters, estimatedTimeBounds: bounds });
+            }}
+          />
+        )}
       </div>
     </form>
   );

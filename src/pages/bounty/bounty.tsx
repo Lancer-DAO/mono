@@ -23,7 +23,14 @@ import {
   getMintName,
   getSolscanAddress,
 } from "@/src/utils";
-import { EscrowContract, Issue, IssueState, WEB3_INIT_STATE } from "@/types";
+import {
+  EscrowContract,
+  Issue,
+  IssueState,
+  ISSUE_ACCOUNT_RELATIONSHIP,
+  Contributor,
+  WEB3_INIT_STATE,
+} from "@/types";
 import { Connection, PublicKey } from "@solana/web3.js";
 import { WALLET_ADAPTERS } from "@web3auth/base";
 import axios from "axios";
@@ -44,14 +51,19 @@ import { MONO_DEVNET } from "@/escrow/sdk/constants";
 import { MonoProgram } from "@/escrow/sdk/types/mono_program";
 import Base58 from "base-58";
 import RadioWithCustomInput from "@/src/pages/fund/RadioWithCustomInput";
-import { DEFAULT_MINTS, DEFAULT_MINT_NAMES } from "@/src/pages/fund/form";
-import { useLancer, User } from "@/src/providers/lancerProvider";
-import FundBounty from "@/src/pages/bounty/components/fundBounty";
-import RequestToSubmit from "@/src/pages/bounty/components/requestToSubmit";
+import { useLancer } from "@/src/providers/lancerProvider";
 import SubmitterSection from "@/src/pages/bounty/components/submitterSection";
 import SubmitRequest from "@/src/pages/bounty/components/submitRequest";
 import ReviewRequest from "@/src/pages/bounty/components/reviewRequest";
 import VoterSection from "@/src/pages/bounty/components/voteToCancel";
+import { Clock } from "react-feather";
+import USDC from "@/src/assets/USDC";
+import dayjs from "dayjs";
+import localizedFormat from "dayjs/plugin/localizedFormat";
+import classNames from "classnames";
+import { ContributorInfo } from "@/src/components/ContributorInfo";
+import { BountyActions } from "@/src/pages/bounty/components/bountyActions";
+dayjs.extend(localizedFormat);
 
 const SideBarSection: React.FC<{ title: string; children: ReactNode }> = ({
   title,
@@ -65,209 +77,238 @@ const SideBarSection: React.FC<{ title: string; children: ReactNode }> = ({
   );
 };
 
-const getAvailableCommands = (issue: Issue, user: User) => {
-  const availableCommands = [];
-  console.log(user, issue);
-  if (!issue) {
-    return null;
-  }
-
-  if (!user) {
-    return [<div key="loading-user">Loading User Info</div>];
-  }
-  if (
-    issue.state === IssueState.NEW &&
-    (!issue.escrowKey || !issue.escrowContract)
-  ) {
-    return [<div key="creating-escrow">Creating Escrow Contract</div>];
-  }
-  const isSubmitter = issue.submitter && issue.submitter.uuid === user.uuid;
-  const isCreator = issue.creator.uuid === user.uuid;
-  const isApprovedSubmitter =
-    issue.approvedSubmitters.findIndex(
-      (submitter) => submitter.uuid === user.uuid
-    ) > -1;
-  const isRequestedSubmitter =
-    issue.requestedSubmitters.findIndex(
-      (submitter) => submitter.uuid === user.uuid
-    ) > -1;
-  if (issue.state === IssueState.NEW && issue.creator.uuid === user.uuid) {
-    availableCommands.push(<FundBounty key="fund-bounty" />);
-  }
-  console.log(isSubmitter, isCreator, isApprovedSubmitter);
-  if (
-    issue.state === IssueState.ACCEPTING_APPLICATIONS ||
-    (issue.state === IssueState.IN_PROGRESS &&
-      !isApprovedSubmitter &&
-      issue.approvedSubmitters.length < 3 &&
-      !isRequestedSubmitter)
-  ) {
-    availableCommands.push(<RequestToSubmit key={`request-submit`} />);
-  }
-
-  if (issue.approvedSubmitters.length > 0 && isCreator) {
-    issue.approvedSubmitters.forEach((submitter) => {
-      if (!submitter.isSubmitter) {
-        availableCommands.push(
-          <SubmitterSection
-            submitter={submitter}
-            type="approved"
-            key={`approved-submitters-${submitter.uuid}`}
-          />
-        );
-      }
-    });
-  }
-
-  if (issue.requestedSubmitters.length > 0 && isCreator) {
-    issue.requestedSubmitters.forEach((submitter) => {
-      availableCommands.push(
-        <SubmitterSection
-          submitter={submitter}
-          type="requested"
-          key={`requested-submitters-${submitter.uuid}`}
-        />
-      );
-    });
-  }
-
-  if (isRequestedSubmitter && !isApprovedSubmitter) {
-    availableCommands.push(<div>Submission Request Pending</div>);
-  }
-
-  if (!isRequestedSubmitter && isApprovedSubmitter && !isSubmitter) {
-    availableCommands.push(<div>Your request to submit has been approved</div>);
-  }
-  console.log(issue.state, isApprovedSubmitter);
-  if (issue.state === IssueState.IN_PROGRESS && isApprovedSubmitter) {
-    availableCommands.push(<SubmitRequest key={`submit-request`} />);
-  }
-  if (
-    issue.state === IssueState.AWAITING_REVIEW &&
-    issue.creator.uuid === user.uuid
-  ) {
-    availableCommands.push(<ReviewRequest key={`review-request`} />);
-  }
-  if (issue.state !== IssueState.COMPLETE && (isCreator || isSubmitter)) {
-    availableCommands.push(<VoterSection key={`voter-section`} />);
-  }
-  console.log(availableCommands);
-  return availableCommands;
-};
-
 const Bounty: React.FC = () => {
-  const { user, issue, issueLoadingState } = useLancer();
-  const [availableCommands, setAvailableCommands] = useState([]);
-
+  const { user, issue, setForceGetIssue } = useLancer();
+  const [pollId, setPollId] = useState(null);
   useEffect(() => {
-    console.log(user, issue, issueLoadingState);
-    const commands = getAvailableCommands(issue, user);
-    if (!commands) {
-      return;
+    const setFuturePoll = () => {
+      setForceGetIssue(true);
+      setPollId(setTimeout(() => setFuturePoll(), 5000));
+    };
+    if (!pollId) {
+      setPollId(setTimeout(() => setFuturePoll(), 5000));
     }
-    setAvailableCommands(commands);
-  }, [user?.uuid, issue, issueLoadingState]);
-  if (!issue) {
+  }, []);
+
+  if (!user || !issue) {
     return <></>;
   }
-
-  const descriptionMarkup = () => {
+  const previewMarkup = () => {
     const markdown = marked.parse(issue.description, { breaks: true });
     return { __html: markdown };
   };
 
   return (
-    <div className="bounty-page">
-      <h2 className="bounty-title">{issue.title}</h2>
-      <div className="bounty-content">
-        <div className="bounty-left-side">
-          <SideBarSection title="Payout">
-            <div>
-              ${issue.amount} {getMintName(issue.mint)}
-            </div>
-          </SideBarSection>
-
-          <SideBarSection title="Estimated Time">
-            <div>{issue.estimatedTime} hours</div>
-          </SideBarSection>
-          {issue.escrowKey && (
-            <SideBarSection title="Escrow Account">
-              <a
-                className="issue-creator"
-                href={getSolscanAddress(issue.escrowKey.toString())}
-                target="_blank"
-                rel="noreferrer"
-              >
-                Escrow Account
-              </a>
-            </SideBarSection>
-          )}
-
-          <SideBarSection title="State">
-            <div className={`issue-state ${issue.state} text-start`}>
-              {issue.state}
-            </div>
-          </SideBarSection>
-        </div>
-        <div className="bounty-center">
+    <section className="section-job-post wf-section">
+      <div className="container-default">
+        <div className="w-layout-grid grid-job-post">
           <div
-            className="bounty-description-markup"
-            dangerouslySetInnerHTML={descriptionMarkup()}
-          />
-
-          <>{...availableCommands}</>
-        </div>
-        <div className="bounty-right-side">
-          <SideBarSection title="Creator">
-            <a
-              className="issue-creator"
-              href={`https://github.com/${issue.org}/${issue.repo}`}
-              target="_blank"
-              rel="noreferrer"
+            id="w-node-_9d97a6aa-31d5-1276-53c2-e76c8908f874-fde9cdb1"
+            data-w-id="9d97a6aa-31d5-1276-53c2-e76c8908f874"
+            className="job-post-container"
+          >
+            <div
+              id="w-node-_9d97a6aa-31d5-1276-53c2-e76c8908f876-fde9cdb1"
+              className="job-post-primary-info"
             >
-              {issue.org}/{issue.repo}
-            </a>
-          </SideBarSection>
-          {issue.creator && (
-            <SideBarSection title="Author">
-              <div>{issue.creator.githubLogin}</div>
-            </SideBarSection>
-          )}
-          <SideBarSection title="GitHub Links">
-            <div className="bounty-github-links">
-              <a
-                className="issue-creator"
-                href={`https://github.com/${issue.org}/${issue.repo}/issue/${issue.issueNumber}`}
-                target="_blank"
-                rel="noreferrer"
-              >
-                Issue
-              </a>
-              <a
-                className="issue-creator"
-                href={`https://github.com/${issue.org}/${issue.repo}/pull/${issue.pullNumber}`}
-                target="_blank"
-                rel="noreferrer"
-              >
-                Pull Request
-              </a>
-            </div>
-          </SideBarSection>
-
-          {issue.tags && (
-            <SideBarSection title="Tags">
-              <div className="bounty-tags">
-                {issue.tags.map((tag, index) => (
-                  <div className="tag" key={index}>
-                    {capitalize(tag)}
+              <img
+                className="contributor-picture-large"
+                src={`https://avatars.githubusercontent.com/u/${117492794}?s=60&v=4`}
+              />
+              <div className="bounty-page-title-section">
+                <div className="bounty-title-row-1">
+                  <a
+                    href={`https://github.com/${issue.org}`}
+                    className="job-post-company-name"
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    {issue.org}
+                  </a>
+                  <div className={`issue-state ${issue.state} text-start`}>
+                    {issue.state.split("_").join(" ")}
                   </div>
-                ))}
+                </div>
+                <a
+                  className="job-post-title"
+                  href={`https://github.com/${issue.org}/${issue.repo}/issues/${issue.issueNumber}`}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  {issue.title}
+                </a>
+                <div className="bounty-title-row-1">
+                  <div className="job-post-date">
+                    {`${dayjs
+                      .unix(parseInt(issue.timestamp) / 1000)
+                      .format("MMMM D, YYYY h:mm A")}`}
+                  </div>
+                  {issue.escrowKey && (
+                    <a
+                      href={getSolscanAddress(issue.escrowKey)}
+                      className="job-post-company-name"
+                      target="_blank"
+                      rel="noreferrer"
+                    >
+                      Escrow Contract
+                    </a>
+                  )}
+                </div>
               </div>
-            </SideBarSection>
-          )}
+            </div>
+            <div></div>
+            <div className="job-post-middle">
+              <div className="job-post-info-container">
+                <Clock />
+                <div className="job-post-info-text icon-left">
+                  {`${issue.estimatedTime}`} HOURS
+                </div>
+              </div>
+              <div className="job-post-info-divider"></div>
+              <div className="job-post-info-container">
+                <div className="tag-list">
+                  {issue.tags.map((tag) => (
+                    <div className="tag-item" key={tag}>
+                      {tag}
+                    </div>
+                  ))}
+                </div>
+              </div>
+              <div className="job-post-info-divider"></div>
+              <div className="job-post-info-container">
+                <div className="job-post-info-text icon-right">
+                  {issue.amount.toFixed(2)}
+                </div>
+                <USDC height="24px" width="24px" />
+              </div>
+            </div>
+            <div className="job-post-bottom">
+              <h2 className="job-post-subtitle">Job description</h2>
+              <div
+                className="bounty-markdown-preview"
+                dangerouslySetInnerHTML={previewMarkup()}
+              />
+              {<BountyActions />}
+            </div>
+          </div>
+          <div
+            id="w-node-_272b1d4e-bae1-2928-a444-208d5db4485b-fde9cdb1"
+            className="w-form"
+          >
+            <div className="contributors-section">
+              <h2>Links</h2>
+              {issue.issueNumber && (
+                <a
+                  href={`https://github.com/${issue.org}/${issue.repo}/issues/${issue.issueNumber}`}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  GitHub Issue
+                </a>
+              )}
+              {issue.pullNumber && (
+                <a
+                  href={`https://github.com/${issue.org}/${issue.repo}/issues/${issue.pullNumber}`}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  GitHub Pull Request
+                </a>
+              )}
+            </div>
+            <div className="contributors-section">
+              <h2>Contributors</h2>
+              {issue && (
+                <div>
+                  <label className="field-label-10">Creator</label>
+                  <ContributorInfo user={issue.creator} />
+                </div>
+              )}
+              {user.isCreator && issue.deniedRequesters.length > 0 && (
+                <div>
+                  <label className="field-label-5">Denied Requesters</label>
+                  {issue.deniedRequesters.map((submitter) => (
+                    <ContributorInfo user={submitter} key={submitter.uuid} />
+                  ))}
+                </div>
+              )}
+              {user.isCreator && issue.requestedSubmitters.length > 0 && (
+                <div>
+                  <label className="field-label-5">Requested Applicants</label>
+                  {issue.requestedSubmitters.map((submitter) => (
+                    <SubmitterSection
+                      submitter={submitter}
+                      type="requested"
+                      key={`requested-submitters-${submitter.uuid}`}
+                    />
+                  ))}
+                </div>
+              )}
+
+              {user.isCreator && issue.approvedSubmitters.length > 0 && (
+                <div>
+                  <label className="field-label-5">Approved Applicants</label>
+                  {issue.approvedSubmitters.map((submitter) => (
+                    <SubmitterSection
+                      submitter={submitter}
+                      type="approved"
+                      key={`approved-submitters-${submitter.uuid}`}
+                    />
+                  ))}
+                </div>
+              )}
+              {issue.state === IssueState.AWAITING_REVIEW && (
+                <div>
+                  <label className="field-label-10">Submissions</label>
+                  <ContributorInfo user={issue.currentSubmitter} />
+                </div>
+              )}
+              {user.isCreator &&
+                issue.changesRequestedSubmitters.length > 0 && (
+                  <div>
+                    <label className="field-label-5">Changes Requested</label>
+                    {issue.changesRequestedSubmitters.map((submitter) => (
+                      <ContributorInfo user={submitter} key={submitter.uuid} />
+                    ))}
+                  </div>
+                )}
+              {user.isCreator && issue.deniedSubmitters.length > 0 && (
+                <div>
+                  <label className="field-label-5">Denied Submitters</label>
+                  {issue.deniedSubmitters.map((submitter) => (
+                    <ContributorInfo user={submitter} key={submitter.uuid} />
+                  ))}
+                </div>
+              )}
+              {issue.completer && (
+                <div>
+                  <label className="field-label-10">Bounty Completer</label>
+                  <ContributorInfo user={issue.completer} />
+                </div>
+              )}
+              {user.isCreator && issue.cancelVoters.length > 0 && (
+                <div>
+                  <label className="field-label-5">Voting To Cancel</label>
+                  {issue.cancelVoters.map((submitter) => (
+                    <ContributorInfo user={submitter} key={submitter.uuid} />
+                  ))}
+                </div>
+              )}
+              {user.isCreator && issue.needsToVote.length > 0 && (
+                <div>
+                  <label className="field-label-5">
+                    Votes Needed to Cancel
+                  </label>
+                  {issue.needsToVote.map((submitter) => (
+                    <ContributorInfo user={submitter} key={submitter.uuid} />
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
         </div>
       </div>
-    </div>
+    </section>
   );
 };
 
