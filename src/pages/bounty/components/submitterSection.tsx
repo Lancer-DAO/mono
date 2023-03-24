@@ -34,14 +34,14 @@ const SubmitterSection: React.FC<SubmitterSectionProps> = ({
       case "approved":
         {
           try {
-            // await removeSubmitterFFA(
-            //   issue.creator.publicKey,
-            //   submitter.publicKey,
-            //   issue.escrowContract,
-            //   wallet,
-            //   anchor,
-            //   program
-            // );
+            await removeSubmitterFFA(
+              issue.creator.publicKey,
+              submitter.publicKey,
+              issue.escrowContract,
+              wallet,
+              anchor,
+              program
+            );
             submitter.relations.push(
               ISSUE_ACCOUNT_RELATIONSHIP.RequestedSubmitter
             );
@@ -136,7 +136,7 @@ const SubmitterSection: React.FC<SubmitterSectionProps> = ({
           <Check color="#1488bb" width="20px" height="20px" />
         </button>
       )}
-      <button onClick={() => handleSubmitter()}>
+      <button onClick={() => handleSubmitter(true)}>
         <X color="red" width="20px" height="20px" />
       </button>
     </div>
