@@ -5,6 +5,7 @@ import timezone from "dayjs/plugin/timezone";
 dayjs.extend(timezone);
 import request from "request";
 import jwt_decode from "jwt-decode";
+const PREFIXES = ["localhost:3000", "vercel.app", "lancer.so"]
 
 // USERS
 
@@ -13,7 +14,12 @@ export default function handler(req: NextApiRequest, res: NextApiResponse)  {
 //when a request from auth0 is received we get auth code as query param
 const authCode = req.query.code;
 const referrer = req.query.referrer as string;
-console.log(authCode, referrer)
+const prefix = PREFIXES.find((prefix) => referrer.includes(prefix))
+const prefix_index = referrer.indexOf(prefix)
+const substr = referrer.substring(prefix_index + prefix.length + 1); // get the substring after the comma
+  const arr = referrer.split(substr);
+let redirect_uri = arr[0];
+console.log(redirect_uri, authCode, referrer)
 var options = {
   method: "POST",
   url: process.env.AUTH_URL || '',
@@ -23,7 +29,7 @@ var options = {
     client_id: process.env.CLIENT_ID, //auth0 clientID
     client_secret: process.env.CLIENT_SECRET, //auth0 client secret
     code: authCode, //we will be sending this code to get the id_token from auth0
-    redirect_uri: process.env.REDIRECT_URI, //url mentioned in auth0 client
+    redirect_uri: redirect_uri, //url mentioned in auth0 client
     scope: "openid profile email",
   },
 };
