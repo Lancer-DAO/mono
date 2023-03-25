@@ -3,10 +3,9 @@ import { PullRequest } from "../components/pullRequest";
 
 import axios, { AxiosResponse } from "axios";
 import {
-  DATA_API_ROUTE,
   NEW_PULL_REQUEST_API_ROUTE,
   FULL_PULL_REQUEST_API_ROUTE,
-} from "@/server/src/constants";
+} from "@/constants";
 import { getApiEndpointExtension } from "../utils";
 import { Issue } from "../types";
 const AUTHOR_SELECTOR = ".author.text-bold.Link--secondary";
@@ -41,18 +40,13 @@ const insertPR = (response) => {
 };
 
 const maybeGetPR = (splitURL, issueNumber, author) =>
-  axios.get(
-    `${getApiEndpointExtension()}${DATA_API_ROUTE}/${FULL_PULL_REQUEST_API_ROUTE}`,
-    {
-      params: {
-        org: splitURL[3],
-        repo: splitURL[4],
-        pullNumber: splitURL[6],
-        issueNumber: issueNumber,
-        githubLogin: author,
-      },
-    }
-  );
+  axios.post(`${getApiEndpointExtension()}/${FULL_PULL_REQUEST_API_ROUTE}`, {
+    org: splitURL[3],
+    repo: splitURL[4],
+    pullNumber: splitURL[6],
+    issueNumber: issueNumber,
+    githubLogin: author,
+  });
 
 // Check if this PR is closing an Issue linked to lancer. If so, either
 // - get a link to that lancer issue and provide it
@@ -73,7 +67,7 @@ export const insertPullRequest = (splitURL: string[]) => {
         if (response.data.message === "NOT FOUND") {
           axios
             .post(
-              `${getApiEndpointExtension()}${DATA_API_ROUTE}/${NEW_PULL_REQUEST_API_ROUTE}`,
+              `${getApiEndpointExtension()}/${NEW_PULL_REQUEST_API_ROUTE}`,
               {
                 org: splitURL[3],
                 repo: splitURL[4],

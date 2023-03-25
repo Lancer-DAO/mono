@@ -19,7 +19,7 @@ const Coinflow: React.FC<{
         transaction={transaction}
         onSuccess={onSuccess}
         debugTx={true}
-        env="sandbox"
+        env="staging"
         amount={amount}
       />
     </div>

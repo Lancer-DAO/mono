@@ -3,12 +3,14 @@ import { marked } from "marked";
 import { convertToQueryParams, getApiEndpoint } from "@/src/utils";
 import axios from "axios";
 import {
-  ACCOUNT_API_ROUTE,
-  DATA_API_ROUTE,
-  GITHUB_ISSUE_API_ROUTE,
-  ISSUE_API_ROUTE,
-} from "@/server/src/constants";
-import { createFFA } from "@/src/onChain";
+  LINK_GITHUB_ISSUE_API_ROUTE,
+  NEW_GITHUB_ISSUE_API_ROUTE,
+  UPDATE_ISSUE_ROUTE,
+  USER_REPOSITORIES_ROUTE,
+  USER_REPOSITORY_ISSUES_ROUTE,
+  USER_REPOSITORY_NO_BOUNTIES_ROUTE,
+} from "@/constants";
+import { createFFA } from "@/escrow/adapters";
 import { useLancer } from "@/src/providers/lancerProvider";
 import classnames from "classnames";
 import { useLocation } from "react-router-dom";
@@ -46,19 +48,13 @@ const Form = () => {
 
   useEffect(() => {
     if (user?.githubId) {
-      axios
-        .get(
-          `${getApiEndpoint()}${DATA_API_ROUTE}/${ACCOUNT_API_ROUTE}/organizations?${convertToQueryParams(
-            { githubId: user.githubId }
-          )}`
-        )
-        .then((resp) => {
-          console.log(resp);
-          setUser({
-            ...user,
-            repos: resp.data.data,
-          });
+      axios.get(`${USER_REPOSITORIES_ROUTE}/${user.githubId}`).then((resp) => {
+        console.log(resp);
+        setUser({
+          ...user,
+          repos: resp.data.data,
         });
+      });
     }
   }, [user?.githubId]);
 
@@ -68,16 +64,11 @@ const Form = () => {
       // that are not linked to a lancer bounty. The user can choose
       // to link a bounty to one of these issues
       axios
-        .get(
-          `${getApiEndpoint()}${DATA_API_ROUTE}/${ACCOUNT_API_ROUTE}/organization/repository_issues`,
-          {
-            params: {
-              githubId: user.githubId,
-              org: repo.full_name.split("/")[0],
-              repo: repo.full_name.split("/")[1],
-            },
-          }
-        )
+        .post(USER_REPOSITORY_NO_BOUNTIES_ROUTE, {
+          github_id: user.githubId,
+          org: repo.full_name.split("/")[0],
+          repo: repo.full_name.split("/")[1],
+        })
         .then((resp) => {
           console.log(resp);
           setIssues(resp.data.data);
@@ -134,43 +125,37 @@ const Form = () => {
     setIsSubmittingIssue(true);
     // Create a new github issue
     const createIssueNew = async () => {
-      return axios.post(
-        `${getApiEndpoint()}${DATA_API_ROUTE}/${GITHUB_ISSUE_API_ROUTE}`,
-        {
-          createNewIssue: true,
-          githubId: user.githubId,
-          githubLogin: user.githubLogin,
-          solanaKey: user.publicKey.toString(),
-          org: repo ? repo.full_name.split("/")[0] : "Lancer-DAO",
-          repo: repo ? repo.full_name.split("/")[1] : "github-app",
-          title: formData.issueTitle,
-          description: formData.issueDescription,
-          tags: formData.requirements,
-          private: formData.isPrivate || repo ? repo.private : false,
-          estimatedTime: formData.estimatedTime,
-        }
-      );
+      return axios.post(NEW_GITHUB_ISSUE_API_ROUTE, {
+        createNewIssue: true,
+        githubId: user.githubId,
+        githubLogin: user.githubLogin,
+        solanaKey: user.publicKey.toString(),
+        org: repo ? repo.full_name.split("/")[0] : "Lancer-DAO",
+        repo: repo ? repo.full_name.split("/")[1] : "github-app",
+        title: formData.issueTitle,
+        description: formData.issueDescription,
+        tags: formData.requirements,
+        private: formData.isPrivate || repo ? repo.private : false,
+        estimatedTime: formData.estimatedTime,
+      });
     };
 
     // link an existing github issue
     const createIssueExisting = async () => {
-      return axios.post(
-        `${getApiEndpoint()}${DATA_API_ROUTE}/${GITHUB_ISSUE_API_ROUTE}`,
-        {
-          createNewIssue: false,
-          githubId: user.githubId,
-          githubLogin: user.githubLogin,
-          solanaKey: user.publicKey.toString(),
-          org: repo ? repo.full_name.split("/")[0] : "Lancer-DAO",
-          repo: repo ? repo.full_name.split("/")[1] : "github-app",
-          title: issue.title,
-          description: issue.body,
-          tags: formData.requirements,
-          private: repo.private,
-          estimatedTime: formData.estimatedTime,
-          issueNumber: issue.number,
-        }
-      );
+      return axios.post(LINK_GITHUB_ISSUE_API_ROUTE, {
+        createNewIssue: false,
+        githubId: user.githubId,
+        githubLogin: user.githubLogin,
+        solanaKey: user.publicKey.toString(),
+        org: repo ? repo.full_name.split("/")[0] : "Lancer-DAO",
+        repo: repo ? repo.full_name.split("/")[1] : "github-app",
+        title: issue.title,
+        description: issue.body,
+        tags: formData.requirements,
+        private: repo.private,
+        estimatedTime: formData.estimatedTime,
+        issueNumber: issue.number,
+      });
     };
 
     // create and link an escrow contract to the issue
@@ -181,15 +166,11 @@ const Form = () => {
       console.log("submit");
       const creator = user.publicKey;
       const timestamp = await createFFA(creator, wallet, anchor, program);
-      await axios.put(
-        `${getApiEndpoint()}${DATA_API_ROUTE}/${ISSUE_API_ROUTE}/timestamp`,
-        {
-          org: repo ? repo.full_name.split("/")[0] : "Lancer-DAO",
-          repo: repo ? repo.full_name.split("/")[1] : "github-app",
-          issueNumber: issue.number,
-          timestamp: timestamp,
-        }
-      );
+      await axios.put(UPDATE_ISSUE_ROUTE, {
+        uuid: issue.uuid,
+        issueNumber: issue.number,
+        timestamp: timestamp,
+      });
       window.location.replace(`/fund?id=${issue.uuid}&token=${jwt}`);
     };
     if (creationType === "new") {

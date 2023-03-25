@@ -25,10 +25,10 @@ module.exports = {
   resolve: {
     extensions: ['.tsx', '.ts', '.js'],
     alias: {
-        "@/constants": path.resolve(__dirname,"../src/constants/index.ts"),
+        "@/constants": path.resolve(__dirname,"../app/src/constants/index.ts"),
         "@/server": path.resolve(__dirname,"../server"),
         "@/styles": path.resolve(__dirname,"../src/styles"),
-        "@/types": path.resolve(__dirname,"../src/types/index.ts"),
+        "@/types": path.resolve(__dirname,"../app/src/types/index.ts"),
         "@/utils": path.resolve(__dirname,"../src/utils/index.ts")
     },
 

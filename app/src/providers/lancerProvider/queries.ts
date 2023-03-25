@@ -1,13 +1,15 @@
 import {
     PublicKey,
   } from "@solana/web3.js";
-  import { getFeatureFundingAccount } from "@/src/onChain";
+  import { getFeatureFundingAccount } from "@/escrow/adapters";
   import { getApiEndpoint } from "@/src/utils";
   import axios from "axios";
   import {
-    DATA_API_ROUTE,
+    ISSUES_API_ROUTE,
+    ISSUE_ACCOUNT_ROUTE,
     ISSUE_API_ROUTE,
-  } from "@/server/src/constants";
+    UPDATE_ISSUE_ROUTE,
+  } from "@/constants";
   import Base58 from "base-58";
   import {
     EscrowContract,
@@ -20,19 +22,16 @@ import {
 
 const getIssue = (uuid: string) =>
   axios.get(
-    `${getApiEndpoint()}${DATA_API_ROUTE}/${ISSUE_API_ROUTE}?id=${uuid}`
+    `${ISSUE_API_ROUTE}/${uuid}`
   );
 
 const getIssues = (account?: string) =>
-  axios.get(
-    `${getApiEndpoint()}${DATA_API_ROUTE}/${ISSUE_API_ROUTE}s${
-      account ? `?uuid=${account}` : ""
-    }`
-  );
+account ? axios.post(ISSUES_API_ROUTE, {uuid: account}):axios.get(
+    ISSUES_API_ROUTE
+  )  ;
 
 const getAccounts = (uuid: string) =>
-  axios.get(
-    `${getApiEndpoint()}${DATA_API_ROUTE}/${ISSUE_API_ROUTE}/accounts?id=${uuid}`
+  axios.post(ISSUE_ACCOUNT_ROUTE, {uuid: uuid}
   );
 
   export const getEscrowContract = async (issue: Issue, program, anchor) => {
@@ -66,12 +65,9 @@ const getAccounts = (uuid: string) =>
 
       escrowKey = accounts[0].pubkey;
 
-      axios.put(
-        `${getApiEndpoint()}${DATA_API_ROUTE}/${ISSUE_API_ROUTE}/escrow_key`,
+      axios.put(UPDATE_ISSUE_ROUTE,
         {
-          org: issue.org,
-          repo: issue.repo,
-          issueNumber: issue.issueNumber,
+          uuid: issue.uuid,
           escrowKey: escrowKey.toString(),
         }
       );

@@ -1,12 +1,9 @@
-import {
-  ACCOUNT_ISSUE_API_ROUTE,
-  DATA_API_ROUTE,
-} from "@/server/src/constants";
+import { USER_ISSUE_RELATION_ROUTE } from "@/constants";
 import { getApiEndpoint } from "@/src/utils";
 import axios from "axios";
 import { useLancer } from "@/src/providers/lancerProvider";
 import { Contributor, ISSUE_ACCOUNT_RELATIONSHIP } from "@/src/types";
-import { addSubmitterFFA, removeSubmitterFFA } from "@/src/onChain";
+import { addSubmitterFFA, removeSubmitterFFA } from "@/escrow/adapters";
 import { ContributorInfo } from "@/src/components/ContributorInfo";
 import { Check, X } from "react-feather";
 
@@ -52,14 +49,11 @@ const SubmitterSection: React.FC<SubmitterSectionProps> = ({
             if (index !== -1) {
               user.relations.splice(index, 1);
             }
-            axios.put(
-              `${getApiEndpoint()}${DATA_API_ROUTE}/${ACCOUNT_ISSUE_API_ROUTE}`,
-              {
-                issueId: issue.uuid,
-                accountId: submitter.uuid,
-                relations: [ISSUE_ACCOUNT_RELATIONSHIP.RequestedSubmitter],
-              }
-            );
+            axios.put(USER_ISSUE_RELATION_ROUTE, {
+              issueId: issue.uuid,
+              accountId: submitter.uuid,
+              relations: [ISSUE_ACCOUNT_RELATIONSHIP.RequestedSubmitter],
+            });
           } catch (e) {
             console.error(e);
           }
@@ -69,14 +63,11 @@ const SubmitterSection: React.FC<SubmitterSectionProps> = ({
         {
           try {
             if (cancel) {
-              axios.put(
-                `${getApiEndpoint()}${DATA_API_ROUTE}/${ACCOUNT_ISSUE_API_ROUTE}`,
-                {
-                  issueId: issue.uuid,
-                  accountId: submitter.uuid,
-                  relations: [ISSUE_ACCOUNT_RELATIONSHIP.DeniedRequester],
-                }
-              );
+              axios.put(USER_ISSUE_RELATION_ROUTE, {
+                issueId: issue.uuid,
+                accountId: submitter.uuid,
+                relations: [ISSUE_ACCOUNT_RELATIONSHIP.DeniedRequester],
+              });
               const index = issue.requestedSubmitters.findIndex(
                 (_submitter) => submitter.uuid === _submitter.uuid
               );
@@ -97,14 +88,11 @@ const SubmitterSection: React.FC<SubmitterSectionProps> = ({
                 anchor,
                 program
               );
-              axios.put(
-                `${getApiEndpoint()}${DATA_API_ROUTE}/${ACCOUNT_ISSUE_API_ROUTE}`,
-                {
-                  issueId: issue.uuid,
-                  accountId: submitter.uuid,
-                  relations: [ISSUE_ACCOUNT_RELATIONSHIP.ApprovedSubmitter],
-                }
-              );
+              axios.put(USER_ISSUE_RELATION_ROUTE, {
+                issueId: issue.uuid,
+                accountId: submitter.uuid,
+                relations: [ISSUE_ACCOUNT_RELATIONSHIP.ApprovedSubmitter],
+              });
               const index = issue.requestedSubmitters.findIndex(
                 (_submitter) => submitter.uuid === _submitter.uuid
               );

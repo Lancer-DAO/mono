@@ -1,7 +1,6 @@
-import { DATA_API_ROUTE, ISSUE_API_ROUTE } from "@/server/src/constants";
+import { ISSUE_API_ROUTE, UPDATE_ISSUE_ROUTE } from "@/constants";
 import { DEVNET_USDC_MINT } from "@/src/constants";
-import { fundFFA } from "@/src/onChain";
-import { getApiEndpoint } from "@/src/utils";
+import { fundFFA } from "@/escrow/adapters";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { useLancer } from "@/src/providers/lancerProvider";
@@ -64,17 +63,16 @@ const FundBounty: React.FC<{ amount: number }> = ({
   }
 
   const onSuccess = () => {
-    axios.put(
-      `${getApiEndpoint()}${DATA_API_ROUTE}/${ISSUE_API_ROUTE}/funding_hash`,
-      {
-        org: issue.org,
-        repo: issue.repo,
-        issueNumber: issue.issueNumber,
-        hash: "",
-        amount: amount,
-        mint: DEVNET_USDC_MINT,
-      }
-    );
+    axios.put(UPDATE_ISSUE_ROUTE, {
+      org: issue.org,
+      repo: issue.repo,
+      issueNumber: issue.issueNumber,
+      hash: "",
+      amount: amount,
+      mint: DEVNET_USDC_MINT,
+      state: IssueState.ACCEPTING_APPLICATIONS,
+      uuid: issue.uuid,
+    });
 
     setIssue({
       ...issue,

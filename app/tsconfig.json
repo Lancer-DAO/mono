@@ -38,6 +38,12 @@
       "@/constants": [
         "./src/constants/index.ts"
       ],
+      "@/controllers": [
+        "./src/controllers/index.ts"
+      ],
+      "@/db": [
+        "./src/db/index.ts"
+      ],
       "@/helpers": [
         "extension/content/helpers/index.ts"
       ],
@@ -48,7 +54,7 @@
         "./src/layouts/index.ts"
       ],
       "@/onChain": [
-        "./src/onChain/index.ts"
+        "./src/onChain"
       ],
       "@/pages": [
         "./src/pages"
@@ -75,11 +81,10 @@
   "include": [
     "next-env.d.ts",
     "**/*.ts",
-    "**/*.tsx"
+    "**/*.tsx",
   ],
   "exclude": [
     "node_modules",
-    "escrow",
     "extension"
   ]
 }

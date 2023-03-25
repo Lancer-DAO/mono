@@ -1,9 +1,8 @@
 import {
-  ACCOUNT_ISSUE_API_ROUTE,
-  DATA_API_ROUTE,
-  ISSUE_API_ROUTE,
   MERGE_PULL_REQUEST_API_ROUTE,
-} from "@/server/src/constants";
+  UPDATE_ISSUE_ROUTE,
+  USER_ISSUE_RELATION_ROUTE,
+} from "@/constants";
 import { LoadingBar } from "@/src/components/LoadingBar";
 import {
   addSubmitterFFA,
@@ -12,7 +11,7 @@ import {
   denyRequestFFA,
   submitRequestFFA,
   voteToCancelFFA,
-} from "@/src/onChain";
+} from "@/escrow/adapters";
 import { useLancer } from "@/src/providers";
 import {
   Contributor,
@@ -61,10 +60,11 @@ export const BountyActions = () => {
         program
       );
       user.relations.push(ISSUE_ACCOUNT_RELATIONSHIP.ApprovedSubmitter);
-      axios.put(
-        `${getApiEndpoint()}${DATA_API_ROUTE}/${ACCOUNT_ISSUE_API_ROUTE}`,
-        { accountId: user.uuid, issueId: issue.uuid, relations: user.relations }
-      );
+      axios.put(USER_ISSUE_RELATION_ROUTE, {
+        accountId: user.uuid,
+        issueId: issue.uuid,
+        relations: user.relations,
+      });
 
       setIssue({
         ...issue,
@@ -79,14 +79,11 @@ export const BountyActions = () => {
       setIssueLoadingState("getting_contract");
     } else {
       // Request to submit. Does not interact on chain
-      axios.post(
-        `${getApiEndpoint()}${DATA_API_ROUTE}/${ACCOUNT_ISSUE_API_ROUTE}`,
-        {
-          accountId: user.uuid,
-          issueId: issue.uuid,
-          relations: [ISSUE_ACCOUNT_RELATIONSHIP.RequestedSubmitter],
-        }
-      );
+      axios.post(USER_ISSUE_RELATION_ROUTE, {
+        accountId: user.uuid,
+        issueId: issue.uuid,
+        relations: [ISSUE_ACCOUNT_RELATIONSHIP.RequestedSubmitter],
+      });
 
       setIssue({
         ...issue,
@@ -103,7 +100,7 @@ export const BountyActions = () => {
       });
     }
 
-    axios.put(`${getApiEndpoint()}${DATA_API_ROUTE}/${ISSUE_API_ROUTE}/state`, {
+    axios.put(UPDATE_ISSUE_ROUTE, {
       uuid: issue.uuid,
       state: IssueState.IN_PROGRESS,
     });
@@ -138,21 +135,15 @@ export const BountyActions = () => {
         user.relations.splice(index2, 1);
       }
 
-      axios.put(
-        `${getApiEndpoint()}${DATA_API_ROUTE}/${ACCOUNT_ISSUE_API_ROUTE}`,
-        {
-          issueId: issue.uuid,
-          accountId: user.uuid,
-          relations: user.relations,
-        }
-      );
-      axios.put(
-        `${getApiEndpoint()}${DATA_API_ROUTE}/${ISSUE_API_ROUTE}/state`,
-        {
-          uuid: issue.uuid,
-          state: IssueState.AWAITING_REVIEW,
-        }
-      );
+      axios.put(USER_ISSUE_RELATION_ROUTE, {
+        issueId: issue.uuid,
+        accountId: user.uuid,
+        relations: user.relations,
+      });
+      axios.put(UPDATE_ISSUE_ROUTE, {
+        uuid: issue.uuid,
+        state: IssueState.AWAITING_REVIEW,
+      });
       setIssue({
         ...issue,
         state: IssueState.AWAITING_REVIEW,
@@ -173,13 +164,10 @@ export const BountyActions = () => {
         anchor,
         program
       );
-      await axios.post(
-        `${getApiEndpoint()}${DATA_API_ROUTE}/${MERGE_PULL_REQUEST_API_ROUTE}`,
-        {
-          uuid: issue.uuid,
-          githubId: user.githubId,
-        }
-      );
+      await axios.post(MERGE_PULL_REQUEST_API_ROUTE, {
+        uuid: issue.uuid,
+        githubId: user.githubId,
+      });
       // move the submitter to the completer
       issue.currentSubmitter.relations.push(
         ISSUE_ACCOUNT_RELATIONSHIP.Completer
@@ -191,14 +179,11 @@ export const BountyActions = () => {
       if (index !== -1) {
         issue.currentSubmitter.relations.splice(index, 1);
       }
-      axios.put(
-        `${getApiEndpoint()}${DATA_API_ROUTE}/${ACCOUNT_ISSUE_API_ROUTE}`,
-        {
-          issueId: issue.uuid,
-          accountId: issue.currentSubmitter.uuid,
-          relations: issue.currentSubmitter.relations,
-        }
-      );
+      axios.put(USER_ISSUE_RELATION_ROUTE, {
+        issueId: issue.uuid,
+        accountId: issue.currentSubmitter.uuid,
+        relations: issue.currentSubmitter.relations,
+      });
       setIssue({
         ...issue,
         state: IssueState.COMPLETE,
@@ -234,21 +219,15 @@ export const BountyActions = () => {
       if (index !== -1) {
         issue.currentSubmitter.relations.splice(index, 1);
       }
-      axios.put(
-        `${getApiEndpoint()}${DATA_API_ROUTE}/${ACCOUNT_ISSUE_API_ROUTE}`,
-        {
-          issueId: issue.uuid,
-          accountId: issue.currentSubmitter.uuid,
-          relations: issue.currentSubmitter.relations,
-        }
-      );
-      axios.put(
-        `${getApiEndpoint()}${DATA_API_ROUTE}/${ISSUE_API_ROUTE}/state`,
-        {
-          uuid: issue.uuid,
-          state: IssueState.IN_PROGRESS,
-        }
-      );
+      axios.put(USER_ISSUE_RELATION_ROUTE, {
+        issueId: issue.uuid,
+        accountId: issue.currentSubmitter.uuid,
+        relations: issue.currentSubmitter.relations,
+      });
+      axios.put(UPDATE_ISSUE_ROUTE, {
+        uuid: issue.uuid,
+        state: IssueState.IN_PROGRESS,
+      });
       setIssue({
         ...issue,
         state: IssueState.IN_PROGRESS,
@@ -283,21 +262,15 @@ export const BountyActions = () => {
       if (index !== -1) {
         issue.currentSubmitter.relations.splice(index, 1);
       }
-      axios.put(
-        `${getApiEndpoint()}${DATA_API_ROUTE}/${ACCOUNT_ISSUE_API_ROUTE}`,
-        {
-          issueId: issue.uuid,
-          accountId: issue.currentSubmitter.uuid,
-          relations: issue.currentSubmitter.relations,
-        }
-      );
-      axios.put(
-        `${getApiEndpoint()}${DATA_API_ROUTE}/${ISSUE_API_ROUTE}/state`,
-        {
-          uuid: issue.uuid,
-          state: IssueState.IN_PROGRESS,
-        }
-      );
+      axios.put(USER_ISSUE_RELATION_ROUTE, {
+        issueId: issue.uuid,
+        accountId: issue.currentSubmitter.uuid,
+        relations: issue.currentSubmitter.relations,
+      });
+      axios.put(UPDATE_ISSUE_ROUTE, {
+        uuid: issue.uuid,
+        state: IssueState.IN_PROGRESS,
+      });
 
       setIssue({
         ...issue,
@@ -320,7 +293,7 @@ export const BountyActions = () => {
       program
     );
 
-    axios.put(`${getApiEndpoint()}${DATA_API_ROUTE}/${ISSUE_API_ROUTE}/state`, {
+    axios.put(UPDATE_ISSUE_ROUTE, {
       uuid: issue.uuid,
       state: IssueState.CANCELED,
     });
@@ -368,14 +341,11 @@ export const BountyActions = () => {
       if (index !== -1) {
         issue.needsToVote.splice(index, 1);
       }
-      axios.put(
-        `${getApiEndpoint()}${DATA_API_ROUTE}/${ACCOUNT_ISSUE_API_ROUTE}`,
-        {
-          issueId: issue.uuid,
-          accountId: user.uuid,
-          relations: user.relations,
-        }
-      );
+      axios.put(USER_ISSUE_RELATION_ROUTE, {
+        issueId: issue.uuid,
+        accountId: user.uuid,
+        relations: user.relations,
+      });
       setIssue({
         ...issue,
         needsToVote: issue.needsToVote,

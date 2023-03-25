@@ -21,10 +21,10 @@ import {
 import { AnchorProvider, Program } from "@project-serum/anchor";
 import { MonoProgram } from "@/escrow/sdk/types/mono_program";
 import { getApiEndpoint, getEndpoint } from "@/src/utils";
-import { REACT_APP_CLIENTID } from "@/src/constants";
+import { CREATE_USER_ROUTE, REACT_APP_CLIENTID } from "@/src/constants";
 import { useLocation } from "react-router-dom";
 import axios from "axios";
-import { ACCOUNT_API_ROUTE, DATA_API_ROUTE } from "@/server/src/constants";
+import { ACCOUNT_API_ROUTE } from "@/constants";
 import { MONO_DEVNET } from "@/escrow/sdk/constants";
 import RPC from "../solanaRPC";
 import MonoProgramJSON from "@/escrow/sdk/idl/mono_program.json";
@@ -218,12 +218,7 @@ export const LancerProvider: FunctionComponent<ILancerState> = ({
       // and populate our user data
       const web3AuthUser = await web3Auth.getUserInfo();
       const user = await axios.get(
-        `${getApiEndpoint()}${DATA_API_ROUTE}/${ACCOUNT_API_ROUTE}`,
-        {
-          params: {
-            githubId: web3AuthUser.verifierId,
-          },
-        }
+        `${ACCOUNT_API_ROUTE}/${web3AuthUser.verifierId}`
       );
       if (user.data.message === "NOT FOUND") {
         // this is a newly logged in user
@@ -239,20 +234,12 @@ export const LancerProvider: FunctionComponent<ILancerState> = ({
           }, 1000);
         } else {
           // create our new user on the backend
-          await axios.post(
-            `${getApiEndpoint()}${DATA_API_ROUTE}/${ACCOUNT_API_ROUTE}`,
-            {
-              githubId: web3AuthUser.verifierId,
-              solanaKey: wallet.publicKey.toString(),
-            }
-          );
+          await axios.post(CREATE_USER_ROUTE, {
+            githubId: web3AuthUser.verifierId,
+            solanaKey: wallet.publicKey.toString(),
+          });
           const user = await axios.get(
-            `${getApiEndpoint()}${DATA_API_ROUTE}/${ACCOUNT_API_ROUTE}`,
-            {
-              params: {
-                githubId: web3AuthUser.verifierId,
-              },
-            }
+            `${ACCOUNT_API_ROUTE}/${web3AuthUser.verifierId}`
           );
           const connection = new Connection(getEndpoint());
           //   airdrop 1 SOL to the new user's wallet so they can sign TX
@@ -296,7 +283,7 @@ export const LancerProvider: FunctionComponent<ILancerState> = ({
     };
     if (jwt === "" || jwt === null) {
       // If there is not JWT, then we need to request one from Auth0
-      const rwaURL = `${REACT_APP_AUTH0_DOMAIN}/authorize?scope=openid&response_type=code&client_id=${REACT_APP_CLIENTID}&redirect_uri=${`${getApiEndpoint()}callback?referrer=${referrer}`}&state=STATE`;
+      const rwaURL = `${REACT_APP_AUTH0_DOMAIN}/authorize?scope=openid&response_type=code&client_id=${REACT_APP_CLIENTID}&redirect_uri=${`${window.location.origin}/api/auth/callback?referrer=${window.location}`}&state=STATE`;
       setLoginState("retrieving_jwt");
       window.location.href = rwaURL;
     } else if (
@@ -505,7 +492,7 @@ export const LancerProvider: FunctionComponent<ILancerState> = ({
   }, [user, referrer]);
 
   const login = async () => {
-    const rwaURL = `${REACT_APP_AUTH0_DOMAIN}/authorize?scope=openid&response_type=code&client_id=${REACT_APP_CLIENTID}&redirect_uri=${`${getApiEndpoint()}callback?referrer=${referrer}`}&state=STATE`;
+    const rwaURL = `${REACT_APP_AUTH0_DOMAIN}/authorize?scope=openid&response_type=code&client_id=${REACT_APP_CLIENTID}&redirect_uri=${`callback?referrer=${referrer}`}&state=STATE`;
     window.location.href = rwaURL;
   };
 

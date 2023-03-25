@@ -1,11 +1,7 @@
 import * as ReactDOM from "react-dom/client";
 import { ExistingIssueFunds } from "../components/existingIssueFunds";
 import axios, { AxiosResponse } from "axios";
-import {
-  DATA_API_ROUTE,
-  FULL_PULL_REQUEST_API_ROUTE,
-  ISSUE_API_ROUTE,
-} from "@/server/src/constants";
+import { FULL_PULL_REQUEST_API_ROUTE, ISSUE_API_ROUTE } from "@/constants";
 import { getApiEndpointExtension } from "../utils";
 import { Issue, IssueState } from "../types";
 const WRAPPER_CLASSNAME = "discussion-sidebar-item js-discussion-sidebar-item";
@@ -16,18 +12,13 @@ const innerPRSpanSelector = ".color-fg-muted.text-normal";
 const authorSelector = ".author.Link--primary.text-bold";
 
 const getPR = (splitURL, pullNumber, author) =>
-  axios.get(
-    `${getApiEndpointExtension()}${DATA_API_ROUTE}/${FULL_PULL_REQUEST_API_ROUTE}`,
-    {
-      params: {
-        org: splitURL[3],
-        repo: splitURL[4],
-        pullNumber: pullNumber,
-        issueNumber: splitURL[6],
-        githubLogin: author,
-      },
-    }
-  );
+  axios.post(`${getApiEndpointExtension()}/${FULL_PULL_REQUEST_API_ROUTE}`, {
+    org: splitURL[3],
+    repo: splitURL[4],
+    pullNumber: pullNumber,
+    issueNumber: splitURL[6],
+    githubLogin: author,
+  });
 
 // Insert our component into the right side of the issue page after getting the issue info
 export const insertIssue = (response) => {
@@ -68,16 +59,11 @@ export const insertExistingIssue = (splitURL: string[]) => {
       });
     } else {
       axios
-        .get(
-          `${getApiEndpointExtension()}${DATA_API_ROUTE}/${ISSUE_API_ROUTE}`,
-          {
-            params: {
-              org: splitURL[3],
-              repo: splitURL[4],
-              issueNumber: splitURL[6],
-            },
-          }
-        )
+        .post(`${getApiEndpointExtension()}/${ISSUE_API_ROUTE}/get`, {
+          org: splitURL[3],
+          repo: splitURL[4],
+          issueNumber: splitURL[6],
+        })
         .then((response: AxiosResponse<any, any>) => {
           insertIssue(response);
         });

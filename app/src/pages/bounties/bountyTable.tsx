@@ -1,4 +1,4 @@
-import { TABLE_ISSUE_STATES } from "@/src/constants";
+import { USER_REPOSITORIES_ROUTE, TABLE_ISSUE_STATES } from "@/src/constants";
 import { getApiEndpoint, getMintName, getUniqueItems } from "@/src/utils";
 import { useState } from "react";
 import { BountyFilters } from "./bountyFilters";
@@ -6,7 +6,6 @@ import { LancerBounty } from "@/src/pages/bounties/lancerBounty";
 import { useLancer } from "@/src/providers";
 import { useEffect } from "react";
 import axios from "axios";
-import { ACCOUNT_API_ROUTE, DATA_API_ROUTE } from "@/server/src/constants";
 import { LoadingBar } from "@/src/components";
 export const ISSUE_USER_RELATIONSHIP = [
   "Creator",
@@ -89,18 +88,13 @@ export const IssueList: React.FC<{ isMyBounties: boolean }> = ({
   useEffect(() => {
     if (user?.githubId) {
       // get the organizations the user is part of, so we know which private issues they can see
-      axios
-        .get(
-          `${getApiEndpoint()}${DATA_API_ROUTE}/${ACCOUNT_API_ROUTE}/organizations`,
-          { params: { githubId: user.githubId } }
-        )
-        .then((resp) => {
-          console.log(resp);
-          setUser({
-            ...user,
-            repos: resp.data.data,
-          });
+      axios.get(`${USER_REPOSITORIES_ROUTE}/${user.githubId}`).then((resp) => {
+        console.log(resp);
+        setUser({
+          ...user,
+          repos: resp.data.data,
         });
+      });
     }
   }, [user?.githubId]);
   if (!issues) return <LoadingBar title="Loading Issues" />;
