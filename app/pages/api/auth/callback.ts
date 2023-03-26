@@ -29,7 +29,7 @@ const authCode = req.query.code;
 const referrer = req.query.referrer as string;
 const prefix = PREFIXES.find((prefix) => referrer.includes(prefix))
 const prefix_index = referrer.indexOf(prefix)
-const substr = referrer.substring(prefix_index + prefix.length + 1); // get the substring after the comma
+const substr = referrer.substring(prefix_index + prefix.length); // get the substring after the comma
   const arr = referrer.split(substr);
 let redirect_uri = arr[0];
 console.log(redirect_uri, authCode, referrer)
