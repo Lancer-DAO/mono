@@ -141,6 +141,7 @@ export const LancerProvider: FunctionComponent<ILancerState> = ({
   const search = useLocation().search;
   const params = new URLSearchParams(search);
   const jwt = params.get("token");
+  const whitelist = params.get("whitelist");
   type NewType = ISSUE_LOAD_STATE;
 
   const [issueLoadingState, setIssueLoadingState] =
@@ -185,11 +186,16 @@ export const LancerProvider: FunctionComponent<ILancerState> = ({
           chainConfig: currentChainConfig,
           clientId: clientId,
         });
+        const originData = {
+          [window.location.origin]: whitelist,
+        };
+        console.log(originData);
         const adapter = new OpenloginAdapter({
           adapterSettings: {
             network: "testnet",
             clientId,
             uxMode: "popup",
+            originData,
             loginConfig: {
               jwt: {
                 name: "rwa Auth0 Login",
