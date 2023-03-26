@@ -7,7 +7,7 @@ export const DATA_API_ROUTE = "api/data"
 
 // USER
 export const ACCOUNT_API_ROUTE = `${DATA_API_ROUTE}/account`
-export const CREATE_USER_ROUTE = `${ACCOUNT_API_ROUTE}/repository`
+export const CREATE_USER_ROUTE = `${ACCOUNT_API_ROUTE}/create`
 export const USER_REPOSITORIES_ROUTE = `${ACCOUNT_API_ROUTE}/repository`
 export const USER_REPOSITORY_ISSUES_ROUTE = `${ACCOUNT_API_ROUTE}/repository/issue`
 export const USER_REPOSITORY_NO_BOUNTIES_ROUTE = `${USER_REPOSITORY_ISSUES_ROUTE}/open_no_bounties`

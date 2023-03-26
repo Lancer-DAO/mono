@@ -36,15 +36,17 @@ var options = {
 console.log(options)
 
 //to get id_token we need to send post req to auth0
-request(options, function (error, response, data) {
+return request(options, function (error, response, data) {
   if (error) throw new Error(error);
   const id_token = JSON.parse(data)["id_token"];
   var decoded = jwt_decode(id_token);
   console.log(decoded)
   const redirect_url = referrer + `${referrer.includes('?') ? '&' : '?'}token=` + id_token;
-  return res.redirect(redirect_url);
+  console.log(redirect_url)
+  res.redirect(redirect_url);
 });
   } catch (err) {
+    console.log(err)
     return res.status(500)
   }
 

@@ -6,7 +6,10 @@ const nextConfig = {
     unoptimized: true,
   },
   webpack: (config) => {
-
+    config.watchOptions = {
+      poll: 1000,
+      aggregateTimeout: 300,
+    };
     config.resolve.fallback = {
       fs: false,
       path: false,
