@@ -5,18 +5,6 @@ import knex from 'knex';
 
 
 export const DB = knex(
-  process.env.NODE_ENV === 'production'?
-    {
-    client: 'pg',
-    connection: {
-      host : '/cloudsql/lancer-api-375702:us-central1:dev-lancer-db',
-      debug:  true,
-      user : 'postgres',
-      password : 'developer',
-      database : 'postgres'
-    }
-  }
-:
   {
     client: 'pg',
 
