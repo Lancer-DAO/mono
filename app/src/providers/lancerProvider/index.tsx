@@ -207,9 +207,6 @@ export const LancerProvider: FunctionComponent<ILancerState> = ({
                 clientId: REACT_APP_RWA_CLIENTID,
               },
             },
-            redirectUrl: `${window.location.origin}${
-              referrer?.length > 0 ? `/${referrer}` : ""
-            }?token=${jwt}`,
           },
         };
         console.log(originData, openLoginInfo, referrer);
