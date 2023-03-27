@@ -1,6 +1,10 @@
 import { ADAPTER_EVENTS, WALLET_ADAPTERS } from "@web3auth/base";
 import { Web3AuthCore } from "@web3auth/core";
-import { OpenloginAdapter } from "@web3auth/openlogin-adapter";
+import {
+  OpenloginAdapter,
+  OpenloginAdapterOptions,
+  OpenloginLoginParams,
+} from "@web3auth/openlogin-adapter";
 import {
   createContext,
   FunctionComponent,
@@ -189,12 +193,11 @@ export const LancerProvider: FunctionComponent<ILancerState> = ({
         const originData = {
           [window.location.origin]: whitelist,
         };
-        console.log(originData);
-        const adapter = new OpenloginAdapter({
+        const openLoginInfo: OpenloginAdapterOptions = {
           adapterSettings: {
             network: "testnet",
             clientId,
-            uxMode: "popup",
+            uxMode: "redirect",
             originData,
             loginConfig: {
               jwt: {
@@ -204,13 +207,18 @@ export const LancerProvider: FunctionComponent<ILancerState> = ({
                 clientId: REACT_APP_RWA_CLIENTID,
               },
             },
+            redirectUrl: `${window.location.origin}${
+              referrer?.length > 0 ? `/${referrer}` : ""
+            }?token=${jwt}`,
           },
-        });
+        };
+        console.log(originData, openLoginInfo, referrer);
+        const adapter = new OpenloginAdapter(openLoginInfo);
 
         web3AuthInstance.configureAdapter(adapter);
-
+        // debugger;
         await web3AuthInstance.init();
-
+        // debugger;
         setWeb3Auth(web3AuthInstance);
         setLoginState("initializing_wallet");
       } catch (error) {
