@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 
 const Redirect = () => {
   useEffect(() => {
-    window.location.replace("https://home.lancer.so");
+    window.location.replace("/account");
   }, []);
   return <></>;
 };

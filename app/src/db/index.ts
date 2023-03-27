@@ -9,10 +9,10 @@ export const DB = knex(
     client: 'pg',
 
     connection: {
-      host : '34.171.131.58',
+      host : '34.70.117.106',
       debug:  true,
       user : 'postgres',
-      password : 'lancer',
+      password : 'demo',
       database : 'postgres'
     }
   }
