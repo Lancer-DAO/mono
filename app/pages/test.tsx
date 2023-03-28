@@ -19,6 +19,7 @@ import { SolanaWalletContextState } from "@coinflowlabs/react";
 import Coinflow from "@/src/pages/bounty/components/coinflowPurchase";
 const getCoinflowWallet = async (magic, connection) => {
   const metadata = await magic.user.getMetadata();
+  debugger;
 
   const payer = new web3.PublicKey(metadata.publicAddress);
   const sendTransaction = async (transaction: web3.Transaction) => {
@@ -31,21 +32,30 @@ const getCoinflowWallet = async (magic, connection) => {
   const signTransaction = async <
     T extends web3.Transaction | web3.VersionedTransaction
   >(
-    transaction: T
+    tx: T
   ): Promise<T> => {
-    debugger;
     const serializeConfig = {
       requireAllSignatures: false,
       verifySignatures: true,
     };
-    const signedTransaction = await magic.solana.signTransaction(
-      transaction,
+
+    const { rawTransaction } = await magic.solana.signTransaction(
+      tx,
       serializeConfig
     );
+    const transaction = web3.Transaction.from(rawTransaction);
+    const missingSigners = transaction.signatures
+      .filter((s) => !s.signature)
+      .map((s) => s.publicKey);
+    missingSigners.forEach((publicKey) => {
+      const signature = (tx.signatures as web3.SignaturePubkeyPair[]).find(
+        (s) => s.publicKey.equals(publicKey)
+      );
+      if (signature?.signature)
+        transaction.addSignature(publicKey, signature.signature);
+    });
 
-    const stx = web3.Transaction.from(signedTransaction.rawTransaction);
-    debugger;
-    return stx as T;
+    return transaction as T;
   };
   const signMessage = async (message: string | Uint8Array) => {
     return await magic.solana.signMessage(message, serializeConfig);
@@ -58,6 +68,7 @@ const getCoinflowWallet = async (magic, connection) => {
     signMessage,
     signTransaction,
   };
+  debugger;
   return coinflowWallet;
 };
 
@@ -84,6 +95,7 @@ const Buttons = () => {
     if (magic.user.isLoggedIn()) {
       const setWallet = async () => {
         const wallet = await getCoinflowWallet(magic, connection);
+        // debugger;
         setCoinflowWallet(wallet);
       };
       setWallet();
