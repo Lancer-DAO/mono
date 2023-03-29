@@ -198,7 +198,7 @@ export const LancerProvider: FunctionComponent<ILancerState> = ({
             network: "cyan",
             clientId,
             uxMode: "redirect",
-            originData,
+            // originData,
             loginConfig: {
               jwt: {
                 name: "rwa Auth0 Login",
