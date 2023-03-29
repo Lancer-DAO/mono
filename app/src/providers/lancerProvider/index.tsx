@@ -195,7 +195,7 @@ export const LancerProvider: FunctionComponent<ILancerState> = ({
         };
         const openLoginInfo: OpenloginAdapterOptions = {
           adapterSettings: {
-            network: "mainnet",
+            network: "cyan",
             clientId,
             uxMode: "redirect",
             originData,
