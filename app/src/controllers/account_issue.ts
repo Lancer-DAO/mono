@@ -1,7 +1,7 @@
 import { DB } from "@/db";
 import { AccountIssueGetParams, AccountIssueNewParams, AccountIssueUpdateParams } from "@/types";
 import { getAccount, getAccountById, insertAccount } from "./account";
-import { getIssueById, getIssueByTitle, insertIssue } from "./issue";
+import { getIssueById, getIssueByNumber, getIssueByTitle, insertIssue } from "./issue";
 
 export const insertAccountIssue = async (params: {accountId: string, issueId: string}) => {
     const issue = await getIssueById(params.issueId);
@@ -47,10 +47,10 @@ export const insertAccountIssue = async (params: {accountId: string, issueId: st
 
 
   export const newAccountIssue = async (params: AccountIssueNewParams) => {
-    let issue = await getIssueByTitle(params);
+    let issue = await getIssueByNumber(params);
     if (issue.message === 'NOT FOUND') {
       console.log((await insertIssue(params)).rows)
-      issue = await getIssueByTitle(params);
+      issue = await getIssueByNumber(params);
     }
     let account = await getAccount(params);
     if(account.message === 'NOT FOUND') {

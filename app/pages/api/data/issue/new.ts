@@ -17,6 +17,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     );
       }
     } catch (err) {
+      console.error(err)
         res.status(500).send({ error: 'failed to get pull_request', message: `$${err?.message}` })
       }
   }
