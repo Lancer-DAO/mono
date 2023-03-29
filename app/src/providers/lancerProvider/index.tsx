@@ -184,7 +184,7 @@ export const LancerProvider: FunctionComponent<ILancerState> = ({
     async function init() {
       try {
         // First, start the connection with web3Auth
-        const clientId = REACT_APP_CLIENT_ID;
+        const clientId = REACT_APP_CLIENT_ID_DEV;
 
         const web3AuthInstance = new Web3AuthCore({
           chainConfig: currentChainConfig,
@@ -195,7 +195,7 @@ export const LancerProvider: FunctionComponent<ILancerState> = ({
         };
         const openLoginInfo: OpenloginAdapterOptions = {
           adapterSettings: {
-            network: "cyan",
+            network: "testnet",
             clientId,
             uxMode: "redirect",
             // originData,
