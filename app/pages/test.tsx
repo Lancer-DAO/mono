@@ -2,7 +2,7 @@ import { Magic } from "magic-sdk";
 import { OAuthExtension } from "@magic-ext/oauth";
 import Head from "next/head";
 import { useEffect, useMemo, useState } from "react";
-
+import { useRouter } from "next/router";
 import * as web3 from "@solana/web3.js";
 import * as token from "@solana/spl-token";
 import axios from "axios";
@@ -12,14 +12,29 @@ import {
   USER_REPOSITORY_ISSUES_ROUTE,
 } from "@/src/constants";
 import { Octokit } from "octokit";
+import { useDebounce } from "./../src/hooks/debounce";
+import MonoProgramJSON from "@/escrow/sdk/idl/mono_program.json";
+
 const rpcUrl = web3.clusterApiUrl("devnet");
+
+interface LancerWallet extends SolanaWalletContextState {
+  signAndSendTransaction: (transaction: web3.Transaction) => Promise<string>;
+  signAllTransactions: (
+    transactions: web3.Transaction[]
+  ) => Promise<web3.Transaction[]>;
+}
 
 import { SolanaExtension } from "@magic-ext/solana";
 import { SolanaWalletContextState } from "@coinflowlabs/react";
 import Coinflow from "@/src/pages/bounty/components/coinflowPurchase";
+import { createFFA } from "@/escrow/adapters";
+import { AnchorProvider, Program, setProvider } from "@project-serum/anchor";
+import { MonoProgram } from "@/escrow/sdk/types/mono_program";
+import { MONO_DEVNET } from "@/escrow/sdk/constants";
 const getCoinflowWallet = async (magic, connection) => {
+  // debugger;
   const metadata = await magic.user.getMetadata();
-  debugger;
+  // debugger;
 
   const payer = new web3.PublicKey(metadata.publicAddress);
   const sendTransaction = async (transaction: web3.Transaction) => {
@@ -60,26 +75,51 @@ const getCoinflowWallet = async (magic, connection) => {
   const signMessage = async (message: string | Uint8Array) => {
     return await magic.solana.signMessage(message, serializeConfig);
   };
-  const coinflowWallet: SolanaWalletContextState = {
+  const signAndSendTransaction = async (transaction: web3.Transaction) => {
+    const signedTransaction = await magic.solana.signTransaction(
+      transaction,
+      serializeConfig
+    );
+    const tx = web3.Transaction.from(signedTransaction.rawTransaction);
+    const signature = await connection.sendRawTransaction(tx.serialize());
+    return signature;
+  };
+
+  const signAllTransactions = async (transactions: web3.Transaction[]) => {
+    await transactions.forEach(async (transaction) => {
+      await signTransaction(transaction);
+    });
+    return transactions;
+  };
+  const coinflowWallet: LancerWallet = {
     wallet: null,
     connected: true,
     publicKey: payer,
     sendTransaction,
     signMessage,
     signTransaction,
+    signAndSendTransaction,
+    signAllTransactions,
   };
-  debugger;
-  return coinflowWallet;
+  const provider = new AnchorProvider(connection, coinflowWallet, {});
+  const program = new Program<MonoProgram>(
+    MonoProgramJSON as unknown as MonoProgram,
+    new web3.PublicKey(MONO_DEVNET),
+    provider
+  );
+  return { coinflowWallet, provider, program };
 };
 
 const Buttons = () => {
   const [coinflowWallet, setCoinflowWallet] = useState(null);
+
+  const [anchor, setAnchor] = useState<AnchorProvider | null>(null);
+  const [program, setProgram] = useState<Program<MonoProgram> | null>(null);
   const [tx, setTX] = useState(null);
   const connection = useMemo(() => new web3.Connection(rpcUrl), []);
-
   const magic = useMemo(
     () =>
-      new Magic("pk_live_736C8D5728FF026E", {
+      new Magic("pk_live_09B38A312623C6B7", {
         extensions: [
           new OAuthExtension(),
           new SolanaExtension({
@@ -91,20 +131,22 @@ const Buttons = () => {
   );
 
   useEffect(() => {
-    // debugger;
-    if (magic.user.isLoggedIn()) {
-      const setWallet = async () => {
-        const wallet = await getCoinflowWallet(magic, connection);
-        // debugger;
-        setCoinflowWallet(wallet);
-      };
+    const setWallet = async () => {
+      const { coinflowWallet, program, provider } = await getCoinflowWallet(
+        magic,
+        connection
+      );
+      setCoinflowWallet(coinflowWallet);
+      setProgram(program);
+      setAnchor(provider);
+    };
+    setTimeout(() => {
       setWallet();
-    }
-  }, [magic, connection]);
+    }, 1000);
+  }, [magic]);
 
   useEffect(() => {
-    // debugger;
-    if (coinflowWallet && !tx) {
+    if (coinflowWallet && !tx && false) {
       const getTX = async () => {
         const metadata = await magic.user.getMetadata();
 
@@ -179,53 +221,17 @@ const Buttons = () => {
     <>
       <button
         onClick={async () => {
-          await magic.oauth.loginWithRedirect({
-            provider: "github" /* 'google', 'facebook', 'apple', or 'github' */,
-            redirectURI: "http://localhost:3000/test",
-          });
+          const signature = createFFA(
+            coinflowWallet.publicKey,
+            coinflowWallet,
+            anchor,
+            program
+          );
+          console.log("created ", signature);
         }}
       >
-        Login
+        Create Escrow
       </button>
-
-      <button
-        onClick={async () => {
-          const result = await magic.oauth.getRedirectResult();
-          debugger;
-        }}
-      >
-        Get Result
-      </button>
-
-      <button
-        onClick={async () => {
-          const result = await magic.oauth.getRedirectResult();
-
-          const authToken = result.oauth.accessToken;
-          const userId = result.oauth.userHandle;
-          const octokit = new Octokit({
-            auth: authToken,
-          });
-          const octokitResponse = await octokit.request("GET /user");
-          //   const resp = await axios.post(`${USER_REPOSITORY_ISSUES_ROUTE}`, {
-          //     authToken,
-          //     githubId: `github|${userId}`,
-          //   });
-          console.log(octokitResponse);
-          debugger;
-        }}
-      >
-        Test Token
-      </button>
-      {tx !== null && (
-        <Coinflow
-          wallet={coinflowWallet}
-          connection={connection}
-          transaction={tx}
-          onSuccess={() => {}}
-          amount={1}
-        />
-      )}
     </>
   );
 };

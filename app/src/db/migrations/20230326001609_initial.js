@@ -11,12 +11,10 @@ exports.up = function(knex) {
     solana_pubkey VARCHAR,
     is_admin BOOLEAN,
     verified BOOLEAN,
-    github_id VARCHAR NOT NULL,
-    github_login VARCHAR NOT NULL,
+    github_id VARCHAR,
+    github_login VARCHAR,
 		name VARCHAR,
-		discord VARCHAR,
-		twitter VARCHAR,
-		instagram VARCHAR,
+    email VARCHAR NOT NULL,
     PRIMARY KEY (uuid)
 );
 
