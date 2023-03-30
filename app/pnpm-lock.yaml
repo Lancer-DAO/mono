@@ -31,6 +31,7 @@ specifiers:
   '@web3auth/core': 4.6.0
   '@web3auth/openlogin-adapter': 4.6.0
   assert: ^2.0.0
+  autoprefixer: ^10.4.14
   axios: 1.2.3
   base-58: 0.0.1
   base64url: 3.0.1
@@ -63,6 +64,7 @@ specifiers:
   octokit: 2.0.11
   os-browserify: ^0.3.0
   pg: ^8.7.1
+  postcss: ^8.4.21
   process: 0.11.10
   react: ^18.2.0
   react-app-rewired: ^2.2.1
@@ -157,7 +159,6 @@ dependencies:
   sass: 1.56.2
   sass-loader: 13.2.0_sass@1.56.2+webpack@5.76.3
   start: 5.1.0
-  tailwindcss: 3.3.0_postcss@8.4.21
   ts-loader: 9.4.2_jcc2ynry53rzfm5e2fdrskfasy
   tsup: 6.5.0_k22f457wtryv7dv7ltdlwpdpdm
   typescript: 4.9.4
@@ -176,14 +177,17 @@ devDependencies:
   '@typescript-eslint/parser': 5.57.0_iukboom6ndih5an6iafl45j2fe
   '@vitejs/plugin-react': 2.2.0_vite@3.2.5
   assert: 2.0.0
+  autoprefixer: 10.4.14_postcss@8.4.21
   browserify-zlib: 0.2.0
   crypto-browserify: 3.12.0
   eslint-plugin-react: 7.32.2_eslint@8.31.0
   https-browserify: 1.0.0
   os-browserify: 0.3.0
+  postcss: 8.4.21
   react-app-rewired: 2.2.1_react-scripts@5.0.1
   stream-browserify: 3.0.0
   stream-http: 3.2.0
+  tailwindcss: 3.3.0_postcss@8.4.21
   tsc-alias: 1.8.2
   tsconfig-paths: 4.1.2
   tscpaths: 0.0.9
