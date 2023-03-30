@@ -21,11 +21,16 @@ const Login = () => {
         const publicKey = result.magic.userMetadata.publicAddress;
         const githubId = result.oauth.userHandle;
 
-        axios.post("/api/data/account/login", {
-          session,
-          publicKey,
-          githubId,
-        });
+        axios
+          .post("/api/data/account/login", {
+            session,
+            publicKey,
+            githubId,
+          })
+          .then(() => {
+            setCookie("session", session);
+            router.push("/test");
+          });
       });
     }
 
