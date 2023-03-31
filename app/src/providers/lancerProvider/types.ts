@@ -2,25 +2,17 @@ import { MonoProgram } from "@/escrow/sdk/types/mono_program";
 import { Issue, User } from "@/src/types";
 import { SolanaWalletContextState } from "@coinflowlabs/react";
 import { AnchorProvider, Program } from "@project-serum/anchor";
-import { PublicKey } from "@solana/web3.js";
+import { PublicKey, Transaction } from "@solana/web3.js";
 import { SafeEventEmitterProvider } from "@web3auth/base";
 import { Web3AuthCore } from "@web3auth/core";
 import { SolanaWallet } from "@web3auth/solana-provider";
 
-export class LancerWallet extends SolanaWallet {
-    pk: PublicKey;
-    constructor(readonly provider: SafeEventEmitterProvider) {
-      super(provider);
-    }
-
-    set pubkey(pk: PublicKey) {
-      this.pk = pk;
-    }
-
-    get publicKey(): PublicKey {
-      return this.pk;
-    }
-  }
+export interface LancerWallet extends SolanaWalletContextState {
+  signAndSendTransaction: (transaction: Transaction) => Promise<string>;
+  signAllTransactions: (
+    transactions: Transaction[]
+  ) => Promise<Transaction[]>;
+}
 
   export type LOGIN_STATE =
     | "logged_out"

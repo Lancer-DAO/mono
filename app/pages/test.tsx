@@ -15,6 +15,14 @@ import { Octokit } from "octokit";
 import { useDebounce } from "./../src/hooks/debounce";
 import MonoProgramJSON from "@/escrow/sdk/idl/mono_program.json";
 
+import { SolanaExtension } from "@magic-ext/solana";
+import { SolanaWalletContextState } from "@coinflowlabs/react";
+import Coinflow from "@/src/pages/bounty/components/coinflowPurchase";
+import { createFFA } from "@/escrow/adapters";
+import { AnchorProvider, Program, setProvider } from "@project-serum/anchor";
+import { MonoProgram } from "@/escrow/sdk/types/mono_program";
+import { MONO_DEVNET } from "@/escrow/sdk/constants";
+import { magic } from "@/src/utils/magic";
 const rpcUrl = web3.clusterApiUrl("devnet");
 
 interface LancerWallet extends SolanaWalletContextState {
@@ -24,15 +32,7 @@ interface LancerWallet extends SolanaWalletContextState {
   ) => Promise<web3.Transaction[]>;
 }
 
-import { SolanaExtension } from "@magic-ext/solana";
-import { SolanaWalletContextState } from "@coinflowlabs/react";
-import Coinflow from "@/src/pages/bounty/components/coinflowPurchase";
-import { createFFA } from "@/escrow/adapters";
-import { AnchorProvider, Program, setProvider } from "@project-serum/anchor";
-import { MonoProgram } from "@/escrow/sdk/types/mono_program";
-import { MONO_DEVNET } from "@/escrow/sdk/constants";
-import { magic } from "@/src/utils/magic";
-const getCoinflowWallet = async (magic, connection) => {
+export const getCoinflowWallet = async (connection) => {
   // debugger;
   const metadata = await magic.user.getMetadata();
   // debugger;
@@ -74,7 +74,7 @@ const getCoinflowWallet = async (magic, connection) => {
     return transaction as T;
   };
   const signMessage = async (message: string | Uint8Array) => {
-    return await magic.solana.signMessage(message, serializeConfig);
+    return await magic.solana.signMessage(message);
   };
   const signAndSendTransaction = async (transaction: web3.Transaction) => {
     const signedTransaction = await magic.solana.signTransaction(
@@ -122,7 +122,6 @@ const Buttons = () => {
   useEffect(() => {
     const setWallet = async () => {
       const { coinflowWallet, program, provider } = await getCoinflowWallet(
-        magic,
         connection
       );
       setCoinflowWallet(coinflowWallet);

@@ -4,11 +4,11 @@ import { useRouter } from "next/router";
 import { useState, useEffect } from "react";
 import { setCookie } from "cookies-next";
 import axios from "axios";
-import { LancerProvider } from "@/src/providers";
+import { useLancer } from "@/src/providers";
 
 const Login = () => {
   const [isLoading, setIsLoading] = useState<boolean>(true);
-
+  const { setUser } = useLancer();
   const router = useRouter();
   const provider = router.query.provider;
 
@@ -28,8 +28,9 @@ const Login = () => {
             publicKey,
             githubId,
           })
-          .then(() => {
+          .then((user) => {
             setCookie("session", session);
+            setUser(user.data);
             router.push("/test");
           });
       });
@@ -54,10 +55,4 @@ const Login = () => {
   );
 };
 
-const LoginPage = () => {
-  <LancerProvider>
-    <Login />
-  </LancerProvider>;
-};
-
-export default LoginPage;
+export default Login;
