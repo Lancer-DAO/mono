@@ -9,28 +9,30 @@ import { addApprovedSubmittersInstruction,
 
 import { LancerWallet } from "@/src/providers/lancerProvider";
 import { EscrowContract } from "@/src/types";
+import { getCoinflowWallet } from "@/src/utils/coinflowWallet";
 
 
-export const addSubmitterFFA = async (creator: PublicKey, submitter: PublicKey, acc: EscrowContract, wallet: LancerWallet, anchor: AnchorProvider, program: Program<MonoProgram>) => {
-
+export const addSubmitterFFA = async ( submitter: PublicKey, acc: EscrowContract) => {
+  const { coinflowWallet, program, provider } =
+  await getCoinflowWallet();
       let approveSubmitterIx = await addApprovedSubmittersInstruction(
         acc.unixTimestamp,
-        creator,
+        coinflowWallet.publicKey,
         submitter,
         program
       )
 
-      const {blockhash, lastValidBlockHeight} = (await anchor.connection.getLatestBlockhash());
+      const {blockhash, lastValidBlockHeight} = (await provider.connection.getLatestBlockhash());
       const txInfo = {
                 /** The transaction fee payer */
-                feePayer: creator,
+                feePayer: coinflowWallet.publicKey,
                 /** A recent blockhash */
                 blockhash: blockhash,
                 /** the last block chain can advance to before tx is exportd expired */
                 lastValidBlockHeight: lastValidBlockHeight,
               }
 
-      const tx = await wallet.signAndSendTransaction(
+      const tx = await coinflowWallet.signAndSendTransaction(
         new Transaction(txInfo).add(approveSubmitterIx)
       );
   };

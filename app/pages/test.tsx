@@ -32,7 +32,7 @@ interface LancerWallet extends SolanaWalletContextState {
   ) => Promise<web3.Transaction[]>;
 }
 
-export const getCoinflowWallet = async (connection) => {
+const getCoinflowWallet = async (connection) => {
   // debugger;
   const metadata = await magic.user.getMetadata();
   // debugger;
@@ -209,12 +209,7 @@ const Buttons = () => {
     <>
       <button
         onClick={async () => {
-          const signature = await createFFA(
-            coinflowWallet.publicKey,
-            coinflowWallet,
-            anchor,
-            program
-          );
+          const signature = await createFFA();
           console.log("created ", signature);
         }}
       >

@@ -11,33 +11,35 @@ import { cancelFeatureInstruction } from "@/escrow/sdk/instructions";
 import { DEVNET_USDC_MINT } from "@/src/constants";
 import { LancerWallet } from "@/src/providers/lancerProvider";
 import { EscrowContract } from "@/src/types";
+import { getCoinflowWallet } from "@/src/utils/coinflowWallet";
 
 
-export const cancelFFA = async (creator: PublicKey, acc: EscrowContract , wallet: LancerWallet, anchor: AnchorProvider, program: Program<MonoProgram>) => {
+export const cancelFFA = async (acc: EscrowContract  ) => {
 
-
+  const { coinflowWallet, program, provider } =
+  await getCoinflowWallet();
       const tokenAddress = await getAssociatedTokenAddress(
         new PublicKey(DEVNET_USDC_MINT),
-        creator
+        coinflowWallet.publicKey
       );
       let approveSubmitterIx = await cancelFeatureInstruction(
         acc.unixTimestamp,
-        creator,
+        coinflowWallet.publicKey,
         tokenAddress,
         new PublicKey(DEVNET_USDC_MINT),
         program
       )
 
-      const {blockhash, lastValidBlockHeight} = (await anchor.connection.getLatestBlockhash());
+      const {blockhash, lastValidBlockHeight} = (await provider.connection.getLatestBlockhash());
       const txInfo = {
                 /** The transaction fee payer */
-                feePayer: creator,
+                feePayer: coinflowWallet.publicKey,
                 /** A recent blockhash */
                 blockhash: blockhash,
                 /** the last block chain can advance to before tx is exportd expired */
                 lastValidBlockHeight: lastValidBlockHeight,
               }
-      const tx = await wallet.signAndSendTransaction(
+      const tx = await coinflowWallet.signAndSendTransaction(
         new Transaction(txInfo).add(approveSubmitterIx)
       );
 

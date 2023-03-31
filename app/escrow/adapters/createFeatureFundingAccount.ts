@@ -9,27 +9,29 @@ import {
 } from "@/escrow/sdk/instructions";
 import { DEVNET_USDC_MINT } from "@/src/constants";
 import { LancerWallet } from "@/src/providers/lancerProvider";
+import { getCoinflowWallet } from "@/src/utils/coinflowWallet";
 
-export const createFFA = async (creator: PublicKey, wallet: LancerWallet, anchor: AnchorProvider, program: Program<MonoProgram>) => {
-debugger;
+export const createFFA = async () => {
+  const { coinflowWallet, program, provider } =
+  await getCoinflowWallet();
   const timestamp = Date.now().toString();
   console.log("timestamp = ", timestamp);
       const ix = await createFeatureFundingAccountInstruction(
         new PublicKey(DEVNET_USDC_MINT),
-        creator,
+        coinflowWallet.publicKey,
         program,
         timestamp
       );
-      const {blockhash, lastValidBlockHeight} = (await anchor.connection.getLatestBlockhash());
+      const {blockhash, lastValidBlockHeight} = (await provider.connection.getLatestBlockhash());
       const txInfo = {
                 /** The transaction fee payer */
-                feePayer: creator,
+                feePayer: coinflowWallet.publicKey,
                 /** A recent blockhash */
                 blockhash: blockhash,
                 /** the last block chain can advance to before tx is exportd expired */
                 lastValidBlockHeight: lastValidBlockHeight,
               }
-      const tx = await wallet.signAndSendTransaction(
+      const tx = await coinflowWallet.signAndSendTransaction(
         new Transaction(txInfo).add(ix)
       );
       console.log('creation tx signature: ', tx)

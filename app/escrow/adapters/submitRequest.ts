@@ -13,10 +13,12 @@ import {  submitRequestInstruction,
 import { DEVNET_USDC_MINT } from "@/src/constants";
 import { LancerWallet } from "@/src/providers/lancerProvider";
 import { EscrowContract } from "@/src/types";
+import { getCoinflowWallet } from "@/src/utils/coinflowWallet";
 
 
-export const submitRequestFFA = async (creator: PublicKey,submitter: PublicKey, acc: EscrowContract, wallet: LancerWallet, anchor: AnchorProvider, program: Program<MonoProgram>) => {
-
+export const submitRequestFFA = async (creator: PublicKey,submitter: PublicKey, acc: EscrowContract) => {
+  const { coinflowWallet, program, provider } =
+  await getCoinflowWallet();
         const tokenAddress = await getAssociatedTokenAddress(
             new PublicKey(DEVNET_USDC_MINT),
             submitter
@@ -29,7 +31,7 @@ export const submitRequestFFA = async (creator: PublicKey,submitter: PublicKey, 
         program
       )
 
-      const {blockhash, lastValidBlockHeight} = (await anchor.connection.getLatestBlockhash());
+      const {blockhash, lastValidBlockHeight} = (await provider.connection.getLatestBlockhash());
       const txInfo = {
                 /** The transaction fee payer */
                 feePayer: submitter,
@@ -38,7 +40,7 @@ export const submitRequestFFA = async (creator: PublicKey,submitter: PublicKey, 
                 /** the last block chain can advance to before tx is exportd expired */
                 lastValidBlockHeight: lastValidBlockHeight,
               }
-      const tx = await wallet.signAndSendTransaction(
+      const tx = await coinflowWallet.signAndSendTransaction(
         new Transaction(txInfo).add(approveSubmitterIx)
       );
 

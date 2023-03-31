@@ -9,9 +9,12 @@ import { voteToCancelInstruction,
 
 import { LancerWallet } from "@/src/providers/lancerProvider";
 import { EscrowContract } from "@/src/types";
+import { getCoinflowWallet } from "@/src/utils/coinflowWallet";
 
 
-export const voteToCancelFFA = async (creator: PublicKey, voter: PublicKey, acc: EscrowContract, wallet: LancerWallet, anchor: AnchorProvider, program: Program<MonoProgram>) => {
+export const voteToCancelFFA = async (creator: PublicKey, voter: PublicKey, acc: EscrowContract) => {
+  const { coinflowWallet, program, provider } =
+  await getCoinflowWallet();
 
 
       let approveSubmitterIx = await voteToCancelInstruction(
@@ -22,7 +25,7 @@ export const voteToCancelFFA = async (creator: PublicKey, voter: PublicKey, acc:
         program
       )
 
-      const {blockhash, lastValidBlockHeight} = (await anchor.connection.getLatestBlockhash());
+      const {blockhash, lastValidBlockHeight} = (await provider.connection.getLatestBlockhash());
       const txInfo = {
                 /** The transaction fee payer */
                 feePayer: voter,
@@ -31,7 +34,7 @@ export const voteToCancelFFA = async (creator: PublicKey, voter: PublicKey, acc:
                 /** the last block chain can advance to before tx is exportd expired */
                 lastValidBlockHeight: lastValidBlockHeight,
               }
-      const tx = await wallet.signAndSendTransaction(
+      const tx = await coinflowWallet.signAndSendTransaction(
         new Transaction(txInfo).add(approveSubmitterIx)
       );  console.log(tx);
 

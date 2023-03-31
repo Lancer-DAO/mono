@@ -51,15 +51,7 @@ const Form = () => {
     <>
       <button
         onClick={async () => {
-          const { coinflowWallet, program, provider } =
-            await getCoinflowWallet();
-
-          const signature = await createFFA(
-            coinflowWallet.publicKey,
-            coinflowWallet,
-            provider,
-            program
-          );
+          const signature = await createFFA();
           console.log("created ", signature);
         }}
       >
