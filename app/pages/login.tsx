@@ -11,6 +11,9 @@ const Login = () => {
   const { setUser } = useLancer();
   const router = useRouter();
   const provider = router.query.provider;
+  const referrer = router.query.referrer
+    ? (router.query.referrer as string)
+    : "/account";
 
   console.log(isLoading);
 
@@ -31,7 +34,7 @@ const Login = () => {
           .then((user) => {
             setCookie("session", session);
             setUser(user.data);
-            router.push("/test");
+            router.push(referrer);
           });
       });
     }
@@ -42,7 +45,7 @@ const Login = () => {
   const loginWithGithub = async () => {
     await magic?.oauth.loginWithRedirect({
       provider: "github",
-      redirectURI: "http://localhost:3000/login",
+      redirectURI: `http://localhost:3000/login?referrer=${referrer}`,
     });
   };
 

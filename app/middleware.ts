@@ -14,7 +14,7 @@ export function middleware(request: NextRequest) {
     !PUBLIC_FILE.test(pathname) &&
     !session
   ) {
-    return NextResponse.redirect(new URL("/login", request.url));
+    return NextResponse.redirect(new URL(`/login?referrer=${pathname}`, request.url, ));
   }
 
   return NextResponse.next();
