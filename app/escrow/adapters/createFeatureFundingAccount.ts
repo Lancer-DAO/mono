@@ -11,7 +11,7 @@ import { DEVNET_USDC_MINT } from "@/src/constants";
 import { LancerWallet } from "@/src/providers/lancerProvider";
 
 export const createFFA = async (creator: PublicKey, wallet: LancerWallet, anchor: AnchorProvider, program: Program<MonoProgram>) => {
-
+debugger;
   const timestamp = Date.now().toString();
   console.log("timestamp = ", timestamp);
       const ix = await createFeatureFundingAccountInstruction(
@@ -32,6 +32,7 @@ export const createFFA = async (creator: PublicKey, wallet: LancerWallet, anchor
       const tx = await wallet.signAndSendTransaction(
         new Transaction(txInfo).add(ix)
       );
+      console.log('creation tx signature: ', tx)
 
       return timestamp;
   };

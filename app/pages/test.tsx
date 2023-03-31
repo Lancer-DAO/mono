@@ -31,6 +31,7 @@ import { createFFA } from "@/escrow/adapters";
 import { AnchorProvider, Program, setProvider } from "@project-serum/anchor";
 import { MonoProgram } from "@/escrow/sdk/types/mono_program";
 import { MONO_DEVNET } from "@/escrow/sdk/constants";
+import { magic } from "@/src/utils/magic";
 const getCoinflowWallet = async (magic, connection) => {
   // debugger;
   const metadata = await magic.user.getMetadata();
@@ -117,18 +118,6 @@ const Buttons = () => {
   const [program, setProgram] = useState<Program<MonoProgram> | null>(null);
   const [tx, setTX] = useState(null);
   const connection = useMemo(() => new web3.Connection(rpcUrl), []);
-  const magic = useMemo(
-    () =>
-      new Magic("pk_live_09B38A312623C6B7", {
-        extensions: [
-          new OAuthExtension(),
-          new SolanaExtension({
-            rpcUrl: rpcUrl,
-          }),
-        ],
-      }),
-    []
-  );
 
   useEffect(() => {
     const setWallet = async () => {
@@ -221,7 +210,7 @@ const Buttons = () => {
     <>
       <button
         onClick={async () => {
-          const signature = createFFA(
+          const signature = await createFFA(
             coinflowWallet.publicKey,
             coinflowWallet,
             anchor,

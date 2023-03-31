@@ -4,6 +4,7 @@ import { useRouter } from "next/router";
 import { useState, useEffect } from "react";
 import { setCookie } from "cookies-next";
 import axios from "axios";
+import { LancerProvider } from "@/src/providers";
 
 const Login = () => {
   const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -53,4 +54,10 @@ const Login = () => {
   );
 };
 
-export default Login;
+const LoginPage = () => {
+  <LancerProvider>
+    <Login />
+  </LancerProvider>;
+};
+
+export default LoginPage;
