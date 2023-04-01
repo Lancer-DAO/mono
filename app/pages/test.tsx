@@ -1,237 +1,177 @@
-import { OAuthExtension } from "@magic-ext/oauth";
+import type { NextPage } from "next";
+import dynamic from "next/dynamic";
 import Head from "next/head";
-import { useEffect, useMemo, useState } from "react";
-import { useRouter } from "next/router";
-import * as web3 from "@solana/web3.js";
-import * as token from "@solana/spl-token";
-import axios from "axios";
-import {
-  DEVNET_USDC_MINT,
-  USER_REPOSITORIES_ROUTE,
-  USER_REPOSITORY_ISSUES_ROUTE,
-} from "@/src/constants";
-import { Octokit } from "octokit";
-import { useDebounce } from "./../src/hooks/debounce";
+import Image from "next/image";
+import React, { useCallback, useMemo } from "react";
+import styles from "../styles/Home.module.css";
 import MonoProgramJSON from "@/escrow/sdk/idl/mono_program.json";
 
-import { SolanaExtension } from "@magic-ext/solana";
-import { SolanaWalletContextState } from "@coinflowlabs/react";
-import Coinflow from "@/src/pages/bounty/components/coinflowPurchase";
-import { createFFA } from "@/escrow/adapters";
-import { AnchorProvider, Program, setProvider } from "@project-serum/anchor";
+import {
+  WalletAdapterNetwork,
+  WalletNotConnectedError,
+} from "@solana/wallet-adapter-base";
+import {
+  ConnectionProvider,
+  useConnection,
+  useWallet,
+  WalletProvider,
+} from "@solana/wallet-adapter-react";
+import { WalletModalProvider } from "@solana/wallet-adapter-react-ui";
+import {
+  PhantomWalletAdapter,
+  UnsafeBurnerWalletAdapter,
+} from "@solana/wallet-adapter-wallets";
+import {
+  clusterApiUrl,
+  Keypair,
+  PublicKey,
+  SystemProgram,
+  Transaction,
+} from "@solana/web3.js";
+import type { AppProps } from "next/app";
+import type { FC } from "react";
+import { createFeatureFundingAccountInstruction } from "@/escrow/sdk/instructions";
+import { DEVNET_USDC_MINT } from "@/src/constants";
+import { AnchorProvider, Program } from "@project-serum/anchor";
 import { MonoProgram } from "@/escrow/sdk/types/mono_program";
 import { MONO_DEVNET } from "@/escrow/sdk/constants";
-import { magic } from "@/src/utils/magic";
-const rpcUrl = web3.clusterApiUrl("devnet");
+const WalletDisconnectButtonDynamic = dynamic(
+  async () =>
+    (await import("@solana/wallet-adapter-react-ui")).WalletDisconnectButton,
+  { ssr: false }
+);
+const WalletMultiButtonDynamic = dynamic(
+  async () =>
+    (await import("@solana/wallet-adapter-react-ui")).WalletMultiButton,
+  { ssr: false }
+);
 
-interface LancerWallet extends SolanaWalletContextState {
-  signAndSendTransaction: (transaction: web3.Transaction) => Promise<string>;
-  signAllTransactions: (
-    transactions: web3.Transaction[]
-  ) => Promise<web3.Transaction[]>;
-}
-
-const getCoinflowWallet = async (connection) => {
-  // debugger;
-  const metadata = await magic.user.getMetadata();
-  // debugger;
-
-  const payer = new web3.PublicKey(metadata.publicAddress);
-  const sendTransaction = async (transaction: web3.Transaction) => {
-    return await connection.sendTransaction(transaction);
-  };
-  const serializeConfig = {
-    requireAllSignatures: false,
-    verifySignatures: true,
-  };
-  const signTransaction = async <
-    T extends web3.Transaction | web3.VersionedTransaction
-  >(
-    tx: T
-  ): Promise<T> => {
-    const serializeConfig = {
-      requireAllSignatures: false,
-      verifySignatures: true,
-    };
-
-    const { rawTransaction } = await magic.solana.signTransaction(
-      tx,
-      serializeConfig
-    );
-    const transaction = web3.Transaction.from(rawTransaction);
-    const missingSigners = transaction.signatures
-      .filter((s) => !s.signature)
-      .map((s) => s.publicKey);
-    missingSigners.forEach((publicKey) => {
-      const signature = (tx.signatures as web3.SignaturePubkeyPair[]).find(
-        (s) => s.publicKey.equals(publicKey)
-      );
-      if (signature?.signature)
-        transaction.addSignature(publicKey, signature.signature);
-    });
-
-    return transaction as T;
-  };
-  const signMessage = async (message: string | Uint8Array) => {
-    return await magic.solana.signMessage(message);
-  };
-  const signAndSendTransaction = async (transaction: web3.Transaction) => {
-    const signedTransaction = await magic.solana.signTransaction(
-      transaction,
-      serializeConfig
-    );
-    const tx = web3.Transaction.from(signedTransaction.rawTransaction);
-    const signature = await connection.sendRawTransaction(tx.serialize());
-    return signature;
-  };
-
-  const signAllTransactions = async (transactions: web3.Transaction[]) => {
-    await transactions.forEach(async (transaction) => {
-      await signTransaction(transaction);
-    });
-    return transactions;
-  };
-  const coinflowWallet: LancerWallet = {
-    wallet: null,
-    connected: true,
-    publicKey: payer,
+export const SendSOLToRandomAddress: FC = () => {
+  const { connection } = useConnection();
+  const {
+    publicKey,
     sendTransaction,
-    signMessage,
-    signTransaction,
-    signAndSendTransaction,
+    wallet,
     signAllTransactions,
-  };
-  const provider = new AnchorProvider(connection, coinflowWallet, {});
-  const program = new Program<MonoProgram>(
-    MonoProgramJSON as unknown as MonoProgram,
-    new web3.PublicKey(MONO_DEVNET),
-    provider
-  );
-  return { coinflowWallet, provider, program };
-};
+    signTransaction,
+  } = useWallet();
 
-const Buttons = () => {
-  const [coinflowWallet, setCoinflowWallet] = useState(null);
-
-  const [anchor, setAnchor] = useState<AnchorProvider | null>(null);
-  const [program, setProgram] = useState<Program<MonoProgram> | null>(null);
-  const [tx, setTX] = useState(null);
-  const connection = useMemo(() => new web3.Connection(rpcUrl), []);
-
-  useEffect(() => {
-    const setWallet = async () => {
-      const { coinflowWallet, program, provider } = await getCoinflowWallet(
-        connection
-      );
-      setCoinflowWallet(coinflowWallet);
-      setProgram(program);
-      setAnchor(provider);
+  const onClick = useCallback(async () => {
+    if (!publicKey) throw new WalletNotConnectedError();
+    const provider = new AnchorProvider(
+      connection,
+      { ...wallet, signAllTransactions, signTransaction, publicKey },
+      {}
+    );
+    const program = new Program<MonoProgram>(
+      MonoProgramJSON as unknown as MonoProgram,
+      new PublicKey(MONO_DEVNET),
+      provider
+    );
+    const timestamp = Date.now().toString();
+    console.log("timestamp = ", timestamp);
+    const ix = await createFeatureFundingAccountInstruction(
+      new PublicKey(DEVNET_USDC_MINT),
+      publicKey,
+      program,
+      timestamp
+    );
+    const { blockhash, lastValidBlockHeight } =
+      await connection.getLatestBlockhash();
+    const txInfo = {
+      /** The transaction fee payer */
+      feePayer: publicKey,
+      /** A recent blockhash */
+      blockhash: blockhash,
+      /** the last block chain can advance to before tx is exportd expired */
+      lastValidBlockHeight: lastValidBlockHeight,
     };
-    setTimeout(() => {
-      setWallet();
-    }, 1000);
-  }, [magic]);
-
-  useEffect(() => {
-    if (coinflowWallet && !tx && false) {
-      const getTX = async () => {
-        const metadata = await magic.user.getMetadata();
-
-        const payer = new web3.PublicKey(metadata.publicAddress);
-
-        const { blockhash, lastValidBlockHeight } =
-          await connection.getLatestBlockhash();
-        const txInfo = {
-          /** The transaction fee payer */
-          feePayer: payer,
-          /** A recent blockhash */
-          blockhash: blockhash,
-          /** the last block chain can advance to before tx is exportd expired */
-          lastValidBlockHeight: lastValidBlockHeight,
-        };
-        const devnetPK = new web3.PublicKey(DEVNET_USDC_MINT);
-
-        const usdcMint = token.getMint(connection, devnetPK);
-        const source = token.getAssociatedTokenAddressSync(devnetPK, payer);
-
-        const recipientPubKey = new web3.PublicKey(
-          new web3.PublicKey("FwqmdrxLKN9Gct9Dwp15wip5fNeSixJZ941bcnTKbAMo")
-        );
-        const destination = token.getAssociatedTokenAddressSync(
-          devnetPK,
-          recipientPubKey
-        );
-        const decimals = (await usdcMint).decimals;
-
-        const ix = token.createTransferCheckedInstruction(
-          source,
-          new web3.PublicKey(DEVNET_USDC_MINT),
-          destination,
-          payer,
-          1 * Math.pow(10, decimals),
-          decimals
-        );
-        const tx = new web3.Transaction(txInfo).add(ix);
-        debugger;
-        setTX(tx);
-        // console.log("hi");
-        // const serializeConfig = {
-        //   requireAllSignatures: false,
-        //   verifySignatures: true,
-        // };
-        // const signedTransaction = await magic.solana.signTransaction(
-        //   tx,
-        //   serializeConfig
-        // );
-
-        // const stx = web3.Transaction.from(signedTransaction.rawTransaction);
-        // debugger;
-        // setTX(stx);
-        // const serializeConfig = {
-        //   requireAllSignatures: true,
-        //   verifySignatures: true,
-        // };
-
-        // const signedTransaction = await magic.solana.signTransaction(
-        //   rawtx,
-        //   serializeConfig
-        // );
-        // const tx = web3.Transaction.from(signedTransaction.rawTransaction);
-        // const signature = await connection.sendRawTransaction(tx.serialize());
-        // console.log(signature);
-      };
-      getTX();
-    }
-  }, [coinflowWallet?.publicKey?.toString()]);
+    const signature = await signTransaction(new Transaction(txInfo).add(ix));
+    console.log(signature.signature);
+    const tx = await sendTransaction(signature, connection);
+    return timestamp;
+  }, [publicKey, sendTransaction, connection]);
 
   return (
-    <>
-      <button
-        onClick={async () => {
-          const signature = await createFFA();
-          console.log("created ", signature);
-        }}
-      >
-        Create Escrow
-      </button>
-    </>
+    <button onClick={onClick} disabled={!publicKey}>
+      Send SOL to a random address!
+    </button>
   );
 };
 
-export default function Home() {
-  const [ready, setReady] = useState(false);
-  useEffect(() => setReady(true), []);
+const Home: NextPage = () => {
   return (
-    ready && (
-      <>
-        <Head>
-          <title>Lancer</title>
-          <meta name="description" content="Lancer Github Extension" />
-        </Head>
-        <main>
-          <Buttons />
-        </main>
-      </>
-    )
+    <div className={styles.container}>
+      <Head>
+        <title>Create Next App</title>
+        <meta name="description" content="Generated by create next app" />
+        <link rel="icon" href="/favicon.ico" />
+      </Head>
+
+      <main className={styles.main}>
+        <h1 className={styles.title}>
+          Welcome to <a href="https://nextjs.org">Next.js!</a>
+        </h1>
+
+        <div className={styles.walletButtons}>
+          <WalletMultiButtonDynamic />
+          <WalletDisconnectButtonDynamic />
+        </div>
+        <SendSOLToRandomAddress />
+      </main>
+
+      <footer className={styles.footer}>
+        <a
+          href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Powered by{" "}
+          <span className={styles.logo}>
+            <Image src="/vercel.svg" alt="Vercel Logo" width={72} height={16} />
+          </span>
+        </a>
+      </footer>
+    </div>
   );
-}
+};
+
+const App: FC<AppProps> = ({ Component, pageProps }) => {
+  // Can be set to 'devnet', 'testnet', or 'mainnet-beta'
+  const network = WalletAdapterNetwork.Devnet;
+
+  // You can also provide a custom RPC endpoint
+  const endpoint = useMemo(() => clusterApiUrl(network), [network]);
+
+  const wallets = useMemo(
+    () => [
+      /**
+       * Wallets that implement either of these standards will be available automatically.
+       *
+       *   - Solana Mobile Stack Mobile Wallet Adapter Protocol
+       *     (https://github.com/solana-mobile/mobile-wallet-adapter)
+       *   - Solana Wallet Standard
+       *     (https://github.com/solana-labs/wallet-standard)
+       *
+       * If you wish to support a wallet that supports neither of those standards,
+       * instantiate its legacy wallet adapter here. Common legacy adapters can be found
+       * in the npm package `@solana/wallet-adapter-wallets`.
+       */
+      new PhantomWalletAdapter(),
+    ],
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [network]
+  );
+
+  return (
+    <ConnectionProvider endpoint={endpoint}>
+      <WalletProvider wallets={wallets} autoConnect>
+        <WalletModalProvider>
+          <Home />
+        </WalletModalProvider>
+      </WalletProvider>
+    </ConnectionProvider>
+  );
+};
+
+export default App;
