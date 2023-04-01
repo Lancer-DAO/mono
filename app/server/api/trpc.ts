@@ -22,10 +22,6 @@ type CreateContextOptions = {
   user: string | null;
 };
 
-import { Magic } from "@magic-sdk/admin";
-import { env } from "@/env.mjs";
-const magic = new Magic(env.MAGIC_KEY);
-
 /**
  * This helper generates the "internals" for a tRPC context. If you need to use it, you can export
  * it from here.
@@ -43,6 +39,9 @@ const createInnerTRPCContext = async (_opts: CreateContextOptions) => {
   };
 };
 
+import { Magic } from "@magic-sdk/admin";
+const magic = new Magic(process.env.MAGIC_SK);
+
 /**
  * This is the actual context you will use in your router. It will be used to process every request
  * that goes through your tRPC endpoint.
@@ -59,7 +58,7 @@ export const createTRPCContext = async (_opts: CreateNextContextOptions) => {
 
     const user = await prisma.user.findUnique({
       where: {
-        email: metadata.email!,
+        email: metadata.email,
       },
       select: {
         id: true,
