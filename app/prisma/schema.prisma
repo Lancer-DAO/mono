@@ -1,24 +1,69 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider        = "prisma-client-js"
-  previewFeatures = ["fullTextSearch", "fullTextIndex", "referentialIntegrity"]
+  previewFeatures = ["referentialIntegrity", "fullTextSearch", "fullTextIndex"]
 }
 
 datasource db {
-  provider     = "mysql"
+  provider     = "postgres"
   url          = env("DATABASE_URL")
   relationMode = "prisma"
 }
 
-model User {
-  id           String @id @default(cuid())
-  email        String @unique
-  solanaPubkey String @unique
-  githubId     String @unique
+model account {
+  uuid          String   @id @default(uuid()) @db.Uuid
+  solana_pubkey String?  @db.VarChar
+  is_admin      Boolean?
+  verified      Boolean?
+  github_id     String?  @db.VarChar
+  github_login  String?  @db.VarChar
+  name          String?  @db.VarChar
+  discord       String?  @db.VarChar
+  twitter       String?  @db.VarChar
+  instagram     String?  @db.VarChar
+  email         String?  @db.VarChar
 }
 
-model Issue {
-  id String @id @default(cuid())
+model account_issue {
+  account_uuid String   @db.Uuid
+  issue_uuid   String   @db.Uuid
+  relations    String[] @db.VarChar
+
+  @@id([account_uuid, issue_uuid])
+}
+
+model account_pull_request {
+  account_uuid      String   @db.Uuid
+  pull_request_uuid String   @db.Uuid
+  amount            Decimal? @db.Decimal(10, 10)
+
+  @@id([account_uuid, pull_request_uuid])
+}
+
+model issue {
+  uuid           String   @id @default(uuid()) @db.Uuid
+  funding_hash   String?  @db.VarChar
+  funding_amount Decimal? @db.Decimal(20, 10)
+  funding_mint   String?  @db.VarChar
+  escrow_key     String?  @db.VarChar
+  title          String?  @db.VarChar
+  repo           String?  @db.VarChar
+  org            String?  @db.VarChar
+  issue_number   Decimal? @db.Decimal(20, 0)
+  state          String?  @db.VarChar
+  type           String?  @db.VarChar
+  estimated_time Decimal? @db.Decimal(10, 2)
+  private        Boolean?
+  tags           String[] @db.VarChar
+  description    String?
+  unix_timestamp String?  @db.VarChar
+}
+
+model pull_request {
+  uuid        String   @id @default(uuid()) @db.Uuid
+  title       String?  @db.VarChar
+  repo        String?  @db.VarChar
+  org         String?  @db.VarChar
+  pull_number Decimal? @db.Decimal(20, 0)
+  issue_uuid  String?  @db.Uuid
+  payout_hash String?  @db.VarChar
 }
