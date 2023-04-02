@@ -24,8 +24,10 @@ export const login = publicProcedure
       await prisma.user.create({
         data: {
           email,
-          solanaPubkey: publicKey,
           githubId,
+          wallets: {
+            create: {pubkey: publicKey, provider: "Magic Link"}
+          }
         },
       });
     }

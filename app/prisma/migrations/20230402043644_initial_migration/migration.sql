@@ -8,7 +8,7 @@ CREATE TABLE "Bounty" (
     "state" VARCHAR,
     "title" VARCHAR,
     "type" VARCHAR,
-    "escrowUuid" UUID NOT NULL,
+    "escrowUuid" UUID,
     "milestoneUuid" UUID,
     "projectUuid" UUID,
     "protocolUuid" UUID,
@@ -61,9 +61,9 @@ CREATE TABLE "Issue" (
     "uuid" UUID NOT NULL,
     "title" VARCHAR,
     "number" DECIMAL(10,0),
-    "description" VARCHAR NOT NULL,
-    "state" VARCHAR NOT NULL,
-    "githubLink" VARCHAR NOT NULL,
+    "description" VARCHAR,
+    "state" VARCHAR,
+    "githubLink" VARCHAR,
     "bountyUuid" UUID NOT NULL,
     "repositoryUuid" UUID NOT NULL,
 
@@ -170,10 +170,8 @@ CREATE TABLE "User" (
 -- CreateTable
 CREATE TABLE "Wallet" (
     "uuid" UUID NOT NULL,
-    "pubkey" VARCHAR,
-    "chain" VARCHAR,
+    "publicKey" VARCHAR,
     "provider" VARCHAR,
-    "network" VARCHAR,
     "isDefault" BOOLEAN,
     "userUuid" UUID NOT NULL,
 
@@ -243,26 +241,6 @@ CREATE TABLE "CertificateUser" (
 );
 
 -- CreateTable
-CREATE TABLE "ChainEscrow" (
-    "escrowUuid" UUID NOT NULL,
-    "chainUuid" UUID NOT NULL,
-    "relations" VARCHAR[],
-    "certificateUuid" UUID,
-
-    CONSTRAINT "ChainEscrow_pkey" PRIMARY KEY ("escrowUuid","chainUuid")
-);
-
--- CreateTable
-CREATE TABLE "ChainTransaction" (
-    "transactionUuid" UUID NOT NULL,
-    "chainUuid" UUID NOT NULL,
-    "relations" VARCHAR[],
-    "certificateUuid" UUID,
-
-    CONSTRAINT "ChainTransaction_pkey" PRIMARY KEY ("transactionUuid","chainUuid")
-);
-
--- CreateTable
 CREATE TABLE "ChainWallet" (
     "walletUuid" UUID NOT NULL,
     "chainUuid" UUID NOT NULL,
@@ -270,15 +248,6 @@ CREATE TABLE "ChainWallet" (
     "certificateUuid" UUID,
 
     CONSTRAINT "ChainWallet_pkey" PRIMARY KEY ("walletUuid","chainUuid")
-);
-
--- CreateTable
-CREATE TABLE "EscrowTransaction" (
-    "transactionUuid" UUID NOT NULL,
-    "escrowUuid" UUID NOT NULL,
-    "relations" VARCHAR[],
-
-    CONSTRAINT "EscrowTransaction_pkey" PRIMARY KEY ("transactionUuid","escrowUuid")
 );
 
 -- CreateTable
@@ -403,6 +372,9 @@ CREATE UNIQUE INDEX "Transaction_chainUuid_key" ON "Transaction"("chainUuid");
 CREATE UNIQUE INDEX "Transaction_escrowUuid_key" ON "Transaction"("escrowUuid");
 
 -- CreateIndex
+CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
+
+-- CreateIndex
 CREATE UNIQUE INDEX "Wallet_userUuid_key" ON "Wallet"("userUuid");
 
 -- CreateIndex
@@ -448,28 +420,10 @@ CREATE UNIQUE INDEX "CertificateUser_userUuid_key" ON "CertificateUser"("userUui
 CREATE UNIQUE INDEX "CertificateUser_certificateUuid_key" ON "CertificateUser"("certificateUuid");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "ChainEscrow_escrowUuid_key" ON "ChainEscrow"("escrowUuid");
-
--- CreateIndex
-CREATE UNIQUE INDEX "ChainEscrow_chainUuid_key" ON "ChainEscrow"("chainUuid");
-
--- CreateIndex
-CREATE UNIQUE INDEX "ChainTransaction_transactionUuid_key" ON "ChainTransaction"("transactionUuid");
-
--- CreateIndex
-CREATE UNIQUE INDEX "ChainTransaction_chainUuid_key" ON "ChainTransaction"("chainUuid");
-
--- CreateIndex
 CREATE UNIQUE INDEX "ChainWallet_walletUuid_key" ON "ChainWallet"("walletUuid");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "ChainWallet_chainUuid_key" ON "ChainWallet"("chainUuid");
-
--- CreateIndex
-CREATE UNIQUE INDEX "EscrowTransaction_transactionUuid_key" ON "EscrowTransaction"("transactionUuid");
-
--- CreateIndex
-CREATE UNIQUE INDEX "EscrowTransaction_escrowUuid_key" ON "EscrowTransaction"("escrowUuid");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "EscrowUser_userUuid_key" ON "EscrowUser"("userUuid");
