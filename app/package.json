@@ -12,9 +12,8 @@
     "docker:dev": "yarn migrate &next dev",
     "start": "next start -p 8080",
     "prisma:pull": "prisma db pull",
-    "prisma:dev:migrate:create": "prisma migrate dev --create-only --name",
-    "prisma:dev:migrate": "prisma migrate dev",
-    "prisma:generate": "prisma generate"
+    "prisma:generate": "prisma generate",
+    "prisma:db:push": "prisma db push"
   },
   "dependencies": {
     "@coinflowlabs/react": "1.2.0",
