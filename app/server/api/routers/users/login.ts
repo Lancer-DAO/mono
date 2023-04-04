@@ -26,7 +26,7 @@ export const login = publicProcedure
           email,
           githubId,
           wallets: {
-            create: {pubkey: publicKey, provider: "Magic Link"}
+            create: {publicKey: publicKey, providers: ["Magic Link"]}
           }
         },
       });

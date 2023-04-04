@@ -1,18 +1,18 @@
 -- CreateTable
 CREATE TABLE "Bounty" (
     "uuid" UUID NOT NULL,
-    "created" VARCHAR,
-    "description" VARCHAR,
+    "createdAt" VARCHAR NOT NULL,
+    "description" VARCHAR NOT NULL,
     "estimatedTime" DECIMAL(10,2),
-    "isPrivate" BOOLEAN,
-    "state" VARCHAR,
-    "title" VARCHAR,
+    "isPrivate" BOOLEAN NOT NULL,
+    "state" VARCHAR NOT NULL,
+    "title" VARCHAR NOT NULL,
     "type" VARCHAR,
-    "escrowUuid" UUID,
+    "escrowUuid" UUID NOT NULL,
     "milestoneUuid" UUID,
     "projectUuid" UUID,
     "protocolUuid" UUID,
-    "repositoryUuid" UUID,
+    "repositoryUuid" UUID NOT NULL,
 
     CONSTRAINT "Bounty_pkey" PRIMARY KEY ("uuid")
 );
@@ -59,11 +59,12 @@ CREATE TABLE "Escrow" (
 -- CreateTable
 CREATE TABLE "Issue" (
     "uuid" UUID NOT NULL,
-    "title" VARCHAR,
-    "number" DECIMAL(10,0),
-    "description" VARCHAR,
-    "state" VARCHAR,
-    "githubLink" VARCHAR,
+    "title" VARCHAR NOT NULL,
+    "number" DECIMAL(10,0) NOT NULL,
+    "description" VARCHAR NOT NULL,
+    "state" VARCHAR NOT NULL,
+    "githubLink" VARCHAR NOT NULL,
+    "linkingMethod" VARCHAR NOT NULL,
     "bountyUuid" UUID NOT NULL,
     "repositoryUuid" UUID NOT NULL,
 
@@ -106,15 +107,14 @@ CREATE TABLE "Protocol" (
 -- CreateTable
 CREATE TABLE "PullRequest" (
     "uuid" UUID NOT NULL,
-    "title" VARCHAR,
-    "repo" VARCHAR,
-    "org" VARCHAR,
-    "pull_number" DECIMAL(20,0),
-    "issue_uuid" UUID,
-    "payout_hash" VARCHAR,
+    "title" VARCHAR NOT NULL,
+    "number" DECIMAL(10,0) NOT NULL,
+    "description" VARCHAR NOT NULL,
+    "state" VARCHAR NOT NULL,
+    "githubLink" VARCHAR NOT NULL,
     "bountyUuid" UUID NOT NULL,
     "repositoryUuid" UUID NOT NULL,
-    "issueUuid" UUID NOT NULL,
+    "issueUuid" UUID,
 
     CONSTRAINT "PullRequest_pkey" PRIMARY KEY ("uuid")
 );
@@ -122,9 +122,10 @@ CREATE TABLE "PullRequest" (
 -- CreateTable
 CREATE TABLE "Repository" (
     "uuid" UUID NOT NULL,
-    "link" VARCHAR,
-    "name" VARCHAR,
-    "organizationName" VARCHAR,
+    "githubLink" VARCHAR NOT NULL,
+    "name" VARCHAR NOT NULL,
+    "organization" VARCHAR NOT NULL,
+    "isPrivate" BOOLEAN NOT NULL,
     "protocolUuid" UUID,
 
     CONSTRAINT "Repository_pkey" PRIMARY KEY ("uuid")
@@ -143,8 +144,9 @@ CREATE TABLE "Tag" (
 -- CreateTable
 CREATE TABLE "Transaction" (
     "uuid" UUID NOT NULL,
-    "signature" VARCHAR,
-    "timestamp" VARCHAR,
+    "signature" VARCHAR NOT NULL,
+    "timestamp" VARCHAR NOT NULL,
+    "label" VARCHAR NOT NULL,
     "chainUuid" UUID NOT NULL,
     "escrowUuid" UUID NOT NULL,
 
@@ -171,7 +173,7 @@ CREATE TABLE "User" (
 CREATE TABLE "Wallet" (
     "uuid" UUID NOT NULL,
     "publicKey" VARCHAR,
-    "provider" VARCHAR,
+    "providers" VARCHAR[],
     "isDefault" BOOLEAN,
     "userUuid" UUID NOT NULL,
 
@@ -373,6 +375,9 @@ CREATE UNIQUE INDEX "Transaction_escrowUuid_key" ON "Transaction"("escrowUuid");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Wallet_publicKey_key" ON "Wallet"("publicKey");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Wallet_userUuid_key" ON "Wallet"("userUuid");

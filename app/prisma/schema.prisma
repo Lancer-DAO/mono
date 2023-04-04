@@ -15,19 +15,19 @@ model Bounty {
   uuid String @id @default(uuid()) @db.Uuid
 
   // Fields
-  created       String?  @db.VarChar
-  description   String?  @db.VarChar
+  createdAt     String   @db.VarChar
+  description   String   @db.VarChar
   estimatedTime Decimal? @db.Decimal(10, 2)
-  isPrivate     Boolean?
-  state         String?  @db.VarChar
-  title         String?  @db.VarChar
+  isPrivate     Boolean
+  state         String   @db.VarChar
+  title         String   @db.VarChar
   type          String?  @db.VarChar
 
   // Relations
   certificates   BountyCertificate[]
   comments       BountyComment[]
-  escrow         Escrow?             @relation(fields: [escrowUuid], references: [uuid])
-  escrowUuid     String?             @unique @db.Uuid
+  escrow         Escrow              @relation(fields: [escrowUuid], references: [uuid])
+  escrowUuid     String              @unique @db.Uuid
   issue          Issue?
   milestone      Milestone?          @relation(fields: [milestoneUuid], references: [uuid])
   milestoneUuid  String?             @unique @db.Uuid
@@ -36,10 +36,10 @@ model Bounty {
   protocol       Protocol?           @relation(fields: [protocolUuid], references: [uuid])
   protocolUuid   String?             @unique @db.Uuid
   pullRequests   PullRequest[]
+  repository     Repository          @relation(fields: [repositoryUuid], references: [uuid])
+  repositoryUuid String              @unique @db.Uuid
   tags           BountyTag[]
   users          BountyUser[]
-  repository     Repository?         @relation(fields: [repositoryUuid], references: [uuid])
-  repositoryUuid String?             @unique @db.Uuid
 }
 
 model Certificate {
@@ -103,11 +103,12 @@ model Issue {
   uuid String @id @default(uuid()) @db.Uuid
 
   // Fields
-  title       String?  @db.VarChar
-  number      Decimal? @db.Decimal(10, 0)
-  description String?  @db.VarChar
-  state       String?  @db.VarChar
-  githubLink  String?  @db.VarChar
+  title         String  @db.VarChar
+  number        Decimal @db.Decimal(10, 0)
+  description   String  @db.VarChar
+  state         String  @db.VarChar
+  githubLink    String  @db.VarChar
+  linkingMethod String  @db.VarChar
 
   // Relations
   bounty         Bounty        @relation(fields: [bountyUuid], references: [uuid])
@@ -174,29 +175,29 @@ model PullRequest {
   uuid String @id @default(uuid()) @db.Uuid
 
   // Fields
-  title       String?  @db.VarChar
-  repo        String?  @db.VarChar
-  org         String?  @db.VarChar
-  pull_number Decimal? @db.Decimal(20, 0)
-  issue_uuid  String?  @db.Uuid
-  payout_hash String?  @db.VarChar
+  title       String  @db.VarChar
+  number      Decimal @db.Decimal(10, 0)
+  description String  @db.VarChar
+  state       String  @db.VarChar
+  githubLink  String  @db.VarChar
 
   // Relations
   bounty         Bounty     @relation(fields: [bountyUuid], references: [uuid])
   bountyUuid     String     @unique @db.Uuid
   repository     Repository @relation(fields: [repositoryUuid], references: [uuid])
   repositoryUuid String     @unique @db.Uuid
-  issue          Issue      @relation(fields: [issueUuid], references: [uuid])
-  issueUuid      String     @unique @db.Uuid
+  issue          Issue?     @relation(fields: [issueUuid], references: [uuid])
+  issueUuid      String?    @unique @db.Uuid
 }
 
 model Repository {
   uuid String @id @default(uuid()) @db.Uuid
 
   // Fields
-  link             String? @db.VarChar
-  name             String? @db.VarChar
-  organizationName String? @db.VarChar
+  githubLink   String  @db.VarChar
+  name         String  @db.VarChar
+  organization String  @db.VarChar
+  isPrivate    Boolean @db.Boolean
 
   // Relations
   bounties     Bounty[]
@@ -226,8 +227,9 @@ model Transaction {
   uuid String @id @default(uuid()) @db.Uuid
 
   // Fields
-  signature String? @db.VarChar
-  timestamp String? @db.VarChar
+  signature String @db.VarChar
+  timestamp String @db.VarChar
+  label     String @db.VarChar
 
   // Relations
   chainUuid  String              @unique @db.Uuid
@@ -260,8 +262,8 @@ model User {
 
 model Wallet {
   uuid         String              @id @default(uuid()) @db.Uuid
-  publicKey    String?             @db.VarChar
-  provider     String?             @db.VarChar
+  publicKey    String?             @unique @db.VarChar
+  providers    String[]            @db.VarChar
   isDefault    Boolean?
   userUuid     String              @unique @db.Uuid
   user         User                @relation(fields: [userUuid], references: [uuid])
