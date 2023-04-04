@@ -19,7 +19,41 @@ import {
     User,
   } from "@/src/types";
 
-
+  export const getUserRelations = (
+    user: User,
+    issue: Issue,
+    userContributor: Contributor
+  ) => {
+    // Check and flag all relations the user has to the current issue
+    // saves time since these checks only need to happen once, instead of
+    // whenever used in code
+    const newUser: User = {
+      ...user,
+      relations: userContributor.relations,
+      isCreator: user.id === issue.creator.id,
+      isRequestedSubmitter: issue.requestedSubmitters
+        .map((contributor) => contributor.id)
+        .includes(user.id),
+      isDeniedRequester: issue.deniedRequesters
+        .map((contributor) => contributor.id)
+        .includes(user.id),
+      isApprovedSubmitter: issue.approvedSubmitters
+        .map((contributor) => contributor.id)
+        .includes(user.id),
+      isCurrentSubmitter: user.id === issue.currentSubmitter?.id,
+      isDeniedSubmitter: issue.deniedSubmitters
+        .map((contributor) => contributor.id)
+        .includes(user.id),
+      isChangesRequestedSubmitter: issue.changesRequestedSubmitters
+        .map((contributor) => contributor.id)
+        .includes(user.id),
+      isCompleter: user.id === issue.completer?.id,
+      isVotingCancel: issue.cancelVoters
+        .map((contributor) => contributor.id)
+        .includes(user.id),
+    };
+    return newUser;
+  };
 const getIssue = (uuid: string) =>
   axios.get(
     `${ISSUE_API_ROUTE}/${uuid}`

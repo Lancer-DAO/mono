@@ -24,3 +24,16 @@ export const getOrCreateRepository = async (
   }
   return repository;
 };
+
+export const getRepository = async (
+  name: string,
+  organization: string
+): Promise<Prisma.Repository> => {
+  let repository = await prisma.repository.findFirstOrThrow({
+    where: {
+      name,
+      organization,
+    },
+  });
+  return repository;
+};

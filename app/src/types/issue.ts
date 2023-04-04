@@ -1,4 +1,6 @@
 import { PublicKey } from "@solana/web3.js";
+import * as Prisma from "@prisma/client";
+import { OAuthRedirectResult } from "@magic-ext/oauth";
 
 export enum ISSUE_ACCOUNT_RELATIONSHIP {
   Creator = 'creator',
@@ -12,21 +14,26 @@ export enum ISSUE_ACCOUNT_RELATIONSHIP {
   VotingCancel = 'voting_cancel'
 }
 
-export interface AccountCommon {
-  publicKey: PublicKey;
-  githubId: string;
-  githubLogin: string;
-  name: string;
-  uuid: string;
-  relations?: ISSUE_ACCOUNT_RELATIONSHIP[];
-}
-
-export interface Contributor extends AccountCommon  {
+export interface Contributor extends User  {
   relations: ISSUE_ACCOUNT_RELATIONSHIP[];
 }
 
-export interface User extends AccountCommon  {
-  token?: string;
+export interface User extends Prisma.User  {
+  isCreator?: boolean,
+  isRequestedSubmitter?: boolean,
+  isDeniedRequester?: boolean,
+  isApprovedSubmitter?: boolean,
+  isCurrentSubmitter?: boolean,
+  isDeniedSubmitter?: boolean,
+  isChangesRequestedSubmitter?: boolean,
+  isCompleter?: boolean,
+  isVotingCancel?: boolean
+  repos?: any[];
+  relations?: ISSUE_ACCOUNT_RELATIONSHIP[];
+}
+
+export interface CurrentUser extends User  {
+  magic: OAuthRedirectResult;
   isCreator?: boolean,
   isRequestedSubmitter?: boolean,
   isDeniedRequester?: boolean,

@@ -14,14 +14,14 @@ export const login = publicProcedure
   .mutation(async ({ input: { session, publicKey, githubId } }) => {
     const { email } = await magic.users.getMetadataByToken(session);
 
-    const user = await prisma.user.findUnique({
+    let user = await prisma.user.findUnique({
       where: {
         email,
       },
     });
 
     if (!user) {
-      await prisma.user.create({
+      user = await prisma.user.create({
         data: {
           email,
           githubId,
@@ -35,4 +35,5 @@ export const login = publicProcedure
         },
       });
     }
+    return user;
   });

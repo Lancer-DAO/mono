@@ -1,6 +1,7 @@
 import { createTRPCRouter } from "@/server/api/trpc";
 import { users } from "@/server/api/routers/users/index";
 import { bounties } from "@/server/api/routers/bounties/index";
+import { issues } from "@/server/api/routers/issues/index";
 
 /**
  * This is the primary router for your server.
@@ -9,7 +10,8 @@ import { bounties } from "@/server/api/routers/bounties/index";
  */
 export const appRouter = createTRPCRouter({
   users,
-  bounties
+  bounties,
+  issues
 });
 
 // export type definition of API

@@ -37,6 +37,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
       const octokitResponse = await octokit.request('GET /user/repos', {
       })
+      console.log(octokitResponse)
       return res.status(200).json({message: 'Organizations Found', data: octokitResponse.data})
 
       } catch (err) {

@@ -50,3 +50,10 @@ export const createBounty = async (
   return bounty;
 };
 
+export const getBounty = async (id: number) => {
+  return prisma.bounty.findUnique({
+    where : {
+      id: id
+    }
+  })
+}

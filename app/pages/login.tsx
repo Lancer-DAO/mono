@@ -6,37 +6,42 @@ import { setCookie } from "cookies-next";
 import axios from "axios";
 import { useLancer } from "@/src/providers";
 import { api } from "@/src/utils/api";
+import { PageLayout } from "@/src/layouts";
+import { LancerProvider } from "@/src/providers";
 
 const Login = () => {
-  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const { setCurrentUser, setLoginState } = useLancer();
 
   const router = useRouter();
   const provider = router.query.provider;
   const referrer = router.query.referrer
     ? (router.query.referrer as string)
-    : "/account";
+    : "/create";
 
   const { mutateAsync } = api.users.login.useMutation();
 
   const login = async () => {
-    setIsLoading(true);
+    setLoginState("logging_in");
+    const magicResult = await magic?.oauth.getRedirectResult();
     const {
       magic: {
         idToken: session,
         userMetadata: { publicAddress: publicKey },
       },
-      oauth: { userHandle: githubId },
-    } = await magic?.oauth.getRedirectResult();
+      oauth: { userHandle: githubId, accessToken },
+    } = magicResult;
 
-    await mutateAsync({ session, publicKey, githubId });
+    const currentUser = await mutateAsync({ session, publicKey, githubId });
     setCookie("session", session);
+    setCookie("githubToken", accessToken);
+    setCurrentUser({ ...currentUser, magic: magicResult });
+    setLoginState("logged_in");
     router.push(referrer);
   };
 
   useEffect(() => {
     if (router.isReady) {
       if (provider) login();
-      if (!provider) setIsLoading(false);
     }
   }, [router.isReady]);
 
@@ -44,6 +49,7 @@ const Login = () => {
     await magic?.oauth.loginWithRedirect({
       provider: "github",
       redirectURI: `http://localhost:3000/login?referrer=${referrer}`,
+      scope: ["user, repo"],
     });
   };
 
@@ -56,4 +62,14 @@ const Login = () => {
   );
 };
 
-export default Login;
+const App = () => {
+  return (
+    <LancerProvider>
+      <PageLayout>
+        <Login />
+      </PageLayout>
+    </LancerProvider>
+  );
+};
+
+export default App;

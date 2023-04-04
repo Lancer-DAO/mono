@@ -10,10 +10,11 @@ import {
 import { DEVNET_USDC_MINT } from "@/src/constants";
 import { LancerWallet } from "@/src/providers/lancerProvider";
 import { getCoinflowWallet } from "@/src/utils/coinflowWallet";
+import { createMagicWallet } from "@/src/utils/magic";
 
 export const createFFA = async () => {
   const { coinflowWallet, program, provider } =
-  await getCoinflowWallet();
+  await createMagicWallet();
   const timestamp = Date.now().toString();
   console.log("timestamp = ", timestamp);
       const ix = await createFeatureFundingAccountInstruction(
