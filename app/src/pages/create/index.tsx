@@ -45,7 +45,6 @@ function App() {
               <Form />
             </div>
           </PageLayout>
-          {/* </LancerProvider> */}
         </Router>
       </div>
     );

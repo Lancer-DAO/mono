@@ -31,10 +31,10 @@ export const createFFA = async () => {
                 /** the last block chain can advance to before tx is exportd expired */
                 lastValidBlockHeight: lastValidBlockHeight,
               }
-      const tx = await coinflowWallet.signAndSendTransaction(
+      const signature = await coinflowWallet.signAndSendTransaction(
         new Transaction(txInfo).add(ix)
       );
-      console.log('creation tx signature: ', tx)
+      console.log('creation tx signature: ', signature)
 
-      return timestamp;
+      return { timestamp,signature};
   };

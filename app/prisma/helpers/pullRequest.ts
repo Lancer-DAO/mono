@@ -17,12 +17,12 @@ export const createPullRequest = async (
             githubLink: `${repository.githubLink}/pull/${number}`,
             repository: {
                 connect: {
-                    uuid: repository.uuid
+                    id: repository.id
                 }
             },
             bounty: {
                 connect: {
-                    uuid: bounty.uuid
+                    id: bounty.id
                 }
             }
 
@@ -32,7 +32,7 @@ export const createPullRequest = async (
             ...createData,
             issue: {
                 connect: {
-                    uuid: issue.uuid
+                    id: issue.id
                 }
             }
         }

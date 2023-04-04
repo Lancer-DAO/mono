@@ -43,7 +43,8 @@ export const createBounty = protectedProcedure
       network
   } }) => {
     const { email } = await magic.users.getMetadataByToken(session);
-    const user = await helpers.getUser(email)
+    const user = await helpers.getUser("jack@sturt.io")
+    console.log('user', user)
       const wallet = await  helpers.getOrCreateWallet(user, publicKey, provider);
       const repository = await helpers.getOrCreateRepository(repositoryName, organizationName, isPrivateRepo);
       const chain = await helpers.getOrCreateChain(chainName, network);

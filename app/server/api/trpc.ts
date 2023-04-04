@@ -19,7 +19,7 @@ import { type CreateNextContextOptions } from "@trpc/server/adapters/next";
 import { prisma } from "@/server/db";
 
 type CreateContextOptions = {
-  user: string | null;
+  user: number | null;
 };
 
 /**

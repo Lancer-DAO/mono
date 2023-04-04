@@ -11,17 +11,13 @@ export const getOrCreateWallet = async (user: Prisma.User, publicKey: string, pr
         wallet = await prisma.wallet.create({data:
           {
             publicKey,
-            userUuid: user.uuid,
-            providers: [provider]
+            userid: user.id,
+            providers: {
+              connect: {
+                name: provider
+              }
+            }
         }})
-      } else if (!wallet.providers.includes(provider)) {
-        wallet = await prisma.wallet.update({
-                data: {
-                    providers: [...wallet.providers, provider]
-                    },
-                where: {
-                    uuid: wallet.uuid
-            }})
       }
       return wallet;
   };

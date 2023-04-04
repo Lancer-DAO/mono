@@ -17,16 +17,17 @@ export const createTransaction = async (
           label,
           chain: {
             connect: {
-                uuid: chain.uuid
+                id: chain.id
             }
           },
           escrow: {
             connect: {
-                uuid: escrow.uuid
+                id: escrow.id
             }
           },
-          wallets: {connect: {
-            walletUuid: wallet.uuid
+          wallets: {create: {
+            walletid: wallet.id,
+            relations: "[creator]"
           }}
         }
       })

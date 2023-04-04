@@ -12,12 +12,13 @@ export const createEscrow = async (
           timestamp: timestamp,
         chain: {
             connect: {
-                uuid: chain.uuid
+                id: chain.id
             }
         },
         users: {
-            connect: {
-                userUuid: user.uuid,
+            create: {
+                userid: user.id,
+                relations: "[creator]"
             }
         }
         }

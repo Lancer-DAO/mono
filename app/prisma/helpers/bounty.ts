@@ -23,26 +23,26 @@ export const createBounty = async (
           title,
           escrow: {
             connect: {
-                uuid: escrow.uuid
+                id: escrow.id
             }
           },
           tags: {
             create: tags.map((tag) => {
-                return  {
-                        tagUuid: tag.uuid
-                    }
+              return  {
+                      tagId: tag.id
+                  }
 
-            })
+          })
           },
           users: {
               create: {
-                  userUuid: user.uuid,
-                  relations: ["creator"]
+                  userid: user.id,
+                  relations: "[creator]"
               }
           },
           repository: {
               connect: {
-                  uuid: repository.uuid
+                  id: repository.id
               }
           }
         },

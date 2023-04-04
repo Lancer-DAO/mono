@@ -19,12 +19,12 @@ export const createIssue = async (
             linkingMethod,
             repository: {
                 connect: {
-                    uuid: repository.uuid
+                    id: repository.id
                 }
             },
             bounty: {
                 connect: {
-                    uuid: bounty.uuid
+                    id: bounty.id
                 }
             },
         }
