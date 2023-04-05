@@ -38,7 +38,7 @@ model Bounty {
   pullRequests PullRequest[]
   repository   Repository          @relation(fields: [repositoryid], references: [id])
   repositoryid Int
-  tags         BountyTag[]
+  tags         Tag[]
   users        BountyUser[]
 }
 
@@ -51,7 +51,7 @@ model Certificate {
   // Relations
   bounties  BountyCertificate[]
   protocols CertificateProtocol[]
-  tags      CertificateTag[]
+  tags      Tag[]
   users     CertificateUser[]
 }
 
@@ -133,7 +133,7 @@ model Milestone {
   escrowid  Int             @unique
   project   Project         @relation(fields: [projectid], references: [id])
   projectid Int
-  tags      MilestoneTag[]
+  tags      Tag[]
   users     MilestoneUser[]
 }
 
@@ -227,10 +227,10 @@ model Tag {
   name        String? @db.VarChar(64)
 
   // Relations
-  bounties     BountyTag[]
-  certificates CertificateTag[]
-  milestones   MilestoneTag[]
-  users        TagUser[]
+  bounties     Bounty[]
+  certificates Certificate[]
+  milestones   Milestone[]
+  users        User[]
 }
 
 model Transaction {
@@ -271,7 +271,7 @@ model User {
   milestones   MilestoneUser[]
   projects     ProjectUser[]
   protocols    ProtocolUser[]
-  tags         TagUser[]
+  tags         Tag[]
 }
 
 model Wallet {
@@ -307,15 +307,6 @@ model BountyComment {
   @@id([commentid, bountyid])
 }
 
-model BountyTag {
-  Bounty   Bounty? @relation(fields: [bountyId], references: [id])
-  bountyId Int
-  Tag      Tag?    @relation(fields: [tagId], references: [id])
-  tagId    Int
-
-  @@id([tagId, bountyId])
-}
-
 model BountyUser {
   userid    Int
   bountyid  Int
@@ -334,16 +325,6 @@ model CertificateProtocol {
   protocol      Protocol    @relation(fields: [protocolid], references: [id])
 
   @@id([certificateid, protocolid])
-}
-
-model CertificateTag {
-  tagid         Int
-  certificateid Int
-  relations     String      @db.VarChar(256)
-  tag           Tag         @relation(fields: [tagid], references: [id])
-  certificate   Certificate @relation(fields: [certificateid], references: [id])
-
-  @@id([tagid, certificateid])
 }
 
 model CertificateUser {
@@ -376,16 +357,6 @@ model EscrowUser {
   @@id([userid, escrowid])
 }
 
-model MilestoneTag {
-  tagid       Int
-  milestoneid Int
-  relations   String    @db.VarChar(256)
-  tag         Tag       @relation(fields: [tagid], references: [id])
-  milestone   Milestone @relation(fields: [milestoneid], references: [id])
-
-  @@id([tagid, milestoneid])
-}
-
 model MilestoneUser {
   userid      Int
   milestoneid Int
@@ -414,16 +385,6 @@ model ProtocolUser {
   protocol   Protocol @relation(fields: [protocolid], references: [id])
 
   @@id([userid, protocolid])
-}
-
-model TagUser {
-  userid    Int
-  tagid     Int
-  relations String @db.VarChar(256)
-  user      User   @relation(fields: [userid], references: [id])
-  tag       Tag    @relation(fields: [tagid], references: [id])
-
-  @@id([userid, tagid])
 }
 
 model TransactionWallet {

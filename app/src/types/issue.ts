@@ -1,6 +1,8 @@
 import { PublicKey } from "@solana/web3.js";
 import * as Prisma from "@prisma/client";
-import { OAuthRedirectResult } from "@magic-ext/oauth";
+import { OAuthExtension, OAuthRedirectResult } from "@magic-ext/oauth";
+import { SolanaExtension } from "@magic-ext/solana";
+import { SDKBase, InstanceWithExtensions, MagicSDKExtensionsOption } from '@magic-sdk/provider';
 
 export enum ISSUE_ACCOUNT_RELATIONSHIP {
   Creator = 'creator',
@@ -18,6 +20,33 @@ export interface Contributor extends User  {
   relations: ISSUE_ACCOUNT_RELATIONSHIP[];
 }
 
+export interface Bounty extends Prisma.Bounty {
+
+  escrow: Escrow;
+  repository: Repository;
+  issue: Issue;
+  tags: Tag[];
+  creator?: User;
+  contributors?: User[];
+  transactions?: Transaction[];
+}
+
+export interface Tag extends Prisma.Tag {
+
+}
+
+export interface Transaction extends Prisma.Transaction {
+
+}
+
+export interface Escrow extends Prisma.Escrow {
+
+}
+
+export interface Repository extends Prisma.Repository {
+
+}
+
 export interface User extends Prisma.User  {
   isCreator?: boolean,
   isRequestedSubmitter?: boolean,
@@ -31,9 +60,10 @@ export interface User extends Prisma.User  {
   repos?: any[];
   relations?: ISSUE_ACCOUNT_RELATIONSHIP[];
 }
+export declare type Magic<T extends MagicSDKExtensionsOption<any> = MagicSDKExtensionsOption> = InstanceWithExtensions<SDKBase, T>;
 
 export interface CurrentUser extends User  {
-  magic: OAuthRedirectResult;
+  magic: OAuthRedirectResult | InstanceWithExtensions<SDKBase, (OAuthExtension | SolanaExtension)[]>,
   isCreator?: boolean,
   isRequestedSubmitter?: boolean,
   isDeniedRequester?: boolean,
@@ -63,41 +93,7 @@ export type EscrowContract = {
   unixTimestamp: string;
 }
 
-export type Issue = {
-    amount: number;
-    hash?: string;
-    title: string;
-    issueNumber?: string;
-    repo: string;
-    org: string;
-    paid?: boolean;
-    state: IssueState;
-    private?: boolean;
-    type?: IssueType;
-    author?: string;
-    pubkey?: string;
-    pullNumber?: number;
-    githubId?: string;
-    payoutHash?: string;
-    mint?: PublicKey;
-    tags: string[];
-    estimatedTime: number;
-    description?: string;
-    uuid?: string;
-    escrowKey?: PublicKey;
-    timestamp?:string;
-    allContributors?: Contributor[];
-    creator?: Contributor;
-    requestedSubmitters?: Contributor[];
-    deniedRequesters?: Contributor[];
-    approvedSubmitters?: Contributor[];
-    currentSubmitter?: Contributor;
-    deniedSubmitters?: Contributor[];
-    changesRequestedSubmitters?: Contributor[];
-    completer?: Contributor;
-    cancelVoters?: Contributor[];
-    needsToVote?: Contributor[];
-    escrowContract: EscrowContract
+export interface Issue extends Prisma.Issue  {
   };
 
 

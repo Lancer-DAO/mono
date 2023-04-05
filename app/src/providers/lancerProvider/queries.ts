@@ -18,6 +18,8 @@ import {
     Contributor,
     User,
   } from "@/src/types";
+import { MonoProgram } from "@/escrow/sdk/types/mono_program";
+import { AnchorProvider, Program } from "@project-serum/anchor";
 
   export const getUserRelations = (
     user: User,
@@ -68,10 +70,9 @@ const getAccounts = (uuid: string) =>
   axios.post(ISSUE_ACCOUNT_ROUTE, {uuid: uuid}
   );
 
-  export const getEscrowContract = async (issue: Issue, program, anchor) => {
-    let escrowKey = issue.escrowKey;
-    if (!escrowKey) {
-      const accounts = await anchor.connection.getParsedProgramAccounts(
+  export const getEscrowContractKey = async (creator: PublicKey, timestamp: string, program: Program<MonoProgram>, provider: AnchorProvider) => {
+
+      const accounts = await provider.connection.getParsedProgramAccounts(
         program.programId, // new PublicKey("TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA")
         {
           filters: [
@@ -81,38 +82,20 @@ const getAccounts = (uuid: string) =>
             {
               memcmp: {
                 offset: 8, // number of bytes
-                bytes: issue.creator.publicKey.toBase58(), // base58 encoded string
+                bytes: creator.toBase58(), // base58 encoded string
               },
             },
             {
               memcmp: {
                 offset: 275, // number of bytes
-                bytes: Base58.encode(Buffer.from(issue.timestamp)), // base58 encoded string
+                bytes: Base58.encode(Buffer.from(timestamp)), // base58 encoded string
               },
             },
           ],
         }
       );
-      if (accounts.length === 0) {
-        return;
-      }
+      return accounts[0].pubkey;
 
-      escrowKey = accounts[0].pubkey;
-
-      axios.put(UPDATE_ISSUE_ROUTE,
-        {
-          uuid: issue.uuid,
-          escrowKey: escrowKey.toString(),
-        }
-      );
-    }
-    const escrowContract = await getFeatureFundingAccount(escrowKey, program);
-    const newIssue = {
-      ...issue,
-      escrowContract: escrowContract as unknown as EscrowContract,
-      escrowKey: escrowKey,
-    };
-    return newIssue;
   };
 
 export const queryIssue = async (id: string) => {

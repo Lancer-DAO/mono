@@ -4,87 +4,52 @@ import { fundFFA } from "@/escrow/adapters";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { useLancer } from "@/src/providers/lancerProvider";
-import { IssueState } from "@/src/types";
-import { Transaction } from "@solana/web3.js";
+import { IssueState, LancerWallet } from "@/src/types";
+import { Connection, Transaction } from "@solana/web3.js";
 import Coinflow from "@/src/pages/bounty/components/coinflowPurchase";
+import { api } from "@/src/utils/api";
 
 const FundBounty: React.FC<{ amount: number }> = ({
   amount,
 }: {
   amount: number;
 }) => {
-  const {
-    wallet,
-    anchor,
-    program,
-    setIssue,
-    issue,
-    coinflowWallet,
-    setForceGetIssue,
-  } = useLancer();
+  const { currentBounty, provider, wallet, program } = useLancer();
+  const { mutateAsync: fundB } = api.bounties.fundBounty.useMutation();
 
   const [fundTx, setFundTx] = useState<Transaction>(null);
   useEffect(() => {
     const getFundTransaction = async () => {
-      const tx = await fundFFA(
-        issue.creator.publicKey,
+      const transaction = await fundFFA(
         amount,
-        issue.escrowContract,
+        currentBounty.escrow,
         wallet,
-        anchor,
-        program
+        program,
+        provider
       );
-      setFundTx(tx);
+      setFundTx(transaction);
     };
-    if (
-      issue?.creator &&
-      issue?.escrowContract?.unixTimestamp &&
-      anchor &&
-      wallet &&
-      program
-    ) {
-      getFundTransaction();
-    }
-  }, [
-    !!issue?.creator,
-    !!issue?.escrowContract,
-    !!anchor,
-    !!wallet,
-    !!program,
-  ]);
-  if (
-    !issue ||
-    !issue.escrowContract ||
-    !wallet ||
-    !anchor ||
-    !coinflowWallet
-  ) {
-    return <></>;
-  }
+    getFundTransaction();
+  }, []);
 
   const onSuccess = () => {
-    axios.put(UPDATE_ISSUE_ROUTE, {
-      org: issue.org,
-      repo: issue.repo,
-      issueNumber: issue.issueNumber,
-      hash: "",
-      amount: amount,
+    fundB({
+      bountyId: currentBounty.id,
+      escrowId: currentBounty.escrow.id,
       mint: DEVNET_USDC_MINT,
-      state: IssueState.ACCEPTING_APPLICATIONS,
-      uuid: issue.uuid,
+      amount,
     });
-
-    setIssue({
-      ...issue,
-      state: IssueState.ACCEPTING_APPLICATIONS,
-    });
-    setForceGetIssue(true);
-    window.location.replace(`/bounty?id=${issue.uuid}`);
   };
   return (
     <div className="bounty-fund-with-card">
       {fundTx && amount && (
-        <Coinflow transaction={fundTx} onSuccess={onSuccess} amount={amount} />
+        <Coinflow
+          transaction={fundTx}
+          onSuccess={onSuccess}
+          amount={amount}
+          wallet={wallet}
+          connection={provider.connection}
+        />
       )}
     </div>
   );

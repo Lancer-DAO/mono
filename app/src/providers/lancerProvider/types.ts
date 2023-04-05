@@ -1,5 +1,5 @@
 import { MonoProgram } from "@/escrow/sdk/types/mono_program";
-import { CurrentUser, Issue, User } from "@/src/types";
+import { Bounty, CurrentUser, Issue, User } from "@/src/types";
 import { SolanaWalletContextState } from "@coinflowlabs/react";
 import { AnchorProvider, Program } from "@project-serum/anchor";
 import { PublicKey, Transaction } from "@solana/web3.js";
@@ -32,6 +32,11 @@ export interface LancerWallet extends SolanaWalletContextState {
         issues: Issue[];
         loginState: LOGIN_STATE;
         issueLoadingState: ISSUE_LOAD_STATE;
+        program: Program<MonoProgram>;
+        provider: AnchorProvider;
+        wallet: LancerWallet;
+        currentBounty: Bounty;
+        setCurrentBounty: (bounty:Bounty)=>void;
         setIssue: (issue: Issue) => void;
         setIssues: (issues: Issue[]) => void;
         setLoginState: (state: LOGIN_STATE) => void;

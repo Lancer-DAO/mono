@@ -27,9 +27,9 @@ export const createBounty = async (
             }
           },
           tags: {
-            create: tags.map((tag) => {
+            connect: tags.map((tag) => {
               return  {
-                      tagId: tag.id
+                      id: tag.id
                   }
 
           })

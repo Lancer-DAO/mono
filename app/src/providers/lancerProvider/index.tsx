@@ -32,19 +32,24 @@ import { ACCOUNT_API_ROUTE } from "@/constants";
 import { MONO_DEVNET } from "@/escrow/sdk/constants";
 import RPC from "../solanaRPC";
 import MonoProgramJSON from "@/escrow/sdk/idl/mono_program.json";
-import { Issue, IssueState, Contributor, User, CurrentUser } from "@/src/types";
+import {
+  Issue,
+  IssueState,
+  Contributor,
+  User,
+  CurrentUser,
+  LancerWallet,
+  Bounty,
+} from "@/src/types";
 import { SolanaWalletContextState } from "@coinflowlabs/react";
 import {
   ILancerContext,
   ISSUE_LOAD_STATE,
-  LancerWallet,
   LOGIN_STATE,
 } from "@/src/providers/lancerProvider/types";
-import {
-  getEscrowContract,
-  queryIssue,
-  queryIssues,
-} from "@/src/providers/lancerProvider/queries";
+import { createMagicWallet, magic } from "@/src/utils/magic";
+import { api } from "@/src/utils/api";
+import { getCookie } from "cookies-next";
 export * from "./types";
 
 export const LancerContext = createContext<ILancerContext>({
@@ -53,11 +58,16 @@ export const LancerContext = createContext<ILancerContext>({
   issues: [],
   loginState: "logged_out",
   issueLoadingState: "initializing",
+  program: null,
+  wallet: null,
+  provider: null,
+  currentBounty: null,
   setIssue: () => null,
   setIssues: () => null,
   setLoginState: () => null,
   setCurrentUser: () => null,
   setIssueLoadingState: (state: ISSUE_LOAD_STATE) => null,
+  setCurrentBounty: () => null,
 });
 
 export function useLancer(): ILancerContext {
@@ -74,13 +84,41 @@ interface ILancerProps {
 export const LancerProvider: FunctionComponent<ILancerState> = ({
   children,
 }: ILancerProps) => {
+  const { mutateAsync: getCurrUser } = api.users.currentUser.useMutation();
+
   const [currentUser, setCurrentUser] = useState<CurrentUser | null>(null);
+  const [currentBounty, setCurrentBounty] = useState<Bounty | null>(null);
   const [issue, setIssue] = useState<Issue | null>(null);
   const [issues, setIssues] = useState<Issue[] | null>(null);
   const [loginState, setLoginState] = useState<LOGIN_STATE | null>(
     "logged_out"
   );
   const [isGettingContract, setIsGettingContract] = useState(false);
+  const [wallet, setWallet] = useState<LancerWallet>();
+  const [provider, setProvider] = useState<AnchorProvider>();
+  const [program, setProgram] = useState<Program<MonoProgram>>();
+  const [isWalletReady, setIsWalletReady] = useState(false);
+  useEffect(() => {
+    const getMagicWallet = async () => {
+      const { coinflowWallet, program, provider } = await createMagicWallet();
+      setWallet(coinflowWallet);
+      setProvider(provider);
+      setProgram(program);
+      setIsWalletReady(true);
+    };
+    getMagicWallet();
+  }, [magic?.user]);
+
+  useEffect(() => {
+    const getCurrentUser = async () => {
+      setLoginState("logging_in");
+      const user = await getCurrUser({
+        session: getCookie("session") as string,
+      });
+      setCurrentUser({ ...user, magic: magic });
+    };
+    getCurrentUser();
+  }, [magic?.user]);
 
   const [issueLoadingState, setIssueLoadingState] =
     useState<ISSUE_LOAD_STATE>("initializing");
@@ -231,6 +269,11 @@ export const LancerProvider: FunctionComponent<ILancerState> = ({
     setIssues,
     issueLoadingState,
     setIssueLoadingState,
+    program,
+    provider,
+    wallet,
+    currentBounty,
+    setCurrentBounty,
   };
   return (
     <LancerContext.Provider value={contextProvider}>

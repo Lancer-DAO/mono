@@ -2,13 +2,14 @@ import { useLancer } from "@/src/providers/lancerProvider";
 import { Transaction, Connection } from "@solana/web3.js";
 import { CoinflowPurchase } from "@coinflowlabs/react";
 import { SolanaWalletContextState } from "@coinflowlabs/react";
+import { LancerWallet } from "@/src/types";
 
 const Coinflow: React.FC<{
   transaction: Transaction;
   onSuccess: () => void;
   amount: number;
   connection: Connection;
-  wallet: SolanaWalletContextState;
+  wallet: LancerWallet;
 }> = ({ transaction, onSuccess, amount, connection, wallet }) => {
   // const { anchor, coinflowWallet } = useLancer();
   console.log(transaction);

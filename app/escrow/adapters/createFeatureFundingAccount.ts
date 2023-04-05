@@ -10,11 +10,10 @@ import {
 import { DEVNET_USDC_MINT } from "@/src/constants";
 import { LancerWallet } from "@/src/providers/lancerProvider";
 import { getCoinflowWallet } from "@/src/utils/coinflowWallet";
-import { createMagicWallet } from "@/src/utils/magic";
+import { createMagicWallet, } from "@/src/utils/magic";
+import { findFeatureAccount } from "@/escrow/sdk/pda";
 
-export const createFFA = async () => {
-  const { coinflowWallet, program, provider } =
-  await createMagicWallet();
+export const createFFA = async (coinflowWallet: LancerWallet, program: Program<MonoProgram>, provider: AnchorProvider) => {
   const timestamp = Date.now().toString();
   console.log("timestamp = ", timestamp);
       const ix = await createFeatureFundingAccountInstruction(
@@ -36,6 +35,10 @@ export const createFFA = async () => {
         new Transaction(txInfo).add(ix)
       );
       console.log('creation tx signature: ', signature)
-
-      return { timestamp,signature};
+      const [feature_account] = await findFeatureAccount(
+        timestamp,
+        coinflowWallet.publicKey,
+        program
+    );
+      return { timestamp,signature, creator: coinflowWallet.publicKey, escrowKey: feature_account};
   };

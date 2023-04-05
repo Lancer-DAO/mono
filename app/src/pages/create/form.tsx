@@ -23,8 +23,12 @@ import { getCookie } from "cookies-next";
 import { magic } from "@/src/utils/magic-admin";
 import { MagicUserMetadata } from "magic-sdk";
 import { Octokit } from "octokit";
+import { getEscrowContractKey } from "@/src/providers/lancerProvider/queries";
+import { useRouter } from "next/router";
 
 const Form = () => {
+  const { wallet, program, provider, currentUser, setCurrentBounty } =
+    useLancer();
   const { mutateAsync } = api.bounties.createBounty.useMutation();
   const { mutateAsync: createIssue } = api.issues.createIssue.useMutation();
   const [creationType, setCreationType] = useState<"new" | "existing">("new");
@@ -44,6 +48,7 @@ const Form = () => {
   const [repos, setRepos] = useState(null);
   const [issues, setIssues] = useState(null);
   const [octokit, setOctokit] = useState(null);
+  const router = useRouter();
 
   const [isPreview, setIsPreview] = useState(false);
   const [isSubmittingIssue, setIsSubmittingIssue] = useState(false);
@@ -71,25 +76,32 @@ const Form = () => {
     e.preventDefault();
     setIsSubmittingIssue(true);
     const session = getCookie("session") as string;
-    const { timestamp, signature } = await createFFA();
-    console.log("created ", signature);
-    const bounty = await mutateAsync({
-      session,
-      description: formData.issueDescription,
-      estimatedTime: parseFloat(formData.estimatedTime),
-      isPrivate: formData.isPrivate || repo ? repo.private : false,
-      isPrivateRepo: formData.isPrivate || repo ? repo.private : false,
-      title: formData.issueTitle,
-      tags: formData.requirements,
-      organizationName: repo.full_name.split("/")[0],
-      repositoryName: repo.full_name.split("/")[1],
-      publicKey: "4nJtM5muozAwMXgfM1xKVQYAKefTUnVvnEkAcWWiL6AW",
-      transactionSignature: signature,
-      provider: "Magic Link",
-      timestamp: timestamp,
-      chainName: "Solana",
-      network: "devnet",
-    });
+    const { timestamp, signature, escrowKey } = await createFFA(
+      wallet,
+      program,
+      provider
+    );
+
+    console.log("created ", signature, escrowKey);
+    const { bounty, tags, escrow, repository, creator, transactions } =
+      await mutateAsync({
+        email: currentUser.email,
+        description: formData.issueDescription,
+        estimatedTime: parseFloat(formData.estimatedTime),
+        isPrivate: formData.isPrivate || repo ? repo.private : false,
+        isPrivateRepo: formData.isPrivate || repo ? repo.private : false,
+        title: formData.issueTitle,
+        tags: formData.requirements,
+        organizationName: repo.full_name.split("/")[0],
+        repositoryName: repo.full_name.split("/")[1],
+        publicKey: wallet.publicKey.toString(),
+        escrowKey: escrowKey.toString(),
+        transactionSignature: signature,
+        provider: "Magic Link",
+        timestamp: timestamp,
+        chainName: "Solana",
+        network: "devnet",
+      });
     console.log("bounty created");
     let issueNumber;
     if (creationType === "new") {
@@ -118,6 +130,17 @@ const Form = () => {
       linkingMethod: creationType,
     });
     console.log("issue created", issueResp);
+    setCurrentBounty({
+      ...bounty,
+      repository,
+      tags,
+      escrow,
+      creator,
+      issue,
+      contributors: [],
+      transactions,
+    });
+    router.push(`/fund?id=${bounty.id}`);
   };
 
   const getRepoIssues = async (_repo) => {
