@@ -28,7 +28,9 @@ export const updateBountyUser = protectedProcedure
             bountyid: bountyId,
         }
     });
+    console.log('relations',relations)
     if(!userBounty) {
+      console.log('new')
       userBounty = await prisma.bountyUser.create({
         data: {
           userid: userId,
@@ -37,15 +39,18 @@ export const updateBountyUser = protectedProcedure
         }
       })
     } else {
-      userBounty = await prisma.bountyUser.updateMany({
+      console.log('exists')
+      await prisma.bountyUser.update({
         where: {
-          userid: userId,
+          userid_bountyid:{
+            userid: userId,
           bountyid: bountyId
+          }
         },
         data: {
           relations: relations.join()
         }
-      })[0]
+      })
     }
     if(state) {
 

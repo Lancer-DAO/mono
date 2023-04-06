@@ -2,41 +2,59 @@ import { prisma } from "@/server/db";
 import * as Prisma from "@prisma/client";
 
 export const createPullRequest = async (
-  title: string,
-  number: number,
-  description: string,
-  repository: Prisma.Repository,
-  bounty: Prisma.Bounty,
-  issue?: Prisma.Issue
+    user: Prisma.User,
+    repository: Prisma.Repository,
+    issueNumber: number,
+    pullNumber: number,
 ): Promise<Prisma.PullRequest> => {
-    let createData: Prisma.Prisma.PullRequestCreateInput =  {
-            title,
-            number,
-            description,
-            state: 'open',
-            githubLink: `${repository.githubLink}/pull/${number}`,
-            repository: {
-                connect: {
-                    id: repository.id
-                }
-            },
-            bounty: {
-                connect: {
-                    id: bounty.id
-                }
-            }
 
-      }
-      if(issue) {
-        createData = {
-            ...createData,
-            issue: {
-                connect: {
-                    id: issue.id
+    const issue = await prisma.issue.findFirstOrThrow({
+        where:{
+            number: issueNumber,
+            repositoryid: repository.id
+        },
+        include: {
+            bounty: true
+        }
+    })
+
+        const pullRequest = await prisma.pullRequest.create({
+            data: {
+                number: pullNumber,
+                githubLink: `${repository.githubLink}/pulls/${pullNumber}`,
+                state: "Open",
+                users: {
+                    connect: [{id: user.id}]
+                },
+                repository: {
+                    connect: {
+                        id: repository.id
+                    }
+                },
+                bounty: {
+                    connect: {
+                        id: issue.bountyid
+                    }
+                },
+                issue: {
+                    connect: {
+                        id: issue.id
+                    }
                 }
             }
-        }
-      }
-    const pullRequest = await prisma.pullRequest.create({data: createData})
-  return pullRequest;
+        })
+        return pullRequest;
+};
+
+export const getPullRequest = async (
+    repositoryId: number,
+    pullNumber: number,
+): Promise<Prisma.PullRequest> => {
+        const pullRequest = await prisma.pullRequest.findFirst({
+            where: {
+                number: pullNumber,
+                repositoryid: repositoryId
+            }
+        })
+        return pullRequest;
 };

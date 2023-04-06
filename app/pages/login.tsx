@@ -34,7 +34,11 @@ const Login = () => {
     const currentUser = await mutateAsync({ session, publicKey, githubId });
     setCookie("session", session);
     setCookie("githubToken", accessToken);
-    setCurrentUser({ ...currentUser, magic: magicResult });
+    setCurrentUser({
+      ...currentUser,
+      magic: magicResult,
+      currentWallet: currentUser.wallets[0],
+    });
     setLoginState("logged_in");
     router.push(referrer);
   };

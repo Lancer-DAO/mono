@@ -1,4 +1,4 @@
-import { PrismaClient } from "@prisma/client";
+import { Prisma, PrismaClient } from "@prisma/client";
 
 const globalForPrisma = globalThis as unknown as { prisma: PrismaClient };
 
@@ -10,3 +10,10 @@ export const prisma =
   });
 
 if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = prisma;
+
+prisma.$on<any>("query", (query: Prisma.QueryEvent) =>{
+  console.log('Query: ' + query.query)
+  console.log('Params: ' + query.params)
+  console.log('Duration: ' + query.duration + 'ms')
+
+})

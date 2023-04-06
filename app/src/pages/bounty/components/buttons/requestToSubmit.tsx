@@ -17,7 +17,7 @@ export const RequestToSubmit = () => {
   } = useLancer();
   const { mutateAsync } = api.bounties.updateBountyUser.useMutation();
   const onClick = async () => {
-    if (currentUser.id === currentBounty.creator.userid) {
+    if (currentBounty.isCreator) {
       // If we are the creator, then skip requesting and add self as approved
       const signature = await addSubmitterFFA(
         wallet.publicKey,
@@ -26,15 +26,18 @@ export const RequestToSubmit = () => {
         program,
         provider
       );
-      currentUser.relations.push(BOUNTY_USER_RELATIONSHIP.ApprovedSubmitter);
+      currentBounty.currentUserRelationsList.push(
+        BOUNTY_USER_RELATIONSHIP.ApprovedSubmitter
+      );
       const { updatedBounty } = await mutateAsync({
         bountyId: currentBounty.id,
+        currentUserId: currentUser.id,
         userId: currentUser.id,
-        relations: currentUser.relations,
+        relations: currentBounty.currentUserRelationsList,
         state: IssueState.IN_PROGRESS,
         walletId: currentUser.currentWallet.id,
         escrowId: currentBounty.escrowid,
-        signature,
+        signature: "test",
         label: "add-approved-submitter",
       });
 
@@ -42,6 +45,7 @@ export const RequestToSubmit = () => {
     } else {
       // Request to submit. Does not interact on chain
       const { updatedBounty } = await mutateAsync({
+        currentUserId: currentUser.id,
         bountyId: currentBounty.id,
         userId: currentUser.id,
         relations: [BOUNTY_USER_RELATIONSHIP.RequestedSubmitter],

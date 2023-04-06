@@ -5,7 +5,7 @@ import { api } from "@/src/utils/api";
 import { PublicKey } from "@solana/web3.js";
 import classNames from "classnames";
 
-export const SubmitRequest = () => {
+export const SubmitRequest = ({ disabled }: { disabled?: boolean }) => {
   const {
     currentUser,
     currentBounty,
@@ -26,26 +26,29 @@ export const SubmitRequest = () => {
       program,
       provider
     );
-    currentUser.relations.push(BOUNTY_USER_RELATIONSHIP.CurrentSubmitter);
-    const index = currentUser.relations.indexOf(
+    currentBounty.currentUserRelationsList.push(
+      BOUNTY_USER_RELATIONSHIP.CurrentSubmitter
+    );
+    const index = currentBounty.currentUserRelationsList.indexOf(
       BOUNTY_USER_RELATIONSHIP.ApprovedSubmitter
     );
 
     if (index !== -1) {
-      currentUser.relations.splice(index, 1);
+      currentBounty.currentUserRelationsList.splice(index, 1);
     }
 
-    const index2 = currentUser.relations.indexOf(
+    const index2 = currentBounty.currentUserRelationsList.indexOf(
       BOUNTY_USER_RELATIONSHIP.ChangesRequestedSubmitter
     );
 
     if (index2 !== -1) {
-      currentUser.relations.splice(index2, 1);
+      currentBounty.currentUserRelationsList.splice(index2, 1);
     }
     const { updatedBounty } = await mutateAsync({
       bountyId: currentBounty.id,
+      currentUserId: currentUser.id,
       userId: currentUser.id,
-      relations: currentUser.relations,
+      relations: currentBounty.currentUserRelationsList,
       state: IssueState.AWAITING_REVIEW,
       walletId: currentUser.currentWallet.id,
       escrowId: currentBounty.escrowid,
@@ -57,8 +60,11 @@ export const SubmitRequest = () => {
   };
 
   return (
-    <button className={classNames("button-primary")} onClick={onClick}>
-      Apply
+    <button
+      className={classNames("button-primary", { disabled })}
+      onClick={onClick}
+    >
+      Submit
     </button>
   );
 };

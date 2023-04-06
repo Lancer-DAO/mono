@@ -12,11 +12,14 @@ export const currentUser = protectedProcedure
   .mutation(async ({ input: { session } }) => {
     const { email } = await magic.users.getMetadataByToken(session);
 
-    let user = await prisma.user.findUnique({
+    const user = await prisma.user.findUnique({
       where: {
         email,
       },
-    });
+      include: {
+        wallets: true
+      }
+    })
 
-    return user;
+    return {...user, currentWallet: user.wallets[0]};
   });

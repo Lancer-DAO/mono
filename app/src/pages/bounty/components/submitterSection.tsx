@@ -51,17 +51,17 @@ const SubmitterSection: React.FC<SubmitterSectionProps> = ({
             submitter.relations.push(
               BOUNTY_USER_RELATIONSHIP.RequestedSubmitter
             );
-            const index = currentUser.relations.indexOf(
+            const index = currentBounty.currentUserRelationsList.indexOf(
               BOUNTY_USER_RELATIONSHIP.ApprovedSubmitter
             );
 
             if (index !== -1) {
-              currentUser.relations.splice(index, 1);
+              currentBounty.currentUserRelationsList.splice(index, 1);
             }
             const { updatedBounty } = await mutateAsync({
               bountyId: currentBounty.id,
               userId: submitter.userid,
-              relations: currentUser.relations,
+              relations: currentBounty.currentUserRelationsList,
               walletId: currentUser.currentWallet.id,
               escrowId: currentBounty.escrowid,
               signature,
@@ -71,7 +71,7 @@ const SubmitterSection: React.FC<SubmitterSectionProps> = ({
             setCurrentBounty(updatedBounty);
             setCurrentUser({
               ...currentUser,
-              relations: currentUser.relations,
+              relations: currentBounty.currentUserRelationsList,
             });
           } catch (e) {
             console.error(e);
@@ -91,7 +91,7 @@ const SubmitterSection: React.FC<SubmitterSectionProps> = ({
 
               setCurrentUser({
                 ...currentUser,
-                relations: currentUser.relations,
+                relations: currentBounty.currentUserRelationsList,
               });
             } else {
               const signature = await addSubmitterFFA(
@@ -104,7 +104,7 @@ const SubmitterSection: React.FC<SubmitterSectionProps> = ({
               const { updatedBounty } = await mutateAsync({
                 bountyId: currentBounty.id,
                 userId: currentUser.id,
-                relations: currentUser.relations,
+                relations: currentBounty.currentUserRelationsList,
                 state: IssueState.IN_PROGRESS,
                 walletId: currentUser.currentWallet.id,
                 escrowId: currentBounty.escrowid,
@@ -115,7 +115,7 @@ const SubmitterSection: React.FC<SubmitterSectionProps> = ({
               setCurrentBounty(updatedBounty);
               setCurrentUser({
                 ...currentUser,
-                relations: currentUser.relations,
+                relations: currentBounty.currentUserRelationsList,
               });
             }
           } catch (e) {

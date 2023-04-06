@@ -33,11 +33,14 @@ export const VoteToCancel = () => {
       provider
     );
 
-    currentUser.relations.push(BOUNTY_USER_RELATIONSHIP.VotingCancel);
+    currentBounty.currentUserRelationsList.push(
+      BOUNTY_USER_RELATIONSHIP.VotingCancel
+    );
     const { updatedBounty } = await mutateAsync({
       bountyId: currentBounty.id,
+      currentUserId: currentUser.id,
       userId: currentUser.id,
-      relations: currentUser.relations,
+      relations: currentBounty.currentUserRelationsList,
       state: IssueState.VOTING_TO_CANCEL,
       walletId: currentUser.currentWallet.id,
       escrowId: currentBounty.escrowid,

@@ -116,6 +116,8 @@ model Issue {
   repository   Repository    @relation(fields: [repositoryid], references: [id])
   repositoryid Int
   pullRequests PullRequest[]
+
+  @@unique([number, repositoryid])
 }
 
 model Milestone {
@@ -185,9 +187,9 @@ model PullRequest {
   id Int @id @default(autoincrement())
 
   // Fields
-  title       String  @db.VarChar(256)
+  title       String? @db.VarChar(256)
   number      Decimal @db.Decimal(10, 0)
-  description String  @db.VarChar(2000)
+  description String? @db.VarChar(2000)
   state       String  @db.VarChar(24)
   githubLink  String  @db.VarChar(256)
 
@@ -198,13 +200,16 @@ model PullRequest {
   repositoryid Int
   issue        Issue?     @relation(fields: [issueid], references: [id])
   issueid      Int?
+  users        User[]
+
+  @@unique([repositoryid, number])
 }
 
 model Repository {
   id Int @id @default(autoincrement())
 
   // Fields
-  githubLink   String  @db.VarChar(255)
+  githubLink   String  @unique @db.VarChar(255)
   name         String  @db.VarChar(128)
   organization String  @db.VarChar(128)
   isPrivate    Boolean
@@ -216,6 +221,8 @@ model Repository {
   pullRequests PullRequest[]
   Protocol     Protocol?     @relation(fields: [protocolid], references: [id])
   protocolid   Int?
+
+  @@unique([organization, name])
 }
 
 model Tag {
@@ -272,6 +279,7 @@ model User {
   projects     ProjectUser[]
   protocols    ProtocolUser[]
   tags         Tag[]
+  pullRequests PullRequest[]
 }
 
 model Wallet {

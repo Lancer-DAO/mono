@@ -30,9 +30,12 @@ import {
 
 export const BountyActions = () => {
   const { currentUser, currentBounty } = useLancer();
+
+  const [hoveredButton, setHoveredButton] = useState("none");
   if (false) {
     return <LoadingBar title="Loading On Chain Details" />;
   }
+  console.log(currentBounty, currentUser);
 
   return (
     <div className="bounty-buttons">
@@ -56,7 +59,7 @@ export const BountyActions = () => {
             Submission Request Denied
           </button>
         )}
-        {/* {currentBounty.isApprovedSubmitter &&
+        {currentBounty.isApprovedSubmitter &&
           !currentBounty.currentSubmitter && (
             <div
               className="hover-tooltip-wrapper"
@@ -67,7 +70,9 @@ export const BountyActions = () => {
                 setHoveredButton("none");
               }}
             >
-              <SubmitRequest />
+              <SubmitRequest
+                disabled={currentBounty.pullRequests.length === 0}
+              />
               {hoveredButton === "submit" &&
                 currentBounty.pullRequests.length === 0 && (
                   <div className="hover-tooltip">
@@ -76,7 +81,7 @@ export const BountyActions = () => {
                   </div>
                 )}
             </div>
-          )} */}
+          )}
         {currentBounty.isCurrentSubmitter && !currentBounty.isCreator && (
           <button className={classNames("button-primary disabled")}>
             Submission Pending Review
@@ -88,22 +93,28 @@ export const BountyActions = () => {
           </button>
         )}
         {currentBounty.isChangesRequestedSubmitter && <SubmitRequest />}
-        {currentBounty.isCreator && currentBounty.currentSubmitter && (
-          <ApproveSubmission />
-        )}
-        {currentBounty.isCreator && currentBounty.currentSubmitter && (
-          <RequestChanges />
-        )}
-        {currentBounty.isCreator && currentBounty.currentSubmitter && (
-          <DenySubmission />
-        )}
+        {currentBounty.isCreator &&
+          currentBounty.currentSubmitter &&
+          !currentBounty.completer && <ApproveSubmission />}
+        {currentBounty.isCreator &&
+          currentBounty.currentSubmitter &&
+          !currentBounty.completer && <RequestChanges />}
+        {currentBounty.isCreator &&
+          currentBounty.currentSubmitter &&
+          !currentBounty.completer && <DenySubmission />}
         {(currentBounty.isCreator ||
           currentBounty.isCurrentSubmitter ||
           currentBounty.isDeniedSubmitter ||
           currentBounty.isChangesRequestedSubmitter ||
-          currentBounty.isVotingCancel) && <VoteToCancel />}
+          currentBounty.isVotingCancel) &&
+          !currentBounty.completer && <VoteToCancel />}
         {currentBounty.isCreator && currentBounty.needsToVote.length === 0 && (
           <CancelEscrow />
+        )}
+        {currentBounty.completer && (
+          <button className={classNames("button-primary disabled")}>
+            Complete
+          </button>
         )}
       </>
     </div>

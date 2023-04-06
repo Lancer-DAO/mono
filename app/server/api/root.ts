@@ -2,6 +2,7 @@ import { createTRPCRouter } from "@/server/api/trpc";
 import { users } from "@/server/api/routers/users/index";
 import { bounties } from "@/server/api/routers/bounties/index";
 import { issues } from "@/server/api/routers/issues/index";
+import { pullRequests } from "@/server/api/routers/pullRequests/index";
 
 /**
  * This is the primary router for your server.
@@ -11,7 +12,8 @@ import { issues } from "@/server/api/routers/issues/index";
 export const appRouter = createTRPCRouter({
   users,
   bounties,
-  issues
+  issues,
+  pullRequests
 });
 
 // export type definition of API

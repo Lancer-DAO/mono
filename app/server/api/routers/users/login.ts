@@ -18,10 +18,13 @@ export const login = publicProcedure
       where: {
         email,
       },
+      include: {
+        wallets: true
+      }
     });
 
     if (!user) {
-      user = await prisma.user.create({
+      await prisma.user.create({
         data: {
           email,
           githubId,
@@ -35,5 +38,13 @@ export const login = publicProcedure
         },
       });
     }
+    user = await prisma.user.findUnique({
+      where: {
+        email,
+      },
+      include: {
+        wallets: true
+      }
+    })
     return user;
   });

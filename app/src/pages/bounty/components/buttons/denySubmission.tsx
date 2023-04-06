@@ -41,6 +41,7 @@ export const DenySubmission = () => {
     }
     const { updatedBounty } = await mutateAsync({
       bountyId: currentBounty.id,
+      currentUserId: currentUser.id,
       userId: currentBounty.currentSubmitter.userid,
       relations: currentBounty.currentSubmitter.relations,
       state: IssueState.IN_PROGRESS,
@@ -55,7 +56,7 @@ export const DenySubmission = () => {
 
   return (
     <button className={classNames("button-primary")} onClick={onClick}>
-      Apply
+      Deny
     </button>
   );
 };

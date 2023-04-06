@@ -30,6 +30,7 @@ export const CancelEscrow = () => {
     );
     const { updatedBounty } = await mutateAsync({
       bountyId: currentBounty.id,
+      currentUserId: currentUser.id,
       userId: currentBounty.currentSubmitter.userid,
       relations: currentBounty.currentSubmitter.relations,
       state: IssueState.CANCELED,

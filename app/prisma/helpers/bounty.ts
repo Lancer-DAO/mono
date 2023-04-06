@@ -78,12 +78,9 @@ export const getBounty = async (id: number, currentUserId: number) => {
         pullRequests: true,
     }
 });
-console.log('bounty', bounty)
 const allWallets = bounty.escrow.transactions.map((tx) => tx.wallets.map((wallet) => wallet.walletid))
-console.log('allWallets', allWallets)
 
 const uniqueIds = uniqueNumbers(allWallets)
-console.log('uniqueIds', uniqueIds)
 const wallets = await prisma.wallet.findMany({
   where: {
       id: {
@@ -95,16 +92,13 @@ const wallets = await prisma.wallet.findMany({
     transactions: true
   }
 });
-console.log('wallets', wallets, bounty.users)
 const relations = getBountyRelations(bounty.users, wallets);
-console.log('relations', relations)
-const currentUserRelations = getCurrentUserRelations(currentUserId,relations)
-console.log('currentUserRelations', currentUserRelations)
-
 const currentUserRelationsList: BOUNTY_USER_RELATIONSHIP[] = bounty.users.find((user) => user.userid===currentUserId).relations.replace(/[\[\]]/g, '').split(",") as BOUNTY_USER_RELATIONSHIP[]
-console.log('currentUserRelationsList', currentUserRelationsList)
 
-return {...bounty, wallets: wallets, ...relations, currentUserRelations, currentUserRelationsList};
+const currentUserRelations = getCurrentUserRelations(currentUserRelationsList)
+
+
+return {...bounty, wallets: wallets, ...relations, ...currentUserRelations, currentUserRelationsList};
 }
 
 
@@ -176,17 +170,17 @@ const getBountyRelations = (rawUsers: (Prisma.BountyUser & {
     return newBounty;
 }
 
-const getCurrentUserRelations = (currentUserId: number, bountyUserRelations: BountyUserRelations) => {
+const getCurrentUserRelations = (currentUserRelationsList: BOUNTY_USER_RELATIONSHIP[]) => {
    const currentUserRelations: CurrentUserBountyInclusions = {
-    isCreator: bountyUserRelations.creator.userid === currentUserId,
-    isRequestedSubmitter: bountyUserRelations.requestedSubmitters.map((user) => user.userid).includes(currentUserId),
-    isDeniedRequester: bountyUserRelations.deniedRequesters.map((user) => user.userid).includes(currentUserId),
-    isApprovedSubmitter: bountyUserRelations.approvedSubmitters.map((user) => user.userid).includes(currentUserId),
-    isCurrentSubmitter: bountyUserRelations.currentSubmitter?.userid === currentUserId,
-    isDeniedSubmitter: bountyUserRelations.deniedSubmitters.map((user) => user.userid).includes(currentUserId),
-    isChangesRequestedSubmitter: bountyUserRelations.changesRequestedSubmitters.map((user) => user.userid).includes(currentUserId),
-    isCompleter: bountyUserRelations.completer?.userid === currentUserId,
-    isVotingCancel: bountyUserRelations.votingToCancel.map((user) => user.userid).includes(currentUserId)
+    isCreator: currentUserRelationsList.includes(BOUNTY_USER_RELATIONSHIP.Creator),
+    isRequestedSubmitter: currentUserRelationsList.includes(BOUNTY_USER_RELATIONSHIP.RequestedSubmitter),
+    isDeniedRequester: currentUserRelationsList.includes(BOUNTY_USER_RELATIONSHIP.DeniedRequester),
+    isApprovedSubmitter: currentUserRelationsList.includes(BOUNTY_USER_RELATIONSHIP.ApprovedSubmitter),
+    isCurrentSubmitter: currentUserRelationsList.includes(BOUNTY_USER_RELATIONSHIP.CurrentSubmitter),
+    isDeniedSubmitter: currentUserRelationsList.includes(BOUNTY_USER_RELATIONSHIP.DeniedSubmitter),
+    isChangesRequestedSubmitter: currentUserRelationsList.includes(BOUNTY_USER_RELATIONSHIP.ChangesRequestedSubmitter),
+    isCompleter: currentUserRelationsList.includes(BOUNTY_USER_RELATIONSHIP.Completer),
+    isVotingCancel: currentUserRelationsList.includes(BOUNTY_USER_RELATIONSHIP.VotingCancel)
   }
   return currentUserRelations
 }

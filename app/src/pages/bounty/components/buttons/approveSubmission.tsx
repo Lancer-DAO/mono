@@ -4,6 +4,8 @@ import { BOUNTY_USER_RELATIONSHIP, IssueState } from "@/src/types";
 import { api } from "@/src/utils/api";
 import { PublicKey } from "@solana/web3.js";
 import classNames from "classnames";
+import { getCookie } from "cookies-next";
+import { Octokit } from "octokit";
 
 export const ApproveSubmission = () => {
   const {
@@ -13,7 +15,6 @@ export const ApproveSubmission = () => {
     provider,
     program,
     setCurrentBounty,
-    setCurrentUser,
   } = useLancer();
   const { mutateAsync } = api.bounties.updateBountyUser.useMutation();
   const onClick = async () => {
@@ -25,24 +26,42 @@ export const ApproveSubmission = () => {
       program,
       provider
     );
-    currentUser.relations.push(BOUNTY_USER_RELATIONSHIP.Completer);
+    currentBounty.currentUserRelationsList.push(
+      BOUNTY_USER_RELATIONSHIP.Completer
+    );
     const { updatedBounty } = await mutateAsync({
       bountyId: currentBounty.id,
+      currentUserId: currentUser.id,
       userId: currentUser.id,
-      relations: currentUser.relations,
+      relations: currentBounty.currentUserRelationsList,
       state: IssueState.COMPLETE,
       walletId: currentUser.currentWallet.id,
       escrowId: currentBounty.escrowid,
-      signature,
-      label: "add-approved-submitter",
+      signature: "",
+      label: "complete-bounty",
+    });
+    const authToken = getCookie("githubToken") as string;
+
+    const octokit = new Octokit({
+      auth: authToken,
     });
 
-    setCurrentBounty(updatedBounty);
+    const octokitResponse = await octokit.request(
+      "PUT /repos/{owner}/{repo}/pulls/{pull_number}/merge",
+      {
+        owner: currentBounty.repository.organization,
+        repo: currentBounty.repository.name,
+        pull_number: parseInt(currentBounty.pullRequests[0].number.toString()),
+      }
+    );
+    console.log(octokitResponse);
+
+    // setCurrentBounty(updatedBounty);
   };
 
   return (
     <button className={classNames("button-primary")} onClick={onClick}>
-      Apply
+      Approve
     </button>
   );
 };
