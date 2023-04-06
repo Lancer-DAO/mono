@@ -9,9 +9,7 @@ import {
 } from "@/escrow/sdk/instructions";
 
 import { DEVNET_USDC_MINT } from "@/src/constants";
-import { LancerWallet } from "@/src/providers/lancerProvider";
-import { Escrow, EscrowContract } from "@/src/types";
-import { getCoinflowWallet } from "@/src/utils/coinflowWallet";
+import { Escrow, LancerWallet } from "@/src/types";
 
 
 export const fundFFA = async (baseAmount: number, acc: Escrow, wallet: LancerWallet, program: Program<MonoProgram>, provider: AnchorProvider) => {

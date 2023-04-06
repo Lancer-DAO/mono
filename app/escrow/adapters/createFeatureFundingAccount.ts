@@ -8,37 +8,35 @@ import {
   createFeatureFundingAccountInstruction,
 } from "@/escrow/sdk/instructions";
 import { DEVNET_USDC_MINT } from "@/src/constants";
-import { LancerWallet } from "@/src/providers/lancerProvider";
-import { getCoinflowWallet } from "@/src/utils/coinflowWallet";
-import { createMagicWallet, } from "@/src/utils/magic";
 import { findFeatureAccount } from "@/escrow/sdk/pda";
+import { LancerWallet } from "@/src/types";
 
-export const createFFA = async (coinflowWallet: LancerWallet, program: Program<MonoProgram>, provider: AnchorProvider) => {
+export const createFFA = async (wallet: LancerWallet, program: Program<MonoProgram>, provider: AnchorProvider) => {
   const timestamp = Date.now().toString();
   console.log("timestamp = ", timestamp);
       const ix = await createFeatureFundingAccountInstruction(
         new PublicKey(DEVNET_USDC_MINT),
-        coinflowWallet.publicKey,
+        new PublicKey(wallet.publicKey),
         program,
         timestamp
       );
       const {blockhash, lastValidBlockHeight} = (await provider.connection.getLatestBlockhash());
       const txInfo = {
                 /** The transaction fee payer */
-                feePayer: coinflowWallet.publicKey,
+                feePayer: new PublicKey(wallet.publicKey),
                 /** A recent blockhash */
                 blockhash: blockhash,
                 /** the last block chain can advance to before tx is exportd expired */
                 lastValidBlockHeight: lastValidBlockHeight,
               }
-      const signature = await coinflowWallet.signAndSendTransaction(
+      const signature = await wallet.signAndSendTransaction(
         new Transaction(txInfo).add(ix)
       );
       console.log('creation tx signature: ', signature)
       const [feature_account] = await findFeatureAccount(
         timestamp,
-        coinflowWallet.publicKey,
+        new PublicKey(wallet.publicKey),
         program
     );
-      return { timestamp,signature, creator: coinflowWallet.publicKey, escrowKey: feature_account};
+      return { timestamp,signature, creator: new PublicKey(wallet.publicKey), escrowKey: feature_account};
   };

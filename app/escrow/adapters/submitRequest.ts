@@ -11,20 +11,18 @@ import {  submitRequestInstruction,
 } from "@/escrow/sdk/instructions";
 
 import { DEVNET_USDC_MINT } from "@/src/constants";
-import { LancerWallet } from "@/src/providers/lancerProvider";
-import { EscrowContract } from "@/src/types";
-import { getCoinflowWallet } from "@/src/utils/coinflowWallet";
+import { Escrow } from "@prisma/client";
+import { LancerWallet } from "@/src/types";
 
 
-export const submitRequestFFA = async (creator: PublicKey,submitter: PublicKey, acc: EscrowContract) => {
-  const { coinflowWallet, program, provider } =
-  await getCoinflowWallet();
+export const submitRequestFFA = async (creator: PublicKey,submitter: PublicKey, acc: Escrow, wallet: LancerWallet, program: Program<MonoProgram>, provider: AnchorProvider) => {
+
         const tokenAddress = await getAssociatedTokenAddress(
             new PublicKey(DEVNET_USDC_MINT),
             submitter
           );
       let approveSubmitterIx = await submitRequestInstruction(
-        acc.unixTimestamp,
+        acc.timestamp,
         creator,
         submitter,
         tokenAddress,
@@ -40,8 +38,9 @@ export const submitRequestFFA = async (creator: PublicKey,submitter: PublicKey, 
                 /** the last block chain can advance to before tx is exportd expired */
                 lastValidBlockHeight: lastValidBlockHeight,
               }
-      const tx = await coinflowWallet.signAndSendTransaction(
+      const tx = await wallet.signAndSendTransaction(
         new Transaction(txInfo).add(approveSubmitterIx)
       );
+      return tx;
 
   };

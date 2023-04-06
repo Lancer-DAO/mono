@@ -13,7 +13,8 @@ export const createIssue = protectedProcedure
       organizationName: z.string(),
       repositoryName: z.string(),
       bountyId: z.number(),
-      linkingMethod: z.string()
+      linkingMethod: z.string(),
+      currentUserId: z.number()
     })
   )
   .mutation(async ({
@@ -24,9 +25,10 @@ export const createIssue = protectedProcedure
       repositoryName,
       bountyId,
       linkingMethod,
-      number
+      number,
+      currentUserId
   } }) => {
-      const bounty = await helpers.getBounty(bountyId)
+      const bounty = await helpers.getBounty(bountyId, currentUserId)
       const repository = await helpers.getRepository(repositoryName, organizationName);
         const issue = await helpers.createIssue(title, number, description, linkingMethod, repository, bounty)
       return issue;

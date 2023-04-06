@@ -16,7 +16,7 @@ const Form = () => {
   const [formData, setFormData] = useState({
     fundingAmount: null,
   });
-  const [isAccountCreated, setIsAccountCreated] = useState(false);
+  const [isAccountCreated, setIsAccountCreated] = useState(true);
   const [fundingType, setFundingType] = useState<"card" | "wallet">("card");
   const handleChange = (event) => {
     setFormData({
@@ -35,17 +35,17 @@ const Form = () => {
       getB();
     }
   }, [router.isReady]);
-  useEffect(() => {
-    provider &&
-      currentBounty &&
-      provider.connection.onAccountChange(
-        new PublicKey(currentBounty.escrow.publicKey),
-        (callback) => {
-          console.log(callback);
-          setIsAccountCreated(true);
-        }
-      );
-  }, [currentBounty?.escrow.publicKey, provider]);
+  // useEffect(() => {
+  //   provider &&
+  //     currentBounty &&
+  //     provider.connection.onAccountChange(
+  //       new PublicKey(currentBounty.escrow.publicKey),
+  //       (callback) => {
+  //         console.log(callback);
+  //         setIsAccountCreated(true);
+  //       }
+  //     );
+  // }, [currentBounty?.escrow.publicKey, provider]);
 
   return (
     currentBounty && (

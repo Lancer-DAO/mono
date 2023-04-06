@@ -8,6 +8,7 @@ import { IssueState, LancerWallet } from "@/src/types";
 import { Connection, Transaction } from "@solana/web3.js";
 import Coinflow from "@/src/pages/bounty/components/coinflowPurchase";
 import { api } from "@/src/utils/api";
+import { useRouter } from "next/router";
 
 const FundBounty: React.FC<{ amount: number }> = ({
   amount,
@@ -16,6 +17,7 @@ const FundBounty: React.FC<{ amount: number }> = ({
 }) => {
   const { currentBounty, provider, wallet, program } = useLancer();
   const { mutateAsync: fundB } = api.bounties.fundBounty.useMutation();
+  const router = useRouter();
 
   const [fundTx, setFundTx] = useState<Transaction>(null);
   useEffect(() => {
@@ -39,6 +41,7 @@ const FundBounty: React.FC<{ amount: number }> = ({
       mint: DEVNET_USDC_MINT,
       amount,
     });
+    router.push(`/bounty?id=${currentBounty.id}`);
   };
   return (
     <div className="bounty-fund-with-card">

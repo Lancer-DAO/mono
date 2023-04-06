@@ -6,19 +6,16 @@ import { AnchorProvider, Program } from "@project-serum/anchor";
 import { MonoProgram } from "@/escrow/sdk/types/mono_program";
 import { voteToCancelInstruction,
 } from "@/escrow/sdk/instructions";
-
-import { LancerWallet } from "@/src/providers/lancerProvider";
-import { EscrowContract } from "@/src/types";
-import { getCoinflowWallet } from "@/src/utils/coinflowWallet";
+import { Escrow, LancerWallet } from "@/src/types";
 
 
-export const voteToCancelFFA = async (creator: PublicKey, voter: PublicKey, acc: EscrowContract) => {
-  const { coinflowWallet, program, provider } =
-  await getCoinflowWallet();
+
+export const voteToCancelFFA = async (creator: PublicKey, voter: PublicKey, acc: Escrow, wallet: LancerWallet, program: Program<MonoProgram>, provider: AnchorProvider) => {
+
 
 
       let approveSubmitterIx = await voteToCancelInstruction(
-        acc.unixTimestamp,
+        acc.timestamp,
         creator,
         voter,
         true,
@@ -34,8 +31,8 @@ export const voteToCancelFFA = async (creator: PublicKey, voter: PublicKey, acc:
                 /** the last block chain can advance to before tx is exportd expired */
                 lastValidBlockHeight: lastValidBlockHeight,
               }
-      const tx = await coinflowWallet.signAndSendTransaction(
+      const tx = await wallet.signAndSendTransaction(
         new Transaction(txInfo).add(approveSubmitterIx)
       );  console.log(tx);
-
+return tx;
   };

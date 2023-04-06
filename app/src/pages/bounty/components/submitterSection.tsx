@@ -2,10 +2,17 @@ import { USER_ISSUE_RELATION_ROUTE } from "@/constants";
 import { getApiEndpoint } from "@/src/utils";
 import axios from "axios";
 import { useLancer } from "@/src/providers/lancerProvider";
-import { Contributor, ISSUE_ACCOUNT_RELATIONSHIP } from "@/src/types";
+import {
+  Contributor,
+  BOUNTY_USER_RELATIONSHIP,
+  User,
+  IssueState,
+} from "@/src/types";
 import { addSubmitterFFA, removeSubmitterFFA } from "@/escrow/adapters";
 import { ContributorInfo } from "@/src/components/ContributorInfo";
 import { Check, X } from "react-feather";
+import { PublicKey } from "@solana/web3.js";
+import { api } from "@/src/utils/api";
 
 export type SubmitterSectionType = "approved" | "requested";
 interface SubmitterSectionProps {
@@ -17,42 +24,54 @@ const SubmitterSection: React.FC<SubmitterSectionProps> = ({
   submitter,
   type,
 }: SubmitterSectionProps) => {
-  const { issue, wallet, anchor, program, user, setIssue } = useLancer();
-  if (!user.isCreator) {
-    return (
-      <div className="submitter-section">
-        <ContributorInfo user={submitter} />
-      </div>
-    );
-  }
+  const {
+    currentBounty,
+    wallet,
+    provider,
+    program,
+    currentUser,
+    setIssue,
+    setCurrentBounty,
+    setCurrentUser,
+  } = useLancer();
+  const { mutateAsync } = api.bounties.updateBountyUser.useMutation();
 
   const handleSubmitter = async (cancel?: boolean) => {
     switch (type) {
       case "approved":
         {
           try {
-            await removeSubmitterFFA(
-              issue.creator.publicKey,
-              submitter.publicKey,
-              issue.escrowContract,
+            const signature = await removeSubmitterFFA(
+              new PublicKey(submitter.publicKey),
+              currentBounty.escrow,
               wallet,
-              anchor,
-              program
+              program,
+              provider
             );
             submitter.relations.push(
-              ISSUE_ACCOUNT_RELATIONSHIP.RequestedSubmitter
+              BOUNTY_USER_RELATIONSHIP.RequestedSubmitter
             );
-            const index = user.relations.indexOf(
-              ISSUE_ACCOUNT_RELATIONSHIP.ApprovedSubmitter
+            const index = currentUser.relations.indexOf(
+              BOUNTY_USER_RELATIONSHIP.ApprovedSubmitter
             );
 
             if (index !== -1) {
-              user.relations.splice(index, 1);
+              currentUser.relations.splice(index, 1);
             }
-            axios.put(USER_ISSUE_RELATION_ROUTE, {
-              issueId: issue.uuid,
-              accountId: submitter.uuid,
-              relations: [ISSUE_ACCOUNT_RELATIONSHIP.RequestedSubmitter],
+            const { updatedBounty } = await mutateAsync({
+              bountyId: currentBounty.id,
+              userId: submitter.userid,
+              relations: currentUser.relations,
+              walletId: currentUser.currentWallet.id,
+              escrowId: currentBounty.escrowid,
+              signature,
+              label: "remove-submitter",
+            });
+
+            setCurrentBounty(updatedBounty);
+            setCurrentUser({
+              ...currentUser,
+              relations: currentUser.relations,
             });
           } catch (e) {
             console.error(e);
@@ -63,46 +82,40 @@ const SubmitterSection: React.FC<SubmitterSectionProps> = ({
         {
           try {
             if (cancel) {
-              axios.put(USER_ISSUE_RELATION_ROUTE, {
-                issueId: issue.uuid,
-                accountId: submitter.uuid,
-                relations: [ISSUE_ACCOUNT_RELATIONSHIP.DeniedRequester],
+              const { updatedBounty } = await mutateAsync({
+                bountyId: currentBounty.id,
+                userId: submitter.userid,
+                relations: [BOUNTY_USER_RELATIONSHIP.DeniedRequester],
               });
-              const index = issue.requestedSubmitters.findIndex(
-                (_submitter) => submitter.uuid === _submitter.uuid
-              );
+              setCurrentBounty(updatedBounty);
 
-              if (index !== -1) {
-                issue.requestedSubmitters.splice(index, 1);
-              }
-              setIssue({
-                ...issue,
-                deniedRequesters: [...issue.deniedRequesters, submitter],
+              setCurrentUser({
+                ...currentUser,
+                relations: currentUser.relations,
               });
             } else {
-              await addSubmitterFFA(
-                issue.creator.publicKey,
-                submitter.publicKey,
-                issue.escrowContract,
+              const signature = await addSubmitterFFA(
+                new PublicKey(submitter.publicKey),
+                currentBounty.escrow,
                 wallet,
-                anchor,
-                program
+                program,
+                provider
               );
-              axios.put(USER_ISSUE_RELATION_ROUTE, {
-                issueId: issue.uuid,
-                accountId: submitter.uuid,
-                relations: [ISSUE_ACCOUNT_RELATIONSHIP.ApprovedSubmitter],
+              const { updatedBounty } = await mutateAsync({
+                bountyId: currentBounty.id,
+                userId: currentUser.id,
+                relations: currentUser.relations,
+                state: IssueState.IN_PROGRESS,
+                walletId: currentUser.currentWallet.id,
+                escrowId: currentBounty.escrowid,
+                signature,
+                label: "add-approved-submitter",
               });
-              const index = issue.requestedSubmitters.findIndex(
-                (_submitter) => submitter.uuid === _submitter.uuid
-              );
 
-              if (index !== -1) {
-                issue.requestedSubmitters.splice(index, 1);
-              }
-              setIssue({
-                ...issue,
-                approvedSubmitters: [...issue.approvedSubmitters, submitter],
+              setCurrentBounty(updatedBounty);
+              setCurrentUser({
+                ...currentUser,
+                relations: currentUser.relations,
               });
             }
           } catch (e) {

@@ -14,7 +14,7 @@ import {
   import {
     EscrowContract,
     Issue,
-    ISSUE_ACCOUNT_RELATIONSHIP,
+    BOUNTY_USER_RELATIONSHIP,
     Contributor,
     User,
   } from "@/src/types";
@@ -141,51 +141,51 @@ export const queryIssue = async (id: string) => {
       ...issue,
       allContributors: accounts,
       creator: accounts.find((submitter) =>
-        submitter.relations.includes(ISSUE_ACCOUNT_RELATIONSHIP.Creator)
+        submitter.relations.includes(BOUNTY_USER_RELATIONSHIP.Creator)
       ),
       requestedSubmitters: accounts.filter((submitter) =>
         submitter.relations.includes(
-          ISSUE_ACCOUNT_RELATIONSHIP.RequestedSubmitter
+          BOUNTY_USER_RELATIONSHIP.RequestedSubmitter
         )
       ),
       deniedRequesters: accounts.filter((submitter) =>
-        submitter.relations.includes(ISSUE_ACCOUNT_RELATIONSHIP.DeniedRequester)
+        submitter.relations.includes(BOUNTY_USER_RELATIONSHIP.DeniedRequester)
       ),
       approvedSubmitters: accounts.filter((submitter) =>
         submitter.relations.includes(
-          ISSUE_ACCOUNT_RELATIONSHIP.ApprovedSubmitter
+          BOUNTY_USER_RELATIONSHIP.ApprovedSubmitter
         )
       ),
       currentSubmitter: accounts.find((submitter) =>
         submitter.relations.includes(
-          ISSUE_ACCOUNT_RELATIONSHIP.CurrentSubmitter
+          BOUNTY_USER_RELATIONSHIP.CurrentSubmitter
         )
       ),
       deniedSubmitters: accounts.filter((submitter) =>
-        submitter.relations.includes(ISSUE_ACCOUNT_RELATIONSHIP.DeniedSubmitter)
+        submitter.relations.includes(BOUNTY_USER_RELATIONSHIP.DeniedSubmitter)
       ),
       changesRequestedSubmitters: accounts.filter((submitter) =>
         submitter.relations.includes(
-          ISSUE_ACCOUNT_RELATIONSHIP.ChangesRequestedSubmitter
+          BOUNTY_USER_RELATIONSHIP.ChangesRequestedSubmitter
         )
       ),
       completer: accounts.find((submitter) =>
-        submitter.relations.includes(ISSUE_ACCOUNT_RELATIONSHIP.Completer)
+        submitter.relations.includes(BOUNTY_USER_RELATIONSHIP.Completer)
       ),
       cancelVoters: accounts.filter((submitter) =>
-        submitter.relations.includes(ISSUE_ACCOUNT_RELATIONSHIP.VotingCancel)
+        submitter.relations.includes(BOUNTY_USER_RELATIONSHIP.VotingCancel)
       ),
       needsToVote: accounts.filter(
         (submitter) =>
           !submitter.relations.includes(
-            ISSUE_ACCOUNT_RELATIONSHIP.VotingCancel
+            BOUNTY_USER_RELATIONSHIP.VotingCancel
           ) &&
           submitter.relations.some((relation) =>
             [
-              ISSUE_ACCOUNT_RELATIONSHIP.Creator,
-              ISSUE_ACCOUNT_RELATIONSHIP.CurrentSubmitter,
-              ISSUE_ACCOUNT_RELATIONSHIP.DeniedSubmitter,
-              ISSUE_ACCOUNT_RELATIONSHIP.ChangesRequestedSubmitter,
+              BOUNTY_USER_RELATIONSHIP.Creator,
+              BOUNTY_USER_RELATIONSHIP.CurrentSubmitter,
+              BOUNTY_USER_RELATIONSHIP.DeniedSubmitter,
+              BOUNTY_USER_RELATIONSHIP.ChangesRequestedSubmitter,
             ].includes(relation)
           )
       ),
