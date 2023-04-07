@@ -8,9 +8,10 @@ import { LoadingBar } from "@/src/components/LoadingBar";
 import { PublicKey } from "@solana/web3.js";
 import { useRouter } from "next/router";
 import { api } from "@/src/utils/api";
+import { currentUser } from "@/server/api/routers/users/currentUser";
 
 const Form = () => {
-  const { currentBounty, provider, setCurrentBounty } = useLancer();
+  const { currentBounty, currentUser, setCurrentBounty } = useLancer();
   const { mutateAsync: getBounty } = api.bounties.getBounty.useMutation();
   const router = useRouter();
   const [formData, setFormData] = useState({
@@ -29,6 +30,7 @@ const Form = () => {
       const getB = async () => {
         const bounty = await getBounty({
           id: parseInt(router.query.id as string),
+          currentUserId: currentUser.id,
         });
         setCurrentBounty(bounty);
       };

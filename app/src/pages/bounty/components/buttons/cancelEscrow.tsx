@@ -31,8 +31,8 @@ export const CancelEscrow = () => {
     const { updatedBounty } = await mutateAsync({
       bountyId: currentBounty.id,
       currentUserId: currentUser.id,
-      userId: currentBounty.currentSubmitter.userid,
-      relations: currentBounty.currentSubmitter.relations,
+      userId: currentUser.id,
+      relations: [...currentBounty.currentUserRelationsList, "canceler"],
       state: IssueState.CANCELED,
       walletId: currentUser.currentWallet.id,
       escrowId: currentBounty.escrowid,

@@ -36,6 +36,20 @@ export const BountyActions = () => {
     return <LoadingBar title="Loading On Chain Details" />;
   }
   console.log(currentBounty, currentUser);
+  if (currentBounty.state === IssueState.COMPLETE) {
+    return (
+      <button className={classNames("button-primary disabled")}>
+        Bounty Completed
+      </button>
+    );
+  }
+  if (currentBounty.state === IssueState.CANCELED) {
+    return (
+      <button className={classNames("button-primary disabled")}>
+        Bounty Canceled
+      </button>
+    );
+  }
 
   return (
     <div className="bounty-buttons">

@@ -128,18 +128,9 @@ const Form = () => {
       repositoryName: repo ? repo.full_name.split("/")[1] : "github-app",
       bountyId: bounty.id,
       linkingMethod: creationType,
+      currentUserId: currentUser.id,
     });
     console.log("issue created", issueResp);
-    setCurrentBounty({
-      ...bounty,
-      repository,
-      tags,
-      escrow,
-      creator,
-      issue,
-      contributors: [],
-      transactions,
-    });
     router.push(`/fund?id=${bounty.id}`);
   };
 
