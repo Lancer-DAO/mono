@@ -9,9 +9,10 @@ export const login = publicProcedure
       session: z.string(),
       publicKey: z.string(),
       githubId: z.string(),
+      githubLogin: z.string()
     })
   )
-  .mutation(async ({ input: { session, publicKey, githubId } }) => {
+  .mutation(async ({ input: { session, publicKey, githubId, githubLogin } }) => {
     const { email } = await magic.users.getMetadataByToken(session);
 
     let user = await prisma.user.findUnique({
@@ -28,6 +29,7 @@ export const login = publicProcedure
         data: {
           email,
           githubId,
+          githubLogin,
           wallets: {
             create: {publicKey: publicKey, providers: {
               connect: {

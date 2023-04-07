@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-import { IssueState } from "@/src/types";
+import { BountyState } from "@/src/types";
 import { useLancer } from "@/src/providers/lancerProvider";
 import classnames from "classnames";
 import FundBounty from "./fundBounty";
@@ -26,7 +26,7 @@ const Form = () => {
     });
   };
   useEffect(() => {
-    if (router.isReady) {
+    if (router.isReady && currentUser?.id) {
       const getB = async () => {
         const bounty = await getBounty({
           id: parseInt(router.query.id as string),
@@ -36,7 +36,7 @@ const Form = () => {
       };
       getB();
     }
-  }, [router.isReady]);
+  }, [router.isReady, currentUser?.id]);
   // useEffect(() => {
   //   provider &&
   //     currentBounty &&

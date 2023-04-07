@@ -6,7 +6,7 @@ import {
   Contributor,
   BOUNTY_USER_RELATIONSHIP,
   User,
-  IssueState,
+  BountyState,
 } from "@/src/types";
 import { addSubmitterFFA, removeSubmitterFFA } from "@/escrow/adapters";
 import { ContributorInfo } from "@/src/components/ContributorInfo";
@@ -30,9 +30,7 @@ const SubmitterSection: React.FC<SubmitterSectionProps> = ({
     provider,
     program,
     currentUser,
-    setIssue,
     setCurrentBounty,
-    setCurrentUser,
   } = useLancer();
   const { mutateAsync } = api.bounties.updateBountyUser.useMutation();
 
@@ -61,18 +59,15 @@ const SubmitterSection: React.FC<SubmitterSectionProps> = ({
             const { updatedBounty } = await mutateAsync({
               bountyId: currentBounty.id,
               userId: submitter.userid,
+              currentUserId: currentUser.id,
               relations: currentBounty.currentUserRelationsList,
               walletId: currentUser.currentWallet.id,
               escrowId: currentBounty.escrowid,
-              signature,
+              signature: "test",
               label: "remove-submitter",
             });
 
             setCurrentBounty(updatedBounty);
-            setCurrentUser({
-              ...currentUser,
-              relations: currentBounty.currentUserRelationsList,
-            });
           } catch (e) {
             console.error(e);
           }
@@ -84,15 +79,15 @@ const SubmitterSection: React.FC<SubmitterSectionProps> = ({
             if (cancel) {
               const { updatedBounty } = await mutateAsync({
                 bountyId: currentBounty.id,
+                currentUserId: currentUser.id,
                 userId: submitter.userid,
                 relations: [BOUNTY_USER_RELATIONSHIP.DeniedRequester],
+                walletId: currentUser.currentWallet.id,
+                escrowId: currentBounty.escrowid,
+                signature: "n/a",
+                label: "deny-submitter",
               });
               setCurrentBounty(updatedBounty);
-
-              setCurrentUser({
-                ...currentUser,
-                relations: currentBounty.currentUserRelationsList,
-              });
             } else {
               const signature = await addSubmitterFFA(
                 new PublicKey(submitter.publicKey),
@@ -103,9 +98,10 @@ const SubmitterSection: React.FC<SubmitterSectionProps> = ({
               );
               const { updatedBounty } = await mutateAsync({
                 bountyId: currentBounty.id,
-                userId: currentUser.id,
-                relations: currentBounty.currentUserRelationsList,
-                state: IssueState.IN_PROGRESS,
+                userId: submitter.userid,
+                currentUserId: currentUser.id,
+                relations: [BOUNTY_USER_RELATIONSHIP.ApprovedSubmitter],
+                state: BountyState.IN_PROGRESS,
                 walletId: currentUser.currentWallet.id,
                 escrowId: currentBounty.escrowid,
                 signature,
@@ -113,10 +109,6 @@ const SubmitterSection: React.FC<SubmitterSectionProps> = ({
               });
 
               setCurrentBounty(updatedBounty);
-              setCurrentUser({
-                ...currentUser,
-                relations: currentBounty.currentUserRelationsList,
-              });
             }
           } catch (e) {
             console.error(e);

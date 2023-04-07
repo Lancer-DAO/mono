@@ -27,6 +27,9 @@ export const createPullRequest = publicProcedure
         const user = await prisma.user.findFirstOrThrow({
             where: {
                 githubLogin
+            },
+            include: {
+              bounties: true
             }
         })
         const repository = await prisma.repository.findUniqueOrThrow({
@@ -38,6 +41,7 @@ export const createPullRequest = publicProcedure
 
             }
         })
+
         let pullRequest = await helpers.getPullRequest(repository.id, pullNumber);
         if(!pullRequest) {
             return await helpers.createPullRequest(user, repository, issueNumber, pullNumber)

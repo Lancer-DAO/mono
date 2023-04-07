@@ -13,7 +13,11 @@ import {
   voteToCancelFFA,
 } from "@/escrow/adapters";
 import { useLancer } from "@/src/providers";
-import { Contributor, IssueState, BOUNTY_USER_RELATIONSHIP } from "@/src/types";
+import {
+  Contributor,
+  BountyState,
+  BOUNTY_USER_RELATIONSHIP,
+} from "@/src/types";
 import { getApiEndpoint } from "@/src/utils";
 import axios from "axios";
 import classNames from "classnames";
@@ -36,27 +40,27 @@ export const BountyActions = () => {
     return <LoadingBar title="Loading On Chain Details" />;
   }
   console.log(currentBounty, currentUser);
-  if (currentBounty.state === IssueState.COMPLETE) {
+  if (currentBounty.state === BountyState.COMPLETE) {
     return (
       <button className={classNames("button-primary disabled")}>
         Bounty Completed
       </button>
     );
   }
-  if (currentBounty.state === IssueState.CANCELED) {
+  if (currentBounty.state === BountyState.CANCELED) {
     return (
       <button className={classNames("button-primary disabled")}>
         Bounty Canceled
       </button>
     );
   }
+  if (!currentBounty.currentUserRelationsList) {
+    return <RequestToSubmit />;
+  }
 
   return (
     <div className="bounty-buttons">
       <>
-        {currentBounty.currentUserRelationsList.length === 0 && (
-          <RequestToSubmit />
-        )}
         {currentBounty.isCreator &&
           (currentBounty.isVotingCancel
             ? currentBounty.currentUserRelationsList.length === 2
@@ -119,9 +123,8 @@ export const BountyActions = () => {
         {(currentBounty.isCreator ||
           currentBounty.isCurrentSubmitter ||
           currentBounty.isDeniedSubmitter ||
-          currentBounty.isChangesRequestedSubmitter ||
-          currentBounty.isVotingCancel) &&
-          !currentBounty.completer && <VoteToCancel />}
+          currentBounty.isChangesRequestedSubmitter) &&
+          !currentBounty.isVotingCancel && <VoteToCancel />}
         {currentBounty.isCreator && currentBounty.needsToVote.length === 0 && (
           <CancelEscrow />
         )}

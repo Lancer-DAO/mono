@@ -5,7 +5,7 @@ import {
   submitRequestFFA,
 } from "@/escrow/adapters";
 import { useLancer } from "@/src/providers";
-import { BOUNTY_USER_RELATIONSHIP, IssueState } from "@/src/types";
+import { BOUNTY_USER_RELATIONSHIP, BountyState } from "@/src/types";
 import { api } from "@/src/utils/api";
 import classNames from "classnames";
 
@@ -17,7 +17,6 @@ export const CancelEscrow = () => {
     provider,
     program,
     setCurrentBounty,
-    setCurrentUser,
   } = useLancer();
   const { mutateAsync } = api.bounties.updateBountyUser.useMutation();
   const onClick = async () => {
@@ -33,7 +32,7 @@ export const CancelEscrow = () => {
       currentUserId: currentUser.id,
       userId: currentUser.id,
       relations: [...currentBounty.currentUserRelationsList, "canceler"],
-      state: IssueState.CANCELED,
+      state: BountyState.CANCELED,
       walletId: currentUser.currentWallet.id,
       escrowId: currentBounty.escrowid,
       signature,

@@ -93,12 +93,68 @@ const wallets = await prisma.wallet.findMany({
   }
 });
 const relations = getBountyRelations(bounty.users, wallets);
-const currentUserRelationsList: BOUNTY_USER_RELATIONSHIP[] = bounty.users.find((user) => user.userid===currentUserId).relations.replace(/[\[\]]/g, '').split(",") as BOUNTY_USER_RELATIONSHIP[]
+const currentUserRelationsList: BOUNTY_USER_RELATIONSHIP[] = bounty.users.find((user) => user.userid===currentUserId)?.relations.replace(/[\[\]]/g, '').split(",") as BOUNTY_USER_RELATIONSHIP[]
 
-const currentUserRelations = getCurrentUserRelations(currentUserRelationsList)
+const currentUserRelations = currentUserRelationsList ? getCurrentUserRelations(currentUserRelationsList) : []
 
 
 return {...bounty, wallets: wallets, ...relations, ...currentUserRelations, currentUserRelationsList};
+}
+
+export const getBounties = async (currentUserId: number) => {
+  const bounties = currentUserId? await prisma.bounty.findMany({
+    where: {
+      users: {
+        some: {
+          userid: currentUserId
+        }
+      }
+    },
+    include: {
+        repository: true,
+        escrow: {
+          include: {
+            transactions: {
+              include: {
+                wallets:true
+              }
+            }
+          }
+        },
+        users: {
+          include: {
+            user: true
+          }
+        },
+        issue: true,
+        tags: true,
+        pullRequests: true,
+    }
+}): await prisma.bounty.findMany({
+    include: {
+        repository: true,
+        escrow: {
+          include: {
+            transactions: {
+              include: {
+                wallets:true
+              }
+            }
+          }
+        },
+        users: {
+          include: {
+            user: true
+          }
+        },
+        issue: true,
+        tags: true,
+        pullRequests: true,
+    }
+});
+
+
+return bounties;
 }
 
 
@@ -110,7 +166,7 @@ const getBountyRelations = (rawUsers: (Prisma.BountyUser & {
     return {
       ...user,
       relations: user.relations.replace(/[\[\]]/g, '').split(",") as BOUNTY_USER_RELATIONSHIP[],
-      publicKey: wallets.find((wallet) => wallet.userid === user.userid).publicKey
+      publicKey: wallets.find((wallet) => wallet.userid === user.userid)?.publicKey
     }
   })
   const newBounty: BountyUserRelations = {

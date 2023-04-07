@@ -30,8 +30,8 @@ export interface Bounty extends Omit<Prisma.Bounty, "creator">, BountyUserRelati
   issue: Issue;
   tags: Tag[];
   pullRequests: PullRequest[];
-  wallets: Wallet[]
-  currentUserRelationsList: BOUNTY_USER_RELATIONSHIP[];
+  wallets?: Wallet[]
+  currentUserRelationsList?: BOUNTY_USER_RELATIONSHIP[];
 }
 
 export interface Tag extends Prisma.Tag {
@@ -133,7 +133,7 @@ export interface Issue extends Prisma.Issue  {
     signature?: string;
   };
 
-  export enum IssueState {
+  export enum BountyState {
     NEW = "new",
     FUNDED = "funded",
     ACCEPTING_APPLICATIONS = "accepting_applications",

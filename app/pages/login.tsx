@@ -8,6 +8,7 @@ import { useLancer } from "@/src/providers";
 import { api } from "@/src/utils/api";
 import { PageLayout } from "@/src/layouts";
 import { LancerProvider } from "@/src/providers";
+import { Octokit } from "octokit";
 
 const Login = () => {
   const { setCurrentUser, setLoginState } = useLancer();
@@ -20,7 +21,7 @@ const Login = () => {
 
   const { mutateAsync } = api.users.login.useMutation();
 
-  const login = async () => {
+  const handleLogin = async () => {
     setLoginState("logging_in");
     const magicResult = await magic?.oauth.getRedirectResult();
     const {
@@ -31,7 +32,17 @@ const Login = () => {
       oauth: { userHandle: githubId, accessToken },
     } = magicResult;
 
-    const currentUser = await mutateAsync({ session, publicKey, githubId });
+    const octokit = new Octokit({
+      auth: accessToken,
+    });
+    const octokitResponse = await octokit.request("GET /user", {});
+
+    const currentUser = await mutateAsync({
+      session,
+      publicKey,
+      githubId,
+      githubLogin: octokitResponse.data.login,
+    });
     setCookie("session", session);
     setCookie("githubToken", accessToken);
     setCurrentUser({
@@ -45,7 +56,7 @@ const Login = () => {
 
   useEffect(() => {
     if (router.isReady) {
-      if (provider) login();
+      if (provider) handleLogin();
     }
   }, [router.isReady]);
 

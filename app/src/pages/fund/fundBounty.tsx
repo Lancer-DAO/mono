@@ -4,7 +4,7 @@ import { fundFFA } from "@/escrow/adapters";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { useLancer } from "@/src/providers/lancerProvider";
-import { IssueState, LancerWallet } from "@/src/types";
+import { BountyState, LancerWallet } from "@/src/types";
 import { Connection, Transaction } from "@solana/web3.js";
 import Coinflow from "@/src/pages/bounty/components/coinflowPurchase";
 import { api } from "@/src/utils/api";

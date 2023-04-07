@@ -2,7 +2,9 @@ import { prisma } from "@/server/db";
 import * as Prisma from "@prisma/client";
 
 export const createPullRequest = async (
-    user: Prisma.User,
+    user: Prisma.User & {
+        bounties: Prisma.BountyUser[];
+    },
     repository: Prisma.Repository,
     issueNumber: number,
     pullNumber: number,
@@ -42,7 +44,32 @@ export const createPullRequest = async (
                     }
                 }
             }
-        })
+        });
+        const existingRelation = user.bounties.find((bounty) => bounty.bountyid === issue.bountyid)
+        if(existingRelation) {
+            const relationsListOld = existingRelation.relations.replace(/[\[\]]/g, '').split(",");
+            const relations = [...relationsListOld, "pull-submitter"];
+            const bountyUser = await prisma.bountyUser.update({
+                where: {
+                    userid_bountyid: {
+                        userid: user.id,
+                        bountyid: issue.bountyid
+                    }
+                },
+                data: {
+                    relations: relations.join(",").replace(/[\[\]]/g, '')
+                },
+            })
+        } else {
+            const bountyUser = await prisma.bountyUser.create({
+                data: {
+                        userid: user.id,
+                        bountyid: issue.bountyid,
+                        relations: "pull-submitter"
+                }
+            })
+        }
+
         return pullRequest;
 };
 

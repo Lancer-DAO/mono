@@ -1,5 +1,5 @@
 import { getSolscanAddress } from "@/src/utils";
-import { IssueState } from "@/types";
+import { BountyState } from "@/types";
 import { marked } from "marked";
 import { ReactNode, useEffect, useState } from "react";
 import { useLancer } from "@/src/providers/lancerProvider";
@@ -184,19 +184,15 @@ const Bounty: React.FC = () => {
                   <ContributorInfo user={currentBounty.creator} />
                 </div>
               )}
-              {currentUser.isCreator &&
-                currentBounty.deniedRequesters.length > 0 && (
-                  <div>
-                    <label className="field-label-5">Denied Requesters</label>
-                    {currentBounty.deniedRequesters.map((submitter) => (
-                      <ContributorInfo
-                        user={submitter}
-                        key={submitter.userid}
-                      />
-                    ))}
-                  </div>
-                )}
-              {currentUser.isCreator &&
+              {currentBounty && currentBounty.deniedRequesters.length > 0 && (
+                <div>
+                  <label className="field-label-5">Denied Requesters</label>
+                  {currentBounty.deniedRequesters.map((submitter) => (
+                    <ContributorInfo user={submitter} key={submitter.userid} />
+                  ))}
+                </div>
+              )}
+              {currentBounty &&
                 currentBounty.requestedSubmitters.length > 0 && (
                   <div>
                     <label className="field-label-5">
@@ -212,26 +208,25 @@ const Bounty: React.FC = () => {
                   </div>
                 )}
 
-              {currentUser.isCreator &&
-                currentBounty.approvedSubmitters.length > 0 && (
-                  <div>
-                    <label className="field-label-5">Approved Applicants</label>
-                    {currentBounty.approvedSubmitters.map((submitter) => (
-                      <SubmitterSection
-                        submitter={submitter}
-                        type="approved"
-                        key={`approved-submitters-${submitter.userid}`}
-                      />
-                    ))}
-                  </div>
-                )}
-              {currentBounty.state === IssueState.AWAITING_REVIEW && (
+              {currentBounty && currentBounty.approvedSubmitters.length > 0 && (
+                <div>
+                  <label className="field-label-5">Approved Applicants</label>
+                  {currentBounty.approvedSubmitters.map((submitter) => (
+                    <SubmitterSection
+                      submitter={submitter}
+                      type="approved"
+                      key={`approved-submitters-${submitter.userid}`}
+                    />
+                  ))}
+                </div>
+              )}
+              {currentBounty.state === BountyState.AWAITING_REVIEW && (
                 <div>
                   <label className="field-label-10">Submissions</label>
                   <ContributorInfo user={currentBounty.currentSubmitter} />
                 </div>
               )}
-              {currentUser.isCreator &&
+              {currentBounty.isCreator &&
                 currentBounty.changesRequestedSubmitters.length > 0 && (
                   <div>
                     <label className="field-label-5">Changes Requested</label>
@@ -245,7 +240,7 @@ const Bounty: React.FC = () => {
                     )}
                   </div>
                 )}
-              {currentUser.isCreator &&
+              {currentBounty.isCreator &&
                 currentBounty.deniedSubmitters.length > 0 && (
                   <div>
                     <label className="field-label-5">Denied Submitters</label>
@@ -263,7 +258,7 @@ const Bounty: React.FC = () => {
                   <ContributorInfo user={currentBounty.completer} />
                 </div>
               )}
-              {currentUser.isCreator &&
+              {currentBounty.isCreator &&
                 currentBounty.votingToCancel.length > 0 && (
                   <div>
                     <label className="field-label-5">Voting To Cancel</label>
@@ -275,7 +270,7 @@ const Bounty: React.FC = () => {
                     ))}
                   </div>
                 )}
-              {currentUser.isCreator &&
+              {currentBounty.isCreator &&
                 currentBounty.needsToVote.length > 0 && (
                   <div>
                     <label className="field-label-5">

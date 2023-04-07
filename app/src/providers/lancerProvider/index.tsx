@@ -34,7 +34,7 @@ import RPC from "../solanaRPC";
 import MonoProgramJSON from "@/escrow/sdk/idl/mono_program.json";
 import {
   Issue,
-  IssueState,
+  BountyState,
   Contributor,
   User,
   CurrentUser,

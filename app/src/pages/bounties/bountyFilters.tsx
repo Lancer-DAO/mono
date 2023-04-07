@@ -1,6 +1,6 @@
 import MultiSelectDropdown from "@/src/components/MultiSelectDropdown";
 import RangeSlider from "@/src/components/RangeSlider";
-import { ISSUE_STATES } from "@/src/constants";
+import { BOUNTY_STATES } from "@/src/constants";
 import { capitalize } from "lodash";
 import { Filters } from "./bountyTable";
 
@@ -98,7 +98,7 @@ export const BountyFilters = ({
       <div className="filter-section">
         <label>States</label>
         <MultiSelectDropdown
-          options={ISSUE_STATES.map((state) => {
+          options={BOUNTY_STATES.map((state) => {
             return {
               value: state,
               label: state

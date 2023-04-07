@@ -1,6 +1,6 @@
 import { addSubmitterFFA, approveRequestFFA } from "@/escrow/adapters";
 import { useLancer } from "@/src/providers";
-import { BOUNTY_USER_RELATIONSHIP, IssueState } from "@/src/types";
+import { BOUNTY_USER_RELATIONSHIP, BountyState } from "@/src/types";
 import { api } from "@/src/utils/api";
 import { PublicKey } from "@solana/web3.js";
 import classNames from "classnames";
@@ -34,10 +34,10 @@ export const ApproveSubmission = () => {
       currentUserId: currentUser.id,
       userId: currentUser.id,
       relations: currentBounty.currentUserRelationsList,
-      state: IssueState.COMPLETE,
+      state: BountyState.COMPLETE,
       walletId: currentUser.currentWallet.id,
       escrowId: currentBounty.escrowid,
-      signature: "",
+      signature,
       label: "complete-bounty",
     });
     const authToken = getCookie("githubToken") as string;
@@ -56,7 +56,7 @@ export const ApproveSubmission = () => {
     );
     console.log(octokitResponse);
 
-    // setCurrentBounty(updatedBounty);
+    setCurrentBounty(updatedBounty);
   };
 
   return (

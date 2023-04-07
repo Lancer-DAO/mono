@@ -13,10 +13,11 @@ import Coinflow from "./coinflowOfframp";
 import { PageLayout } from "@/src/layouts";
 
 const FundBounty: React.FC = () => {
-  const { wallet, anchor, user, logout } = useLancer();
-  const [userSOLBalance, setUserSOLBalance] = useState("0.0");
-  const [userUSDCBalance, setUserUSDCBalance] = useState("0.0");
+  const { wallet, provider, currentUser } = useLancer();
+  const [currentUserSOLBalance, setUserSOLBalance] = useState("0.0");
+  const [currentUserUSDCBalance, setUserUSDCBalance] = useState("0.0");
   const [aidropSignature, setAirdropSignature] = useState("");
+  console.log(provider, currentUser);
 
   useEffect(() => {
     const getWalletUSDCBalance = async () => {
@@ -24,10 +25,10 @@ const FundBounty: React.FC = () => {
         const mintKey = new PublicKey(DEVNET_USDC_MINT);
         const token_account = await getAssociatedTokenAddress(
           mintKey,
-          user.publicKey
+          new PublicKey(currentUser.currentWallet.publicKey)
         );
-        const account = await getAccount(anchor.connection, token_account);
-        const mint = await getMint(anchor.connection, mintKey);
+        const account = await getAccount(provider.connection, token_account);
+        const mint = await getMint(provider.connection, mintKey);
         const decimals = Math.pow(10, mint.decimals);
         console.log(account.amount);
         const balance = account.amount / BigInt(decimals);
@@ -38,25 +39,27 @@ const FundBounty: React.FC = () => {
       }
     };
 
-    if (user?.publicKey && anchor?.connection) {
+    if (currentUser?.currentWallet?.publicKey && provider?.connection) {
       getWalletUSDCBalance();
     }
-  }, [user?.publicKey, anchor]);
+  }, [currentUser?.currentWallet?.publicKey, provider]);
 
   useEffect(() => {
     const getWalletSOLBalance = async () => {
-      const totalBalance = await anchor.connection.getBalance(user.publicKey);
+      const totalBalance = await provider.connection.getBalance(
+        new PublicKey(currentUser.currentWallet.publicKey)
+      );
       const balance = totalBalance / 1000000000;
       setUserSOLBalance(balance.toString());
     };
-    if (user?.publicKey && anchor?.connection) {
+    if (currentUser?.currentWallet?.publicKey && provider?.connection) {
       getWalletSOLBalance();
     }
-  }, [user?.publicKey, anchor]);
+  }, [currentUser?.currentWallet?.publicKey, provider]);
 
   const requestAirdrop = async () => {
     console.log("requesting airdrop");
-    const airdrop = await anchor.connection.requestAirdrop(
+    const airdrop = await provider.connection.requestAirdrop(
       wallet.publicKey,
       1000000000
     );
@@ -64,13 +67,20 @@ const FundBounty: React.FC = () => {
     setAirdropSignature(airdrop);
   };
   return (
-    user &&
-    anchor && (
+    currentUser &&
+    provider && (
       <PageLayout>
         <div className="account-page-wrapper">
-          {user?.githubLogin && <div>GitHub User: {user.githubLogin}</div>}
-          <PubKey pubKey={user.publicKey} full />
-          <div className="User Balance">User SOL Balance: {userSOLBalance}</div>
+          {currentUser?.githubLogin && (
+            <div>GitHub User: {currentUser.githubLogin}</div>
+          )}
+          <PubKey
+            pubKey={new PublicKey(currentUser.currentWallet.publicKey)}
+            full
+          />
+          <div className="User Balance">
+            User SOL Balance: {currentUserSOLBalance}
+          </div>
           <button className="button-primary" onClick={() => requestAirdrop()}>
             Request SOL Airdrop
           </button>
@@ -84,7 +94,7 @@ const FundBounty: React.FC = () => {
             </a>
           )}
           <div className="User Balance">
-            User USDC Balance: {userUSDCBalance}
+            User USDC Balance: {currentUserUSDCBalance}
           </div>
           <a
             href="https://staging.coinflow.cash/faucet"
@@ -94,9 +104,6 @@ const FundBounty: React.FC = () => {
             USDC Faucet
           </a>
           <Coinflow />
-          <button className="button-primary" onClick={() => logout()}>
-            Logout
-          </button>
         </div>
       </PageLayout>
     )

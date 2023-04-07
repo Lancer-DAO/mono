@@ -1,6 +1,6 @@
 import { addSubmitterFFA } from "@/escrow/adapters";
 import { useLancer } from "@/src/providers";
-import { BOUNTY_USER_RELATIONSHIP, IssueState } from "@/src/types";
+import { BOUNTY_USER_RELATIONSHIP, BountyState } from "@/src/types";
 import { api } from "@/src/utils/api";
 import { PublicKey } from "@solana/web3.js";
 import classNames from "classnames";
@@ -13,7 +13,6 @@ export const RequestToSubmit = () => {
     provider,
     program,
     setCurrentBounty,
-    setCurrentUser,
   } = useLancer();
   const { mutateAsync } = api.bounties.updateBountyUser.useMutation();
   const onClick = async () => {
@@ -34,10 +33,10 @@ export const RequestToSubmit = () => {
         currentUserId: currentUser.id,
         userId: currentUser.id,
         relations: currentBounty.currentUserRelationsList,
-        state: IssueState.IN_PROGRESS,
+        state: BountyState.IN_PROGRESS,
         walletId: currentUser.currentWallet.id,
         escrowId: currentBounty.escrowid,
-        signature: "test",
+        signature,
         label: "add-approved-submitter",
       });
 
@@ -49,6 +48,10 @@ export const RequestToSubmit = () => {
         bountyId: currentBounty.id,
         userId: currentUser.id,
         relations: [BOUNTY_USER_RELATIONSHIP.RequestedSubmitter],
+        walletId: currentUser.currentWallet.id,
+        escrowId: currentBounty.escrowid,
+        label: "request-to-submit",
+        signature: "n/a",
       });
 
       setCurrentBounty(updatedBounty);

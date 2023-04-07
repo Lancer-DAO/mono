@@ -13,7 +13,7 @@ export const updateBountyUser = protectedProcedure
       walletId: z.number(),
       escrowId: z.number(),
       relations: z.array(z.string()),
-      state: z.string(),
+      state: z.optional(z.string()),
       label: z.string(),
       signature: z.string(),
     })
