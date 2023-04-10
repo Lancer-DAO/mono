@@ -34,7 +34,7 @@ const createMagic = (key: string) => {
 };
 
 console.log(process.env.NEXT_PUBLIC_MAGIC_PUBLIC_KEY);
-export const magic = createMagic(process.env.NEXT_PUBLIC_MAGIC_PUBLIC_KEY);
+export const magic = createMagic("pk_live_736C8D5728FF026E");
 
 export const createMagicWallet = async () => {
   // debugger;
