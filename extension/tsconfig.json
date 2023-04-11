@@ -24,7 +24,7 @@
           "../*"
         ],
         "@/constants": [
-          "../src/constants/index.ts"
+          "../app/src/constants/index.ts"
         ],
         "@/styles": [
           "../src/styles"
@@ -33,7 +33,7 @@
           "../server"
         ],
         "@/types": [
-          "../src/types/index.ts"
+          "../app/src/types/index.ts"
         ],
         "@/utils": [
           "../src/utils/index.ts"
@@ -52,4 +52,3 @@
       "node_modules"
     ]
   }
-  

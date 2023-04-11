@@ -3,10 +3,9 @@ import { PullRequest } from "../components/pullRequest";
 
 import axios, { AxiosResponse } from "axios";
 import {
-  DATA_API_ROUTE,
   NEW_PULL_REQUEST_API_ROUTE,
   FULL_PULL_REQUEST_API_ROUTE,
-} from "@/server/src/constants";
+} from "@/constants";
 import { getApiEndpointExtension } from "../utils";
 import { Issue } from "../types";
 const AUTHOR_SELECTOR = ".author.text-bold.Link--secondary";
@@ -41,15 +40,17 @@ const insertPR = (response) => {
 };
 
 const maybeGetPR = (splitURL, issueNumber, author) =>
-  axios.get(
-    `${getApiEndpointExtension()}${DATA_API_ROUTE}/${FULL_PULL_REQUEST_API_ROUTE}`,
+  axios.post(
+    `http://localhost:3000/api/trpc/pullRequests.createPullRequest?batch=1`,
     {
-      params: {
-        org: splitURL[3],
-        repo: splitURL[4],
-        pullNumber: splitURL[6],
-        issueNumber: issueNumber,
-        githubLogin: author,
+      0: {
+        json: {
+          organizationName: splitURL[3],
+          repositoryName: splitURL[4],
+          pullNumber: parseInt(splitURL[6]),
+          issueNumber: parseInt(issueNumber),
+          githubLogin: author,
+        },
       },
     }
   );
@@ -73,7 +74,7 @@ export const insertPullRequest = (splitURL: string[]) => {
         if (response.data.message === "NOT FOUND") {
           axios
             .post(
-              `${getApiEndpointExtension()}${DATA_API_ROUTE}/${NEW_PULL_REQUEST_API_ROUTE}`,
+              `${getApiEndpointExtension()}/${NEW_PULL_REQUEST_API_ROUTE}`,
               {
                 org: splitURL[3],
                 repo: splitURL[4],
