@@ -4,7 +4,9 @@ const nextConfig = {
   reactStrictMode: true,
   images: {
     unoptimized: true,
-  },
+  },optimization: {
+    minimize: false
+},
   webpack: (config) => {
     config.watchOptions = {
       poll: 1000,

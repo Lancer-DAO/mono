@@ -63,7 +63,7 @@ const Login = () => {
   const github = async () => {
     await magic?.oauth.loginWithRedirect({
       provider: "github",
-      redirectURI: `https://app-kbmqmgviw-lancer-so.vercel.app/login?referrer=${referrer}`,
+      redirectURI: `http://localhost:8080/login`,
       scope: ["user, repo"],
     });
   };
