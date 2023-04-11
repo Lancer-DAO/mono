@@ -1,4 +1,3 @@
-import { Magic } from "magic-sdk";
 import { OAuthExtension } from "@magic-ext/oauth";
 import Head from "next/head";
 import { useEffect, useMemo, useState } from "react";
