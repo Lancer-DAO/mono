@@ -6,24 +6,24 @@ import { AnchorProvider, Program} from "@project-serum/anchor";
 import { MonoProgram } from "@/escrow/sdk/types/mono_program";
 import {  removeApprovedSubmittersInstruction,
 } from "@/escrow/sdk/instructions";
+import { Escrow } from "@prisma/client";
+import { LancerWallet } from "@/src/types";
 
-import { LancerWallet } from "@/src/providers/lancerProvider";
-import { EscrowContract } from "@/src/types";
 
 
-export const removeSubmitterFFA = async (creator: PublicKey, submitter: PublicKey, acc: EscrowContract, wallet: LancerWallet, anchor: AnchorProvider, program: Program<MonoProgram>) => {
+export const removeSubmitterFFA = async (submitter: PublicKey, acc: Escrow, wallet: LancerWallet, program: Program<MonoProgram>, provider: AnchorProvider) => {
 
       let approveSubmitterIx = await removeApprovedSubmittersInstruction(
-        acc.unixTimestamp,
-        creator,
+        acc.timestamp,
+        new PublicKey(wallet.publicKey),
         submitter,
         program
       )
 
-      const {blockhash, lastValidBlockHeight} = (await anchor.connection.getLatestBlockhash());
+      const {blockhash, lastValidBlockHeight} = (await provider.connection.getLatestBlockhash());
       const txInfo = {
                 /** The transaction fee payer */
-                feePayer: creator,
+                feePayer: new PublicKey(wallet.publicKey),
                 /** A recent blockhash */
                 blockhash: blockhash,
                 /** the last block chain can advance to before tx is exportd expired */
@@ -32,5 +32,5 @@ export const removeSubmitterFFA = async (creator: PublicKey, submitter: PublicKe
       const tx = await wallet.signAndSendTransaction(
         new Transaction(txInfo).add(approveSubmitterIx)
       );
-
+        return tx;
   };

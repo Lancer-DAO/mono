@@ -15,16 +15,23 @@ import { useLancer } from "@/src/providers/lancerProvider";
 import classnames from "classnames";
 import { useLocation } from "react-router-dom";
 import { LoadingBar } from "@/src/components/LoadingBar";
+import { AnchorProvider, Program } from "@project-serum/anchor";
+import { MonoProgram } from "@/escrow/sdk/types/mono_program";
+import { getCoinflowWallet } from "@/src/utils/coinflowWallet";
+import { api } from "@/src/utils/api";
+import { getCookie } from "cookies-next";
+import { magic } from "@/src/utils/magic-admin";
+import { MagicUserMetadata } from "magic-sdk";
+import { Octokit } from "octokit";
+import { getEscrowContractKey } from "@/src/providers/lancerProvider/queries";
+import { useRouter } from "next/router";
 
 const Form = () => {
-  const { user, program, anchor, wallet, setUser } = useLancer();
-
-  const search = useLocation().search;
-
-  const params = new URLSearchParams(search);
-  const jwt = params.get("token");
+  const { wallet, program, provider, currentUser, setCurrentBounty } =
+    useLancer();
+  const { mutateAsync } = api.bounties.createBounty.useMutation();
+  const { mutateAsync: createIssue } = api.issues.createIssue.useMutation();
   const [creationType, setCreationType] = useState<"new" | "existing">("new");
-  const [issues, setIssues] = useState<any[]>();
   const [repo, setRepo] = useState<any>();
   const [issue, setIssue] = useState<any>();
   const [formData, setFormData] = useState({
@@ -38,6 +45,10 @@ const Form = () => {
   });
   const [isOpenRepo, setIsOpenRepo] = useState(false);
   const [isOpenIssue, setIsOpenIssue] = useState(false);
+  const [repos, setRepos] = useState(null);
+  const [issues, setIssues] = useState(null);
+  const [octokit, setOctokit] = useState(null);
+  const router = useRouter();
 
   const [isPreview, setIsPreview] = useState(false);
   const [isSubmittingIssue, setIsSubmittingIssue] = useState(false);
@@ -47,34 +58,92 @@ const Form = () => {
   const togglePreview = () => setIsPreview(!isPreview);
 
   useEffect(() => {
-    if (user?.githubId) {
-      axios.get(`${USER_REPOSITORIES_ROUTE}/${user.githubId}`).then((resp) => {
-        console.log(resp);
-        setUser({
-          ...user,
-          repos: resp.data.data,
-        });
-      });
-    }
-  }, [user?.githubId]);
+    const getRepos = async () => {
+      const authToken = getCookie("githubToken") as string;
 
-  useEffect(() => {
-    if (user?.githubId && repo) {
-      // once we choose a repo, get all the issues for that repo
-      // that are not linked to a lancer bounty. The user can choose
-      // to link a bounty to one of these issues
-      axios
-        .post(USER_REPOSITORY_NO_BOUNTIES_ROUTE, {
-          github_id: user.githubId,
-          org: repo.full_name.split("/")[0],
+      const octokit = new Octokit({
+        auth: authToken,
+      });
+
+      const octokitResponse = await octokit.request("GET /user/repos", {});
+      setRepos(octokitResponse.data);
+      setOctokit(octokit);
+    };
+    getRepos();
+  }, []);
+
+  const createBounty = async (e) => {
+    e.preventDefault();
+    setIsSubmittingIssue(true);
+    const session = getCookie("session") as string;
+    const { timestamp, signature, escrowKey } = await createFFA(
+      wallet,
+      program,
+      provider
+    );
+
+    console.log("created ", signature, escrowKey);
+    const { bounty, tags, escrow, repository, creator, transactions } =
+      await mutateAsync({
+        email: currentUser.email,
+        description: formData.issueDescription,
+        estimatedTime: parseFloat(formData.estimatedTime),
+        isPrivate: formData.isPrivate || repo ? repo.private : false,
+        isPrivateRepo: formData.isPrivate || repo ? repo.private : false,
+        title: formData.issueTitle,
+        tags: formData.requirements,
+        organizationName: repo.full_name.split("/")[0],
+        repositoryName: repo.full_name.split("/")[1],
+        publicKey: wallet.publicKey.toString(),
+        escrowKey: escrowKey.toString(),
+        transactionSignature: signature,
+        provider: "Magic Link",
+        timestamp: timestamp,
+        chainName: "Solana",
+        network: "devnet",
+      });
+    console.log("bounty created");
+    let issueNumber;
+    if (creationType === "new") {
+      const octokitData = await octokit.request(
+        "POST /repos/{owner}/{repo}/issues",
+        {
+          owner: repo.full_name.split("/")[0],
           repo: repo.full_name.split("/")[1],
-        })
-        .then((resp) => {
-          console.log(resp);
-          setIssues(resp.data.data);
-        });
+          title: formData.issueTitle,
+          body: formData.issueDescription,
+        }
+      );
+      issueNumber = octokitData.data.number;
+    } else {
+      issueNumber = issue.number;
     }
-  }, [repo]);
+
+    const issueResp = await createIssue({
+      number: issueNumber,
+      description: formData.issueDescription,
+      title: formData.issueTitle,
+
+      organizationName: repo ? repo.full_name.split("/")[0] : "Lancer-DAO",
+      repositoryName: repo ? repo.full_name.split("/")[1] : "github-app",
+      bountyId: bounty.id,
+      linkingMethod: creationType,
+      currentUserId: currentUser.id,
+    });
+    console.log("issue created", issueResp);
+    router.push(`/fund?id=${bounty.id}`);
+  };
+
+  const getRepoIssues = async (_repo) => {
+    const octokitResponse = await octokit.request(
+      "GET /repos/{owner}/{repo}/issues",
+      {
+        owner: _repo.owner.login,
+        repo: _repo.name,
+      }
+    );
+    setIssues(octokitResponse.data);
+  };
 
   const handleChange = (event) => {
     setFormData({
@@ -84,8 +153,9 @@ const Form = () => {
   };
 
   const handleChangeRepo = (repoFullName: string) => {
-    const repo = user.repos.find((_repo) => _repo.full_name === repoFullName);
+    const repo = repos.find((_repo) => _repo.full_name === repoFullName);
     setRepo(repo);
+    getRepoIssues(repo);
   };
 
   const handleChangeIssue = (issueNumber: number) => {
@@ -120,73 +190,9 @@ const Form = () => {
     return { __html: markdown };
   };
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    setIsSubmittingIssue(true);
-    // Create a new github issue
-    const createIssueNew = async () => {
-      return axios.post(NEW_GITHUB_ISSUE_API_ROUTE, {
-        createNewIssue: true,
-        githubId: user.githubId,
-        githubLogin: user.githubLogin,
-        solanaKey: user.publicKey.toString(),
-        org: repo ? repo.full_name.split("/")[0] : "Lancer-DAO",
-        repo: repo ? repo.full_name.split("/")[1] : "github-app",
-        title: formData.issueTitle,
-        description: formData.issueDescription,
-        tags: formData.requirements,
-        private: formData.isPrivate || repo ? repo.private : false,
-        estimatedTime: formData.estimatedTime,
-      });
-    };
-
-    // link an existing github issue
-    const createIssueExisting = async () => {
-      return axios.post(LINK_GITHUB_ISSUE_API_ROUTE, {
-        createNewIssue: false,
-        githubId: user.githubId,
-        githubLogin: user.githubLogin,
-        solanaKey: user.publicKey.toString(),
-        org: repo ? repo.full_name.split("/")[0] : "Lancer-DAO",
-        repo: repo ? repo.full_name.split("/")[1] : "github-app",
-        title: issue.title,
-        description: issue.body,
-        tags: formData.requirements,
-        private: repo.private,
-        estimatedTime: formData.estimatedTime,
-        issueNumber: issue.number,
-      });
-    };
-
-    // create and link an escrow contract to the issue
-    const createAndFundEscrow = async (issue: {
-      number: number;
-      uuid: string;
-    }) => {
-      console.log("submit");
-      const creator = user.publicKey;
-      const timestamp = await createFFA(creator, wallet, anchor, program);
-      await axios.put(UPDATE_ISSUE_ROUTE, {
-        uuid: issue.uuid,
-        issueNumber: issue.number,
-        timestamp: timestamp,
-      });
-      window.location.replace(`/fund?id=${issue.uuid}&token=${jwt}`);
-    };
-    if (creationType === "new") {
-      const issueResponse = await createIssueNew();
-      console.log("issueres", issueResponse);
-      await createAndFundEscrow(issueResponse.data.issue);
-    } else {
-      const issueResponse = await createIssueExisting();
-      console.log("issueres", issueResponse);
-      await createAndFundEscrow(issueResponse.data.issue);
-    }
-  };
-
   return (
     <div className="form-container">
-      <form className="form" onSubmit={handleSubmit}>
+      <form className="form" onSubmit={(e) => createBounty(e)}>
         <>
           <div id="job-information" className="form-layout-flex">
             <h2
@@ -203,7 +209,7 @@ const Form = () => {
               id="w-node-_11ff66e2-bb63-3205-39c9-a48a569518d9-0ae9cdc2"
               className="input-container-full-width"
             >
-              {!user?.repos ? (
+              {!repos ? (
                 <LoadingBar title="Loading Repositories" />
               ) : (
                 <div
@@ -225,12 +231,12 @@ const Form = () => {
                       )}
                     </div>
                   </main>
-                  {isOpenRepo && user?.repos && (
+                  {isOpenRepo && repos && (
                     <div
                       className="w-dropdown-list"
                       onMouseLeave={() => setIsOpenRepo(false)}
                     >
-                      {user.repos.map((project) => (
+                      {repos.map((project) => (
                         <div
                           onClick={() => handleChangeRepo(project.full_name)}
                           key={project.full_name}

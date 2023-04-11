@@ -1,12 +1,12 @@
-import { IssueList } from "./bountyTable";
+import { BountyList } from "./bountyTable";
 import { PageLayout } from "@/src/layouts";
 import { LancerProvider } from "@/src/providers";
 
 const App: React.FC<{ isMyBounties?: boolean }> = ({ isMyBounties }) => {
   return (
-    <LancerProvider referrer={isMyBounties ? `my_bounties` : `bounties`}>
+    <LancerProvider>
       <PageLayout>
-        <IssueList isMyBounties={isMyBounties} />
+        <BountyList isMyBounties={isMyBounties} />
       </PageLayout>
     </LancerProvider>
   );

@@ -40,13 +40,20 @@ const insertPR = (response) => {
 };
 
 const maybeGetPR = (splitURL, issueNumber, author) =>
-  axios.post(`${getApiEndpointExtension()}/${FULL_PULL_REQUEST_API_ROUTE}`, {
-    org: splitURL[3],
-    repo: splitURL[4],
-    pullNumber: splitURL[6],
-    issueNumber: issueNumber,
-    githubLogin: author,
-  });
+  axios.post(
+    `http://localhost:3000/api/trpc/pullRequests.createPullRequest?batch=1`,
+    {
+      0: {
+        json: {
+          organizationName: splitURL[3],
+          repositoryName: splitURL[4],
+          pullNumber: parseInt(splitURL[6]),
+          issueNumber: parseInt(issueNumber),
+          githubLogin: author,
+        },
+      },
+    }
+  );
 
 // Check if this PR is closing an Issue linked to lancer. If so, either
 // - get a link to that lancer issue and provide it

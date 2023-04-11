@@ -1,0 +1,406 @@
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["fullTextSearch", "fullTextIndex"]
+}
+
+datasource db {
+  provider     = "mysql"
+  url          = env("DATABASE_URL")
+  relationMode = "prisma"
+}
+
+/// MODELS
+
+model Bounty {
+  id Int @id @default(autoincrement())
+
+  // Fields
+  createdAt     String   @db.VarChar(24)
+  description   String   @db.VarChar(2000)
+  estimatedTime Decimal? @db.Decimal(10, 2)
+  isPrivate     Boolean
+  state         String   @db.VarChar(24)
+  title         String   @db.VarChar(256)
+  type          String?  @db.VarChar(24)
+
+  // Relations
+  certificates BountyCertificate[]
+  comments     BountyComment[]
+  escrow       Escrow              @relation(fields: [escrowid], references: [id])
+  escrowid     Int                 @unique
+  issue        Issue?
+  milestone    Milestone?          @relation(fields: [milestoneid], references: [id])
+  milestoneid  Int?
+  project      Project?            @relation(fields: [projectid], references: [id])
+  projectid    Int?
+  protocol     Protocol?           @relation(fields: [protocolid], references: [id])
+  protocolid   Int?
+  pullRequests PullRequest[]
+  repository   Repository          @relation(fields: [repositoryid], references: [id])
+  repositoryid Int
+  tags         Tag[]
+  users        BountyUser[]
+}
+
+model Certificate {
+  id Int @id @default(autoincrement())
+
+  // Fields
+  name String? @db.VarChar(256)
+
+  // Relations
+  bounties  BountyCertificate[]
+  protocols CertificateProtocol[]
+  tags      Tag[]
+  users     CertificateUser[]
+}
+
+model Chain {
+  id Int @id @default(autoincrement())
+
+  // Fields
+  name    String @db.VarChar(24)
+  network String @db.VarChar(24)
+
+  // Relations
+  wallets      ChainWallet[]
+  escrows      Escrow[]
+  transactions Transaction[]
+}
+
+model Comment {
+  id Int @id @default(autoincrement())
+
+  // Fields
+  content   String? @db.VarChar(2000)
+  createdAt String? @db.VarChar(24)
+
+  // Relations
+  bounty BountyComment[]
+}
+
+model Escrow {
+  id Int @id @default(autoincrement())
+
+  // Fields
+  amount    Decimal? @db.Decimal(20, 10)
+  mint      String?  @db.VarChar(100)
+  publicKey String?  @db.VarChar(100)
+  timestamp String?  @db.VarChar(24)
+
+  // Relations
+  bounty       Bounty?
+  chainid      Int
+  chain        Chain         @relation(fields: [chainid], references: [id])
+  milestone    Milestone?
+  project      Project?
+  transactions Transaction[]
+  users        EscrowUser[]
+  milestoneid  Int?
+}
+
+model Issue {
+  id Int @id @default(autoincrement())
+
+  // Fields
+  title         String  @db.VarChar(256)
+  number        Decimal @db.Decimal(10, 0)
+  description   String  @db.VarChar(2000)
+  state         String  @db.VarChar(24)
+  githubLink    String  @db.VarChar(256)
+  linkingMethod String  @db.VarChar(24)
+
+  // Relations
+  bounty       Bounty        @relation(fields: [bountyid], references: [id])
+  bountyid     Int           @unique
+  repository   Repository    @relation(fields: [repositoryid], references: [id])
+  repositoryid Int
+  pullRequests PullRequest[]
+
+  @@unique([number, repositoryid])
+}
+
+model Milestone {
+  id Int @id @default(autoincrement())
+
+  // Fields
+  name        String? @db.VarChar(128)
+  dueDate     String? @db.VarChar(36)
+  description String? @db.VarChar(2000)
+
+  // Relations
+  bounties Bounty[]
+
+  escrow    Escrow?         @relation(fields: [escrowid], references: [id])
+  escrowid  Int             @unique
+  project   Project         @relation(fields: [projectid], references: [id])
+  projectid Int
+  tags      Tag[]
+  users     MilestoneUser[]
+}
+
+model Project {
+  id Int @id @default(autoincrement())
+
+  // Fields
+  description String? @db.VarChar(2000)
+
+  // Relations
+  bounties     Bounty[]
+  escrow       Escrow?       @relation(fields: [escrowid], references: [id])
+  escrowid     Int?          @unique
+  milestones   Milestone[]
+  protocol     Protocol      @relation(fields: [protocolid], references: [id])
+  protocolid   Int
+  repository   Repository    @relation(fields: [repositoryid], references: [id])
+  repositoryid Int
+  users        ProjectUser[]
+}
+
+model Protocol {
+  id Int @id @default(autoincrement())
+
+  // Fields
+  name    String? @db.VarChar(128)
+  logo    String? @db.VarChar(2000)
+  website String? @db.VarChar(128)
+
+  // Relations
+  bounties     Bounty[]
+  projects     Project[]
+  repositories Repository[]
+  certificates CertificateProtocol[]
+  users        ProtocolUser[]
+}
+
+model Provider {
+  id Int @id @default(autoincrement())
+
+  // Fields
+  name String @unique @db.VarChar(128)
+
+  // Relations
+  wallets Wallet[]
+}
+
+model PullRequest {
+  id Int @id @default(autoincrement())
+
+  // Fields
+  title       String? @db.VarChar(256)
+  number      Decimal @db.Decimal(10, 0)
+  description String? @db.VarChar(2000)
+  state       String  @db.VarChar(24)
+  githubLink  String  @db.VarChar(256)
+
+  // Relations
+  bounty       Bounty     @relation(fields: [bountyid], references: [id])
+  bountyid     Int
+  repository   Repository @relation(fields: [repositoryid], references: [id])
+  repositoryid Int
+  issue        Issue?     @relation(fields: [issueid], references: [id])
+  issueid      Int?
+  users        User[]
+
+  @@unique([repositoryid, number])
+}
+
+model Repository {
+  id Int @id @default(autoincrement())
+
+  // Fields
+  githubLink   String  @unique @db.VarChar(255)
+  name         String  @db.VarChar(128)
+  organization String  @db.VarChar(128)
+  isPrivate    Boolean
+
+  // Relations
+  bounties     Bounty[]
+  issues       Issue[]
+  projects     Project[]
+  pullRequests PullRequest[]
+  Protocol     Protocol?     @relation(fields: [protocolid], references: [id])
+  protocolid   Int?
+
+  @@unique([organization, name])
+}
+
+model Tag {
+  id Int @id @default(autoincrement())
+
+  // Fields
+  color       String? @db.VarChar(24)
+  description String? @db.VarChar(255)
+  name        String? @db.VarChar(64)
+
+  // Relations
+  bounties     Bounty[]
+  certificates Certificate[]
+  milestones   Milestone[]
+  users        User[]
+}
+
+model Transaction {
+  id Int @id @default(autoincrement())
+
+  // Fields
+  signature String @db.VarChar(100)
+  timestamp String @db.VarChar(24)
+  label     String @db.VarChar(24)
+
+  // Relations
+  chainid  Int
+  chain    Chain               @relation(fields: [chainid], references: [id])
+  escrowid Int
+  escrow   Escrow              @relation(fields: [escrowid], references: [id])
+  wallets  TransactionWallet[]
+}
+
+model User {
+  id Int @id @default(autoincrement())
+
+  // Fields
+  isAdmin     Boolean?
+  verified    Boolean?
+  githubId    String?  @db.VarChar(24)
+  githubLogin String?  @db.VarChar(64)
+  name        String?  @db.VarChar(128)
+  discord     String?  @db.VarChar(64)
+  twitter     String?  @db.VarChar(64)
+  instagram   String?  @db.VarChar(64)
+  email       String?  @unique @db.VarChar(128)
+
+  // Relations
+  wallets      Wallet[]
+  bounties     BountyUser[]
+  certificates CertificateUser[]
+  escrows      EscrowUser[]
+  milestones   MilestoneUser[]
+  projects     ProjectUser[]
+  protocols    ProtocolUser[]
+  tags         Tag[]
+  pullRequests PullRequest[]
+}
+
+model Wallet {
+  id           Int                 @id @default(autoincrement())
+  publicKey    String?             @unique @db.VarChar(64)
+  isDefault    Boolean?
+  userid       Int
+  user         User                @relation(fields: [userid], references: [id])
+  providers    Provider[]
+  transactions TransactionWallet[]
+  chains       ChainWallet[]
+}
+
+/// RELATIONS
+
+model BountyCertificate {
+  certificateid Int
+  bountyid      Int
+  relations     String      @db.VarChar(256)
+  certificate   Certificate @relation(fields: [certificateid], references: [id])
+  bounty        Bounty      @relation(fields: [bountyid], references: [id])
+
+  @@id([certificateid, bountyid])
+}
+
+model BountyComment {
+  commentid Int
+  bountyid  Int
+  relations String  @db.VarChar(256)
+  comment   Comment @relation(fields: [commentid], references: [id])
+  bounty    Bounty  @relation(fields: [bountyid], references: [id])
+
+  @@id([commentid, bountyid])
+}
+
+model BountyUser {
+  userid    Int
+  bountyid  Int
+  relations String @db.VarChar(256)
+  user      User   @relation(fields: [userid], references: [id])
+  bounty    Bounty @relation(fields: [bountyid], references: [id])
+
+  @@id([userid, bountyid])
+}
+
+model CertificateProtocol {
+  certificateid Int
+  protocolid    Int
+  relations     String      @db.VarChar(256)
+  certificiate  Certificate @relation(fields: [certificateid], references: [id])
+  protocol      Protocol    @relation(fields: [protocolid], references: [id])
+
+  @@id([certificateid, protocolid])
+}
+
+model CertificateUser {
+  userid        Int
+  certificateid Int
+  relations     String      @db.VarChar(256)
+  user          User        @relation(fields: [userid], references: [id])
+  certificate   Certificate @relation(fields: [certificateid], references: [id])
+
+  @@id([userid, certificateid])
+}
+
+model ChainWallet {
+  walletid  Int
+  chainid   Int
+  relations String @db.VarChar(256)
+  wallet    Wallet @relation(fields: [walletid], references: [id])
+  chain     Chain  @relation(fields: [chainid], references: [id])
+
+  @@id([walletid, chainid])
+}
+
+model EscrowUser {
+  userid    Int
+  escrowid  Int
+  relations String @db.VarChar(256)
+  user      User   @relation(fields: [userid], references: [id])
+  escrow    Escrow @relation(fields: [escrowid], references: [id])
+
+  @@id([userid, escrowid])
+}
+
+model MilestoneUser {
+  userid      Int
+  milestoneid Int
+  relations   String    @db.VarChar(256)
+  user        User      @relation(fields: [userid], references: [id])
+  milestone   Milestone @relation(fields: [milestoneid], references: [id])
+
+  @@id([userid, milestoneid])
+}
+
+model ProjectUser {
+  userid    Int
+  projectid Int
+  relations String  @db.VarChar(256)
+  user      User    @relation(fields: [userid], references: [id])
+  project   Project @relation(fields: [projectid], references: [id])
+
+  @@id([userid, projectid])
+}
+
+model ProtocolUser {
+  userid     Int
+  protocolid Int
+  relations  String   @db.VarChar(256)
+  user       User     @relation(fields: [userid], references: [id])
+  protocol   Protocol @relation(fields: [protocolid], references: [id])
+
+  @@id([userid, protocolid])
+}
+
+model TransactionWallet {
+  walletid      Int
+  transactionid Int
+  relations     String      @db.VarChar(256)
+  wallet        Wallet      @relation(fields: [walletid], references: [id])
+  transaction   Transaction @relation(fields: [transactionid], references: [id])
+
+  @@id([walletid, transactionid])
+}

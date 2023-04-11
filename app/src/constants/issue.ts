@@ -1,4 +1,4 @@
-import { IssueState } from "@/types";
+import { BountyState } from "@/types";
 
-export const ISSUE_STATES = Object.values(IssueState)
-export const TABLE_ISSUE_STATES = Object.values(IssueState).slice(1)
+export const BOUNTY_STATES = Object.values(BountyState)
+export const TABLE_BOUNTY_STATES = Object.values(BountyState).slice(1)

@@ -1,4 +1,4 @@
-import { USER_REPOSITORIES_ROUTE, TABLE_ISSUE_STATES } from "@/src/constants";
+import { USER_REPOSITORIES_ROUTE, TABLE_BOUNTY_STATES } from "@/src/constants";
 import { getApiEndpoint, getMintName, getUniqueItems } from "@/src/utils";
 import { useState } from "react";
 import { BountyFilters } from "./bountyFilters";
@@ -7,7 +7,11 @@ import { useLancer } from "@/src/providers";
 import { useEffect } from "react";
 import axios from "axios";
 import { LoadingBar } from "@/src/components";
-export const ISSUE_USER_RELATIONSHIP = [
+import { Bounty, User } from "@/src/types";
+import { PublicKey } from "@solana/web3.js";
+import { api } from "@/src/utils/api";
+import { useRouter } from "next/router";
+export const BOUNTY_USER_RELATIONSHIP = [
   "Creator",
   "Requested Submitter",
   "Approved Submitter",
@@ -24,32 +28,50 @@ export type Filters = {
   relationships: string[];
 };
 
-export const IssueList: React.FC<{ isMyBounties: boolean }> = ({
+export const BountyList: React.FC<{ isMyBounties: boolean }> = ({
   isMyBounties,
 }) => {
-  const { user, issues, setUser } = useLancer();
+  const { currentUser } = useLancer();
+  const router = useRouter();
+  const { mutateAsync: getBounties } =
+    api.bounties.getAllBounties.useMutation();
   const [tags, setTags] = useState<string[]>([]);
   const [mints, setMints] = useState<string[]>([]);
   const [orgs, setOrgs] = useState<string[]>([]);
   const [bounds, setTimeBounds] = useState<[number, number]>([0, 10]);
+  const [bounties, setBounties] = useState<any[]>([]);
 
   const [filters, setFilters] = useState<Filters>({
     mints: mints,
     tags: tags,
     orgs: orgs,
     estimatedTimeBounds: bounds,
-    states: TABLE_ISSUE_STATES,
-    relationships: ISSUE_USER_RELATIONSHIP,
+    states: TABLE_BOUNTY_STATES,
+    relationships: BOUNTY_USER_RELATIONSHIP,
   });
+
   useEffect(() => {
-    // Get the meta-info off all issues that are used for filters. Specifically
-    // - all tags for issues
-    // - all orgs posting issues
+    const getBs = async () => {
+      if (router.isReady && currentUser?.id) {
+        const isMyBounties = !!router.query.my_bounties;
+        const bounties = await getBounties(
+          isMyBounties ? { currentUserId: currentUser.id } : {}
+        );
+        setBounties(bounties);
+      }
+    };
+    getBs();
+  }, [router, currentUser?.id]);
+
+  useEffect(() => {
+    // Get the meta-info off all bounties that are used for filters. Specifically
+    // - all tags for bounties
+    // - all orgs posting bounties
     // - all payout mints
     // - upper and lower bounds of estimated time completion
-    if (issues && issues.length !== 0) {
-      const allTags = issues
-        .map((issue) => issue.tags)
+    if (bounties && bounties.length !== 0) {
+      const allTags = bounties
+        .map((bounty) => bounty.tags.map((tag) => tag.name))
         .reduce(
           (accumulator, currentValue) => [
             ...accumulator,
@@ -58,14 +80,22 @@ export const IssueList: React.FC<{ isMyBounties: boolean }> = ({
           []
         );
       const uniqueTags = getUniqueItems(allTags);
-      const uniqueOrgs = getUniqueItems(issues.map((issue) => issue.org));
+      const uniqueOrgs = getUniqueItems(
+        bounties.map((bounty) => bounty.repository.organization)
+      );
       const uniqueMints = getUniqueItems(
-        issues.map((issue) => getMintName(issue.mint))
+        bounties.map((bounty) =>
+          bounty.escrow.mint
+            ? getMintName(new PublicKey(bounty.escrow.mint))
+            : "USDC"
+        )
       );
       setTags(uniqueTags);
       setOrgs(uniqueOrgs);
       setMints(uniqueMints);
-      const allTimes = issues.map((issue) => issue.estimatedTime);
+      const allTimes = bounties.map((bounty) =>
+        parseFloat(bounty.estimatedTime.toString())
+      );
       const maxTime = Math.max(...allTimes) || 10;
       const minTime = Math.min(...allTimes) || 0;
       const timeBounds: [number, number] = [
@@ -79,47 +109,43 @@ export const IssueList: React.FC<{ isMyBounties: boolean }> = ({
         tags: allTags,
         orgs: uniqueOrgs,
         estimatedTimeBounds: timeBounds,
-        states: TABLE_ISSUE_STATES,
-        relationships: ISSUE_USER_RELATIONSHIP,
+        states: TABLE_BOUNTY_STATES,
+        relationships: BOUNTY_USER_RELATIONSHIP,
       });
     }
-  }, [issues]);
+  }, [bounties]);
 
-  useEffect(() => {
-    if (user?.githubId) {
-      // get the organizations the user is part of, so we know which private issues they can see
-      axios.get(`${USER_REPOSITORIES_ROUTE}/${user.githubId}`).then((resp) => {
-        console.log(resp);
-        setUser({
-          ...user,
-          repos: resp.data.data,
-        });
-      });
+  if (!bounties) return <LoadingBar title="Loading Bountys" />;
+
+  const filteredBountys = bounties.filter((bounty) => {
+    if (!bounty.escrow.publicKey || !bounty.escrow.mint) {
+      return false;
     }
-  }, [user?.githubId]);
-  if (!issues) return <LoadingBar title="Loading Issues" />;
-
-  const filteredIssues = issues.filter((issue) => {
-    if (!filters.mints.includes(getMintName(issue.mint))) {
+    if (
+      !filters.mints.includes(getMintName(new PublicKey(bounty.escrow.mint)))
+    ) {
       return false;
     }
 
-    if (!filters.orgs.includes(issue.org)) {
+    if (!filters.orgs.includes(bounty.repository.organization)) {
       return false;
     }
 
-    const issueTags = issue.tags || [];
-    const commonTags = issueTags.filter((tag) => filters.tags.includes(tag));
+    const bountyTags = bounty.tags || [];
+    const commonTags = bountyTags.filter((tag) =>
+      filters.tags.includes(tag.name)
+    );
     if (commonTags.length === 0 && tags.length !== 0) {
       return false;
     }
 
-    if (!filters.states.includes(issue.state)) {
+    if (!filters.states.includes(bounty.state)) {
       return false;
     }
+    const bountyEstimate = parseFloat(bounty.estimatedTime.toString());
     if (
-      issue.estimatedTime < filters.estimatedTimeBounds[0] ||
-      issue.estimatedTime > filters.estimatedTimeBounds[1]
+      bountyEstimate < filters.estimatedTimeBounds[0] ||
+      bountyEstimate > filters.estimatedTimeBounds[1]
     ) {
       return false;
     }
@@ -140,12 +166,12 @@ export const IssueList: React.FC<{ isMyBounties: boolean }> = ({
         setFilters={setFilters}
       />
       <div className="issue-list">
-        {filteredIssues.map((issue, index) => (
-          <LancerBounty issue={issue} key={index} />
+        {filteredBountys.map((bounty, index) => (
+          <LancerBounty bounty={bounty} key={index} />
         ))}
       </div>
     </div>
   );
 };
 
-export default IssueList;
+export default BountyList;

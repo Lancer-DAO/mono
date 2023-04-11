@@ -1,16 +1,23 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
-import { IssueState } from "@/src/types";
+import { BountyState } from "@/src/types";
 import { useLancer } from "@/src/providers/lancerProvider";
 import classnames from "classnames";
 import FundBounty from "./fundBounty";
 import { LoadingBar } from "@/src/components/LoadingBar";
+import { PublicKey } from "@solana/web3.js";
+import { useRouter } from "next/router";
+import { api } from "@/src/utils/api";
+import { currentUser } from "@/server/api/routers/users/currentUser";
 
 const Form = () => {
-  const { issue } = useLancer();
+  const { currentBounty, currentUser, setCurrentBounty } = useLancer();
+  const { mutateAsync: getBounty } = api.bounties.getBounty.useMutation();
+  const router = useRouter();
   const [formData, setFormData] = useState({
     fundingAmount: null,
   });
+  const [isAccountCreated, setIsAccountCreated] = useState(true);
   const [fundingType, setFundingType] = useState<"card" | "wallet">("card");
   const handleChange = (event) => {
     setFormData({
@@ -18,9 +25,32 @@ const Form = () => {
       [event.target.name]: event.target.value,
     });
   };
+  useEffect(() => {
+    if (router.isReady && currentUser?.id) {
+      const getB = async () => {
+        const bounty = await getBounty({
+          id: parseInt(router.query.id as string),
+          currentUserId: currentUser.id,
+        });
+        setCurrentBounty(bounty);
+      };
+      getB();
+    }
+  }, [router.isReady, currentUser?.id]);
+  // useEffect(() => {
+  //   provider &&
+  //     currentBounty &&
+  //     provider.connection.onAccountChange(
+  //       new PublicKey(currentBounty.escrow.publicKey),
+  //       (callback) => {
+  //         console.log(callback);
+  //         setIsAccountCreated(true);
+  //       }
+  //     );
+  // }, [currentBounty?.escrow.publicKey, provider]);
 
   return (
-    issue && (
+    currentBounty && (
       <div className="form-container">
         <div className="form">
           <>
@@ -31,8 +61,7 @@ const Form = () => {
               >
                 Fund Lancer Bounty
               </h2>
-              {issue.state === IssueState.NEW &&
-              (!issue.escrowKey || !issue.escrowContract) ? (
+              {!isAccountCreated ? (
                 <LoadingBar title="Loading On Chain Details" />
               ) : (
                 <>
@@ -76,7 +105,9 @@ const Form = () => {
                         </div>
                       </div>
                       {formData.fundingAmount && (
-                        <FundBounty amount={formData.fundingAmount} />
+                        <FundBounty
+                          amount={parseInt(formData.fundingAmount || 0)}
+                        />
                       )}
                     </>
                   )}

@@ -9,11 +9,10 @@ import { AnchorProvider, Program, } from "@project-serum/anchor";
 import { MonoProgram } from "@/escrow/sdk/types/mono_program";
 import { approveRequestInstruction } from "@/escrow/sdk/instructions";
 import { DEVNET_USDC_MINT } from "@/src/constants";
-import { LancerWallet } from "@/src/providers/lancerProvider";
-import { EscrowContract } from "@/src/types";
+import { Escrow, EscrowContract, LancerWallet } from "@/src/types";
 
 
-export const approveRequestFFA = async (creator: PublicKey,submitter: PublicKey, acc: EscrowContract, wallet: LancerWallet, anchor: AnchorProvider, program: Program<MonoProgram>) => {
+export const approveRequestFFA = async (submitter: PublicKey, acc: Escrow, wallet: LancerWallet, program: Program<MonoProgram>, provider: AnchorProvider) => {
 
 
       const tokenAddress = await getAssociatedTokenAddress(
@@ -21,18 +20,18 @@ export const approveRequestFFA = async (creator: PublicKey,submitter: PublicKey,
         submitter
       );
       let approveSubmitterIx = await approveRequestInstruction(
-        acc.unixTimestamp,
-        creator,
+        acc.timestamp,
+        new PublicKey(wallet.publicKey),
         submitter,
         tokenAddress,
         new PublicKey(DEVNET_USDC_MINT),
         program
       )
 
-      const {blockhash, lastValidBlockHeight} = (await anchor.connection.getLatestBlockhash());
+      const {blockhash, lastValidBlockHeight} = (await provider.connection.getLatestBlockhash());
       const txInfo = {
                 /** The transaction fee payer */
-                feePayer: creator,
+                feePayer: new PublicKey(wallet.publicKey),
                 /** A recent blockhash */
                 blockhash: blockhash,
                 /** the last block chain can advance to before tx is exportd expired */
@@ -41,5 +40,6 @@ export const approveRequestFFA = async (creator: PublicKey,submitter: PublicKey,
       const tx = await wallet.signAndSendTransaction(
         new Transaction(txInfo).add(approveSubmitterIx)
       );
+      return tx;
 
   };

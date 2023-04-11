@@ -1,34 +1,18 @@
 import { MonoProgram } from "@/escrow/sdk/types/mono_program";
-import { Issue, User } from "@/src/types";
+import { Bounty, CurrentUser, Issue, LancerWallet, User } from "@/src/types";
 import { SolanaWalletContextState } from "@coinflowlabs/react";
 import { AnchorProvider, Program } from "@project-serum/anchor";
-import { PublicKey } from "@solana/web3.js";
+import { PublicKey, Transaction } from "@solana/web3.js";
 import { SafeEventEmitterProvider } from "@web3auth/base";
 import { Web3AuthCore } from "@web3auth/core";
 import { SolanaWallet } from "@web3auth/solana-provider";
 
-export class LancerWallet extends SolanaWallet {
-    pk: PublicKey;
-    constructor(readonly provider: SafeEventEmitterProvider) {
-      super(provider);
-    }
 
-    set pubkey(pk: PublicKey) {
-      this.pk = pk;
-    }
-
-    get publicKey(): PublicKey {
-      return this.pk;
-    }
-  }
 
   export type LOGIN_STATE =
     | "logged_out"
-    | "retrieving_jwt"
-    | "initializing_wallet"
-    | "getting_user"
-    | "initializing_anchor"
-    | "ready";
+    | "logging_in"
+    | "logged_in"
 
   export type ISSUE_LOAD_STATE =
     | "initializing"
@@ -38,20 +22,19 @@ export class LancerWallet extends SolanaWallet {
     | "loaded";
 
     export interface ILancerContext {
-        user: User;
+        currentUser: CurrentUser;
         issue: Issue;
         issues: Issue[];
         loginState: LOGIN_STATE;
-        anchor: AnchorProvider;
-        program: Program<MonoProgram>;
-        web3Auth: Web3AuthCore;
-        wallet: LancerWallet;
         issueLoadingState: ISSUE_LOAD_STATE;
-        coinflowWallet: SolanaWalletContextState;
+        program: Program<MonoProgram>;
+        provider: AnchorProvider;
+        wallet: LancerWallet;
+        currentBounty: Bounty;
+        setCurrentBounty: (bounty:Bounty)=>void;
         setIssue: (issue: Issue) => void;
-        setUser: (user: User) => void;
-        setForceGetIssue: (force: boolean) => void;
+        setIssues: (issues: Issue[]) => void;
+        setLoginState: (state: LOGIN_STATE) => void;
+        setCurrentUser: (user: CurrentUser) => void;
         setIssueLoadingState: (state: ISSUE_LOAD_STATE) => void;
-        login: () => Promise<void>;
-        logout: () => Promise<void>;
       }

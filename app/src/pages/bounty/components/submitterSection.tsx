@@ -2,10 +2,17 @@ import { USER_ISSUE_RELATION_ROUTE } from "@/constants";
 import { getApiEndpoint } from "@/src/utils";
 import axios from "axios";
 import { useLancer } from "@/src/providers/lancerProvider";
-import { Contributor, ISSUE_ACCOUNT_RELATIONSHIP } from "@/src/types";
+import {
+  Contributor,
+  BOUNTY_USER_RELATIONSHIP,
+  User,
+  BountyState,
+} from "@/src/types";
 import { addSubmitterFFA, removeSubmitterFFA } from "@/escrow/adapters";
 import { ContributorInfo } from "@/src/components/ContributorInfo";
 import { Check, X } from "react-feather";
+import { PublicKey } from "@solana/web3.js";
+import { api } from "@/src/utils/api";
 
 export type SubmitterSectionType = "approved" | "requested";
 interface SubmitterSectionProps {
@@ -17,43 +24,50 @@ const SubmitterSection: React.FC<SubmitterSectionProps> = ({
   submitter,
   type,
 }: SubmitterSectionProps) => {
-  const { issue, wallet, anchor, program, user, setIssue } = useLancer();
-  if (!user.isCreator) {
-    return (
-      <div className="submitter-section">
-        <ContributorInfo user={submitter} />
-      </div>
-    );
-  }
+  const {
+    currentBounty,
+    wallet,
+    provider,
+    program,
+    currentUser,
+    setCurrentBounty,
+  } = useLancer();
+  const { mutateAsync } = api.bounties.updateBountyUser.useMutation();
 
   const handleSubmitter = async (cancel?: boolean) => {
     switch (type) {
       case "approved":
         {
           try {
-            await removeSubmitterFFA(
-              issue.creator.publicKey,
-              submitter.publicKey,
-              issue.escrowContract,
+            const signature = await removeSubmitterFFA(
+              new PublicKey(submitter.publicKey),
+              currentBounty.escrow,
               wallet,
-              anchor,
-              program
+              program,
+              provider
             );
             submitter.relations.push(
-              ISSUE_ACCOUNT_RELATIONSHIP.RequestedSubmitter
+              BOUNTY_USER_RELATIONSHIP.RequestedSubmitter
             );
-            const index = user.relations.indexOf(
-              ISSUE_ACCOUNT_RELATIONSHIP.ApprovedSubmitter
+            const index = currentBounty.currentUserRelationsList.indexOf(
+              BOUNTY_USER_RELATIONSHIP.ApprovedSubmitter
             );
 
             if (index !== -1) {
-              user.relations.splice(index, 1);
+              currentBounty.currentUserRelationsList.splice(index, 1);
             }
-            axios.put(USER_ISSUE_RELATION_ROUTE, {
-              issueId: issue.uuid,
-              accountId: submitter.uuid,
-              relations: [ISSUE_ACCOUNT_RELATIONSHIP.RequestedSubmitter],
+            const { updatedBounty } = await mutateAsync({
+              bountyId: currentBounty.id,
+              userId: submitter.userid,
+              currentUserId: currentUser.id,
+              relations: currentBounty.currentUserRelationsList,
+              walletId: currentUser.currentWallet.id,
+              escrowId: currentBounty.escrowid,
+              signature: "test",
+              label: "remove-submitter",
             });
+
+            setCurrentBounty(updatedBounty);
           } catch (e) {
             console.error(e);
           }
@@ -63,47 +77,38 @@ const SubmitterSection: React.FC<SubmitterSectionProps> = ({
         {
           try {
             if (cancel) {
-              axios.put(USER_ISSUE_RELATION_ROUTE, {
-                issueId: issue.uuid,
-                accountId: submitter.uuid,
-                relations: [ISSUE_ACCOUNT_RELATIONSHIP.DeniedRequester],
+              const { updatedBounty } = await mutateAsync({
+                bountyId: currentBounty.id,
+                currentUserId: currentUser.id,
+                userId: submitter.userid,
+                relations: [BOUNTY_USER_RELATIONSHIP.DeniedRequester],
+                walletId: currentUser.currentWallet.id,
+                escrowId: currentBounty.escrowid,
+                signature: "n/a",
+                label: "deny-submitter",
               });
-              const index = issue.requestedSubmitters.findIndex(
-                (_submitter) => submitter.uuid === _submitter.uuid
-              );
-
-              if (index !== -1) {
-                issue.requestedSubmitters.splice(index, 1);
-              }
-              setIssue({
-                ...issue,
-                deniedRequesters: [...issue.deniedRequesters, submitter],
-              });
+              setCurrentBounty(updatedBounty);
             } else {
-              await addSubmitterFFA(
-                issue.creator.publicKey,
-                submitter.publicKey,
-                issue.escrowContract,
+              const signature = await addSubmitterFFA(
+                new PublicKey(submitter.publicKey),
+                currentBounty.escrow,
                 wallet,
-                anchor,
-                program
+                program,
+                provider
               );
-              axios.put(USER_ISSUE_RELATION_ROUTE, {
-                issueId: issue.uuid,
-                accountId: submitter.uuid,
-                relations: [ISSUE_ACCOUNT_RELATIONSHIP.ApprovedSubmitter],
+              const { updatedBounty } = await mutateAsync({
+                bountyId: currentBounty.id,
+                userId: submitter.userid,
+                currentUserId: currentUser.id,
+                relations: [BOUNTY_USER_RELATIONSHIP.ApprovedSubmitter],
+                state: BountyState.IN_PROGRESS,
+                walletId: currentUser.currentWallet.id,
+                escrowId: currentBounty.escrowid,
+                signature,
+                label: "add-approved-submitter",
               });
-              const index = issue.requestedSubmitters.findIndex(
-                (_submitter) => submitter.uuid === _submitter.uuid
-              );
 
-              if (index !== -1) {
-                issue.requestedSubmitters.splice(index, 1);
-              }
-              setIssue({
-                ...issue,
-                approvedSubmitters: [...issue.approvedSubmitters, submitter],
-              });
+              setCurrentBounty(updatedBounty);
             }
           } catch (e) {
             console.error(e);

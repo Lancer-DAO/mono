@@ -6,23 +6,23 @@ import { AnchorProvider, Program } from "@project-serum/anchor";
 import { MonoProgram } from "@/escrow/sdk/types/mono_program";
 import { voteToCancelInstruction,
 } from "@/escrow/sdk/instructions";
-
-import { LancerWallet } from "@/src/providers/lancerProvider";
-import { EscrowContract } from "@/src/types";
+import { Escrow, LancerWallet } from "@/src/types";
 
 
-export const voteToCancelFFA = async (creator: PublicKey, voter: PublicKey, acc: EscrowContract, wallet: LancerWallet, anchor: AnchorProvider, program: Program<MonoProgram>) => {
+
+export const voteToCancelFFA = async (creator: PublicKey, voter: PublicKey, acc: Escrow, wallet: LancerWallet, program: Program<MonoProgram>, provider: AnchorProvider) => {
+
 
 
       let approveSubmitterIx = await voteToCancelInstruction(
-        acc.unixTimestamp,
+        acc.timestamp,
         creator,
         voter,
         true,
         program
       )
 
-      const {blockhash, lastValidBlockHeight} = (await anchor.connection.getLatestBlockhash());
+      const {blockhash, lastValidBlockHeight} = (await provider.connection.getLatestBlockhash());
       const txInfo = {
                 /** The transaction fee payer */
                 feePayer: voter,
@@ -34,5 +34,5 @@ export const voteToCancelFFA = async (creator: PublicKey, voter: PublicKey, acc:
       const tx = await wallet.signAndSendTransaction(
         new Transaction(txInfo).add(approveSubmitterIx)
       );  console.log(tx);
-
+return tx;
   };

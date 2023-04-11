@@ -1,5 +1,5 @@
 import { getSolscanAddress } from "@/src/utils";
-import { IssueState } from "@/types";
+import { BountyState } from "@/types";
 import { marked } from "marked";
 import { ReactNode, useEffect, useState } from "react";
 import { useLancer } from "@/src/providers/lancerProvider";
@@ -11,14 +11,31 @@ import localizedFormat from "dayjs/plugin/localizedFormat";
 import { ContributorInfo } from "@/src/components/ContributorInfo";
 import { BountyActions } from "@/src/pages/bounty/components/bountyActions";
 import Logo from "@/src/assets/Logo";
+import { PublicKey } from "@solana/web3.js";
+import { useRouter } from "next/router";
+import { api } from "@/src/utils/api";
 dayjs.extend(localizedFormat);
 
 const Bounty: React.FC = () => {
-  const { user, issue, setForceGetIssue } = useLancer();
+  const { currentUser, currentBounty, setCurrentBounty } = useLancer();
   const [pollId, setPollId] = useState(null);
+  const router = useRouter();
+  const { mutateAsync: getBounty } = api.bounties.getBounty.useMutation();
+
+  useEffect(() => {
+    if (router.isReady && currentUser?.id) {
+      const getB = async () => {
+        const bounty = await getBounty({
+          id: parseInt(router.query.id as string),
+          currentUserId: currentUser.id,
+        });
+        setCurrentBounty(bounty);
+      };
+      getB();
+    }
+  }, [router.isReady, currentUser?.id]);
   useEffect(() => {
     const setFuturePoll = () => {
-      setForceGetIssue(true);
       setPollId(setTimeout(() => setFuturePoll(), 5000));
     };
     if (!pollId) {
@@ -26,11 +43,11 @@ const Bounty: React.FC = () => {
     }
   }, []);
 
-  if (!user || !issue) {
+  if (!currentUser || !currentBounty) {
     return <></>;
   }
   const previewMarkup = () => {
-    const markdown = marked.parse(issue.description, { breaks: true });
+    const markdown = marked.parse(currentBounty.description, { breaks: true });
     return { __html: markdown };
   };
 
@@ -53,34 +70,38 @@ const Bounty: React.FC = () => {
               <div className="bounty-page-title-section">
                 <div className="bounty-title-row-1">
                   <a
-                    href={`https://github.com/${issue.org}`}
+                    href={`https://github.com/${currentBounty.repository.organization}`}
                     className="job-post-company-name"
                     target="_blank"
                     rel="noreferrer"
                   >
-                    {issue.org}
+                    {currentBounty.repository.organization}
                   </a>
-                  <div className={`issue-state ${issue.state} text-start`}>
-                    {issue.state.split("_").join(" ")}
+                  <div
+                    className={`currentBounty-state ${currentBounty.state} text-start`}
+                  >
+                    {currentBounty.state.split("_").join(" ")}
                   </div>
                 </div>
                 <a
                   className="job-post-title"
-                  href={`https://github.com/${issue.org}/${issue.repo}/issues/${issue.issueNumber}`}
+                  href={`${currentBounty.repository.githubLink}/issues/${currentBounty.issue.number}`}
                   target="_blank"
                   rel="noreferrer"
                 >
-                  {issue.title}
+                  {currentBounty.title}
                 </a>
                 <div className="bounty-title-row-1">
                   <div className="job-post-date">
                     {`${dayjs
-                      .unix(parseInt(issue.timestamp) / 1000)
+                      .unix(parseInt(currentBounty.createdAt) / 1000)
                       .format("MMMM D, YYYY h:mm A")}`}
                   </div>
-                  {issue.escrowKey && (
+                  {currentBounty.escrow.publicKey && (
                     <a
-                      href={getSolscanAddress(issue.escrowKey)}
+                      href={getSolscanAddress(
+                        new PublicKey(currentBounty.escrow.publicKey)
+                      )}
                       className="job-post-company-name"
                       target="_blank"
                       rel="noreferrer"
@@ -96,15 +117,19 @@ const Bounty: React.FC = () => {
               <div className="job-post-info-container">
                 <Clock />
                 <div className="job-post-info-text icon-left">
-                  {`${issue.estimatedTime}`} HOURS
+                  {`${currentBounty.estimatedTime}`} HOURS
                 </div>
               </div>
               <div className="job-post-info-divider"></div>
               <div className="job-post-info-container">
                 <div className="tag-list">
-                  {issue.tags.map((tag) => (
-                    <div className="tag-item" key={tag}>
-                      {tag}
+                  {currentBounty.tags.map((tag) => (
+                    <div
+                      className="tag-item"
+                      key={tag.name}
+                      style={{ color: tag.color }}
+                    >
+                      {tag.name}
                     </div>
                   ))}
                 </div>
@@ -112,7 +137,7 @@ const Bounty: React.FC = () => {
               <div className="job-post-info-divider"></div>
               <div className="job-post-info-container">
                 <div className="job-post-info-text icon-right">
-                  {issue.amount.toFixed(2)}
+                  {/* {currentBounty.escrow.amount.toFixed(2)} */}
                 </div>
                 <USDC height="24px" width="24px" />
               </div>
@@ -132,18 +157,18 @@ const Bounty: React.FC = () => {
           >
             <div className="contributors-section">
               <h2>Links</h2>
-              {issue.issueNumber && (
+              {currentBounty.issue && (
                 <a
-                  href={`https://github.com/${issue.org}/${issue.repo}/issues/${issue.issueNumber}`}
+                  href={`${currentBounty.repository.githubLink}/issues/${currentBounty.issue.number}`}
                   target="_blank"
                   rel="noreferrer"
                 >
                   GitHub Issue
                 </a>
               )}
-              {issue.pullNumber && (
+              {currentBounty.pullRequests.length > 0 && (
                 <a
-                  href={`https://github.com/${issue.org}/${issue.repo}/issues/${issue.pullNumber}`}
+                  href={`${currentBounty.repository.githubLink}/issues/${currentBounty.pullRequests[0].number}`}
                   target="_blank"
                   rel="noreferrer"
                 >
@@ -153,92 +178,112 @@ const Bounty: React.FC = () => {
             </div>
             <div className="contributors-section">
               <h2>Contributors</h2>
-              {issue?.creator && (
+              {currentBounty?.creator && (
                 <div>
                   <label className="field-label-10">Creator</label>
-                  <ContributorInfo user={issue.creator} />
+                  <ContributorInfo user={currentBounty.creator} />
                 </div>
               )}
-              {user.isCreator && issue.deniedRequesters.length > 0 && (
+              {currentBounty && currentBounty.deniedRequesters.length > 0 && (
                 <div>
                   <label className="field-label-5">Denied Requesters</label>
-                  {issue.deniedRequesters.map((submitter) => (
-                    <ContributorInfo user={submitter} key={submitter.uuid} />
+                  {currentBounty.deniedRequesters.map((submitter) => (
+                    <ContributorInfo user={submitter} key={submitter.userid} />
                   ))}
                 </div>
               )}
-              {user.isCreator && issue.requestedSubmitters.length > 0 && (
-                <div>
-                  <label className="field-label-5">Requested Applicants</label>
-                  {issue.requestedSubmitters.map((submitter) => (
-                    <SubmitterSection
-                      submitter={submitter}
-                      type="requested"
-                      key={`requested-submitters-${submitter.uuid}`}
-                    />
-                  ))}
-                </div>
-              )}
-
-              {user.isCreator && issue.approvedSubmitters.length > 0 && (
-                <div>
-                  <label className="field-label-5">Approved Applicants</label>
-                  {issue.approvedSubmitters.map((submitter) => (
-                    <SubmitterSection
-                      submitter={submitter}
-                      type="approved"
-                      key={`approved-submitters-${submitter.uuid}`}
-                    />
-                  ))}
-                </div>
-              )}
-              {issue.state === IssueState.AWAITING_REVIEW && (
-                <div>
-                  <label className="field-label-10">Submissions</label>
-                  <ContributorInfo user={issue.currentSubmitter} />
-                </div>
-              )}
-              {user.isCreator &&
-                issue.changesRequestedSubmitters.length > 0 && (
+              {currentBounty &&
+                currentBounty.requestedSubmitters.length > 0 && (
                   <div>
-                    <label className="field-label-5">Changes Requested</label>
-                    {issue.changesRequestedSubmitters.map((submitter) => (
-                      <ContributorInfo user={submitter} key={submitter.uuid} />
+                    <label className="field-label-5">
+                      Requested Applicants
+                    </label>
+                    {currentBounty.requestedSubmitters.map((submitter) => (
+                      <SubmitterSection
+                        submitter={submitter}
+                        type="requested"
+                        key={`requested-submitters-${submitter.userid}`}
+                      />
                     ))}
                   </div>
                 )}
-              {user.isCreator && issue.deniedSubmitters.length > 0 && (
+
+              {currentBounty && currentBounty.approvedSubmitters.length > 0 && (
                 <div>
-                  <label className="field-label-5">Denied Submitters</label>
-                  {issue.deniedSubmitters.map((submitter) => (
-                    <ContributorInfo user={submitter} key={submitter.uuid} />
+                  <label className="field-label-5">Approved Applicants</label>
+                  {currentBounty.approvedSubmitters.map((submitter) => (
+                    <SubmitterSection
+                      submitter={submitter}
+                      type="approved"
+                      key={`approved-submitters-${submitter.userid}`}
+                    />
                   ))}
                 </div>
               )}
-              {issue.completer && (
+              {currentBounty.state === BountyState.AWAITING_REVIEW && (
+                <div>
+                  <label className="field-label-10">Submissions</label>
+                  <ContributorInfo user={currentBounty.currentSubmitter} />
+                </div>
+              )}
+              {currentBounty.isCreator &&
+                currentBounty.changesRequestedSubmitters.length > 0 && (
+                  <div>
+                    <label className="field-label-5">Changes Requested</label>
+                    {currentBounty.changesRequestedSubmitters.map(
+                      (submitter) => (
+                        <ContributorInfo
+                          user={submitter}
+                          key={submitter.userid}
+                        />
+                      )
+                    )}
+                  </div>
+                )}
+              {currentBounty.isCreator &&
+                currentBounty.deniedSubmitters.length > 0 && (
+                  <div>
+                    <label className="field-label-5">Denied Submitters</label>
+                    {currentBounty.deniedSubmitters.map((submitter) => (
+                      <ContributorInfo
+                        user={submitter}
+                        key={submitter.userid}
+                      />
+                    ))}
+                  </div>
+                )}
+              {currentBounty.completer && (
                 <div>
                   <label className="field-label-10">Bounty Completer</label>
-                  <ContributorInfo user={issue.completer} />
+                  <ContributorInfo user={currentBounty.completer} />
                 </div>
               )}
-              {user.isCreator && issue.cancelVoters.length > 0 && (
-                <div>
-                  <label className="field-label-5">Voting To Cancel</label>
-                  {issue.cancelVoters.map((submitter) => (
-                    <ContributorInfo user={submitter} key={submitter.uuid} />
-                  ))}
-                </div>
-              )}
-              {user.isCreator && issue.needsToVote.length > 0 && (
-                <div>
-                  <label className="field-label-5">
-                    Votes Needed to Cancel
-                  </label>
-                  {issue.needsToVote.map((submitter) => (
-                    <ContributorInfo user={submitter} key={submitter.uuid} />
-                  ))}
-                </div>
-              )}
+              {currentBounty.isCreator &&
+                currentBounty.votingToCancel.length > 0 && (
+                  <div>
+                    <label className="field-label-5">Voting To Cancel</label>
+                    {currentBounty.votingToCancel.map((submitter) => (
+                      <ContributorInfo
+                        user={submitter}
+                        key={submitter.userid}
+                      />
+                    ))}
+                  </div>
+                )}
+              {currentBounty.isCreator &&
+                currentBounty.needsToVote.length > 0 && (
+                  <div>
+                    <label className="field-label-5">
+                      Votes Needed to Cancel
+                    </label>
+                    {currentBounty.needsToVote.map((submitter) => (
+                      <ContributorInfo
+                        user={submitter}
+                        key={submitter.userid}
+                      />
+                    ))}
+                  </div>
+                )}
             </div>
           </div>
         </div>
