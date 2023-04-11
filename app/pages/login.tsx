@@ -79,11 +79,9 @@ const Login = () => {
 
 const App = () => {
   return (
-    <LancerProvider>
-      <PageLayout>
-        <Login />
-      </PageLayout>
-    </LancerProvider>
+    <PageLayout>
+      <Login />
+    </PageLayout>
   );
 };
 
