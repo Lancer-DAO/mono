@@ -33,7 +33,6 @@ const createMagic = (key: string) => {
     : undefined;
 };
 
-console.log(process.env.NEXT_PUBLIC_MAGIC_PUBLIC_KEY);
 export const magic = createMagic("pk_live_736C8D5728FF026E");
 
 export const createMagicWallet = async () => {
