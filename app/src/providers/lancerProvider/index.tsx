@@ -81,18 +81,24 @@ export const LancerProvider: FunctionComponent<ILancerState> = ({
   const [program, setProgram] = useState<Program<MonoProgram>>();
   useEffect(() => {
     const getMagicWallet = async () => {
-      const { coinflowWallet, program, provider } = await createMagicWallet();
-      if (wallets) {
-        wallets.push(coinflowWallet);
+      const { lancerWallet, program, provider } = await createMagicWallet();
+
+      console.log("walletsm", wallets);
+      if (!wallets) {
+        setWallets([lancerWallet]);
+      } else if (
+        !wallets
+          .map((wallet) => wallet.publicKey.toString())
+          .includes(lancerWallet.publicKey.toString())
+      ) {
+        wallets.push(lancerWallet);
         setWallets(wallets);
-      } else {
-        setWallets([coinflowWallet]);
       }
       setProvider(provider);
       setProgram(program);
     };
     getMagicWallet();
-  }, [magic?.user]);
+  }, [magic?.user, wallets]);
 
   useEffect(() => {
     if (connected) {
@@ -108,18 +114,24 @@ export const LancerProvider: FunctionComponent<ILancerState> = ({
           await signTransaction(transaction);
           return await sendTransaction(transaction, connection);
         },
+        providerName: "Phantom",
       };
-      if (wallets) {
+      console.log("walletsp", wallets);
+      if (!wallets) {
+        setWallets([lancerWallet]);
+      } else if (
+        !wallets
+          .map((wallet) => wallet.publicKey.toString())
+          .includes(lancerWallet.publicKey.toString())
+      ) {
         wallets.push(lancerWallet);
         setWallets(wallets);
-      } else {
-        setWallets([lancerWallet]);
       }
       setProvider(provider);
       setProgram(program);
       setCurrentWallet(lancerWallet);
     }
-  }, [connected]);
+  }, [connected, wallets]);
 
   useEffect(() => {
     const getCurrentUser = async () => {

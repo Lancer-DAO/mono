@@ -7,4 +7,5 @@ export interface LancerWallet extends SolanaWalletContextState {
     signAllTransactions: (
       transactions: Transaction[]
     ) => Promise<Transaction[]>;
+    providerName: string;
   }
