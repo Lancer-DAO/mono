@@ -13,7 +13,7 @@ export const CancelEscrow = () => {
   const {
     currentUser,
     currentBounty,
-    wallet,
+    currentWallet,
     provider,
     program,
     setCurrentBounty,
@@ -23,7 +23,7 @@ export const CancelEscrow = () => {
     // If we are the creator, then skip requesting and add self as approved
     const signature = await cancelFFA(
       currentBounty.escrow,
-      wallet,
+      currentWallet,
       program,
       provider
     );

@@ -13,7 +13,7 @@ import Coinflow from "./coinflowOfframp";
 import { PageLayout } from "@/src/layouts";
 
 const FundBounty: React.FC = () => {
-  const { wallet, provider, currentUser } = useLancer();
+  const { currentWallet, provider, currentUser } = useLancer();
   const [currentUserSOLBalance, setUserSOLBalance] = useState("0.0");
   const [currentUserUSDCBalance, setUserUSDCBalance] = useState("0.0");
   const [aidropSignature, setAirdropSignature] = useState("");
@@ -60,7 +60,7 @@ const FundBounty: React.FC = () => {
   const requestAirdrop = async () => {
     console.log("requesting airdrop");
     const airdrop = await provider.connection.requestAirdrop(
-      wallet.publicKey,
+      currentWallet.publicKey,
       1000000000
     );
     console.log("airdrop signature", airdrop);

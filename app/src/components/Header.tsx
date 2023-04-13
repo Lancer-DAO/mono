@@ -1,7 +1,14 @@
 import Link from "next/link";
 import { useLocation } from "react-router-dom";
 import Logo from "../assets/Logo";
+import dynamic from "next/dynamic";
+import styles from "../styles/Home.module.css";
 
+const WalletMultiButtonDynamic = dynamic(
+  async () =>
+    (await import("@solana/wallet-adapter-react-ui")).WalletMultiButton,
+  { ssr: false }
+);
 export const Header = () => {
   return (
     <div
@@ -39,6 +46,9 @@ export const Header = () => {
               alt="Bag - Jobs Webflow Template"
             />
           </Link>
+          <div className={styles.walletButtons}>
+            <WalletMultiButtonDynamic />
+          </div>
         </div>
       </div>
     </div>

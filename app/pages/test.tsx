@@ -164,13 +164,15 @@ const App: FC<AppProps> = ({ Component, pageProps }) => {
   );
 
   return (
-    <ConnectionProvider endpoint={endpoint}>
-      <WalletProvider wallets={wallets} autoConnect>
-        <WalletModalProvider>
-          <Home />
-        </WalletModalProvider>
-      </WalletProvider>
-    </ConnectionProvider>
+    wallets && (
+      <ConnectionProvider endpoint={endpoint}>
+        <WalletProvider wallets={wallets} autoConnect>
+          <WalletModalProvider>
+            <Home />
+          </WalletModalProvider>
+        </WalletProvider>
+      </ConnectionProvider>
+    )
   );
 };
 

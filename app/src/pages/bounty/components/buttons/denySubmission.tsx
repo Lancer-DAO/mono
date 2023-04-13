@@ -13,7 +13,7 @@ export const DenySubmission = () => {
   const {
     currentUser,
     currentBounty,
-    wallet,
+    currentWallet,
     provider,
     program,
     setCurrentBounty,
@@ -24,7 +24,7 @@ export const DenySubmission = () => {
     const signature = await denyRequestFFA(
       new PublicKey(currentBounty.currentSubmitter.publicKey),
       currentBounty.escrow,
-      wallet,
+      currentWallet,
       program,
       provider
     );

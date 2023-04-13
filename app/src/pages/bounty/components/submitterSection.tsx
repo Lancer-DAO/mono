@@ -26,7 +26,7 @@ const SubmitterSection: React.FC<SubmitterSectionProps> = ({
 }: SubmitterSectionProps) => {
   const {
     currentBounty,
-    wallet,
+    currentWallet,
     provider,
     program,
     currentUser,
@@ -42,7 +42,7 @@ const SubmitterSection: React.FC<SubmitterSectionProps> = ({
             const signature = await removeSubmitterFFA(
               new PublicKey(submitter.publicKey),
               currentBounty.escrow,
-              wallet,
+              currentWallet,
               program,
               provider
             );
@@ -92,7 +92,7 @@ const SubmitterSection: React.FC<SubmitterSectionProps> = ({
               const signature = await addSubmitterFFA(
                 new PublicKey(submitter.publicKey),
                 currentBounty.escrow,
-                wallet,
+                currentWallet,
                 program,
                 provider
               );

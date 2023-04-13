@@ -13,7 +13,7 @@ export const RequestChanges = () => {
   const {
     currentUser,
     currentBounty,
-    wallet,
+    currentWallet,
     provider,
     program,
     setCurrentBounty,
@@ -25,7 +25,7 @@ export const RequestChanges = () => {
       new PublicKey(currentBounty.currentSubmitter.publicKey),
 
       currentBounty.escrow,
-      wallet,
+      currentWallet,
       program,
       provider
     );

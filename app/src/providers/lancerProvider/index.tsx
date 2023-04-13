@@ -16,22 +16,9 @@ import {
   useState,
 } from "react";
 import { CHAIN_CONFIG } from "../../config/chainConfig";
-import {
-  Connection,
-  PublicKey,
-  Transaction,
-  VersionedTransaction,
-} from "@solana/web3.js";
+import { clusterApiUrl } from "@solana/web3.js";
 import { AnchorProvider, Program } from "@project-serum/anchor";
 import { MonoProgram } from "@/escrow/sdk/types/mono_program";
-import { getApiEndpoint, getEndpoint } from "@/src/utils";
-import { CREATE_USER_ROUTE, REACT_APP_CLIENTID } from "@/src/constants";
-import { useLocation } from "react-router-dom";
-import axios from "axios";
-import { ACCOUNT_API_ROUTE } from "@/constants";
-import { MONO_DEVNET } from "@/escrow/sdk/constants";
-import RPC from "../solanaRPC";
-import MonoProgramJSON from "@/escrow/sdk/idl/mono_program.json";
 import {
   Issue,
   BountyState,
@@ -50,6 +37,13 @@ import {
 import { createMagicWallet, magic } from "@/src/utils/magic";
 import { api } from "@/src/utils/api";
 import { getCookie } from "cookies-next";
+import { PhantomWalletAdapter } from "@solana/wallet-adapter-phantom";
+import { WalletAdapterNetwork } from "@solana/wallet-adapter-base";
+import {
+  ConnectionProvider,
+  WalletProvider,
+} from "@solana/wallet-adapter-react";
+import { WalletModalProvider } from "@solana/wallet-adapter-react-ui";
 export * from "./types";
 
 export const LancerContext = createContext<ILancerContext>({
@@ -59,15 +53,18 @@ export const LancerContext = createContext<ILancerContext>({
   loginState: "logged_out",
   issueLoadingState: "initializing",
   program: null,
-  wallet: null,
+  currentWallet: null,
+  wallets: null,
   provider: null,
   currentBounty: null,
   setIssue: () => null,
   setIssues: () => null,
+  setWallets: () => null,
   setLoginState: () => null,
   setCurrentUser: () => null,
   setIssueLoadingState: (state: ISSUE_LOAD_STATE) => null,
   setCurrentBounty: () => null,
+  setCurrentWallet: () => null,
 });
 
 export function useLancer(): ILancerContext {
@@ -85,7 +82,30 @@ export const LancerProvider: FunctionComponent<ILancerState> = ({
   children,
 }: ILancerProps) => {
   const { mutateAsync: getCurrUser } = api.users.currentUser.useMutation();
+  const network = WalletAdapterNetwork.Devnet;
 
+  // You can also provide a custom RPC endpoint
+  const endpoint = useMemo(() => clusterApiUrl(network), [network]);
+
+  const walletProviders = useMemo(
+    () => [
+      /**
+       * Wallets that implement either of these standards will be available automatically.
+       *
+       *   - Solana Mobile Stack Mobile Wallet Adapter Protocol
+       *     (https://github.com/solana-mobile/mobile-wallet-adapter)
+       *   - Solana Wallet Standard
+       *     (https://github.com/solana-labs/wallet-standard)
+       *
+       * If you wish to support a wallet that supports neither of those standards,
+       * instantiate its legacy wallet adapter here. Common legacy adapters can be found
+       * in the npm package `@solana/wallet-adapter-wallets`.
+       */
+      new PhantomWalletAdapter(),
+    ],
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [network]
+  );
   const [currentUser, setCurrentUser] = useState<CurrentUser | null>(null);
   const [currentBounty, setCurrentBounty] = useState<Bounty | null>(null);
   const [issue, setIssue] = useState<Issue | null>(null);
@@ -94,17 +114,21 @@ export const LancerProvider: FunctionComponent<ILancerState> = ({
     "logged_out"
   );
   const [isGettingContract, setIsGettingContract] = useState(false);
-  const [wallet, setWallet] = useState<LancerWallet>();
+  const [currentWallet, setCurrentWallet] = useState<LancerWallet>();
+  const [wallets, setWallets] = useState<LancerWallet[]>();
   const [provider, setProvider] = useState<AnchorProvider>();
   const [program, setProgram] = useState<Program<MonoProgram>>();
-  const [isWalletReady, setIsWalletReady] = useState(false);
   useEffect(() => {
     const getMagicWallet = async () => {
       const { coinflowWallet, program, provider } = await createMagicWallet();
-      setWallet(coinflowWallet);
+      if (wallets) {
+        wallets.push(coinflowWallet);
+        setWallets(wallets);
+      } else {
+        setWallets([coinflowWallet]);
+      }
       setProvider(provider);
       setProgram(program);
-      setIsWalletReady(true);
     };
     getMagicWallet();
   }, [magic?.user]);
@@ -123,7 +147,6 @@ export const LancerProvider: FunctionComponent<ILancerState> = ({
   const [issueLoadingState, setIssueLoadingState] =
     useState<ISSUE_LOAD_STATE>("initializing");
 
- 
   const contextProvider = {
     currentUser,
     setCurrentUser,
@@ -137,13 +160,20 @@ export const LancerProvider: FunctionComponent<ILancerState> = ({
     setIssueLoadingState,
     program,
     provider,
-    wallet,
+    setWallets,
+    wallets,
     currentBounty,
     setCurrentBounty,
+    currentWallet,
+    setCurrentWallet,
   };
   return (
     <LancerContext.Provider value={contextProvider}>
-      {children}
+      <ConnectionProvider endpoint={endpoint}>
+        <WalletProvider wallets={walletProviders} autoConnect>
+          <WalletModalProvider>{children}</WalletModalProvider>
+        </WalletProvider>
+      </ConnectionProvider>
     </LancerContext.Provider>
   );
 };
