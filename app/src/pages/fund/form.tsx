@@ -30,7 +30,6 @@ const Form = () => {
     fundingAmount: null,
   });
   const [isAccountCreated, setIsAccountCreated] = useState(true);
-  const [fundingType, setFundingType] = useState<"card" | "wallet">("card");
   const handleChange = (event) => {
     setFormData({
       ...formData,
@@ -94,27 +93,7 @@ const Form = () => {
                 <LoadingBar title="Loading On Chain Details" />
               ) : (
                 <>
-                  <div className="issue-creation-type">
-                    <div
-                      className={classnames("form-subtitle hover-effect", {
-                        unselected: fundingType !== "card",
-                      })}
-                      onClick={() => setFundingType("card")}
-                    >
-                      Pay With Card
-                    </div>
-                    <div>OR</div>
-                    <div
-                      className={classnames("form-subtitle hover-effect", {
-                        unselected: fundingType !== "wallet",
-                      })}
-                      onClick={() => setFundingType("wallet")}
-                    >
-                      Pay With Phantom Wallet
-                    </div>
-                  </div>
-
-                  {fundingType === "card" && (
+                  {currentWallet.providerName === "Magic Link" && (
                     <>
                       <div>
                         <label>
@@ -139,7 +118,7 @@ const Form = () => {
                       )}
                     </>
                   )}
-                  {fundingType === "wallet" && (
+                  {currentWallet.providerName !== "Magic Link" && (
                     <>
                       <div>
                         <label>

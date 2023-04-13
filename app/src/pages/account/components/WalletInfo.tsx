@@ -13,7 +13,7 @@ import { PageLayout } from "@/src/layouts";
 import { LancerWallet } from "@/src/types";
 
 export const WalletInfo: React.FC<{ wallet: LancerWallet }> = ({ wallet }) => {
-  const { provider } = useLancer();
+  const { provider, setCurrentWallet, currentWallet } = useLancer();
   const [currentUserSOLBalance, setUserSOLBalance] = useState("0.0");
   const [currentUserUSDCBalance, setUserUSDCBalance] = useState("0.0");
   const [aidropSignature, setAirdropSignature] = useState("");
@@ -69,9 +69,17 @@ export const WalletInfo: React.FC<{ wallet: LancerWallet }> = ({ wallet }) => {
     provider && (
       <div className="account-page-wrapper">
         <PubKey pubKey={new PublicKey(wallet.publicKey)} full />
-        <div className="User Balance">
-          Wallet SOL Balance: {currentUserSOLBalance}
-        </div>
+        {wallet.publicKey.toString() === currentWallet?.publicKey.toString() ? (
+          <div>Current Wallet</div>
+        ) : (
+          <button
+            className="button-primary"
+            onClick={() => setCurrentWallet(wallet)}
+          >
+            Set as Current Wallet
+          </button>
+        )}
+        <div className="User Balance">SOL Balance: {currentUserSOLBalance}</div>
         <button className="button-primary" onClick={() => requestAirdrop()}>
           Request SOL Airdrop
         </button>
@@ -85,7 +93,7 @@ export const WalletInfo: React.FC<{ wallet: LancerWallet }> = ({ wallet }) => {
           </a>
         )}
         <div className="User Balance">
-          Wallet USDC Balance: {currentUserUSDCBalance}
+          USDC Balance: {currentUserUSDCBalance}
         </div>
       </div>
     )

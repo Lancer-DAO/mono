@@ -12,7 +12,14 @@ import { PubKey } from "@/src/components";
 import Coinflow from "./coinflowOfframp";
 import { PageLayout } from "@/src/layouts";
 import { WalletInfo } from "@/src/pages/account/components/WalletInfo";
+import styles from "@/styles/Home.module.css";
+import dynamic from "next/dynamic";
 
+const WalletMultiButtonDynamic = dynamic(
+  async () =>
+    (await import("@solana/wallet-adapter-react-ui")).WalletMultiButton,
+  { ssr: false }
+);
 const FundBounty: React.FC = () => {
   const { currentUser, wallets } = useLancer();
 
@@ -23,9 +30,14 @@ const FundBounty: React.FC = () => {
           {currentUser?.githubLogin && (
             <div>GitHub User: {currentUser.githubLogin}</div>
           )}
-          {wallets.map((wallet) => (
-            <WalletInfo wallet={wallet} key={wallet.publicKey.toString()} />
-          ))}
+
+          <div className={styles.walletButtons}>
+            <WalletMultiButtonDynamic />
+          </div>
+          {wallets &&
+            wallets.map((wallet) => (
+              <WalletInfo wallet={wallet} key={wallet.publicKey.toString()} />
+            ))}
 
           <a
             href="https://staging.coinflow.cash/faucet"

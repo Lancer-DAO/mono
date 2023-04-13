@@ -1,15 +1,16 @@
 import Link from "next/link";
-import { useLocation } from "react-router-dom";
 import Logo from "../assets/Logo";
-import dynamic from "next/dynamic";
-import styles from "../styles/Home.module.css";
+import { PubKey } from "@/src/components/PublicKey";
+import { useLancer } from "@/src/providers";
+import { getWalletProviderImage } from "@/src/utils";
+import { useState } from "react";
 
-const WalletMultiButtonDynamic = dynamic(
-  async () =>
-    (await import("@solana/wallet-adapter-react-ui")).WalletMultiButton,
-  { ssr: false }
-);
 export const Header = () => {
+  const { currentWallet, wallets, setCurrentWallet } = useLancer();
+  const [isWalletSelectOpen, setIsWalletSelectOpen] = useState(false);
+  const toggleWalletSelectOpen = () =>
+    setIsWalletSelectOpen(!isWalletSelectOpen);
+
   return (
     <div
       data-collapse="medium"
@@ -35,20 +36,46 @@ export const Header = () => {
           <Link href={`/bounties`} className="button-primary">
             All bounties
           </Link>
-          <Link
-            href={`/account`}
-            data-node-type="commerce-cart-open-link"
-            className="w-commerce-commercecartopenlink cart-buttno w-inline-block"
-          >
-            <img
-              src="assets/images/noun-wallet-database-763815.png"
-              width="50"
-              alt="Bag - Jobs Webflow Template"
-            />
+
+          <Link href={`/account`} className="button-primary">
+            Account
           </Link>
-          <div className={styles.walletButtons}>
-            <WalletMultiButtonDynamic />
-          </div>
+
+          {currentWallet && (
+            <div
+              data-delay="0"
+              data-hover="false"
+              id="w-node-b1521c3c-4fa1-4011-ae36-88dcb6e746fb-0ae9cdc2"
+              className="w-dropdown hug"
+              onClick={toggleWalletSelectOpen}
+            >
+              <main className="dropdown-toggle-3 w-dropdown-toggle-3">
+                <div className="header-current-wallet">
+                  {getWalletProviderImage(currentWallet.providerName)}
+                  <PubKey pubKey={currentWallet.publicKey} noCopy />
+                </div>
+                <div className="w-icon-dropdown-toggle"></div>
+              </main>
+              {isWalletSelectOpen && wallets && (
+                <div
+                  className="w-dropdown-list"
+                  onMouseLeave={() => setIsWalletSelectOpen(false)}
+                >
+                  {wallets.map((wallet) => (
+                    <div
+                      className="header-current-wallet"
+                      onClick={() => {
+                        setCurrentWallet(wallet);
+                      }}
+                    >
+                      {getWalletProviderImage(wallet.providerName)}
+                      <PubKey pubKey={wallet.publicKey} noCopy />
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
         </div>
       </div>
     </div>

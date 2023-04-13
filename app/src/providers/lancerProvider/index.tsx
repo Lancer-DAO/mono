@@ -96,6 +96,7 @@ export const LancerProvider: FunctionComponent<ILancerState> = ({
       }
       setProvider(provider);
       setProgram(program);
+      setCurrentWallet(lancerWallet);
     };
     getMagicWallet();
   }, [magic?.user, wallets]);
