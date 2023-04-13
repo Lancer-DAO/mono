@@ -25,9 +25,8 @@ import { MagicUserMetadata } from "magic-sdk";
 import { Octokit } from "octokit";
 import { getEscrowContractKey } from "@/src/providers/lancerProvider/queries";
 import { useRouter } from "next/router";
-import { useConnection, useWallet } from "@solana/wallet-adapter-react";
+import { useWallet } from "@solana/wallet-adapter-react";
 import { LancerWallet } from "@/src/types";
-import { Transaction } from "@solana/web3.js";
 
 const Form = () => {
   const { currentWallet, program, provider, currentUser, setCurrentBounty } =
@@ -41,20 +40,6 @@ const Form = () => {
     signTransaction,
     connected,
   } = useWallet();
-  const { connection } = useConnection();
-  const lancerPhantom: LancerWallet = {
-    wallet,
-    publicKey,
-    sendTransaction,
-    signAllTransactions,
-    signMessage,
-    signTransaction,
-    connected,
-    signAndSendTransaction: async (transaction: Transaction) => {
-      await signTransaction(transaction);
-      return await sendTransaction(transaction, connection);
-    },
-  };
   const { mutateAsync } = api.bounties.createBounty.useMutation();
   const { mutateAsync: createIssue } = api.issues.createIssue.useMutation();
   const [creationType, setCreationType] = useState<"new" | "existing">("new");
@@ -102,7 +87,7 @@ const Form = () => {
     e.preventDefault();
     setIsSubmittingIssue(true);
     const { timestamp, signature, escrowKey } = await createFFA(
-      lancerPhantom,
+      currentWallet,
       program,
       provider
     );
@@ -118,10 +103,10 @@ const Form = () => {
       tags: formData.requirements,
       organizationName: repo.full_name.split("/")[0],
       repositoryName: repo.full_name.split("/")[1],
-      publicKey: lancerPhantom.publicKey.toString(),
+      publicKey: currentUser.currentWallet.publicKey.toString(),
       escrowKey: escrowKey.toString(),
       transactionSignature: signature,
-      provider: "Phantom",
+      provider: "Magic Link",
       timestamp: timestamp,
       chainName: "Solana",
       network: "devnet",

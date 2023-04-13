@@ -21,36 +21,13 @@ export const RequestToSubmit = () => {
   } = useLancer();
   const { mutateAsync } = api.bounties.updateBountyUser.useMutation();
 
-  const {
-    wallet,
-    publicKey,
-    sendTransaction,
-    signAllTransactions,
-    signMessage,
-    signTransaction,
-    connected,
-  } = useWallet();
-  const { connection } = useConnection();
-  const lancerPhantom: LancerWallet = {
-    wallet,
-    publicKey,
-    sendTransaction,
-    signAllTransactions,
-    signMessage,
-    signTransaction,
-    connected,
-    signAndSendTransaction: async (transaction: Transaction) => {
-      await signTransaction(transaction);
-      return await sendTransaction(transaction, connection);
-    },
-  };
   const onClick = async () => {
     if (currentBounty.isCreator) {
       // If we are the creator, then skip requesting and add self as approved
       const signature = await addSubmitterFFA(
-        lancerPhantom.publicKey,
+        currentWallet.publicKey,
         currentBounty.escrow,
-        lancerPhantom,
+        currentWallet,
         program,
         provider
       );

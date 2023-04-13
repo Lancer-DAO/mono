@@ -1,14 +1,14 @@
 import { BountyList } from "./bountyTable";
 import { PageLayout } from "@/src/layouts";
-import { LancerProvider } from "@/src/providers";
+import { AllProviders } from "@/src/providers";
 
 const App: React.FC<{ isMyBounties?: boolean }> = ({ isMyBounties }) => {
   return (
-    <LancerProvider>
+    <AllProviders>
       <PageLayout>
         <BountyList isMyBounties={isMyBounties} />
       </PageLayout>
-    </LancerProvider>
+    </AllProviders>
   );
 };
 

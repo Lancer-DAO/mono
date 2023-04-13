@@ -31,26 +31,12 @@ export const ApproveSubmission = () => {
     signTransaction,
     connected,
   } = useWallet();
-  const { connection } = useConnection();
-  const lancerPhantom: LancerWallet = {
-    wallet,
-    publicKey,
-    sendTransaction,
-    signAllTransactions,
-    signMessage,
-    signTransaction,
-    connected,
-    signAndSendTransaction: async (transaction: Transaction) => {
-      await signTransaction(transaction);
-      return await sendTransaction(transaction, connection);
-    },
-  };
   const onClick = async () => {
     // If we are the creator, then skip requesting and add self as approved
     const signature = await approveRequestFFA(
       new PublicKey(currentBounty.currentSubmitter.publicKey),
       currentBounty.escrow,
-      lancerPhantom,
+      currentWallet,
       program,
       provider
     );

@@ -1,11 +1,11 @@
 import Form from "./form";
-import { LancerProvider } from "@/src/providers/lancerProvider";
+import { AllProviders } from "@/src/providers";
 import { PageLayout } from "@/src/layouts";
 
 function App() {
   return (
     <div>
-      <LancerProvider>
+      <AllProviders>
         <PageLayout>
           <div className="create-issue-wrapper">
             <div
@@ -36,7 +36,7 @@ function App() {
             <Form />
           </div>
         </PageLayout>
-      </LancerProvider>
+      </AllProviders>
     </div>
   );
 }

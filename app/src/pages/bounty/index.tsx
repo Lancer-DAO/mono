@@ -1,15 +1,15 @@
 import { useRouter } from "next/router";
 import Bounty from "@/src/pages/bounty/bounty";
-import { LancerProvider } from "@/src/providers/lancerProvider";
+import { AllProviders } from "@/src/providers";
 import { PageLayout } from "@/src/layouts";
 
 function App() {
   return (
-    <LancerProvider>
+    <AllProviders>
       <PageLayout>
         <Bounty />
       </PageLayout>
-    </LancerProvider>
+    </AllProviders>
   );
 }
 

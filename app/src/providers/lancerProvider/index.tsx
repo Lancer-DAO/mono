@@ -1,34 +1,14 @@
-import { ADAPTER_EVENTS, WALLET_ADAPTERS } from "@web3auth/base";
-import { Web3AuthCore } from "@web3auth/core";
-import {
-  OpenloginAdapter,
-  OpenloginAdapterOptions,
-  OpenloginLoginParams,
-} from "@web3auth/openlogin-adapter";
 import {
   createContext,
   FunctionComponent,
   ReactNode,
-  useCallback,
   useContext,
   useEffect,
-  useMemo,
   useState,
 } from "react";
-import { CHAIN_CONFIG } from "../../config/chainConfig";
-import { clusterApiUrl } from "@solana/web3.js";
 import { AnchorProvider, Program } from "@project-serum/anchor";
 import { MonoProgram } from "@/escrow/sdk/types/mono_program";
-import {
-  Issue,
-  BountyState,
-  Contributor,
-  User,
-  CurrentUser,
-  LancerWallet,
-  Bounty,
-} from "@/src/types";
-import { SolanaWalletContextState } from "@coinflowlabs/react";
+import { Issue, CurrentUser, LancerWallet, Bounty } from "@/src/types";
 import {
   ILancerContext,
   ISSUE_LOAD_STATE,
@@ -37,13 +17,8 @@ import {
 import { createMagicWallet, magic } from "@/src/utils/magic";
 import { api } from "@/src/utils/api";
 import { getCookie } from "cookies-next";
-import { PhantomWalletAdapter } from "@solana/wallet-adapter-phantom";
-import { WalletAdapterNetwork } from "@solana/wallet-adapter-base";
-import {
-  ConnectionProvider,
-  WalletProvider,
-} from "@solana/wallet-adapter-react";
-import { WalletModalProvider } from "@solana/wallet-adapter-react-ui";
+import { useConnection, useWallet } from "@solana/wallet-adapter-react";
+import { Transaction } from "@solana/web3.js";
 export * from "./types";
 
 export const LancerContext = createContext<ILancerContext>({
@@ -82,30 +57,16 @@ export const LancerProvider: FunctionComponent<ILancerState> = ({
   children,
 }: ILancerProps) => {
   const { mutateAsync: getCurrUser } = api.users.currentUser.useMutation();
-  const network = WalletAdapterNetwork.Devnet;
-
-  // You can also provide a custom RPC endpoint
-  const endpoint = useMemo(() => clusterApiUrl(network), [network]);
-
-  const walletProviders = useMemo(
-    () => [
-      /**
-       * Wallets that implement either of these standards will be available automatically.
-       *
-       *   - Solana Mobile Stack Mobile Wallet Adapter Protocol
-       *     (https://github.com/solana-mobile/mobile-wallet-adapter)
-       *   - Solana Wallet Standard
-       *     (https://github.com/solana-labs/wallet-standard)
-       *
-       * If you wish to support a wallet that supports neither of those standards,
-       * instantiate its legacy wallet adapter here. Common legacy adapters can be found
-       * in the npm package `@solana/wallet-adapter-wallets`.
-       */
-      new PhantomWalletAdapter(),
-    ],
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [network]
-  );
+  const {
+    wallet,
+    publicKey,
+    sendTransaction,
+    signAllTransactions,
+    signMessage,
+    signTransaction,
+    connected,
+  } = useWallet();
+  const { connection } = useConnection();
   const [currentUser, setCurrentUser] = useState<CurrentUser | null>(null);
   const [currentBounty, setCurrentBounty] = useState<Bounty | null>(null);
   const [issue, setIssue] = useState<Issue | null>(null);
@@ -132,6 +93,33 @@ export const LancerProvider: FunctionComponent<ILancerState> = ({
     };
     getMagicWallet();
   }, [magic?.user]);
+
+  useEffect(() => {
+    if (connected) {
+      const lancerWallet: LancerWallet = {
+        wallet,
+        publicKey,
+        sendTransaction,
+        signAllTransactions,
+        signMessage,
+        signTransaction,
+        connected,
+        signAndSendTransaction: async (transaction: Transaction) => {
+          await signTransaction(transaction);
+          return await sendTransaction(transaction, connection);
+        },
+      };
+      if (wallets) {
+        wallets.push(lancerWallet);
+        setWallets(wallets);
+      } else {
+        setWallets([lancerWallet]);
+      }
+      setProvider(provider);
+      setProgram(program);
+      setCurrentWallet(lancerWallet);
+    }
+  }, [connected]);
 
   useEffect(() => {
     const getCurrentUser = async () => {
@@ -169,11 +157,7 @@ export const LancerProvider: FunctionComponent<ILancerState> = ({
   };
   return (
     <LancerContext.Provider value={contextProvider}>
-      <ConnectionProvider endpoint={endpoint}>
-        <WalletProvider wallets={walletProviders} autoConnect>
-          <WalletModalProvider>{children}</WalletModalProvider>
-        </WalletProvider>
-      </ConnectionProvider>
+      {children}
     </LancerContext.Provider>
   );
 };

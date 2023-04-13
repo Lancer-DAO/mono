@@ -15,33 +15,16 @@ import { DEVNET_USDC_MINT } from "@/src/constants";
 import { useConnection, useWallet } from "@solana/wallet-adapter-react";
 
 const Form = () => {
-  const { currentBounty, currentUser, setCurrentBounty, program, provider } =
-    useLancer();
+  const {
+    currentBounty,
+    currentUser,
+    setCurrentBounty,
+    program,
+    provider,
+    currentWallet,
+  } = useLancer();
   const { mutateAsync: getBounty } = api.bounties.getBounty.useMutation();
   const { mutateAsync: fundB } = api.bounties.fundBounty.useMutation();
-  const {
-    wallet,
-    publicKey,
-    sendTransaction,
-    signAllTransactions,
-    signMessage,
-    signTransaction,
-    connected,
-  } = useWallet();
-  const { connection } = useConnection();
-  const lancerPhantom: LancerWallet = {
-    wallet,
-    publicKey,
-    sendTransaction,
-    signAllTransactions,
-    signMessage,
-    signTransaction,
-    connected,
-    signAndSendTransaction: async (transaction: Transaction) => {
-      await signTransaction(transaction);
-      return await sendTransaction(transaction, connection);
-    },
-  };
   const router = useRouter();
   const [formData, setFormData] = useState({
     fundingAmount: null,
@@ -82,7 +65,7 @@ const Form = () => {
     const signature = await fundFFA(
       formData.fundingAmount,
       currentBounty.escrow,
-      lancerPhantom,
+      currentWallet,
       program,
       provider
     );
