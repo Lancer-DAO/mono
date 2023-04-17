@@ -21,6 +21,12 @@ pub enum MonoError
     #[msg("No Request Submitted yet")]
     NoActiveRequest,
 
+    #[msg("Insufficient funds to pay lancer fee")]
+    CannotPayFee,
+
     #[msg("Cannot Cancel Feature")]
-    CannotCancelFeature
+    CannotCancelFeature,
+
+    #[msg("You are not the Admin")]
+    InvalidAdmin,
 }

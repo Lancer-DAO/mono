@@ -7,6 +7,10 @@ pub mod deny_request;
 pub mod vote_to_cancel;
 pub mod cancel_feature;
 pub mod remove_approved_submitters;
+pub mod create_lancer_token_account;
+pub mod create_lancer_tokens;
+pub mod withdraw_tokens;
+pub mod approve_request_third_party;
 
 pub use create_feature_funding_account::*;
 pub use fund_feature::*;
@@ -17,3 +21,7 @@ pub use deny_request::*;
 pub use vote_to_cancel::*;
 pub use cancel_feature::*;
 pub use remove_approved_submitters::*;
+pub use create_lancer_token_account::*;
+pub use create_lancer_tokens::*;
+pub use withdraw_tokens::*;
+pub use approve_request_third_party::*;

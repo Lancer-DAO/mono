@@ -3,13 +3,16 @@
 use anchor_lang::prelude::*;
 use anchor_spl::{token::{TokenAccount, Token, self, Transfer, CloseAccount, MintTo, Mint}};
 
-use crate::{constants::{MONO_DATA, PERCENT, LANCER_DAO, COMPLETER_FEE, LANCER_ADMIN, MINT_DECIMALS, LANCER_COMPLETER_TOKENS, LANCER_COMPANY_TOKENS, MINT_AUTHORITY}, state::FeatureDataAccount, errors::MonoError};
+use crate::{constants::{MONO_DATA, PERCENT, LANCER_DAO, COMPLETER_FEE, LANCER_ADMIN, MINT_DECIMALS, LANCER_COMPLETER_TOKENS, LANCER_COMPANY_TOKENS, MINT_AUTHORITY, THIRD_PARTY_FEE}, state::FeatureDataAccount, errors::MonoError};
 
 #[derive(Accounts)]
-pub struct ApproveRequest<'info>
+pub struct ApproveRequestThirdParty<'info>
 {
     #[account(mut)]
     pub creator: Signer<'info>,
+
+    #[account(mut)]
+    pub third_party: Account<'info, TokenAccount>,
 
     #[account(mut)]
     pub submitter: SystemAccount<'info>,
@@ -134,7 +137,7 @@ pub struct ApproveRequest<'info>
 
 }
 
-impl<'info> ApproveRequest<'info> {
+impl<'info> ApproveRequestThirdParty<'info> {
     fn transfer_bounty_context(&self) -> CpiContext<'_, '_, '_, 'info, Transfer<'info>> {
         CpiContext::new(
             self.token_program.to_account_info().clone(),
@@ -151,6 +154,16 @@ impl<'info> ApproveRequest<'info> {
           Transfer {
             from: self.feature_token_account.to_account_info(),
             to: self.lancer_dao_token_account.to_account_info(),
+            authority: self.program_authority.to_account_info(),
+        })
+    }
+
+    fn transfer_bounty_third_party_fee_context(&self) -> CpiContext<'_, '_, '_, 'info, Transfer<'info>> {
+        CpiContext::new(
+            self.token_program.to_account_info().clone(),
+          Transfer {
+            from: self.feature_token_account.to_account_info(),
+            to: self.third_party.to_account_info(),
             authority: self.program_authority.to_account_info(),
         })
     }
@@ -190,7 +203,7 @@ impl<'info> ApproveRequest<'info> {
 
 }
 
-pub fn handler(ctx: Context<ApproveRequest>, mint_bump: u8) -> Result<()>
+pub fn handler(ctx: Context<ApproveRequestThirdParty>, bump: u8) -> Result<()>
 {
 
     let transfer_seeds = &[
@@ -201,7 +214,7 @@ pub fn handler(ctx: Context<ApproveRequest>, mint_bump: u8) -> Result<()>
 
     let mint_seeds = &[
         MINT_AUTHORITY.as_bytes(),
-        &[mint_bump]
+        &[bump]
     ];
     let mint_signer = [&mint_seeds[..]];
 
@@ -222,12 +235,25 @@ pub fn handler(ctx: Context<ApproveRequest>, mint_bump: u8) -> Result<()>
     )?;
     ctx.accounts.feature_token_account.reload()?;
 
-    msg!("lancer fee = {}", ctx.accounts.feature_token_account.amount);
+    let third_party_fee = ctx.accounts.feature_token_account.amount
+        .checked_mul(THIRD_PARTY_FEE)
+        .unwrap()
+        .checked_div(PERCENT)
+        .unwrap();
+    
+    msg!("third party fee = {}", third_party_fee);
+    token::transfer(
+        ctx.accounts.transfer_bounty_third_party_fee_context().with_signer(&transfer_signer), 
+        third_party_fee
+    )?;
 
+    ctx.accounts.feature_token_account.reload()?;
+    msg!("lancer fee = {}", ctx.accounts.feature_token_account.amount);
     token::transfer(
         ctx.accounts.transfer_bounty_fee_context().with_signer(&transfer_signer), 
         ctx.accounts.feature_token_account.amount
     )?;
+
 
     token::mint_to(
         ctx.accounts.mint_completer_tokens().with_signer(&mint_signer), 

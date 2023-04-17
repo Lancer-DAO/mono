@@ -91,7 +91,7 @@ pub fn handler(ctx: Context<CancelFeature>, ) -> Result<()>
     token::transfer(
         ctx.accounts.transfer_context().with_signer(&signer), 
         ctx.accounts.feature_token_account.amount,
-    )?;msg!("whyyyyyyyy");
+    )?;
 
     // Close token account owned by program that stored funds
     token::close_account(

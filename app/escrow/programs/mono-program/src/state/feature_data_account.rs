@@ -5,7 +5,8 @@ use crate::constants::MAX_NO_OF_SUBMITTERS;
 #[account]
 pub struct FeatureDataAccount 
 {
-    pub creator: Pubkey,// 32
+    pub creator: Pubkey,// 
+    pub amount: u64,// 8
     pub request_submitted: bool,// 1
     pub current_submitter: Pubkey,// 32
     pub approved_submitters: [Pubkey; MAX_NO_OF_SUBMITTERS],// 32 * 3 = 96    
@@ -26,6 +27,7 @@ impl FeatureDataAccount
     pub fn space(unix_timestamp: &String) -> usize
     {
         8  +// Discriminator 
+        8 + //Amount
         1  +// request_submitted
         32 +// current_submitter
         (32 * 3) +// approved_submitters

@@ -9,7 +9,7 @@ mod instructions;
 use crate::instructions::*;
 
 
-declare_id!("DYMY9uf1t4vvSnHxJZJor74xjb67v7fuMTWBCxcknXj8");
+declare_id!("Gu2VCpw4RagQ5gtxENrdXydPjyioEZqXgcyP2mf89xfA");
 
 
 #[program]
@@ -38,9 +38,9 @@ pub mod mono_program {
         submit_request::handler(ctx)
     }
 
-    pub fn approve_request(ctx: Context<ApproveRequest>) -> Result<()>
+    pub fn approve_request(ctx: Context<ApproveRequest>, mint_bump: u8) -> Result<()>
     {
-        approve_request::handler(ctx)
+        approve_request::handler(ctx, mint_bump)
     }
 
     pub fn deny_request(ctx: Context<DenyRequest>) -> Result<()>
@@ -62,6 +62,25 @@ pub mod mono_program {
     {
         remove_approved_submitters::handler(ctx)
     }
+
+    pub fn create_lancer_token_account(ctx: Context<CreateLancerTokenAccount>) -> Result<()>
+    {
+        create_lancer_token_account::handler(ctx)
+    }
+
+    pub fn create_lancer_tokens(ctx: Context<CreateLancerTokens>) -> Result<()>
+    {
+        create_lancer_tokens::handler(ctx)
+    }
+
+    pub fn withdraw_tokens(ctx: Context<WithdrawTokens>, amount: u64, withdraw_bump: u8) -> Result<()> {
+        withdraw_tokens::handler(ctx, amount, withdraw_bump)
+    }
+
+    pub fn approve_request_third_party(ctx: Context<ApproveRequestThirdParty>, bump: u8) -> Result<()> {
+        approve_request_third_party::handler(ctx, bump)
+    }
+
 }
 
 

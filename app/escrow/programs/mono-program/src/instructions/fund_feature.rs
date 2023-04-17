@@ -1,7 +1,7 @@
 use anchor_lang::prelude::*;
 use anchor_spl::{token::{Mint, TokenAccount, Token, self}};
 
-use crate::{constants::MONO_DATA, state::FeatureDataAccount, errors::MonoError};
+use crate::{constants::{MONO_DATA, PERCENT, FEE}, state::FeatureDataAccount, errors::MonoError};
 
 #[derive(Accounts)]
 pub struct FundFeature<'info>
@@ -63,7 +63,25 @@ pub struct FundFeature<'info>
 
 pub fn handler(ctx: Context<FundFeature>, amount: u64) -> Result<()>
 {
-        
+    // check that account can pay amount + 5%
+    let lancer_fee = amount
+        .checked_mul(FEE as u64)
+        .unwrap()
+        .checked_div(PERCENT)
+        .unwrap();
+    let min_token_balance = amount
+        .checked_add(lancer_fee)
+        .unwrap();
+    let feature_data_account = &mut ctx.accounts.feature_data_account;
+    feature_data_account.amount = amount;
+
+    msg!("lancer fee = {}, min token balance = {}", lancer_fee, min_token_balance);
+    require!(
+        ctx.accounts.creator_token_account.amount >= 
+        min_token_balance,
+        MonoError::CannotPayFee,
+    );
+
     let cpi_accounts = token::Transfer{
             from: ctx.accounts.creator_token_account.to_account_info(),
             to: ctx.accounts.feature_token_account.to_account_info(),
@@ -72,6 +90,6 @@ pub fn handler(ctx: Context<FundFeature>, amount: u64) -> Result<()>
     
     token::transfer(
         CpiContext::new(ctx.accounts.token_program.to_account_info(), cpi_accounts), 
-        amount
+        min_token_balance
     )
 }

@@ -67,6 +67,7 @@ pub fn handler(
     msg!("size = {}", FeatureDataAccount::space(&unix_timestamp));
     feature_data_account.unix_timestamp = String::from(unix_timestamp);
     feature_data_account.no_of_submitters = 0;
+    feature_data_account.amount = 0;
     feature_data_account.request_submitted = false;
     feature_data_account.funder_cancel = false;
     feature_data_account.payout_cancel = false;
