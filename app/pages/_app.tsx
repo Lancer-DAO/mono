@@ -7,9 +7,14 @@ import "@/styles/tailwind.css";
 
 require("@solana/wallet-adapter-react-ui/styles.css");
 import { api } from "@/src/utils/api";
+import { AllProviders } from "@/src/providers";
 
 const App = ({ Component, pageProps }: AppProps) => {
-  return <Component {...pageProps} />;
+  return (
+    <AllProviders>
+      <Component {...pageProps} />
+    </AllProviders>
+  );
 };
 
 export default api.withTRPC(App);

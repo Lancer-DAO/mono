@@ -8,9 +8,7 @@ function App() {
 
   return (
     <div>
-      <AllProviders>
-        <Account />
-      </AllProviders>
+      <Account />
     </div>
   );
 }

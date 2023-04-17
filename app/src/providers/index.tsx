@@ -9,11 +9,13 @@ import {
 } from "@solana/wallet-adapter-react";
 import { WalletModalProvider } from "@solana/wallet-adapter-react-ui";
 import { LancerProvider } from "@/src/providers/lancerProvider";
+import { useRouter } from "next/router";
 export * from "./lancerProvider";
 
 export const AllProviders: React.FC<{ children: ReactNode }> = ({
   children,
 }) => {
+  const router = useRouter();
   const network = WalletAdapterNetwork.Devnet;
 
   // You can also provide a custom RPC endpoint
