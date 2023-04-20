@@ -53,7 +53,6 @@ export default class SolanaRpc {
 
   sendTransaction = async (transaction: Transaction): Promise<string> => {
     const solanaWallet = new SolanaWallet(this.provider);
-    debugger;
     const {signature} = await solanaWallet.signAndSendTransaction(transaction);
 
     return signature;

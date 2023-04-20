@@ -91,7 +91,6 @@ const Form = () => {
       program,
       provider
     );
-    debugger;
     console.log("created ", signature, escrowKey);
     const { bounty } = await mutateAsync({
       email: currentUser.email,

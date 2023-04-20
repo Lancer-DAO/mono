@@ -32,10 +32,9 @@ import { LANCER_ADMIN } from "./constants";
 export const createFeatureFundingAccountInstruction = async(
   mint: PublicKey,
   creator: PublicKey,
-  program: Program<MonoProgram>
+  program: Program<MonoProgram>,
+  timestamp: string
 ): Promise<TransactionInstruction> => {
-  const timestamp = Date.now().toString();
-  console.log("timestamp = ", timestamp);
   const [feature_account] = await findFeatureAccount(
       timestamp, 
       creator, 
@@ -75,6 +74,7 @@ export const fundFeatureInstruction = async (
   mint: PublicKey,
   program: Program<MonoProgram>
 ): Promise<TransactionInstruction> => {
+  // debugger;
   const [feature_data_account] = await findFeatureAccount(
     timestamp,
     creator,
@@ -87,6 +87,7 @@ export const fundFeatureInstruction = async (
     mint,
     program
   );
+  console.log(feature_token_account.toBase58(), feature_data_account.toBase58())
 
   const [program_authority] = await findProgramAuthority(program);
 
@@ -153,6 +154,7 @@ export const submitRequestInstruction = async (
   submitter_token_account: PublicKey,
   program: Program<MonoProgram>
 ): Promise<TransactionInstruction> =>  {
+  debugger;
   const [feature_data_account] = await findFeatureAccount(
     timestamp,
     creator,

@@ -68,7 +68,7 @@ export const SendSOLToRandomAddress: FC = () => {
     );
     const create_lancer_token_account_ix =
       await createLancerTokenAccountInstruction(
-        new PublicKey(DEVNET_USDC_MINT),
+        new PublicKey("So11111111111111111111111111111111111111111"),
         program
       );
     await provider.sendAndConfirm(

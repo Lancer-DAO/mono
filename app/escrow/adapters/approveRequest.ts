@@ -33,8 +33,9 @@ export const approveRequestFFA = async (submitter: PublicKey, acc: Escrow, walle
       lancer_completer_tokens,
       submitter
     )
+    debugger;
     await maybeCreateTokenAccount(creator_company_tokens_account, creator, lancer_company_tokens, wallet,provider.connection)
-    await maybeCreateTokenAccount(lancer_completer_tokens, submitter, lancer_completer_tokens, wallet,provider.connection)
+    await maybeCreateTokenAccount(payout_completer_tokens_account, submitter, lancer_completer_tokens, wallet,provider.connection)
       let approveSubmitterIx = await approveRequestInstruction(
         acc.timestamp,
         payout_completer_tokens_account,

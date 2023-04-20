@@ -38,7 +38,6 @@ export const submitRequestFFA = async (creator: PublicKey,submitter: PublicKey, 
                 /** the last block chain can advance to before tx is exportd expired */
                 lastValidBlockHeight: lastValidBlockHeight,
               }
-              debugger
       const tx = await wallet.signAndSendTransaction(
         new Transaction(txInfo).add(approveSubmitterIx)
       );
