@@ -13,7 +13,7 @@ import {
     createSyncNativeInstruction,
     ASSOCIATED_TOKEN_PROGRAM_ID
   } from "@solana/spl-token";
-
+  
   import {
     Keypair,
     LAMPORTS_PER_SOL,
@@ -26,29 +26,28 @@ import {
     TransactionInstruction,
   } from '@solana/web3.js';
 import { findFeatureAccount, findFeatureTokenAccount, findLancerCompanyTokens, findLancerCompleterTokens, findLancerProgramAuthority, findLancerTokenAccount, findProgramAuthority, findProgramMintAuthority } from "./pda";
-import { LANCER_ADMIN, WSOL_ADDRESS } from "./constants";
-
+import { LANCER_ADMIN } from "./constants";
+  
 
 export const createFeatureFundingAccountInstruction = async(
   mint: PublicKey,
   creator: PublicKey,
-  program: Program<MonoProgram>,
-  time?: string,
+  program: Program<MonoProgram>
 ): Promise<TransactionInstruction> => {
-  const timestamp = time? time: Date.now().toString()
+  const timestamp = Date.now().toString();
   console.log("timestamp = ", timestamp);
   const [feature_account] = await findFeatureAccount(
-      timestamp,
-      creator,
+      timestamp, 
+      creator, 
       program
   );
   const [feature_token_account] = await findFeatureTokenAccount(
-      timestamp,
+      timestamp, 
       creator,
-      mint,
+      mint, 
       program,
   );
-
+  
   const [program_authority] = await findProgramAuthority(
       program,
   );
@@ -56,7 +55,7 @@ export const createFeatureFundingAccountInstruction = async(
   return await program.methods.createFeatureFundingAccount(timestamp).
       accounts({
           creator: creator,
-          fundsMint: WSOL_ADDRESS,
+          fundsMint: mint,
           featureDataAccount: feature_account,
           featureTokenAccount: feature_token_account,
           programAuthority: program_authority,
@@ -97,7 +96,7 @@ export const fundFeatureInstruction = async (
     .accounts({
       creator: creator,
       creatorTokenAccount: creator_token_account,
-      fundsMint: WSOL_ADDRESS,
+      fundsMint: mint,
       featureDataAccount: feature_data_account,
       featureTokenAccount: feature_token_account,
       programAuthority: program_authority,
@@ -209,9 +208,9 @@ export const approveRequestInstruction = async (
   );
 
   const [feature_token_account] = await findFeatureTokenAccount(
-    timestamp,
+    timestamp, 
     creator,
-    mint,
+    mint, 
     program,
   );
 
@@ -268,9 +267,9 @@ export const approveRequestThirdPartyInstruction = async (
   );
 
   const [feature_token_account] = await findFeatureTokenAccount(
-    timestamp,
+    timestamp, 
     creator,
-    mint,
+    mint, 
     program,
   );
 
@@ -312,13 +311,18 @@ export const approveRequestThirdPartyInstruction = async (
 
 export const createLancerTokenAccountInstruction =async (
   funds_mint: PublicKey,
-  lancer_dao_token_account: PublicKey,
   program: Program<MonoProgram>,
 ) => {
 
   const [lancer_token_program_authority] = await findLancerProgramAuthority(
     program
   );
+
+  const [lancer_dao_token_account] = await findLancerTokenAccount(
+    funds_mint,
+    program
+  );
+
 
   return await program.methods.createLancerTokenAccount()
     .accounts({
@@ -365,9 +369,9 @@ export const cancelFeatureInstruction = async (
     program
   );
   const [feature_token_account] = await findFeatureTokenAccount(
-    timestamp,
+    timestamp, 
     creator,
-    mint,
+    mint, 
     program,
 );
 
@@ -405,8 +409,9 @@ export const createLancerTokensInstruction = async (
     }).instruction()
 }
 
-export const withdrawTokensInstrution = async (
+export const withdrawTokensInstruction = async (
   amount: number,
+  mint: PublicKey,
   withdrawer: PublicKey,
   withdrawerTokenAccount: PublicKey,
   program: Program<MonoProgram>,
@@ -415,7 +420,7 @@ export const withdrawTokensInstrution = async (
     program
   );
   const [lancer_dao_token_account] = await findLancerTokenAccount(
-    WSOL_ADDRESS,
+    mint,
     program
   );
 
@@ -425,7 +430,7 @@ export const withdrawTokensInstrution = async (
       lancerAdmin: LANCER_ADMIN,
       withdrawer: withdrawer,
       withdrawerTokenAccount: withdrawerTokenAccount,
-      mint: WSOL_ADDRESS,
+      mint: mint,
       lancerDaoTokenAccount: lancer_dao_token_account,
       lancerTokenProgramAuthority: lancer_token_program_authority,
       tokenProgram: TOKEN_PROGRAM_ID,

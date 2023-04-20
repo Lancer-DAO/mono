@@ -7,7 +7,7 @@ import { COMPLETER_FEE, LANCER_FEE, LANCER_FEE_THIRD_PARTY, MINT_DECIMALS, MONO_
 import { Keypair, LAMPORTS_PER_SOL, PublicKey, SystemProgram, SYSVAR_RENT_PUBKEY, Transaction } from "@solana/web3.js";
 import { add_more_token, createKeypair } from "./utils";
 import { findFeatureAccount, findFeatureTokenAccount, findLancerCompanyTokens, findLancerCompleterTokens, findLancerProgramAuthority, findLancerTokenAccount, findProgramAuthority, findProgramMintAuthority } from "../sdk/pda";
-import { addApprovedSubmittersInstruction, approveRequestInstruction, approveRequestThirdPartyInstruction, cancelFeatureInstruction, createFeatureFundingAccountInstruction, createLancerTokenAccountInstruction, createLancerTokensInstruction, denyRequestInstruction, fundFeatureInstruction, removeApprovedSubmittersInstruction, submitRequestInstruction, voteToCancelInstruction, withdrawTokensInstrution } from "../sdk/instructions";
+import { addApprovedSubmittersInstruction, approveRequestInstruction, approveRequestThirdPartyInstruction, cancelFeatureInstruction, createFeatureFundingAccountInstruction, createLancerTokenAccountInstruction, createLancerTokensInstruction, denyRequestInstruction, fundFeatureInstruction, removeApprovedSubmittersInstruction, submitRequestInstruction, voteToCancelInstruction, withdrawTokensInstruction } from "../sdk/instructions";
 import { assert } from "chai";
 import { min } from "bn.js";
 
@@ -49,7 +49,6 @@ describe("integration tests", () => {
   
     const create_lancer_token_account_ix = await createLancerTokenAccountInstruction(
       WSOL_ADDRESS,
-      lancer_dao_token_account,
       program
     );
     await provider.sendAndConfirm(
@@ -1795,8 +1794,9 @@ describe("integration tests", () => {
       let withdrawer_wsol_account_before_balance = await provider.connection.getTokenAccountBalance(withdrawer_wsol_account.address);
 
 
-      let withdraw_tokens_ix = await withdrawTokensInstrution(
+      let withdraw_tokens_ix = await withdrawTokensInstruction(
         LANCER_FEE * amount,
+        WSOL_ADDRESS,
         withdrawer.publicKey,
         withdrawer_wsol_account.address,
         program,

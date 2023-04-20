@@ -3252,7 +3252,7 @@
     "@solana/wallet-standard-chains" "^1.0.0"
     "@solana/wallet-standard-features" "^1.0.0"
 
-"@solana/wallet-standard-wallet-adapter-base@^1.0.2":
+"@solana/wallet-standard-wallet-adapter-base@^1.0.1":
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/@solana/wallet-standard-wallet-adapter-base/-/wallet-standard-wallet-adapter-base-1.0.2.tgz#d6028c27381fe384a34a7426b3eb828a1da6bff0"
   integrity sha512-QqkupdWvWuihX87W6ijt174u6ZdP5OSFlNhZhuhoMlIdyI/sj7MhGsdppuRlMh65oVO2WNWTL9y2bO5Pbx+dfg==

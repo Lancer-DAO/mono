@@ -9,7 +9,7 @@ mod instructions;
 use crate::instructions::*;
 
 
-declare_id!("Gu2VCpw4RagQ5gtxENrdXydPjyioEZqXgcyP2mf89xfA");
+declare_id!("LnCrQyE83MgFTT8XftEMxzZedEbYx7ishUQ5ytA7pyk");
 
 
 #[program]
