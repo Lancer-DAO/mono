@@ -77,12 +77,10 @@ const Login = () => {
   );
 };
 
-const App = () => {
+export default function App() {
   return (
     <PageLayout>
       <Login />
     </PageLayout>
   );
-};
-
-export default App;
+}

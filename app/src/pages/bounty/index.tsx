@@ -5,11 +5,9 @@ import { PageLayout } from "@/src/layouts";
 
 function App() {
   return (
-    <AllProviders>
-      <PageLayout>
-        <Bounty />
-      </PageLayout>
-    </AllProviders>
+    <PageLayout>
+      <Bounty />
+    </PageLayout>
   );
 }
 

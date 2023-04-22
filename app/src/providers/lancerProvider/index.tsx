@@ -4,6 +4,7 @@ import {
   ReactNode,
   useContext,
   useEffect,
+  useReducer,
   useState,
 } from "react";
 import { AnchorProvider, Program } from "@project-serum/anchor";
@@ -19,6 +20,7 @@ import { api } from "@/src/utils/api";
 import { getCookie } from "cookies-next";
 import { useConnection, useWallet } from "@solana/wallet-adapter-react";
 import { Transaction } from "@solana/web3.js";
+import { useRouter } from "next/router";
 export * from "./types";
 
 export const LancerContext = createContext<ILancerContext>({
@@ -67,6 +69,7 @@ export const LancerProvider: FunctionComponent<ILancerState> = ({
     connected,
   } = useWallet();
   const { connection } = useConnection();
+  const router = useRouter();
   const [currentUser, setCurrentUser] = useState<CurrentUser | null>(null);
   const [currentBounty, setCurrentBounty] = useState<Bounty | null>(null);
   const [issue, setIssue] = useState<Issue | null>(null);
@@ -86,6 +89,7 @@ export const LancerProvider: FunctionComponent<ILancerState> = ({
       console.log("walletsm", wallets);
       if (!wallets) {
         setWallets([lancerWallet]);
+        setCurrentWallet(lancerWallet);
       } else if (
         !wallets
           .map((wallet) => wallet.publicKey.toString())
@@ -93,13 +97,15 @@ export const LancerProvider: FunctionComponent<ILancerState> = ({
       ) {
         wallets.push(lancerWallet);
         setWallets(wallets);
+        setCurrentWallet(lancerWallet);
       }
       setProvider(provider);
       setProgram(program);
-      setCurrentWallet(lancerWallet);
     };
-    getMagicWallet();
-  }, [magic?.user, wallets]);
+    if (router.isReady && !router.asPath.includes("login")) {
+      getMagicWallet();
+    }
+  }, [magic?.user, wallets, router]);
 
   useEffect(() => {
     if (connected) {

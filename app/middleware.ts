@@ -10,7 +10,7 @@ export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   if (
-    !pathname.startsWith("/login") &&
+    !pathname.includes("/login") &&
     !PUBLIC_FILE.test(pathname) &&
     !session
   ) {
