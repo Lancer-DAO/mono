@@ -88,7 +88,9 @@ export const BountyActions = () => {
                 setHoveredButton("none");
               }}
             >
-              <SubmitRequest />
+              <SubmitRequest
+                disabled={currentBounty.pullRequests.length === 0}
+              />
               {hoveredButton === "submit" &&
                 currentBounty.pullRequests.length === 0 && (
                   <div className="hover-tooltip">

@@ -97,7 +97,6 @@ export const LancerProvider: FunctionComponent<ILancerState> = ({
       ) {
         wallets.push(lancerWallet);
         setWallets(wallets);
-        setCurrentWallet(lancerWallet);
       }
       setProvider(provider);
       setProgram(program);
@@ -136,7 +135,9 @@ export const LancerProvider: FunctionComponent<ILancerState> = ({
       }
       setProvider(provider);
       setProgram(program);
-      setCurrentWallet(lancerWallet);
+      if (!currentWallet) {
+        setCurrentWallet(lancerWallet);
+      }
     }
   }, [connected, wallets]);
 

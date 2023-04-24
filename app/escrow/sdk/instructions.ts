@@ -154,12 +154,12 @@ export const submitRequestInstruction = async (
   submitter_token_account: PublicKey,
   program: Program<MonoProgram>
 ): Promise<TransactionInstruction> =>  {
-  debugger;
   const [feature_data_account] = await findFeatureAccount(
     timestamp,
     creator,
     program
   );
+  debugger;
 
   return await program.methods.submitRequest()
   .accounts({
