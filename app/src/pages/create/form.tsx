@@ -31,15 +31,6 @@ import { LancerWallet } from "@/src/types";
 const Form = () => {
   const { currentWallet, program, provider, currentUser, setCurrentBounty } =
     useLancer();
-  const {
-    wallet,
-    publicKey,
-    sendTransaction,
-    signAllTransactions,
-    signMessage,
-    signTransaction,
-    connected,
-  } = useWallet();
   const { mutateAsync } = api.bounties.createBounty.useMutation();
   const { mutateAsync: createIssue } = api.issues.createIssue.useMutation();
   const [creationType, setCreationType] = useState<"new" | "existing">("new");

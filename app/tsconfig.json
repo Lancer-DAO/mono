@@ -85,6 +85,8 @@
   ],
   "exclude": [
     "node_modules",
-    "extension"
+    "extension",
+    "escrow/tests",
+    "escrow/migrations"
   ]
 }

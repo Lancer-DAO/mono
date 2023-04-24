@@ -2,13 +2,13 @@ import { useLancer } from "@/src/providers/lancerProvider";
 import { CoinflowWithdraw } from "@coinflowlabs/react";
 
 const Coinflow: React.FC = () => {
-  const { provider, wallet } = useLancer();
+  const { provider, currentWallet } = useLancer();
   return (
     !!provider &&
-    !!wallet && (
+    !!currentWallet && (
       <div className="coinflow-wrapper">
         <CoinflowWithdraw
-          wallet={wallet}
+          wallet={currentWallet}
           merchantId="lancer"
           connection={provider.connection}
           blockchain={"solana"}
