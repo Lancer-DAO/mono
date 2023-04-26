@@ -86,7 +86,6 @@ export const LancerProvider: FunctionComponent<ILancerState> = ({
     const getMagicWallet = async () => {
       const { lancerWallet, program, provider } = await createMagicWallet();
 
-      console.log("walletsm", wallets);
       if (!wallets) {
         setWallets([lancerWallet]);
         setCurrentWallet(lancerWallet);
