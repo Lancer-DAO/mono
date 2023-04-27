@@ -1,47 +1,15 @@
-import { ADAPTER_EVENTS, WALLET_ADAPTERS } from "@web3auth/base";
-import { Web3AuthCore } from "@web3auth/core";
-import {
-  OpenloginAdapter,
-  OpenloginAdapterOptions,
-  OpenloginLoginParams,
-} from "@web3auth/openlogin-adapter";
 import {
   createContext,
   FunctionComponent,
   ReactNode,
-  useCallback,
   useContext,
   useEffect,
-  useMemo,
+  useReducer,
   useState,
 } from "react";
-import { CHAIN_CONFIG } from "../../config/chainConfig";
-import {
-  Connection,
-  PublicKey,
-  Transaction,
-  VersionedTransaction,
-} from "@solana/web3.js";
 import { AnchorProvider, Program } from "@project-serum/anchor";
 import { MonoProgram } from "@/escrow/sdk/types/mono_program";
-import { getApiEndpoint, getEndpoint } from "@/src/utils";
-import { CREATE_USER_ROUTE, REACT_APP_CLIENTID } from "@/src/constants";
-import { useLocation } from "react-router-dom";
-import axios from "axios";
-import { ACCOUNT_API_ROUTE } from "@/constants";
-import { MONO_DEVNET } from "@/escrow/sdk/constants";
-import RPC from "../solanaRPC";
-import MonoProgramJSON from "@/escrow/sdk/idl/mono_program.json";
-import {
-  Issue,
-  BountyState,
-  Contributor,
-  User,
-  CurrentUser,
-  LancerWallet,
-  Bounty,
-} from "@/src/types";
-import { SolanaWalletContextState } from "@coinflowlabs/react";
+import { Issue, CurrentUser, LancerWallet, Bounty } from "@/src/types";
 import {
   ILancerContext,
   ISSUE_LOAD_STATE,
@@ -50,6 +18,9 @@ import {
 import { createMagicWallet, magic } from "@/src/utils/magic";
 import { api } from "@/src/utils/api";
 import { getCookie } from "cookies-next";
+import { useConnection, useWallet } from "@solana/wallet-adapter-react";
+import { Transaction } from "@solana/web3.js";
+import { useRouter } from "next/router";
 export * from "./types";
 
 export const LancerContext = createContext<ILancerContext>({
@@ -59,15 +30,18 @@ export const LancerContext = createContext<ILancerContext>({
   loginState: "logged_out",
   issueLoadingState: "initializing",
   program: null,
-  wallet: null,
+  currentWallet: null,
+  wallets: null,
   provider: null,
   currentBounty: null,
   setIssue: () => null,
   setIssues: () => null,
+  setWallets: () => null,
   setLoginState: () => null,
   setCurrentUser: () => null,
   setIssueLoadingState: (state: ISSUE_LOAD_STATE) => null,
   setCurrentBounty: () => null,
+  setCurrentWallet: () => null,
 });
 
 export function useLancer(): ILancerContext {
@@ -85,7 +59,17 @@ export const LancerProvider: FunctionComponent<ILancerState> = ({
   children,
 }: ILancerProps) => {
   const { mutateAsync: getCurrUser } = api.users.currentUser.useMutation();
-
+  const {
+    wallet,
+    publicKey,
+    sendTransaction,
+    signAllTransactions,
+    signMessage,
+    signTransaction,
+    connected,
+  } = useWallet();
+  const { connection } = useConnection();
+  const router = useRouter();
   const [currentUser, setCurrentUser] = useState<CurrentUser | null>(null);
   const [currentBounty, setCurrentBounty] = useState<Bounty | null>(null);
   const [issue, setIssue] = useState<Issue | null>(null);
@@ -94,20 +78,67 @@ export const LancerProvider: FunctionComponent<ILancerState> = ({
     "logged_out"
   );
   const [isGettingContract, setIsGettingContract] = useState(false);
-  const [wallet, setWallet] = useState<LancerWallet>();
+  const [currentWallet, setCurrentWallet] = useState<LancerWallet>();
+  const [wallets, setWallets] = useState<LancerWallet[]>();
   const [provider, setProvider] = useState<AnchorProvider>();
   const [program, setProgram] = useState<Program<MonoProgram>>();
-  const [isWalletReady, setIsWalletReady] = useState(false);
   useEffect(() => {
     const getMagicWallet = async () => {
-      const { coinflowWallet, program, provider } = await createMagicWallet();
-      setWallet(coinflowWallet);
+      const { lancerWallet, program, provider } = await createMagicWallet();
+
+      if (!wallets) {
+        setWallets([lancerWallet]);
+        setCurrentWallet(lancerWallet);
+      } else if (
+        !wallets
+          .map((wallet) => wallet.publicKey.toString())
+          .includes(lancerWallet.publicKey.toString())
+      ) {
+        wallets.push(lancerWallet);
+        setWallets(wallets);
+      }
       setProvider(provider);
       setProgram(program);
-      setIsWalletReady(true);
     };
-    getMagicWallet();
-  }, [magic?.user]);
+    if (router.isReady && !router.asPath.includes("login")) {
+      getMagicWallet();
+    }
+  }, [magic?.user, wallets, router]);
+
+  useEffect(() => {
+    if (connected) {
+      const lancerWallet: LancerWallet = {
+        wallet,
+        publicKey,
+        sendTransaction,
+        signAllTransactions,
+        signMessage,
+        signTransaction,
+        connected,
+        signAndSendTransaction: async (transaction: Transaction) => {
+          await signTransaction(transaction);
+          return await sendTransaction(transaction, connection);
+        },
+        providerName: "Phantom",
+      };
+      console.log("walletsp", wallets);
+      if (!wallets) {
+        setWallets([lancerWallet]);
+      } else if (
+        !wallets
+          .map((wallet) => wallet.publicKey.toString())
+          .includes(lancerWallet.publicKey.toString())
+      ) {
+        wallets.push(lancerWallet);
+        setWallets(wallets);
+      }
+      setProvider(provider);
+      setProgram(program);
+      if (!currentWallet) {
+        setCurrentWallet(lancerWallet);
+      }
+    }
+  }, [connected, wallets]);
 
   useEffect(() => {
     const getCurrentUser = async () => {
@@ -123,7 +154,6 @@ export const LancerProvider: FunctionComponent<ILancerState> = ({
   const [issueLoadingState, setIssueLoadingState] =
     useState<ISSUE_LOAD_STATE>("initializing");
 
- 
   const contextProvider = {
     currentUser,
     setCurrentUser,
@@ -137,9 +167,12 @@ export const LancerProvider: FunctionComponent<ILancerState> = ({
     setIssueLoadingState,
     program,
     provider,
-    wallet,
+    setWallets,
+    wallets,
     currentBounty,
     setCurrentBounty,
+    currentWallet,
+    setCurrentWallet,
   };
   return (
     <LancerContext.Provider value={contextProvider}>

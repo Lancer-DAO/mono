@@ -100,7 +100,7 @@ export const createMagicWallet = async () => {
     });
     return transactions;
   };
-  const coinflowWallet: LancerWallet = {
+  const lancerWallet: LancerWallet = {
     wallet: null,
     connected: true,
     publicKey: payer,
@@ -109,12 +109,13 @@ export const createMagicWallet = async () => {
     signTransaction,
     signAndSendTransaction,
     signAllTransactions,
+    providerName: "Magic Link",
   };
-  const provider = new AnchorProvider(connection, coinflowWallet, {});
+  const provider = new AnchorProvider(connection, lancerWallet, {});
   const program = new Program<MonoProgram>(
     MonoProgramJSON as unknown as MonoProgram,
     new PublicKey(MONO_DEVNET),
     provider
   );
-  return { coinflowWallet, provider, program };
+  return { lancerWallet, provider, program };
 };

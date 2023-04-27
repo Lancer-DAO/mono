@@ -63,7 +63,7 @@ const Login = () => {
   const github = async () => {
     await magic?.oauth.loginWithRedirect({
       provider: "github",
-      redirectURI: `https://app-git-test-magic-link-lancer-so.vercel.app/login?referrer=${referrer}`,
+      redirectURI: `${window.location.origin}/login?referrer=${referrer}`,
       scope: ["user, repo"],
     });
   };
@@ -77,12 +77,10 @@ const Login = () => {
   );
 };
 
-const App = () => {
+export default function App() {
   return (
     <PageLayout>
       <Login />
     </PageLayout>
   );
-};
-
-export default App;
+}

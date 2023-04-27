@@ -13,6 +13,7 @@ import {  submitRequestInstruction,
 import { DEVNET_USDC_MINT } from "@/src/constants";
 import { Escrow } from "@prisma/client";
 import { LancerWallet } from "@/src/types";
+import { maybeCreateTokenAccount } from "@/src/utils";
 
 
 export const submitRequestFFA = async (creator: PublicKey,submitter: PublicKey, acc: Escrow, wallet: LancerWallet, program: Program<MonoProgram>, provider: AnchorProvider) => {
@@ -21,6 +22,8 @@ export const submitRequestFFA = async (creator: PublicKey,submitter: PublicKey, 
             new PublicKey(DEVNET_USDC_MINT),
             submitter
           );
+    await maybeCreateTokenAccount(tokenAddress, submitter, new PublicKey(DEVNET_USDC_MINT), wallet,provider.connection)
+
       let approveSubmitterIx = await submitRequestInstruction(
         acc.timestamp,
         creator,
@@ -38,7 +41,6 @@ export const submitRequestFFA = async (creator: PublicKey,submitter: PublicKey, 
                 /** the last block chain can advance to before tx is exportd expired */
                 lastValidBlockHeight: lastValidBlockHeight,
               }
-              debugger
       const tx = await wallet.signAndSendTransaction(
         new Transaction(txInfo).add(approveSubmitterIx)
       );

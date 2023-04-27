@@ -15,7 +15,7 @@ export const VoteToCancel = () => {
   const {
     currentUser,
     currentBounty,
-    wallet,
+    currentWallet,
     provider,
     program,
     setCurrentBounty,
@@ -27,9 +27,9 @@ export const VoteToCancel = () => {
     if (currentBounty.isCreator || currentBounty.isCurrentSubmitter) {
       signature = await voteToCancelFFA(
         new PublicKey(currentBounty.creator.publicKey),
-        new PublicKey(wallet.publicKey),
+        new PublicKey(currentWallet.publicKey),
         currentBounty.escrow,
-        wallet,
+        currentWallet,
         program,
         provider
       );
@@ -44,7 +44,8 @@ export const VoteToCancel = () => {
       userId: currentUser.id,
       relations: currentBounty.currentUserRelationsList,
       state: BountyState.VOTING_TO_CANCEL,
-      walletId: currentUser.currentWallet.id,
+      publicKey: currentWallet.publicKey.toString(),
+      provider: currentWallet.providerName,
       escrowId: currentBounty.escrowid,
       signature,
       label: "vote-to-cancel",

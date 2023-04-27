@@ -1,8 +1,13 @@
 import { addSubmitterFFA, approveRequestFFA } from "@/escrow/adapters";
 import { useLancer } from "@/src/providers";
-import { BOUNTY_USER_RELATIONSHIP, BountyState } from "@/src/types";
+import {
+  BOUNTY_USER_RELATIONSHIP,
+  BountyState,
+  LancerWallet,
+} from "@/src/types";
 import { api } from "@/src/utils/api";
-import { PublicKey } from "@solana/web3.js";
+import { useConnection, useWallet } from "@solana/wallet-adapter-react";
+import { PublicKey, Transaction } from "@solana/web3.js";
 import classNames from "classnames";
 import { getCookie } from "cookies-next";
 import { Octokit } from "octokit";
@@ -11,18 +16,27 @@ export const ApproveSubmission = () => {
   const {
     currentUser,
     currentBounty,
-    wallet,
     provider,
     program,
+    currentWallet,
     setCurrentBounty,
   } = useLancer();
   const { mutateAsync } = api.bounties.updateBountyUser.useMutation();
+  const {
+    wallet,
+    publicKey,
+    sendTransaction,
+    signAllTransactions,
+    signMessage,
+    signTransaction,
+    connected,
+  } = useWallet();
   const onClick = async () => {
     // If we are the creator, then skip requesting and add self as approved
     const signature = await approveRequestFFA(
       new PublicKey(currentBounty.currentSubmitter.publicKey),
       currentBounty.escrow,
-      wallet,
+      currentWallet,
       program,
       provider
     );
@@ -35,7 +49,8 @@ export const ApproveSubmission = () => {
       userId: currentUser.id,
       relations: currentBounty.currentUserRelationsList,
       state: BountyState.COMPLETE,
-      walletId: currentUser.currentWallet.id,
+      publicKey: currentWallet.publicKey.toString(),
+      provider: currentWallet.providerName,
       escrowId: currentBounty.escrowid,
       signature,
       label: "complete-bounty",

@@ -1,27 +1,33 @@
 import { addSubmitterFFA } from "@/escrow/adapters";
 import { useLancer } from "@/src/providers";
-import { BOUNTY_USER_RELATIONSHIP, BountyState } from "@/src/types";
+import {
+  BOUNTY_USER_RELATIONSHIP,
+  BountyState,
+  LancerWallet,
+} from "@/src/types";
 import { api } from "@/src/utils/api";
-import { PublicKey } from "@solana/web3.js";
+import { useWallet, useConnection } from "@solana/wallet-adapter-react";
+import { PublicKey, Transaction } from "@solana/web3.js";
 import classNames from "classnames";
 
 export const RequestToSubmit = () => {
   const {
     currentUser,
     currentBounty,
-    wallet,
+    currentWallet,
     provider,
     program,
     setCurrentBounty,
   } = useLancer();
   const { mutateAsync } = api.bounties.updateBountyUser.useMutation();
+
   const onClick = async () => {
     if (currentBounty.isCreator) {
       // If we are the creator, then skip requesting and add self as approved
       const signature = await addSubmitterFFA(
-        wallet.publicKey,
+        currentWallet.publicKey,
         currentBounty.escrow,
-        wallet,
+        currentWallet,
         program,
         provider
       );
@@ -34,7 +40,8 @@ export const RequestToSubmit = () => {
         userId: currentUser.id,
         relations: currentBounty.currentUserRelationsList,
         state: BountyState.IN_PROGRESS,
-        walletId: currentUser.currentWallet.id,
+        publicKey: currentWallet.publicKey.toString(),
+        provider: currentWallet.providerName,
         escrowId: currentBounty.escrowid,
         signature,
         label: "add-approved-submitter",
@@ -48,7 +55,8 @@ export const RequestToSubmit = () => {
         bountyId: currentBounty.id,
         userId: currentUser.id,
         relations: [BOUNTY_USER_RELATIONSHIP.RequestedSubmitter],
-        walletId: currentUser.currentWallet.id,
+        publicKey: currentWallet.publicKey.toString(),
+        provider: currentWallet.providerName,
         escrowId: currentBounty.escrowid,
         label: "request-to-submit",
         signature: "n/a",

@@ -13,6 +13,7 @@ import { LancerWallet } from "@/src/types";
 
 export const createFFA = async (wallet: LancerWallet, program: Program<MonoProgram>, provider: AnchorProvider) => {
   const timestamp = Date.now().toString();
+
   console.log("timestamp = ", timestamp);
       const ix = await createFeatureFundingAccountInstruction(
         new PublicKey(DEVNET_USDC_MINT),
@@ -29,6 +30,7 @@ export const createFFA = async (wallet: LancerWallet, program: Program<MonoProgr
                 /** the last block chain can advance to before tx is exportd expired */
                 lastValidBlockHeight: lastValidBlockHeight,
               }
+              debugger;
       const signature = await wallet.signAndSendTransaction(
         new Transaction(txInfo).add(ix)
       );

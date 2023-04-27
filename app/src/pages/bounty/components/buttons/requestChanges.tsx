@@ -13,7 +13,7 @@ export const RequestChanges = () => {
   const {
     currentUser,
     currentBounty,
-    wallet,
+    currentWallet,
     provider,
     program,
     setCurrentBounty,
@@ -25,7 +25,7 @@ export const RequestChanges = () => {
       new PublicKey(currentBounty.currentSubmitter.publicKey),
 
       currentBounty.escrow,
-      wallet,
+      currentWallet,
       program,
       provider
     );
@@ -45,7 +45,8 @@ export const RequestChanges = () => {
       userId: currentBounty.currentSubmitter.userid,
       relations: currentBounty.currentSubmitter.relations,
       state: BountyState.IN_PROGRESS,
-      walletId: currentUser.currentWallet.id,
+      publicKey: currentWallet.publicKey.toString(),
+      provider: currentWallet.providerName,
       escrowId: currentBounty.escrowid,
       signature,
       label: "request-changes",

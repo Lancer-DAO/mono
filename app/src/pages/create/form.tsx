@@ -25,9 +25,11 @@ import { MagicUserMetadata } from "magic-sdk";
 import { Octokit } from "octokit";
 import { getEscrowContractKey } from "@/src/providers/lancerProvider/queries";
 import { useRouter } from "next/router";
+import { useWallet } from "@solana/wallet-adapter-react";
+import { LancerWallet } from "@/src/types";
 
 const Form = () => {
-  const { wallet, program, provider, currentUser, setCurrentBounty } =
+  const { currentWallet, program, provider, currentUser, setCurrentBounty } =
     useLancer();
   const { mutateAsync } = api.bounties.createBounty.useMutation();
   const { mutateAsync: createIssue } = api.issues.createIssue.useMutation();
@@ -75,33 +77,30 @@ const Form = () => {
   const createBounty = async (e) => {
     e.preventDefault();
     setIsSubmittingIssue(true);
-    const session = getCookie("session") as string;
     const { timestamp, signature, escrowKey } = await createFFA(
-      wallet,
+      currentWallet,
       program,
       provider
     );
-
     console.log("created ", signature, escrowKey);
-    const { bounty, tags, escrow, repository, creator, transactions } =
-      await mutateAsync({
-        email: currentUser.email,
-        description: formData.issueDescription,
-        estimatedTime: parseFloat(formData.estimatedTime),
-        isPrivate: formData.isPrivate || repo ? repo.private : false,
-        isPrivateRepo: formData.isPrivate || repo ? repo.private : false,
-        title: formData.issueTitle,
-        tags: formData.requirements,
-        organizationName: repo.full_name.split("/")[0],
-        repositoryName: repo.full_name.split("/")[1],
-        publicKey: wallet.publicKey.toString(),
-        escrowKey: escrowKey.toString(),
-        transactionSignature: signature,
-        provider: "Magic Link",
-        timestamp: timestamp,
-        chainName: "Solana",
-        network: "devnet",
-      });
+    const { bounty } = await mutateAsync({
+      email: currentUser.email,
+      description: formData.issueDescription,
+      estimatedTime: parseFloat(formData.estimatedTime),
+      isPrivate: formData.isPrivate || repo ? repo.private : false,
+      isPrivateRepo: formData.isPrivate || repo ? repo.private : false,
+      title: formData.issueTitle,
+      tags: formData.requirements,
+      organizationName: repo.full_name.split("/")[0],
+      repositoryName: repo.full_name.split("/")[1],
+      publicKey: currentWallet.publicKey.toString(),
+      escrowKey: escrowKey.toString(),
+      transactionSignature: signature,
+      provider: currentWallet.providerName,
+      timestamp: timestamp,
+      chainName: "Solana",
+      network: "devnet",
+    });
     console.log("bounty created");
     let issueNumber;
     if (creationType === "new") {

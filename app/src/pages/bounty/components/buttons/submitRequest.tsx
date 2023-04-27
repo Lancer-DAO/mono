@@ -9,7 +9,7 @@ export const SubmitRequest = ({ disabled }: { disabled?: boolean }) => {
   const {
     currentUser,
     currentBounty,
-    wallet,
+    currentWallet,
     provider,
     program,
     setCurrentBounty,
@@ -19,9 +19,9 @@ export const SubmitRequest = ({ disabled }: { disabled?: boolean }) => {
     // If we are the creator, then skip requesting and add self as approved
     const signature = await submitRequestFFA(
       new PublicKey(currentBounty.creator.publicKey),
-      wallet.publicKey,
+      currentWallet.publicKey,
       currentBounty.escrow,
-      wallet,
+      currentWallet,
       program,
       provider
     );
@@ -49,7 +49,8 @@ export const SubmitRequest = ({ disabled }: { disabled?: boolean }) => {
       userId: currentUser.id,
       relations: currentBounty.currentUserRelationsList,
       state: BountyState.AWAITING_REVIEW,
-      walletId: currentUser.currentWallet.id,
+      publicKey: currentWallet.publicKey.toString(),
+      provider: currentWallet.providerName,
       escrowId: currentBounty.escrowid,
       signature,
       label: "submit-request",

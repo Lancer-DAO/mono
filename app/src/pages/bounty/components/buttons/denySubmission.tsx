@@ -13,7 +13,7 @@ export const DenySubmission = () => {
   const {
     currentUser,
     currentBounty,
-    wallet,
+    currentWallet,
     provider,
     program,
     setCurrentBounty,
@@ -24,7 +24,7 @@ export const DenySubmission = () => {
     const signature = await denyRequestFFA(
       new PublicKey(currentBounty.currentSubmitter.publicKey),
       currentBounty.escrow,
-      wallet,
+      currentWallet,
       program,
       provider
     );
@@ -44,7 +44,8 @@ export const DenySubmission = () => {
       userId: currentBounty.currentSubmitter.userid,
       relations: currentBounty.currentSubmitter.relations,
       state: BountyState.IN_PROGRESS,
-      walletId: currentUser.currentWallet.id,
+      publicKey: currentWallet.publicKey.toString(),
+      provider: currentWallet.providerName,
       escrowId: currentBounty.escrowid,
       signature,
       label: "add-approved-submitter",

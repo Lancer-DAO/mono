@@ -26,7 +26,7 @@ const SubmitterSection: React.FC<SubmitterSectionProps> = ({
 }: SubmitterSectionProps) => {
   const {
     currentBounty,
-    wallet,
+    currentWallet,
     provider,
     program,
     currentUser,
@@ -42,7 +42,7 @@ const SubmitterSection: React.FC<SubmitterSectionProps> = ({
             const signature = await removeSubmitterFFA(
               new PublicKey(submitter.publicKey),
               currentBounty.escrow,
-              wallet,
+              currentWallet,
               program,
               provider
             );
@@ -61,7 +61,9 @@ const SubmitterSection: React.FC<SubmitterSectionProps> = ({
               userId: submitter.userid,
               currentUserId: currentUser.id,
               relations: currentBounty.currentUserRelationsList,
-              walletId: currentUser.currentWallet.id,
+
+              publicKey: currentWallet.publicKey.toString(),
+              provider: currentWallet.providerName,
               escrowId: currentBounty.escrowid,
               signature: "test",
               label: "remove-submitter",
@@ -82,7 +84,8 @@ const SubmitterSection: React.FC<SubmitterSectionProps> = ({
                 currentUserId: currentUser.id,
                 userId: submitter.userid,
                 relations: [BOUNTY_USER_RELATIONSHIP.DeniedRequester],
-                walletId: currentUser.currentWallet.id,
+                publicKey: currentWallet.publicKey.toString(),
+                provider: currentWallet.providerName,
                 escrowId: currentBounty.escrowid,
                 signature: "n/a",
                 label: "deny-submitter",
@@ -92,7 +95,7 @@ const SubmitterSection: React.FC<SubmitterSectionProps> = ({
               const signature = await addSubmitterFFA(
                 new PublicKey(submitter.publicKey),
                 currentBounty.escrow,
-                wallet,
+                currentWallet,
                 program,
                 provider
               );
@@ -102,7 +105,8 @@ const SubmitterSection: React.FC<SubmitterSectionProps> = ({
                 currentUserId: currentUser.id,
                 relations: [BOUNTY_USER_RELATIONSHIP.ApprovedSubmitter],
                 state: BountyState.IN_PROGRESS,
-                walletId: currentUser.currentWallet.id,
+                publicKey: currentWallet.publicKey.toString(),
+                provider: currentWallet.providerName,
                 escrowId: currentBounty.escrowid,
                 signature,
                 label: "add-approved-submitter",

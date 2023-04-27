@@ -1,6 +1,6 @@
 import { ISSUE_API_ROUTE, UPDATE_ISSUE_ROUTE } from "@/constants";
 import { DEVNET_USDC_MINT } from "@/src/constants";
-import { fundFFA } from "@/escrow/adapters";
+import { getFundFFATX } from "@/escrow/adapters";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { useLancer } from "@/src/providers/lancerProvider";
@@ -15,17 +15,17 @@ const FundBounty: React.FC<{ amount: number }> = ({
 }: {
   amount: number;
 }) => {
-  const { currentBounty, provider, wallet, program } = useLancer();
+  const { currentBounty, provider, currentWallet, program } = useLancer();
   const { mutateAsync: fundB } = api.bounties.fundBounty.useMutation();
   const router = useRouter();
 
   const [fundTx, setFundTx] = useState<Transaction>(null);
   useEffect(() => {
     const getFundTransaction = async () => {
-      const transaction = await fundFFA(
+      const transaction = await getFundFFATX(
         amount,
         currentBounty.escrow,
-        wallet,
+        currentWallet,
         program,
         provider
       );
@@ -50,7 +50,7 @@ const FundBounty: React.FC<{ amount: number }> = ({
           transaction={fundTx}
           onSuccess={onSuccess}
           amount={amount}
-          wallet={wallet}
+          wallet={currentWallet}
           connection={provider.connection}
         />
       )}

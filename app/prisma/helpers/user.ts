@@ -11,3 +11,14 @@ export const getUser = async (
       });
       return user;
 };
+
+export const getUserById = async (
+  id: number
+): Promise<Prisma.User> => {
+    const user = await prisma.user.findUniqueOrThrow({
+        where: {
+          id,
+        },
+      });
+      return user;
+};

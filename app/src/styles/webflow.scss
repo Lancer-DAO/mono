@@ -7620,6 +7620,10 @@
       border-radius: 4px;
     }
 
+    .dropdown-toggle-3 {
+      position: relative;
+    }
+
     .checkbox-field {
       margin-top: 20px;
     }
@@ -12483,6 +12487,14 @@
     z-index: 900;
     border: 1px solid #cccccc;
     border-radius: 4px;
+    &.hug {
+      width: fit-content;
+
+    &:hover {
+      border-color: #14bb88;
+
+      }
+    }
   }
   .w-dropdown-btn,
   .w-dropdown-toggle,
@@ -12510,6 +12522,25 @@
     border-color: #14bb88;
 
     }
+  }
+  .w-dropdown-toggle-3 {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    display: inline-block;
+    cursor: pointer;
+    width: 100%;
+
+    position: relative;
+    vertical-align: top;
+    text-decoration: none;
+    color: #222222;
+    padding: 10px;
+    padding-right: 50px;
+    text-align: left;
+    margin-left: auto;
+    white-space: nowrap;
   }
   .w-dropdown-toggle:focus {
     outline: 0;

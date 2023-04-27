@@ -2,7 +2,7 @@ import { prisma } from "@/server/db";
 import { protectedProcedure } from "../../trpc";
 import { z } from "zod";
 import { magic } from "@/src/utils/magic-admin";
-import { getBounty } from "@/prisma/helpers";
+import { getBounty, getOrCreateWallet, getUserById } from "@/prisma/helpers";
 
 export const updateBountyUser = protectedProcedure
   .input(
@@ -10,7 +10,8 @@ export const updateBountyUser = protectedProcedure
       bountyId: z.number(),
       currentUserId: z.number(),
       userId: z.number(),
-      walletId: z.number(),
+      publicKey: z.string(),
+      provider: z.string(),
       escrowId: z.number(),
       relations: z.array(z.string()),
       state: z.optional(z.string()),
@@ -18,7 +19,10 @@ export const updateBountyUser = protectedProcedure
       signature: z.string(),
     })
   )
-  .mutation(async ({ input: { bountyId, currentUserId, userId, walletId, escrowId, relations, state, label, signature } }) => {
+  .mutation(async ({ input: { bountyId, currentUserId, userId, publicKey, escrowId, relations, state, label, signature, provider } }) => {
+    const user = await getUserById(userId)
+    
+    const wallet = await  getOrCreateWallet(user, publicKey, provider);
 
     let bounty;
     let transaction;
@@ -78,7 +82,7 @@ export const updateBountyUser = protectedProcedure
           label,
           wallets: {
             create: {
-              walletid: walletId,
+              walletid: wallet.id,
               relations: "",
             }
           },
