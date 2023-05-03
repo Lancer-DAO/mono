@@ -32,7 +32,6 @@ function App() {
               </span>
             </p>
           </div>
-          <Form />
         </div>
       </PageLayout>
     </div>
