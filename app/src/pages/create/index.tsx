@@ -3,9 +3,14 @@ import { useEffect, useState } from "react";
 import { BrowserRouter as Router } from "react-router-dom";
 import Form from "./form";
 import { AllProviders } from "@/src/providers";
+import FundForm from "../fund/form";
 import { PageLayout } from "@/src/layouts";
 
+export type FORM_SECTION = "CREATE" | "FUND";
+
 function App() {
+  const [formSection, setFormSection] = useState<FORM_SECTION>("CREATE");
+  const [newBountyId, setNewBountyId] = useState<number | null>(null);
   return (
     <div>
       <PageLayout>
@@ -35,7 +40,13 @@ function App() {
               </span>
             </p>
           </div>
-          <Form />
+          {formSection === "CREATE" && (
+            <Form
+              setFormSection={setFormSection}
+              setNewBountyId={setNewBountyId}
+            />
+          )}
+          {formSection === "FUND" && <FundForm newBountyId={newBountyId} />}
         </div>
       </PageLayout>
     </div>
