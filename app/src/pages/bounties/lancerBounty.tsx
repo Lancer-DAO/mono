@@ -4,6 +4,9 @@ import { marked } from "marked";
 import { Bounty } from "@/src/types";
 import { useLocation } from "react-router-dom";
 import Logo from "@/src/assets/Logo";
+import dayjs from "dayjs";
+import relativeTime from "dayjs/plugin/relativeTime";
+dayjs.extend(relativeTime);
 
 export const LancerBounty = ({ bounty }: { bounty: Bounty }) => {
   const search = useLocation().search;
@@ -39,9 +42,20 @@ export const LancerBounty = ({ bounty }: { bounty: Bounty }) => {
           </div>
           <div className="spacer-filled" />
           <div className="bounty-footer">
-            <div className="estimated-time-wrapper">
-              <Clock size={"36px"} color="#14bb88" />
-              <div>{`${bounty.estimatedTime} HRS`}</div>
+            <div className="bounty-card-funder">
+              <div className="contributor-picture">
+                <Clock size={"36px"} color="#14bb88" />
+              </div>
+
+              <div className="bounty-funder-text">
+                <h3 className="no-padding-margin">
+                  {bounty.estimatedTime.toString()} HRS
+                </h3>
+                <div>
+                  Created:{" "}
+                  {dayjs.unix(parseInt(bounty.createdAt) / 1000).fromNow()}
+                </div>
+              </div>
             </div>
             <div className="tag-list">
               {bounty.tags.map((tag) => (
