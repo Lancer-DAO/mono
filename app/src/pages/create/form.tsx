@@ -27,10 +27,13 @@ import { getEscrowContractKey } from "@/src/providers/lancerProvider/queries";
 import { useRouter } from "next/router";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { LancerWallet } from "@/src/types";
+import { FORM_SECTION } from "@/src/pages/create";
 
-const Form = () => {
-  const { currentWallet, program, provider, currentUser, setCurrentBounty } =
-    useLancer();
+const Form: React.FC<{
+  setFormSection: (section: FORM_SECTION) => void;
+  setNewBountyId: (id: number) => void;
+}> = ({ setFormSection, setNewBountyId }) => {
+  const { currentWallet, program, provider, currentUser } = useLancer();
   const { mutateAsync } = api.bounties.createBounty.useMutation();
   const { mutateAsync: createIssue } = api.issues.createIssue.useMutation();
   const [creationType, setCreationType] = useState<"new" | "existing">("new");
@@ -130,7 +133,8 @@ const Form = () => {
       currentUserId: currentUser.id,
     });
     console.log("issue created", issueResp);
-    router.push(`/fund?id=${bounty.id}`);
+    setFormSection("FUND");
+    setNewBountyId(bounty.id);
   };
 
   const getRepoIssues = async (_repo) => {

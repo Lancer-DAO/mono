@@ -14,7 +14,7 @@ import { fundFFA, getFundFFATX } from "@/escrow/adapters";
 import { DEVNET_USDC_MINT } from "@/src/constants";
 import { useConnection, useWallet } from "@solana/wallet-adapter-react";
 
-const Form = () => {
+const Form: React.FC<{ newBountyId: number }> = ({ newBountyId }) => {
   const {
     currentBounty,
     currentUser,
@@ -37,28 +37,28 @@ const Form = () => {
     });
   };
   useEffect(() => {
-    if (router.isReady && currentUser?.id) {
+    if (currentUser?.id) {
       const getB = async () => {
         const bounty = await getBounty({
-          id: parseInt(router.query.id as string),
+          id: newBountyId,
           currentUserId: currentUser.id,
         });
         setCurrentBounty(bounty);
       };
       getB();
     }
-  }, [router.isReady, currentUser?.id]);
-  // useEffect(() => {
-  //   provider &&
-  //     currentBounty &&
-  //     provider.connection.onAccountChange(
-  //       new PublicKey(currentBounty.escrow.publicKey),
-  //       (callback) => {
-  //         console.log(callback);
-  //         setIsAccountCreated(true);
-  //       }
-  //     );
-  // }, [currentBounty?.escrow.publicKey, provider]);
+  }, [currentUser?.id]);
+  useEffect(() => {
+    provider &&
+      currentBounty &&
+      provider.connection.onAccountChange(
+        new PublicKey(currentBounty.escrow.publicKey),
+        (callback) => {
+          console.log(callback);
+          setIsAccountCreated(true);
+        }
+      );
+  }, [currentBounty?.escrow.publicKey, provider]);
   const onClick = async () => {
     // If we are the creator, then skip requesting and add self as approved
     const signature = await fundFFA(
