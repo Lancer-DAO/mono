@@ -3,7 +3,6 @@ import "@/src/styles/app.scss";
 import "@/src/styles/Form.scss";
 import "@/src/styles/Bounty.scss";
 import "@/src/styles/webflow.scss";
-import "@/styles/tailwind.css";
 
 require("@solana/wallet-adapter-react-ui/styles.css");
 import { api } from "@/src/utils/api";
