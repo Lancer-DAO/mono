@@ -53,7 +53,6 @@ export const BountyList: React.FC<{ isMyBounties: boolean }> = ({
   useEffect(() => {
     const getBs = async () => {
       if (router.isReady && currentUser?.id) {
-        const isMyBounties = !!router.query.my_bounties;
         const bounties = await getBounties(
           isMyBounties ? { currentUserId: currentUser.id } : {}
         );
@@ -102,7 +101,6 @@ export const BountyList: React.FC<{ isMyBounties: boolean }> = ({
         minTime,
         maxTime === minTime ? maxTime + 1 : maxTime,
       ];
-      console.log(timeBounds);
       setTimeBounds(timeBounds);
       setFilters({
         mints: uniqueMints,
