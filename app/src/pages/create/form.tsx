@@ -31,8 +31,7 @@ import { FORM_SECTION } from "@/src/pages/create";
 
 const Form: React.FC<{
   setFormSection: (section: FORM_SECTION) => void;
-  setNewBountyId: (id: number) => void;
-}> = ({ setFormSection, setNewBountyId }) => {
+}> = ({ setFormSection }) => {
   const { currentWallet, program, provider, currentUser } = useLancer();
   const { mutateAsync } = api.bounties.createBounty.useMutation();
   const { mutateAsync: createIssue } = api.issues.createIssue.useMutation();
@@ -53,7 +52,6 @@ const Form: React.FC<{
   const [repos, setRepos] = useState(null);
   const [issues, setIssues] = useState(null);
   const [octokit, setOctokit] = useState(null);
-  const router = useRouter();
 
   const [isPreview, setIsPreview] = useState(false);
   const [isSubmittingIssue, setIsSubmittingIssue] = useState(false);
@@ -134,7 +132,6 @@ const Form: React.FC<{
     });
     console.log("issue created", issueResp);
     setFormSection("FUND");
-    setNewBountyId(bounty.id);
   };
 
   const getRepoIssues = async (_repo) => {
