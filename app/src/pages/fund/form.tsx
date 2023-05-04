@@ -29,7 +29,7 @@ const Form: React.FC<{ newBountyId: number }> = ({ newBountyId }) => {
   const [formData, setFormData] = useState({
     fundingAmount: null,
   });
-  const [isAccountCreated, setIsAccountCreated] = useState(true);
+  const [isAccountCreated, setIsAccountCreated] = useState(false);
   const handleChange = (event) => {
     setFormData({
       ...formData,
@@ -50,7 +50,6 @@ const Form: React.FC<{ newBountyId: number }> = ({ newBountyId }) => {
   }, [currentUser?.id]);
   useEffect(() => {
     provider &&
-      currentBounty &&
       provider.connection.onAccountChange(
         new PublicKey(currentBounty.escrow.publicKey),
         (callback) => {

@@ -40,12 +40,7 @@ function App() {
               </span>
             </p>
           </div>
-          {formSection === "CREATE" && (
-            <Form
-              setFormSection={setFormSection}
-              setNewBountyId={setNewBountyId}
-            />
-          )}
+          {formSection === "CREATE" && <Form setFormSection={setFormSection} />}
           {formSection === "FUND" && <FundForm newBountyId={newBountyId} />}
         </div>
       </PageLayout>
