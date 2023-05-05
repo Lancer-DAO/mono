@@ -10,7 +10,7 @@ export type FORM_SECTION = "CREATE" | "FUND";
 
 function App() {
   const [formSection, setFormSection] = useState<FORM_SECTION>("CREATE");
-  const [newBountyId, setNewBountyId] = useState<number | null>(null);
+  const [isAccountCreated, setIsAccountCreated] = useState(false);
   return (
     <div>
       <PageLayout>
@@ -40,8 +40,13 @@ function App() {
               </span>
             </p>
           </div>
-          {formSection === "CREATE" && <Form setFormSection={setFormSection} />}
-          {formSection === "FUND" && <FundForm newBountyId={newBountyId} />}
+          {formSection === "CREATE" && (
+            <Form
+              setFormSection={setFormSection}
+              setIsAccountCreated={setIsAccountCreated}
+            />
+          )}
+          {formSection === "FUND" && <FundForm isAccountCreated />}
         </div>
       </PageLayout>
     </div>

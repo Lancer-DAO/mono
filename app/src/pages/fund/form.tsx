@@ -14,7 +14,9 @@ import { fundFFA, getFundFFATX } from "@/escrow/adapters";
 import { DEVNET_USDC_MINT } from "@/src/constants";
 import { useConnection, useWallet } from "@solana/wallet-adapter-react";
 
-const Form: React.FC<{ newBountyId: number }> = ({ newBountyId }) => {
+const Form: React.FC<{ isAccountCreated: boolean }> = ({
+  isAccountCreated,
+}) => {
   const {
     currentBounty,
     currentUser,
@@ -29,35 +31,12 @@ const Form: React.FC<{ newBountyId: number }> = ({ newBountyId }) => {
   const [formData, setFormData] = useState({
     fundingAmount: null,
   });
-  const [isAccountCreated, setIsAccountCreated] = useState(false);
   const handleChange = (event) => {
     setFormData({
       ...formData,
       [event.target.name]: event.target.value,
     });
   };
-  useEffect(() => {
-    if (currentUser?.id) {
-      const getB = async () => {
-        const bounty = await getBounty({
-          id: newBountyId,
-          currentUserId: currentUser.id,
-        });
-        setCurrentBounty(bounty);
-      };
-      getB();
-    }
-  }, [currentUser?.id]);
-  useEffect(() => {
-    provider &&
-      provider.connection.onAccountChange(
-        new PublicKey(currentBounty.escrow.publicKey),
-        (callback) => {
-          console.log(callback);
-          setIsAccountCreated(true);
-        }
-      );
-  }, [currentBounty?.escrow.publicKey, provider]);
   const onClick = async () => {
     // If we are the creator, then skip requesting and add self as approved
     const signature = await fundFFA(
