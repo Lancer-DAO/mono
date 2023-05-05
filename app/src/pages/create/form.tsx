@@ -31,8 +31,10 @@ import { FORM_SECTION } from "@/src/pages/create";
 
 const Form: React.FC<{
   setFormSection: (section: FORM_SECTION) => void;
-}> = ({ setFormSection }) => {
-  const { currentWallet, program, provider, currentUser } = useLancer();
+  setIsAccountCreated: (created: boolean) => void;
+}> = ({ setFormSection, setIsAccountCreated }) => {
+  const { currentWallet, program, provider, currentUser, setCurrentBounty } =
+    useLancer();
   const { mutateAsync } = api.bounties.createBounty.useMutation();
   const { mutateAsync: createIssue } = api.issues.createIssue.useMutation();
   const [creationType, setCreationType] = useState<"new" | "existing">("new");
@@ -83,6 +85,10 @@ const Form: React.FC<{
       program,
       provider
     );
+    provider.connection.onAccountChange(escrowKey, (callback) => {
+      console.log(callback);
+      setIsAccountCreated(true);
+    });
     console.log("created ", signature, escrowKey);
     const { bounty } = await mutateAsync({
       email: currentUser.email,
@@ -132,6 +138,7 @@ const Form: React.FC<{
     });
     console.log("issue created", issueResp);
     setFormSection("FUND");
+    setCurrentBounty(issueResp);
   };
 
   const getRepoIssues = async (_repo) => {
