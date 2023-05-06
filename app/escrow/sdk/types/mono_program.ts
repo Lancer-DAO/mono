@@ -323,16 +323,6 @@ export type MonoProgram = {
           "isSigner": false
         },
         {
-          "name": "payoutCompleterTokensAccount",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "creatorCompanyTokensAccount",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
           "name": "featureDataAccount",
           "isMut": true,
           "isSigner": false,
@@ -437,30 +427,6 @@ export type MonoProgram = {
                 "kind": "const",
                 "type": "string",
                 "value": "mono"
-              }
-            ]
-          }
-        },
-        {
-          "name": "lancerCompleterTokens",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "lancerCompanyTokens",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "programMintAuthority",
-          "isMut": false,
-          "isSigner": false,
-          "pda": {
-            "seeds": [
-              {
-                "kind": "const",
-                "type": "string",
-                "value": "mint_authority"
               }
             ]
           }
@@ -763,79 +729,6 @@ export type MonoProgram = {
       "args": []
     },
     {
-      "name": "createLancerTokens",
-      "accounts": [
-        {
-          "name": "admin",
-          "isMut": true,
-          "isSigner": true
-        },
-        {
-          "name": "lancerCompleterTokens",
-          "isMut": true,
-          "isSigner": false,
-          "pda": {
-            "seeds": [
-              {
-                "kind": "account",
-                "type": "publicKey",
-                "path": "admin"
-              },
-              {
-                "kind": "const",
-                "type": "string",
-                "value": "lancer_completer_tokens"
-              }
-            ]
-          }
-        },
-        {
-          "name": "lancerCompanyTokens",
-          "isMut": true,
-          "isSigner": false,
-          "pda": {
-            "seeds": [
-              {
-                "kind": "account",
-                "type": "publicKey",
-                "path": "admin"
-              },
-              {
-                "kind": "const",
-                "type": "string",
-                "value": "lancer_company_tokens"
-              }
-            ]
-          }
-        },
-        {
-          "name": "programMintAuthority",
-          "isMut": false,
-          "isSigner": false,
-          "pda": {
-            "seeds": [
-              {
-                "kind": "const",
-                "type": "string",
-                "value": "mint_authority"
-              }
-            ]
-          }
-        },
-        {
-          "name": "systemProgram",
-          "isMut": false,
-          "isSigner": false
-        },
-        {
-          "name": "tokenProgram",
-          "isMut": false,
-          "isSigner": false
-        }
-      ],
-      "args": []
-    },
-    {
       "name": "withdrawTokens",
       "accounts": [
         {
@@ -934,16 +827,6 @@ export type MonoProgram = {
         },
         {
           "name": "payoutAccount",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "payoutCompleterTokensAccount",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "creatorCompanyTokensAccount",
           "isMut": true,
           "isSigner": false
         },
@@ -1057,30 +940,6 @@ export type MonoProgram = {
           }
         },
         {
-          "name": "lancerCompleterTokens",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "lancerCompanyTokens",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "programMintAuthority",
-          "isMut": false,
-          "isSigner": false,
-          "pda": {
-            "seeds": [
-              {
-                "kind": "const",
-                "type": "string",
-                "value": "mint_authority"
-              }
-            ]
-          }
-        },
-        {
           "name": "tokenProgram",
           "isMut": false,
           "isSigner": false
@@ -1092,6 +951,393 @@ export type MonoProgram = {
           "type": "u8"
         }
       ]
+    },
+    {
+      "name": "enableMultipleSubmitters",
+      "accounts": [
+        {
+          "name": "creator",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "featureDataAccount",
+          "isMut": true,
+          "isSigner": false,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "type": "string",
+                "value": "mono"
+              },
+              {
+                "kind": "account",
+                "type": "string",
+                "account": "FeatureDataAccount",
+                "path": "feature_data_account.unix_timestamp"
+              },
+              {
+                "kind": "account",
+                "type": "publicKey",
+                "path": "creator"
+              }
+            ]
+          }
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "submitRequestMultiple",
+      "accounts": [
+        {
+          "name": "creator",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "submitter",
+          "isMut": false,
+          "isSigner": true
+        },
+        {
+          "name": "featureDataAccount",
+          "isMut": true,
+          "isSigner": false,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "type": "string",
+                "value": "mono"
+              },
+              {
+                "kind": "account",
+                "type": "string",
+                "account": "FeatureDataAccount",
+                "path": "feature_data_account.unix_timestamp"
+              },
+              {
+                "kind": "account",
+                "type": "publicKey",
+                "path": "creator"
+              }
+            ]
+          }
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "setShareMultipleSubmitters",
+      "accounts": [
+        {
+          "name": "creator",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "featureDataAccount",
+          "isMut": true,
+          "isSigner": false,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "type": "string",
+                "value": "mono"
+              },
+              {
+                "kind": "account",
+                "type": "string",
+                "account": "FeatureDataAccount",
+                "path": "feature_data_account.unix_timestamp"
+              },
+              {
+                "kind": "account",
+                "type": "publicKey",
+                "path": "creator"
+              }
+            ]
+          }
+        }
+      ],
+      "args": [
+        {
+          "name": "submitter",
+          "type": "publicKey"
+        },
+        {
+          "name": "submitterShare",
+          "type": "f32"
+        }
+      ]
+    },
+    {
+      "name": "approveRequestMultiple",
+      "accounts": [
+        {
+          "name": "creator",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "featureDataAccount",
+          "isMut": true,
+          "isSigner": false,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "type": "string",
+                "value": "mono"
+              },
+              {
+                "kind": "account",
+                "type": "string",
+                "account": "FeatureDataAccount",
+                "path": "feature_data_account.unix_timestamp"
+              },
+              {
+                "kind": "account",
+                "type": "publicKey",
+                "path": "creator"
+              }
+            ]
+          }
+        },
+        {
+          "name": "featureTokenAccount",
+          "isMut": true,
+          "isSigner": false,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "type": "string",
+                "value": "mono"
+              },
+              {
+                "kind": "account",
+                "type": "string",
+                "account": "FeatureDataAccount",
+                "path": "feature_data_account.unix_timestamp"
+              },
+              {
+                "kind": "account",
+                "type": "publicKey",
+                "path": "creator"
+              },
+              {
+                "kind": "account",
+                "type": "publicKey",
+                "account": "FeatureDataAccount",
+                "path": "feature_data_account.funds_mint"
+              }
+            ]
+          }
+        },
+        {
+          "name": "lancerDaoTokenAccount",
+          "isMut": true,
+          "isSigner": false,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "type": "string",
+                "value": "mono"
+              },
+              {
+                "kind": "const",
+                "type": "string",
+                "value": "LANCER_DAO"
+              },
+              {
+                "kind": "account",
+                "type": "publicKey",
+                "account": "TokenAccount",
+                "path": "feature_token_account.mint"
+              }
+            ]
+          }
+        },
+        {
+          "name": "lancerTokenProgramAuthority",
+          "isMut": false,
+          "isSigner": false,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "type": "string",
+                "value": "LANCER_DAO"
+              }
+            ]
+          }
+        },
+        {
+          "name": "programAuthority",
+          "isMut": false,
+          "isSigner": false,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "type": "string",
+                "value": "mono"
+              }
+            ]
+          }
+        },
+        {
+          "name": "tokenProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "approveRequestMultipleThirdParty",
+      "accounts": [
+        {
+          "name": "creator",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "thirdParty",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "featureDataAccount",
+          "isMut": true,
+          "isSigner": false,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "type": "string",
+                "value": "mono"
+              },
+              {
+                "kind": "account",
+                "type": "string",
+                "account": "FeatureDataAccount",
+                "path": "feature_data_account.unix_timestamp"
+              },
+              {
+                "kind": "account",
+                "type": "publicKey",
+                "path": "creator"
+              }
+            ]
+          }
+        },
+        {
+          "name": "featureTokenAccount",
+          "isMut": true,
+          "isSigner": false,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "type": "string",
+                "value": "mono"
+              },
+              {
+                "kind": "account",
+                "type": "string",
+                "account": "FeatureDataAccount",
+                "path": "feature_data_account.unix_timestamp"
+              },
+              {
+                "kind": "account",
+                "type": "publicKey",
+                "path": "creator"
+              },
+              {
+                "kind": "account",
+                "type": "publicKey",
+                "account": "FeatureDataAccount",
+                "path": "feature_data_account.funds_mint"
+              }
+            ]
+          }
+        },
+        {
+          "name": "lancerDaoTokenAccount",
+          "isMut": true,
+          "isSigner": false,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "type": "string",
+                "value": "mono"
+              },
+              {
+                "kind": "const",
+                "type": "string",
+                "value": "LANCER_DAO"
+              },
+              {
+                "kind": "account",
+                "type": "publicKey",
+                "account": "TokenAccount",
+                "path": "feature_token_account.mint"
+              }
+            ]
+          }
+        },
+        {
+          "name": "lancerTokenProgramAuthority",
+          "isMut": false,
+          "isSigner": false,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "type": "string",
+                "value": "LANCER_DAO"
+              }
+            ]
+          }
+        },
+        {
+          "name": "programAuthority",
+          "isMut": false,
+          "isSigner": false,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "type": "string",
+                "value": "mono"
+              }
+            ]
+          }
+        },
+        {
+          "name": "tokenProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": []
     }
   ],
   "accounts": [
@@ -1121,7 +1367,16 @@ export type MonoProgram = {
             "type": {
               "array": [
                 "publicKey",
-                3
+                5
+              ]
+            }
+          },
+          {
+            "name": "approvedSubmittersShares",
+            "type": {
+              "array": [
+                "f32",
+                5
               ]
             }
           },
@@ -1148,6 +1403,10 @@ export type MonoProgram = {
           {
             "name": "noOfSubmitters",
             "type": "u8"
+          },
+          {
+            "name": "isMultipleSubmitters",
+            "type": "bool"
           },
           {
             "name": "fundsTokenAccountBump",
@@ -1214,6 +1473,36 @@ export type MonoProgram = {
       "code": 6008,
       "name": "InvalidAdmin",
       "msg": "You are not the Admin"
+    },
+    {
+      "code": 6009,
+      "name": "NotApprovedSubmitter",
+      "msg": "You do not have permissions to submit"
+    },
+    {
+      "code": 6010,
+      "name": "ExpectedSingleSubmitter",
+      "msg": "This Instruction is used for only a single submitter."
+    },
+    {
+      "code": 6011,
+      "name": "ExpectedMultipleSubmitters",
+      "msg": "This Instruction is used for only Multiple submitters."
+    },
+    {
+      "code": 6012,
+      "name": "MaxShareExceeded",
+      "msg": "Share Cannot Exceed 100"
+    },
+    {
+      "code": 6013,
+      "name": "ShareMustBe100",
+      "msg": "Share must be 100"
+    },
+    {
+      "code": 6014,
+      "name": "NotOwnedBySplToken",
+      "msg": "Token Error"
     }
   ]
 };
@@ -1543,16 +1832,6 @@ export const IDL: MonoProgram = {
           "isSigner": false
         },
         {
-          "name": "payoutCompleterTokensAccount",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "creatorCompanyTokensAccount",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
           "name": "featureDataAccount",
           "isMut": true,
           "isSigner": false,
@@ -1657,30 +1936,6 @@ export const IDL: MonoProgram = {
                 "kind": "const",
                 "type": "string",
                 "value": "mono"
-              }
-            ]
-          }
-        },
-        {
-          "name": "lancerCompleterTokens",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "lancerCompanyTokens",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "programMintAuthority",
-          "isMut": false,
-          "isSigner": false,
-          "pda": {
-            "seeds": [
-              {
-                "kind": "const",
-                "type": "string",
-                "value": "mint_authority"
               }
             ]
           }
@@ -1983,79 +2238,6 @@ export const IDL: MonoProgram = {
       "args": []
     },
     {
-      "name": "createLancerTokens",
-      "accounts": [
-        {
-          "name": "admin",
-          "isMut": true,
-          "isSigner": true
-        },
-        {
-          "name": "lancerCompleterTokens",
-          "isMut": true,
-          "isSigner": false,
-          "pda": {
-            "seeds": [
-              {
-                "kind": "account",
-                "type": "publicKey",
-                "path": "admin"
-              },
-              {
-                "kind": "const",
-                "type": "string",
-                "value": "lancer_completer_tokens"
-              }
-            ]
-          }
-        },
-        {
-          "name": "lancerCompanyTokens",
-          "isMut": true,
-          "isSigner": false,
-          "pda": {
-            "seeds": [
-              {
-                "kind": "account",
-                "type": "publicKey",
-                "path": "admin"
-              },
-              {
-                "kind": "const",
-                "type": "string",
-                "value": "lancer_company_tokens"
-              }
-            ]
-          }
-        },
-        {
-          "name": "programMintAuthority",
-          "isMut": false,
-          "isSigner": false,
-          "pda": {
-            "seeds": [
-              {
-                "kind": "const",
-                "type": "string",
-                "value": "mint_authority"
-              }
-            ]
-          }
-        },
-        {
-          "name": "systemProgram",
-          "isMut": false,
-          "isSigner": false
-        },
-        {
-          "name": "tokenProgram",
-          "isMut": false,
-          "isSigner": false
-        }
-      ],
-      "args": []
-    },
-    {
       "name": "withdrawTokens",
       "accounts": [
         {
@@ -2154,16 +2336,6 @@ export const IDL: MonoProgram = {
         },
         {
           "name": "payoutAccount",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "payoutCompleterTokensAccount",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "creatorCompanyTokensAccount",
           "isMut": true,
           "isSigner": false
         },
@@ -2277,30 +2449,6 @@ export const IDL: MonoProgram = {
           }
         },
         {
-          "name": "lancerCompleterTokens",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "lancerCompanyTokens",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "programMintAuthority",
-          "isMut": false,
-          "isSigner": false,
-          "pda": {
-            "seeds": [
-              {
-                "kind": "const",
-                "type": "string",
-                "value": "mint_authority"
-              }
-            ]
-          }
-        },
-        {
           "name": "tokenProgram",
           "isMut": false,
           "isSigner": false
@@ -2312,6 +2460,393 @@ export const IDL: MonoProgram = {
           "type": "u8"
         }
       ]
+    },
+    {
+      "name": "enableMultipleSubmitters",
+      "accounts": [
+        {
+          "name": "creator",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "featureDataAccount",
+          "isMut": true,
+          "isSigner": false,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "type": "string",
+                "value": "mono"
+              },
+              {
+                "kind": "account",
+                "type": "string",
+                "account": "FeatureDataAccount",
+                "path": "feature_data_account.unix_timestamp"
+              },
+              {
+                "kind": "account",
+                "type": "publicKey",
+                "path": "creator"
+              }
+            ]
+          }
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "submitRequestMultiple",
+      "accounts": [
+        {
+          "name": "creator",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "submitter",
+          "isMut": false,
+          "isSigner": true
+        },
+        {
+          "name": "featureDataAccount",
+          "isMut": true,
+          "isSigner": false,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "type": "string",
+                "value": "mono"
+              },
+              {
+                "kind": "account",
+                "type": "string",
+                "account": "FeatureDataAccount",
+                "path": "feature_data_account.unix_timestamp"
+              },
+              {
+                "kind": "account",
+                "type": "publicKey",
+                "path": "creator"
+              }
+            ]
+          }
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "setShareMultipleSubmitters",
+      "accounts": [
+        {
+          "name": "creator",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "featureDataAccount",
+          "isMut": true,
+          "isSigner": false,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "type": "string",
+                "value": "mono"
+              },
+              {
+                "kind": "account",
+                "type": "string",
+                "account": "FeatureDataAccount",
+                "path": "feature_data_account.unix_timestamp"
+              },
+              {
+                "kind": "account",
+                "type": "publicKey",
+                "path": "creator"
+              }
+            ]
+          }
+        }
+      ],
+      "args": [
+        {
+          "name": "submitter",
+          "type": "publicKey"
+        },
+        {
+          "name": "submitterShare",
+          "type": "f32"
+        }
+      ]
+    },
+    {
+      "name": "approveRequestMultiple",
+      "accounts": [
+        {
+          "name": "creator",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "featureDataAccount",
+          "isMut": true,
+          "isSigner": false,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "type": "string",
+                "value": "mono"
+              },
+              {
+                "kind": "account",
+                "type": "string",
+                "account": "FeatureDataAccount",
+                "path": "feature_data_account.unix_timestamp"
+              },
+              {
+                "kind": "account",
+                "type": "publicKey",
+                "path": "creator"
+              }
+            ]
+          }
+        },
+        {
+          "name": "featureTokenAccount",
+          "isMut": true,
+          "isSigner": false,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "type": "string",
+                "value": "mono"
+              },
+              {
+                "kind": "account",
+                "type": "string",
+                "account": "FeatureDataAccount",
+                "path": "feature_data_account.unix_timestamp"
+              },
+              {
+                "kind": "account",
+                "type": "publicKey",
+                "path": "creator"
+              },
+              {
+                "kind": "account",
+                "type": "publicKey",
+                "account": "FeatureDataAccount",
+                "path": "feature_data_account.funds_mint"
+              }
+            ]
+          }
+        },
+        {
+          "name": "lancerDaoTokenAccount",
+          "isMut": true,
+          "isSigner": false,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "type": "string",
+                "value": "mono"
+              },
+              {
+                "kind": "const",
+                "type": "string",
+                "value": "LANCER_DAO"
+              },
+              {
+                "kind": "account",
+                "type": "publicKey",
+                "account": "TokenAccount",
+                "path": "feature_token_account.mint"
+              }
+            ]
+          }
+        },
+        {
+          "name": "lancerTokenProgramAuthority",
+          "isMut": false,
+          "isSigner": false,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "type": "string",
+                "value": "LANCER_DAO"
+              }
+            ]
+          }
+        },
+        {
+          "name": "programAuthority",
+          "isMut": false,
+          "isSigner": false,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "type": "string",
+                "value": "mono"
+              }
+            ]
+          }
+        },
+        {
+          "name": "tokenProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "approveRequestMultipleThirdParty",
+      "accounts": [
+        {
+          "name": "creator",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "thirdParty",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "featureDataAccount",
+          "isMut": true,
+          "isSigner": false,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "type": "string",
+                "value": "mono"
+              },
+              {
+                "kind": "account",
+                "type": "string",
+                "account": "FeatureDataAccount",
+                "path": "feature_data_account.unix_timestamp"
+              },
+              {
+                "kind": "account",
+                "type": "publicKey",
+                "path": "creator"
+              }
+            ]
+          }
+        },
+        {
+          "name": "featureTokenAccount",
+          "isMut": true,
+          "isSigner": false,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "type": "string",
+                "value": "mono"
+              },
+              {
+                "kind": "account",
+                "type": "string",
+                "account": "FeatureDataAccount",
+                "path": "feature_data_account.unix_timestamp"
+              },
+              {
+                "kind": "account",
+                "type": "publicKey",
+                "path": "creator"
+              },
+              {
+                "kind": "account",
+                "type": "publicKey",
+                "account": "FeatureDataAccount",
+                "path": "feature_data_account.funds_mint"
+              }
+            ]
+          }
+        },
+        {
+          "name": "lancerDaoTokenAccount",
+          "isMut": true,
+          "isSigner": false,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "type": "string",
+                "value": "mono"
+              },
+              {
+                "kind": "const",
+                "type": "string",
+                "value": "LANCER_DAO"
+              },
+              {
+                "kind": "account",
+                "type": "publicKey",
+                "account": "TokenAccount",
+                "path": "feature_token_account.mint"
+              }
+            ]
+          }
+        },
+        {
+          "name": "lancerTokenProgramAuthority",
+          "isMut": false,
+          "isSigner": false,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "type": "string",
+                "value": "LANCER_DAO"
+              }
+            ]
+          }
+        },
+        {
+          "name": "programAuthority",
+          "isMut": false,
+          "isSigner": false,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "type": "string",
+                "value": "mono"
+              }
+            ]
+          }
+        },
+        {
+          "name": "tokenProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": []
     }
   ],
   "accounts": [
@@ -2341,7 +2876,16 @@ export const IDL: MonoProgram = {
             "type": {
               "array": [
                 "publicKey",
-                3
+                5
+              ]
+            }
+          },
+          {
+            "name": "approvedSubmittersShares",
+            "type": {
+              "array": [
+                "f32",
+                5
               ]
             }
           },
@@ -2368,6 +2912,10 @@ export const IDL: MonoProgram = {
           {
             "name": "noOfSubmitters",
             "type": "u8"
+          },
+          {
+            "name": "isMultipleSubmitters",
+            "type": "bool"
           },
           {
             "name": "fundsTokenAccountBump",
@@ -2434,6 +2982,36 @@ export const IDL: MonoProgram = {
       "code": 6008,
       "name": "InvalidAdmin",
       "msg": "You are not the Admin"
+    },
+    {
+      "code": 6009,
+      "name": "NotApprovedSubmitter",
+      "msg": "You do not have permissions to submit"
+    },
+    {
+      "code": 6010,
+      "name": "ExpectedSingleSubmitter",
+      "msg": "This Instruction is used for only a single submitter."
+    },
+    {
+      "code": 6011,
+      "name": "ExpectedMultipleSubmitters",
+      "msg": "This Instruction is used for only Multiple submitters."
+    },
+    {
+      "code": 6012,
+      "name": "MaxShareExceeded",
+      "msg": "Share Cannot Exceed 100"
+    },
+    {
+      "code": 6013,
+      "name": "ShareMustBe100",
+      "msg": "Share must be 100"
+    },
+    {
+      "code": 6014,
+      "name": "NotOwnedBySplToken",
+      "msg": "Token Error"
     }
   ]
 };
