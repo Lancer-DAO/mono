@@ -7,7 +7,7 @@ import styles from "../styles/Home.module.css";
 import MonoProgramJSON from "@/escrow/sdk/idl/mono_program.json";
 import {
   createLancerTokenAccountInstruction,
-  createLancerTokensInstruction,
+  withdrawTokensInstruction,
 } from "@/escrow/sdk/instructions";
 import {
   WalletAdapterNetwork,
@@ -38,6 +38,8 @@ import { DEVNET_USDC_MINT } from "@/src/constants";
 import { AnchorProvider, Program } from "@project-serum/anchor";
 import { MonoProgram } from "@/escrow/sdk/types/mono_program";
 import { MONO_DEVNET, WSOL_ADDRESS } from "@/escrow/sdk/constants";
+
+import { getAssociatedTokenAddress } from "@solana/spl-token";
 const WalletDisconnectButtonDynamic = dynamic(
   async () =>
     (await import("@solana/wallet-adapter-react-ui")).WalletDisconnectButton,
@@ -54,7 +56,7 @@ export const SendSOLToRandomAddress: FC = () => {
   const { publicKey, wallet, signAllTransactions, signTransaction } =
     useWallet();
 
-  const onClick = useCallback(async () => {
+  const createFeesAccount = useCallback(async () => {
     if (!publicKey) throw new WalletNotConnectedError();
     const provider = new AnchorProvider(
       connection,
@@ -77,7 +79,7 @@ export const SendSOLToRandomAddress: FC = () => {
     );
   }, [publicKey, connection]);
 
-  const lancerAccounts = useCallback(async () => {
+  const withdrawTokens = useCallback(async () => {
     if (!publicKey) throw new WalletNotConnectedError();
     const provider = new AnchorProvider(
       connection,
@@ -89,9 +91,22 @@ export const SendSOLToRandomAddress: FC = () => {
       new PublicKey(MONO_DEVNET),
       provider
     );
-    let create_lancer_tokens_ix = await createLancerTokensInstruction(program);
+    const withdrawer = new PublicKey(
+      "BuxU7uwwkoobF8p4Py7nRoTgxWRJfni8fc4U3YKGEXKs"
+    );
+    const withdrawerTokenAccount = await getAssociatedTokenAddress(
+      new PublicKey(DEVNET_USDC_MINT),
+      withdrawer
+    );
+    const create_lancer_token_account_ix = await withdrawTokensInstruction(
+      1,
+      new PublicKey(DEVNET_USDC_MINT),
+      withdrawer,
+      withdrawerTokenAccount,
+      program
+    );
     await provider.sendAndConfirm(
-      new Transaction().add(create_lancer_tokens_ix),
+      new Transaction().add(create_lancer_token_account_ix),
       []
     );
   }, [publicKey, connection]);
@@ -104,11 +119,12 @@ export const SendSOLToRandomAddress: FC = () => {
           <WalletDisconnectButtonDynamic />
         </div>
 
-        <button onClick={onClick} disabled={!publicKey}>
+        <button onClick={createFeesAccount} disabled={!publicKey}>
           Create New Mint Fees Account
         </button>
-        <button onClick={lancerAccounts} disabled={!publicKey}>
-          Create Points Accounts
+
+        <button onClick={withdrawTokens} disabled={!publicKey}>
+          Withdraw Tokens
         </button>
       </>
     )
