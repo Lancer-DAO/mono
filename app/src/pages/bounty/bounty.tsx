@@ -193,7 +193,8 @@ const Bounty: React.FC = () => {
                 </div>
               )}
               {currentBounty &&
-                currentBounty.requestedSubmitters.length > 0 && (
+                currentBounty.requestedSubmitters.length > 0 &&
+                currentBounty.isCreator && (
                   <div>
                     <label className="field-label-5">
                       Requested Applicants
@@ -208,18 +209,20 @@ const Bounty: React.FC = () => {
                   </div>
                 )}
 
-              {currentBounty && currentBounty.approvedSubmitters.length > 0 && (
-                <div>
-                  <label className="field-label-5">Approved Applicants</label>
-                  {currentBounty.approvedSubmitters.map((submitter) => (
-                    <SubmitterSection
-                      submitter={submitter}
-                      type="approved"
-                      key={`approved-submitters-${submitter.userid}`}
-                    />
-                  ))}
-                </div>
-              )}
+              {currentBounty &&
+                currentBounty.approvedSubmitters.length > 0 &&
+                currentBounty.isCreator && (
+                  <div>
+                    <label className="field-label-5">Approved Applicants</label>
+                    {currentBounty.approvedSubmitters.map((submitter) => (
+                      <SubmitterSection
+                        submitter={submitter}
+                        type="approved"
+                        key={`approved-submitters-${submitter.userid}`}
+                      />
+                    ))}
+                  </div>
+                )}
               {currentBounty.state === BountyState.AWAITING_REVIEW && (
                 <div>
                   <label className="field-label-10">Submissions</label>

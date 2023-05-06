@@ -2,15 +2,24 @@ import { useEffect, useState } from "react";
 
 import { BrowserRouter as Router } from "react-router-dom";
 import Form from "./form";
-import { AllProviders } from "@/src/providers";
+import { AllProviders, useLancer } from "@/src/providers";
 import FundForm from "../fund/form";
 import { PageLayout } from "@/src/layouts";
+import { PublicKey } from "@solana/web3.js";
 
 export type FORM_SECTION = "CREATE" | "FUND";
 
 function App() {
+  const { provider, program } = useLancer();
   const [formSection, setFormSection] = useState<FORM_SECTION>("CREATE");
   const [isAccountCreated, setIsAccountCreated] = useState(false);
+  const createAccountPoll = (publicKey: PublicKey) => {
+    console.log("creating");
+    provider.connection.onAccountChange(publicKey, (callback) => {
+      console.log("changed");
+      setIsAccountCreated(true);
+    });
+  };
   return (
     <div>
       <PageLayout>
@@ -43,10 +52,12 @@ function App() {
           {formSection === "CREATE" && (
             <Form
               setFormSection={setFormSection}
-              setIsAccountCreated={setIsAccountCreated}
+              createAccountPoll={createAccountPoll}
             />
           )}
-          {formSection === "FUND" && <FundForm isAccountCreated />}
+          {formSection === "FUND" && (
+            <FundForm isAccountCreated={isAccountCreated} />
+          )}
         </div>
       </PageLayout>
     </div>

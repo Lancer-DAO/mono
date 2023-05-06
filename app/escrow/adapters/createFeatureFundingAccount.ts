@@ -30,7 +30,6 @@ export const createFFA = async (wallet: LancerWallet, program: Program<MonoProgr
                 /** the last block chain can advance to before tx is exportd expired */
                 lastValidBlockHeight: lastValidBlockHeight,
               }
-              debugger;
       const signature = await wallet.signAndSendTransaction(
         new Transaction(txInfo).add(ix)
       );

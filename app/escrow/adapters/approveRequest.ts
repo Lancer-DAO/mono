@@ -21,25 +21,9 @@ export const approveRequestFFA = async (submitter: PublicKey, acc: Escrow, walle
         new PublicKey(DEVNET_USDC_MINT),
         submitter
       );
-
-    const [lancer_completer_tokens] = await findLancerCompleterTokens(program);
-    const [lancer_company_tokens] = await findLancerCompanyTokens(program);
-    const creator_company_tokens_account = await getAssociatedTokenAddress(
-      lancer_company_tokens,
-      new PublicKey(wallet.publicKey)
-    )
-
-    const payout_completer_tokens_account = await getAssociatedTokenAddress(
-      lancer_completer_tokens,
-      submitter
-    )
-    await maybeCreateTokenAccount(creator_company_tokens_account, creator, lancer_company_tokens, wallet,provider.connection)
-    await maybeCreateTokenAccount(payout_completer_tokens_account, submitter, lancer_completer_tokens, wallet,provider.connection)
       let approveSubmitterIx = await approveRequestInstruction(
         acc.timestamp,
-        payout_completer_tokens_account,
-        creator_company_tokens_account,
-        new PublicKey(wallet.publicKey),
+        creator,
         submitter,
         tokenAddress,
         new PublicKey(DEVNET_USDC_MINT),
@@ -49,7 +33,7 @@ export const approveRequestFFA = async (submitter: PublicKey, acc: Escrow, walle
       const {blockhash, lastValidBlockHeight} = (await provider.connection.getLatestBlockhash());
       const txInfo = {
                 /** The transaction fee payer */
-                feePayer: new PublicKey(wallet.publicKey),
+                feePayer: creator,
                 /** A recent blockhash */
                 blockhash: blockhash,
                 /** the last block chain can advance to before tx is exportd expired */

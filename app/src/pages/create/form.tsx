@@ -28,11 +28,12 @@ import { useRouter } from "next/router";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { LancerWallet } from "@/src/types";
 import { FORM_SECTION } from "@/src/pages/create";
+import { PublicKey } from "@solana/web3.js";
 
 const Form: React.FC<{
   setFormSection: (section: FORM_SECTION) => void;
-  setIsAccountCreated: (created: boolean) => void;
-}> = ({ setFormSection, setIsAccountCreated }) => {
+  createAccountPoll: (publicKey: PublicKey) => void;
+}> = ({ setFormSection, createAccountPoll }) => {
   const { currentWallet, program, provider, currentUser, setCurrentBounty } =
     useLancer();
   const { mutateAsync } = api.bounties.createBounty.useMutation();
@@ -85,10 +86,7 @@ const Form: React.FC<{
       program,
       provider
     );
-    provider.connection.onAccountChange(escrowKey, (callback) => {
-      console.log(callback);
-      setIsAccountCreated(true);
-    });
+    createAccountPoll(escrowKey);
     console.log("created ", signature, escrowKey);
     const { bounty } = await mutateAsync({
       email: currentUser.email,
