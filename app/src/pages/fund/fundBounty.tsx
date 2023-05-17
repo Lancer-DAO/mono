@@ -1,5 +1,5 @@
 import { ISSUE_API_ROUTE, UPDATE_ISSUE_ROUTE } from "@/constants";
-import { DEVNET_USDC_MINT } from "@/src/constants";
+import { USDC_MINT } from "@/src/constants";
 import { getFundFFATX } from "@/escrow/adapters";
 import axios from "axios";
 import { useEffect, useState } from "react";
@@ -38,7 +38,7 @@ const FundBounty: React.FC<{ amount: number }> = ({
     fundB({
       bountyId: currentBounty.id,
       escrowId: currentBounty.escrow.id,
-      mint: DEVNET_USDC_MINT,
+      mint: USDC_MINT,
       amount,
     });
     router.push(`/bounty?id=${currentBounty.id}`);

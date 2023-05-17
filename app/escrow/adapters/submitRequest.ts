@@ -10,7 +10,7 @@ import { MonoProgram } from "@/escrow/sdk/types/mono_program";
 import {  submitRequestInstruction,
 } from "@/escrow/sdk/instructions";
 
-import { DEVNET_USDC_MINT } from "@/src/constants";
+import { USDC_MINT } from "@/src/constants";
 import { Escrow } from "@prisma/client";
 import { LancerWallet } from "@/src/types";
 import { maybeCreateTokenAccount } from "@/src/utils";
@@ -19,10 +19,10 @@ import { maybeCreateTokenAccount } from "@/src/utils";
 export const submitRequestFFA = async (creator: PublicKey,submitter: PublicKey, acc: Escrow, wallet: LancerWallet, program: Program<MonoProgram>, provider: AnchorProvider) => {
 
         const tokenAddress = await getAssociatedTokenAddress(
-            new PublicKey(DEVNET_USDC_MINT),
+            new PublicKey(USDC_MINT),
             submitter
           );
-    await maybeCreateTokenAccount(tokenAddress, submitter, new PublicKey(DEVNET_USDC_MINT), wallet,provider.connection)
+    await maybeCreateTokenAccount(tokenAddress, submitter, new PublicKey(USDC_MINT), wallet,provider.connection)
 
       let approveSubmitterIx = await submitRequestInstruction(
         acc.timestamp,

@@ -11,7 +11,7 @@ import { api } from "@/src/utils/api";
 import { currentUser } from "@/server/api/routers/users/currentUser";
 import classNames from "classnames";
 import { fundFFA, getFundFFATX } from "@/escrow/adapters";
-import { DEVNET_USDC_MINT } from "@/src/constants";
+import { USDC_MINT } from "@/src/constants";
 import { useConnection, useWallet } from "@solana/wallet-adapter-react";
 
 const Form: React.FC<{ isAccountCreated: boolean }> = ({
@@ -49,7 +49,7 @@ const Form: React.FC<{ isAccountCreated: boolean }> = ({
     await fundB({
       bountyId: currentBounty.id,
       escrowId: currentBounty.escrow.id,
-      mint: DEVNET_USDC_MINT,
+      mint: USDC_MINT,
       amount: parseFloat(formData.fundingAmount),
     });
     router.push(`/bounty?id=${currentBounty.id}`);

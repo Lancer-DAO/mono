@@ -104,7 +104,7 @@ const Form: React.FC<{
       provider: currentWallet.providerName,
       timestamp: timestamp,
       chainName: "Solana",
-      network: "devnet",
+      network: "mainnet",
     });
     console.log("bounty created");
     let issueNumber;

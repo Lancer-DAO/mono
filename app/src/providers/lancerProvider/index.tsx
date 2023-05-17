@@ -84,7 +84,9 @@ export const LancerProvider: FunctionComponent<ILancerState> = ({
   const [program, setProgram] = useState<Program<MonoProgram>>();
   useEffect(() => {
     const getMagicWallet = async () => {
-      const { lancerWallet, program, provider } = await createMagicWallet();
+      const { lancerWallet, program, provider } = await createMagicWallet(
+        connection
+      );
 
       if (!wallets) {
         setWallets([lancerWallet]);

@@ -5,10 +5,7 @@ import Image from "next/image";
 import React, { useCallback, useMemo } from "react";
 import styles from "../styles/Home.module.css";
 import MonoProgramJSON from "@/escrow/sdk/idl/mono_program.json";
-import {
-  createLancerTokenAccountInstruction,
-  createLancerTokensInstruction,
-} from "@/escrow/sdk/instructions";
+import { createLancerTokenAccountInstruction } from "@/escrow/sdk/instructions";
 import {
   WalletAdapterNetwork,
   WalletNotConnectedError,
@@ -34,7 +31,7 @@ import {
 import type { AppProps } from "next/app";
 import type { FC } from "react";
 import { createFeatureFundingAccountInstruction } from "@/escrow/sdk/instructions";
-import { DEVNET_USDC_MINT } from "@/src/constants";
+import { USDC_MINT } from "@/src/constants";
 import { AnchorProvider, Program } from "@project-serum/anchor";
 import { MonoProgram } from "@/escrow/sdk/types/mono_program";
 import { MONO_DEVNET, WSOL_ADDRESS } from "@/escrow/sdk/constants";
@@ -68,30 +65,11 @@ export const SendSOLToRandomAddress: FC = () => {
     );
     const create_lancer_token_account_ix =
       await createLancerTokenAccountInstruction(
-        new PublicKey(DEVNET_USDC_MINT),
+        new PublicKey(USDC_MINT),
         program
       );
     await provider.sendAndConfirm(
       new Transaction().add(create_lancer_token_account_ix),
-      []
-    );
-  }, [publicKey, connection]);
-
-  const lancerAccounts = useCallback(async () => {
-    if (!publicKey) throw new WalletNotConnectedError();
-    const provider = new AnchorProvider(
-      connection,
-      { ...wallet, signAllTransactions, signTransaction, publicKey },
-      {}
-    );
-    const program = new Program<MonoProgram>(
-      MonoProgramJSON as unknown as MonoProgram,
-      new PublicKey(MONO_DEVNET),
-      provider
-    );
-    let create_lancer_tokens_ix = await createLancerTokensInstruction(program);
-    await provider.sendAndConfirm(
-      new Transaction().add(create_lancer_tokens_ix),
       []
     );
   }, [publicKey, connection]);
@@ -106,9 +84,6 @@ export const SendSOLToRandomAddress: FC = () => {
 
         <button onClick={onClick} disabled={!publicKey}>
           Create New Mint Fees Account
-        </button>
-        <button onClick={lancerAccounts} disabled={!publicKey}>
-          Create Points Accounts
         </button>
       </>
     )
@@ -150,7 +125,7 @@ const Home: NextPage = () => {
 
 const App: FC<AppProps> = ({ Component, pageProps }) => {
   // Can be set to 'devnet', 'testnet', or 'mainnet-beta'
-  const network = WalletAdapterNetwork.Devnet;
+  const network = WalletAdapterNetwork.Mainnet;
 
   // You can also provide a custom RPC endpoint
   const endpoint = useMemo(() => clusterApiUrl(network), [network]);

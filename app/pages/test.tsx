@@ -26,6 +26,7 @@ import {
 } from "@solana/wallet-adapter-wallets";
 import {
   clusterApiUrl,
+  Connection,
   Keypair,
   PublicKey,
   SystemProgram,
@@ -34,7 +35,7 @@ import {
 import type { AppProps } from "next/app";
 import type { FC } from "react";
 import { createFeatureFundingAccountInstruction } from "@/escrow/sdk/instructions";
-import { DEVNET_USDC_MINT } from "@/src/constants";
+import { USDC_MINT, MAINNET_RPC, MAINNET_USDC_MINT } from "@/src/constants";
 import { AnchorProvider, Program } from "@project-serum/anchor";
 import { MonoProgram } from "@/escrow/sdk/types/mono_program";
 import { MONO_DEVNET, WSOL_ADDRESS } from "@/escrow/sdk/constants";
@@ -58,6 +59,7 @@ export const SendSOLToRandomAddress: FC = () => {
 
   const createFeesAccount = useCallback(async () => {
     if (!publicKey) throw new WalletNotConnectedError();
+    debugger;
     const provider = new AnchorProvider(
       connection,
       { ...wallet, signAllTransactions, signTransaction, publicKey },
@@ -70,7 +72,7 @@ export const SendSOLToRandomAddress: FC = () => {
     );
     const create_lancer_token_account_ix =
       await createLancerTokenAccountInstruction(
-        new PublicKey("So11111111111111111111111111111111111111111"),
+        new PublicKey(MAINNET_USDC_MINT),
         program
       );
     await provider.sendAndConfirm(
@@ -95,12 +97,12 @@ export const SendSOLToRandomAddress: FC = () => {
       "BuxU7uwwkoobF8p4Py7nRoTgxWRJfni8fc4U3YKGEXKs"
     );
     const withdrawerTokenAccount = await getAssociatedTokenAddress(
-      new PublicKey(DEVNET_USDC_MINT),
+      new PublicKey(USDC_MINT),
       withdrawer
     );
     const create_lancer_token_account_ix = await withdrawTokensInstruction(
       1,
-      new PublicKey(DEVNET_USDC_MINT),
+      new PublicKey(USDC_MINT),
       withdrawer,
       withdrawerTokenAccount,
       program
@@ -166,10 +168,10 @@ const Home: NextPage = () => {
 
 const App: FC<AppProps> = ({ Component, pageProps }) => {
   // Can be set to 'devnet', 'testnet', or 'mainnet-beta'
-  const network = WalletAdapterNetwork.Devnet;
+  const network = MAINNET_RPC;
 
   // You can also provide a custom RPC endpoint
-  const endpoint = useMemo(() => clusterApiUrl(network), [network]);
+  const endpoint = useMemo(() => network, [network]);
 
   const wallets = useMemo(
     () => [

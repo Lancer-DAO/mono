@@ -8,7 +8,7 @@ import {
 import { AnchorProvider, Program, } from "@project-serum/anchor";
 import { MonoProgram } from "@/escrow/sdk/types/mono_program";
 import { approveRequestInstruction } from "@/escrow/sdk/instructions";
-import { DEVNET_USDC_MINT } from "@/src/constants";
+import { USDC_MINT } from "@/src/constants";
 import { Escrow, EscrowContract, LancerWallet } from "@/src/types";
 import { findLancerCompanyTokens, findLancerCompleterTokens } from "@/escrow/sdk/pda";
 import { maybeCreateTokenAccount } from "@/src/utils";
@@ -18,7 +18,7 @@ export const approveRequestFFA = async (submitter: PublicKey, acc: Escrow, walle
 
   const creator = new PublicKey(wallet.publicKey)
       const tokenAddress = await getAssociatedTokenAddress(
-        new PublicKey(DEVNET_USDC_MINT),
+        new PublicKey(USDC_MINT),
         submitter
       );
       let approveSubmitterIx = await approveRequestInstruction(
@@ -26,7 +26,7 @@ export const approveRequestFFA = async (submitter: PublicKey, acc: Escrow, walle
         creator,
         submitter,
         tokenAddress,
-        new PublicKey(DEVNET_USDC_MINT),
+        new PublicKey(USDC_MINT),
         program
       )
 

@@ -1,6 +1,6 @@
 import { clusterApiUrl, Connection, PublicKey, Transaction } from "@solana/web3.js";
 import { IS_MAINNET } from "@/constants";
-import { DEVNET_USDC_MINT, MAINNET_RPC, MAINNET_USDC_MINT } from "../constants/web3";
+import { USDC_MINT, MAINNET_RPC, MAINNET_USDC_MINT } from "../constants/web3";
 import { getAssociatedTokenAddress, createAssociatedTokenAccountInstruction, getAccount } from "@solana/spl-token";
 import { LancerWallet } from "@/src/types";
 
@@ -21,7 +21,7 @@ export const getMintName = (mint?: PublicKey) => {
     return 'SOL'
   }
   const mintString = mint.toString()
-  if(mintString === DEVNET_USDC_MINT || mintString === MAINNET_USDC_MINT) {
+  if(mintString === USDC_MINT || mintString === MAINNET_USDC_MINT) {
     return 'USDC'
   }
 

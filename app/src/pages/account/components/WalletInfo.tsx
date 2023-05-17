@@ -1,4 +1,4 @@
-import { DEVNET_USDC_MINT } from "@/src/constants";
+import { USDC_MINT } from "@/src/constants";
 import { getSolscanTX } from "@/src/utils";
 import { useEffect, useState } from "react";
 import { useLancer } from "@/src/providers/lancerProvider";
@@ -21,7 +21,7 @@ export const WalletInfo: React.FC<{ wallet: LancerWallet }> = ({ wallet }) => {
   useEffect(() => {
     const getWalletUSDCBalance = async () => {
       try {
-        const mintKey = new PublicKey(DEVNET_USDC_MINT);
+        const mintKey = new PublicKey(USDC_MINT);
         const token_account = await getAssociatedTokenAddress(
           mintKey,
           new PublicKey(wallet.publicKey)

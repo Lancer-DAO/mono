@@ -8,7 +8,7 @@ import {
 import { AnchorProvider, Program } from "@project-serum/anchor";
 import { MonoProgram } from "@/escrow/sdk/types/mono_program";
 import { cancelFeatureInstruction } from "@/escrow/sdk/instructions";
-import { DEVNET_USDC_MINT } from "@/src/constants";
+import { USDC_MINT } from "@/src/constants";
 import { Escrow, EscrowContract, LancerWallet } from "@/src/types";
 
 
@@ -16,14 +16,14 @@ export const cancelFFA = async (acc: Escrow, wallet: LancerWallet, program: Prog
 
 
       const tokenAddress = await getAssociatedTokenAddress(
-        new PublicKey(DEVNET_USDC_MINT),
+        new PublicKey(USDC_MINT),
         new PublicKey(wallet.publicKey)
       );
       let approveSubmitterIx = await cancelFeatureInstruction(
         acc.timestamp,
         new PublicKey(wallet.publicKey),
         tokenAddress,
-        new PublicKey(DEVNET_USDC_MINT),
+        new PublicKey(USDC_MINT),
         program
       )
 
