@@ -33,9 +33,9 @@ import { LANCER_ADMIN } from "./constants";
 export const createFeatureFundingAccountInstruction = async(
   mint: PublicKey,
   creator: PublicKey,
-  program: Program<MonoProgram>
+  program: Program<MonoProgram>,
+  timestamp: string
 ): Promise<TransactionInstruction> => {
-  const timestamp = Date.now().toString();
   console.log("timestamp = ", timestamp);
   const [feature_account] = await findFeatureAccount(
       timestamp, 
