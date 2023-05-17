@@ -10,16 +10,18 @@ import {
 import { WalletModalProvider } from "@solana/wallet-adapter-react-ui";
 import { LancerProvider } from "@/src/providers/lancerProvider";
 import { useRouter } from "next/router";
+import { IS_MAINNET, MAINNET_RPC } from "../constants";
 export * from "./lancerProvider";
 
 export const AllProviders: React.FC<{ children: ReactNode }> = ({
   children,
 }) => {
-  const router = useRouter();
-  const network = WalletAdapterNetwork.Devnet;
-
   // You can also provide a custom RPC endpoint
-  const endpoint = useMemo(() => clusterApiUrl(network), [network]);
+  const endpoint = useMemo(
+    () =>
+      IS_MAINNET ? MAINNET_RPC : clusterApiUrl(WalletAdapterNetwork.Devnet),
+    [IS_MAINNET]
+  );
 
   const walletProviders = useMemo(
     () => [
@@ -38,7 +40,7 @@ export const AllProviders: React.FC<{ children: ReactNode }> = ({
       new PhantomWalletAdapter(),
     ],
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [network]
+    [IS_MAINNET]
   );
 
   return (

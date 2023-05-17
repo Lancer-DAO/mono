@@ -8,7 +8,7 @@ import {
    fundFeatureInstruction,
 } from "@/escrow/sdk/instructions";
 
-import { DEVNET_USDC_MINT } from "@/src/constants";
+import { USDC_MINT } from "@/src/constants";
 import { Escrow, LancerWallet } from "@/src/types";
 
 
@@ -21,7 +21,7 @@ export const getFundFFATX = async (baseAmount: number, acc: Escrow, wallet: Lanc
       amount,
       acc.timestamp,
       wallet.publicKey,
-      new PublicKey(DEVNET_USDC_MINT),
+      new PublicKey(USDC_MINT),
       program
     );
     const {blockhash, lastValidBlockHeight} = (await provider.connection.getLatestBlockhash());
@@ -46,7 +46,7 @@ export const getFundFFATX = async (baseAmount: number, acc: Escrow, wallet: Lanc
     amount,
     acc.timestamp,
     wallet.publicKey,
-    new PublicKey(DEVNET_USDC_MINT),
+    new PublicKey(USDC_MINT),
     program
   );
   const {blockhash, lastValidBlockHeight} = (await provider.connection.getLatestBlockhash());

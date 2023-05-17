@@ -27,8 +27,13 @@ import { getEscrowContractKey } from "@/src/providers/lancerProvider/queries";
 import { useRouter } from "next/router";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { LancerWallet } from "@/src/types";
+import { FORM_SECTION } from "@/src/pages/create";
+import { PublicKey } from "@solana/web3.js";
 
-const Form = () => {
+const Form: React.FC<{
+  setFormSection: (section: FORM_SECTION) => void;
+  createAccountPoll: (publicKey: PublicKey) => void;
+}> = ({ setFormSection, createAccountPoll }) => {
   const { currentWallet, program, provider, currentUser, setCurrentBounty } =
     useLancer();
   const { mutateAsync } = api.bounties.createBounty.useMutation();
@@ -50,7 +55,6 @@ const Form = () => {
   const [repos, setRepos] = useState(null);
   const [issues, setIssues] = useState(null);
   const [octokit, setOctokit] = useState(null);
-  const router = useRouter();
 
   const [isPreview, setIsPreview] = useState(false);
   const [isSubmittingIssue, setIsSubmittingIssue] = useState(false);
@@ -82,6 +86,7 @@ const Form = () => {
       program,
       provider
     );
+    createAccountPoll(escrowKey);
     console.log("created ", signature, escrowKey);
     const { bounty } = await mutateAsync({
       email: currentUser.email,
@@ -99,7 +104,7 @@ const Form = () => {
       provider: currentWallet.providerName,
       timestamp: timestamp,
       chainName: "Solana",
-      network: "devnet",
+      network: "mainnet",
     });
     console.log("bounty created");
     let issueNumber;
@@ -130,7 +135,8 @@ const Form = () => {
       currentUserId: currentUser.id,
     });
     console.log("issue created", issueResp);
-    router.push(`/fund?id=${bounty.id}`);
+    setFormSection("FUND");
+    setCurrentBounty(issueResp);
   };
 
   const getRepoIssues = async (_repo) => {

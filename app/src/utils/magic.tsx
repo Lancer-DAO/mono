@@ -17,8 +17,6 @@ import {
 import MonoProgramJSON from "@/escrow/sdk/idl/mono_program.json";
 import { LancerWallet } from "@/src/types";
 import { getCookie } from "cookies-next";
-import { useCallback, useMemo } from "react";
-const rpcUrl = clusterApiUrl("devnet");
 // Create client-side Magic instance
 const createMagic = (key: string) => {
   return typeof window != "undefined"
@@ -35,15 +33,12 @@ const createMagic = (key: string) => {
 
 export const magic = createMagic("pk_live_736C8D5728FF026E");
 
-export const createMagicWallet = async () => {
+export const createMagicWallet = async (connection: Connection) => {
   // debugger;
   if (!magic.user.isLoggedIn()) {
     const token = getCookie("session");
     await magic.auth.loginWithCredential(token as string);
   }
-  const connection = new Connection(rpcUrl, {
-    commitment: "finalized",
-  });
 
   const metadata = await magic.user.getMetadata();
 

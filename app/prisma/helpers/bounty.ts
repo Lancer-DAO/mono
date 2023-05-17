@@ -102,7 +102,9 @@ return {...bounty, wallets: wallets, ...relations, ...currentUserRelations, curr
 }
 
 export const getBounties = async (currentUserId: number) => {
-  const bounties = currentUserId? await prisma.bounty.findMany({
+  const bounties =
+  currentUserId?
+  await prisma.bounty.findMany({
     where: {
       users: {
         some: {
@@ -129,8 +131,12 @@ export const getBounties = async (currentUserId: number) => {
         issue: true,
         tags: true,
         pullRequests: true,
+    },
+    orderBy: {
+      createdAt: "desc"
     }
-}): await prisma.bounty.findMany({
+})
+: await prisma.bounty.findMany({
     include: {
         repository: true,
         escrow: {
@@ -150,6 +156,9 @@ export const getBounties = async (currentUserId: number) => {
         issue: true,
         tags: true,
         pullRequests: true,
+    },
+    orderBy: {
+      createdAt: "desc"
     }
 });
 

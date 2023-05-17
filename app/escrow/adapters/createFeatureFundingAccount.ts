@@ -7,7 +7,7 @@ import { MonoProgram } from "@/escrow/sdk/types/mono_program";
 import {
   createFeatureFundingAccountInstruction,
 } from "@/escrow/sdk/instructions";
-import { DEVNET_USDC_MINT } from "@/src/constants";
+import { USDC_MINT } from "@/src/constants";
 import { findFeatureAccount } from "@/escrow/sdk/pda";
 import { LancerWallet } from "@/src/types";
 
@@ -16,7 +16,7 @@ export const createFFA = async (wallet: LancerWallet, program: Program<MonoProgr
 
   console.log("timestamp = ", timestamp);
       const ix = await createFeatureFundingAccountInstruction(
-        new PublicKey(DEVNET_USDC_MINT),
+        new PublicKey(USDC_MINT),
         new PublicKey(wallet.publicKey),
         program,
         timestamp
@@ -30,7 +30,6 @@ export const createFFA = async (wallet: LancerWallet, program: Program<MonoProgr
                 /** the last block chain can advance to before tx is exportd expired */
                 lastValidBlockHeight: lastValidBlockHeight,
               }
-              debugger;
       const signature = await wallet.signAndSendTransaction(
         new Transaction(txInfo).add(ix)
       );

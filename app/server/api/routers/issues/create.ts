@@ -31,5 +31,5 @@ export const createIssue = protectedProcedure
       const bounty = await helpers.getBounty(bountyId, currentUserId)
       const repository = await helpers.getRepository(repositoryName, organizationName);
         const issue = await helpers.createIssue(title, number, description, linkingMethod, repository, bounty)
-      return issue;
+      return await helpers.getBounty(bountyId, currentUserId)
   });

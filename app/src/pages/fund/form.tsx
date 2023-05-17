@@ -11,10 +11,12 @@ import { api } from "@/src/utils/api";
 import { currentUser } from "@/server/api/routers/users/currentUser";
 import classNames from "classnames";
 import { fundFFA, getFundFFATX } from "@/escrow/adapters";
-import { DEVNET_USDC_MINT } from "@/src/constants";
+import { USDC_MINT } from "@/src/constants";
 import { useConnection, useWallet } from "@solana/wallet-adapter-react";
 
-const Form = () => {
+const Form: React.FC<{ isAccountCreated: boolean }> = ({
+  isAccountCreated,
+}) => {
   const {
     currentBounty,
     currentUser,
@@ -29,36 +31,12 @@ const Form = () => {
   const [formData, setFormData] = useState({
     fundingAmount: null,
   });
-  const [isAccountCreated, setIsAccountCreated] = useState(true);
   const handleChange = (event) => {
     setFormData({
       ...formData,
       [event.target.name]: event.target.value,
     });
   };
-  useEffect(() => {
-    if (router.isReady && currentUser?.id) {
-      const getB = async () => {
-        const bounty = await getBounty({
-          id: parseInt(router.query.id as string),
-          currentUserId: currentUser.id,
-        });
-        setCurrentBounty(bounty);
-      };
-      getB();
-    }
-  }, [router.isReady, currentUser?.id]);
-  // useEffect(() => {
-  //   provider &&
-  //     currentBounty &&
-  //     provider.connection.onAccountChange(
-  //       new PublicKey(currentBounty.escrow.publicKey),
-  //       (callback) => {
-  //         console.log(callback);
-  //         setIsAccountCreated(true);
-  //       }
-  //     );
-  // }, [currentBounty?.escrow.publicKey, provider]);
   const onClick = async () => {
     // If we are the creator, then skip requesting and add self as approved
     const signature = await fundFFA(
@@ -71,7 +49,7 @@ const Form = () => {
     await fundB({
       bountyId: currentBounty.id,
       escrowId: currentBounty.escrow.id,
-      mint: DEVNET_USDC_MINT,
+      mint: USDC_MINT,
       amount: parseFloat(formData.fundingAmount),
     });
     router.push(`/bounty?id=${currentBounty.id}`);
