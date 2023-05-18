@@ -1,4 +1,4 @@
-import { addSubmitterFFA, approveRequestFFA } from "@/escrow/adapters";
+import { approveRequestFFA } from "@/escrow/adapters";
 import { useLancer } from "@/src/providers";
 import {
   BOUNTY_USER_RELATIONSHIP,
@@ -12,7 +12,9 @@ import classNames from "classnames";
 import { getCookie } from "cookies-next";
 import { Octokit } from "octokit";
 import { useEffect, useState } from "react";
+import { createUnderdogClient, useProject, Nft } from "@underdog-protocol/js";
 
+const underdogClient = createUnderdogClient({});
 export const ApproveSubmission = () => {
   const {
     currentUser,
@@ -25,6 +27,14 @@ export const ApproveSubmission = () => {
   const { mutateAsync } = api.bounties.updateBountyUser.useMutation();
 
   const { currentAPIKey } = useLancer();
+  const params = {
+    type: {
+      transferable: false,
+      compressed: false,
+    },
+    projectId: 1,
+  };
+
   const onClick = async () => {
     // If we are the creator, then skip requesting and add self as approved
     const signature = await approveRequestFFA(
@@ -49,6 +59,14 @@ export const ApproveSubmission = () => {
       signature,
       label: "complete-bounty",
     });
+    const nfts = await underdogClient.getNfts({
+      params,
+      query: {
+        page: 1,
+        limit: 1,
+        ownerAddress: currentWallet.publicKey.toString(),
+      },
+    });
 
     setCurrentBounty(updatedBounty);
 
@@ -64,6 +82,34 @@ export const ApproveSubmission = () => {
         pull_number: updatedBounty.pullRequests[0].number.toNumber(),
       }
     );
+    if (nfts.totalResults > 0) {
+      return underdogClient.partialUpdateNft({
+        params: { ...params, nftId: nfts.results[0].id },
+        body: {
+          attributes: {
+            "Last Updated": new Date().toISOString(),
+          },
+        },
+      });
+    }
+
+    // const authToken = getCookie("githubToken") as string;
+
+    // const octokit = new Octokit({
+    //   auth: authToken,
+    // });
+
+    // const octokitResponse = await octokit.request(
+    //   "PUT /repos/{owner}/{repo}/pulls/{pull_number}/merge",
+    //   {
+    //     owner: currentBounty.repository.organization,
+    //     repo: currentBounty.repository.name,
+    //     pull_number: parseInt(currentBounty.pullRequests[0].number.toString()),
+    //   }
+    // );
+    // console.log(octokitResponse);
+
+    // setCurrentBounty(updatedBounty);
   };
 
   return (
