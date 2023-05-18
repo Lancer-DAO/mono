@@ -1,6 +1,7 @@
 import { PublicKey } from "@solana/web3.js";
 
-export const MONO_DEVNET = "LNCRQTZfeLMFHsSggvVc9kQWb1A98PEqHxVzBraWpQs";
+export const MONO_DEVNET = "LnCrQyE83MgFTT8XftEMxzZedEbYx7ishUQ5ytA7pyk";
+export const MONO_MAINNET = "LNCRQTZfeLMFHsSggvVc9kQWb1A98PEqHxVzBraWpQs";
 
 export const MONO_DATA = "mono";
 export const LANCER_DAO = "LANCER_DAO";
