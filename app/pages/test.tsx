@@ -56,8 +56,13 @@ const WalletMultiButtonDynamic = dynamic(
 
 export const SendSOLToRandomAddress: FC = () => {
   const { connection } = useConnection();
-  const { publicKey, wallet, signAllTransactions, signTransaction } =
-    useWallet();
+  const {
+    publicKey,
+    wallet,
+    signAllTransactions,
+    signTransaction,
+    sendTransaction,
+  } = useWallet();
 
   const createFeesAccount = useCallback(async () => {
     if (!publicKey) throw new WalletNotConnectedError();
@@ -111,7 +116,9 @@ export const SendSOLToRandomAddress: FC = () => {
       program
     );
     debugger;
-    await provider.sendAndConfirm(new Transaction().add(ix), []);
+    const tx = await signTransaction(new Transaction().add(ix));
+    debugger;
+    await sendTransaction(tx, connection);
   }, [publicKey, connection]);
 
   return (
