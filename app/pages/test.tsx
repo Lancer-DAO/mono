@@ -110,6 +110,7 @@ export const SendSOLToRandomAddress: FC = () => {
       tokenAddress,
       program
     );
+    debugger;
     await provider.sendAndConfirm(new Transaction().add(ix), []);
   }, [publicKey, connection]);
 
