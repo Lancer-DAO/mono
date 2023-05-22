@@ -6,16 +6,16 @@ const PUBLIC_FILE = /\.(.*)$/;
 
 // This function can be marked `async` if using `await` inside
 export function middleware(request: NextRequest) {
-  const session = request.cookies.get("session");
-  const { pathname } = request.nextUrl;
+  // const session = request.cookies.get("session");
+  // const { pathname } = request.nextUrl;
 
-  if (
-    !pathname.includes("/login") &&
-    !PUBLIC_FILE.test(pathname) &&
-    !session
-  ) {
-    return NextResponse.redirect(new URL(`/login?referrer=${pathname}`, request.url, ));
-  }
+  // if (
+  //   !pathname.includes("/login") &&
+  //   !PUBLIC_FILE.test(pathname) &&
+  //   !session
+  // ) {
+  //   return NextResponse.redirect(new URL(`/login?referrer=${pathname}`, request.url, ));
+  // }
 
   return NextResponse.next();
 }
