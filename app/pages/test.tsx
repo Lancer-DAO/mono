@@ -115,8 +115,19 @@ export const SendSOLToRandomAddress: FC = () => {
       tokenAddress,
       program
     );
+    const { blockhash, lastValidBlockHeight } =
+      await provider.connection.getLatestBlockhash();
+
+    const txInfo = {
+      /** The transaction fee payer */
+      feePayer: submitter,
+      /** A recent blockhash */
+      blockhash: blockhash,
+      /** the last block chain can advance to before tx is exportd expired */
+      lastValidBlockHeight: lastValidBlockHeight,
+    };
     debugger;
-    const tx = await signTransaction(new Transaction().add(ix));
+    const tx = await signTransaction(new Transaction(txInfo).add(ix));
     debugger;
     await sendTransaction(tx, connection);
   }, [publicKey, connection]);
