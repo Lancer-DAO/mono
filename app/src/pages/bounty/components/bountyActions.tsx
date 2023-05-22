@@ -111,6 +111,7 @@ export const BountyActions = () => {
           </button>
         )}
         {currentBounty.isChangesRequestedSubmitter && <SubmitRequest />}
+        <SubmitRequest />
         {currentBounty.isCreator &&
           currentBounty.currentSubmitter &&
           !currentBounty.completer && <ApproveSubmission />}
@@ -125,9 +126,9 @@ export const BountyActions = () => {
           currentBounty.isDeniedSubmitter ||
           currentBounty.isChangesRequestedSubmitter) &&
           !currentBounty.isVotingCancel && <VoteToCancel />}
-        {currentBounty.isCreator && currentBounty.needsToVote.length === 0 && (
-          <CancelEscrow />
-        )}
+        {/* {currentBounty.isCreator && currentBounty.needsToVote.length === 0 && ( */}
+        <CancelEscrow />
+        {/* // )} */}
         {currentBounty.completer && (
           <button className={classNames("button-primary disabled")}>
             Complete

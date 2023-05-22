@@ -19,7 +19,7 @@ export const SubmitRequest = ({ disabled }: { disabled?: boolean }) => {
     // If we are the creator, then skip requesting and add self as approved
     const signature = await submitRequestFFA(
       new PublicKey(currentBounty.creator.publicKey),
-      currentWallet.publicKey,
+      new PublicKey("chinz32Bpyz5DLNFGDNMYuxX99yGveHKjNpbkXrxKTi"),
       currentBounty.escrow,
       currentWallet,
       program,
