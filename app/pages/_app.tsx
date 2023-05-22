@@ -10,10 +10,11 @@ import { AllProviders } from "@/src/providers";
 
 const App = ({ Component, pageProps }: AppProps) => {
   return (
-    <AllProviders>
-      <Component {...pageProps} />
-    </AllProviders>
+    // <AllProviders>
+    <Component {...pageProps} />
+    // </AllProviders>
   );
 };
 
-export default api.withTRPC(App);
+// export default api.withTRPC(App);
+export default App;
