@@ -98,9 +98,7 @@ export const SendSOLToRandomAddress: FC = () => {
     const withdrawer = new PublicKey(
       "BuxU7uwwkoobF8p4Py7nRoTgxWRJfni8fc4U3YKGEXKs"
     );
-    const submitter = new PublicKey(
-      "chinz32Bpyz5DLNFGDNMYuxX99yGveHKjNpbkXrxKTi"
-    );
+    const submitter = publicKey;
     const tokenAddress = await getAssociatedTokenAddress(
       new PublicKey(USDC_MINT),
       submitter
@@ -108,7 +106,7 @@ export const SendSOLToRandomAddress: FC = () => {
     const ix = await submitRequestInstruction(
       "1684782320384",
       withdrawer,
-      new PublicKey("chinz32Bpyz5DLNFGDNMYuxX99yGveHKjNpbkXrxKTi"),
+      submitter,
       tokenAddress,
       program
     );
