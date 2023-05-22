@@ -123,7 +123,7 @@ export const SendSOLToRandomAddress: FC = () => {
           <WalletDisconnectButtonDynamic />
         </div>
 
-        <button onClick={createFeesAccount} disabled={!publicKey}>
+        <button onClick={withdrawTokens} disabled={!publicKey}>
           Submit
         </button>
         {/* 

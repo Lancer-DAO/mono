@@ -47,7 +47,8 @@ export const AllProviders: React.FC<{ children: ReactNode }> = ({
     <ConnectionProvider endpoint={endpoint}>
       <WalletProvider wallets={walletProviders} autoConnect>
         <WalletModalProvider>
-          <LancerProvider>{children}</LancerProvider>
+          {children}
+          {/* <LancerProvider>{children}</LancerProvider> */}
         </WalletModalProvider>
       </WalletProvider>
     </ConnectionProvider>
