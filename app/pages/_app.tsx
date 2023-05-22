@@ -16,4 +16,5 @@ const App = ({ Component, pageProps }: AppProps) => {
   );
 };
 
-export default api.withTRPC(App);
+// export default api.withTRPC(App);
+export default App;
