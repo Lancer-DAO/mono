@@ -7,6 +7,7 @@ import styles from "../styles/Home.module.css";
 import MonoProgramJSON from "@/escrow/sdk/idl/mono_program.json";
 import {
   createLancerTokenAccountInstruction,
+  submitRequestInstruction,
   withdrawTokensInstruction,
 } from "@/escrow/sdk/instructions";
 import {
@@ -41,6 +42,7 @@ import { MonoProgram } from "@/escrow/sdk/types/mono_program";
 import { MONO_DEVNET, WSOL_ADDRESS } from "@/escrow/sdk/constants";
 
 import { getAssociatedTokenAddress } from "@solana/spl-token";
+import { SubmitRequest } from "@/src/pages/bounty/components/buttons";
 const WalletDisconnectButtonDynamic = dynamic(
   async () =>
     (await import("@solana/wallet-adapter-react-ui")).WalletDisconnectButton,
@@ -96,21 +98,21 @@ export const SendSOLToRandomAddress: FC = () => {
     const withdrawer = new PublicKey(
       "BuxU7uwwkoobF8p4Py7nRoTgxWRJfni8fc4U3YKGEXKs"
     );
-    const withdrawerTokenAccount = await getAssociatedTokenAddress(
-      new PublicKey(USDC_MINT),
-      withdrawer
+    const submitter = new PublicKey(
+      "chinz32Bpyz5DLNFGDNMYuxX99yGveHKjNpbkXrxKTi"
     );
-    const create_lancer_token_account_ix = await withdrawTokensInstruction(
-      1,
+    const tokenAddress = await getAssociatedTokenAddress(
       new PublicKey(USDC_MINT),
+      submitter
+    );
+    const ix = await submitRequestInstruction(
+      "1684782320384",
       withdrawer,
-      withdrawerTokenAccount,
+      new PublicKey("chinz32Bpyz5DLNFGDNMYuxX99yGveHKjNpbkXrxKTi"),
+      tokenAddress,
       program
     );
-    await provider.sendAndConfirm(
-      new Transaction().add(create_lancer_token_account_ix),
-      []
-    );
+    await provider.sendAndConfirm(new Transaction().add(ix), []);
   }, [publicKey, connection]);
 
   return (
@@ -122,12 +124,12 @@ export const SendSOLToRandomAddress: FC = () => {
         </div>
 
         <button onClick={createFeesAccount} disabled={!publicKey}>
-          Create New Mint Fees Account
+          Submit
         </button>
-
+        {/* 
         <button onClick={withdrawTokens} disabled={!publicKey}>
           Withdraw Tokens
-        </button>
+        </button> */}
       </>
     )
   );
