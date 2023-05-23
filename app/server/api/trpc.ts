@@ -19,7 +19,7 @@ import { type CreateNextContextOptions } from "@trpc/server/adapters/next";
 import { prisma } from "@/server/db";
 import { getAccessToken, getSession } from "@auth0/nextjs-auth0";
 type CreateContextOptions = {
-  user: {
+  user?: {
     id: number | null;
     email: string;
     token: string;
@@ -76,9 +76,11 @@ export const createTRPCContext = async (_opts: CreateNextContextOptions) => {
       });
     }
 
+    console.log("user", user);
+
     return createInnerTRPCContext({
       user: {
-        id: user.id,
+        id: user?.id,
         email,
         token,
         sub,

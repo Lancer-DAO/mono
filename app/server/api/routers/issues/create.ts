@@ -54,7 +54,7 @@ export const createIssue = protectedProcedure
           const auth0Token = auth0TokenResponse.data.access_token;
           const githubTokenResponse = await axios.request({
             method: "GET",
-            url: `${process.env.AUTH0_ISSUER_BASE_URL}/api/v2/users/github|${currUser.githubId}`,
+            url: `${process.env.AUTH0_ISSUER_BASE_URL}/api/v2/users/${currUser.githubId}`,
             headers: {
               "content-type": "application/x-www-form-urlencoded",
               Authorization: `Bearer ${auth0Token}`,

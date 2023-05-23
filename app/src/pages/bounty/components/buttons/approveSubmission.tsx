@@ -43,7 +43,7 @@ export const ApproveSubmission = () => {
       publicKey: currentWallet.publicKey.toString(),
       provider: currentWallet.providerName,
       escrowId: currentBounty.escrowid,
-      signature: "",
+      signature,
       label: "complete-bounty",
     });
 

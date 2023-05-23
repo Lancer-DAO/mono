@@ -3,17 +3,9 @@ import { publicProcedure } from "../../trpc";
 
 export const login = publicProcedure.mutation(async ({ ctx }) => {
   const { email, id, sub, nickname } = ctx.user;
-  let user = await prisma.user.findUnique({
-    where: {
-      id,
-    },
-    include: {
-      wallets: true,
-    },
-  });
 
-  if (!user) {
-    if (sub.includes("github")) {
+  if (!id) {
+    try {
       await prisma.user.create({
         data: {
           email,
@@ -21,21 +13,28 @@ export const login = publicProcedure.mutation(async ({ ctx }) => {
           githubLogin: nickname,
         },
       });
-    }
 
-    await prisma.user.create({
-      data: {
-        email,
+      const user = await prisma.user.findUnique({
+        where: {
+          email,
+        },
+        include: {
+          wallets: true,
+        },
+      });
+      return user;
+    } catch (e) {
+      console.error(e);
+    }
+  } else {
+    const user = await prisma.user.findUnique({
+      where: {
+        id,
+      },
+      include: {
+        wallets: true,
       },
     });
+    return user;
   }
-  user = await prisma.user.findUnique({
-    where: {
-      email,
-    },
-    include: {
-      wallets: true,
-    },
-  });
-  return user;
 });
