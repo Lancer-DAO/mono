@@ -59,7 +59,6 @@ export const createTRPCContext = async (_opts: CreateNextContextOptions) => {
     const tokenRes = await getAccessToken(req, res);
     const token = tokenRes.accessToken;
     const { email, sub, nickname } = metadata.user;
-    console.log(metadata);
 
     const user = await prisma.user.findUnique({
       where: {
@@ -76,8 +75,6 @@ export const createTRPCContext = async (_opts: CreateNextContextOptions) => {
       });
     }
 
-    console.log("user", user);
-
     return createInnerTRPCContext({
       user: {
         id: user?.id,
@@ -88,7 +85,7 @@ export const createTRPCContext = async (_opts: CreateNextContextOptions) => {
       },
     });
   } catch (e) {
-    console.log(e);
+    console.error(e);
     return createInnerTRPCContext({
       user: null,
     });

@@ -39,7 +39,6 @@ export const createIssue = protectedProcedure
       if (newIssue) {
         try {
           const currUser = await getUserById(ctx.user.id);
-          console.log("token", ctx.user.token, currUser.githubId);
           const auth0TokenResponse = await axios.request({
             method: "POST",
             url: `${process.env.AUTH0_ISSUER_BASE_URL}/oauth/token`,
@@ -60,7 +59,6 @@ export const createIssue = protectedProcedure
               Authorization: `Bearer ${auth0Token}`,
             },
           });
-          console.log("gh", githubTokenResponse);
 
           const octokit = new Octokit({
             auth: githubTokenResponse.data.identities[0].access_token,

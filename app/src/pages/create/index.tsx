@@ -14,9 +14,7 @@ function App() {
   const [formSection, setFormSection] = useState<FORM_SECTION>("CREATE");
   const [isAccountCreated, setIsAccountCreated] = useState(false);
   const createAccountPoll = (publicKey: PublicKey) => {
-    console.log("creating");
     provider.connection.onAccountChange(publicKey, (callback) => {
-      console.log("changed");
       setIsAccountCreated(true);
     });
   };

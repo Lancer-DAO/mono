@@ -81,7 +81,6 @@ const Form: React.FC<{
       provider
     );
     createAccountPoll(escrowKey);
-    console.log("created ", signature, escrowKey);
     const { bounty } = await mutateAsync({
       email: currentUser.email,
       description: formData.issueDescription,
@@ -100,7 +99,6 @@ const Form: React.FC<{
       chainName: "Solana",
       network: "mainnet",
     });
-    console.log("bounty created");
     let issueNumber;
 
     const issueResp = await createIssue({
@@ -115,7 +113,6 @@ const Form: React.FC<{
       linkingMethod: creationType,
       currentUserId: currentUser.id,
     });
-    console.log("issue created", issueResp);
     setFormSection("FUND");
     setCurrentBounty(issueResp);
   };

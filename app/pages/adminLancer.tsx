@@ -40,6 +40,8 @@ import { AnchorProvider, Program } from "@project-serum/anchor";
 import { MonoProgram } from "@/escrow/sdk/types/mono_program";
 import { MONO_DEVNET, WSOL_ADDRESS } from "@/escrow/sdk/constants";
 
+import { withPageAuthRequired } from "@auth0/nextjs-auth0";
+export const getServerSideProps = withPageAuthRequired();
 import { getAssociatedTokenAddress } from "@solana/spl-token";
 const WalletDisconnectButtonDynamic = dynamic(
   async () =>

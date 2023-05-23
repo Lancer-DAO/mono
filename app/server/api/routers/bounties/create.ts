@@ -46,7 +46,6 @@ export const createBounty = protectedProcedure
       },
     }) => {
       const user = await helpers.getUser(email);
-      console.log("user", user);
       const wallet = await helpers.getOrCreateWallet(user, publicKey, provider);
       const repository = await helpers.getOrCreateRepository(
         repositoryName,

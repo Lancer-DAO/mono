@@ -10,6 +10,5 @@ export const getAllBounties = protectedProcedure
     })
   )
   .mutation(async ({ input: { currentUserId } }) => {
-    console.log("userid", currentUserId);
     return await getBounties(currentUserId);
   });

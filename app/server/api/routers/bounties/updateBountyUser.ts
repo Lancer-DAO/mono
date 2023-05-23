@@ -56,9 +56,7 @@ export const updateBountyUser = protectedProcedure
           bountyid: bountyId,
         },
       });
-      console.log("relations", relations);
       if (!userBounty) {
-        console.log("new");
         userBounty = await prisma.bountyUser.create({
           data: {
             userid: userId,
@@ -67,7 +65,6 @@ export const updateBountyUser = protectedProcedure
           },
         });
       } else {
-        console.log("exists");
         await prisma.bountyUser.update({
           where: {
             userid_bountyid: {
@@ -122,7 +119,6 @@ export const updateBountyUser = protectedProcedure
             bountyInfo.pullRequests[0].id
           );
           const repository = await getRepositoryByID(bountyInfo.repositoryid);
-          console.log("token", ctx.user.token, currUser.githubId);
           const auth0TokenResponse = await axios.request({
             method: "POST",
             url: `${process.env.AUTH0_ISSUER_BASE_URL}/oauth/token`,
@@ -144,7 +140,6 @@ export const updateBountyUser = protectedProcedure
             },
           });
           step = "octo";
-          console.log("gh", githubTokenResponse);
 
           const octokit = new Octokit({
             auth: githubTokenResponse.data.identities[0].access_token,
@@ -158,10 +153,8 @@ export const updateBountyUser = protectedProcedure
               pull_number: pullRequest.number.toNumber(),
             }
           );
-          console.log("octo", octokitResponse);
         } catch (e) {
           console.error(e);
-          console.log(step);
         }
       }
       const updatedBounty = await getBounty(bountyId, currentUserId);

@@ -17,7 +17,6 @@ export const getRepoIssues = protectedProcedure
 
     try {
       const currUser = await getUserById(ctx.user.id);
-      console.log("token", ctx.user.token, currUser.githubId);
       const auth0TokenResponse = await axios.request({
         method: "POST",
         url: `${process.env.AUTH0_ISSUER_BASE_URL}/oauth/token`,
@@ -39,7 +38,6 @@ export const getRepoIssues = protectedProcedure
         },
       });
       step = "octo";
-      console.log("gh", githubTokenResponse);
 
       const octokit = new Octokit({
         auth: githubTokenResponse.data.identities[0].access_token,
@@ -53,11 +51,9 @@ export const getRepoIssues = protectedProcedure
         }
       );
 
-      console.log("octo", octokitResponse);
       return octokitResponse.data;
     } catch (e) {
       console.error(e);
-      console.log(step);
       return [];
     }
   });

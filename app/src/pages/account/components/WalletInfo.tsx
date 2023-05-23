@@ -1,4 +1,4 @@
-import { USDC_MINT } from "@/src/constants";
+import { IS_MAINNET, USDC_MINT } from "@/src/constants";
 import { getSolscanTX } from "@/src/utils";
 import { useEffect, useState } from "react";
 import { useLancer } from "@/src/providers/lancerProvider";
@@ -29,11 +29,10 @@ export const WalletInfo: React.FC<{ wallet: LancerWallet }> = ({ wallet }) => {
         const account = await getAccount(provider.connection, token_account);
         const mint = await getMint(provider.connection, mintKey);
         const decimals = Math.pow(10, mint.decimals);
-        console.log(account.amount);
         const balance = account.amount / BigInt(decimals);
         setUserUSDCBalance(balance.toString());
       } catch (e) {
-        console.log(e);
+        console.error(e);
         setUserUSDCBalance("Account Not Initialized. Please Use the Faucet");
       }
     };
@@ -57,12 +56,10 @@ export const WalletInfo: React.FC<{ wallet: LancerWallet }> = ({ wallet }) => {
   }, [provider]);
 
   const requestAirdrop = async () => {
-    console.log("requesting airdrop");
     const airdrop = await provider.connection.requestAirdrop(
       wallet.publicKey,
       1000000000
     );
-    console.log("airdrop signature", airdrop);
     setAirdropSignature(airdrop);
   };
   return (
@@ -80,9 +77,11 @@ export const WalletInfo: React.FC<{ wallet: LancerWallet }> = ({ wallet }) => {
           </button>
         )}
         <div className="User Balance">SOL Balance: {currentUserSOLBalance}</div>
-        <button className="button-primary" onClick={() => requestAirdrop()}>
-          Request SOL Airdrop
-        </button>
+        {!IS_MAINNET && (
+          <button className="button-primary" onClick={() => requestAirdrop()}>
+            Request SOL Airdrop
+          </button>
+        )}
         {aidropSignature !== "" && (
           <a
             href={getSolscanTX(aidropSignature)}
