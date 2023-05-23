@@ -1,4 +1,4 @@
-import { USDC_MINT } from "@/src/constants";
+import { IS_MAINNET, USDC_MINT } from "@/src/constants";
 import { getSolscanTX } from "@/src/utils";
 import { useEffect, useState } from "react";
 import { useLancer } from "@/src/providers/lancerProvider";
@@ -30,6 +30,7 @@ const FundBounty: React.FC = () => {
           {currentUser?.githubLogin && (
             <div>GitHub User: {currentUser.githubLogin}</div>
           )}
+          <a href="/api/auth/logout">Logout</a>
 
           <div className={styles.walletButtons}>
             <WalletMultiButtonDynamic />
@@ -39,13 +40,15 @@ const FundBounty: React.FC = () => {
               <WalletInfo wallet={wallet} key={wallet.publicKey.toString()} />
             ))}
 
-          <a
-            href="https://staging.coinflow.cash/faucet"
-            target={"_blank"}
-            rel="noreferrer"
-          >
-            USDC Faucet
-          </a>
+          {!IS_MAINNET && (
+            <a
+              href="https://staging.coinflow.cash/faucet"
+              target={"_blank"}
+              rel="noreferrer"
+            >
+              USDC Faucet
+            </a>
+          )}
           <Coinflow />
         </div>
       </PageLayout>

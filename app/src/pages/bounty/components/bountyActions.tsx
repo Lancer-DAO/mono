@@ -39,7 +39,6 @@ export const BountyActions = () => {
   if (false) {
     return <LoadingBar title="Loading On Chain Details" />;
   }
-  console.log(currentBounty, currentUser);
   if (currentBounty.state === BountyState.COMPLETE) {
     return (
       <button className={classNames("button-primary disabled")}>

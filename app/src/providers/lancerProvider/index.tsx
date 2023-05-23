@@ -15,13 +15,15 @@ import {
   ISSUE_LOAD_STATE,
   LOGIN_STATE,
 } from "@/src/providers/lancerProvider/types";
-import { createMagicWallet, magic } from "@/src/utils/magic";
 import { api } from "@/src/utils/api";
 import { getCookie } from "cookies-next";
 import { useConnection, useWallet } from "@solana/wallet-adapter-react";
-import { Transaction } from "@solana/web3.js";
+import { PublicKey, Transaction } from "@solana/web3.js";
 import { useRouter } from "next/router";
+import { useUser } from "@auth0/nextjs-auth0/client";
+import { MONO_DEVNET } from "@/escrow/sdk/constants";
 export * from "./types";
+import MonoProgramJSON from "@/escrow/sdk/idl/mono_program.json";
 
 export const LancerContext = createContext<ILancerContext>({
   currentUser: null,
@@ -58,7 +60,9 @@ interface ILancerProps {
 export const LancerProvider: FunctionComponent<ILancerState> = ({
   children,
 }: ILancerProps) => {
-  const { mutateAsync: getCurrUser } = api.users.currentUser.useMutation();
+  const { mutateAsync: getCurrUser } = api.users.login.useMutation();
+  const { user } = useUser();
+
   const {
     wallet,
     publicKey,
@@ -69,7 +73,6 @@ export const LancerProvider: FunctionComponent<ILancerState> = ({
     connected,
   } = useWallet();
   const { connection } = useConnection();
-  const router = useRouter();
   const [currentUser, setCurrentUser] = useState<CurrentUser | null>(null);
   const [currentBounty, setCurrentBounty] = useState<Bounty | null>(null);
   const [issue, setIssue] = useState<Issue | null>(null);
@@ -77,35 +80,10 @@ export const LancerProvider: FunctionComponent<ILancerState> = ({
   const [loginState, setLoginState] = useState<LOGIN_STATE | null>(
     "logged_out"
   );
-  const [isGettingContract, setIsGettingContract] = useState(false);
   const [currentWallet, setCurrentWallet] = useState<LancerWallet>();
   const [wallets, setWallets] = useState<LancerWallet[]>();
   const [provider, setProvider] = useState<AnchorProvider>();
   const [program, setProgram] = useState<Program<MonoProgram>>();
-  useEffect(() => {
-    const getMagicWallet = async () => {
-      const { lancerWallet, program, provider } = await createMagicWallet(
-        connection
-      );
-
-      if (!wallets) {
-        setWallets([lancerWallet]);
-        setCurrentWallet(lancerWallet);
-      } else if (
-        !wallets
-          .map((wallet) => wallet.publicKey.toString())
-          .includes(lancerWallet.publicKey.toString())
-      ) {
-        wallets.push(lancerWallet);
-        setWallets(wallets);
-      }
-      setProvider(provider);
-      setProgram(program);
-    };
-    if (router.isReady && !router.asPath.includes("login")) {
-      getMagicWallet();
-    }
-  }, [magic?.user, wallets, router]);
 
   useEffect(() => {
     if (connected) {
@@ -123,35 +101,27 @@ export const LancerProvider: FunctionComponent<ILancerState> = ({
         },
         providerName: "Phantom",
       };
-      console.log("walletsp", wallets);
-      if (!wallets) {
-        setWallets([lancerWallet]);
-      } else if (
-        !wallets
-          .map((wallet) => wallet.publicKey.toString())
-          .includes(lancerWallet.publicKey.toString())
-      ) {
-        wallets.push(lancerWallet);
-        setWallets(wallets);
-      }
+      const provider = new AnchorProvider(connection, lancerWallet, {});
+      const program = new Program<MonoProgram>(
+        MonoProgramJSON as unknown as MonoProgram,
+        new PublicKey(MONO_DEVNET),
+        provider
+      );
       setProvider(provider);
       setProgram(program);
-      if (!currentWallet) {
-        setCurrentWallet(lancerWallet);
-      }
+      setCurrentWallet(lancerWallet);
     }
-  }, [connected, wallets]);
+  }, [connected]);
 
   useEffect(() => {
-    const getCurrentUser = async () => {
-      setLoginState("logging_in");
-      const user = await getCurrUser({
-        session: getCookie("session") as string,
-      });
-      setCurrentUser({ ...user, magic: magic });
-    };
-    getCurrentUser();
-  }, [magic?.user]);
+    if (user) {
+      const getUser = async () => {
+        const userInfo = await getCurrUser();
+        setCurrentUser(userInfo);
+      };
+      getUser();
+    }
+  }, [user]);
 
   const [issueLoadingState, setIssueLoadingState] =
     useState<ISSUE_LOAD_STATE>("initializing");

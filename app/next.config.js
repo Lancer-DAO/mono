@@ -7,6 +7,9 @@ const nextConfig = {
   },optimization: {
     minimize: false
 },
+  env: {
+    AUTH0_BASE_URL: process.env.VERCEL_URL || 'http://localhost:3000'
+  },
   webpack: (config) => {
     config.watchOptions = {
       poll: 1000,
@@ -41,6 +44,8 @@ const nextConfig = {
           ...config.resolve.alias,
           stream: require.resolve("stream-browserify"),
           zlib: require.resolve("browserify-zlib"),
+          http: require.resolve("http-browserify"),
+          https: require.resolve("https-browserify")
         },
       },
     };

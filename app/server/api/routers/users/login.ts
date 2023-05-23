@@ -1,52 +1,40 @@
 import { prisma } from "@/server/db";
 import { publicProcedure } from "../../trpc";
-import { z } from "zod";
-import { magic } from "@/src/utils/magic-admin";
 
-export const login = publicProcedure
-  .input(
-    z.object({
-      session: z.string(),
-      publicKey: z.string(),
-      githubId: z.string(),
-      githubLogin: z.string()
-    })
-  )
-  .mutation(async ({ input: { session, publicKey, githubId, githubLogin } }) => {
-    const { email } = await magic.users.getMetadataByToken(session);
+export const login = publicProcedure.mutation(async ({ ctx }) => {
+  const { email, id, sub, nickname } = ctx.user;
 
-    let user = await prisma.user.findUnique({
-      where: {
-        email,
-      },
-      include: {
-        wallets: true
-      }
-    });
-
-    if (!user) {
+  if (!id) {
+    try {
       await prisma.user.create({
         data: {
           email,
-          githubId,
-          githubLogin,
-          wallets: {
-            create: {publicKey: publicKey, providers: {
-              connect: {
-                name: "Magic Link"
-              }
-            }}
-          }
+          githubId: sub,
+          githubLogin: nickname,
         },
       });
+
+      const user = await prisma.user.findUnique({
+        where: {
+          email,
+        },
+        include: {
+          wallets: true,
+        },
+      });
+      return user;
+    } catch (e) {
+      console.error(e);
     }
-    user = await prisma.user.findUnique({
+  } else {
+    const user = await prisma.user.findUnique({
       where: {
-        email,
+        id,
       },
       include: {
-        wallets: true
-      }
-    })
+        wallets: true,
+      },
+    });
     return user;
-  });
+  }
+});

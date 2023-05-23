@@ -136,10 +136,10 @@ ALTER TABLE public.pull_request OWNER TO developer;
 --
 
 COPY public.account (uuid, solana_pubkey, is_admin, verified, github_id, github_login, name, discord, twitter, instagram) FROM stdin;
-ce9420c5-390b-428d-9e44-e06701cd4daaFwqmdrxLKN9Gct9Dwp15wip5fNeSixJZ941bcnTKbAMo\N\Ngithub|117492794jacksturt\N\N\N\N
-bf47474b-36d6-4ecb-a387-192ad04352c3HggDbQyM7fv8pytg4hsCJjM516mRR3KACVzEe3YNHoRu\N\Ngithub|12817860jacksturtevant\N\N\N\N
-f75041c0-01e1-4e17-ae91-9f2fc3bed9322bxJDk721gM7MqqfCqMcrXKvVFhjYmHZxefRTKFKC1yQ\N\Ngithub|127899754demolancersubmitter\N\N\N\N
-c7218d06-db98-4ccc-8131-7bd137c15e217G6vA6dLdM9z6odkT1SbkUd5m5gek6zNRvM7HBWiu5f1\N\Ngithub|127899370demolancerfunder\N\N\N\N
+ce9420c5-390b-428d-9e44-e06701cd4daaFwqmdrxLKN9Gct9Dwp15wip5fNeSixJZ941bcnTKbAMo\N\N117492794jacksturt\N\N\N\N
+bf47474b-36d6-4ecb-a387-192ad04352c3HggDbQyM7fv8pytg4hsCJjM516mRR3KACVzEe3YNHoRu\N\N12817860jacksturtevant\N\N\N\N
+f75041c0-01e1-4e17-ae91-9f2fc3bed9322bxJDk721gM7MqqfCqMcrXKvVFhjYmHZxefRTKFKC1yQ\N\N127899754demolancersubmitter\N\N\N\N
+c7218d06-db98-4ccc-8131-7bd137c15e217G6vA6dLdM9z6odkT1SbkUd5m5gek6zNRvM7HBWiu5f1\N\N127899370demolancerfunder\N\N\N\N
 \.
 
 

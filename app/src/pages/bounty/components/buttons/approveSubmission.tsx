@@ -22,15 +22,6 @@ export const ApproveSubmission = () => {
     setCurrentBounty,
   } = useLancer();
   const { mutateAsync } = api.bounties.updateBountyUser.useMutation();
-  const {
-    wallet,
-    publicKey,
-    sendTransaction,
-    signAllTransactions,
-    signMessage,
-    signTransaction,
-    connected,
-  } = useWallet();
   const onClick = async () => {
     // If we are the creator, then skip requesting and add self as approved
     const signature = await approveRequestFFA(
@@ -55,21 +46,6 @@ export const ApproveSubmission = () => {
       signature,
       label: "complete-bounty",
     });
-    const authToken = getCookie("githubToken") as string;
-
-    const octokit = new Octokit({
-      auth: authToken,
-    });
-
-    const octokitResponse = await octokit.request(
-      "PUT /repos/{owner}/{repo}/pulls/{pull_number}/merge",
-      {
-        owner: currentBounty.repository.organization,
-        repo: currentBounty.repository.name,
-        pull_number: parseInt(currentBounty.pullRequests[0].number.toString()),
-      }
-    );
-    console.log(octokitResponse);
 
     setCurrentBounty(updatedBounty);
   };

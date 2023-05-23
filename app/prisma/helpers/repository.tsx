@@ -37,3 +37,12 @@ export const getRepository = async (
   });
   return repository;
 };
+
+export const getRepositoryByID = async (
+  id: number
+): Promise<Prisma.Repository> => {
+  let repository = await prisma.repository.findFirstOrThrow({
+    where: { id },
+  });
+  return repository;
+};

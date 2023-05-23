@@ -17,11 +17,8 @@ import { useLocation } from "react-router-dom";
 import { LoadingBar } from "@/src/components/LoadingBar";
 import { AnchorProvider, Program } from "@project-serum/anchor";
 import { MonoProgram } from "@/escrow/sdk/types/mono_program";
-import { getCoinflowWallet } from "@/src/utils/coinflowWallet";
 import { api } from "@/src/utils/api";
 import { getCookie } from "cookies-next";
-import { magic } from "@/src/utils/magic-admin";
-import { MagicUserMetadata } from "magic-sdk";
 import { Octokit } from "octokit";
 import { getEscrowContractKey } from "@/src/providers/lancerProvider/queries";
 import { useRouter } from "next/router";
@@ -37,6 +34,8 @@ const Form: React.FC<{
   const { currentWallet, program, provider, currentUser, setCurrentBounty } =
     useLancer();
   const { mutateAsync } = api.bounties.createBounty.useMutation();
+  const { mutateAsync: getUserRepos } = api.users.getRepos.useMutation();
+  const { mutateAsync: getIssues } = api.repository.getRepoIssues.useMutation();
   const { mutateAsync: createIssue } = api.issues.createIssue.useMutation();
   const [creationType, setCreationType] = useState<"new" | "existing">("new");
   const [repo, setRepo] = useState<any>();
@@ -65,14 +64,8 @@ const Form: React.FC<{
 
   useEffect(() => {
     const getRepos = async () => {
-      const authToken = getCookie("githubToken") as string;
-
-      const octokit = new Octokit({
-        auth: authToken,
-      });
-
-      const octokitResponse = await octokit.request("GET /user/repos", {});
-      setRepos(octokitResponse.data);
+      const octokitResponse = await getUserRepos();
+      setRepos(octokitResponse);
       setOctokit(octokit);
     };
     getRepos();
@@ -81,13 +74,13 @@ const Form: React.FC<{
   const createBounty = async (e) => {
     e.preventDefault();
     setIsSubmittingIssue(true);
+    debugger;
     const { timestamp, signature, escrowKey } = await createFFA(
       currentWallet,
       program,
       provider
     );
     createAccountPoll(escrowKey);
-    console.log("created ", signature, escrowKey);
     const { bounty } = await mutateAsync({
       email: currentUser.email,
       description: formData.issueDescription,
@@ -106,24 +99,10 @@ const Form: React.FC<{
       chainName: "Solana",
       network: "mainnet",
     });
-    console.log("bounty created");
     let issueNumber;
-    if (creationType === "new") {
-      const octokitData = await octokit.request(
-        "POST /repos/{owner}/{repo}/issues",
-        {
-          owner: repo.full_name.split("/")[0],
-          repo: repo.full_name.split("/")[1],
-          title: formData.issueTitle,
-          body: formData.issueDescription,
-        }
-      );
-      issueNumber = octokitData.data.number;
-    } else {
-      issueNumber = issue.number;
-    }
 
     const issueResp = await createIssue({
+      newIssue: creationType === "new",
       number: issueNumber,
       description: formData.issueDescription,
       title: formData.issueTitle,
@@ -134,20 +113,17 @@ const Form: React.FC<{
       linkingMethod: creationType,
       currentUserId: currentUser.id,
     });
-    console.log("issue created", issueResp);
     setFormSection("FUND");
     setCurrentBounty(issueResp);
   };
 
   const getRepoIssues = async (_repo) => {
-    const octokitResponse = await octokit.request(
-      "GET /repos/{owner}/{repo}/issues",
-      {
-        owner: _repo.owner.login,
-        repo: _repo.name,
-      }
-    );
-    setIssues(octokitResponse.data);
+    const octokitResponse = await getIssues({
+      organization: _repo.owner.login,
+      repository: _repo.name,
+    });
+
+    setIssues(octokitResponse);
   };
 
   const handleChange = (event) => {

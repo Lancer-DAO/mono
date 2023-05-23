@@ -1,7 +1,6 @@
 import { prisma } from "@/server/db";
 import { publicProcedure } from "../../trpc";
 import { z } from "zod";
-import { magic } from "@/src/utils/magic-admin";
 import * as helpers from "@/prisma/helpers";
 
 export const createPullRequest = publicProcedure
@@ -14,40 +13,49 @@ export const createPullRequest = publicProcedure
       pullNumber: z.number(),
     })
   )
-  .mutation(async ({
-    input: {
+  .mutation(
+    async ({
+      input: {
         githubLogin,
         repositoryName,
-      organizationName,
+        organizationName,
         issueNumber,
-        pullNumber
-  } }) => {
-    try {
-
+        pullNumber,
+      },
+    }) => {
+      try {
         const user = await prisma.user.findFirstOrThrow({
-            where: {
-                githubLogin
-            },
-            include: {
-              bounties: true
-            }
-        })
+          where: {
+            githubLogin,
+          },
+          include: {
+            bounties: true,
+          },
+        });
         const repository = await prisma.repository.findUniqueOrThrow({
-            where: {
-                organization_name:{
-                    name: repositoryName,
-                organization: organizationName
-                }
+          where: {
+            organization_name: {
+              name: repositoryName,
+              organization: organizationName,
+            },
+          },
+        });
 
-            }
-        })
-
-        let pullRequest = await helpers.getPullRequest(repository.id, pullNumber);
-        if(!pullRequest) {
-            return await helpers.createPullRequest(user, repository, issueNumber, pullNumber)
+        let pullRequest = await helpers.getPullRequest(
+          repository.id,
+          pullNumber
+        );
+        if (!pullRequest) {
+          return await helpers.createPullRequest(
+            user,
+            repository,
+            issueNumber,
+            pullNumber
+          );
         }
         return pullRequest;
-    } catch (e) {
-        return e
+      } catch (e) {
+        return e;
+      }
     }
-  });
+  );
