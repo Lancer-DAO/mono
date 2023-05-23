@@ -24,18 +24,17 @@ export const ApproveSubmission = () => {
   const { mutateAsync } = api.bounties.updateBountyUser.useMutation();
   const onClick = async () => {
     // If we are the creator, then skip requesting and add self as approved
-    // const signature = await approveRequestFFA(
-    //   new PublicKey(currentBounty.currentSubmitter.publicKey),
-    //   currentBounty.escrow,
-    //   currentWallet,
-    //   program,
-    //   provider
-    // );
+    const signature = await approveRequestFFA(
+      new PublicKey(currentBounty.currentSubmitter.publicKey),
+      currentBounty.escrow,
+      currentWallet,
+      program,
+      provider
+    );
     currentBounty.currentUserRelationsList.push(
       BOUNTY_USER_RELATIONSHIP.Completer
     );
-    // const { updatedBounty } =
-    await mutateAsync({
+    const { updatedBounty } = await mutateAsync({
       bountyId: currentBounty.id,
       currentUserId: currentUser.id,
       userId: currentUser.id,
@@ -48,7 +47,7 @@ export const ApproveSubmission = () => {
       label: "complete-bounty",
     });
 
-    // setCurrentBounty(updatedBounty);
+    setCurrentBounty(updatedBounty);
   };
 
   return (

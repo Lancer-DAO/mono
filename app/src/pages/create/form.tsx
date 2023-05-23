@@ -102,20 +102,6 @@ const Form: React.FC<{
     });
     console.log("bounty created");
     let issueNumber;
-    if (creationType === "new") {
-      const octokitData = await octokit.request(
-        "POST /repos/{owner}/{repo}/issues",
-        {
-          owner: repo.full_name.split("/")[0],
-          repo: repo.full_name.split("/")[1],
-          title: formData.issueTitle,
-          body: formData.issueDescription,
-        }
-      );
-      issueNumber = octokitData.data.number;
-    } else {
-      issueNumber = issue.number;
-    }
 
     const issueResp = await createIssue({
       newIssue: creationType === "new",

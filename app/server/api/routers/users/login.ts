@@ -1,10 +1,8 @@
 import { prisma } from "@/server/db";
 import { publicProcedure } from "../../trpc";
-import { z } from "zod";
 
 export const login = publicProcedure.mutation(async ({ ctx }) => {
   const { email, id, sub, nickname } = ctx.user;
-  console.log("user", ctx.user);
   let user = await prisma.user.findUnique({
     where: {
       id,

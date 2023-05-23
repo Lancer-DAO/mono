@@ -17,11 +17,7 @@
 import { type CreateNextContextOptions } from "@trpc/server/adapters/next";
 
 import { prisma } from "@/server/db";
-import {
-  withApiAuthRequired,
-  getAccessToken,
-  getSession,
-} from "@auth0/nextjs-auth0";
+import { getAccessToken, getSession } from "@auth0/nextjs-auth0";
 type CreateContextOptions = {
   user: {
     id: number | null;
