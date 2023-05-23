@@ -67,65 +67,65 @@ const Form: React.FC<{ isAccountCreated: boolean }> = ({
               >
                 Fund Lancer Bounty
               </h2>
-              {!isAccountCreated ? (
+              {/* {!isAccountCreated ? (
                 <LoadingBar title="Loading On Chain Details" />
-              ) : (
-                <>
-                  {currentWallet.providerName === "Magic Link" && (
-                    <>
+              ) : ( */}
+              <>
+                {currentWallet.providerName === "Magic Link" && (
+                  <>
+                    <div>
+                      <label>
+                        Funding Amount<span className="color-red">*</span>
+                      </label>
                       <div>
-                        <label>
-                          Funding Amount<span className="color-red">*</span>
-                        </label>
-                        <div>
-                          <input
-                            type="number"
-                            className="input w-input"
-                            name="fundingAmount"
-                            placeholder="1000 (USD)"
-                            id="Issue"
-                            value={formData.fundingAmount}
-                            onChange={handleChange}
-                          />
-                        </div>
-                      </div>
-                      {formData.fundingAmount && (
-                        <FundBounty
-                          amount={parseInt(formData.fundingAmount || 0)}
+                        <input
+                          type="number"
+                          className="input w-input"
+                          name="fundingAmount"
+                          placeholder="1000 (USD)"
+                          id="Issue"
+                          value={formData.fundingAmount}
+                          onChange={handleChange}
                         />
-                      )}
-                    </>
-                  )}
-                  {currentWallet.providerName !== "Magic Link" && (
-                    <>
-                      <div>
-                        <label>
-                          Funding Amount<span className="color-red">*</span>
-                        </label>
-                        <div>
-                          <input
-                            type="number"
-                            className="input w-input"
-                            name="fundingAmount"
-                            placeholder="1000 (USD)"
-                            id="Issue"
-                            value={formData.fundingAmount}
-                            onChange={handleChange}
-                          />
-                        </div>
                       </div>
-                      <button
-                        className={classNames("button-primary", {
-                          disabled: !formData.fundingAmount,
-                        })}
-                        onClick={onClick}
-                      >
-                        Submit
-                      </button>
-                    </>
-                  )}
-                </>
-              )}
+                    </div>
+                    {formData.fundingAmount && (
+                      <FundBounty
+                        amount={parseInt(formData.fundingAmount || 0)}
+                      />
+                    )}
+                  </>
+                )}
+                {currentWallet.providerName !== "Magic Link" && (
+                  <>
+                    <div>
+                      <label>
+                        Funding Amount<span className="color-red">*</span>
+                      </label>
+                      <div>
+                        <input
+                          type="number"
+                          className="input w-input"
+                          name="fundingAmount"
+                          placeholder="1000 (USD)"
+                          id="Issue"
+                          value={formData.fundingAmount}
+                          onChange={handleChange}
+                        />
+                      </div>
+                    </div>
+                    <button
+                      className={classNames("button-primary", {
+                        disabled: !formData.fundingAmount,
+                      })}
+                      onClick={onClick}
+                    >
+                      Submit
+                    </button>
+                  </>
+                )}
+              </>
+              {/* )} */}
             </div>
           </>
         </div>

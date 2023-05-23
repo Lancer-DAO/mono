@@ -3,6 +3,7 @@ import { PhantomWalletAdapter } from "@solana/wallet-adapter-phantom";
 import { clusterApiUrl } from "@solana/web3.js";
 import { ReactNode, useMemo } from "react";
 
+import { UserProvider } from "@auth0/nextjs-auth0/client";
 import {
   ConnectionProvider,
   WalletProvider,
@@ -33,7 +34,7 @@ export const AllProviders: React.FC<{ children: ReactNode }> = ({
        *   - Solana Wallet Standard
        *     (https://github.com/solana-labs/wallet-standard)
        *
-       * If you wish to support a wallet that supports neither of those standards,
+       * If you wish to support a wallet that supports n\either of those standards,
        * instantiate its legacy wallet adapter here. Common legacy adapters can be found
        * in the npm package `@solana/wallet-adapter-wallets`.
        */
@@ -44,12 +45,14 @@ export const AllProviders: React.FC<{ children: ReactNode }> = ({
   );
 
   return (
-    <ConnectionProvider endpoint={endpoint}>
-      <WalletProvider wallets={walletProviders} autoConnect>
-        <WalletModalProvider>
-          <LancerProvider>{children}</LancerProvider>
-        </WalletModalProvider>
-      </WalletProvider>
-    </ConnectionProvider>
+    <UserProvider>
+      <ConnectionProvider endpoint={endpoint}>
+        <WalletProvider wallets={walletProviders} autoConnect>
+          <WalletModalProvider>
+            <LancerProvider>{children}</LancerProvider>
+          </WalletModalProvider>
+        </WalletProvider>
+      </ConnectionProvider>
+    </UserProvider>
   );
 };

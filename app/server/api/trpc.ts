@@ -17,9 +17,17 @@
 import { type CreateNextContextOptions } from "@trpc/server/adapters/next";
 
 import { prisma } from "@/server/db";
-
+import {
+  withApiAuthRequired,
+  getAccessToken,
+  getSession,
+} from "@auth0/nextjs-auth0";
 type CreateContextOptions = {
-  user: number | null;
+  user: {
+    id: number | null;
+    email: string;
+    token: string;
+  };
 };
 
 /**
@@ -39,9 +47,6 @@ const createInnerTRPCContext = async (_opts: CreateContextOptions) => {
   };
 };
 
-import { Magic } from "@magic-sdk/admin";
-const magic = new Magic("sk_live_E3BDA91C4454065F");
-
 /**
  * This is the actual context you will use in your router. It will be used to process every request
  * that goes through your tRPC endpoint.
@@ -49,16 +54,18 @@ const magic = new Magic("sk_live_E3BDA91C4454065F");
  * @see https://trpc.io/docs/context
  */
 export const createTRPCContext = async (_opts: CreateNextContextOptions) => {
-  const session = getCookie("session", {
-    req: _opts.req,
-  }) as string;
+  const { req, res } = _opts;
 
   try {
-    const metadata = await magic.users.getMetadataByToken(session);
+    const metadata = await getSession(req, res);
+    const tokenRes = await getAccessToken(req, res);
+    const token = tokenRes.accessToken;
+    const email = metadata.user.email;
+    console.log(metadata);
 
     const user = await prisma.user.findUnique({
       where: {
-        email: metadata.email,
+        email,
       },
       select: {
         id: true,
@@ -72,9 +79,14 @@ export const createTRPCContext = async (_opts: CreateNextContextOptions) => {
     }
 
     return createInnerTRPCContext({
-      user: user ? user.id : null,
+      user: {
+        id: user.id,
+        email,
+        token,
+      },
     });
-  } catch {
+  } catch (e) {
+    console.log(e);
     return createInnerTRPCContext({
       user: null,
     });

@@ -17,11 +17,8 @@ import { useLocation } from "react-router-dom";
 import { LoadingBar } from "@/src/components/LoadingBar";
 import { AnchorProvider, Program } from "@project-serum/anchor";
 import { MonoProgram } from "@/escrow/sdk/types/mono_program";
-import { getCoinflowWallet } from "@/src/utils/coinflowWallet";
 import { api } from "@/src/utils/api";
 import { getCookie } from "cookies-next";
-import { magic } from "@/src/utils/magic-admin";
-import { MagicUserMetadata } from "magic-sdk";
 import { Octokit } from "octokit";
 import { getEscrowContractKey } from "@/src/providers/lancerProvider/queries";
 import { useRouter } from "next/router";
@@ -81,6 +78,7 @@ const Form: React.FC<{
   const createBounty = async (e) => {
     e.preventDefault();
     setIsSubmittingIssue(true);
+    debugger;
     const { timestamp, signature, escrowKey } = await createFFA(
       currentWallet,
       program,

@@ -22,28 +22,20 @@ export const ApproveSubmission = () => {
     setCurrentBounty,
   } = useLancer();
   const { mutateAsync } = api.bounties.updateBountyUser.useMutation();
-  const {
-    wallet,
-    publicKey,
-    sendTransaction,
-    signAllTransactions,
-    signMessage,
-    signTransaction,
-    connected,
-  } = useWallet();
   const onClick = async () => {
     // If we are the creator, then skip requesting and add self as approved
-    const signature = await approveRequestFFA(
-      new PublicKey(currentBounty.currentSubmitter.publicKey),
-      currentBounty.escrow,
-      currentWallet,
-      program,
-      provider
-    );
+    // const signature = await approveRequestFFA(
+    //   new PublicKey(currentBounty.currentSubmitter.publicKey),
+    //   currentBounty.escrow,
+    //   currentWallet,
+    //   program,
+    //   provider
+    // );
     currentBounty.currentUserRelationsList.push(
       BOUNTY_USER_RELATIONSHIP.Completer
     );
-    const { updatedBounty } = await mutateAsync({
+    // const { updatedBounty } =
+    await mutateAsync({
       bountyId: currentBounty.id,
       currentUserId: currentUser.id,
       userId: currentUser.id,
@@ -52,26 +44,11 @@ export const ApproveSubmission = () => {
       publicKey: currentWallet.publicKey.toString(),
       provider: currentWallet.providerName,
       escrowId: currentBounty.escrowid,
-      signature,
+      signature: "",
       label: "complete-bounty",
     });
-    const authToken = getCookie("githubToken") as string;
 
-    const octokit = new Octokit({
-      auth: authToken,
-    });
-
-    const octokitResponse = await octokit.request(
-      "PUT /repos/{owner}/{repo}/pulls/{pull_number}/merge",
-      {
-        owner: currentBounty.repository.organization,
-        repo: currentBounty.repository.name,
-        pull_number: parseInt(currentBounty.pullRequests[0].number.toString()),
-      }
-    );
-    console.log(octokitResponse);
-
-    setCurrentBounty(updatedBounty);
+    // setCurrentBounty(updatedBounty);
   };
 
   return (

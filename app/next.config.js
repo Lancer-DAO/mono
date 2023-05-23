@@ -41,6 +41,8 @@ const nextConfig = {
           ...config.resolve.alias,
           stream: require.resolve("stream-browserify"),
           zlib: require.resolve("browserify-zlib"),
+          http: require.resolve("http-browserify"),
+          https: require.resolve("https-browserify")
         },
       },
     };

@@ -1,7 +1,6 @@
 import { prisma } from "@/server/db";
 import { publicProcedure } from "../../trpc";
 import { z } from "zod";
-import { magic } from "@/src/utils/magic-admin";
 
 export const login = publicProcedure
   .input(
@@ -9,19 +8,18 @@ export const login = publicProcedure
       session: z.string(),
       publicKey: z.string(),
       githubId: z.string(),
-      githubLogin: z.string()
+      githubLogin: z.string(),
     })
   )
-  .mutation(async ({ input: { session, publicKey, githubId, githubLogin } }) => {
-    const { email } = await magic.users.getMetadataByToken(session);
-
+  .mutation(async ({ input: { publicKey, githubId, githubLogin }, ctx }) => {
+    const { email, id } = ctx.user;
     let user = await prisma.user.findUnique({
       where: {
-        email,
+        id,
       },
       include: {
-        wallets: true
-      }
+        wallets: true,
+      },
     });
 
     if (!user) {
@@ -31,12 +29,15 @@ export const login = publicProcedure
           githubId,
           githubLogin,
           wallets: {
-            create: {publicKey: publicKey, providers: {
-              connect: {
-                name: "Magic Link"
-              }
-            }}
-          }
+            create: {
+              publicKey: publicKey,
+              providers: {
+                connect: {
+                  name: "Magic Link",
+                },
+              },
+            },
+          },
         },
       });
     }
@@ -45,8 +46,8 @@ export const login = publicProcedure
         email,
       },
       include: {
-        wallets: true
-      }
-    })
+        wallets: true,
+      },
+    });
     return user;
   });
