@@ -1,6 +1,7 @@
 import { prisma } from "@/server/db";
 import { protectedProcedure } from "../../trpc";
 import { z } from "zod";
+import { BountyState } from "@/src/types";
 
 export const fundBounty = protectedProcedure
   .input(
@@ -17,7 +18,7 @@ export const fundBounty = protectedProcedure
         id: bountyId,
       },
       data: {
-        state: "awaiting_applicants",
+        state: BountyState.ACCEPTING_APPLICATIONS,
       },
     });
 

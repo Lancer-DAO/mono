@@ -6,7 +6,9 @@ export const ContributorInfo: React.FC<{ user: Contributor }> = ({ user }) => {
       <div className="contributor-info">
         <img
           className="contributor-picture-small"
-          src={`https://avatars.githubusercontent.com/u/${user.user.githubId}?s=60&v=4`}
+          src={`https://avatars.githubusercontent.com/u/${
+            user.user.githubId.split("|")[1]
+          }?s=60&v=4`}
         />
         <div className="contributor-name">{user.user.githubLogin}</div>
       </div>

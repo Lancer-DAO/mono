@@ -46,7 +46,10 @@ export const getRepos = protectedProcedure.mutation(
         auth: githubTokenResponse.data.identities[0].access_token,
       });
 
-      const octokitResponse = await octokit.request("GET /user/repos", {});
+      const octokitResponse = await octokit.request("GET /user/repos", {
+        type: "all",
+        per_page: 100,
+      });
 
       return octokitResponse.data;
     } catch (e) {
