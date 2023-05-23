@@ -60,7 +60,7 @@ interface ILancerProps {
 export const LancerProvider: FunctionComponent<ILancerState> = ({
   children,
 }: ILancerProps) => {
-  const { mutateAsync: getCurrUser } = api.users.currentUser.useMutation();
+  const { mutateAsync: getCurrUser } = api.users.login.useMutation();
   const { user } = useUser();
 
   const {
@@ -116,8 +116,8 @@ export const LancerProvider: FunctionComponent<ILancerState> = ({
   useEffect(() => {
     if (user) {
       const getUser = async () => {
-        const user = await getCurrUser();
-        setCurrentUser(user);
+        const userInfo = await getCurrUser();
+        setCurrentUser(userInfo);
       };
       getUser();
     }

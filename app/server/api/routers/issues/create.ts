@@ -2,10 +2,14 @@ import { prisma } from "@/server/db";
 import { protectedProcedure } from "../../trpc";
 import { z } from "zod";
 import * as helpers from "@/prisma/helpers";
+import { getUserById } from "@/prisma/helpers";
+import { Octokit } from "octokit";
+import axios from "axios";
 
 export const createIssue = protectedProcedure
   .input(
     z.object({
+      newIssue: z.boolean(),
       number: z.number(),
       description: z.string(),
       title: z.string(),
@@ -27,8 +31,44 @@ export const createIssue = protectedProcedure
         linkingMethod,
         number,
         currentUserId,
+        newIssue,
       },
+      ctx,
     }) => {
+      let issueNumber;
+      if (newIssue) {
+        try {
+          const currUser = await getUserById(ctx.user.id);
+          console.log("token", ctx.user.token, currUser.githubId);
+
+          const githubTokenResponse = await axios.request({
+            method: "GET",
+            url: `${process.env.AUTH0_ISSUER_BASE_URL}/api/v2/users/github|${currUser.githubId}`,
+            headers: {
+              "content-type": "application/x-www-form-urlencoded",
+              Authorization: `Bearer ${process.env.AUTH0_MANAGEMENT_TOKEN}`,
+            },
+          });
+          console.log("gh", githubTokenResponse);
+
+          const octokit = new Octokit({
+            auth: githubTokenResponse.data.identities[0].access_token,
+          });
+
+          const octokitData = await octokit.request(
+            "POST /repos/{owner}/{repo}/issues",
+            {
+              owner: organizationName,
+              repo: repositoryName,
+              title: title,
+              body: description,
+            }
+          );
+          issueNumber = octokitData.data.number;
+        } catch (e) {
+          console.error(e);
+        }
+      }
       const bounty = await helpers.getBounty(bountyId, currentUserId);
       const repository = await helpers.getRepository(
         repositoryName,

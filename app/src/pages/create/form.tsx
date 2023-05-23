@@ -34,6 +34,8 @@ const Form: React.FC<{
   const { currentWallet, program, provider, currentUser, setCurrentBounty } =
     useLancer();
   const { mutateAsync } = api.bounties.createBounty.useMutation();
+  const { mutateAsync: getUserRepos } = api.users.getRepos.useMutation();
+  const { mutateAsync: getIssues } = api.repository.getRepoIssues.useMutation();
   const { mutateAsync: createIssue } = api.issues.createIssue.useMutation();
   const [creationType, setCreationType] = useState<"new" | "existing">("new");
   const [repo, setRepo] = useState<any>();
@@ -62,14 +64,8 @@ const Form: React.FC<{
 
   useEffect(() => {
     const getRepos = async () => {
-      const authToken = getCookie("githubToken") as string;
-
-      const octokit = new Octokit({
-        auth: authToken,
-      });
-
-      const octokitResponse = await octokit.request("GET /user/repos", {});
-      setRepos(octokitResponse.data);
+      const octokitResponse = await getUserRepos();
+      setRepos(octokitResponse);
       setOctokit(octokit);
     };
     getRepos();
@@ -122,6 +118,7 @@ const Form: React.FC<{
     }
 
     const issueResp = await createIssue({
+      newIssue: creationType === "new",
       number: issueNumber,
       description: formData.issueDescription,
       title: formData.issueTitle,
@@ -138,14 +135,12 @@ const Form: React.FC<{
   };
 
   const getRepoIssues = async (_repo) => {
-    const octokitResponse = await octokit.request(
-      "GET /repos/{owner}/{repo}/issues",
-      {
-        owner: _repo.owner.login,
-        repo: _repo.name,
-      }
-    );
-    setIssues(octokitResponse.data);
+    const octokitResponse = await getIssues({
+      organization: _repo.owner.login,
+      repository: _repo.name,
+    });
+
+    setIssues(octokitResponse);
   };
 
   const handleChange = (event) => {

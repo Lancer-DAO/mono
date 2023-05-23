@@ -68,7 +68,7 @@ export interface User extends Prisma.User {
   repos?: any[];
   relations?: BOUNTY_USER_RELATIONSHIP[];
   wallets: Wallet[];
-  currentWallet: Wallet;
+  currentWallet?: Wallet;
 }
 
 export interface CurrentUser extends User {
