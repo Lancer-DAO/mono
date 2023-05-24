@@ -5,7 +5,6 @@ const LIST_ITEM_ID = "bounty-list-item";
 // Add a button to the home page that links to the lancer bounty feed
 export const insertHomeFeed = () => {
   const existingWrapper = window.document.getElementById(LIST_ITEM_ID);
-  console.log("feed", existingWrapper, getApiEndpointExtension());
   if (existingWrapper) {
     return;
   }
