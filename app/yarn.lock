@@ -1685,6 +1685,11 @@
   dependencies:
     "@hapi/hoek" "^9.0.0"
 
+"@hotjar/browser@^1.0.7":
+  version "1.0.7"
+  resolved "https://registry.yarnpkg.com/@hotjar/browser/-/browser-1.0.7.tgz#02cd95174451624883d81620431845d400dfdc5c"
+  integrity sha512-OS6qRkidT7ACt+kSaYgHwEbOfUSiVCi9tVwmkq45KYAA+4wE0BrZO9Zwob9YJap17yY/yG6moc0vR0R47NJ0EA==
+
 "@humanwhocodes/config-array@^0.11.8":
   version "0.11.8"
   resolved "https://registry.yarnpkg.com/@humanwhocodes/config-array/-/config-array-0.11.8.tgz#03595ac2075a4dc0f191cc2131de14fbd7d410b9"
