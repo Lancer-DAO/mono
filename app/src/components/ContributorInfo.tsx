@@ -3,14 +3,14 @@ import { Contributor } from "@/src/types";
 export const ContributorInfo: React.FC<{ user: Contributor }> = ({ user }) => {
   return (
     user && (
-      <div className="contributor-info">
+      <div className="flex items-center">
         <img
-          className="contributor-picture-small"
+          className="h-[20px] w-[20px] rounded-full shadow-md shadow-black-300"
           src={`https://avatars.githubusercontent.com/u/${
             user.user.githubId.split("|")[1]
           }?s=60&v=4`}
         />
-        <div className="contributor-name">{user.user.githubLogin}</div>
+        <div className="ml-[10px]">{user.user.githubLogin}</div>
       </div>
     )
   );
