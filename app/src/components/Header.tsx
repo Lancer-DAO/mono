@@ -3,7 +3,7 @@ import Logo from "../assets/Logo";
 import { PubKey } from "@/src/components/PublicKey";
 import { useLancer } from "@/src/providers";
 import { getWalletProviderImage } from "@/src/utils";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
 
 import styles from "@/styles/Home.module.css";
@@ -12,12 +12,23 @@ const WalletMultiButtonDynamic = dynamic(
     (await import("@solana/wallet-adapter-react-ui")).WalletMultiButton,
   { ssr: false }
 );
-export const Header = () => {
-  const { currentWallet, wallets, setCurrentWallet } = useLancer();
-  const [isWalletSelectOpen, setIsWalletSelectOpen] = useState(false);
-  const toggleWalletSelectOpen = () =>
-    setIsWalletSelectOpen(!isWalletSelectOpen);
 
+// The ID of the extension we want to talk to.
+var editorExtensionId = "nenaophjhbollmlklbamcmbbfgjlcjpk";
+
+// Make a simple request:
+
+export const Header = () => {
+  const [hasExtension, setHasExtension] = useState(false);
+  useEffect(() => {
+    chrome.runtime.sendMessage(
+      editorExtensionId,
+      { message: "test connection" },
+      function (response) {
+        if (response.connected) setHasExtension(true);
+      }
+    );
+  }, []);
   return (
     <div
       data-collapse="medium"
@@ -51,6 +62,15 @@ export const Header = () => {
           <div className={styles.walletButtons}>
             <WalletMultiButtonDynamic />
           </div>
+          {!hasExtension && (
+            <a
+              href="https://chrome.google.com/webstore/detail/lancer/abcdefghijklmnoabcdefhijklmnoabc"
+              target="_blank"
+              rel="noreferrer"
+            >
+              Download Extension
+            </a>
+          )}
         </div>
       </div>
     </div>

@@ -6,9 +6,13 @@
   "host_permissions": [
     "http://localhost:3000/*",
     "https://github.com/*",
-    "https://app-dot-lancer-api-375702.uc.r.appspot.com/*",
-    "https://app.lancer.so/*"
+    "https://demo.lancer.so/*",
+    "https://app-*-lancer-so.vercel.app/*"
   ],
+  "externally_connectable": {
+    "matches": ["http://localhost:3000/*", 
+    "https://app-dot-lancer-api-375702.uc.r.appspot.com/*"]
+  },
   "permissions": [
     "storage",
     "activeTab",
@@ -17,6 +21,10 @@
     "system.display",
     "webNavigation"
   ],
+
+  "background": {
+    "service_worker": "background.js"
+  },
   "content_scripts": [
     {
       "matches": [
