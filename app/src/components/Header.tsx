@@ -21,13 +21,15 @@ var editorExtensionId = "nenaophjhbollmlklbamcmbbfgjlcjpk";
 export const Header = () => {
   const [hasExtension, setHasExtension] = useState(false);
   useEffect(() => {
-    chrome.runtime.sendMessage(
-      editorExtensionId,
-      { message: "test connection" },
-      function (response) {
-        if (response.connected) setHasExtension(true);
-      }
-    );
+    try {
+      chrome.runtime.sendMessage(
+        editorExtensionId,
+        { message: "test connection" },
+        function (response) {
+          if (response.connected) setHasExtension(true);
+        }
+      );
+    } catch (e) {}
   }, []);
   return (
     <div

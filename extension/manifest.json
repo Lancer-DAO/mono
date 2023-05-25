@@ -7,11 +7,11 @@
     "http://localhost:3000/*",
     "https://github.com/*",
     "https://demo.lancer.so/*",
-    "https://app-*-lancer-so.vercel.app/*"
+    "https://*.vercel.app/*"
   ],
   "externally_connectable": {
-    "matches": ["http://localhost:3000/*", 
-    "https://app-dot-lancer-api-375702.uc.r.appspot.com/*"]
+    "matches": ["http://localhost:3000/*",
+    "https://*.vercel.app/*"]
   },
   "permissions": [
     "storage",
