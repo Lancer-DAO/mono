@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
 
 import styles from "@/styles/Home.module.css";
+import { EXTENSION_ID } from "../constants";
 const WalletMultiButtonDynamic = dynamic(
   async () =>
     (await import("@solana/wallet-adapter-react-ui")).WalletMultiButton,
@@ -14,7 +15,6 @@ const WalletMultiButtonDynamic = dynamic(
 );
 
 // The ID of the extension we want to talk to.
-var editorExtensionId = "nenaophjhbollmlklbamcmbbfgjlcjpk";
 
 // Make a simple request:
 
@@ -23,7 +23,7 @@ export const Header = () => {
   useEffect(() => {
     try {
       chrome.runtime.sendMessage(
-        editorExtensionId,
+        EXTENSION_ID,
         { message: "test connection" },
         function (response) {
           if (response.connected) setHasExtension(true);
