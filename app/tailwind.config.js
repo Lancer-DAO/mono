@@ -18,6 +18,7 @@ module.exports = {
         'fff': "#FFFFFF",
         'ccc': "#CCCCCC",
         "translucent-black": '#33333333',
+        '14bb88': '#14bb88'
       },
     },
   },
