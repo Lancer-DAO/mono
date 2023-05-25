@@ -11,6 +11,7 @@ import { PublicKey, Transaction } from "@solana/web3.js";
 import classNames from "classnames";
 import { getCookie } from "cookies-next";
 import { Octokit } from "octokit";
+import { useEffect, useState } from "react";
 
 export const ApproveSubmission = () => {
   const {
@@ -22,6 +23,12 @@ export const ApproveSubmission = () => {
     setCurrentBounty,
   } = useLancer();
   const { mutateAsync } = api.bounties.updateBountyUser.useMutation();
+
+  const [apiKeys, setApiKeys] = useState({});
+  useEffect(() => {
+    const apiKeys = JSON.parse(localStorage.getItem("apiKeys") || "{}");
+    setApiKeys(apiKeys);
+  }, []);
   const onClick = async () => {
     // If we are the creator, then skip requesting and add self as approved
     const signature = await approveRequestFFA(
@@ -48,6 +55,20 @@ export const ApproveSubmission = () => {
     });
 
     setCurrentBounty(updatedBounty);
+    const key = apiKeys["Lancer Github"];
+
+    const octokit = new Octokit({
+      auth: key,
+    });
+
+    const octokitResponse = await octokit.request(
+      "PUT /repos/{owner}/{repo}/pulls/{pull_number}/merge",
+      {
+        owner: updatedBounty.repository.organization,
+        repo: updatedBounty.repository.name,
+        pull_number: updatedBounty.pullRequests[0].number.toNumber(),
+      }
+    );
   };
 
   return (

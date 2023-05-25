@@ -34,8 +34,6 @@ const Form: React.FC<{
   const { currentWallet, program, provider, currentUser, setCurrentBounty } =
     useLancer();
   const { mutateAsync } = api.bounties.createBounty.useMutation();
-  const { mutateAsync: getUserRepos } = api.users.getRepos.useMutation();
-  const { mutateAsync: getIssues } = api.repository.getRepoIssues.useMutation();
   const { mutateAsync: createIssue } = api.issues.createIssue.useMutation();
   const [creationType, setCreationType] = useState<"new" | "existing">("new");
   const [repo, setRepo] = useState<any>();
@@ -62,14 +60,30 @@ const Form: React.FC<{
   const toggleOpenIssue = () => setIsOpenIssue(!isOpenIssue);
   const togglePreview = () => setIsPreview(!isPreview);
 
+  const [apiKeys, setApiKeys] = useState({});
+  useEffect(() => {
+    const apiKeys = JSON.parse(localStorage.getItem("apiKeys") || "{}");
+    setApiKeys(apiKeys);
+  }, []);
   useEffect(() => {
     const getRepos = async () => {
-      const octokitResponse = await getUserRepos();
-      setRepos(octokitResponse);
-      setOctokit(octokit);
+      // debugger;
+      const key = apiKeys["Lancer Github"];
+      console.log(key);
+      if (key) {
+        const octokit = new Octokit({
+          auth: key,
+        });
+        const octokitResponse = await octokit.request("GET /user/repos", {
+          type: "all",
+          per_page: 100,
+        });
+        setRepos(octokitResponse.data);
+        setOctokit(octokit);
+      }
     };
     getRepos();
-  }, []);
+  }, [apiKeys]);
 
   const createBounty = async (e) => {
     e.preventDefault();
@@ -81,6 +95,7 @@ const Form: React.FC<{
       provider
     );
     createAccountPoll(escrowKey);
+    const [organizationName, repositoryName] = repo.full_name.split("/");
     const { bounty } = await mutateAsync({
       email: currentUser.email,
       description: formData.issueDescription,
@@ -89,8 +104,8 @@ const Form: React.FC<{
       isPrivateRepo: formData.isPrivate || repo ? repo.private : false,
       title: formData.issueTitle,
       tags: formData.requirements,
-      organizationName: repo.full_name.split("/")[0],
-      repositoryName: repo.full_name.split("/")[1],
+      organizationName,
+      repositoryName,
       publicKey: currentWallet.publicKey.toString(),
       escrowKey: escrowKey.toString(),
       transactionSignature: signature,
@@ -101,8 +116,20 @@ const Form: React.FC<{
     });
     let issueNumber;
 
+    if (creationType === "new") {
+      const octokitData = await octokit.request(
+        "POST /repos/{owner}/{repo}/issues",
+        {
+          owner: organizationName,
+          repo: repositoryName,
+          title: formData.issueTitle,
+          body: formData.issueDescription,
+        }
+      );
+      issueNumber = octokitData.data.number;
+    }
+
     const issueResp = await createIssue({
-      newIssue: creationType === "new",
       number: issueNumber,
       description: formData.issueDescription,
       title: formData.issueTitle,
@@ -118,12 +145,15 @@ const Form: React.FC<{
   };
 
   const getRepoIssues = async (_repo) => {
-    const octokitResponse = await getIssues({
-      organization: _repo.owner.login,
-      repository: _repo.name,
-    });
+    const octokitResponse = await octokit.request(
+      "GET /repos/{owner}/{repo}/issues",
+      {
+        owner: repo.owner.login,
+        repo: repo.name,
+      }
+    );
 
-    setIssues(octokitResponse);
+    setIssues(octokitResponse.data);
   };
 
   const handleChange = (event) => {

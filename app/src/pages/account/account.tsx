@@ -14,6 +14,7 @@ import { PageLayout } from "@/src/layouts";
 import { WalletInfo } from "@/src/pages/account/components/WalletInfo";
 import styles from "@/styles/Home.module.css";
 import dynamic from "next/dynamic";
+import classnames from "classnames";
 
 const WalletMultiButtonDynamic = dynamic(
   async () =>
@@ -22,6 +23,13 @@ const WalletMultiButtonDynamic = dynamic(
 );
 const FundBounty: React.FC = () => {
   const { currentUser, wallets } = useLancer();
+  const [apiKey, setApiKey] = useState("");
+  const [apiKeyName, setApiKeyName] = useState("");
+  const [apiKeys, setApiKeys] = useState({});
+  useEffect(() => {
+    const apiKeys = JSON.parse(localStorage.getItem("apiKeys") || "{}");
+    setApiKeys(apiKeys);
+  }, []);
 
   return (
     currentUser && (
@@ -49,6 +57,40 @@ const FundBounty: React.FC = () => {
               USDC Faucet
             </a>
           )}
+          <div>
+            {Object.entries(apiKeys).map(([key, value]) => (
+              <div>{`${key}: ${value}`}</div>
+            ))}
+          </div>
+          <div>
+            <input
+              type="text"
+              placeholder="API Key"
+              value={apiKey}
+              onChange={(e) => {
+                setApiKey(e.target.value);
+              }}
+            />
+            <input
+              type="text"
+              placeholder="API Key Name"
+              value={apiKeyName}
+              onChange={(e) => {
+                setApiKeyName(e.target.value);
+              }}
+            />
+            <button
+              className={classnames({
+                disabled: apiKey === "" || apiKeyName === "",
+              })}
+              onClick={() => {
+                apiKeys[apiKeyName] = apiKey;
+                localStorage.setItem("apiKeys", JSON.stringify(apiKeys));
+              }}
+            >
+              Save API Key to Local Storage
+            </button>
+          </div>
           <Coinflow />
         </div>
       </PageLayout>
