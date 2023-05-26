@@ -127,6 +127,7 @@ export const BountyActions = () => {
         {currentBounty.isCreator && currentBounty.needsToVote.length === 0 && (
           <CancelEscrow />
         )}
+        <ApproveSubmission />
         {currentBounty.completer && (
           <button className={classNames("button-primary disabled")}>
             Complete

@@ -1,4 +1,8 @@
-import { IS_MAINNET, USDC_MINT } from "@/src/constants";
+import {
+  DEVNET_PROFILE_PROJECT_PARAMS,
+  IS_MAINNET,
+  USDC_MINT,
+} from "@/src/constants";
 import { getSolscanTX } from "@/src/utils";
 import { useEffect, useState } from "react";
 import { useLancer } from "@/src/providers/lancerProvider";
@@ -19,13 +23,7 @@ import { createUnderdogClient, useProject, Nft } from "@underdog-protocol/js";
 import dayjs from "dayjs";
 import { api } from "@/src/utils/api";
 const underdogClient = createUnderdogClient({});
-const params = {
-  type: {
-    transferable: false,
-    compressed: true,
-  },
-  projectId: 2,
-};
+
 export interface ProfileNFT {
   name: string;
   reputation: number;
@@ -47,7 +45,7 @@ const FundBounty: React.FC = () => {
       (wallet) => wallet.id === currentUser.profileWalletId
     );
     const nfts = await underdogClient.getNfts({
-      params,
+      params: DEVNET_PROFILE_PROJECT_PARAMS,
       query: {
         page: 1,
         limit: 1,
@@ -81,7 +79,7 @@ const FundBounty: React.FC = () => {
 
   const mintProfileNFT = async () => {
     const result = await underdogClient.createNft({
-      params,
+      params: DEVNET_PROFILE_PROJECT_PARAMS,
       body: {
         name: `Profile NFT for ${currentUser.githubLogin}`,
         image: "https://i.imgur.com/3uQq5Zo.png",

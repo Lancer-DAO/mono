@@ -13,6 +13,11 @@ import { getCookie } from "cookies-next";
 import { Octokit } from "octokit";
 import { useEffect, useState } from "react";
 import { createUnderdogClient, useProject, Nft } from "@underdog-protocol/js";
+import dayjs from "dayjs";
+import {
+  DEVNET_BOUNTY_PROJECT_PARAMS,
+  DEVNET_PROFILE_PROJECT_PARAMS,
+} from "@/src/constants";
 
 const underdogClient = createUnderdogClient({});
 export const ApproveSubmission = () => {
@@ -30,9 +35,9 @@ export const ApproveSubmission = () => {
   const params = {
     type: {
       transferable: false,
-      compressed: false,
+      compressed: true,
     },
-    projectId: 1,
+    projectId: 2,
   };
 
   const onClick = async () => {
@@ -59,12 +64,13 @@ export const ApproveSubmission = () => {
       signature,
       label: "complete-bounty",
     });
+    const submitterKey = currentBounty.currentSubmitter.publicKey;
     const nfts = await underdogClient.getNfts({
       params,
       query: {
         page: 1,
         limit: 1,
-        ownerAddress: currentWallet.publicKey.toString(),
+        ownerAddress: submitterKey,
       },
     });
 
@@ -82,16 +88,35 @@ export const ApproveSubmission = () => {
         pull_number: updatedBounty.pullRequests[0].number.toNumber(),
       }
     );
+    const reputationIncrease = 100 * updatedBounty.estimatedTime.toNumber();
     if (nfts.totalResults > 0) {
-      return underdogClient.partialUpdateNft({
-        params: { ...params, nftId: nfts.results[0].id },
+      const profileNFT = nfts.results[0];
+      underdogClient.partialUpdateNft({
+        params: { ...DEVNET_PROFILE_PROJECT_PARAMS, nftId: nfts.results[0].id },
         body: {
           attributes: {
-            "Last Updated": new Date().toISOString(),
+            lastUpdated: new Date().toISOString(),
+            reputation:
+              (profileNFT.attributes.reputation as number) + reputationIncrease,
           },
         },
       });
     }
+    await underdogClient.createNft({
+      params: DEVNET_BOUNTY_PROJECT_PARAMS,
+      body: {
+        name: `${updatedBounty.title} - ${updatedBounty.repository.name}`,
+        image: "https://i.imgur.com/3uQq5Zo.png",
+        description: updatedBounty.description,
+        attributes: {
+          reputation: reputationIncrease,
+          completed: dayjs().toISOString(),
+          tags: updatedBounty.tags.map((tag) => tag.name).join(","),
+        },
+        upsert: true,
+        receiverAddress: submitterKey,
+      },
+    });
 
     setCurrentBounty(updatedBounty);
   };
