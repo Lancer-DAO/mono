@@ -15,17 +15,89 @@ import { WalletInfo } from "@/src/pages/account/components/WalletInfo";
 import styles from "@/styles/Home.module.css";
 import dynamic from "next/dynamic";
 import classnames from "classnames";
+import { createUnderdogClient, useProject, Nft } from "@underdog-protocol/js";
+import dayjs from "dayjs";
+import { api } from "@/src/utils/api";
+const underdogClient = createUnderdogClient({});
+const params = {
+  type: {
+    transferable: false,
+    compressed: true,
+  },
+  projectId: 2,
+};
+export interface ProfileNFT {
+  name: string;
+  reputation: number;
+  badges: string[];
+  certifications: string[];
+  image: string;
+  lastUpdated?: dayjs.Dayjs;
+}
 
 const FundBounty: React.FC = () => {
-  const { currentUser, wallets } = useLancer();
-  const [apiKey, setApiKey] = useState("");
-  const [apiKeyName, setApiKeyName] = useState("");
-  const [apiKeys, setApiKeys] = useState({});
+  const { currentUser, wallets, currentWallet } = useLancer();
   const [showCoinflow, setShowCoinflow] = useState(false);
+  const [profileNFT, setProfileNFT] = useState<ProfileNFT>();
+
+  const { mutateAsync: registerProfileNFT } =
+    api.users.registerProfileNFT.useMutation();
+  const fetchNFT = async () => {
+    const profileNFTHolder = currentUser.wallets.find(
+      (wallet) => wallet.id === currentUser.profileWalletId
+    );
+    const nfts = await underdogClient.getNfts({
+      params,
+      query: {
+        page: 1,
+        limit: 1,
+        ownerAddress: profileNFTHolder.publicKey,
+      },
+    });
+    if (nfts.totalResults > 0) {
+      const { name, attributes, image } = nfts.results[0];
+      const profileNFT: ProfileNFT = {
+        name: name,
+        reputation: attributes.reputation as number,
+        badges:
+          attributes.badges !== ""
+            ? (attributes.badges as string)?.split(",")
+            : [],
+        certifications:
+          attributes.certifications !== ""
+            ? (attributes.certifications as string)?.split(",")
+            : [],
+        image: image,
+        lastUpdated: attributes.lastUpdated
+          ? dayjs(attributes.lastUpdated)
+          : undefined,
+      };
+      setProfileNFT(profileNFT);
+    }
+  };
   useEffect(() => {
-    const apiKeys = JSON.parse(localStorage.getItem("apiKeys") || "{}");
-    setApiKeys(apiKeys);
-  }, []);
+    if (currentUser && currentUser.hasProfileNFT) fetchNFT();
+  }, [currentUser]);
+
+  const mintProfileNFT = async () => {
+    const result = await underdogClient.createNft({
+      params,
+      body: {
+        name: `Profile NFT for ${currentUser.githubLogin}`,
+        image: "https://i.imgur.com/3uQq5Zo.png",
+        attributes: {
+          reputation: 0,
+          badges: "",
+          certifications: "",
+          lastUpdated: dayjs().toISOString(),
+        },
+        upsert: true,
+        receiverAddress: currentWallet.publicKey.toString(),
+      },
+    });
+    fetchNFT();
+    registerProfileNFT({ walletPublicKey: currentWallet.publicKey.toString() });
+  };
 
   return (
     currentUser && (
@@ -50,6 +122,34 @@ const FundBounty: React.FC = () => {
               USDC Faucet
             </a>
           )}
+          {profileNFT && (
+            <div>
+              <img src={profileNFT.image} className="contributor-picture" />
+              <div>Name: {profileNFT.name}</div>
+              <div>Reputation: {profileNFT.reputation}</div>
+              <div>
+                Badges:{" "}
+                {profileNFT.badges.map((badge) => (
+                  <div className="tag-item" key={badge}>
+                    {badge}
+                  </div>
+                ))}
+              </div>
+              <div>
+                Certifications:{" "}
+                {profileNFT.certifications.map((certification) => (
+                  <div className="tag-item" key={certification}>
+                    {certification}
+                  </div>
+                ))}
+              </div>
+              <div>Last Updated: {profileNFT.lastUpdated?.toString()}</div>
+            </div>
+          )}
+          {!currentUser?.hasProfileNFT && (
+            <button onClick={mintProfileNFT}>Mint Profile NFT</button>
+          )}
+
           <button
             onClick={() => {
               setShowCoinflow(!showCoinflow);
