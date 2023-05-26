@@ -109,54 +109,6 @@ export const updateBountyUser = protectedProcedure
           },
         });
       }
-      if (label === "complete-bounty") {
-        let step = "token";
-
-        try {
-          const currUser = await getUserById(currentUserId);
-          const bountyInfo = await getBounty(bountyId, currentUserId);
-          const pullRequest = await getPullRequestByID(
-            bountyInfo.pullRequests[0].id
-          );
-          const repository = await getRepositoryByID(bountyInfo.repositoryid);
-          const auth0TokenResponse = await axios.request({
-            method: "POST",
-            url: `${process.env.AUTH0_ISSUER_BASE_URL}/oauth/token`,
-            headers: { "content-type": "application/x-www-form-urlencoded" },
-            data: new URLSearchParams({
-              grant_type: "client_credentials",
-              client_id: process.env.AUTH0_CLIENT_ID || "", //auth0 clientID
-              client_secret: process.env.AUTH0_CLIENT_SECRET || "", //auth0 client secret
-              audience: `${process.env.AUTH0_ISSUER_BASE_URL}/api/v2/`,
-            }),
-          });
-          const auth0Token = auth0TokenResponse.data.access_token;
-          const githubTokenResponse = await axios.request({
-            method: "GET",
-            url: `${process.env.AUTH0_ISSUER_BASE_URL}/api/v2/users/${currUser.githubId}`,
-            headers: {
-              "content-type": "application/x-www-form-urlencoded",
-              Authorization: `Bearer ${auth0Token}`,
-            },
-          });
-          step = "octo";
-
-          const octokit = new Octokit({
-            auth: githubTokenResponse.data.identities[0].access_token,
-          });
-
-          const octokitResponse = await octokit.request(
-            "PUT /repos/{owner}/{repo}/pulls/{pull_number}/merge",
-            {
-              owner: repository.organization,
-              repo: repository.name,
-              pull_number: pullRequest.number.toNumber(),
-            }
-          );
-        } catch (e) {
-          console.error(e);
-        }
-      }
       const updatedBounty = await getBounty(bountyId, currentUserId);
       return { updatedBounty };
     }

@@ -7,16 +7,15 @@ import { useState } from "react";
 import dynamic from "next/dynamic";
 
 import styles from "@/styles/Home.module.css";
+import ApiKeyModal from "./ApiKeyModal";
 const WalletMultiButtonDynamic = dynamic(
   async () =>
     (await import("@solana/wallet-adapter-react-ui")).WalletMultiButton,
   { ssr: false }
 );
 export const Header = () => {
-  const { currentWallet, wallets, setCurrentWallet } = useLancer();
-  const [isWalletSelectOpen, setIsWalletSelectOpen] = useState(false);
-  const toggleWalletSelectOpen = () =>
-    setIsWalletSelectOpen(!isWalletSelectOpen);
+  const { currentAPIKey } = useLancer();
+  const [showModal, setShowModal] = useState(false);
 
   return (
     <div
@@ -51,6 +50,10 @@ export const Header = () => {
           <div className={styles.walletButtons}>
             <WalletMultiButtonDynamic />
           </div>
+          <button onClick={() => setShowModal(true)}>
+            {currentAPIKey ? currentAPIKey.name : "Set API Key"}
+          </button>
+          <ApiKeyModal showModal={showModal} setShowModal={setShowModal} />
         </div>
       </div>
     </div>
