@@ -93,23 +93,7 @@ export const ApproveSubmission = () => {
       });
     }
 
-    // const authToken = getCookie("githubToken") as string;
-
-    // const octokit = new Octokit({
-    //   auth: authToken,
-    // });
-
-    // const octokitResponse = await octokit.request(
-    //   "PUT /repos/{owner}/{repo}/pulls/{pull_number}/merge",
-    //   {
-    //     owner: currentBounty.repository.organization,
-    //     repo: currentBounty.repository.name,
-    //     pull_number: parseInt(currentBounty.pullRequests[0].number.toString()),
-    //   }
-    // );
-    // console.log(octokitResponse);
-
-    // setCurrentBounty(updatedBounty);
+    setCurrentBounty(updatedBounty);
   };
 
   return (
