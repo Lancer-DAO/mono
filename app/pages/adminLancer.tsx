@@ -61,7 +61,6 @@ export const SendSOLToRandomAddress: FC = () => {
 
   const createFeesAccount = useCallback(async () => {
     if (!publicKey) throw new WalletNotConnectedError();
-    debugger;
     const provider = new AnchorProvider(
       connection,
       { ...wallet, signAllTransactions, signTransaction, publicKey },

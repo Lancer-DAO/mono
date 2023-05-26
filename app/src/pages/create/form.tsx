@@ -52,6 +52,7 @@ const Form: React.FC<{
   const [repos, setRepos] = useState(null);
   const [issues, setIssues] = useState(null);
   const [octokit, setOctokit] = useState(null);
+  const { currentAPIKey } = useLancer();
 
   const [isPreview, setIsPreview] = useState(false);
   const [isSubmittingIssue, setIsSubmittingIssue] = useState(false);
@@ -60,19 +61,11 @@ const Form: React.FC<{
   const toggleOpenIssue = () => setIsOpenIssue(!isOpenIssue);
   const togglePreview = () => setIsPreview(!isPreview);
 
-  const [apiKeys, setApiKeys] = useState({});
-  useEffect(() => {
-    const apiKeys = JSON.parse(localStorage.getItem("apiKeys") || "{}");
-    setApiKeys(apiKeys);
-  }, []);
   useEffect(() => {
     const getRepos = async () => {
-      // debugger;
-      const key = apiKeys["Lancer Github"];
-      console.log(key);
-      if (key) {
+      if (currentAPIKey) {
         const octokit = new Octokit({
-          auth: key,
+          auth: currentAPIKey.token,
         });
         const octokitResponse = await octokit.request("GET /user/repos", {
           type: "all",
@@ -83,12 +76,11 @@ const Form: React.FC<{
       }
     };
     getRepos();
-  }, [apiKeys]);
+  }, [currentAPIKey]);
 
   const createBounty = async (e) => {
     e.preventDefault();
     setIsSubmittingIssue(true);
-    debugger;
     const { timestamp, signature, escrowKey } = await createFFA(
       currentWallet,
       program,
@@ -148,8 +140,8 @@ const Form: React.FC<{
     const octokitResponse = await octokit.request(
       "GET /repos/{owner}/{repo}/issues",
       {
-        owner: repo.owner.login,
-        repo: repo.name,
+        owner: _repo.owner.login,
+        repo: _repo.name,
       }
     );
 

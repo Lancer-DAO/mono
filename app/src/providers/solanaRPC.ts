@@ -1,6 +1,11 @@
-import {Connection, PublicKey, Transaction, VersionedTransaction} from '@solana/web3.js';
-import {CustomChainConfig, SafeEventEmitterProvider} from '@web3auth/base';
-import {SolanaWallet} from '@web3auth/solana-provider';
+import {
+  Connection,
+  PublicKey,
+  Transaction,
+  VersionedTransaction,
+} from "@solana/web3.js";
+import { CustomChainConfig, SafeEventEmitterProvider } from "@web3auth/base";
+import { SolanaWallet } from "@web3auth/solana-provider";
 
 // This Code came from the wonderful team at Coinflow!
 // Check them out at https://coinflow.cash/
@@ -27,7 +32,7 @@ export default class SolanaRpc {
     try {
       const solanaWallet = new SolanaWallet(this.provider);
       const connectionConfig = await solanaWallet.request<CustomChainConfig>({
-        method: 'solana_provider_config',
+        method: "solana_provider_config",
         params: [],
       });
       const conn = new Connection(connectionConfig.rpcTarget);
@@ -43,31 +48,33 @@ export default class SolanaRpc {
 
   signMessage = async (message: string | Uint8Array): Promise<Uint8Array> => {
     const solanaWallet = new SolanaWallet(this.provider);
-    if (typeof message === 'string') {
-       const msg = Buffer.from(message, 'utf8');
-    return await solanaWallet.signMessage(msg);
-
+    if (typeof message === "string") {
+      const msg = Buffer.from(message, "utf8");
+      return await solanaWallet.signMessage(msg);
     }
     return await solanaWallet.signMessage(message);
   };
 
   sendTransaction = async (transaction: Transaction): Promise<string> => {
     const solanaWallet = new SolanaWallet(this.provider);
-    const {signature} = await solanaWallet.signAndSendTransaction(transaction);
+    const { signature } = await solanaWallet.signAndSendTransaction(
+      transaction
+    );
 
     return signature;
   };
 
-  signTransaction = async <T extends Transaction | VersionedTransaction>(transaction: T): Promise<T> =>  {
+  signTransaction = async <T extends Transaction | VersionedTransaction>(
+    transaction: T
+  ): Promise<T> => {
     const solanaWallet = new SolanaWallet(this.provider);
-    // debugger;
 
     return await solanaWallet.signTransaction(transaction);
   };
 
   getPrivateKey = async (): Promise<string> => {
     const privateKey = await this.provider.request({
-      method: 'solanaPrivateKey',
+      method: "solanaPrivateKey",
     });
 
     return privateKey as string;

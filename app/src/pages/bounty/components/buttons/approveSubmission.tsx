@@ -24,11 +24,7 @@ export const ApproveSubmission = () => {
   } = useLancer();
   const { mutateAsync } = api.bounties.updateBountyUser.useMutation();
 
-  const [apiKeys, setApiKeys] = useState({});
-  useEffect(() => {
-    const apiKeys = JSON.parse(localStorage.getItem("apiKeys") || "{}");
-    setApiKeys(apiKeys);
-  }, []);
+  const { currentAPIKey } = useLancer();
   const onClick = async () => {
     // If we are the creator, then skip requesting and add self as approved
     const signature = await approveRequestFFA(
@@ -55,10 +51,9 @@ export const ApproveSubmission = () => {
     });
 
     setCurrentBounty(updatedBounty);
-    const key = apiKeys["Lancer Github"];
 
     const octokit = new Octokit({
-      auth: key,
+      auth: currentAPIKey.token,
     });
 
     const octokitResponse = await octokit.request(

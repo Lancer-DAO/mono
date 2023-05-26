@@ -24,6 +24,7 @@ import { useUser } from "@auth0/nextjs-auth0/client";
 import { MONO_DEVNET } from "@/escrow/sdk/constants";
 export * from "./types";
 import MonoProgramJSON from "@/escrow/sdk/idl/mono_program.json";
+import { APIKeyInfo } from "@/src/components/ApiKeyModal";
 
 export const LancerContext = createContext<ILancerContext>({
   currentUser: null,
@@ -36,6 +37,8 @@ export const LancerContext = createContext<ILancerContext>({
   wallets: null,
   provider: null,
   currentBounty: null,
+  currentAPIKey: null,
+  setCurrentAPIKey: () => null,
   setIssue: () => null,
   setIssues: () => null,
   setWallets: () => null,
@@ -57,7 +60,7 @@ interface ILancerProps {
   children?: ReactNode;
 }
 
-export const LancerProvider: FunctionComponent<ILancerState> = ({
+const LancerProvider: FunctionComponent<ILancerState> = ({
   children,
 }: ILancerProps) => {
   const { mutateAsync: getCurrUser } = api.users.login.useMutation();
@@ -84,6 +87,13 @@ export const LancerProvider: FunctionComponent<ILancerState> = ({
   const [wallets, setWallets] = useState<LancerWallet[]>();
   const [provider, setProvider] = useState<AnchorProvider>();
   const [program, setProgram] = useState<Program<MonoProgram>>();
+  const [currentAPIKey, setCurrentAPIKey] = useState<APIKeyInfo>();
+
+  useEffect(() => {
+    const apiKeys = JSON.parse(localStorage.getItem("apiKeys") || "[]");
+    const defaultKey = apiKeys.find((key: APIKeyInfo) => key.isDefault);
+    setCurrentAPIKey(defaultKey);
+  }, []);
 
   useEffect(() => {
     if (connected) {
@@ -145,6 +155,8 @@ export const LancerProvider: FunctionComponent<ILancerState> = ({
     setCurrentBounty,
     currentWallet,
     setCurrentWallet,
+    currentAPIKey,
+    setCurrentAPIKey,
   };
   return (
     <LancerContext.Provider value={contextProvider}>
@@ -152,3 +164,4 @@ export const LancerProvider: FunctionComponent<ILancerState> = ({
     </LancerContext.Provider>
   );
 };
+export default LancerProvider;
