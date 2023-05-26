@@ -62,7 +62,7 @@ export const LancerProvider: FunctionComponent<ILancerState> = ({
 }: ILancerProps) => {
   const { mutateAsync: getCurrUser } = api.users.login.useMutation();
   const { user } = useUser();
-
+  const router = useRouter();
   const {
     wallet,
     publicKey,
@@ -116,8 +116,12 @@ export const LancerProvider: FunctionComponent<ILancerState> = ({
   useEffect(() => {
     if (user) {
       const getUser = async () => {
-        const userInfo = await getCurrUser();
-        setCurrentUser(userInfo);
+        try {
+          const userInfo = await getCurrUser();
+          setCurrentUser(userInfo);
+        } catch (e) {
+          router.push("/api/auth/login");
+        }
       };
       getUser();
     }
