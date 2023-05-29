@@ -116,7 +116,7 @@ export const ApproveSubmission = () => {
           tags: currentBounty.tags.map((tag) => tag.name).join(","),
           role: "completer",
         },
-        upsert: true,
+        upsert: false,
         receiverAddress: submitterKey,
       },
     });
@@ -156,7 +156,7 @@ export const ApproveSubmission = () => {
           tags: currentBounty.tags.map((tag) => tag.name).join(","),
           role: "creator",
         },
-        upsert: true,
+        upsert: false,
         receiverAddress: creatorKey,
       },
     });
