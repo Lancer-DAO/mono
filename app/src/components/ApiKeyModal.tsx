@@ -96,7 +96,7 @@ const ApiKeyModal: FC<Props> = ({ showModal, setShowModal }) => {
                         });
                         localStorage.setItem(
                           "apiKeys",
-                          JSON.stringify(apiKeys)
+                          JSON.stringify(newApiKeys)
                         );
                       }}
                     >
