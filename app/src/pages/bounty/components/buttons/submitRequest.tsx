@@ -61,7 +61,7 @@ export const SubmitRequest = ({ disabled }: { disabled?: boolean }) => {
 
   return (
     <button
-      className={classNames("button-primary", disabled)}
+      className={classNames("button-primary", { disabled })}
       onClick={onClick}
     >
       Submit
