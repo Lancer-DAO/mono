@@ -126,7 +126,7 @@ export const ApproveSubmission = () => {
       query: {
         page: 1,
         limit: 1,
-        ownerAddress: submitterKey,
+        ownerAddress: creatorKey,
       },
     });
 
