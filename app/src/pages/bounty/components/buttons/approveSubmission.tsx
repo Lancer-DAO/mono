@@ -65,6 +65,7 @@ export const ApproveSubmission = () => {
       label: "complete-bounty",
     });
     const submitterKey = currentBounty.currentSubmitter.publicKey;
+    const creatorKey = currentBounty.creator.publicKey;
     const nfts = await underdogClient.getNfts({
       params,
       query: {
@@ -112,9 +113,27 @@ export const ApproveSubmission = () => {
           reputation: reputationIncrease,
           completed: dayjs().toISOString(),
           tags: updatedBounty.tags.map((tag) => tag.name).join(","),
+          role: "completer",
         },
         upsert: true,
         receiverAddress: submitterKey,
+      },
+    });
+
+    await underdogClient.createNft({
+      params: DEVNET_BOUNTY_PROJECT_PARAMS,
+      body: {
+        name: `${updatedBounty.title} - ${updatedBounty.repository.name}`,
+        image: "https://i.imgur.com/3uQq5Zo.png",
+        description: updatedBounty.description,
+        attributes: {
+          reputation: reputationIncrease,
+          completed: dayjs().toISOString(),
+          tags: updatedBounty.tags.map((tag) => tag.name).join(","),
+          role: "creator",
+        },
+        upsert: true,
+        receiverAddress: creatorKey,
       },
     });
 
