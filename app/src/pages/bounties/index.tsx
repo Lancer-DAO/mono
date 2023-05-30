@@ -1,11 +1,11 @@
 import { BountyList } from "./bountyTable";
-import { PageLayout } from "@/src/layouts";
+import { DefaultLayout } from "@/src/components/templates/DefaultLayout";
 
 const App: React.FC<{ isMyBounties?: boolean }> = ({ isMyBounties }) => {
   return (
-    <PageLayout>
+    <DefaultLayout>
       <BountyList isMyBounties={isMyBounties} />
-    </PageLayout>
+    </DefaultLayout>
   );
 };
 

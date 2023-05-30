@@ -8,7 +8,7 @@ import { Clock } from "react-feather";
 import USDC from "@/src/assets/USDC";
 import dayjs from "dayjs";
 import localizedFormat from "dayjs/plugin/localizedFormat";
-import { ContributorInfo } from "@/src/components/ContributorInfo";
+import { ContributorInfo } from "@/src/components/atoms/ContributorInfo";
 import { BountyActions } from "@/src/pages/bounty/components/bountyActions";
 import Logo from "@/src/assets/Logo";
 import { PublicKey } from "@solana/web3.js";

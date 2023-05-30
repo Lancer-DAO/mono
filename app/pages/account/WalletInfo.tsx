@@ -9,7 +9,7 @@ import {
 } from "@solana/spl-token";
 import { PublicKey } from "@solana/web3.js";
 import { PubKey } from "@/src/components";
-import { PageLayout } from "@/src/layouts";
+import { DefaultLayout } from "@/src/components/templates/DefaultLayout";
 import { LancerWallet } from "@/src/types";
 
 export const WalletInfo: React.FC<{ wallet: LancerWallet }> = ({ wallet }) => {

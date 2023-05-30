@@ -1,6 +1,6 @@
 import { Contributor } from "@/src/types";
 
-export const ContributorInfo: React.FC<{ user: Contributor }> = ({ user }) => {
+const ContributorInfo: React.FC<{ user: Contributor }> = ({ user }) => {
   return (
     user && (
       <div className="flex items-center">
@@ -15,3 +15,5 @@ export const ContributorInfo: React.FC<{ user: Contributor }> = ({ user }) => {
     )
   );
 };
+
+export default ContributorInfo;

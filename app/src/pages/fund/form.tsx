@@ -4,7 +4,7 @@ import { BountyState, LancerWallet } from "@/src/types";
 import { useLancer } from "@/src/providers/lancerProvider";
 import classnames from "classnames";
 import FundBounty from "./fundBounty";
-import { LoadingBar } from "@/src/components/LoadingBar";
+import { LoadingBar } from "@/src/components/atoms/LoadingBar";
 import { PublicKey, Transaction } from "@solana/web3.js";
 import { useRouter } from "next/router";
 import { api } from "@/src/utils/api";

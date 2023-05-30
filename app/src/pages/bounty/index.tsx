@@ -1,13 +1,13 @@
 import { useRouter } from "next/router";
 import Bounty from "@/src/pages/bounty/bounty";
 import { AllProviders } from "@/src/providers";
-import { PageLayout } from "@/src/layouts";
+import { DefaultLayout } from "@/src/components/templates/DefaultLayout";
 
 function App() {
   return (
-    <PageLayout>
+    <DefaultLayout>
       <Bounty />
-    </PageLayout>
+    </DefaultLayout>
   );
 }
 

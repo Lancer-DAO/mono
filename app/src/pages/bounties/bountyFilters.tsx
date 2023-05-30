@@ -1,5 +1,5 @@
-import MultiSelectDropdown from "@/src/components/MultiSelectDropdown";
-import RangeSlider from "@/src/components/RangeSlider";
+import MultiSelectDropdown from "@/src/components/molecules/MultiSelectDropdown";
+import RangeSlider from "@/src/components/molecules/RangeSlider";
 import { BOUNTY_STATES } from "@/src/constants";
 import { capitalize } from "lodash";
 import { Filters } from "./bountyTable";

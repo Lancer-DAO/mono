@@ -4,7 +4,7 @@ import { BrowserRouter as Router } from "react-router-dom";
 import Form from "./form";
 import { AllProviders, useLancer } from "@/src/providers";
 import FundForm from "../fund/form";
-import { PageLayout } from "@/src/layouts";
+import { DefaultLayout } from "@/src/components/templates/DefaultLayout";
 import { PublicKey } from "@solana/web3.js";
 
 export type FORM_SECTION = "CREATE" | "FUND";
@@ -20,7 +20,7 @@ function App() {
   };
   return (
     <div>
-      <PageLayout>
+      <DefaultLayout>
         <div className="create-issue-wrapper">
           <div
             id="w-node-_8ffcb42d-e16e-0c3e-7b25-93b4dbf873ae-0ae9cdc2"
@@ -57,7 +57,7 @@ function App() {
             <FundForm isAccountCreated={isAccountCreated} />
           )}
         </div>
-      </PageLayout>
+      </DefaultLayout>
     </div>
   );
 }

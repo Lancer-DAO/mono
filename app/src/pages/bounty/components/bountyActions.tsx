@@ -3,7 +3,7 @@ import {
   UPDATE_ISSUE_ROUTE,
   USER_ISSUE_RELATION_ROUTE,
 } from "@/constants";
-import { LoadingBar } from "@/src/components/LoadingBar";
+import { LoadingBar } from "@/src/components/atoms/LoadingBar";
 import {
   addSubmitterFFA,
   approveRequestFFA,

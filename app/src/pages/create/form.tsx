@@ -14,7 +14,7 @@ import { createFFA } from "@/escrow/adapters";
 import { useLancer } from "@/src/providers/lancerProvider";
 import classnames from "classnames";
 import { useLocation } from "react-router-dom";
-import { LoadingBar } from "@/src/components/LoadingBar";
+import { LoadingBar } from "@/src/components/atoms/LoadingBar";
 import { AnchorProvider, Program } from "@project-serum/anchor";
 import { MonoProgram } from "@/escrow/sdk/types/mono_program";
 import { api } from "@/src/utils/api";
