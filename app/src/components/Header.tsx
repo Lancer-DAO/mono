@@ -7,11 +7,26 @@ import { useState } from "react";
 import dynamic from "next/dynamic";
 
 import styles from "@/styles/Home.module.css";
+
+const HEADER_LINKS:HeaderButtonProps[] = [{href:"/create", text: "New Bounty"}, {href: "/my_bounties", text:"My Bounties"}, {href: "/bounties", text:"All Bounties"}, {href: "/account", text:"Bounty"}]
+
 const WalletMultiButtonDynamic = dynamic(
   async () =>
     (await import("@solana/wallet-adapter-react-ui")).WalletMultiButton,
   { ssr: false }
 );
+
+interface HeaderButtonProps {
+  href: string;
+  text: string;
+}
+
+const HeaderButton = ({href, text}: HeaderButtonProps) => {
+return <Link href={href} className="py-4 px-6 rounded-md bg-turquoise-500 shadow-md transition duration-300 ease-in-out hover:bg-turquoise-600 hover:text-white-100 transform hover:-translate-y-1 text-white-100 text-base font-bold text-center uppercase">
+
+{text}
+</Link>
+}
 export const Header = () => {
   const { currentWallet, wallets, setCurrentWallet } = useLancer();
   const [isWalletSelectOpen, setIsWalletSelectOpen] = useState(false);
@@ -34,19 +49,9 @@ export const Header = () => {
           <Logo width="auto" height="90px" />
         </Link>
         <div className="header-right">
-          <Link href={`/create`} className="button-primary">
-            New Bounty
-          </Link>
-          <Link href={`/my_bounties`} className="button-primary">
-            My bounties
-          </Link>
-          <Link href={`/bounties`} className="button-primary">
-            All bounties
-          </Link>
-
-          <Link href={`/account`} className="button-primary">
-            Account
-          </Link>
+          {HEADER_LINKS.map(({href, text}) => {
+            return <HeaderButton href={href} text={text} />
+          })}
 
           <div className={styles.walletButtons}>
             <WalletMultiButtonDynamic />
