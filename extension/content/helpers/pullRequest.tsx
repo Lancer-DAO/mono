@@ -6,7 +6,7 @@ import {
   NEW_PULL_REQUEST_API_ROUTE,
   FULL_PULL_REQUEST_API_ROUTE,
 } from "@/constants";
-import { APP_ENDPOINT, getApiEndpointExtension } from "../utils";
+import { getApiEndpointExtension } from "../utils";
 import { Issue } from "../types";
 const AUTHOR_SELECTOR = ".author.text-bold.Link--secondary";
 const TITLE_SELECTOR = ".js-issue-title.markdown-title";
@@ -40,17 +40,20 @@ const insertPR = (response) => {
 };
 
 const maybeGetPR = (splitURL, issueNumber, author) =>
-  axios.post(`${APP_ENDPOINT}api/trpc/pullRequests.createPullRequest?batch=1`, {
-    0: {
-      json: {
-        organizationName: splitURL[3],
-        repositoryName: splitURL[4],
-        pullNumber: parseInt(splitURL[6]),
-        issueNumber: parseInt(issueNumber),
-        githubLogin: author,
+  axios.post(
+    `${getApiEndpointExtension()}/api/trpc/pullRequests.createPullRequest?batch=1`,
+    {
+      0: {
+        json: {
+          organizationName: splitURL[3],
+          repositoryName: splitURL[4],
+          pullNumber: parseInt(splitURL[6]),
+          issueNumber: parseInt(issueNumber),
+          githubLogin: author,
+        },
       },
-    },
-  });
+    }
+  );
 
 // Check if this PR is closing an Issue linked to lancer. If so, either
 // - get a link to that lancer issue and provide it

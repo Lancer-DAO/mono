@@ -1,8 +1,4 @@
-import {
-  DEVNET_PROFILE_PROJECT_PARAMS,
-  IS_MAINNET,
-  USDC_MINT,
-} from "@/src/constants";
+import { IS_MAINNET, PROFILE_PROJECT_PARAMS, USDC_MINT } from "@/src/constants";
 import { getSolscanTX } from "@/src/utils";
 import { useEffect, useState } from "react";
 import { useLancer } from "@/src/providers/lancerProvider";
@@ -19,7 +15,12 @@ import { WalletInfo } from "@/src/pages/account/components/WalletInfo";
 import styles from "@/styles/Home.module.css";
 import dynamic from "next/dynamic";
 import classnames from "classnames";
-import { createUnderdogClient, useProject, Nft } from "@underdog-protocol/js";
+import {
+  createUnderdogClient,
+  useProject,
+  Nft,
+  NetworkEnum,
+} from "@underdog-protocol/js";
 import dayjs from "dayjs";
 import { api } from "@/src/utils/api";
 const underdogClient = createUnderdogClient({});
@@ -45,7 +46,7 @@ const FundBounty: React.FC = () => {
       (wallet) => wallet.id === currentUser.profileWalletId
     );
     const nfts = await underdogClient.getNfts({
-      params: DEVNET_PROFILE_PROJECT_PARAMS,
+      params: PROFILE_PROJECT_PARAMS,
       query: {
         page: 1,
         limit: 1,
@@ -74,12 +75,12 @@ const FundBounty: React.FC = () => {
     }
   };
   useEffect(() => {
-    if (currentUser && currentUser.hasProfileNFT) fetchNFT();
+    if (currentUser && currentUser.profileWalletId) fetchNFT();
   }, [currentUser]);
 
   const mintProfileNFT = async () => {
     const result = await underdogClient.createNft({
-      params: DEVNET_PROFILE_PROJECT_PARAMS,
+      params: PROFILE_PROJECT_PARAMS,
       body: {
         name: `Profile NFT for ${currentUser.githubLogin}`,
         image: "https://i.imgur.com/3uQq5Zo.png",
@@ -93,8 +94,9 @@ const FundBounty: React.FC = () => {
         receiverAddress: currentWallet.publicKey.toString(),
       },
     });
-    fetchNFT();
-    registerProfileNFT({ walletPublicKey: currentWallet.publicKey.toString() });
+    await registerProfileNFT({
+      walletPublicKey: currentWallet.publicKey.toString(),
+    });
   };
 
   return (

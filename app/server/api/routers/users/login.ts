@@ -6,6 +6,7 @@ export const login = publicProcedure.mutation(async ({ ctx }) => {
 
   if (!id) {
     try {
+      console.log(email, id, sub, nickname);
       await prisma.user.create({
         data: {
           email,
