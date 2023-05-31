@@ -1,6 +1,7 @@
 import { prisma } from "@/server/db";
 import { protectedProcedure } from "../../trpc";
 import { z } from "zod";
+import * as helpers from "@/prisma/helpers";
 
 export const registerProfileNFT = protectedProcedure
   .input(
@@ -9,10 +10,12 @@ export const registerProfileNFT = protectedProcedure
     })
   )
   .mutation(async ({ ctx, input: { walletPublicKey } }) => {
-    const wallet = await prisma.wallet.findUnique({
-      where: { publicKey: walletPublicKey },
-    });
-    const user = await prisma.user.update({
+    const { email } = ctx.user;
+    const user = await helpers.getUser(email);
+
+    const wallet = await helpers.getOrCreateWallet(user, walletPublicKey);
+
+    const updatedUser = await prisma.user.update({
       where: {
         id: ctx.user.id,
       },
@@ -22,5 +25,5 @@ export const registerProfileNFT = protectedProcedure
       },
     });
 
-    return user;
+    return updatedUser;
   });
