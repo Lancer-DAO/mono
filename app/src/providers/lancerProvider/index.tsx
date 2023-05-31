@@ -21,10 +21,10 @@ import { useConnection, useWallet } from "@solana/wallet-adapter-react";
 import { PublicKey, Transaction } from "@solana/web3.js";
 import { useRouter } from "next/router";
 import { useUser } from "@auth0/nextjs-auth0/client";
-import { MONO_DEVNET } from "@/escrow/sdk/constants";
 export * from "./types";
 import MonoProgramJSON from "@/escrow/sdk/idl/mono_program.json";
 import { APIKeyInfo } from "@/src/components/ApiKeyModal";
+import { MONO_ADDRESS } from "@/src/constants";
 
 export const LancerContext = createContext<ILancerContext>({
   currentUser: null,
@@ -114,7 +114,7 @@ const LancerProvider: FunctionComponent<ILancerState> = ({
       const provider = new AnchorProvider(connection, lancerWallet, {});
       const program = new Program<MonoProgram>(
         MonoProgramJSON as unknown as MonoProgram,
-        new PublicKey(MONO_DEVNET),
+        new PublicKey(MONO_ADDRESS),
         provider
       );
       setProvider(provider);
