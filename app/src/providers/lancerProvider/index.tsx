@@ -24,7 +24,7 @@ import { useUser } from "@auth0/nextjs-auth0/client";
 export * from "./types";
 import MonoProgramJSON from "@/escrow/sdk/idl/mono_program.json";
 import { APIKeyInfo } from "@/src/components/ApiKeyModal";
-import { MONO_ADDRESS } from "@/src/constants";
+import { IS_MAINNET, MONO_ADDRESS } from "@/src/constants";
 
 export const LancerContext = createContext<ILancerContext>({
   currentUser: null,
@@ -126,6 +126,8 @@ const LancerProvider: FunctionComponent<ILancerState> = ({
 
   useEffect(() => {
     if (user) {
+      console.log("testing process");
+      console.log(process.env.NEXT_PUBLIC_IS_MAINNET, IS_MAINNET);
       const getUser = async () => {
         try {
           const userInfo = await getCurrUser();
