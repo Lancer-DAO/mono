@@ -46,7 +46,7 @@ export const updateBountyUser = protectedProcedure
     }) => {
       const user = await getUserById(userId);
 
-      const wallet = await getOrCreateWallet(user, publicKey, provider);
+      const wallet = await getOrCreateWallet(user, publicKey);
       console.error("test");
       let bounty;
       let transaction;
