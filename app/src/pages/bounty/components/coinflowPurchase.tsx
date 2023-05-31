@@ -24,7 +24,7 @@ const Coinflow: React.FC<{
         onSuccess={onSuccess}
         debugTx={true}
         env="prod"
-        amount={amount}
+        amount={amount * 1.05}
       />
     </div>
   );

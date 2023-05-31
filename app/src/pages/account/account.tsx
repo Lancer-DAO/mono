@@ -127,22 +127,26 @@ const FundBounty: React.FC = () => {
               <img src={profileNFT.image} className="contributor-picture" />
               <div>Name: {profileNFT.name}</div>
               <div>Reputation: {profileNFT.reputation}</div>
-              <div>
-                Badges:{" "}
-                {profileNFT.badges.map((badge) => (
-                  <div className="tag-item" key={badge}>
-                    {badge}
-                  </div>
-                ))}
-              </div>
-              <div>
-                Certifications:{" "}
-                {profileNFT.certifications.map((certification) => (
-                  <div className="tag-item" key={certification}>
-                    {certification}
-                  </div>
-                ))}
-              </div>
+              {profileNFT.badges?.length > 0 && (
+                <div>
+                  Badges:{" "}
+                  {profileNFT.badges.map((badge) => (
+                    <div className="tag-item" key={badge}>
+                      {badge}
+                    </div>
+                  ))}
+                </div>
+              )}
+              {profileNFT.certifications?.length > 0 && (
+                <div>
+                  Certifications:{" "}
+                  {profileNFT.certifications.map((certification) => (
+                    <div className="tag-item" key={certification}>
+                      {certification}
+                    </div>
+                  ))}
+                </div>
+              )}
               <div>Last Updated: {profileNFT.lastUpdated?.toString()}</div>
             </div>
           )}
