@@ -76,6 +76,7 @@ const LancerProvider: FunctionComponent<ILancerState> = ({
     connected,
   } = useWallet();
   const { connection } = useConnection();
+  const router = useRouter();
   const [currentUser, setCurrentUser] = useState<CurrentUser | null>(null);
   const [currentBounty, setCurrentBounty] = useState<Bounty | null>(null);
   const [issue, setIssue] = useState<Issue | null>(null);
@@ -126,8 +127,14 @@ const LancerProvider: FunctionComponent<ILancerState> = ({
   useEffect(() => {
     if (user) {
       const getUser = async () => {
-        const userInfo = await getCurrUser();
-        setCurrentUser(userInfo);
+        try {
+          const userInfo = await getCurrUser();
+          setCurrentUser(userInfo);
+        } catch (e) {
+          if (e.data.httpStatus === 401) {
+            router.push("/api/auth/login");
+          }
+        }
       };
       getUser();
     }
