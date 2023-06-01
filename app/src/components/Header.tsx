@@ -6,9 +6,12 @@ import { getWalletProviderImage } from "@/src/utils";
 import { useState } from "react";
 import dynamic from "next/dynamic";
 
-import styles from "@/styles/Home.module.css";
-
-const HEADER_LINKS:HeaderButtonProps[] = [{href:"/create", text: "New Bounty"}, {href: "/my_bounties", text:"My Bounties"}, {href: "/bounties", text:"All Bounties"}, {href: "/account", text:"Bounty"}]
+const HEADER_LINKS: HeaderButtonProps[] = [
+  { href: "/create", text: "New Bounty" },
+  { href: "/my_bounties", text: "My Bounties" },
+  { href: "/bounties", text: "All Bounties" },
+  { href: "/account", text: "Bounty" },
+];
 
 const WalletMultiButtonDynamic = dynamic(
   async () =>
@@ -21,12 +24,16 @@ interface HeaderButtonProps {
   text: string;
 }
 
-const HeaderButton = ({href, text}: HeaderButtonProps) => {
-return <Link href={href} className="button-primary p-[18px 24px] rounded-[4px] bg-turquoise-500 shadow-[0 2px 6px 0 rgba(5, 21, 46, 0.12), 0 14px 14px 0 rgba(21, 60, 245, 0.2)] transition-shadow transition-bg-color transition-transform duration-[300ms] ease-in-out text-white text-[16px] font-bold text-center tracking-wider uppercase hover:bg-aqua-500 hover:shadow-[0 3px 9px 0 rgba(5, 21, 46, 0.16), 0 14px 19px 0 rgba(21, 60, 245, 0.23)] hover:-webkit-transform translate-[0px -2px] hover:-ms-transform translate-[0px -2px] hover:transform translate-[0px -2px] hover:text-white disabled:bg-gray-500 disabled:pointer-events-none">
-
-{text}
-</Link>
-}
+const HeaderButton = ({ href, text }: HeaderButtonProps) => {
+  return (
+    <Link
+      href={href}
+      className="button-primary p-[18px 24px] rounded-[4px] bg-turquoise-500 shadow-[0 2px 6px 0 rgba(5, 21, 46, 0.12), 0 14px 14px 0 rgba(21, 60, 245, 0.2)] transition-shadow transition-bg-color transition-transform duration-[300ms] ease-in-out text-white text-[16px] font-bold text-center tracking-wider uppercase hover:bg-aqua-500 hover:shadow-[0 3px 9px 0 rgba(5, 21, 46, 0.16), 0 14px 19px 0 rgba(21, 60, 245, 0.23)] hover:-webkit-transform translate-[0px -2px] hover:-ms-transform translate-[0px -2px] hover:transform translate-[0px -2px] hover:text-white disabled:bg-gray-500 disabled:pointer-events-none"
+    >
+      {text}
+    </Link>
+  );
+};
 export const Header = () => {
   const { currentWallet, wallets, setCurrentWallet } = useLancer();
   const [isWalletSelectOpen, setIsWalletSelectOpen] = useState(false);
@@ -45,17 +52,18 @@ export const Header = () => {
       className="header w-nav"
     >
       <div className="flex items-center mx-auto w-[70%]">
-        <Link href="/" className="relative float-left text-blue-500 transition-colors duration-400 ease-in-out hover:text-blue-600 no-underline">
+        <Link
+          href="/"
+          className="relative float-left text-blue-500 transition-colors duration-400 ease-in-out hover:text-blue-600 no-underline"
+        >
           <Logo width="auto" height="90px" />
         </Link>
         <div className="ml-auto flex gap-[10px]">
-          {HEADER_LINKS.map(({href, text}) => {
-            return <HeaderButton href={href} text={text} />
+          {HEADER_LINKS.map(({ href, text }) => {
+            return <HeaderButton href={href} text={text} />;
           })}
 
-          <div className={styles.walletButtons}>
-            <WalletMultiButtonDynamic />
-          </div>
+          <WalletMultiButtonDynamic />
         </div>
       </div>
     </div>

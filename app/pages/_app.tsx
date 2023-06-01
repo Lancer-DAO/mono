@@ -4,7 +4,6 @@ import "@/src/styles/Form.scss";
 import "@/src/styles/Bounty.scss";
 import "@/src/styles/webflow.scss";
 
-require("@solana/wallet-adapter-react-ui/styles.css");
 import { api } from "@/src/utils/api";
 import { AllProviders } from "@/src/providers";
 
