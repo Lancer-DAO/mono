@@ -6,6 +6,7 @@ import { useLocation } from "react-router-dom";
 import Logo from "@/src/assets/Logo";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
+import { decimalToNumber } from "@/src/utils";
 dayjs.extend(relativeTime);
 
 export const LancerBounty = ({ bounty }: { bounty: Bounty }) => {
@@ -19,6 +20,7 @@ export const LancerBounty = ({ bounty }: { bounty: Bounty }) => {
     const markdown = marked.parse(bounty.description, { breaks: true });
     return { __html: markdown };
   };
+  const bountyAmount = decimalToNumber(bounty.escrow.amount).toFixed(2);
   return (
     <div
       id="w-node-cff91d78-63a9-e923-e5c8-4e09d47abde6-06e9cdab"
@@ -81,7 +83,7 @@ export const LancerBounty = ({ bounty }: { bounty: Bounty }) => {
               </div>
             </div>
             <div className="bounty-funding">
-              {/* <h3 className="no-padding-margin">{bounty.amount.toFixed(2)}</h3> */}
+              <h3 className="no-padding-margin">{bountyAmount}</h3>
               <USDC width="36px" height="36px" />
             </div>
           </div>

@@ -21,10 +21,10 @@ import { useConnection, useWallet } from "@solana/wallet-adapter-react";
 import { PublicKey, Transaction } from "@solana/web3.js";
 import { useRouter } from "next/router";
 import { useUser } from "@auth0/nextjs-auth0/client";
-import { MONO_DEVNET } from "@/escrow/sdk/constants";
 export * from "./types";
 import MonoProgramJSON from "@/escrow/sdk/idl/mono_program.json";
 import { APIKeyInfo } from "@/src/components/ApiKeyModal";
+import { IS_MAINNET, MONO_ADDRESS } from "@/src/constants";
 
 export const LancerContext = createContext<ILancerContext>({
   currentUser: null,
@@ -76,6 +76,7 @@ const LancerProvider: FunctionComponent<ILancerState> = ({
     connected,
   } = useWallet();
   const { connection } = useConnection();
+  const router = useRouter();
   const [currentUser, setCurrentUser] = useState<CurrentUser | null>(null);
   const [currentBounty, setCurrentBounty] = useState<Bounty | null>(null);
   const [issue, setIssue] = useState<Issue | null>(null);
@@ -114,7 +115,7 @@ const LancerProvider: FunctionComponent<ILancerState> = ({
       const provider = new AnchorProvider(connection, lancerWallet, {});
       const program = new Program<MonoProgram>(
         MonoProgramJSON as unknown as MonoProgram,
-        new PublicKey(MONO_DEVNET),
+        new PublicKey(MONO_ADDRESS),
         provider
       );
       setProvider(provider);
@@ -125,9 +126,17 @@ const LancerProvider: FunctionComponent<ILancerState> = ({
 
   useEffect(() => {
     if (user) {
+      console.log("testing process");
+      console.log(process.env.NEXT_PUBLIC_IS_MAINNET, IS_MAINNET);
       const getUser = async () => {
-        const userInfo = await getCurrUser();
-        setCurrentUser(userInfo);
+        try {
+          const userInfo = await getCurrUser();
+          setCurrentUser(userInfo);
+        } catch (e) {
+          if (e.data.httpStatus === 401) {
+            router.push("/api/auth/login");
+          }
+        }
       };
       getUser();
     }

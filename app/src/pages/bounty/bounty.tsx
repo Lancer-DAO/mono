@@ -1,4 +1,4 @@
-import { getSolscanAddress } from "@/src/utils";
+import { decimalToNumber, getSolscanAddress } from "@/src/utils";
 import { BountyState } from "@/types";
 import { marked } from "marked";
 import { ReactNode, useEffect, useState } from "react";
@@ -50,6 +50,7 @@ const Bounty: React.FC = () => {
     const markdown = marked.parse(currentBounty.description, { breaks: true });
     return { __html: markdown };
   };
+  const bountyAmount = decimalToNumber(currentBounty.escrow.amount).toFixed(2);
 
   return (
     <section className="section-job-post wf-section">
@@ -137,7 +138,7 @@ const Bounty: React.FC = () => {
               <div className="job-post-info-divider"></div>
               <div className="job-post-info-container">
                 <div className="job-post-info-text icon-right">
-                  {/* {currentBounty.escrow.amount.toFixed(2)} */}
+                  {bountyAmount}
                 </div>
                 <USDC height="24px" width="24px" />
               </div>
