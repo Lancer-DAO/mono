@@ -1,8 +1,3 @@
-import {
-  MERGE_PULL_REQUEST_API_ROUTE,
-  UPDATE_ISSUE_ROUTE,
-  USER_ISSUE_RELATION_ROUTE,
-} from "@/constants";
 import { LoadingBar } from "@/src/components/LoadingBar";
 import {
   addSubmitterFFA,
@@ -34,7 +29,6 @@ import {
 
 export const BountyActions = () => {
   const { currentUser, currentBounty } = useLancer();
-  return <ApproveSubmission />;
   const [hoveredButton, setHoveredButton] = useState("none");
   if (false) {
     return <LoadingBar title="Loading On Chain Details" />;
@@ -93,8 +87,7 @@ export const BountyActions = () => {
               {hoveredButton === "submit" &&
                 currentBounty.pullRequests.length === 0 && (
                   <div className="hover-tooltip">
-                    Please open a PR closing this currentBounty before
-                    submitting
+                    Please open a PR closing the GitHub Issue before submitting
                   </div>
                 )}
             </div>

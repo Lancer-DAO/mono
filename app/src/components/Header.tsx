@@ -10,7 +10,7 @@ const HEADER_LINKS: HeaderButtonProps[] = [
   { href: "/create", text: "New Bounty" },
   { href: "/my_bounties", text: "My Bounties" },
   { href: "/bounties", text: "All Bounties" },
-  { href: "/account", text: "Bounty" },
+  { href: "/account", text: "Account" },
 ];
 
 import ApiKeyModal from "./ApiKeyModal";

@@ -29,6 +29,8 @@ import {
 import dayjs from "dayjs";
 import { api } from "@/src/utils/api";
 import relativeTime from "dayjs/plugin/relativeTime";
+import { useRouter } from "next/router";
+import { CurrentUser } from "@/src/types";
 dayjs.extend(relativeTime);
 
 const underdogClient = createUnderdogClient({});
@@ -147,16 +149,20 @@ const BountyNFT = ({ bountyNFT }: { bountyNFT: BountyNFT }) => {
 };
 
 const FundBounty: React.FC = () => {
+  const router = useRouter();
+
   const { currentUser, wallets, currentWallet } = useLancer();
   const [showCoinflow, setShowCoinflow] = useState(false);
   const [profileNFT, setProfileNFT] = useState<ProfileNFT>();
   const [bountyNFTs, setBountyNFTs] = useState<BountyNFT[]>([]);
+  const { mutateAsync: getUser } = api.users.getUser.useMutation();
+  const [account, setAccount] = useState<CurrentUser>();
 
   const { mutateAsync: registerProfileNFT } =
     api.users.registerProfileNFT.useMutation();
   const fetchProfileNFT = async () => {
-    const profileNFTHolder = currentUser.wallets.find(
-      (wallet) => wallet.id === currentUser.profileWalletId
+    const profileNFTHolder = account.wallets.find(
+      (wallet) => wallet.id === account.profileWalletId
     );
     const nfts = await underdogClient.getNfts({
       params: PROFILE_PROJECT_PARAMS,
@@ -189,8 +195,8 @@ const FundBounty: React.FC = () => {
   };
 
   const fetchBountyNFTs = async () => {
-    const profileNFTHolder = currentUser.wallets.find(
-      (wallet) => wallet.id === currentUser.profileWalletId
+    const profileNFTHolder = account.wallets.find(
+      (wallet) => wallet.id === account.profileWalletId
     );
     const nfts = await underdogClient.getNfts({
       params: BOUNTY_PROJECT_PARAMS,
@@ -215,20 +221,36 @@ const FundBounty: React.FC = () => {
         role: attributes.role as string,
       };
     });
+    bountyNFTs.reverse();
     setBountyNFTs(bountyNFTs);
   };
+
   useEffect(() => {
-    if (currentUser && currentUser.profileWalletId) {
+    if (router.query.id !== undefined) {
+      const fetchAccount = async () => {
+        const account = await getUser({
+          id: parseInt(router.query.id as string),
+        });
+        setAccount(account);
+      };
+      fetchAccount();
+    } else {
+      setAccount(currentUser);
+    }
+  }, [currentUser, router.isReady]);
+
+  useEffect(() => {
+    if (account && account.profileWalletId) {
       fetchProfileNFT();
       fetchBountyNFTs();
     }
-  }, [currentUser]);
+  }, [account]);
 
   const mintProfileNFT = async () => {
     const result = await underdogClient.createNft({
       params: PROFILE_PROJECT_PARAMS,
       body: {
-        name: `Profile NFT for ${currentUser.githubLogin}`,
+        name: `Profile NFT for ${account.githubLogin}`,
         image: "https://i.imgur.com/3uQq5Zo.png",
         attributes: {
           reputation: 0,
@@ -246,8 +268,8 @@ const FundBounty: React.FC = () => {
   };
 
   return (
-    currentUser && (
-      <PageLayout>
+    <PageLayout>
+      {account && (
         <div className="account-page-wrapper">
           {/* {currentUser?.githubLogin && (
             <div>GitHub User: {currentUser.githubLogin}</div>
@@ -272,8 +294,8 @@ const FundBounty: React.FC = () => {
             {profileNFT && (
               <ProfileNFT
                 profileNFT={profileNFT}
-                githubLogin={currentUser.githubLogin}
-                githubId={currentUser.githubId}
+                githubLogin={account.githubLogin}
+                githubId={account.githubId}
               />
             )}
           </div>
@@ -285,7 +307,7 @@ const FundBounty: React.FC = () => {
               ))}
             </div>
           )}
-          {!currentUser?.hasProfileNFT && (
+          {!account?.hasProfileNFT && (
             <button onClick={mintProfileNFT}>Mint Profile NFT</button>
           )}
 
@@ -298,8 +320,8 @@ const FundBounty: React.FC = () => {
           </button> */}
           {showCoinflow && <Coinflow />}
         </div>
-      </PageLayout>
-    )
+      )}
+    </PageLayout>
   );
 };
 
