@@ -19,6 +19,7 @@ dayjs.extend(localizedFormat);
 const Bounty: React.FC = () => {
   const { currentUser, currentBounty, setCurrentBounty } = useLancer();
   const [pollId, setPollId] = useState(null);
+  const [bountyAmount, setBountyAmount] = useState("");
   const router = useRouter();
   const { mutateAsync: getBounty } = api.bounties.getBounty.useMutation();
 
@@ -30,6 +31,11 @@ const Bounty: React.FC = () => {
           currentUserId: currentUser.id,
         });
         setCurrentBounty(bounty);
+        if (bounty?.escrow?.amount !== null) {
+          const amount = decimalToNumber(bounty.escrow.amount).toFixed(2);
+
+          setBountyAmount(amount);
+        }
       };
       getB();
     }
@@ -50,7 +56,6 @@ const Bounty: React.FC = () => {
     const markdown = marked.parse(currentBounty.description, { breaks: true });
     return { __html: markdown };
   };
-  const bountyAmount = decimalToNumber(currentBounty.escrow.amount).toFixed(2);
 
   return (
     <section className="section-job-post wf-section">
