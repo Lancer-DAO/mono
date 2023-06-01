@@ -28,6 +28,9 @@ import {
 } from "@underdog-protocol/js";
 import dayjs from "dayjs";
 import { api } from "@/src/utils/api";
+import relativeTime from "dayjs/plugin/relativeTime";
+dayjs.extend(relativeTime);
+
 const underdogClient = createUnderdogClient({});
 
 export interface ProfileNFT {
@@ -49,19 +52,33 @@ export interface BountyNFT {
   role: string;
 }
 
-const ProfileNFT = ({ profileNFT }: { profileNFT: ProfileNFT }) => {
+const ProfileNFT = ({
+  profileNFT,
+  githubLogin,
+  githubId,
+}: {
+  profileNFT: ProfileNFT;
+  githubLogin: string;
+  githubId: string;
+}) => {
   return (
     <>
       <div className="profile-nft">
+        {/* <img src={profileNFT.image} className="profile-picture" /> */}
+        <img
+          src={`https://avatars.githubusercontent.com/u/${
+            githubId.split("|")[1]
+          }?s=60&v=4`}
+          className="profile-picture"
+        />
+
         <div className="profile-nft-header">
-          <img src={profileNFT.image} className="profile-picture" />
-          <div>
-            <h4>{profileNFT.name}</h4>
-            <div>{profileNFT.reputation} Reputation Points</div>
-          </div>
+          <h4>{githubLogin}</h4>
+          <div>{profileNFT.reputation} Pts</div>
         </div>
         {profileNFT.badges?.length > 0 && (
-          <>
+          <div className="profile-section">
+            <div className="divider"></div>
             <h4>Badges</h4>
             <div className="tag-list">
               {profileNFT.badges.map((badge) => (
@@ -70,10 +87,12 @@ const ProfileNFT = ({ profileNFT }: { profileNFT: ProfileNFT }) => {
                 </div>
               ))}
             </div>
-          </>
+          </div>
         )}
         {profileNFT.certifications?.length > 0 && (
-          <>
+          <div className="profile-section">
+            <div className="divider"></div>
+
             <h4>Certificates</h4>
             <div className="tag-list">
               {profileNFT.certifications.map((badge) => (
@@ -82,10 +101,12 @@ const ProfileNFT = ({ profileNFT }: { profileNFT: ProfileNFT }) => {
                 </div>
               ))}
             </div>
-          </>
+          </div>
         )}
+        <div className="divider"></div>
+
         <h4>Last Updated</h4>
-        <div>{profileNFT.lastUpdated?.toString()}</div>
+        <div>{profileNFT.lastUpdated?.fromNow()}</div>
       </div>
     </>
   );
@@ -95,29 +116,31 @@ const BountyNFT = ({ bountyNFT }: { bountyNFT: BountyNFT }) => {
   return (
     <>
       <div className="bounty-nft">
-        <div className="profile-nft-header">
-          <img src={bountyNFT.image} className="profile-picture" />
+        <img
+          src={"/assets/images/Lancer Gradient No Background 1.png"}
+          className="bounty-picture"
+        />
+        {/* <img src={bountyNFT.image} className="bounty-picture" /> */}
+
+        <div className="bounty-nft-header">
           <div>
-            <h4>
-              {bountyNFT.name} | {bountyNFT.role}
-            </h4>
-            <div>{bountyNFT.reputation} Reputation Points</div>
+            <h4>{bountyNFT.name}</h4>
+            <div className="bounty-nft-subheader">
+              {bountyNFT.reputation} Pts | {bountyNFT.completed?.fromNow()} |{" "}
+              {bountyNFT.role}
+            </div>
+
+            {bountyNFT.tags?.length > 0 && (
+              <div className="tag-list">
+                {bountyNFT.tags.map((badge) => (
+                  <div className="tag-item" key={badge}>
+                    {badge}
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         </div>
-        {bountyNFT.tags?.length > 0 && (
-          <>
-            <h4>Tags</h4>
-            <div className="tag-list">
-              {bountyNFT.tags.map((badge) => (
-                <div className="tag-item" key={badge}>
-                  {badge}
-                </div>
-              ))}
-            </div>
-          </>
-        )}
-        <h4>Completed</h4>
-        <div>{bountyNFT.completed?.toString()}</div>
       </div>
     </>
   );
@@ -245,26 +268,34 @@ const FundBounty: React.FC = () => {
               USDC Faucet
             </a>
           )} */}
-          {profileNFT && <ProfileNFT profileNFT={profileNFT} />}
+          <div>
+            {profileNFT && (
+              <ProfileNFT
+                profileNFT={profileNFT}
+                githubLogin={currentUser.githubLogin}
+                githubId={currentUser.githubId}
+              />
+            )}
+          </div>
           {bountyNFTs.length > 0 && (
-            <>
+            <div className="profile-bounty-list">
               <h2>Bounties</h2>
               {bountyNFTs.map((bountyNFT) => (
                 <BountyNFT bountyNFT={bountyNFT} />
               ))}
-            </>
+            </div>
           )}
           {!currentUser?.hasProfileNFT && (
             <button onClick={mintProfileNFT}>Mint Profile NFT</button>
           )}
 
-          <button
+          {/* <button
             onClick={() => {
               setShowCoinflow(!showCoinflow);
             }}
           >
             Cash Out
-          </button>
+          </button> */}
           {showCoinflow && <Coinflow />}
         </div>
       </PageLayout>
