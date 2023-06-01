@@ -33,42 +33,42 @@ export const ApproveSubmission = () => {
 
   const onClick = async () => {
     // If we are the creator, then skip requesting and add self as approved
-    const signature = await approveRequestFFA(
-      new PublicKey(currentBounty.currentSubmitter.publicKey),
-      currentBounty.escrow,
-      currentWallet,
-      program,
-      provider
-    );
-    currentBounty.currentUserRelationsList.push(
-      BOUNTY_USER_RELATIONSHIP.Completer
-    );
-    const { updatedBounty } = await mutateAsync({
-      bountyId: currentBounty.id,
-      currentUserId: currentUser.id,
-      userId: currentUser.id,
-      relations: currentBounty.currentUserRelationsList,
-      state: BountyState.COMPLETE,
-      publicKey: currentWallet.publicKey.toString(),
-      provider: currentWallet.providerName,
-      escrowId: currentBounty.escrowid,
-      signature,
-      label: "complete-bounty",
-    });
+    // const signature = await approveRequestFFA(
+    //   new PublicKey(currentBounty.currentSubmitter.publicKey),
+    //   currentBounty.escrow,
+    //   currentWallet,
+    //   program,
+    //   provider
+    // );
+    // currentBounty.currentUserRelationsList.push(
+    //   BOUNTY_USER_RELATIONSHIP.Completer
+    // );
+    // const { updatedBounty } = await mutateAsync({
+    //   bountyId: currentBounty.id,
+    //   currentUserId: currentUser.id,
+    //   userId: currentUser.id,
+    //   relations: currentBounty.currentUserRelationsList,
+    //   state: BountyState.COMPLETE,
+    //   publicKey: currentWallet.publicKey.toString(),
+    //   provider: currentWallet.providerName,
+    //   escrowId: currentBounty.escrowid,
+    //   signature,
+    //   label: "complete-bounty",
+    // });
 
-    setCurrentBounty(updatedBounty);
+    // setCurrentBounty(updatedBounty);
 
-    const octokit = new Octokit({
-      auth: currentAPIKey.token,
-    });
-    const octokitResponse = await octokit.request(
-      "PUT /repos/{owner}/{repo}/pulls/{pull_number}/merge",
-      {
-        owner: currentBounty.repository.organization,
-        repo: currentBounty.repository.name,
-        pull_number: decimalToNumber(currentBounty.pullRequests[0].number),
-      }
-    );
+    // const octokit = new Octokit({
+    //   auth: currentAPIKey.token,
+    // });
+    // const octokitResponse = await octokit.request(
+    //   "PUT /repos/{owner}/{repo}/pulls/{pull_number}/merge",
+    //   {
+    //     owner: currentBounty.repository.organization,
+    //     repo: currentBounty.repository.name,
+    //     pull_number: decimalToNumber(currentBounty.pullRequests[0].number),
+    //   }
+    // );
 
     const submitterKey = currentBounty.currentSubmitter.publicKey;
     const creatorKey = currentBounty.creator.publicKey;
@@ -80,7 +80,6 @@ export const ApproveSubmission = () => {
         ownerAddress: submitterKey,
       },
     });
-    debugger;
     const reputationIncrease =
       100 * decimalToNumber(currentBounty.estimatedTime);
     if (nfts.totalResults > 0) {
@@ -99,7 +98,7 @@ export const ApproveSubmission = () => {
     await underdogClient.createNft({
       params: BOUNTY_PROJECT_PARAMS,
       body: {
-        name: `${currentBounty.title} - ${currentBounty.repository.name}`,
+        name: `Bounty Completer: ${currentBounty.id}`,
         image: "https://i.imgur.com/3uQq5Zo.png",
         description: currentBounty.description,
         attributes: {
@@ -139,7 +138,7 @@ export const ApproveSubmission = () => {
     await underdogClient.createNft({
       params: BOUNTY_PROJECT_PARAMS,
       body: {
-        name: `${currentBounty.title} - ${currentBounty.repository.name}`,
+        name: `Bounty Creator: ${currentBounty.id}`,
         image: "https://i.imgur.com/3uQq5Zo.png",
         description: currentBounty.description,
         attributes: {

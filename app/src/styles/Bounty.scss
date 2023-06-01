@@ -377,3 +377,22 @@
   justify-content: space-around;
   margin-bottom: 20px;
 }
+
+.profile-nft {
+  border: solid 1px black;
+  border-radius: 20px;
+  padding: 20px;
+}
+
+.profile-nft-header {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+
+  .profile-picture {
+    margin-right: 10px;
+    height: 64px;
+    width: 64px;
+    border-radius: 50%;
+  }
+}

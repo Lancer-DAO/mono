@@ -34,7 +34,7 @@ import {
 
 export const BountyActions = () => {
   const { currentUser, currentBounty } = useLancer();
-
+  return <ApproveSubmission />;
   const [hoveredButton, setHoveredButton] = useState("none");
   if (false) {
     return <LoadingBar title="Loading On Chain Details" />;
@@ -60,12 +60,12 @@ export const BountyActions = () => {
   return (
     <div className="bounty-buttons">
       <>
-        {currentBounty.isCreator &&
+        {/* {currentBounty.isCreator &&
           (currentBounty.isVotingCancel
             ? currentBounty.currentUserRelationsList.length === 2
             : currentBounty.currentUserRelationsList.length === 1) && (
             <RequestToSubmit />
-          )}
+          )} */}
         {currentBounty.isRequestedSubmitter && (
           <button className={classNames("button-primary disabled")}>
             Request Pending

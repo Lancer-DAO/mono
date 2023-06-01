@@ -1,4 +1,9 @@
-import { IS_MAINNET, PROFILE_PROJECT_PARAMS, USDC_MINT } from "@/src/constants";
+import {
+  BOUNTY_PROJECT_PARAMS,
+  IS_MAINNET,
+  PROFILE_PROJECT_PARAMS,
+  USDC_MINT,
+} from "@/src/constants";
 import { getSolscanTX } from "@/src/utils";
 import { useEffect, useState } from "react";
 import { useLancer } from "@/src/providers/lancerProvider";
@@ -34,14 +39,99 @@ export interface ProfileNFT {
   lastUpdated?: dayjs.Dayjs;
 }
 
+export interface BountyNFT {
+  name: string;
+  reputation: number;
+  tags: string[];
+  image: string;
+  completed?: dayjs.Dayjs;
+  description: string;
+  role: string;
+}
+
+const ProfileNFT = ({ profileNFT }: { profileNFT: ProfileNFT }) => {
+  return (
+    <>
+      <div className="profile-nft">
+        <div className="profile-nft-header">
+          <img src={profileNFT.image} className="profile-picture" />
+          <div>
+            <h4>{profileNFT.name}</h4>
+            <div>{profileNFT.reputation} Reputation Points</div>
+          </div>
+        </div>
+        {profileNFT.badges?.length > 0 && (
+          <>
+            <h4>Badges</h4>
+            <div className="tag-list">
+              {profileNFT.badges.map((badge) => (
+                <div className="tag-item" key={badge}>
+                  {badge}
+                </div>
+              ))}
+            </div>
+          </>
+        )}
+        {profileNFT.certifications?.length > 0 && (
+          <>
+            <h4>Certificates</h4>
+            <div className="tag-list">
+              {profileNFT.certifications.map((badge) => (
+                <div className="tag-item" key={badge}>
+                  {badge}
+                </div>
+              ))}
+            </div>
+          </>
+        )}
+        <h4>Last Updated</h4>
+        <div>{profileNFT.lastUpdated?.toString()}</div>
+      </div>
+    </>
+  );
+};
+
+const BountyNFT = ({ bountyNFT }: { bountyNFT: BountyNFT }) => {
+  return (
+    <>
+      <div className="bounty-nft">
+        <div className="profile-nft-header">
+          <img src={bountyNFT.image} className="profile-picture" />
+          <div>
+            <h4>
+              {bountyNFT.name} | {bountyNFT.role}
+            </h4>
+            <div>{bountyNFT.reputation} Reputation Points</div>
+          </div>
+        </div>
+        {bountyNFT.tags?.length > 0 && (
+          <>
+            <h4>Tags</h4>
+            <div className="tag-list">
+              {bountyNFT.tags.map((badge) => (
+                <div className="tag-item" key={badge}>
+                  {badge}
+                </div>
+              ))}
+            </div>
+          </>
+        )}
+        <h4>Completed</h4>
+        <div>{bountyNFT.completed?.toString()}</div>
+      </div>
+    </>
+  );
+};
+
 const FundBounty: React.FC = () => {
   const { currentUser, wallets, currentWallet } = useLancer();
   const [showCoinflow, setShowCoinflow] = useState(false);
   const [profileNFT, setProfileNFT] = useState<ProfileNFT>();
+  const [bountyNFTs, setBountyNFTs] = useState<BountyNFT[]>([]);
 
   const { mutateAsync: registerProfileNFT } =
     api.users.registerProfileNFT.useMutation();
-  const fetchNFT = async () => {
+  const fetchProfileNFT = async () => {
     const profileNFTHolder = currentUser.wallets.find(
       (wallet) => wallet.id === currentUser.profileWalletId
     );
@@ -74,8 +164,41 @@ const FundBounty: React.FC = () => {
       setProfileNFT(profileNFT);
     }
   };
+
+  const fetchBountyNFTs = async () => {
+    const profileNFTHolder = currentUser.wallets.find(
+      (wallet) => wallet.id === currentUser.profileWalletId
+    );
+    const nfts = await underdogClient.getNfts({
+      params: BOUNTY_PROJECT_PARAMS,
+      query: {
+        page: 1,
+        limit: 10,
+        ownerAddress: profileNFTHolder.publicKey,
+      },
+    });
+    const bountyNFTs: BountyNFT[] = nfts.results.map((nft) => {
+      const { name, attributes, image } = nft;
+      return {
+        name: name,
+        reputation: attributes.reputation as number,
+        tags:
+          attributes.tags !== "" ? (attributes.tags as string)?.split(",") : [],
+        image: image,
+        completed: attributes.completed
+          ? dayjs(attributes.completed)
+          : undefined,
+        description: attributes.description as string,
+        role: attributes.role as string,
+      };
+    });
+    setBountyNFTs(bountyNFTs);
+  };
   useEffect(() => {
-    if (currentUser && currentUser.profileWalletId) fetchNFT();
+    if (currentUser && currentUser.profileWalletId) {
+      fetchProfileNFT();
+      fetchBountyNFTs();
+    }
   }, [currentUser]);
 
   const mintProfileNFT = async () => {
@@ -103,7 +226,7 @@ const FundBounty: React.FC = () => {
     currentUser && (
       <PageLayout>
         <div className="account-page-wrapper">
-          {currentUser?.githubLogin && (
+          {/* {currentUser?.githubLogin && (
             <div>GitHub User: {currentUser.githubLogin}</div>
           )}
           <a href="/api/auth/logout">Logout</a>
@@ -121,34 +244,15 @@ const FundBounty: React.FC = () => {
             >
               USDC Faucet
             </a>
-          )}
-          {profileNFT && (
-            <div>
-              <img src={profileNFT.image} className="contributor-picture" />
-              <div>Name: {profileNFT.name}</div>
-              <div>Reputation: {profileNFT.reputation}</div>
-              {profileNFT.badges?.length > 0 && (
-                <div>
-                  Badges:{" "}
-                  {profileNFT.badges.map((badge) => (
-                    <div className="tag-item" key={badge}>
-                      {badge}
-                    </div>
-                  ))}
-                </div>
-              )}
-              {profileNFT.certifications?.length > 0 && (
-                <div>
-                  Certifications:{" "}
-                  {profileNFT.certifications.map((certification) => (
-                    <div className="tag-item" key={certification}>
-                      {certification}
-                    </div>
-                  ))}
-                </div>
-              )}
-              <div>Last Updated: {profileNFT.lastUpdated?.toString()}</div>
-            </div>
+          )} */}
+          {profileNFT && <ProfileNFT profileNFT={profileNFT} />}
+          {bountyNFTs.length > 0 && (
+            <>
+              <h2>Bounties</h2>
+              {bountyNFTs.map((bountyNFT) => (
+                <BountyNFT bountyNFT={bountyNFT} />
+              ))}
+            </>
           )}
           {!currentUser?.hasProfileNFT && (
             <button onClick={mintProfileNFT}>Mint Profile NFT</button>

@@ -1,4 +1,3 @@
-export * from "./existingIssue"
-export * from "./homeFeed"
-export * from "./newIssue"
-export * from "./pullRequest"
+export * from "./homeFeed";
+export * from "./newIssue";
+export * from "./pullRequest";
