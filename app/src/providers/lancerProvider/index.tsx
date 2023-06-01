@@ -76,7 +76,6 @@ const LancerProvider: FunctionComponent<ILancerState> = ({
     connected,
   } = useWallet();
   const { connection } = useConnection();
-  const router = useRouter();
   const [currentUser, setCurrentUser] = useState<CurrentUser | null>(null);
   const [currentBounty, setCurrentBounty] = useState<Bounty | null>(null);
   const [issue, setIssue] = useState<Issue | null>(null);
