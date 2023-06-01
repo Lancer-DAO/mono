@@ -36,12 +36,16 @@ const Dropdown: React.FC<Props> = ({ options, selected, onChange }) => {
     return options.map((option) => {
       const isChecked = selected.find((item) => item.value === option.value);
       return (
-        <label key={option.value} className="dropdown__option">
+        <label
+          key={option.value}
+          className="flex items-center px-[10px] py-[5px] text-[14px] text-gray-700 cursor-pointer hover:bg-gray-200"
+        >
           <input
             type="checkbox"
             value={option.value}
             checked={isChecked ? true : false}
             onChange={() => handleCheckboxChange(option)}
+            className="mr-[10px]"
           />
           {option.label}
         </label>
@@ -50,18 +54,27 @@ const Dropdown: React.FC<Props> = ({ options, selected, onChange }) => {
   };
 
   return (
-    <div className="dropdown">
-      <div className="dropdown__header" onClick={toggleOpen}>
-        <div className="dropdown__selected">
+    <div className="relative inline-block mr-[10px] w-[200px]">
+      <div
+        className="flex justify-between items-center p-[10px] bg-white-100 rounded-[5px] cursor-pointer shadow-[0 6px 12px 0 rgba(21, 60, 245, 0.05), 0 2px 6px 0 rgba(5, 21, 46, 0.02), 0 -2px 6px 0 rgba(36, 52, 128, 0.03)] transition-shadow duration-[400ms] ease-in-out"
+        onClick={toggleOpen}
+      >
+        <div className="text-[14px] text-gray-700 overflow-hidden whitespace-nowrap overflow-ellipsis">
           {selected.length === 0
             ? "Select"
             : selected.map((item) => item.label).join(", ")}
         </div>
-        <div className={`dropdown__icon ${isOpen ? "open" : ""}`}>▾</div>
+        <div
+          className={`text-[14px] text-gray-700 ${
+            isOpen ? "transform rotate-180" : ""
+          }`}
+        >
+          ▾
+        </div>
       </div>
       {isOpen && (
         <div
-          className="dropdown__options"
+          className="absolute top-full left-0 z-10 flex flex-col max-h-[200px] overflow-y-auto bg-white-100 border border-gray-500 rounded-[5px] shadow-md w-full"
           onMouseLeave={() => setIsOpen(false)}
         >
           {renderOptions()}

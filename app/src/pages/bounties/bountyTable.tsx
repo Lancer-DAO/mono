@@ -113,7 +113,7 @@ export const BountyList: React.FC<{ isMyBounties: boolean }> = ({
     }
   }, [bounties]);
 
-  if (!bounties) return <LoadingBar title="Loading Bountys" />;
+  if (bounties.length === 0) return <LoadingBar title="Loading Bountys" />;
 
   const filteredBountys = bounties.filter((bounty) => {
     if (!bounty.escrow.publicKey || !bounty.escrow.mint) {
