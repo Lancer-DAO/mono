@@ -70,8 +70,8 @@ export const createTRPCContext = async (_opts: CreateNextContextOptions) => {
     });
 
     if (!user) {
-      new TRPCError({
-        code: "UNAUTHORIZED",
+      return createInnerTRPCContext({
+        user: null,
       });
     }
 
@@ -134,6 +134,7 @@ export const publicProcedure = t.procedure;
 export const middleware = t.middleware;
 
 const isUser = middleware(async ({ ctx, next }) => {
+  console.log(ctx.user);
   if (!ctx.user) {
     throw new TRPCError({ code: "UNAUTHORIZED" });
   }

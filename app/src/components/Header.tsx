@@ -13,6 +13,7 @@ const HEADER_LINKS: HeaderButtonProps[] = [
   { href: "/account", text: "Bounty" },
 ];
 
+import ApiKeyModal from "./ApiKeyModal";
 const WalletMultiButtonDynamic = dynamic(
   async () =>
     (await import("@solana/wallet-adapter-react-ui")).WalletMultiButton,
@@ -35,10 +36,8 @@ const HeaderButton = ({ href, text }: HeaderButtonProps) => {
   );
 };
 export const Header = () => {
-  const { currentWallet, wallets, setCurrentWallet } = useLancer();
-  const [isWalletSelectOpen, setIsWalletSelectOpen] = useState(false);
-  const toggleWalletSelectOpen = () =>
-    setIsWalletSelectOpen(!isWalletSelectOpen);
+  const { currentAPIKey } = useLancer();
+  const [showModal, setShowModal] = useState(false);
 
   return (
     <div
@@ -64,6 +63,10 @@ export const Header = () => {
           })}
 
           <WalletMultiButtonDynamic />
+          <button onClick={() => setShowModal(true)}>
+            {currentAPIKey ? currentAPIKey.name : "Set API Key"}
+          </button>
+          <ApiKeyModal showModal={showModal} setShowModal={setShowModal} />
         </div>
       </div>
     </div>

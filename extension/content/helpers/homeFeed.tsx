@@ -1,5 +1,5 @@
 import * as ReactDOM from "react-dom/client";
-import { getApiEndpointExtension, getAppEndpointExtension } from "../utils";
+import { getApiEndpointExtension } from "../utils";
 const LIST_ITEM_ID = "bounty-list-item";
 
 // Add a button to the home page that links to the lancer bounty feed
@@ -21,7 +21,7 @@ export const insertHomeFeed = () => {
       className="UnderlineNav-item"
       aria-selected="false"
       tabIndex={-2}
-      href={`${getAppEndpointExtension()}bounties`}
+      href={`${getApiEndpointExtension()}/bounties`}
       target="_blank"
       rel="noreferrer"
     >

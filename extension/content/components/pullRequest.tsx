@@ -1,5 +1,5 @@
 import { Issue } from "../types";
-import { getAppEndpointExtension } from "../utils";
+import { getApiEndpointExtension } from "../utils";
 
 export const PullRequest = ({ issue }: { issue: Issue }) => {
   return (
@@ -8,7 +8,7 @@ export const PullRequest = ({ issue }: { issue: Issue }) => {
         This PR is linked to a Lancer Bounty
       </div>
       <a
-        href={`${getAppEndpointExtension()}/bounty?id=${issue.uuid}`}
+        href={`${getApiEndpointExtension()}/bounty?id=${issue.uuid}`}
         target="_blank"
         rel="noreferrer"
       >

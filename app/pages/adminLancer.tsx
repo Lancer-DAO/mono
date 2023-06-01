@@ -35,10 +35,14 @@ import {
 import type { AppProps } from "next/app";
 import type { FC } from "react";
 import { createFeatureFundingAccountInstruction } from "@/escrow/sdk/instructions";
-import { USDC_MINT, MAINNET_RPC, MAINNET_USDC_MINT } from "@/src/constants";
+import {
+  USDC_MINT,
+  MAINNET_RPC,
+  MAINNET_USDC_MINT,
+  MONO_ADDRESS,
+} from "@/src/constants";
 import { AnchorProvider, Program } from "@project-serum/anchor";
 import { MonoProgram } from "@/escrow/sdk/types/mono_program";
-import { MONO_DEVNET, WSOL_ADDRESS } from "@/escrow/sdk/constants";
 
 import { withPageAuthRequired } from "@auth0/nextjs-auth0";
 export const getServerSideProps = withPageAuthRequired();
@@ -61,7 +65,6 @@ export const SendSOLToRandomAddress: FC = () => {
 
   const createFeesAccount = useCallback(async () => {
     if (!publicKey) throw new WalletNotConnectedError();
-    debugger;
     const provider = new AnchorProvider(
       connection,
       { ...wallet, signAllTransactions, signTransaction, publicKey },
@@ -69,7 +72,7 @@ export const SendSOLToRandomAddress: FC = () => {
     );
     const program = new Program<MonoProgram>(
       MonoProgramJSON as unknown as MonoProgram,
-      new PublicKey(MONO_DEVNET),
+      new PublicKey(MONO_ADDRESS),
       provider
     );
     const create_lancer_token_account_ix =
@@ -92,7 +95,7 @@ export const SendSOLToRandomAddress: FC = () => {
     );
     const program = new Program<MonoProgram>(
       MonoProgramJSON as unknown as MonoProgram,
-      new PublicKey(MONO_DEVNET),
+      new PublicKey(MONO_ADDRESS),
       provider
     );
     const withdrawer = new PublicKey(

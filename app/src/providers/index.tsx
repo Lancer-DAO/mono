@@ -9,7 +9,7 @@ import {
   WalletProvider,
 } from "@solana/wallet-adapter-react";
 import { WalletModalProvider } from "@solana/wallet-adapter-react-ui";
-import { LancerProvider } from "@/src/providers/lancerProvider";
+import LancerProvider from "@/src/providers/lancerProvider";
 import { useRouter } from "next/router";
 import { IS_MAINNET, MAINNET_RPC } from "../constants";
 export * from "./lancerProvider";
