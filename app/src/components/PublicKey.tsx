@@ -18,7 +18,7 @@ export const PubKey: React.FC<{
         await navigator.clipboard.writeText(addy);
         alert(`Copied Address: ${addy}`);
       }}
-      className="hover:cursor-pointer hover:text-blue"
+      className="hover:cursor-pointer hover:text-blue-500"
     >
       {full ? `Solana Address: ${pubKey}` : shortenPublicKey(pubKey)}
     </div>
