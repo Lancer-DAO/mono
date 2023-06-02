@@ -1,15 +1,6 @@
 import { useEffect, useState } from "react";
 import { marked } from "marked";
-import { convertToQueryParams, getApiEndpoint } from "@/src/utils";
 import axios from "axios";
-import {
-  LINK_GITHUB_ISSUE_API_ROUTE,
-  NEW_GITHUB_ISSUE_API_ROUTE,
-  UPDATE_ISSUE_ROUTE,
-  USER_REPOSITORIES_ROUTE,
-  USER_REPOSITORY_ISSUES_ROUTE,
-  USER_REPOSITORY_NO_BOUNTIES_ROUTE,
-} from "@/constants";
 import { createFFA } from "@/escrow/adapters";
 import { useLancer } from "@/src/providers/lancerProvider";
 import classnames from "classnames";

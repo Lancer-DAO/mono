@@ -13,7 +13,6 @@ import {
   BountyState,
   BOUNTY_USER_RELATIONSHIP,
 } from "@/src/types";
-import { getApiEndpoint } from "@/src/utils";
 import axios from "axios";
 import classNames from "classnames";
 import { useState } from "react";

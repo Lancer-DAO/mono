@@ -1,5 +1,5 @@
 import { TABLE_BOUNTY_STATES } from "@/src/constants";
-import { getApiEndpoint, getMintName, getUniqueItems } from "@/src/utils";
+import { getMintName, getUniqueItems } from "@/src/utils";
 import { useState } from "react";
 import { BountyFilters } from "./bountyFilters";
 import { LancerBounty } from "@/src/pages/bounties/lancerBounty";
