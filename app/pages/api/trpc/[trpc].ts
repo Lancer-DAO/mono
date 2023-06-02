@@ -25,7 +25,7 @@ export default async function handler(
   // We can use the response object to enable CORS
   res.setHeader(
     "Access-Control-Allow-Origin",
-    "localhost:3000/*, github.com/*"
+    "http://localhost:3000, https://github.com"
   );
   res.setHeader("Access-Control-Request-Method", "*");
   res.setHeader("Access-Control-Allow-Methods", "OPTIONS, GET, POST");
