@@ -23,10 +23,7 @@ export default async function handler(
   res: NextApiResponse
 ) {
   // We can use the response object to enable CORS
-  res.setHeader(
-    "Access-Control-Allow-Origin",
-    "http://localhost:3000, https://github.com"
-  );
+  res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader("Access-Control-Request-Method", "*");
   res.setHeader("Access-Control-Allow-Methods", "OPTIONS, GET, POST");
   res.setHeader("Access-Control-Allow-Headers", "*");
