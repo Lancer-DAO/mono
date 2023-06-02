@@ -66,13 +66,10 @@ const ApiKeyModal: FC<Props> = ({ showModal, setShowModal }) => {
                         className={classnames(
                           "w-checkbox-input w-checkbox-input--inputType-custom checkbox ",
                           {
-                            checked:
-                              currentAPIKey?.name === name
-                                ? "Selected"
-                                : "Select",
+                            checked: currentAPIKey?.name === name,
                           }
                         )}
-                        onChange={() => {
+                        onClick={() => {
                           setCurrentAPIKey({ name, token, isDefault });
                         }}
                       />
@@ -87,11 +84,13 @@ const ApiKeyModal: FC<Props> = ({ showModal, setShowModal }) => {
                             checked: isDefault,
                           }
                         )}
-                        onChange={() => {
+                        onClick={() => {
+                          const toggleOthers = !isDefault;
                           apiKeys.forEach((key) => {
-                            key.isDefault = false;
                             if (key.name === name) {
-                              key.isDefault = true;
+                              key.isDefault = !isDefault;
+                            } else if (toggleOthers) {
+                              key.isDefault = false;
                             }
                           });
 
@@ -119,12 +118,16 @@ const ApiKeyModal: FC<Props> = ({ showModal, setShowModal }) => {
                     </button>
                     <button
                       onClick={() => {
-                        const newApiKeys = apiKeys.filter((key) => {
-                          key.name !== name;
+                        const deleteIndex = apiKeys.findIndex((key) => {
+                          key.name === name;
                         });
+                        apiKeys.splice(deleteIndex, 1);
                         localStorage.setItem(
                           "apiKeys",
-                          JSON.stringify(newApiKeys)
+                          JSON.stringify(apiKeys)
+                        );
+                        const newApiKeys = JSON.parse(
+                          localStorage.getItem("apiKeys") || "[]"
                         );
                         setApiKeys(newApiKeys);
                       }}
@@ -172,14 +175,15 @@ const ApiKeyModal: FC<Props> = ({ showModal, setShowModal }) => {
                 disabled: apiKey.name === "" || apiKey.token === "",
               })}
               onClick={() => {
+                const deleteIndex = apiKeys.findIndex((key) => {
+                  return key.name === oldApiKeyName || key.name === apiKey.name;
+                });
+                if (deleteIndex !== -1) {
+                  apiKeys.splice(deleteIndex, 1);
+                }
+
                 apiKeys.push(apiKey);
                 localStorage.setItem("apiKeys", JSON.stringify(apiKeys));
-                setApiKeys(apiKeys);
-                if (oldApiKeyName !== "") {
-                  delete apiKeys[oldApiKeyName];
-                  localStorage.setItem("apiKeys", JSON.stringify(apiKeys));
-                  setOldApiKeyName("");
-                }
                 const newApiKeys = JSON.parse(
                   localStorage.getItem("apiKeys") || "[]"
                 );
