@@ -669,6 +669,7 @@
 
 .api-modal-inputs {
   display: flex;
+  flex-direction: column;
   justify-content: space-around;
   margin-bottom: 20px;
 }
@@ -746,4 +747,13 @@
   display: flex;
   flex-direction: row;
   column-gap: 20px;
+}
+
+.token-info {
+  display: flex;
+  flex-direction: row;
+  column-gap: 6px;
+  .token-key {
+    opacity: 0.5;
+  }
 }

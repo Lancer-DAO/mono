@@ -3,6 +3,7 @@ import { getSolscanTX } from "@/src/utils";
 import { useEffect, useState } from "react";
 import { useLancer } from "@/src/providers/lancerProvider";
 import classnames from "classnames";
+import { Edit, Delete, X } from "react-feather";
 
 import { FC, useRef } from "react";
 import { useOutsideAlerter } from "../hooks/useOutsideAlerter";
@@ -55,39 +56,66 @@ const ApiKeyModal: FC<Props> = ({ showModal, setShowModal }) => {
             <div>
               {apiKeys.map(({ name, token, isDefault }) => (
                 <div className="api-key-row">
-                  <div>{`${name}: ${shortenGHToken(token)}`}</div>
+                  <div className="token-info">
+                    <div>{`${name}: `}</div>
+                    <div className="token-key">{shortenGHToken(token)}</div>
+                  </div>
                   <div className="api-key-row-buttons">
-                    <button
-                      onClick={() => {
-                        setCurrentAPIKey({ name, token, isDefault });
-                      }}
-                    >
-                      {currentAPIKey?.name === name ? "Selected" : "Select"}
-                    </button>
-                    <button
-                      onClick={() => {
-                        apiKeys.forEach((key) => {
-                          key.isDefault = false;
-                          if (key.name === name) {
-                            key.isDefault = true;
+                    <label className="w-checkbox checkbox-field-2 label-only">
+                      <div
+                        className={classnames(
+                          "w-checkbox-input w-checkbox-input--inputType-custom checkbox ",
+                          {
+                            checked:
+                              currentAPIKey?.name === name
+                                ? "Selected"
+                                : "Select",
                           }
-                        });
+                        )}
+                        onChange={() => {
+                          setCurrentAPIKey({ name, token, isDefault });
+                        }}
+                      />
 
-                        localStorage.setItem(
-                          "apiKeys",
-                          JSON.stringify(apiKeys)
-                        );
-                      }}
-                    >
-                      {isDefault ? "Default" : "Set Default"}
-                    </button>
+                      <label className="check-label label-only">Selected</label>
+                    </label>
+                    <label className="w-checkbox checkbox-field-2 label-only">
+                      <div
+                        className={classnames(
+                          "w-checkbox-input w-checkbox-input--inputType-custom checkbox ",
+                          {
+                            checked: isDefault,
+                          }
+                        )}
+                        onChange={() => {
+                          apiKeys.forEach((key) => {
+                            key.isDefault = false;
+                            if (key.name === name) {
+                              key.isDefault = true;
+                            }
+                          });
+
+                          localStorage.setItem(
+                            "apiKeys",
+                            JSON.stringify(apiKeys)
+                          );
+
+                          const newApiKeys = JSON.parse(
+                            localStorage.getItem("apiKeys") || "[]"
+                          );
+                          setApiKeys(newApiKeys);
+                        }}
+                      />
+
+                      <label className="check-label label-only">Default</label>
+                    </label>
                     <button
                       onClick={() => {
                         setOldApiKeyName(name);
                         setApiKey({ name, token, isDefault });
                       }}
                     >
-                      Edit
+                      <Edit />
                     </button>
                     <button
                       onClick={() => {
@@ -98,9 +126,10 @@ const ApiKeyModal: FC<Props> = ({ showModal, setShowModal }) => {
                           "apiKeys",
                           JSON.stringify(newApiKeys)
                         );
+                        setApiKeys(newApiKeys);
                       }}
                     >
-                      Delete
+                      <X />
                     </button>
                   </div>
                 </div>
@@ -112,6 +141,7 @@ const ApiKeyModal: FC<Props> = ({ showModal, setShowModal }) => {
 
                 <input
                   type="text"
+                  className="input w-input"
                   placeholder="API Key Name"
                   value={apiKey.name}
                   onChange={(e) => {
@@ -124,6 +154,7 @@ const ApiKeyModal: FC<Props> = ({ showModal, setShowModal }) => {
                 <div className="api-key-input-header">API Token </div>
                 <input
                   type="text"
+                  className="input w-input"
                   placeholder="API Key"
                   value={apiKey.token}
                   onChange={(e) => {
@@ -137,7 +168,7 @@ const ApiKeyModal: FC<Props> = ({ showModal, setShowModal }) => {
             </div>
 
             <button
-              className={classnames({
+              className={classnames("button-primary", {
                 disabled: apiKey.name === "" || apiKey.token === "",
               })}
               onClick={() => {
@@ -149,6 +180,10 @@ const ApiKeyModal: FC<Props> = ({ showModal, setShowModal }) => {
                   localStorage.setItem("apiKeys", JSON.stringify(apiKeys));
                   setOldApiKeyName("");
                 }
+                const newApiKeys = JSON.parse(
+                  localStorage.getItem("apiKeys") || "[]"
+                );
+                setApiKeys(newApiKeys);
               }}
             >
               {oldApiKeyName === ""
