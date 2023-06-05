@@ -9,14 +9,6 @@
     "https://app-dot-lancer-api-375702.uc.r.appspot.com/*",
     "https://app.lancer.so/*"
   ],
-  "permissions": [
-    "storage",
-    "activeTab",
-    "scripting",
-    "tabs",
-    "system.display",
-    "webNavigation"
-  ],
   "content_scripts": [
     {
       "matches": [

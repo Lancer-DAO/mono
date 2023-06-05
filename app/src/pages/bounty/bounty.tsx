@@ -1,4 +1,4 @@
-import { getSolscanAddress } from "@/src/utils";
+import { decimalToNumber, getSolscanAddress } from "@/src/utils";
 import { BountyState } from "@/types";
 import { marked } from "marked";
 import { ReactNode, useEffect, useState } from "react";
@@ -19,6 +19,7 @@ dayjs.extend(localizedFormat);
 const Bounty: React.FC = () => {
   const { currentUser, currentBounty, setCurrentBounty } = useLancer();
   const [pollId, setPollId] = useState(null);
+  const [bountyAmount, setBountyAmount] = useState("");
   const router = useRouter();
   const { mutateAsync: getBounty } = api.bounties.getBounty.useMutation();
 
@@ -30,6 +31,11 @@ const Bounty: React.FC = () => {
           currentUserId: currentUser.id,
         });
         setCurrentBounty(bounty);
+        if (bounty?.escrow?.amount !== null) {
+          const amount = decimalToNumber(bounty.escrow.amount).toFixed(2);
+
+          setBountyAmount(amount);
+        }
       };
       getB();
     }
@@ -137,7 +143,7 @@ const Bounty: React.FC = () => {
               <div className="job-post-info-divider"></div>
               <div className="job-post-info-container">
                 <div className="job-post-info-text icon-right">
-                  {/* {currentBounty.escrow.amount.toFixed(2)} */}
+                  {bountyAmount}
                 </div>
                 <USDC height="24px" width="24px" />
               </div>

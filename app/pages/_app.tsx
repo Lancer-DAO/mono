@@ -4,10 +4,14 @@ import "@/src/styles/Form.scss";
 import "@/src/styles/Bounty.scss";
 import "@/src/styles/webflow.scss";
 
-require("@solana/wallet-adapter-react-ui/styles.css");
 import { api } from "@/src/utils/api";
 import { AllProviders } from "@/src/providers";
+import Hotjar from "@hotjar/browser";
 
+const siteId = 3506102;
+const hotjarVersion = 6;
+
+Hotjar.init(siteId, hotjarVersion);
 const App = ({ Component, pageProps }: AppProps) => {
   return (
     <AllProviders>

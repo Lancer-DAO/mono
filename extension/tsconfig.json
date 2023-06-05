@@ -19,26 +19,6 @@
       "isolatedModules": true,
       "jsx": "react-jsx",
       "baseUrl": ".",
-      "paths": {
-        "@/*": [
-          "../*"
-        ],
-        "@/constants": [
-          "../app/src/constants/index.ts"
-        ],
-        "@/styles": [
-          "../src/styles"
-        ],
-        "@/server": [
-          "../server"
-        ],
-        "@/types": [
-          "../app/src/types/index.ts"
-        ],
-        "@/utils": [
-          "../src/utils/index.ts"
-        ]
-      },
       "outDir": "./dist",
       "noEmit": false,
       "incremental": true

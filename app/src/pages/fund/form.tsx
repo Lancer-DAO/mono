@@ -25,6 +25,8 @@ const Form: React.FC<{ isAccountCreated: boolean }> = ({
     provider,
     currentWallet,
   } = useLancer();
+  const [fundingType, setFundingType] = useState<"wallet" | "card">("wallet");
+
   const { mutateAsync: getBounty } = api.bounties.getBounty.useMutation();
   const { mutateAsync: fundB } = api.bounties.fundBounty.useMutation();
   const router = useRouter();
@@ -67,11 +69,30 @@ const Form: React.FC<{ isAccountCreated: boolean }> = ({
               >
                 Fund Lancer Bounty
               </h2>
+              <div className="issue-creation-type">
+                <div
+                  className={classnames("form-subtitle hover-effect", {
+                    unselected: fundingType !== "wallet",
+                  })}
+                  onClick={() => setFundingType("wallet")}
+                >
+                  Fund with Wallet
+                </div>
+                <div>OR</div>
+                <div
+                  className={classnames("form-subtitle hover-effect", {
+                    unselected: fundingType !== "card",
+                  })}
+                  onClick={() => setFundingType("card")}
+                >
+                  Fund with Card
+                </div>
+              </div>
               {/* {!isAccountCreated ? (
                 <LoadingBar title="Loading On Chain Details" />
               ) : ( */}
               <>
-                {currentWallet.providerName === "Magic Link" && (
+                {fundingType === "card" && (
                   <>
                     <div>
                       <label>
@@ -96,7 +117,7 @@ const Form: React.FC<{ isAccountCreated: boolean }> = ({
                     )}
                   </>
                 )}
-                {currentWallet.providerName !== "Magic Link" && (
+                {fundingType === "wallet" && (
                   <>
                     <div>
                       <label>

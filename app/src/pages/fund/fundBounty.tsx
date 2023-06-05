@@ -1,4 +1,3 @@
-import { ISSUE_API_ROUTE, UPDATE_ISSUE_ROUTE } from "@/constants";
 import { USDC_MINT } from "@/src/constants";
 import { getFundFFATX } from "@/escrow/adapters";
 import axios from "axios";

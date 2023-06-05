@@ -1,6 +1,6 @@
 import ReactLoading from "react-loading";
 
-export const LoadingBar: React.FC<{ title: string }> = ({ title }) => {
+const LoadingBar: React.FC<{ title: string }> = ({ title }) => {
   return (
     <div className="flex w-full items-center justify-center gap-x-[20px]">
       <div className="text-aqua-500 leading-[28px] text-[28px]">{title}</div>
@@ -8,3 +8,5 @@ export const LoadingBar: React.FC<{ title: string }> = ({ title }) => {
     </div>
   );
 };
+
+export default LoadingBar;

@@ -1,10 +1,10 @@
-import { getAppEndpointExtension } from "../utils";
+import { getApiEndpointExtension } from "../utils";
 
 export const FundIssue = () => {
   return (
     <>
       <a
-        href={`${getAppEndpointExtension()}/fund`}
+        href={`${getApiEndpointExtension()}/fund`}
         target="_blank"
         rel="noreferrer"
         className="btn-primary btn ml-2"

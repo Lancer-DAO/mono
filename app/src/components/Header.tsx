@@ -1,22 +1,20 @@
 import Link from "next/link";
-import Logo from "../../assets/Logo";
-import { PubKey } from "@/src/components/atoms/PublicKey";
+import Logo from "../assets/Logo";
+import { PubKey } from "@/src/components/PublicKey";
 import { useLancer } from "@/src/providers";
 import { getWalletProviderImage } from "@/src/utils";
 import { useState } from "react";
 import dynamic from "next/dynamic";
 import { Key } from "react-feather";
 
-import styles from "@/styles/Home.module.css";
-import { LinkButton, ApiKeyModal } from "@/src/components/";
-import { LinkButtonProps } from "@/src/components/atoms/LinkButton";
-const HEADER_LINKS: LinkButtonProps[] = [
+const HEADER_LINKS: HeaderButtonProps[] = [
   { href: "/create", text: "New Bounty" },
   { href: "/my_bounties", text: "My Bounties" },
   { href: "/bounties", text: "All Bounties" },
   { href: "/account", text: "Account" },
 ];
 
+import ApiKeyModal from "./molecules/ApiKeyModal";
 const WalletMultiButtonDynamic = dynamic(
   async () =>
     (await import("@solana/wallet-adapter-react-ui")).WalletMultiButton,
@@ -42,10 +40,6 @@ export const Header = () => {
   const { currentAPIKey } = useLancer();
   const [showModal, setShowModal] = useState(false);
 
-  const [isWalletSelectOpen, setIsWalletSelectOpen] = useState(false);
-  const toggleWalletSelectOpen = () =>
-    setIsWalletSelectOpen(!isWalletSelectOpen);
-
   return (
     <div
       data-collapse="medium"
@@ -66,7 +60,7 @@ export const Header = () => {
         </Link>
         <div className="ml-auto flex gap-[10px]">
           {HEADER_LINKS.map(({ href, text }) => {
-            return <LinkButton href={href} text={text} />;
+            return <HeaderButton href={href} text={text} />;
           })}
 
           <WalletMultiButtonDynamic />
@@ -82,5 +76,3 @@ export const Header = () => {
     </div>
   );
 };
-
-export default Header;

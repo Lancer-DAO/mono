@@ -1,11 +1,12 @@
 import { prisma } from "@/server/db";
-import { publicProcedure } from "../../trpc";
+import { protectedProcedure } from "../../trpc";
 
-export const login = publicProcedure.mutation(async ({ ctx }) => {
+export const login = protectedProcedure.mutation(async ({ ctx }) => {
   const { email, id, sub, nickname } = ctx.user;
 
   if (!id) {
     try {
+      console.log(email, id, sub, nickname);
       await prisma.user.create({
         data: {
           email,

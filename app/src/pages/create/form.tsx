@@ -1,15 +1,6 @@
 import { useEffect, useState } from "react";
 import { marked } from "marked";
-import { convertToQueryParams, getApiEndpoint } from "@/src/utils";
 import axios from "axios";
-import {
-  LINK_GITHUB_ISSUE_API_ROUTE,
-  NEW_GITHUB_ISSUE_API_ROUTE,
-  UPDATE_ISSUE_ROUTE,
-  USER_REPOSITORIES_ROUTE,
-  USER_REPOSITORY_ISSUES_ROUTE,
-  USER_REPOSITORY_NO_BOUNTIES_ROUTE,
-} from "@/constants";
 import { createFFA } from "@/escrow/adapters";
 import { useLancer } from "@/src/providers/lancerProvider";
 import classnames from "classnames";
@@ -34,8 +25,6 @@ const Form: React.FC<{
   const { currentWallet, program, provider, currentUser, setCurrentBounty } =
     useLancer();
   const { mutateAsync } = api.bounties.createBounty.useMutation();
-  const { mutateAsync: getUserRepos } = api.users.getRepos.useMutation();
-  const { mutateAsync: getIssues } = api.repository.getRepoIssues.useMutation();
   const { mutateAsync: createIssue } = api.issues.createIssue.useMutation();
   const [creationType, setCreationType] = useState<"new" | "existing">("new");
   const [repo, setRepo] = useState<any>();
@@ -54,6 +43,7 @@ const Form: React.FC<{
   const [repos, setRepos] = useState(null);
   const [issues, setIssues] = useState(null);
   const [octokit, setOctokit] = useState(null);
+  const { currentAPIKey } = useLancer();
 
   const [isPreview, setIsPreview] = useState(false);
   const [isSubmittingIssue, setIsSubmittingIssue] = useState(false);
@@ -64,23 +54,31 @@ const Form: React.FC<{
 
   useEffect(() => {
     const getRepos = async () => {
-      const octokitResponse = await getUserRepos();
-      setRepos(octokitResponse);
-      setOctokit(octokit);
+      if (currentAPIKey) {
+        const octokit = new Octokit({
+          auth: currentAPIKey.token,
+        });
+        const octokitResponse = await octokit.request("GET /user/repos", {
+          type: "all",
+          per_page: 100,
+        });
+        setRepos(octokitResponse.data);
+        setOctokit(octokit);
+      }
     };
     getRepos();
-  }, []);
+  }, [currentAPIKey]);
 
   const createBounty = async (e) => {
     e.preventDefault();
     setIsSubmittingIssue(true);
-    debugger;
     const { timestamp, signature, escrowKey } = await createFFA(
       currentWallet,
       program,
       provider
     );
     createAccountPoll(escrowKey);
+    const [organizationName, repositoryName] = repo.full_name.split("/");
     const { bounty } = await mutateAsync({
       email: currentUser.email,
       description: formData.issueDescription,
@@ -89,8 +87,8 @@ const Form: React.FC<{
       isPrivateRepo: formData.isPrivate || repo ? repo.private : false,
       title: formData.issueTitle,
       tags: formData.requirements,
-      organizationName: repo.full_name.split("/")[0],
-      repositoryName: repo.full_name.split("/")[1],
+      organizationName,
+      repositoryName,
       publicKey: currentWallet.publicKey.toString(),
       escrowKey: escrowKey.toString(),
       transactionSignature: signature,
@@ -101,8 +99,20 @@ const Form: React.FC<{
     });
     let issueNumber;
 
+    if (creationType === "new") {
+      const octokitData = await octokit.request(
+        "POST /repos/{owner}/{repo}/issues",
+        {
+          owner: organizationName,
+          repo: repositoryName,
+          title: formData.issueTitle,
+          body: formData.issueDescription,
+        }
+      );
+      issueNumber = octokitData.data.number;
+    }
+
     const issueResp = await createIssue({
-      newIssue: creationType === "new",
       number: issueNumber,
       description: formData.issueDescription,
       title: formData.issueTitle,
@@ -118,12 +128,15 @@ const Form: React.FC<{
   };
 
   const getRepoIssues = async (_repo) => {
-    const octokitResponse = await getIssues({
-      organization: _repo.owner.login,
-      repository: _repo.name,
-    });
+    const octokitResponse = await octokit.request(
+      "GET /repos/{owner}/{repo}/issues",
+      {
+        owner: _repo.owner.login,
+        repo: _repo.name,
+      }
+    );
 
-    setIssues(octokitResponse);
+    setIssues(octokitResponse.data);
   };
 
   const handleChange = (event) => {
