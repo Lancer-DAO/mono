@@ -11,17 +11,22 @@ const PubKey = dynamic(() => import("./atoms/PubKey"));
 
 // Molecules
 const ApiKeyModal = dynamic(() => import("./molecules/ApiKeyModal"));
+const BountyActions = dynamic(() => import("./organisms/BountyActions"));
 const BountyNFTCard = dynamic(() => import("./molecules/BountyNFTCard"));
+const CoinflowFund = dynamic(() => import("./molecules/CoinflowFund"));
 const MultiSelectDropdown = dynamic(
   () => import("./molecules/MultiSelectDropdown")
 );
 const ProfileNFTCard = dynamic(() => import("./molecules/ProfileNFTCard"));
 const RangeSlider = dynamic(() => import("./molecules/RangeSlider"));
+const SubmitterSection = dynamic(() => import("./molecules/SubmitterSection"));
 const WalletInfo = dynamic(() => import("./molecules/WalletInfo"));
 
 // Organisms
 const BountyFilters = dynamic(() => import("./organisms/BountyFilters"));
 const BountyTable = dynamic(() => import("./organisms/BountyTable"));
+const CreateBountyForm = dynamic(() => import("./organisms/CreateBountyForm"));
+const FundBountyForm = dynamic(() => import("./organisms/FundBountyForm"));
 const Header = dynamic(() => import("./organisms/Header"));
 const LancerBounty = dynamic(() => import("./organisms/LancerBounty"));
 
@@ -47,4 +52,9 @@ export {
   BountyFilters,
   BountyTable,
   LancerBounty,
+  CreateBountyForm,
+  FundBountyForm,
+  CoinflowFund,
+  BountyActions,
+  SubmitterSection,
 };

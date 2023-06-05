@@ -5,9 +5,9 @@ import { useEffect, useState } from "react";
 import { useLancer } from "@/src/providers/lancerProvider";
 import { BountyState, LancerWallet } from "@/src/types";
 import { Connection, Transaction } from "@solana/web3.js";
-import Coinflow from "@/src/pages/bounty/components/coinflowPurchase";
 import { api } from "@/src/utils/api";
 import { useRouter } from "next/router";
+import { CoinflowPurchase } from "@coinflowlabs/react";
 
 const FundBounty: React.FC<{ amount: number }> = ({
   amount,
@@ -58,3 +58,27 @@ const FundBounty: React.FC<{ amount: number }> = ({
 };
 
 export default FundBounty;
+
+const Coinflow: React.FC<{
+  transaction: Transaction;
+  onSuccess: () => void;
+  amount: number;
+  connection: Connection;
+  wallet: LancerWallet;
+}> = ({ transaction, onSuccess, amount, connection, wallet }) => {
+  return (
+    <div className="coinflow-wrapper">
+      <CoinflowPurchase
+        wallet={wallet}
+        merchantId="lancer"
+        connection={connection}
+        blockchain={"solana"}
+        transaction={transaction}
+        onSuccess={onSuccess}
+        debugTx={true}
+        env="prod"
+        amount={amount * 1.05}
+      />
+    </div>
+  );
+};

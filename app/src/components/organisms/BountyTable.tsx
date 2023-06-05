@@ -1,8 +1,7 @@
 import { TABLE_BOUNTY_STATES } from "@/src/constants";
 import { getMintName, getUniqueItems } from "@/src/utils";
 import { useState } from "react";
-import { BountyFilters } from "./BountyFilters";
-import { LancerBounty } from "@/src/components/organisms/LancerBounty";
+import { LancerBounty, BountyFilters } from "@/src/components/";
 import { useLancer } from "@/src/providers";
 import { useEffect } from "react";
 import axios from "axios";

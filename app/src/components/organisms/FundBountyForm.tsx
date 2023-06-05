@@ -3,8 +3,6 @@ import { useEffect, useState } from "react";
 import { BountyState, LancerWallet } from "@/src/types";
 import { useLancer } from "@/src/providers/lancerProvider";
 import classnames from "classnames";
-import FundBounty from "./fundBounty";
-import { LoadingBar } from "@/src/components/atoms/LoadingBar";
 import { PublicKey, Transaction } from "@solana/web3.js";
 import { useRouter } from "next/router";
 import { api } from "@/src/utils/api";
@@ -13,6 +11,7 @@ import classNames from "classnames";
 import { fundFFA, getFundFFATX } from "@/escrow/adapters";
 import { USDC_MINT } from "@/src/constants";
 import { useConnection, useWallet } from "@solana/wallet-adapter-react";
+import { CoinflowFund } from "@/src/components";
 
 const Form: React.FC<{ isAccountCreated: boolean }> = ({
   isAccountCreated,
@@ -111,7 +110,7 @@ const Form: React.FC<{ isAccountCreated: boolean }> = ({
                       </div>
                     </div>
                     {formData.fundingAmount && (
-                      <FundBounty
+                      <CoinflowFund
                         amount={parseInt(formData.fundingAmount || 0)}
                       />
                     )}

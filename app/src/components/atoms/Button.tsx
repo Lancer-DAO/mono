@@ -12,13 +12,13 @@ import classNames from "classnames";
 import { useState } from "react";
 
 interface ButtonProps {
-  text: string;
-  onClick: () => void;
-  disabled: boolean;
-  disabledText: string;
+  onClick?: () => void;
+  disabled?: boolean;
+  disabledText?: string;
+  children?: React.ReactNode;
 }
 
-const Button = ({ text, onClick, disabled, disabledText }: ButtonProps) => {
+const Button = ({ children, onClick, disabled, disabledText }: ButtonProps) => {
   const [hoveredButton, setHoveredButton] = useState(false);
 
   return (
@@ -35,7 +35,7 @@ const Button = ({ text, onClick, disabled, disabledText }: ButtonProps) => {
         className={classNames("button-primary", { disabled })}
         onClick={onClick}
       >
-        {text}
+        {children}
       </button>
       {hoveredButton && disabledText && (
         <div className="hover-tooltip">{disabledText}</div>

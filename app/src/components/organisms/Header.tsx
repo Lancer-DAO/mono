@@ -1,6 +1,5 @@
 import Link from "next/link";
 import Logo from "../../assets/Logo";
-import { PubKey } from "@/src/components/atoms/PubKey";
 import { useLancer } from "@/src/providers";
 import { getWalletProviderImage } from "@/src/utils";
 import { useState } from "react";

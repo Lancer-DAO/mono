@@ -1,22 +1,13 @@
 import { useEffect, useState } from "react";
 import { marked } from "marked";
-import axios from "axios";
 import { createFFA } from "@/escrow/adapters";
 import { useLancer } from "@/src/providers/lancerProvider";
 import classnames from "classnames";
-import { useLocation } from "react-router-dom";
-import { LoadingBar } from "@/src/components/atoms/LoadingBar";
-import { AnchorProvider, Program } from "@project-serum/anchor";
-import { MonoProgram } from "@/escrow/sdk/types/mono_program";
+import { LoadingBar } from "@/src/components";
 import { api } from "@/src/utils/api";
-import { getCookie } from "cookies-next";
 import { Octokit } from "octokit";
-import { getEscrowContractKey } from "@/src/providers/lancerProvider/queries";
-import { useRouter } from "next/router";
-import { useWallet } from "@solana/wallet-adapter-react";
-import { LancerWallet } from "@/src/types";
-import { FORM_SECTION } from "@/src/pages/create";
 import { PublicKey } from "@solana/web3.js";
+import { FORM_SECTION } from "@/pages/create";
 
 const Form: React.FC<{
   setFormSection: (section: FORM_SECTION) => void;
