@@ -20,7 +20,10 @@ const RangeSlider = dynamic(() => import("./molecules/RangeSlider"));
 const WalletInfo = dynamic(() => import("./molecules/WalletInfo"));
 
 // Organisms
+const BountyFilters = dynamic(() => import("./organisms/BountyFilters"));
+const BountyTable = dynamic(() => import("./organisms/BountyTable"));
 const Header = dynamic(() => import("./organisms/Header"));
+const LancerBounty = dynamic(() => import("./organisms/LancerBounty"));
 
 // Templates
 const DefaultLayout = dynamic(() => import("./templates/DefaultLayout"));
@@ -41,4 +44,7 @@ export {
   MultiSelectDropdown,
   RangeSlider,
   WalletInfo,
+  BountyFilters,
+  BountyTable,
+  LancerBounty,
 };

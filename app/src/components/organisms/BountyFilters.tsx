@@ -2,7 +2,7 @@ import MultiSelectDropdown from "@/src/components/molecules/MultiSelectDropdown"
 import RangeSlider from "@/src/components/molecules/RangeSlider";
 import { BOUNTY_STATES } from "@/src/constants";
 import { capitalize } from "lodash";
-import { Filters } from "./bountyTable";
+import { Filters } from "./BountyTable";
 
 interface BountyFiltersProps {
   mints: string[];
@@ -13,7 +13,7 @@ interface BountyFiltersProps {
   setFilters: (filters: Filters) => void;
 }
 
-export const BountyFilters = ({
+const BountyFilters = ({
   mints,
   tags,
   orgs,
@@ -142,3 +142,5 @@ export const BountyFilters = ({
     </form>
   );
 };
+
+export default BountyFilters;

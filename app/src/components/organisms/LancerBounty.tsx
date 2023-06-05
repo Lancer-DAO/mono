@@ -9,7 +9,7 @@ import relativeTime from "dayjs/plugin/relativeTime";
 import { decimalToNumber } from "@/src/utils";
 dayjs.extend(relativeTime);
 
-export const LancerBounty = ({ bounty }: { bounty: Bounty }) => {
+const LancerBounty = ({ bounty }: { bounty: Bounty }) => {
   const search = useLocation().search;
 
   const params = new URLSearchParams(search);
@@ -92,3 +92,5 @@ export const LancerBounty = ({ bounty }: { bounty: Bounty }) => {
     </div>
   );
 };
+
+export default LancerBounty;

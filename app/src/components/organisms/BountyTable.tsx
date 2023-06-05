@@ -1,8 +1,8 @@
 import { TABLE_BOUNTY_STATES } from "@/src/constants";
 import { getMintName, getUniqueItems } from "@/src/utils";
 import { useState } from "react";
-import { BountyFilters } from "./bountyFilters";
-import { LancerBounty } from "@/src/pages/bounties/lancerBounty";
+import { BountyFilters } from "./BountyFilters";
+import { LancerBounty } from "@/src/components/organisms/LancerBounty";
 import { useLancer } from "@/src/providers";
 import { useEffect } from "react";
 import axios from "axios";
@@ -28,9 +28,7 @@ export type Filters = {
   relationships: string[];
 };
 
-export const BountyList: React.FC<{ isMyBounties: boolean }> = ({
-  isMyBounties,
-}) => {
+const BountyList: React.FC<{ isMyBounties: boolean }> = ({ isMyBounties }) => {
   const { currentUser } = useLancer();
   const router = useRouter();
   const { mutateAsync: getBounties } =
