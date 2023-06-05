@@ -2,10 +2,6 @@ import * as ReactDOM from "react-dom/client";
 import { PullRequest } from "../components/pullRequest";
 
 import axios, { AxiosResponse } from "axios";
-import {
-  NEW_PULL_REQUEST_API_ROUTE,
-  FULL_PULL_REQUEST_API_ROUTE,
-} from "@/constants";
 import { getApiEndpointExtension } from "../utils";
 import { Issue } from "../types";
 const AUTHOR_SELECTOR = ".author.text-bold.Link--secondary";
@@ -71,29 +67,7 @@ export const insertPullRequest = (splitURL: string[]) => {
   if (issueNumber && !existingWrapper) {
     maybeGetPR(splitURL, issueNumber, author).then(
       (response: AxiosResponse<any, any>) => {
-        if (response.data.message === "NOT FOUND") {
-          axios
-            .post(
-              `${getApiEndpointExtension()}/${NEW_PULL_REQUEST_API_ROUTE}`,
-              {
-                org: splitURL[3],
-                repo: splitURL[4],
-                pullNumber: splitURL[6],
-                issueNumber: issueNumber,
-                githubLogin: author,
-                title: title,
-              }
-            )
-            .then(() => {
-              setTimeout(() => {
-                maybeGetPR(splitURL, issueNumber, author).then((response) =>
-                  insertPR(response)
-                );
-              }, 4000);
-            });
-        } else {
-          insertPR(response);
-        }
+        insertPR(response);
       }
     );
   }

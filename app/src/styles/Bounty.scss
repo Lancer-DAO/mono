@@ -669,6 +669,91 @@
 
 .api-modal-inputs {
   display: flex;
+  flex-direction: column;
   justify-content: space-around;
   margin-bottom: 20px;
+}
+
+.profile-nft {
+  display: flex;
+  flex-direction: column;
+  width: 300px;
+}
+
+.profile-nft-header {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  
+}
+
+
+.account-page-wrapper {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  row-gap: 20px;
+  column-gap: 80px;
+  justify-content: center;
+}
+
+.bounty-nft {
+  border: solid 1px black;
+  border-radius: 20px;
+  padding: 20px;
+  display: flex;
+  flex-direction: row;
+  column-gap: 20px;
+}
+
+.profile-picture {
+  margin-bottom: 10px;
+  height: 200px;
+  width: 200px;
+  border-radius: 50%;
+  align-self: center;
+}
+
+.bounty-picture {
+  height: 128px;
+  width: 128px;
+  border-radius: 50%;
+}
+
+.profile-section {
+  margin-bottom: 10px;
+}
+
+.profile-bounty-list{
+  display: flex;
+  flex-direction: column;
+  row-gap: 10px;
+  margin-top: -20px;
+}
+
+.bounty-nft-subheader{
+  margin-bottom: 10px;
+}
+
+.bounty-nft-header {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.bounty-nft-contents {
+  display: flex;
+  flex-direction: row;
+  column-gap: 20px;
+}
+
+.token-info {
+  display: flex;
+  flex-direction: row;
+  column-gap: 6px;
+  .token-key {
+    opacity: 0.5;
+  }
 }

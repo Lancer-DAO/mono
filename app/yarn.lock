@@ -4596,10 +4596,10 @@
     "@typescript-eslint/types" "5.57.0"
     eslint-visitor-keys "^3.3.0"
 
-"@underdog-protocol/js@^0.2.11":
-  version "0.2.11"
-  resolved "https://registry.yarnpkg.com/@underdog-protocol/js/-/js-0.2.11.tgz#eca4c9bd5bd9da2a664a9e758fa5f600ecaced60"
-  integrity sha512-BFsJhi+pE3Np8eVp5KhCxV2UHmpDhUmoWEHtLXPqH0x28Tho9BdDF5uQSaeLruT6cMj0psoScH5KZwQgdFIrzg==
+"@underdog-protocol/js@0.3.2":
+  version "0.3.2"
+  resolved "https://registry.yarnpkg.com/@underdog-protocol/js/-/js-0.3.2.tgz#b7f580c4e11565b99ded63187db328946b3d18be"
+  integrity sha512-DqVlTR2Xx6CCXRxf89HDJb0xmTEWUAmJT5+PucFsKlnWr4hlU8kXQZRWB6hS1ikA35AeDYPI9OwSlL5GvrjPcA==
   dependencies:
     "@tanstack/react-query" "^4.29.5"
     "@underdog-protocol/types" "^0.2.7"

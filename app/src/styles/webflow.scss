@@ -2502,6 +2502,11 @@
     display: block;
     margin-bottom: 5px;
     padding-left: 20px;
+    &.label-only {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
   }
 
   .w-checkbox::before {
@@ -5589,6 +5594,10 @@
     margin-left: 16px;
     line-height: 20px;
     font-weight: 700;
+    &.label-only{
+      margin-left: 8px;
+      margin-top: 4px;
+    }
   }
 
   .check-paragraph {
@@ -13463,13 +13472,6 @@
     align-items: center;
   }
 
-  .account-page-wrapper {
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-    align-items: center;
-    row-gap: 20px;
-  }
 
 
   .hover-tooltip-wrapper{

@@ -80,7 +80,6 @@ export const ApproveSubmission = () => {
         ownerAddress: submitterKey,
       },
     });
-    debugger;
     const reputationIncrease =
       100 * decimalToNumber(currentBounty.estimatedTime);
     if (nfts.totalResults > 0) {
@@ -99,7 +98,7 @@ export const ApproveSubmission = () => {
     await underdogClient.createNft({
       params: BOUNTY_PROJECT_PARAMS,
       body: {
-        name: `${currentBounty.title} - ${currentBounty.repository.name}`,
+        name: `Bounty Completer: ${currentBounty.id}`,
         image: "https://i.imgur.com/3uQq5Zo.png",
         description: currentBounty.description,
         attributes: {
@@ -139,7 +138,7 @@ export const ApproveSubmission = () => {
     await underdogClient.createNft({
       params: BOUNTY_PROJECT_PARAMS,
       body: {
-        name: `${currentBounty.title} - ${currentBounty.repository.name}`,
+        name: `Bounty Creator: ${currentBounty.id}`,
         image: "https://i.imgur.com/3uQq5Zo.png",
         description: currentBounty.description,
         attributes: {

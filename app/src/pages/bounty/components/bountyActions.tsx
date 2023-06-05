@@ -1,8 +1,3 @@
-import {
-  MERGE_PULL_REQUEST_API_ROUTE,
-  UPDATE_ISSUE_ROUTE,
-  USER_ISSUE_RELATION_ROUTE,
-} from "@/constants";
 import { LoadingBar } from "@/src/components/LoadingBar";
 import {
   addSubmitterFFA,
@@ -18,7 +13,6 @@ import {
   BountyState,
   BOUNTY_USER_RELATIONSHIP,
 } from "@/src/types";
-import { getApiEndpoint } from "@/src/utils";
 import axios from "axios";
 import classNames from "classnames";
 import { useState } from "react";
@@ -34,7 +28,6 @@ import {
 
 export const BountyActions = () => {
   const { currentUser, currentBounty } = useLancer();
-
   const [hoveredButton, setHoveredButton] = useState("none");
   if (false) {
     return <LoadingBar title="Loading On Chain Details" />;
@@ -60,12 +53,12 @@ export const BountyActions = () => {
   return (
     <div className="bounty-buttons">
       <>
-        {currentBounty.isCreator &&
+        {/* {currentBounty.isCreator &&
           (currentBounty.isVotingCancel
             ? currentBounty.currentUserRelationsList.length === 2
             : currentBounty.currentUserRelationsList.length === 1) && (
             <RequestToSubmit />
-          )}
+          )} */}
         {currentBounty.isRequestedSubmitter && (
           <button className={classNames("button-primary disabled")}>
             Request Pending
@@ -93,8 +86,7 @@ export const BountyActions = () => {
               {hoveredButton === "submit" &&
                 currentBounty.pullRequests.length === 0 && (
                   <div className="hover-tooltip">
-                    Please open a PR closing this currentBounty before
-                    submitting
+                    Please open a PR closing the GitHub Issue before submitting
                   </div>
                 )}
             </div>
