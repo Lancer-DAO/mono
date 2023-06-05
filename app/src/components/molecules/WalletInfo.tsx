@@ -9,10 +9,9 @@ import {
 } from "@solana/spl-token";
 import { PublicKey } from "@solana/web3.js";
 import { PubKey } from "@/src/components";
-import { DefaultLayout } from "@/src/components/templates/DefaultLayout";
 import { LancerWallet } from "@/src/types";
 
-export const WalletInfo: React.FC<{ wallet: LancerWallet }> = ({ wallet }) => {
+const WalletInfo: React.FC<{ wallet: LancerWallet }> = ({ wallet }) => {
   const { provider, setCurrentWallet, currentWallet } = useLancer();
   const [currentUserSOLBalance, setUserSOLBalance] = useState("0.0");
   const [currentUserUSDCBalance, setUserUSDCBalance] = useState("0.0");
@@ -98,3 +97,5 @@ export const WalletInfo: React.FC<{ wallet: LancerWallet }> = ({ wallet }) => {
     )
   );
 };
+
+export default WalletInfo;

@@ -1,21 +1,22 @@
-import App from "@/src/pages/account";
 import Head from "next/head";
 import { withPageAuthRequired } from "@auth0/nextjs-auth0";
 import { useLancer } from "@/src/providers";
 import dynamic from "next/dynamic";
-import { DefaultLayout } from "@/src/components";
-import Coinflow from "@/pages/account/coinflowOfframp";
+import {
+  DefaultLayout,
+  ProfileNFTCard,
+  CoinflowOfframp,
+  WalletInfo,
+} from "@/src/components";
 import {
   BOUNTY_PROJECT_PARAMS,
   IS_MAINNET,
   PROFILE_PROJECT_PARAMS,
 } from "@/src/constants";
-import { WalletInfo } from "@/pages/account/WalletInfo";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { api } from "@/src/utils/api";
-import { BountyNFT, ProfileNFT } from "@/src/pages/account/account";
-import { CurrentUser } from "@/src/types";
+import { BountyNFT, CurrentUser, ProfileNFT } from "@/src/types";
 export const getServerSideProps = withPageAuthRequired();
 
 import {
@@ -26,6 +27,7 @@ import {
 } from "@underdog-protocol/js";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
+import BountyNFTCard from "@/src/components/molecules/BountyNFTCard";
 dayjs.extend(relativeTime);
 
 const underdogClient = createUnderdogClient({});
@@ -166,7 +168,7 @@ const Account: React.FC = () => {
     <DefaultLayout>
       {account && (
         <div className="account-page-wrapper">
-          {/* {currentUser?.githubLogin && (
+          {currentUser?.githubLogin && (
             <div>GitHub User: {currentUser.githubLogin}</div>
           )}
           <a href="/api/auth/logout">Logout</a>
@@ -184,10 +186,10 @@ const Account: React.FC = () => {
             >
               USDC Faucet
             </a>
-          )} */}
+          )}
           <div>
             {profileNFT && (
-              <ProfileNFT
+              <ProfileNFTCard
                 profileNFT={profileNFT}
                 githubLogin={account.githubLogin}
                 githubId={account.githubId}
@@ -198,7 +200,7 @@ const Account: React.FC = () => {
             <div className="profile-bounty-list">
               <h2>Bounties</h2>
               {bountyNFTs.map((bountyNFT) => (
-                <BountyNFT bountyNFT={bountyNFT} />
+                <BountyNFTCard bountyNFT={bountyNFT} />
               ))}
             </div>
           )}
@@ -213,7 +215,7 @@ const Account: React.FC = () => {
           >
             Cash Out
           </button> */}
-          {showCoinflow && <Coinflow />}
+          {showCoinflow && <CoinflowOfframp />}
         </div>
       )}
     </DefaultLayout>
