@@ -42,7 +42,7 @@ const BountyActions = () => {
   }
 
   return (
-    <div className="bounty-Buttons">
+    <div className="bounty-buttons">
       <>
         {currentBounty.isRequestedSubmitter && (
           <Button disabled>Request Pending</Button>
@@ -298,11 +298,7 @@ export const ApproveSubmission = () => {
     });
   };
 
-  return (
-    <button className={classNames("button-primary")} onClick={onClick}>
-      Approve
-    </button>
-  );
+  return <Button onClick={onClick}>Approve</Button>;
 };
 
 export const CancelEscrow = () => {
@@ -339,11 +335,7 @@ export const CancelEscrow = () => {
     setCurrentBounty(updatedBounty);
   };
 
-  return (
-    <button className={classNames("button-primary")} onClick={onClick}>
-      Cancel
-    </button>
-  );
+  return <Button onClick={onClick}>Cancel</Button>;
 };
 
 export const DenySubmission = () => {
@@ -391,11 +383,7 @@ export const DenySubmission = () => {
     setCurrentBounty(updatedBounty);
   };
 
-  return (
-    <button className={classNames("button-primary")} onClick={onClick}>
-      Deny
-    </button>
-  );
+  return <Button onClick={onClick}>Deny</Button>;
 };
 
 export const RequestChanges = () => {
@@ -444,11 +432,7 @@ export const RequestChanges = () => {
     setCurrentBounty(updatedBounty);
   };
 
-  return (
-    <button className={classNames("button-primary")} onClick={onClick}>
-      Request Changes
-    </button>
-  );
+  return <Button onClick={onClick}>Request Changes</Button>;
 };
 
 export const SubmitRequest = ({ disabled }: { disabled?: boolean }) => {
@@ -506,12 +490,9 @@ export const SubmitRequest = ({ disabled }: { disabled?: boolean }) => {
   };
 
   return (
-    <button
-      className={classNames("button-primary", { disabled })}
-      onClick={onClick}
-    >
+    <Button disabled={disabled} onClick={onClick}>
       Submit
-    </button>
+    </Button>
   );
 };
 
@@ -557,9 +538,5 @@ export const VoteToCancel = () => {
     setCurrentBounty(updatedBounty);
   };
 
-  return (
-    <button className={classNames("button-primary")} onClick={onClick}>
-      Vote To Cancel
-    </button>
-  );
+  return <Button onClick={onClick}>Vote To Cancel</Button>;
 };

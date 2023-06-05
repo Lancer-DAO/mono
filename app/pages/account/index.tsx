@@ -17,7 +17,7 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { api } from "@/src/utils/api";
 import { BountyNFT, CurrentUser, ProfileNFT } from "@/src/types";
-export const getServerSideProps = withPageAuthRequired();
+// export const getServerSideProps = withPageAuthRequired();
 
 import {
   createUnderdogClient,
