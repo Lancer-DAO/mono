@@ -168,17 +168,17 @@ const Account: React.FC = () => {
     <DefaultLayout>
       {account && (
         <div className="account-page-wrapper">
-          {currentUser?.githubLogin && (
+          {/* {currentUser?.githubLogin && (
             <div>GitHub User: {currentUser.githubLogin}</div>
           )}
-          <a href="/api/auth/logout">Logout</a>
+          <a href="/api/auth/logout">Logout</a> */}
 
-          {wallets &&
+          {/* {wallets &&
             wallets.map((wallet) => (
               <WalletInfo wallet={wallet} key={wallet.publicKey.toString()} />
-            ))}
+            ))} */}
 
-          {!IS_MAINNET && (
+          {/* {!IS_MAINNET && (
             <a
               href="https://staging.coinflow.cash/faucet"
               target={"_blank"}
@@ -186,7 +186,7 @@ const Account: React.FC = () => {
             >
               USDC Faucet
             </a>
-          )}
+          )} */}
           <div>
             {profileNFT && (
               <ProfileNFTCard
