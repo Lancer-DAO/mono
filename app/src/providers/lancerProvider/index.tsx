@@ -23,7 +23,7 @@ import { useRouter } from "next/router";
 import { useUser } from "@auth0/nextjs-auth0/client";
 export * from "./types";
 import MonoProgramJSON from "@/escrow/sdk/idl/mono_program.json";
-import { APIKeyInfo } from "@/src/components/ApiKeyModal";
+import { APIKeyInfo } from "@/src/components/molecules/ApiKeyModal";
 import { IS_MAINNET, MONO_ADDRESS } from "@/src/constants";
 
 export const LancerContext = createContext<ILancerContext>({
