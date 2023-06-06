@@ -27,5 +27,5 @@ Sentry.init({
       blockAllMedia: true,
     }),
   ],
-  enabled: process.env.ENABLE_SENTRY === "true",
+  enabled: process.env.NEXT_PUBLIC_ENABLE_SENTRY === "true",
 });
