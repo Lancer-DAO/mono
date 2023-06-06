@@ -2,16 +2,29 @@ import Link from "next/link";
 
 export interface LinkButtonProps {
   href: string;
-  text: string;
+  children?: React.ReactNode;
+  style?: "filled" | "outlined" | "text";
 }
 
-const HeaderButton = ({ href, text }: LinkButtonProps) => {
+const getButtonStyle = (style: LinkButtonProps["style"]) => {
+  switch (style) {
+    case "filled":
+      return "py-4 px-6 rounded-md bg-turquoise-500 shadow-md transition duration-300 ease-in-out hover:bg-turquoise-600 hover:text-white-100 transform hover:-translate-y-1 text-white-100 text-base font-bold text-center uppercase";
+
+    case "outlined":
+      return "py-4 px-6 rounded-md bg-turquoise-500 shadow-md transition duration-300 ease-in-out hover:bg-turquoise-600 hover:text-white-100 transform hover:-translate-y-1 text-white-100 text-base font-bold text-center uppercase";
+    case "text":
+      return "h-fit transition duration-300 ease-in-out hover:text-turquoise-800 transform hover:-translate-y-1 text-turquoise-500 text-base font-bold";
+
+    default:
+      return "py-4 px-6 rounded-md bg-turquoise-500 shadow-md transition duration-300 ease-in-out hover:bg-turquoise-600 hover:text-white-100 transform hover:-translate-y-1 text-white-100 text-base font-bold text-center uppercase";
+  }
+};
+
+const HeaderButton = ({ href, children, style }: LinkButtonProps) => {
   return (
-    <Link
-      href={href}
-      className="py-4 px-6 rounded-md bg-turquoise-500 shadow-md transition duration-300 ease-in-out hover:bg-turquoise-600 hover:text-white-100 transform hover:-translate-y-1 text-white-100 text-base font-bold text-center uppercase"
-    >
-      {text}
+    <Link href={href} className={getButtonStyle(style)}>
+      {children}
     </Link>
   );
 };
