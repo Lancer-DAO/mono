@@ -12,7 +12,7 @@ export default function Home() {
   return (
     <>
       <Head>
-        <title>Lancer</title>
+        <title>Lancer | Bounties</title>
         <meta name="description" content="Lancer Bounties" />
       </Head>
       <main>
@@ -29,7 +29,7 @@ export default function Home() {
 const App: React.FC = () => {
   return (
     <DefaultLayout>
-      <BountyTable isMyBounties={false} />
+      <BountyTable />
     </DefaultLayout>
   );
 };

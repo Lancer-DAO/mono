@@ -35,7 +35,7 @@ export default function Home() {
   return (
     <>
       <Head>
-        <title>Lancer</title>
+        <title>Lancer | Account</title>
         <meta name="description" content="Lancer Account" />
       </Head>
       <main>

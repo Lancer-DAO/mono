@@ -1,6 +1,7 @@
 import MultiSelectDropdown from "@/src/components/molecules/MultiSelectDropdown";
 import RangeSlider from "@/src/components/molecules/RangeSlider";
 import { BOUNTY_STATES } from "@/src/constants";
+import classnames from "classnames";
 import { capitalize } from "lodash";
 import { Filters } from "./BountyTable";
 
@@ -11,6 +12,7 @@ interface BountyFiltersProps {
   timeBounds: [number, number];
   filters: Filters;
   setFilters: (filters: Filters) => void;
+  setBounties: (bounties: any[]) => void;
 }
 
 const BountyFilters = ({
@@ -20,6 +22,7 @@ const BountyFilters = ({
   timeBounds,
   filters,
   setFilters,
+  setBounties,
 }: BountyFiltersProps) => {
   return (
     <form
@@ -27,6 +30,25 @@ const BountyFilters = ({
       className="bounty-filters"
     >
       <div className="filter-section">
+        <label className="w-checkbox checkbox-field-2 label-only no-left-padding">
+          <div
+            className={classnames(
+              "w-checkbox-input w-checkbox-input--inputType-custom checkbox ",
+              {
+                checked: filters.isMyBounties,
+              }
+            )}
+            onClick={() => {
+              setFilters({
+                ...filters,
+                isMyBounties: !filters.isMyBounties,
+              });
+              setBounties([]);
+            }}
+          />
+
+          <label className="check-label label-only">Only My Bounties</label>
+        </label>
         <label>Payout Mints</label>
         <MultiSelectDropdown
           options={mints.map((mint) => {

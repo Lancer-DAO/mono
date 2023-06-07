@@ -1,14 +1,19 @@
 import { Issue } from "../types";
-import { getApiEndpointExtension } from "../utils";
 
-export const PullRequest = ({ issue }: { issue: Issue }) => {
+export const PullRequest = ({
+  issue,
+  endpoint,
+}: {
+  issue: Issue;
+  endpoint: string;
+}) => {
   return (
     <>
       <div className="text-bold discussion-sidebar-heading discussion-sidebar-toggle hx_rsm-trigger">
         This PR is linked to a Lancer Bounty
       </div>
       <a
-        href={`${getApiEndpointExtension()}/bounty?id=${issue.uuid}`}
+        href={`${endpoint}/bounty?id=${issue.uuid}`}
         target="_blank"
         rel="noreferrer"
       >

@@ -8,6 +8,7 @@
     "compile": "yarn background && yarn content && cp manifest.json dist",
     "compile-dev": "yarn background-dev && yarn content",
     "content": "webpack --config content.webpack.config.js",
+    "options": "webpack --config options.webpack.config.js",
     "clean": "rm -rf dist && mkdir dist",
     "tar": "tar -zcvf lancer-extension.tar.gz dist"
   },
