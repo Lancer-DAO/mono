@@ -84,6 +84,15 @@ const AccountHeaderOptions = () => {
                 Discord
               </Link>
               <Link
+                href={
+                  "https://lancerworks.notion.site/Lancer-Documentation-ed924cd3b28e44e3bf90fb5db1dc46d3?pvs=4"
+                }
+                target="_blank"
+                className="flex h-[48px] border-b-gray-400 border-b-[1px] py-[6px] items-center justify-center  hover:bg-turquoise-500 text-gray-800 hover:text-white-100 transition-colors duration-300 ease-in-out"
+              >
+                Documentation
+              </Link>
+              <Link
                 href={"/api/auth/logout"}
                 className="flex h-[48px] rounded-b-[20px] py-[6px] items-center justify-center  hover:bg-turquoise-500 text-gray-800 hover:text-white-100 transition-colors duration-300 ease-in-out"
               >
