@@ -3,7 +3,7 @@ import { ReactNode } from "react";
 
 const DefaultLayout: React.FC<{ children: ReactNode }> = ({ children }) => {
   return (
-    <div>
+    <div className="relative">
       <Header />
       <div className="page-content">{children}</div>
     </div>

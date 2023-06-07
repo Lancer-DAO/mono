@@ -34,11 +34,9 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
-extension/dist
 extension/*.zip
 lancer-extension.tar.gz
 second_wallet.json
 test-keypair.json
 .env
 **/node_modules
-**/dist

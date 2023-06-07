@@ -11700,13 +11700,6 @@
     margin: 0;
     border: 0;
   }
-  button,
-  [type='button'],
-  [type='reset'] {
-    border: 0;
-    cursor: pointer;
-    -webkit-appearance: button;
-  }
   .w-form {
     margin: 0 0 15px;
   }
@@ -13502,4 +13495,9 @@
       color: #14bb88;
       line-height: 28px;
       font-size: 28px;
+    }
+
+    .no-left-padding {
+      padding-left: 0px;
+      margin-left: -16px;
     }

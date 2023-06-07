@@ -25,9 +25,10 @@ export type Filters = {
   states: string[];
   estimatedTimeBounds: [number, number];
   relationships: string[];
+  isMyBounties: boolean;
 };
 
-const BountyList: React.FC<{ isMyBounties: boolean }> = ({ isMyBounties }) => {
+const BountyList: React.FC<{}> = () => {
   const { currentUser } = useLancer();
   const router = useRouter();
   const { mutateAsync: getBounties } =
@@ -45,19 +46,20 @@ const BountyList: React.FC<{ isMyBounties: boolean }> = ({ isMyBounties }) => {
     estimatedTimeBounds: bounds,
     states: TABLE_BOUNTY_STATES,
     relationships: BOUNTY_USER_RELATIONSHIP,
+    isMyBounties: false,
   });
 
   useEffect(() => {
     const getBs = async () => {
       if (router.isReady && currentUser?.id) {
         const bounties = await getBounties(
-          isMyBounties ? { currentUserId: currentUser.id } : {}
+          filters.isMyBounties ? { currentUserId: currentUser.id } : {}
         );
         setBounties(bounties);
       }
     };
     getBs();
-  }, [router, currentUser?.id]);
+  }, [router, currentUser?.id, filters.isMyBounties]);
 
   useEffect(() => {
     // Get the meta-info off all bounties that are used for filters. Specifically
@@ -106,11 +108,12 @@ const BountyList: React.FC<{ isMyBounties: boolean }> = ({ isMyBounties }) => {
         estimatedTimeBounds: timeBounds,
         states: TABLE_BOUNTY_STATES,
         relationships: BOUNTY_USER_RELATIONSHIP,
+        isMyBounties: filters.isMyBounties,
       });
     }
   }, [bounties]);
 
-  if (bounties.length === 0) return <LoadingBar title="Loading Bountys" />;
+  if (bounties.length === 0) return <LoadingBar title="Loading Bounties" />;
 
   const filteredBountys = bounties.filter((bounty) => {
     if (!bounty.escrow.publicKey || !bounty.escrow.mint) {
@@ -150,7 +153,7 @@ const BountyList: React.FC<{ isMyBounties: boolean }> = ({ isMyBounties }) => {
   return (
     <div className="bounty-table">
       <div className="empty-cell" />
-      <h1 className="page-header">{`${isMyBounties ? "My " : ""}Bounties`}</h1>
+      <h1 className="page-header">{`Bounties`}</h1>
 
       <BountyFilters
         mints={mints}
@@ -159,6 +162,7 @@ const BountyList: React.FC<{ isMyBounties: boolean }> = ({ isMyBounties }) => {
         orgs={orgs}
         filters={filters}
         setFilters={setFilters}
+        setBounties={setBounties}
       />
       <div className="issue-list">
         {filteredBountys.map((bounty, index) => (

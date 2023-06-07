@@ -19,7 +19,7 @@ export default function Home() {
   return (
     <>
       <Head>
-        <title>Lancer</title>
+        <title>Lancer | New Bounty</title>
         <meta name="description" content="Lancer Github Extension" />
       </Head>
       <main>

@@ -1,0 +1,42 @@
+{
+  "manifest_version": 3,
+  "name": "Lancer Github Extension",
+  "version": "0.2.0",
+  "icons": {},
+  "host_permissions": [
+    "http://localhost:3000/*",
+    "https://github.com/*",
+    "https://app.lancer.so/*",
+    "https://demo.lancer.so/*"
+  ],
+  "permissions": ["storage"],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "externally_connectable": {
+    "matches": [
+      "http://localhost:3000/*",
+      "https://*.vercel.app/*",
+      "https://app.lancer.so/*",
+      "https://demo.lancer.so/*"
+  ]
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "http://localhost:3000/*",
+        "https://github.com/*"
+      ],
+      "js": [
+        "content.js"
+      ],
+      "media": []
+    }
+  ],
+
+  "action": {
+    "default_icon": "icon.png",
+    "default_popup": "popup.html",
+    "default_title": "Lancer Extension"
+}
+}

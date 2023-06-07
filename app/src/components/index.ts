@@ -9,6 +9,9 @@ const LoadingBar = dynamic(() => import("./atoms/LoadingBar"));
 const PubKey = dynamic(() => import("./atoms/PubKey"));
 
 // Molecules
+const AccountHeaderOptions = dynamic(
+  () => import("./molecules/AccountHeaderOptions")
+);
 const ApiKeyModal = dynamic(() => import("./molecules/ApiKeyModal"));
 const BountyActions = dynamic(() => import("./organisms/BountyActions"));
 const BountyNFTCard = dynamic(() => import("./molecules/BountyNFTCard"));
