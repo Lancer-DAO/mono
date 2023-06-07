@@ -78,7 +78,8 @@ const AccountHeaderOptions = () => {
               </Link>
               <Link
                 href={"https://discord.gg/H6HXzYsc"}
-                className="flex h-[48px] rounded-b-[20px] py-[6px] items-center justify-center  hover:bg-turquoise-500 text-gray-800 hover:text-white-100 transition-colors duration-300 ease-in-out"
+                target="_blank"
+                className="flex h-[48px] border-b-gray-400 border-b-[1px] py-[6px] items-center justify-center  hover:bg-turquoise-500 text-gray-800 hover:text-white-100 transition-colors duration-300 ease-in-out"
               >
                 Discord
               </Link>
