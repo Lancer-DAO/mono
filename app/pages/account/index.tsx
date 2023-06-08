@@ -7,6 +7,7 @@ import {
   ProfileNFTCard,
   CoinflowOfframp,
   WalletInfo,
+  Button,
 } from "@/src/components";
 import {
   BOUNTY_PROJECT_PARAMS,
@@ -147,7 +148,7 @@ const Account: React.FC = () => {
     const result = await underdogClient.createNft({
       params: PROFILE_PROJECT_PARAMS,
       body: {
-        name: `Profile NFT for ${account.githubLogin}`,
+        name: `${account.githubLogin}`,
         image: "https://i.imgur.com/3uQq5Zo.png",
         attributes: {
           reputation: 0,
@@ -159,9 +160,10 @@ const Account: React.FC = () => {
         receiverAddress: currentWallet.publicKey.toString(),
       },
     });
-    await registerProfileNFT({
+    const updatedUser = await registerProfileNFT({
       walletPublicKey: currentWallet.publicKey.toString(),
     });
+    setAccount(updatedUser);
   };
 
   return (
@@ -191,7 +193,6 @@ const Account: React.FC = () => {
             {profileNFT && (
               <ProfileNFTCard
                 profileNFT={profileNFT}
-                githubLogin={account.githubLogin}
                 githubId={account.githubId}
               />
             )}
@@ -205,7 +206,13 @@ const Account: React.FC = () => {
             </div>
           )}
           {!account?.hasProfileNFT && (
-            <button onClick={mintProfileNFT}>Mint Profile NFT</button>
+            <Button
+              disabled={!currentWallet}
+              disabledText={"Please connect a wallet"}
+              onClick={mintProfileNFT}
+            >
+              Mint Profile NFT
+            </Button>
           )}
 
           {/* <button

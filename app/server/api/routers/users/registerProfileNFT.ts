@@ -15,7 +15,7 @@ export const registerProfileNFT = protectedProcedure
 
     const wallet = await helpers.getOrCreateWallet(user, walletPublicKey);
 
-    const updatedUser = await prisma.user.update({
+    await prisma.user.update({
       where: {
         id: ctx.user.id,
       },
@@ -25,5 +25,14 @@ export const registerProfileNFT = protectedProcedure
       },
     });
 
-    return updatedUser;
+    const updatedUser = await prisma.user.findUnique({
+      where: {
+        id: ctx.user.id,
+      },
+      include: {
+        wallets: true,
+      },
+    });
+
+    return { ...updatedUser, currentWallet: updatedUser.wallets[0] };
   });

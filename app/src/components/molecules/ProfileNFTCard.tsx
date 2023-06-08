@@ -5,11 +5,9 @@ dayjs.extend(relativeTime);
 
 const ProfileNFTCard = ({
   profileNFT,
-  githubLogin,
   githubId,
 }: {
   profileNFT: ProfileNFT;
-  githubLogin: string;
   githubId: string;
 }) => {
   return (
@@ -19,12 +17,12 @@ const ProfileNFTCard = ({
         <img
           src={`https://avatars.githubusercontent.com/u/${
             githubId.split("|")[1]
-          }?s=60&v=4`}
+          }?s=256&v=4`}
           className="profile-picture"
         />
 
         <div className="profile-nft-header">
-          <h4>{githubLogin}</h4>
+          <h4>{profileNFT.name}</h4>
           <div>{profileNFT.reputation} Pts</div>
         </div>
         {profileNFT.badges?.length > 0 && (
