@@ -40,7 +40,6 @@ model Bounty {
   repositoryid Int
   tags         Tag[]
   users        BountyUser[]
-  bountyAction BountyAction[]
 }
 
 model Certificate {
@@ -310,7 +309,6 @@ model User {
   pullRequests PullRequest[]
   endorsees    Endorsement[]     @relation("endorsee")
   endorsers    Endorsement[]     @relation("endorser")
-  bountyAction BountyAction[]
 }
 
 model Wallet {
@@ -326,15 +324,14 @@ model Wallet {
 
 /// RELATIONS
 
-model BountyAction {
-  bountyid  Int
-  timestamp String @db.VarChar(24)
-  bounty    Bounty @relation(fields: [bountyid], references: [id])
-  user      User   @relation(fields: [userid], references: [id])
-  userid    Int
-  type      String @db.VarChar(24)
+model BountyUserAction {
+  bountyid   Int
+  userid     Int
+  bountyUser BountyUser @relation(fields: [bountyid, userid], references: [bountyid, userid])
+  timestamp  String     @db.VarChar(24)
+  type       String     @db.VarChar(24)
 
-  @@id([timestamp, bountyid])
+  @@id([timestamp, bountyid, userid])
 }
 
 model BountyCertificate {
@@ -364,6 +361,9 @@ model BountyUser {
   user             User   @relation(fields: [userid], references: [id])
   bounty           Bounty @relation(fields: [bountyid], references: [id])
   onChainPublicKey String @default("") @db.VarChar(256)
+
+  // Relations
+  actions BountyUserAction[]
 
   @@id([userid, bountyid])
 }
