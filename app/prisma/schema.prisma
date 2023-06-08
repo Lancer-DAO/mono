@@ -33,13 +33,14 @@ model Bounty {
   milestoneid  Int?
   project      Project?            @relation(fields: [projectid], references: [id])
   projectid    Int?
-  protocol     Protocol?           @relation(fields: [protocolid], references: [id])
-  protocolid   Int?
+  guild        Guild?              @relation(fields: [guildid], references: [id])
+  guildid      Int?
   pullRequests PullRequest[]
   repository   Repository          @relation(fields: [repositoryid], references: [id])
   repositoryid Int
   tags         Tag[]
   users        BountyUser[]
+  bountyAction BountyAction[]
 }
 
 model Certificate {
@@ -49,10 +50,10 @@ model Certificate {
   name String? @db.VarChar(256)
 
   // Relations
-  bounties  BountyCertificate[]
-  protocols CertificateProtocol[]
-  tags      Tag[]
-  users     CertificateUser[]
+  bounties BountyCertificate[]
+  guilds   CertificateGuild[]
+  tags     Tag[]
+  users    CertificateUser[]
 }
 
 model Chain {
@@ -79,6 +80,21 @@ model Comment {
   bounty BountyComment[]
 }
 
+model Endorsement {
+  id Int @id @default(autoincrement())
+
+  // Fields
+  timestamp String? @db.VarChar(24)
+
+  // Relations
+  skill       Skill? @relation(fields: [skillid], references: [id])
+  skillid     Int?
+  endoreser   User?  @relation(fields: [endorserid], references: [id], name: "endorser")
+  endorserid  Int?
+  endoresee   User?  @relation(fields: [endoreseeid], references: [id], name: "endorsee")
+  endoreseeid Int?
+}
+
 model Escrow {
   id Int @id @default(autoincrement())
 
@@ -97,6 +113,22 @@ model Escrow {
   transactions Transaction[]
   users        EscrowUser[]
   milestoneid  Int?
+}
+
+model Guild {
+  id Int @id @default(autoincrement())
+
+  // Fields
+  name    String? @db.VarChar(128)
+  logo    String? @db.VarChar(2000)
+  website String? @db.VarChar(128)
+
+  // Relations
+  bounties     Bounty[]
+  projects     Project[]
+  repositories Repository[]
+  certificates CertificateGuild[]
+  users        GuildUser[]
 }
 
 model Issue {
@@ -150,27 +182,11 @@ model Project {
   escrow       Escrow?       @relation(fields: [escrowid], references: [id])
   escrowid     Int?          @unique
   milestones   Milestone[]
-  protocol     Protocol      @relation(fields: [protocolid], references: [id])
-  protocolid   Int
+  guild        Guild         @relation(fields: [guildid], references: [id])
+  guildid      Int
   repository   Repository    @relation(fields: [repositoryid], references: [id])
   repositoryid Int
   users        ProjectUser[]
-}
-
-model Protocol {
-  id Int @id @default(autoincrement())
-
-  // Fields
-  name    String? @db.VarChar(128)
-  logo    String? @db.VarChar(2000)
-  website String? @db.VarChar(128)
-
-  // Relations
-  bounties     Bounty[]
-  projects     Project[]
-  repositories Repository[]
-  certificates CertificateProtocol[]
-  users        ProtocolUser[]
 }
 
 model Provider {
@@ -219,10 +235,20 @@ model Repository {
   issues       Issue[]
   projects     Project[]
   pullRequests PullRequest[]
-  Protocol     Protocol?     @relation(fields: [protocolid], references: [id])
-  protocolid   Int?
+  Guild        Guild?        @relation(fields: [guildid], references: [id])
+  guildid      Int?
 
   @@unique([organization, name])
+}
+
+model Skill {
+  id Int @id @default(autoincrement())
+
+  // Fields
+  name String @unique @db.VarChar(128)
+
+  // Relations
+  endorsements Endorsement[]
 }
 
 model Tag {
@@ -279,9 +305,12 @@ model User {
   escrows      EscrowUser[]
   milestones   MilestoneUser[]
   projects     ProjectUser[]
-  protocols    ProtocolUser[]
+  guilds       GuildUser[]
   tags         Tag[]
   pullRequests PullRequest[]
+  endorsees    Endorsement[]     @relation("endorsee")
+  endorsers    Endorsement[]     @relation("endorser")
+  bountyAction BountyAction[]
 }
 
 model Wallet {
@@ -296,6 +325,17 @@ model Wallet {
 }
 
 /// RELATIONS
+
+model BountyAction {
+  bountyid  Int
+  timestamp String @db.VarChar(24)
+  bounty    Bounty @relation(fields: [bountyid], references: [id])
+  user      User   @relation(fields: [userid], references: [id])
+  userid    Int
+  type      String @db.VarChar(24)
+
+  @@id([timestamp, bountyid])
+}
 
 model BountyCertificate {
   certificateid Int
@@ -318,33 +358,33 @@ model BountyComment {
 }
 
 model BountyUser {
-  userid            Int
-  bountyid          Int
-  relations         String @db.VarChar(256)
-  user              User   @relation(fields: [userid], references: [id])
-  bounty            Bounty @relation(fields: [bountyid], references: [id])
-  onChainPublicKeys String @db.VarChar(1028)
+  userid           Int
+  bountyid         Int
+  relations        String @db.VarChar(256)
+  user             User   @relation(fields: [userid], references: [id])
+  bounty           Bounty @relation(fields: [bountyid], references: [id])
+  onChainPublicKey String @default("") @db.VarChar(256)
 
   @@id([userid, bountyid])
 }
 
-model CertificateProtocol {
+model CertificateGuild {
   certificateid Int
-  protocolid    Int
+  guildid       Int
   relations     String      @db.VarChar(256)
   certificiate  Certificate @relation(fields: [certificateid], references: [id])
-  protocol      Protocol    @relation(fields: [protocolid], references: [id])
+  guild         Guild       @relation(fields: [guildid], references: [id])
 
-  @@id([certificateid, protocolid])
+  @@id([certificateid, guildid])
 }
 
 model CertificateUser {
-  userid            Int
-  certificateid     Int
-  relations         String      @db.VarChar(256)
-  onChainPublicKeys String      @db.VarChar(1028)
-  user              User        @relation(fields: [userid], references: [id])
-  certificate       Certificate @relation(fields: [certificateid], references: [id])
+  userid           Int
+  certificateid    Int
+  relations        String      @db.VarChar(256)
+  onChainPublicKey String      @default("") @db.VarChar(256)
+  user             User        @relation(fields: [userid], references: [id])
+  certificate      Certificate @relation(fields: [certificateid], references: [id])
 
   @@id([userid, certificateid])
 }
@@ -389,14 +429,14 @@ model ProjectUser {
   @@id([userid, projectid])
 }
 
-model ProtocolUser {
-  userid     Int
-  protocolid Int
-  relations  String   @db.VarChar(256)
-  user       User     @relation(fields: [userid], references: [id])
-  protocol   Protocol @relation(fields: [protocolid], references: [id])
+model GuildUser {
+  userid    Int
+  guildid   Int
+  relations String @db.VarChar(256)
+  user      User   @relation(fields: [userid], references: [id])
+  guild     Guild  @relation(fields: [guildid], references: [id])
 
-  @@id([userid, protocolid])
+  @@id([userid, guildid])
 }
 
 model TransactionWallet {
