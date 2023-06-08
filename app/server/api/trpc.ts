@@ -71,7 +71,7 @@ export const createTRPCContext = async (_opts: CreateNextContextOptions) => {
 
     if (!user) {
       return createInnerTRPCContext({
-        user: null,
+        user: { id: null, email, token, sub, nickname },
       });
     }
 

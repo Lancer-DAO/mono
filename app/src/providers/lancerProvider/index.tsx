@@ -132,9 +132,10 @@ const LancerProvider: FunctionComponent<ILancerState> = ({
           const userInfo = await getCurrUser();
           setCurrentUser(userInfo);
         } catch (e) {
-          if (e.data.httpStatus === 401) {
-            router.push("/api/auth/login");
-          }
+          // if (e.data.httpStatus === 401) {
+          //   debugger;
+          //   router.push("/api/auth/login");
+          // }
         }
       };
       getUser();

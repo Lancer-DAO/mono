@@ -6,7 +6,17 @@ export const login = protectedProcedure.mutation(async ({ ctx }) => {
 
   if (!id) {
     try {
-      console.log(email, id, sub, nickname);
+      const maybeUser = await prisma.user.findUnique({
+        where: {
+          email,
+        },
+        select: {
+          id: true,
+        },
+      });
+      if (maybeUser) {
+        return maybeUser;
+      }
       await prisma.user.create({
         data: {
           email,
