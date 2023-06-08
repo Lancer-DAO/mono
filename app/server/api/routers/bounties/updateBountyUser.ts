@@ -12,6 +12,7 @@ import {
 } from "@/prisma/helpers";
 import { Octokit } from "octokit";
 import axios from "axios";
+import dayjs from "dayjs";
 
 export const updateBountyUser = protectedProcedure
   .input(
@@ -20,7 +21,6 @@ export const updateBountyUser = protectedProcedure
       currentUserId: z.number(),
       userId: z.number(),
       publicKey: z.string(),
-      provider: z.string(),
       escrowId: z.number(),
       relations: z.array(z.string()),
       state: z.optional(z.string()),
@@ -40,9 +40,7 @@ export const updateBountyUser = protectedProcedure
         state,
         label,
         signature,
-        provider,
       },
-      ctx,
     }) => {
       const user = await getUserById(userId);
 
@@ -77,6 +75,14 @@ export const updateBountyUser = protectedProcedure
           },
         });
       }
+      await prisma.bountyUserAction.create({
+        data: {
+          bountyid: bountyId,
+          userid: userId,
+          type: label,
+          timestamp: new dayjs.Dayjs().toString(),
+        },
+      });
       if (state) {
         bounty = await prisma.bounty.update({
           where: {
@@ -87,7 +93,7 @@ export const updateBountyUser = protectedProcedure
           },
         });
       }
-      if (signature || label) {
+      if (signature) {
         const escrow = await prisma.escrow.findUnique({
           where: {
             id: escrowId,
