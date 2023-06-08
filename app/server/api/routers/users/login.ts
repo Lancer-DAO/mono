@@ -10,8 +10,8 @@ export const login = protectedProcedure.mutation(async ({ ctx }) => {
         where: {
           email,
         },
-        select: {
-          id: true,
+        include: {
+          wallets: true,
         },
       });
       if (maybeUser) {
