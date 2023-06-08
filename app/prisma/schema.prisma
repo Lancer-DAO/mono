@@ -318,11 +318,12 @@ model BountyComment {
 }
 
 model BountyUser {
-  userid    Int
-  bountyid  Int
-  relations String @db.VarChar(256)
-  user      User   @relation(fields: [userid], references: [id])
-  bounty    Bounty @relation(fields: [bountyid], references: [id])
+  userid            Int
+  bountyid          Int
+  relations         String @db.VarChar(256)
+  user              User   @relation(fields: [userid], references: [id])
+  bounty            Bounty @relation(fields: [bountyid], references: [id])
+  onChainPublicKeys String @db.VarChar(1028)
 
   @@id([userid, bountyid])
 }
@@ -338,11 +339,12 @@ model CertificateProtocol {
 }
 
 model CertificateUser {
-  userid        Int
-  certificateid Int
-  relations     String      @db.VarChar(256)
-  user          User        @relation(fields: [userid], references: [id])
-  certificate   Certificate @relation(fields: [certificateid], references: [id])
+  userid            Int
+  certificateid     Int
+  relations         String      @db.VarChar(256)
+  onChainPublicKeys String      @db.VarChar(1028)
+  user              User        @relation(fields: [userid], references: [id])
+  certificate       Certificate @relation(fields: [certificateid], references: [id])
 
   @@id([userid, certificateid])
 }
