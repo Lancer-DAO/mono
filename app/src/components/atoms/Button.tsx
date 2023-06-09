@@ -51,7 +51,7 @@ const Button = ({
       >
         {isLoading ? "Processing..." : children}
       </button>
-      {hoveredButton && disabledText && (
+      {hoveredButton && disabledText && disabled && (
         <div className="hover-tooltip">{disabledText}</div>
       )}
     </div>
