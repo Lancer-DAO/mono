@@ -28,6 +28,7 @@ import {
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import BountyNFTCard from "@/src/components/molecules/BountyNFTCard";
+import AddReferrerModal from "@/src/components/molecules/AddReferrerModal";
 dayjs.extend(relativeTime);
 
 const underdogClient = createUnderdogClient({});
@@ -189,11 +190,7 @@ const Account: React.FC = () => {
           )} */}
           <div>
             {profileNFT && (
-              <ProfileNFTCard
-                profileNFT={profileNFT}
-                githubLogin={account.githubLogin}
-                githubId={account.githubId}
-              />
+              <ProfileNFTCard profileNFT={profileNFT} user={account} />
             )}
           </div>
           {bountyNFTs.length > 0 && (

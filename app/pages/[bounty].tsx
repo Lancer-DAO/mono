@@ -214,14 +214,17 @@ const Bounty: React.FC = () => {
               {currentBounty?.creator && (
                 <div>
                   <label className="field-label-10">Creator</label>
-                  <ContributorInfo user={currentBounty.creator} />
+                  <ContributorInfo user={currentBounty.creator.user} />
                 </div>
               )}
               {currentBounty && currentBounty.deniedRequesters.length > 0 && (
                 <div>
                   <label className="field-label-5">Denied Requesters</label>
                   {currentBounty.deniedRequesters.map((submitter) => (
-                    <ContributorInfo user={submitter} key={submitter.userid} />
+                    <ContributorInfo
+                      user={submitter.user}
+                      key={submitter.userid}
+                    />
                   ))}
                 </div>
               )}
@@ -259,7 +262,7 @@ const Bounty: React.FC = () => {
               {currentBounty.state === BountyState.AWAITING_REVIEW && (
                 <div>
                   <label className="field-label-10">Submissions</label>
-                  <ContributorInfo user={currentBounty.currentSubmitter} />
+                  <ContributorInfo user={currentBounty.currentSubmitter.user} />
                 </div>
               )}
               {currentBounty.isCreator &&
@@ -269,7 +272,7 @@ const Bounty: React.FC = () => {
                     {currentBounty.changesRequestedSubmitters.map(
                       (submitter) => (
                         <ContributorInfo
-                          user={submitter}
+                          user={submitter.user}
                           key={submitter.userid}
                         />
                       )
@@ -282,7 +285,7 @@ const Bounty: React.FC = () => {
                     <label className="field-label-5">Denied Submitters</label>
                     {currentBounty.deniedSubmitters.map((submitter) => (
                       <ContributorInfo
-                        user={submitter}
+                        user={submitter.user}
                         key={submitter.userid}
                       />
                     ))}
@@ -291,7 +294,7 @@ const Bounty: React.FC = () => {
               {currentBounty.completer && (
                 <div>
                   <label className="field-label-10">Bounty Completer</label>
-                  <ContributorInfo user={currentBounty.completer} />
+                  <ContributorInfo user={currentBounty.completer.user} />
                 </div>
               )}
               {currentBounty.isCreator &&
@@ -300,7 +303,7 @@ const Bounty: React.FC = () => {
                     <label className="field-label-5">Voting To Cancel</label>
                     {currentBounty.votingToCancel.map((submitter) => (
                       <ContributorInfo
-                        user={submitter}
+                        user={submitter.user}
                         key={submitter.userid}
                       />
                     ))}
@@ -314,7 +317,7 @@ const Bounty: React.FC = () => {
                     </label>
                     {currentBounty.needsToVote.map((submitter) => (
                       <ContributorInfo
-                        user={submitter}
+                        user={submitter.user}
                         key={submitter.userid}
                       />
                     ))}

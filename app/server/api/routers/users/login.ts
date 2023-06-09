@@ -1,19 +1,13 @@
 import { prisma } from "@/server/db";
 import { protectedProcedure } from "../../trpc";
+import * as helpers from "@/prisma/helpers";
 
 export const login = protectedProcedure.mutation(async ({ ctx }) => {
   const { email, id, sub, nickname } = ctx.user;
 
   if (!id) {
     try {
-      const maybeUser = await prisma.user.findUnique({
-        where: {
-          email,
-        },
-        include: {
-          wallets: true,
-        },
-      });
+      const maybeUser = await helpers.getUser(email);
       if (maybeUser) {
         return maybeUser;
       }
@@ -25,27 +19,13 @@ export const login = protectedProcedure.mutation(async ({ ctx }) => {
         },
       });
 
-      const user = await prisma.user.findUnique({
-        where: {
-          email,
-        },
-        include: {
-          wallets: true,
-        },
-      });
+      const user = await helpers.getUser(email);
       return user;
     } catch (e) {
       console.error(e);
     }
   } else {
-    const user = await prisma.user.findUnique({
-      where: {
-        id,
-      },
-      include: {
-        wallets: true,
-      },
-    });
+    const user = await helpers.getUser(email);
     return user;
   }
 });

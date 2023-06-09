@@ -10,16 +10,25 @@ import { useWallet, useConnection } from "@solana/wallet-adapter-react";
 import { PublicKey, Transaction } from "@solana/web3.js";
 import classNames from "classnames";
 import { useState } from "react";
+import { getButtonStyle } from "./LinkButton";
 
 interface ButtonProps {
-  onClick?: () => void;
+  onClick?: () => void | Promise<void>;
   disabled?: boolean;
   disabledText?: string;
   children?: React.ReactNode;
+  style?: "filled" | "outlined" | "text";
 }
 
-const Button = ({ children, onClick, disabled, disabledText }: ButtonProps) => {
+const Button = ({
+  children,
+  onClick,
+  disabled,
+  disabledText,
+  style,
+}: ButtonProps) => {
   const [hoveredButton, setHoveredButton] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   return (
     <div
@@ -32,10 +41,15 @@ const Button = ({ children, onClick, disabled, disabledText }: ButtonProps) => {
       }}
     >
       <button
-        className={classNames("button-primary", { disabled })}
-        onClick={onClick}
+        className={getButtonStyle(style)}
+        disabled={disabled}
+        onClick={async () => {
+          setIsLoading(true);
+          await onClick();
+          setIsLoading(false);
+        }}
       >
-        {children}
+        {isLoading ? "Processing..." : children}
       </button>
       {hoveredButton && disabledText && (
         <div className="hover-tooltip">{disabledText}</div>

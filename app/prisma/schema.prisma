@@ -307,8 +307,10 @@ model User {
   guilds       GuildUser[]
   tags         Tag[]
   pullRequests PullRequest[]
-  endorsees    Endorsement[]     @relation("endorsee")
-  endorsers    Endorsement[]     @relation("endorser")
+  endorsees    Endorsement[]      @relation("endorsee")
+  endorsers    Endorsement[]      @relation("endorser")
+  referrers    ReferrerReferree[] @relation("referree")
+  referrees    ReferrerReferree[] @relation("referrer")
 }
 
 model Wallet {
@@ -320,6 +322,7 @@ model Wallet {
   providers    Provider[]
   transactions TransactionWallet[]
   chains       ChainWallet[]
+  reffering    ReferrerReferree[]  @relation("wallet")
 }
 
 /// RELATIONS
@@ -447,4 +450,16 @@ model TransactionWallet {
   transaction   Transaction @relation(fields: [transactionid], references: [id])
 
   @@id([walletid, transactionid])
+}
+
+model ReferrerReferree {
+  referrerid Int
+  referreeid Int
+  walletid   Int
+  relations  String @db.VarChar(256)
+  referrer   User   @relation("referrer", fields: [referrerid], references: [id])
+  referree   User   @relation("referree", fields: [referreeid], references: [id])
+  wallet     Wallet @relation("wallet", fields: [walletid], references: [id])
+
+  @@id([referrerid, referreeid])
 }

@@ -119,7 +119,7 @@ const SubmitterSection: React.FC<SubmitterSectionProps> = ({
 
   return (
     <div className="submitter-section">
-      <ContributorInfo user={submitter} />
+      <ContributorInfo user={submitter.user} />
 
       {type === "approved" ? (
         <div className="empty-submitter-cell"></div>

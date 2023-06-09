@@ -7,7 +7,7 @@ export interface LinkButtonProps {
   target?: string;
 }
 
-const getButtonStyle = (style: LinkButtonProps["style"]) => {
+export const getButtonStyle = (style: LinkButtonProps["style"]) => {
   switch (style) {
     case "filled":
       return "py-4 px-6 rounded-md bg-turquoise-500 shadow-md transition duration-300 ease-in-out hover:bg-turquoise-600 hover:text-white-100 transform hover:-translate-y-1 text-white-100 text-base font-bold text-center uppercase";
