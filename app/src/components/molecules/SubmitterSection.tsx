@@ -61,7 +61,6 @@ const SubmitterSection: React.FC<SubmitterSectionProps> = ({
               relations: currentBounty.currentUserRelationsList,
 
               publicKey: currentWallet.publicKey.toString(),
-              provider: currentWallet.providerName,
               escrowId: currentBounty.escrowid,
               signature: "test",
               label: "remove-submitter",
@@ -83,7 +82,6 @@ const SubmitterSection: React.FC<SubmitterSectionProps> = ({
                 userId: submitter.userid,
                 relations: [BOUNTY_USER_RELATIONSHIP.DeniedRequester],
                 publicKey: currentWallet.publicKey.toString(),
-                provider: currentWallet.providerName,
                 escrowId: currentBounty.escrowid,
                 signature: "n/a",
                 label: "deny-submitter",
@@ -104,7 +102,6 @@ const SubmitterSection: React.FC<SubmitterSectionProps> = ({
                 relations: [BOUNTY_USER_RELATIONSHIP.ApprovedSubmitter],
                 state: BountyState.IN_PROGRESS,
                 publicKey: currentWallet.publicKey.toString(),
-                provider: currentWallet.providerName,
                 escrowId: currentBounty.escrowid,
                 signature,
                 label: "add-approved-submitter",
