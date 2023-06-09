@@ -1,5 +1,7 @@
 import { prisma } from "@/server/db";
 import * as Prisma from "@prisma/client";
+import { userAgent } from "next/server";
+import { getWalletOrThrow } from "./wallet";
 
 const USER_INCLUDE = {
   wallets: true,
@@ -46,6 +48,9 @@ export const searchUserByName = async (
         contains: query,
       },
       id: includeCurrentUser ? undefined : { not: currentUserId },
+    },
+    include: {
+      wallets: true,
     },
   });
   return users;

@@ -10,6 +10,7 @@ import { useOutsideAlerter, useDebounce } from "@/hooks";
 import { User, Wallet } from "@/src/types";
 import { api } from "@/src/utils/api";
 import { Button, ContributorInfo } from "@/components";
+import { PublicKey } from "@solana/web3.js";
 
 interface Props {
   showModal: boolean;
@@ -53,6 +54,11 @@ const AddReferrerModal: FC<Props> = ({ showModal, setShowModal }) => {
 
   const addReferrer = async () => {
     try {
+      const referrerWallet = referrer.wallets.find(
+        (wallet) => wallet.id === referrer.profileWalletId
+      );
+      //   USE THIS PUBLIC KEY TO ADD REFERRER
+      const referrerWalletPublicKey = new PublicKey(referrerWallet.publicKey);
       const user = await addReferrerAPI({
         referrerId: referrer.id,
         walletId: referrer.profileWalletId,
