@@ -6,11 +6,7 @@ import { useOutsideAlerter } from "@/src/hooks/useOutsideAlerter";
 import dynamic from "next/dynamic";
 import { Key } from "react-feather";
 import Link from "next/link";
-const WalletMultiButtonDynamic = dynamic(
-  async () =>
-    (await import("@solana/wallet-adapter-react-ui")).WalletMultiButton,
-  { ssr: false }
-);
+
 const AccountHeaderOptions = () => {
   const { currentUser } = useLancer();
   const [hasExtension, setHasExtension] = useState(false);
@@ -36,7 +32,7 @@ const AccountHeaderOptions = () => {
     setShowOptions(false);
   });
   return (
-    <div className="relative ml-auto ">
+    <div className="relative ">
       {currentUser !== null ? (
         <>
           <div
@@ -62,7 +58,6 @@ const AccountHeaderOptions = () => {
               >
                 Account
               </Link>
-              <WalletMultiButtonDynamic className="flex h-[48px] w-[250px] py-[6px] items-center justify-center border-b-gray-400 border-b-[1px] border-solid hover:bg-turquoise-500 text-gray-800 hover:text-white-100 transition-colors duration-300 ease-in-out" />
               <button
                 onClick={() => setShowModal(true)}
                 className="flex h-[48px] w-full gap-[10px] py-[6px] items-center justify-center border-b-gray-400 border-b-[1px] hover:bg-turquoise-500 text-gray-800 hover:text-white-100 transition-colors duration-300 ease-in-out"

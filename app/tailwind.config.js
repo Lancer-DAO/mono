@@ -55,7 +55,7 @@ module.exports = {
           500: "#CCCCCC",  // #CCCCCC
           600: "#999999",  // Darker shade
           700: "#666666",  // Darker shade
-          800: "#333333",  // Darker shade
+          800: "#333333 !important",  // Darker shade
           900: "#000000",  // Black
         },
         blue: {

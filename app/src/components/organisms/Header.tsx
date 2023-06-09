@@ -8,6 +8,7 @@ import styles from "@/styles/Home.module.css";
 import { LinkButton, ApiKeyModal } from "@/src/components/";
 import { LinkButtonProps } from "@/src/components/atoms/LinkButton";
 import AccountHeaderOptions from "../molecules/AccountHeaderOptions";
+import dynamic from "next/dynamic";
 const HEADER_LINKS: LinkButtonProps[] = [
   { href: "/create", children: "New Bounty" },
   { href: "/bounties", children: "Bounties" },
@@ -17,7 +18,11 @@ interface HeaderButtonProps {
   href: string;
   text: string;
 }
-
+const WalletMultiButtonDynamic = dynamic(
+  async () =>
+    (await import("@solana/wallet-adapter-react-ui")).WalletMultiButton,
+  { ssr: false }
+);
 export const Header = () => {
   const [isWalletSelectOpen, setIsWalletSelectOpen] = useState(false);
 
@@ -34,6 +39,9 @@ export const Header = () => {
           {HEADER_LINKS.map(({ href, children }) => {
             return <LinkButton href={href} children={children} style="text" />;
           })}
+          <div className="ml-auto">
+            <WalletMultiButtonDynamic className="text-gray-800 flex h-[48px] w-[250px] py-[6px] items-center justify-center border-solid hover:bg-turquoise-500 text-gray-800 hover:text-white-100 transition-colors duration-300 ease-in-out" />
+          </div>
 
           <AccountHeaderOptions />
         </div>
