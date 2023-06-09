@@ -3,7 +3,7 @@ import { marked } from "marked";
 import { createFFA } from "@/escrow/adapters";
 import { useLancer } from "@/src/providers/lancerProvider";
 import classnames from "classnames";
-import { LoadingBar } from "@/src/components";
+import { Button, LoadingBar } from "@/src/components";
 import { api } from "@/src/utils/api";
 import { Octokit } from "octokit";
 import { PublicKey } from "@solana/web3.js";
@@ -32,6 +32,8 @@ const Form: React.FC<{
   const [isOpenRepo, setIsOpenRepo] = useState(false);
   const [isOpenIssue, setIsOpenIssue] = useState(false);
   const [repos, setRepos] = useState(null);
+  const [failedToGetRepos, setFailedToGetRepos] = useState(false);
+  const [failedToCreateIssue, setFailedToCreateIssue] = useState(false);
   const [issues, setIssues] = useState(null);
   const [octokit, setOctokit] = useState(null);
   const { currentAPIKey } = useLancer();
@@ -45,7 +47,7 @@ const Form: React.FC<{
 
   useEffect(() => {
     const getRepos = async () => {
-      if (currentAPIKey) {
+      try {
         const octokit = new Octokit({
           auth: currentAPIKey.token,
         });
@@ -55,21 +57,45 @@ const Form: React.FC<{
         });
         setRepos(octokitResponse.data);
         setOctokit(octokit);
+      } catch (error) {
+        setFailedToGetRepos(true);
+        setRepos([]);
       }
     };
-    getRepos();
+    if (currentAPIKey) {
+      getRepos();
+    }
   }, [currentAPIKey]);
 
-  const createBounty = async (e) => {
-    e.preventDefault();
+  const createBounty = async () => {
     setIsSubmittingIssue(true);
+
+    let issueNumber = issue ? issue.number : null;
+    const [organizationName, repositoryName] = repo.full_name.split("/");
+    try {
+      if (creationType === "new") {
+        const octokitData = await octokit.request(
+          "POST /repos/{owner}/{repo}/issues",
+          {
+            owner: organizationName,
+            repo: repositoryName,
+            title: formData.issueTitle,
+            body: formData.issueDescription,
+          }
+        );
+        issueNumber = octokitData.data.number;
+      }
+    } catch (error) {
+      setFailedToCreateIssue(true);
+      setIsSubmittingIssue(false);
+      return;
+    }
     const { timestamp, signature, escrowKey } = await createFFA(
       currentWallet,
       program,
       provider
     );
     createAccountPoll(escrowKey);
-    const [organizationName, repositoryName] = repo.full_name.split("/");
     const { bounty } = await mutateAsync({
       email: currentUser.email,
       description: formData.issueDescription,
@@ -88,20 +114,6 @@ const Form: React.FC<{
       chainName: "Solana",
       network: "mainnet",
     });
-    let issueNumber;
-
-    if (creationType === "new") {
-      const octokitData = await octokit.request(
-        "POST /repos/{owner}/{repo}/issues",
-        {
-          owner: organizationName,
-          repo: repositoryName,
-          title: formData.issueTitle,
-          body: formData.issueDescription,
-        }
-      );
-      issueNumber = octokitData.data.number;
-    }
 
     const issueResp = await createIssue({
       number: issueNumber,
@@ -177,7 +189,7 @@ const Form: React.FC<{
 
   return (
     <div className="form-container">
-      <form className="form" onSubmit={(e) => createBounty(e)}>
+      <div className="form">
         <>
           <div id="job-information" className="form-layout-flex">
             <h2
@@ -194,9 +206,18 @@ const Form: React.FC<{
               id="w-node-_11ff66e2-bb63-3205-39c9-a48a569518d9-0ae9cdc2"
               className="input-container-full-width"
             >
-              {!repos ? (
+              {failedToGetRepos && (
+                <span className="color-red">
+                  THERE WAS A PROBLEM WITH YOUR GITHUB API TOKEN
+                </span>
+              )}
+              {!currentAPIKey && (
+                <span className="color-red">PLEASE SET YOUR API KEY</span>
+              )}
+              {!repos && currentAPIKey && !failedToGetRepos && (
                 <LoadingBar title="Loading Repositories" />
-              ) : (
+              )}
+              {repos && (
                 <div
                   data-delay="0"
                   data-hover="false"
@@ -205,16 +226,21 @@ const Form: React.FC<{
                   onClick={toggleOpenRepo}
                 >
                   <main className="dropdown-toggle-2 w-dropdown-toggle">
-                    <div className="w-icon-dropdown-toggle"></div>
-                    <div>
-                      {repo ? (
-                        repo.full_name
-                      ) : (
+                    {
+                      <>
+                        <div className="w-icon-dropdown-toggle"></div>
                         <div>
-                          Select Project <span className="color-red">* </span>
+                          {repo ? (
+                            repo.full_name
+                          ) : (
+                            <div>
+                              Select Project{" "}
+                              <span className="color-red">* </span>
+                            </div>
+                          )}
                         </div>
-                      )}
-                    </div>
+                      </>
+                    }
                   </main>
                   {isOpenRepo && repos && (
                     <div
@@ -358,25 +384,26 @@ const Form: React.FC<{
                   </p>
                 </label>
 
-                {isSubmittingIssue ? (
-                  <LoadingBar title="Creating Lancer Bounty" />
-                ) : (
-                  <input
-                    type="submit"
-                    value="Submit"
-                    data-wait="Please wait..."
-                    id="w-node-ab1d78c4-cf4d-d38a-1a64-ef9c503727ac-0ae9cdc2"
-                    className={classnames("button-primary issue-submit", {
-                      disabled:
-                        !repo ||
-                        !formData.issueTitle ||
-                        !formData.estimatedTime ||
-                        !formData.requirements ||
-                        !formData.issueDescription ||
-                        formData.requirements?.length === 0,
-                    })}
-                  />
-                )}
+                <Button
+                  disabled={
+                    failedToCreateIssue ||
+                    !formData.estimatedTime ||
+                    !formData.requirements ||
+                    !currentWallet
+                  }
+                  disabledText={
+                    failedToCreateIssue
+                      ? "Failed to Create Issue"
+                      : "Please fill all required fields"
+                  }
+                  onClick={createBounty}
+                >
+                  {failedToCreateIssue
+                    ? "Failed to Create Issue"
+                    : !!currentWallet
+                    ? "Submit"
+                    : "Please connect your wallet"}
+                </Button>
               </>
             )}
             {repo && creationType === "existing" && (
@@ -457,27 +484,28 @@ const Form: React.FC<{
                     id="Job-Location-2"
                   />
                 </div>
-                {isSubmittingIssue ? (
-                  <LoadingBar title="Creating Lancer Bounty" />
-                ) : (
-                  <input
-                    type="submit"
-                    value="Submit"
-                    data-wait="Please wait..."
-                    id="w-node-ab1d78c4-cf4d-d38a-1a64-ef9c503727ac-0ae9cdc2"
-                    className={classnames("button-primary issue-submit", {
-                      disabled:
-                        !issue ||
-                        !formData.estimatedTime ||
-                        !formData.requirements,
-                    })}
-                  />
-                )}
+
+                <Button
+                  disabled={
+                    failedToCreateIssue ||
+                    !issue ||
+                    !formData.estimatedTime ||
+                    !formData.requirements
+                  }
+                  disabledText={
+                    failedToCreateIssue
+                      ? "Failed to Create Issue"
+                      : "Please fill all required fields"
+                  }
+                  onClick={createBounty}
+                >
+                  {failedToCreateIssue ? "Failed to Create Issue" : "Submit"}
+                </Button>
               </>
             )}
           </div>
         </>
-      </form>
+      </div>
     </div>
   );
 };
