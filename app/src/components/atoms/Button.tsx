@@ -1,12 +1,23 @@
+import { addSubmitterFFA } from "@/escrow/adapters";
+import { useLancer } from "@/src/providers";
+import {
+  BOUNTY_USER_RELATIONSHIP,
+  BountyState,
+  LancerWallet,
+} from "@/src/types";
+import { api } from "@/src/utils/api";
+import { useWallet, useConnection } from "@solana/wallet-adapter-react";
+import { PublicKey, Transaction } from "@solana/web3.js";
 import classNames from "classnames";
 import { useState } from "react";
+import { getButtonStyle } from "./LinkButton";
 
 interface ButtonProps {
-  onClick?: () => void;
+  onClick?: () => void | Promise<void>;
   disabled?: boolean;
   disabledText?: string;
-  enabledText?: string;
   children?: React.ReactNode;
+  style?: "filled" | "outlined" | "text";
 }
 
 const Button = ({
@@ -14,9 +25,10 @@ const Button = ({
   onClick,
   disabled,
   disabledText,
-  enabledText,
+  style,
 }: ButtonProps) => {
   const [hoveredButton, setHoveredButton] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   return (
     <div
@@ -29,17 +41,18 @@ const Button = ({
       }}
     >
       <button
-        className={classNames("button-primary", { disabled: disabled })}
+        className={getButtonStyle(style)}
         disabled={disabled}
-        onClick={onClick}
+        onClick={async () => {
+          setIsLoading(true);
+          await onClick();
+          setIsLoading(false);
+        }}
       >
-        {children}
+        {isLoading ? "Processing..." : children}
       </button>
-      {hoveredButton && disabledText && disabled && (
+      {hoveredButton && disabledText && (
         <div className="hover-tooltip">{disabledText}</div>
-      )}
-      {hoveredButton && enabledText && !disabled && (
-        <div className="hover-tooltip">{enabledText}</div>
       )}
     </div>
   );
