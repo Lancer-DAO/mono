@@ -45,7 +45,7 @@ const BountyActions = () => {
     <div className="bounty-buttons">
       <>
         {currentBounty.isRequestedSubmitter && (
-          <Button disabled>Request Pending</Button>
+          <Button disabled={true}>Request Pending</Button>
         )}
         {currentBounty.isDeniedRequester && (
           <Button disabled>Submission Request Denied</Button>

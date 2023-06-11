@@ -41,16 +41,7 @@ const Button = ({
       }}
     >
       <button
-        className={
-          getButtonStyle(style) +
-          " " +
-          classNames({
-            "hover:bg-gray-600": disabled,
-            "bg-gray-600": disabled,
-            "transition-none": disabled,
-            "hover:-translate-y-0": disabled,
-          })
-        }
+        className={getButtonStyle(style, disabled)}
         disabled={disabled}
         onClick={async () => {
           setIsLoading(true);
