@@ -271,7 +271,7 @@ model User {
   instagram       String?  @db.VarChar(64)
   email           String?  @unique @db.VarChar(128)
   profileWalletId Int?     @unique
-  createdAt       String   @db.VarChar(24)
+  createdAt       String   @default("") @db.VarChar(24)
 
   // Relations
   wallets      Wallet[]
