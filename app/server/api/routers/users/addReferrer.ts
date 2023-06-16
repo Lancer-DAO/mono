@@ -35,7 +35,7 @@ export const addReferrer = protectedProcedure
             relations: "referrer-referree-normal",
           },
         },
-        refferralTreasureyKey: "UPDATE-ME",
+        refferralTreasuryKey: "UPDATE-ME",
       },
     });
 
