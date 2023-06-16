@@ -285,17 +285,18 @@ model User {
   id Int @id @default(autoincrement())
 
   // Fields
-  isAdmin         Boolean?
-  verified        Boolean?
-  hasProfileNFT   Boolean?
-  githubId        String?  @db.VarChar(24)
-  githubLogin     String?  @db.VarChar(64)
-  name            String?  @db.VarChar(128)
-  discord         String?  @db.VarChar(64)
-  twitter         String?  @db.VarChar(64)
-  instagram       String?  @db.VarChar(64)
-  email           String?  @unique @db.VarChar(128)
-  profileWalletId Int?     @unique
+  isAdmin               Boolean?
+  verified              Boolean?
+  hasProfileNFT         Boolean?
+  githubId              String?  @db.VarChar(24)
+  githubLogin           String?  @db.VarChar(64)
+  name                  String?  @db.VarChar(128)
+  discord               String?  @db.VarChar(64)
+  twitter               String?  @db.VarChar(64)
+  instagram             String?  @db.VarChar(64)
+  email                 String?  @unique @db.VarChar(128)
+  profileWalletId       Int?     @unique
+  refferralTreasureyKey String?  @unique @db.VarChar(128)
 
   // Relations
   wallets      Wallet[]
