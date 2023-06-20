@@ -20,7 +20,11 @@ import { api } from "@/src/utils/api";
 import { PublicKey } from "@solana/web3.js";
 import { Octokit } from "octokit";
 import { decimalToNumber } from "@/src/utils";
-import { BOUNTY_PROJECT_PARAMS, PROFILE_PROJECT_PARAMS } from "@/src/constants";
+import {
+  BOUNTY_PROJECT_PARAMS,
+  IS_MAINNET,
+  PROFILE_PROJECT_PARAMS,
+} from "@/src/constants";
 import { createUnderdogClient } from "@underdog-protocol/js";
 import dayjs from "dayjs";
 const underdogClient = createUnderdogClient({});
@@ -50,6 +54,9 @@ const BountyActions = () => {
         {currentBounty.isDeniedRequester && (
           <Button disabled>Submission Request Denied</Button>
         )}
+        {!IS_MAINNET &&
+          currentBounty.isCreator &&
+          !currentBounty.isApprovedSubmitter && <RequestToSubmit />}
         {currentBounty.isApprovedSubmitter &&
           !currentBounty.currentSubmitter && (
             <div
