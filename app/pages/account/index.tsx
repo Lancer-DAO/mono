@@ -215,13 +215,13 @@ const Account: React.FC = () => {
             </Button>
           )}
 
-          {/* <button
+          <button
             onClick={() => {
               setShowCoinflow(!showCoinflow);
             }}
           >
             Cash Out
-          </button> */}
+          </button>
           {showCoinflow && <CoinflowOfframp />}
         </div>
       )}
