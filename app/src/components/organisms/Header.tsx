@@ -5,9 +5,8 @@ import { getWalletProviderImage } from "@/src/utils";
 import { useState } from "react";
 
 import styles from "@/styles/Home.module.css";
-import { LinkButton, ApiKeyModal } from "@/src/components/";
+import { LinkButton, AccountHeaderOptions } from "@/src/components/";
 import { LinkButtonProps } from "@/src/components/atoms/LinkButton";
-import AccountHeaderOptions from "../molecules/AccountHeaderOptions";
 import dynamic from "next/dynamic";
 const HEADER_LINKS: LinkButtonProps[] = [
   { href: "/create", children: "New Bounty" },
