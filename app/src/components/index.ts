@@ -30,6 +30,7 @@ const BountyTable = dynamic(() => import("./organisms/BountyTable"));
 const CreateBountyForm = dynamic(() => import("./organisms/CreateBountyForm"));
 const FundBountyForm = dynamic(() => import("./organisms/FundBountyForm"));
 const Header = dynamic(() => import("./organisms/Header"));
+const JoyrideWrapper = dynamic(() => import("./organisms/JoyrideWrapper"));
 const LancerBounty = dynamic(() => import("./organisms/LancerBounty"));
 
 // Templates
@@ -58,4 +59,6 @@ export {
   CoinflowFund,
   BountyActions,
   SubmitterSection,
+  JoyrideWrapper,
+  AccountHeaderOptions,
 };

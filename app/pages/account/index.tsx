@@ -6,8 +6,9 @@ import {
   DefaultLayout,
   ProfileNFTCard,
   CoinflowOfframp,
-  WalletInfo,
   Button,
+  BountyNFTCard,
+  JoyrideWrapper,
 } from "@/src/components";
 import {
   BOUNTY_PROJECT_PARAMS,
@@ -28,7 +29,6 @@ import {
 } from "@underdog-protocol/js";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
-import BountyNFTCard from "@/src/components/molecules/BountyNFTCard";
 dayjs.extend(relativeTime);
 
 const underdogClient = createUnderdogClient({});
@@ -51,6 +51,7 @@ const Account: React.FC = () => {
 
   const { currentUser, wallets, currentWallet } = useLancer();
   const [showCoinflow, setShowCoinflow] = useState(false);
+  const [showTutorial, setShowTutorial] = useState(false);
   const [profileNFT, setProfileNFT] = useState<ProfileNFT>();
   const [bountyNFTs, setBountyNFTs] = useState<BountyNFT[]>([]);
   const { mutateAsync: getUser } = api.users.getUser.useMutation();
@@ -169,18 +170,33 @@ const Account: React.FC = () => {
   return (
     <DefaultLayout>
       {account && (
-        <div className="account-page-wrapper">
-          {/* {currentUser?.githubLogin && (
+        <>
+          <JoyrideWrapper
+            run={showTutorial}
+            steps={[
+              {
+                target: ".my-first-step",
+                content: "This is my awesome feature!",
+              },
+              {
+                target: ".my-other-step",
+                content: "This another awesome feature!",
+              },
+            ]}
+          />
+
+          <div className="account-page-wrapper">
+            {/* {currentUser?.githubLogin && (
             <div>GitHub User: {currentUser.githubLogin}</div>
           )}
           <a href="/api/auth/logout">Logout</a> */}
 
-          {/* {wallets &&
+            {/* {wallets &&
             wallets.map((wallet) => (
               <WalletInfo wallet={wallet} key={wallet.publicKey.toString()} />
             ))} */}
 
-          {/* {!IS_MAINNET && (
+            {/* {!IS_MAINNET && (
             <a
               href="https://staging.coinflow.cash/faucet"
               target={"_blank"}
@@ -189,41 +205,52 @@ const Account: React.FC = () => {
               USDC Faucet
             </a>
           )} */}
-          <div>
-            {profileNFT && (
-              <ProfileNFTCard
-                profileNFT={profileNFT}
-                githubId={account.githubId}
-              />
-            )}
-          </div>
-          {bountyNFTs.length > 0 && (
-            <div className="profile-bounty-list">
-              <h2>Bounties</h2>
-              {bountyNFTs.map((bountyNFT) => (
-                <BountyNFTCard bountyNFT={bountyNFT} />
-              ))}
+            <div>
+              {profileNFT && (
+                <ProfileNFTCard
+                  profileNFT={profileNFT}
+                  githubId={account.githubId}
+                />
+              )}
             </div>
-          )}
-          {!account?.hasProfileNFT && (
-            <Button
-              disabled={!currentWallet}
-              disabledText={"Please connect a wallet"}
-              onClick={mintProfileNFT}
-            >
-              Mint Profile NFT
-            </Button>
-          )}
+            {bountyNFTs.length > 0 && (
+              <div className="profile-bounty-list">
+                <h2>Bounties</h2>
+                {bountyNFTs.map((bountyNFT) => (
+                  <BountyNFTCard bountyNFT={bountyNFT} />
+                ))}
+              </div>
+            )}
+            {!account?.hasProfileNFT && (
+              <Button
+                disabled={!currentWallet}
+                disabledText={"Please connect a wallet"}
+                onClick={mintProfileNFT}
+              >
+                Mint Profile NFT
+              </Button>
+            )}
 
-          <button
-            onClick={() => {
-              setShowCoinflow(!showCoinflow);
-            }}
-          >
-            Cash Out
-          </button>
-          {showCoinflow && <CoinflowOfframp />}
-        </div>
+            <button
+              className="my-first-step"
+              onClick={() => {
+                setShowCoinflow(!showCoinflow);
+              }}
+            >
+              Cash Out
+            </button>
+
+            <button
+              className="my-other-step"
+              onClick={() => {
+                setShowTutorial(!showTutorial);
+              }}
+            >
+              Start Tutorial
+            </button>
+            {showCoinflow && <CoinflowOfframp />}
+          </div>
+        </>
       )}
     </DefaultLayout>
   );
