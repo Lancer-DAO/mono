@@ -13389,9 +13389,15 @@
     width: 100%;
   }
 
-  .bounty-markdown-preview {
+  .bounty-markdown-full {
     margin-top: 10px;
     min-height: 200px;
+  }
+  
+  .bounty-markdown-preview {
+    margin-top: 10px;
+    max-height: 200px;
+    overflow: hidden;
   }
 
   .spacer-filled {

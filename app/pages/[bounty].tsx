@@ -178,7 +178,7 @@ const Bounty: React.FC = () => {
             <div className="job-post-bottom">
               <h2 className="job-post-subtitle">Job description</h2>
               <div
-                className="bounty-markdown-preview"
+                className="bounty-markdown-full"
                 dangerouslySetInnerHTML={previewMarkup()}
               />
               {<BountyActions />}
