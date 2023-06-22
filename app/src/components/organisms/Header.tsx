@@ -8,6 +8,7 @@ import { useLancer } from "@/src/providers";
 import { useState } from "react";
 import {
   BOUNTIES_PAGE_STEPS,
+  BOUNTY_ACTION_STEPS,
   BOUNTY_METADATA_STEPS,
   CREATE_BOUNTY_STEPS,
   GITHUB_API_KEY_STEPS,
@@ -63,10 +64,10 @@ export const Header = () => {
           <button
             onClick={() => {
               setIsTutorialRunning(true);
-              setCurrentTutorialStep(0);
+              setCurrentTutorialStep(5);
               setIsTutorialManuallyControlled(true);
               setIsTutorialActive(true);
-              setTutorialSteps(GITHUB_API_KEY_STEPS);
+              setTutorialSteps(BOUNTY_ACTION_STEPS);
               setSpotlightClicks(true);
             }}
             onMouseEnter={() => setIsTutorialButtonHovered(true)}

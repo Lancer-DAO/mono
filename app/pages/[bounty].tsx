@@ -240,13 +240,16 @@ const Bounty: React.FC = () => {
                     <label className="field-label-5">
                       Requested Applicants
                     </label>
-                    {currentBounty.requestedSubmitters.map((submitter) => (
-                      <SubmitterSection
-                        submitter={submitter}
-                        type="requested"
-                        key={`requested-submitters-${submitter.userid}`}
-                      />
-                    ))}
+                    {currentBounty.requestedSubmitters.map(
+                      (submitter, index) => (
+                        <SubmitterSection
+                          submitter={submitter}
+                          type="requested"
+                          key={`requested-submitters-${submitter.userid}`}
+                          index={index}
+                        />
+                      )
+                    )}
                   </div>
                 )}
 
@@ -255,13 +258,16 @@ const Bounty: React.FC = () => {
                 currentBounty.isCreator && (
                   <div id="task-approved-submitters">
                     <label className="field-label-5">Approved Applicants</label>
-                    {currentBounty.approvedSubmitters.map((submitter) => (
-                      <SubmitterSection
-                        submitter={submitter}
-                        type="approved"
-                        key={`approved-submitters-${submitter.userid}`}
-                      />
-                    ))}
+                    {currentBounty.approvedSubmitters.map(
+                      (submitter, index) => (
+                        <SubmitterSection
+                          submitter={submitter}
+                          type="approved"
+                          key={`approved-submitters-${submitter.userid}`}
+                          index={index}
+                        />
+                      )
+                    )}
                   </div>
                 )}
               {currentBounty.state === BountyState.AWAITING_REVIEW && (

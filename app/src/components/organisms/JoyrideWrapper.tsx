@@ -353,6 +353,71 @@ export const GITHUB_API_KEY_STEPS: Step[] = [
   },
 ];
 
+export const BOUNTY_ACTION_STEPS: Step[] = [
+  {
+    target: "#bounty-actions",
+    content:
+      "This is the bounty actions section. Here, you will see buttons to manage the task based on its current state. We are going to walk through the process of both the Client and Freelancer to give you a full idea of the process.",
+    disableBeacon: true,
+    disableCloseOnEsc: false,
+  },
+  {
+    target: "#apply-bounty-button",
+    content:
+      "If you are a freelancer, you can apply to the task here. This will allow you to work on the task. Normally, the creator cannot apply to the task, but since this is the tutorial, we can bend the rules a little.",
+    disableBeacon: true,
+    disableCloseOnEsc: false,
+  },
+
+  {
+    target: "#submitter-section-requested-0",
+    content: "Now you can see that you applied to the bounty.",
+    disableBeacon: true,
+    disableCloseOnEsc: false,
+  },
+
+  {
+    target: "#submitter-section-deny-requested-0",
+    content:
+      "You can click this button to deny the application. This will remove the freelancer from the task and prevent them from making future applications. For now we won't do that.",
+    disableBeacon: true,
+    disableCloseOnEsc: false,
+  },
+
+  {
+    target: "#submitter-section-approve-requested-0",
+    content:
+      "Instead, you can click this button to approve the application. This will add the freelancer to the task and allow them to submit pull requests for review. Let's approve yourself now!",
+    disableBeacon: true,
+    disableCloseOnEsc: false,
+  },
+  {
+    target: "#submitter-section-approved-0",
+    content: "Now you can see that you are an approved submitter!",
+    disableBeacon: true,
+    disableCloseOnEsc: false,
+  },
+  {
+    target: "#submit-request-bounty-button",
+    content:
+      "After you submit a Pull Request closing this issue, you will be able to submit!",
+    disableBeacon: true,
+    disableCloseOnEsc: false,
+  },
+  {
+    target: "#account-options",
+    content: "Before you do that, make sure you have the extension downloaded!",
+    disableBeacon: true,
+    disableCloseOnEsc: false,
+  },
+  {
+    target: "#download-extension-link",
+    content: "You can always download the extension and see instructions here.",
+    disableBeacon: true,
+    disableCloseOnEsc: false,
+  },
+];
+
 const JoyrideWrapper = () => {
   const {
     isTutorialRunning,
@@ -369,11 +434,11 @@ const JoyrideWrapper = () => {
     console.log(data);
     const { action, index, lifecycle, type } = data;
 
-    if (type === "step:after" && ![1].includes(index)) {
+    if (type === "step:after" && ![-1].includes(index)) {
       setCurrentTutorialStep(index + 1);
     }
     if (type === "tour:end") {
-      setIsTutorialActive(false);
+      // setIsTutorialActive(false);
     }
   };
   // debugger;

@@ -40,7 +40,8 @@ const AccountHeaderOptions = () => {
             onClick={() => {
               setShowOptions(true);
               if (isTutorialActive) {
-                setCurrentTutorialStep(1);
+                // setCurrentTutorialStep(1);
+                setCurrentTutorialStep(8);
               }
             }}
             id="account-options"

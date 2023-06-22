@@ -26,7 +26,13 @@ import dayjs from "dayjs";
 const underdogClient = createUnderdogClient({});
 
 const BountyActions = () => {
-  const { currentUser, currentBounty } = useLancer();
+  const {
+    currentUser,
+    currentBounty,
+    isTutorialActive,
+    setIsTutorialRunning,
+    currentTutorialStep,
+  } = useLancer();
   const [hoveredButton, setHoveredButton] = useState("none");
   if (false) {
     return <LoadingBar title="Loading On Chain Details" />;
@@ -42,8 +48,13 @@ const BountyActions = () => {
   }
 
   return (
-    <div className="bounty-buttons">
+    <div className="bounty-buttons" id="bounty-actions">
       <>
+        {currentBounty.isCreator &&
+          isTutorialActive &&
+          currentBounty.currentUserRelationsList.length < 2 && (
+            <RequestToSubmit />
+          )}
         {currentBounty.isRequestedSubmitter && (
           <Button disabled={true}>Request Pending</Button>
         )}
@@ -109,54 +120,39 @@ const RequestToSubmit = () => {
     currentUser,
     currentBounty,
     currentWallet,
-    provider,
-    program,
     setCurrentBounty,
+    isTutorialActive,
+    setIsTutorialRunning,
+    setCurrentTutorialStep,
   } = useLancer();
   const { mutateAsync } = api.bounties.updateBountyUser.useMutation();
 
   const onClick = async () => {
-    if (currentBounty.isCreator) {
-      // If we are the creator, then skip requesting and add self as approved
-      const signature = await addSubmitterFFA(
-        currentWallet.publicKey,
-        currentBounty.escrow,
-        currentWallet,
-        program,
-        provider
-      );
-      currentBounty.currentUserRelationsList.push(
-        BOUNTY_USER_RELATIONSHIP.ApprovedSubmitter
-      );
-      const { updatedBounty } = await mutateAsync({
-        bountyId: currentBounty.id,
-        currentUserId: currentUser.id,
-        userId: currentUser.id,
-        relations: currentBounty.currentUserRelationsList,
-        state: BountyState.IN_PROGRESS,
-        publicKey: currentWallet.publicKey.toString(),
-        provider: currentWallet.providerName,
-        escrowId: currentBounty.escrowid,
-        signature,
-        label: "add-approved-submitter",
-      });
+    // Request to submit. Does not interact on chain
+    if (isTutorialActive) {
+      setIsTutorialRunning(false);
+    }
+    const { updatedBounty } = await mutateAsync({
+      currentUserId: currentUser.id,
+      bountyId: currentBounty.id,
+      userId: currentUser.id,
+      relations: currentBounty.isCreator
+        ? [
+            ...currentBounty.currentUserRelationsList,
+            BOUNTY_USER_RELATIONSHIP.RequestedSubmitter,
+          ]
+        : [BOUNTY_USER_RELATIONSHIP.RequestedSubmitter],
+      publicKey: currentWallet.publicKey.toString(),
+      provider: currentWallet.providerName,
+      escrowId: currentBounty.escrowid,
+      label: "request-to-submit",
+      signature: "n/a",
+    });
 
-      setCurrentBounty(updatedBounty);
-    } else {
-      // Request to submit. Does not interact on chain
-      const { updatedBounty } = await mutateAsync({
-        currentUserId: currentUser.id,
-        bountyId: currentBounty.id,
-        userId: currentUser.id,
-        relations: [BOUNTY_USER_RELATIONSHIP.RequestedSubmitter],
-        publicKey: currentWallet.publicKey.toString(),
-        provider: currentWallet.providerName,
-        escrowId: currentBounty.escrowid,
-        label: "request-to-submit",
-        signature: "n/a",
-      });
-
-      setCurrentBounty(updatedBounty);
+    setCurrentBounty(updatedBounty);
+    if (isTutorialActive) {
+      setCurrentTutorialStep(2);
+      setIsTutorialRunning(true);
     }
   };
 
