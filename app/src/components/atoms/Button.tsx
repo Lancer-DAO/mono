@@ -18,6 +18,7 @@ interface ButtonProps {
   disabledText?: string;
   children?: React.ReactNode;
   style?: "filled" | "outlined" | "text";
+  id?: string;
 }
 
 const Button = ({
@@ -26,6 +27,7 @@ const Button = ({
   disabled,
   disabledText,
   style,
+  id,
 }: ButtonProps) => {
   const [hoveredButton, setHoveredButton] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -48,6 +50,7 @@ const Button = ({
           await onClick();
           setIsLoading(false);
         }}
+        id={id}
       >
         {isLoading ? "Processing..." : children}
       </button>

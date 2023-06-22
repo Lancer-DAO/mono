@@ -8,13 +8,23 @@ import { api } from "@/src/utils/api";
 import { Octokit } from "octokit";
 import { PublicKey } from "@solana/web3.js";
 import { FORM_SECTION } from "@/pages/create";
+import { FUND_BOUNTY_STEPS } from "./JoyrideWrapper";
 
 const Form: React.FC<{
   setFormSection: (section: FORM_SECTION) => void;
   createAccountPoll: (publicKey: PublicKey) => void;
 }> = ({ setFormSection, createAccountPoll }) => {
-  const { currentWallet, program, provider, currentUser, setCurrentBounty } =
-    useLancer();
+  const {
+    currentWallet,
+    program,
+    provider,
+    currentUser,
+    setCurrentBounty,
+    isTutorialActive,
+    setIsTutorialRunning,
+    setCurrentTutorialStep,
+    setTutorialSteps,
+  } = useLancer();
   const { mutateAsync } = api.bounties.createBounty.useMutation();
   const { mutateAsync: createIssue } = api.issues.createIssue.useMutation();
   const [creationType, setCreationType] = useState<"new" | "existing">("new");
@@ -41,7 +51,12 @@ const Form: React.FC<{
   const [isPreview, setIsPreview] = useState(false);
   const [isSubmittingIssue, setIsSubmittingIssue] = useState(false);
 
-  const toggleOpenRepo = () => setIsOpenRepo(!isOpenRepo);
+  const toggleOpenRepo = () => {
+    setIsOpenRepo(!isOpenRepo);
+    if (isTutorialActive && !isOpenRepo) {
+      setIsTutorialRunning(false);
+    }
+  };
   const toggleOpenIssue = () => setIsOpenIssue(!isOpenIssue);
   const togglePreview = () => setIsPreview(!isPreview);
 
@@ -69,6 +84,7 @@ const Form: React.FC<{
 
   const createBounty = async () => {
     setIsSubmittingIssue(true);
+    setIsTutorialRunning(false);
 
     let issueNumber = issue ? issue.number : null;
     const [organizationName, repositoryName] = repo.full_name.split("/");
@@ -127,6 +143,12 @@ const Form: React.FC<{
       currentUserId: currentUser.id,
     });
     setFormSection("FUND");
+
+    if (isTutorialActive) {
+      setCurrentTutorialStep(0);
+      setTutorialSteps(FUND_BOUNTY_STEPS);
+      setIsTutorialRunning(true);
+    }
     setCurrentBounty(issueResp);
   };
 
@@ -153,6 +175,10 @@ const Form: React.FC<{
     const repo = repos.find((_repo) => _repo.full_name === repoFullName);
     setRepo(repo);
     getRepoIssues(repo);
+    if (isTutorialActive) {
+      setCurrentTutorialStep(1);
+      setIsTutorialRunning(true);
+    }
   };
 
   const handleChangeIssue = (issueNumber: number) => {
@@ -225,7 +251,10 @@ const Form: React.FC<{
                   className="w-dropdown"
                   onClick={toggleOpenRepo}
                 >
-                  <main className="dropdown-toggle-2 w-dropdown-toggle">
+                  <main
+                    className="dropdown-toggle-2 w-dropdown-toggle"
+                    id="repo-dropdown-select"
+                  >
                     {
                       <>
                         <div className="w-icon-dropdown-toggle"></div>
@@ -293,9 +322,20 @@ const Form: React.FC<{
                     className="input w-input"
                     name="issueTitle"
                     placeholder="Ex. Add New Feature "
-                    id="Issue"
+                    id="issue-title-input"
                     value={formData.issueTitle}
                     onChange={handleChange}
+                    onBlur={() => {
+                      if (isTutorialActive && formData.issueTitle.length > 0) {
+                        setIsTutorialRunning(true);
+                        setCurrentTutorialStep(2);
+                      }
+                    }}
+                    onFocus={() => {
+                      if (isTutorialActive) {
+                        setIsTutorialRunning(false);
+                      }
+                    }}
                   />
                 </div>
                 <div>
@@ -309,7 +349,21 @@ const Form: React.FC<{
                     value={formData.estimatedTime}
                     onChange={handleChange}
                     placeholder="Ex. 3 (hours)"
-                    id="Issue-Description"
+                    id="issue-time-input"
+                    onBlur={() => {
+                      if (
+                        isTutorialActive &&
+                        formData.estimatedTime.length > 0
+                      ) {
+                        setIsTutorialRunning(true);
+                        setCurrentTutorialStep(3);
+                      }
+                    }}
+                    onFocus={() => {
+                      if (isTutorialActive) {
+                        setIsTutorialRunning(false);
+                      }
+                    }}
                   />
                 </div>
                 <div>
@@ -323,7 +377,21 @@ const Form: React.FC<{
                     value={formData.requirements}
                     onChange={handleRequirementsChange}
                     placeholder="list seperated by commas"
-                    id="Job-Location-2"
+                    id="issue-requirements-input"
+                    onBlur={() => {
+                      if (
+                        isTutorialActive &&
+                        formData.requirements.length > 0
+                      ) {
+                        setIsTutorialRunning(true);
+                        setCurrentTutorialStep(4);
+                      }
+                    }}
+                    onFocus={() => {
+                      if (isTutorialActive) {
+                        setIsTutorialRunning(false);
+                      }
+                    }}
                   />
                 </div>
                 <div
@@ -351,19 +419,33 @@ const Form: React.FC<{
                     />
                   ) : (
                     <textarea
-                      id="Job-Description"
+                      id="issue-description-input"
                       name="issueDescription"
                       value={formData.issueDescription}
                       onChange={handleDescriptionChange}
                       placeholder="Provide a step by step breakdown of what is needed to complete the task. Include criteria that will determine success. **Markdown Supported** "
                       className="textarea w-input"
+                      onBlur={() => {
+                        if (
+                          isTutorialActive &&
+                          formData.issueDescription.length > 0
+                        ) {
+                          setIsTutorialRunning(true);
+                          setCurrentTutorialStep(5);
+                        }
+                      }}
+                      onFocus={() => {
+                        if (isTutorialActive) {
+                          setIsTutorialRunning(false);
+                        }
+                      }}
                     />
                   )}
                 </div>
                 <div className="required-helper">
                   <span className="color-red">* </span> Required
                 </div>
-                <label className="w-checkbox checkbox-field-2">
+                {/* <label className="w-checkbox checkbox-field-2">
                   <div
                     className={classnames(
                       "w-checkbox-input w-checkbox-input--inputType-custom checkbox",
@@ -382,7 +464,7 @@ const Form: React.FC<{
                   <p className="check-paragraph">
                     Only GitHub collaborators will have access to see this.
                   </p>
-                </label>
+                </label> */}
 
                 <Button
                   disabled={
@@ -397,6 +479,7 @@ const Form: React.FC<{
                       : "Please fill all required fields"
                   }
                   onClick={createBounty}
+                  id="create-bounty-button"
                 >
                   {failedToCreateIssue
                     ? "Failed to Create Issue"
@@ -498,6 +581,7 @@ const Form: React.FC<{
                       : "Please fill all required fields"
                   }
                   onClick={createBounty}
+                  id="create-bounty-button"
                 >
                   {failedToCreateIssue ? "Failed to Create Issue" : "Submit"}
                 </Button>

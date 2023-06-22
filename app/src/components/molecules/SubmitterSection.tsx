@@ -127,11 +127,17 @@ const SubmitterSection: React.FC<SubmitterSectionProps> = ({
       {type === "approved" ? (
         <div className="empty-submitter-cell"></div>
       ) : (
-        <button onClick={() => handleSubmitter()}>
+        <button
+          onClick={() => handleSubmitter()}
+          id="approve-requested-submitter-button"
+        >
           <Check color="#1488bb" width="20px" height="20px" />
         </button>
       )}
-      <button onClick={() => handleSubmitter(true)}>
+      <button
+        onClick={() => handleSubmitter(true)}
+        id="deny-requested-submitter-button"
+      >
         <X color="red" width="20px" height="20px" />
       </button>
     </div>

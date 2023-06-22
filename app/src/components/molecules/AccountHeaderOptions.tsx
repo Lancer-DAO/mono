@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { useOutsideAlerter } from "@/src/hooks/useOutsideAlerter";
 
 import dynamic from "next/dynamic";
-import { Key } from "react-feather";
+import { Key, HelpCircle } from "react-feather";
 import Link from "next/link";
 
 const AccountHeaderOptions = () => {
@@ -39,6 +39,7 @@ const AccountHeaderOptions = () => {
             onClick={() => {
               setShowOptions(true);
             }}
+            id="account-options"
           >
             <img
               src={`https://avatars.githubusercontent.com/u/${
@@ -54,12 +55,14 @@ const AccountHeaderOptions = () => {
             >
               <Link
                 href={"/account"}
+                id="account-link"
                 className="flex rounded-t-[20px] h-[48px] py-[6px] items-center justify-center border-b-gray-400 border-b-[1px] hover:bg-turquoise-500 text-gray-800 hover:text-white-100 transition-colors duration-300 ease-in-out"
               >
                 Account
               </Link>
               <button
                 onClick={() => setShowModal(true)}
+                id="api-key-link"
                 className="flex h-[48px] w-full gap-[10px] py-[6px] items-center justify-center border-b-gray-400 border-b-[1px] hover:bg-turquoise-500 text-gray-800 hover:text-white-100 transition-colors duration-300 ease-in-out"
               >
                 <Key />
@@ -67,6 +70,7 @@ const AccountHeaderOptions = () => {
               </button>
               <Link
                 href={"/download_extension"}
+                id="download-extension-link"
                 className="flex  h-[48px] py-[6px] items-center justify-center border-b-gray-400 border-b-[1px] hover:bg-turquoise-500 text-gray-800 hover:text-white-100 transition-colors duration-300 ease-in-out"
               >
                 {hasExtension ? "Extension Detected" : "Download Extension"}
@@ -74,6 +78,7 @@ const AccountHeaderOptions = () => {
               <Link
                 href={"https://discord.gg/H6HXzYsc"}
                 target="_blank"
+                id="discord-link"
                 className="flex h-[48px] border-b-gray-400 border-b-[1px] py-[6px] items-center justify-center  hover:bg-turquoise-500 text-gray-800 hover:text-white-100 transition-colors duration-300 ease-in-out"
               >
                 Discord
@@ -82,13 +87,16 @@ const AccountHeaderOptions = () => {
                 href={
                   "https://lancerworks.notion.site/Lancer-Documentation-ed924cd3b28e44e3bf90fb5db1dc46d3?pvs=4"
                 }
+                id="documentation-link"
                 target="_blank"
                 className="flex h-[48px] border-b-gray-400 border-b-[1px] py-[6px] items-center justify-center  hover:bg-turquoise-500 text-gray-800 hover:text-white-100 transition-colors duration-300 ease-in-out"
               >
                 Documentation
               </Link>
+
               <Link
                 href={"/api/auth/logout"}
+                id="logout-link"
                 className="flex h-[48px] rounded-b-[20px] py-[6px] items-center justify-center  hover:bg-turquoise-500 text-gray-800 hover:text-white-100 transition-colors duration-300 ease-in-out"
               >
                 Logout

@@ -171,20 +171,6 @@ const Account: React.FC = () => {
     <DefaultLayout>
       {account && (
         <>
-          <JoyrideWrapper
-            run={showTutorial}
-            steps={[
-              {
-                target: ".my-first-step",
-                content: "This is my awesome feature!",
-              },
-              {
-                target: ".my-other-step",
-                content: "This another awesome feature!",
-              },
-            ]}
-          />
-
           <div className="account-page-wrapper">
             {/* {currentUser?.githubLogin && (
             <div>GitHub User: {currentUser.githubLogin}</div>
@@ -226,6 +212,7 @@ const Account: React.FC = () => {
                 disabled={!currentWallet}
                 disabledText={"Please connect a wallet"}
                 onClick={mintProfileNFT}
+                id="mint-profile-nft"
               >
                 Mint Profile NFT
               </Button>

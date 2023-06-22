@@ -5,6 +5,7 @@ export interface LinkButtonProps {
   children?: React.ReactNode;
   style?: "filled" | "outlined" | "text";
   target?: string;
+  id?: string;
 }
 
 export const getButtonStyle = (
@@ -29,9 +30,15 @@ export const getButtonStyle = (
   }
 };
 
-const HeaderButton = ({ href, children, style, target }: LinkButtonProps) => {
+const HeaderButton = ({
+  href,
+  children,
+  style,
+  target,
+  id,
+}: LinkButtonProps) => {
   return (
-    <Link href={href} className={getButtonStyle(style)} target={target}>
+    <Link href={href} className={getButtonStyle(style)} id={id} target={target}>
       {children}
     </Link>
   );

@@ -23,6 +23,11 @@ const Form: React.FC<{ isAccountCreated: boolean }> = ({
     program,
     provider,
     currentWallet,
+
+    isTutorialActive,
+    setIsTutorialRunning,
+    setCurrentTutorialStep,
+    setTutorialSteps,
   } = useLancer();
   const [fundingType, setFundingType] = useState<"wallet" | "card">("wallet");
 
@@ -32,6 +37,11 @@ const Form: React.FC<{ isAccountCreated: boolean }> = ({
   const [formData, setFormData] = useState({
     fundingAmount: null,
   });
+  useEffect(() => {
+    if (isTutorialActive) {
+      setIsTutorialRunning(true);
+    }
+  }, []);
   const handleChange = (event) => {
     setFormData({
       ...formData,
@@ -39,6 +49,7 @@ const Form: React.FC<{ isAccountCreated: boolean }> = ({
     });
   };
   const onClick = async () => {
+    setIsTutorialRunning(false);
     // If we are the creator, then skip requesting and add self as approved
     const signature = await fundFFA(
       formData.fundingAmount,
@@ -128,17 +139,35 @@ const Form: React.FC<{ isAccountCreated: boolean }> = ({
                           className="input w-input"
                           name="fundingAmount"
                           placeholder="1000 (USD)"
-                          id="Issue"
+                          id="issue-amount-input"
                           value={formData.fundingAmount}
                           onChange={handleChange}
+                          onBlur={() => {
+                            if (
+                              isTutorialActive &&
+                              formData.fundingAmount > 0
+                            ) {
+                              setIsTutorialRunning(true);
+                              setCurrentTutorialStep(1);
+                            }
+                          }}
+                          onFocus={() => {
+                            if (isTutorialActive) {
+                              setIsTutorialRunning(false);
+                            }
+                          }}
                         />
                       </div>
                     </div>
+                    {formData.fundingAmount && (
+                      <div>Total Cost: {1.05 * formData.fundingAmount}</div>
+                    )}
                     <button
                       className={classNames("button-primary", {
                         disabled: !formData.fundingAmount,
                       })}
                       onClick={onClick}
+                      id="issue-funding-submit"
                     >
                       Submit
                     </button>

@@ -7,6 +7,7 @@ import { PublicKey, Transaction } from "@solana/web3.js";
 import { SafeEventEmitterProvider } from "@web3auth/base";
 import { Web3AuthCore } from "@web3auth/core";
 import { SolanaWallet } from "@web3auth/solana-provider";
+import { Step } from "react-joyride";
 
 export type LOGIN_STATE = "logged_out" | "logging_in" | "logged_in";
 
@@ -29,6 +30,14 @@ export interface ILancerContext {
   wallets: LancerWallet[];
   currentBounty: Bounty;
   currentAPIKey: APIKeyInfo;
+  isTutorialRunning: boolean;
+  isTutorialActive: boolean;
+  isTutorialManuallyControlled: boolean;
+  currentTutorialStep: number;
+  tutorialSteps: Step[];
+  spotlightClicks: boolean;
+  setIsTutorialManuallyControlled: (state: boolean) => void;
+  setSpotlightClicks: (state: boolean) => void;
   setCurrentAPIKey: (apiKey: APIKeyInfo) => void;
   setCurrentBounty: (bounty: Bounty) => void;
   setIssue: (issue: Issue) => void;
@@ -38,4 +47,8 @@ export interface ILancerContext {
   setLoginState: (state: LOGIN_STATE) => void;
   setCurrentUser: (user: CurrentUser) => void;
   setIssueLoadingState: (state: ISSUE_LOAD_STATE) => void;
+  setIsTutorialRunning: (state: boolean) => void;
+  setIsTutorialActive: (state: boolean) => void;
+  setCurrentTutorialStep: (step: number) => void;
+  setTutorialSteps: (steps: Step[]) => void;
 }

@@ -25,6 +25,7 @@ export * from "./types";
 import MonoProgramJSON from "@/escrow/sdk/idl/mono_program.json";
 import { APIKeyInfo } from "@/src/components/molecules/ApiKeyModal";
 import { IS_MAINNET, MONO_ADDRESS } from "@/src/constants";
+import { Step } from "react-joyride";
 
 export const LancerContext = createContext<ILancerContext>({
   currentUser: null,
@@ -38,6 +39,18 @@ export const LancerContext = createContext<ILancerContext>({
   provider: null,
   currentBounty: null,
   currentAPIKey: null,
+  isTutorialRunning: false,
+  isTutorialActive: false,
+  currentTutorialStep: -1,
+  tutorialSteps: [],
+  spotlightClicks: false,
+  isTutorialManuallyControlled: false,
+  setIsTutorialManuallyControlled: () => null,
+  setSpotlightClicks: () => null,
+  setIsTutorialRunning: () => null,
+  setIsTutorialActive: () => null,
+  setTutorialSteps: () => null,
+  setCurrentTutorialStep: () => null,
   setCurrentAPIKey: () => null,
   setIssue: () => null,
   setIssues: () => null,
@@ -79,6 +92,13 @@ const LancerProvider: FunctionComponent<ILancerState> = ({
   const [currentUser, setCurrentUser] = useState<CurrentUser | null>(null);
   const [currentBounty, setCurrentBounty] = useState<Bounty | null>(null);
   const [issue, setIssue] = useState<Issue | null>(null);
+  const [currentTutorialStep, setCurrentTutorialStep] = useState<number>(-1);
+  const [tutorialSteps, setTutorialSteps] = useState<Step[]>([]);
+  const [isTutorialRunning, setIsTutorialRunning] = useState<boolean>(false);
+  const [isTutorialActive, setIsTutorialActive] = useState<boolean>(false);
+  const [spotlightClicks, setSpotlightClicks] = useState<boolean>(false);
+  const [isTutorialManuallyControlled, setIsTutorialManuallyControlled] =
+    useState<boolean>(false);
   const [issues, setIssues] = useState<Issue[] | null>(null);
   const [loginState, setLoginState] = useState<LOGIN_STATE | null>(
     "logged_out"
@@ -124,8 +144,6 @@ const LancerProvider: FunctionComponent<ILancerState> = ({
 
   useEffect(() => {
     if (user) {
-      console.log("testing process");
-      console.log(process.env.NEXT_PUBLIC_IS_MAINNET, IS_MAINNET);
       const getUser = async () => {
         try {
           const userInfo = await getCurrUser();
@@ -165,6 +183,18 @@ const LancerProvider: FunctionComponent<ILancerState> = ({
     setCurrentWallet,
     currentAPIKey,
     setCurrentAPIKey,
+    isTutorialRunning,
+    setIsTutorialRunning,
+    currentTutorialStep,
+    setCurrentTutorialStep,
+    tutorialSteps,
+    setTutorialSteps,
+    isTutorialActive,
+    setIsTutorialActive,
+    setSpotlightClicks,
+    spotlightClicks,
+    isTutorialManuallyControlled,
+    setIsTutorialManuallyControlled,
   };
   return (
     <LancerContext.Provider value={contextProvider}>

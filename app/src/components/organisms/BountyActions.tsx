@@ -160,7 +160,11 @@ const RequestToSubmit = () => {
     }
   };
 
-  return <Button onClick={onClick}>Apply</Button>;
+  return (
+    <Button onClick={onClick} id="apply-bounty-button">
+      Apply
+    </Button>
+  );
 };
 
 export const ApproveSubmission = () => {
@@ -298,7 +302,11 @@ export const ApproveSubmission = () => {
     });
   };
 
-  return <Button onClick={onClick}>Approve</Button>;
+  return (
+    <Button onClick={onClick} id="approve-bounty-button">
+      Approve
+    </Button>
+  );
 };
 
 export const CancelEscrow = () => {
@@ -335,7 +343,11 @@ export const CancelEscrow = () => {
     setCurrentBounty(updatedBounty);
   };
 
-  return <Button onClick={onClick}>Cancel</Button>;
+  return (
+    <Button onClick={onClick} id="cancel-bounty-button">
+      Cancel
+    </Button>
+  );
 };
 
 export const DenySubmission = () => {
@@ -383,7 +395,11 @@ export const DenySubmission = () => {
     setCurrentBounty(updatedBounty);
   };
 
-  return <Button onClick={onClick}>Deny</Button>;
+  return (
+    <Button onClick={onClick} id="deny-submission-bounty-button">
+      Deny
+    </Button>
+  );
 };
 
 export const RequestChanges = () => {
@@ -432,7 +448,11 @@ export const RequestChanges = () => {
     setCurrentBounty(updatedBounty);
   };
 
-  return <Button onClick={onClick}>Request Changes</Button>;
+  return (
+    <Button onClick={onClick} id="request-changes-bounty-button">
+      Request Changes
+    </Button>
+  );
 };
 
 export const SubmitRequest = ({ disabled }: { disabled?: boolean }) => {
@@ -490,7 +510,11 @@ export const SubmitRequest = ({ disabled }: { disabled?: boolean }) => {
   };
 
   return (
-    <Button disabled={disabled} onClick={onClick}>
+    <Button
+      disabled={disabled}
+      onClick={onClick}
+      id="submit-request-bounty-button"
+    >
       Submit
     </Button>
   );
@@ -538,5 +562,9 @@ export const VoteToCancel = () => {
     setCurrentBounty(updatedBounty);
   };
 
-  return <Button onClick={onClick}>Vote To Cancel</Button>;
+  return (
+    <Button onClick={onClick} id="vote-to-cancel-bounty-button">
+      Vote To Cancel
+    </Button>
+  );
 };
