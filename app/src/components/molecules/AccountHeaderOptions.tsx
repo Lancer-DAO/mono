@@ -24,7 +24,8 @@ const AccountHeaderOptions = () => {
       console.error(e);
     }
   }, []);
-  const { currentAPIKey } = useLancer();
+  const { currentAPIKey, isTutorialActive, setCurrentTutorialStep } =
+    useLancer();
   const [showModal, setShowModal] = useState(false);
   const [showOptions, setShowOptions] = useState(false);
   const wrapperRef = useRef(null);
@@ -38,6 +39,9 @@ const AccountHeaderOptions = () => {
           <div
             onClick={() => {
               setShowOptions(true);
+              if (isTutorialActive) {
+                setCurrentTutorialStep(1);
+              }
             }}
             id="account-options"
           >
@@ -61,7 +65,13 @@ const AccountHeaderOptions = () => {
                 Account
               </Link>
               <button
-                onClick={() => setShowModal(true)}
+                onClick={() => {
+                  setShowModal(true);
+
+                  if (isTutorialActive) {
+                    setCurrentTutorialStep(2);
+                  }
+                }}
                 id="api-key-link"
                 className="flex h-[48px] w-full gap-[10px] py-[6px] items-center justify-center border-b-gray-400 border-b-[1px] hover:bg-turquoise-500 text-gray-800 hover:text-white-100 transition-colors duration-300 ease-in-out"
               >

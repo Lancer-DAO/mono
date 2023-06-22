@@ -1,11 +1,13 @@
 import Link from "next/link";
 
-export interface LinkButtonProps {
+export interface LinkButtonProps extends React.ComponentProps<typeof Link> {
   href: string;
   children?: React.ReactNode;
   style?: "filled" | "outlined" | "text";
   target?: string;
   id?: string;
+  extraClasses?: string;
+  props?: any;
 }
 
 export const getButtonStyle = (
@@ -36,9 +38,17 @@ const HeaderButton = ({
   style,
   target,
   id,
+  extraClasses,
+  ...props
 }: LinkButtonProps) => {
   return (
-    <Link href={href} className={getButtonStyle(style)} id={id} target={target}>
+    <Link
+      href={href}
+      className={getButtonStyle(style) + " " + extraClasses}
+      id={id}
+      target={target}
+      {...props}
+    >
       {children}
     </Link>
   );

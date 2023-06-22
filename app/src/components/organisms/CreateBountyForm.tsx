@@ -331,6 +331,12 @@ const Form: React.FC<{
                         setCurrentTutorialStep(2);
                       }
                     }}
+                    onMouseLeave={() => {
+                      if (isTutorialActive && formData.issueTitle.length > 0) {
+                        setIsTutorialRunning(true);
+                        setCurrentTutorialStep(2);
+                      }
+                    }}
                     onFocus={() => {
                       if (isTutorialActive) {
                         setIsTutorialRunning(false);
@@ -359,6 +365,15 @@ const Form: React.FC<{
                         setCurrentTutorialStep(3);
                       }
                     }}
+                    onMouseLeave={() => {
+                      if (
+                        isTutorialActive &&
+                        formData.estimatedTime.length > 0
+                      ) {
+                        setIsTutorialRunning(true);
+                        setCurrentTutorialStep(3);
+                      }
+                    }}
                     onFocus={() => {
                       if (isTutorialActive) {
                         setIsTutorialRunning(false);
@@ -379,6 +394,15 @@ const Form: React.FC<{
                     placeholder="list seperated by commas"
                     id="issue-requirements-input"
                     onBlur={() => {
+                      if (
+                        isTutorialActive &&
+                        formData.requirements.length > 0
+                      ) {
+                        setIsTutorialRunning(true);
+                        setCurrentTutorialStep(4);
+                      }
+                    }}
+                    onMouseLeave={() => {
                       if (
                         isTutorialActive &&
                         formData.requirements.length > 0
@@ -426,6 +450,15 @@ const Form: React.FC<{
                       placeholder="Provide a step by step breakdown of what is needed to complete the task. Include criteria that will determine success. **Markdown Supported** "
                       className="textarea w-input"
                       onBlur={() => {
+                        if (
+                          isTutorialActive &&
+                          formData.issueDescription.length > 0
+                        ) {
+                          setIsTutorialRunning(true);
+                          setCurrentTutorialStep(5);
+                        }
+                      }}
+                      onMouseLeave={() => {
                         if (
                           isTutorialActive &&
                           formData.issueDescription.length > 0

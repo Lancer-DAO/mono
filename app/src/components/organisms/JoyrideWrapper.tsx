@@ -211,6 +211,148 @@ export const BOUNTIES_PAGE_STEPS: Step[] = [
   },
 ];
 
+export const PROFILE_STEPS: Step[] = [
+  {
+    target: "#start-tutorial-link",
+    content:
+      "Welcome to Lancer! Since this is your first time logging in, we will get you started on a quick tutorial. You can always click this button to start the guided tutorial for the page you are one.",
+    disableBeacon: true,
+    disableCloseOnEsc: false,
+  },
+  {
+    target: "#wallet-connect-button",
+    content:
+      "First, you will need to connect your wallet. Click this button to connect your wallet.",
+    disableBeacon: true,
+    disableCloseOnEsc: false,
+  },
+  {
+    target: "#mint-profile-nft",
+    content:
+      "Next, you need to mint your profile NFT. This is managed by Lancer, so you won't need to sign a transaction. This will store your reputation and skills on chain, and update as you complete tasks.",
+    disableBeacon: true,
+    disableCloseOnEsc: false,
+  },
+
+  {
+    target: "#profile-nft",
+    content:
+      "This is your profile NFT. This will store your reputation and skills on chain, and update as you complete tasks.",
+    disableBeacon: true,
+    disableCloseOnEsc: false,
+  },
+
+  {
+    target: "#badges-section",
+    content:
+      "This is the badges section. This will show any badges you have earned. Badges are earned by completing tasks with the marked skills.",
+    disableBeacon: true,
+    disableCloseOnEsc: false,
+  },
+
+  {
+    target: "#certificates-section",
+    content:
+      "This is the certificates section. This will show any certificates you have earned. Certificates are given by clients to freelancers they worked with.",
+    disableBeacon: true,
+    disableCloseOnEsc: false,
+  },
+  {
+    target: "#bounties-list",
+    content:
+      "Completed tasks will show up here. For now, you don't have any completed tasks, so let's walk through creating and completing your first task!",
+    disableBeacon: true,
+    disableCloseOnEsc: false,
+  },
+];
+
+export const GITHUB_API_KEY_STEPS: Step[] = [
+  {
+    target: "#account-options",
+    content:
+      "Before creating a task, you need to get create an API key. This will allow Lancer to create tasks on your behalf. You can find the option in this dropdown.",
+    disableBeacon: true,
+    disableCloseOnEsc: false,
+  },
+  {
+    target: "#api-key-link",
+    content:
+      "Clicking this button will open the API key management modal. You can access this at any time. You can also revoke your API key here.",
+    disableBeacon: true,
+    disableCloseOnEsc: false,
+  },
+  {
+    target: "#github-api-key-tutorial-link",
+    content: "Click here to open a guide on how to create your GitHub API key.",
+    disableBeacon: true,
+    disableCloseOnEsc: false,
+  },
+  {
+    target: "#token-name-input",
+    content:
+      "Here, you can enter a unique name for you API Key. We recommend naming it after the repository or repositories it grants access to.",
+    disableBeacon: true,
+    disableCloseOnEsc: false,
+  },
+  {
+    target: "#token-input",
+    content:
+      "Enter your GitHub API key here. This will be used to create tasks on your behalf.",
+    disableBeacon: true,
+    disableCloseOnEsc: false,
+  },
+  {
+    target: "#save-api-key-button",
+    content:
+      "Click this button to save your API key. You can now create tasks! If you don't have any other keys registered, this will be your default key.",
+    disableBeacon: true,
+    disableCloseOnEsc: false,
+  },
+  {
+    target: "#api-key-list",
+    content:
+      "Here, you can see all of your API keys. You can set the curreent API key, select a default key, and edit and delete keys here.",
+    disableBeacon: true,
+    disableCloseOnEsc: false,
+  },
+
+  {
+    target: "#token-info-0",
+    content:
+      "This is the name and token for your API key. You can see the full token by hovering over the token [TODO].",
+    disableBeacon: true,
+    disableCloseOnEsc: false,
+  },
+  {
+    target: "#token-selected-0",
+    content:
+      "Click this button to set this API key as your current key. This will be used to create tasks on your behalf.",
+    disableBeacon: true,
+    disableCloseOnEsc: false,
+  },
+  {
+    target: "#token-default-0",
+    content:
+      "Click this button to set this API key as your default key. This will be set as your current API key on load.",
+    disableBeacon: true,
+    disableCloseOnEsc: false,
+  },
+  {
+    target: "#token-edit-0",
+    content:
+      "Click this button to edit this API key. You can change the name and token here.",
+    disableBeacon: true,
+    disableCloseOnEsc: false,
+  },
+  {
+    target: "#token-delete-0",
+    content:
+      "Click this button to delete this API key. You will be prompted to confirm this action [TODO].",
+    disableBeacon: true,
+    disableCloseOnEsc: false,
+  },
+];
+
 const JoyrideWrapper = () => {
   const {
     isTutorialRunning,
@@ -220,17 +362,18 @@ const JoyrideWrapper = () => {
     setCurrentTutorialStep,
     spotlightClicks,
     isTutorialManuallyControlled,
+    setIsTutorialActive,
   } = useLancer();
   const router = useRouter();
   const handleCallback = (data: CallBackProps) => {
+    console.log(data);
     const { action, index, lifecycle, type } = data;
 
-    if (type === "step:after" && index === 0 /* or step.target === '#home' */) {
-      setIsTutorialRunning(false);
-      router.push("/create");
+    if (type === "step:after" && ![1].includes(index)) {
+      setCurrentTutorialStep(index + 1);
     }
-    if (type === "step:after" && index === 1 /* or step.target === '#home' */) {
-      setCurrentTutorialStep(2);
+    if (type === "tour:end") {
+      setIsTutorialActive(false);
     }
   };
   // debugger;
@@ -238,10 +381,11 @@ const JoyrideWrapper = () => {
     <Joyride
       continuous
       hideCloseButton
+      callback={handleCallback}
       run={isTutorialRunning}
       steps={tutorialSteps}
       stepIndex={currentTutorialStep}
-      // spotlightClicks={spotlightClicks}
+      spotlightClicks={spotlightClicks}
       scrollToFirstStep
       showSkipButton
       styles={{
@@ -262,7 +406,7 @@ const JoyrideWrapper = () => {
       hideCloseButton
       run={isTutorialRunning}
       steps={tutorialSteps}
-      // spotlightClicks={spotlightClicks}
+      spotlightClicks={spotlightClicks}
       scrollToFirstStep
       showSkipButton
       styles={{

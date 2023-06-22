@@ -19,6 +19,7 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { api } from "@/src/utils/api";
 import { BountyNFT, CurrentUser, ProfileNFT } from "@/src/types";
+import { last } from "lodash";
 export const getServerSideProps = withPageAuthRequired();
 
 import {
@@ -49,7 +50,14 @@ export default function Home() {
 const Account: React.FC = () => {
   const router = useRouter();
 
-  const { currentUser, wallets, currentWallet } = useLancer();
+  const {
+    currentUser,
+    wallets,
+    currentWallet,
+    isTutorialActive,
+    setIsTutorialRunning,
+    setCurrentTutorialStep,
+  } = useLancer();
   const [showCoinflow, setShowCoinflow] = useState(false);
   const [showTutorial, setShowTutorial] = useState(false);
   const [profileNFT, setProfileNFT] = useState<ProfileNFT>();
@@ -139,28 +147,39 @@ const Account: React.FC = () => {
   }, [currentUser, router.isReady]);
 
   useEffect(() => {
+    const fetchNfts = async () => {
+      await fetchProfileNFT();
+
+      if (isTutorialActive) {
+        setIsTutorialRunning(true);
+        setCurrentTutorialStep(3);
+      }
+      await fetchBountyNFTs();
+    };
     if (account && account.profileWalletId) {
-      fetchProfileNFT();
-      fetchBountyNFTs();
+      fetchNfts();
     }
   }, [account]);
 
   const mintProfileNFT = async () => {
-    const result = await underdogClient.createNft({
-      params: PROFILE_PROJECT_PARAMS,
-      body: {
-        name: `${account.githubLogin}`,
-        image: "https://i.imgur.com/3uQq5Zo.png",
-        attributes: {
-          reputation: 0,
-          badges: "",
-          certifications: "",
-          lastUpdated: dayjs().toISOString(),
-        },
-        upsert: true,
-        receiverAddress: currentWallet.publicKey.toString(),
-      },
-    });
+    if (isTutorialActive) {
+      setIsTutorialRunning(false);
+    }
+    //   const result = await underdogClient.createNft({
+    //     params: PROFILE_PROJECT_PARAMS,
+    //     body: {
+    //       name: `${account.githubLogin}`,
+    //       image: "https://i.imgur.com/3uQq5Zo.png",
+    //       attributes: {
+    //         reputation: 0,
+    //         badges: "",
+    //         certifications: "",
+    //         lastUpdated: dayjs().toISOString(),
+    //       },
+    //       upsert: true,
+    //       receiverAddress: currentWallet.publicKey.toString(),
+    //     },
+    //   });
     const updatedUser = await registerProfileNFT({
       walletPublicKey: currentWallet.publicKey.toString(),
     });
@@ -191,23 +210,36 @@ const Account: React.FC = () => {
               USDC Faucet
             </a>
           )} */}
-            <div>
-              {profileNFT && (
+            {profileNFT ? (
+              <>
                 <ProfileNFTCard
                   profileNFT={profileNFT}
                   githubId={account.githubId}
                 />
-              )}
-            </div>
-            {bountyNFTs.length > 0 && (
-              <div className="profile-bounty-list">
-                <h2>Bounties</h2>
-                {bountyNFTs.map((bountyNFT) => (
-                  <BountyNFTCard bountyNFT={bountyNFT} />
-                ))}
-              </div>
-            )}
-            {!account?.hasProfileNFT && (
+
+                <div className="profile-bounty-list" id="bounties-list">
+                  <h2>Bounties</h2>
+                  {bountyNFTs.length > 0 ? (
+                    bountyNFTs.map((bountyNFT) => (
+                      <BountyNFTCard bountyNFT={bountyNFT} />
+                    ))
+                  ) : (
+                    <div>No bounties yet!</div>
+                  )}
+                </div>
+
+                <button
+                  className="my-first-step"
+                  onClick={() => {
+                    setShowCoinflow(!showCoinflow);
+                  }}
+                >
+                  Cash Out
+                </button>
+
+                {showCoinflow && <CoinflowOfframp />}
+              </>
+            ) : (
               <Button
                 disabled={!currentWallet}
                 disabledText={"Please connect a wallet"}
@@ -217,25 +249,6 @@ const Account: React.FC = () => {
                 Mint Profile NFT
               </Button>
             )}
-
-            <button
-              className="my-first-step"
-              onClick={() => {
-                setShowCoinflow(!showCoinflow);
-              }}
-            >
-              Cash Out
-            </button>
-
-            <button
-              className="my-other-step"
-              onClick={() => {
-                setShowTutorial(!showTutorial);
-              }}
-            >
-              Start Tutorial
-            </button>
-            {showCoinflow && <CoinflowOfframp />}
           </div>
         </>
       )}

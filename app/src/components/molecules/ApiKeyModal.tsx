@@ -3,10 +3,11 @@ import { getSolscanTX } from "@/src/utils";
 import { useEffect, useState } from "react";
 import { useLancer } from "@/src/providers/lancerProvider";
 import classnames from "classnames";
-import { Edit, Delete, X } from "react-feather";
+import { Edit, Delete, X, HelpCircle } from "react-feather";
 
 import { FC, useRef } from "react";
 import { useOutsideAlerter } from "../../hooks/useOutsideAlerter";
+import { LinkButton } from "..";
 
 export interface APIKeyInfo {
   token: string;
@@ -25,26 +26,36 @@ const shortenGHToken = (token: string) => {
 
 const ApiKeyModal: FC<Props> = ({ showModal, setShowModal }) => {
   const wrapperRef = useRef(null);
-  const { currentAPIKey, setCurrentAPIKey } = useLancer();
+  const {
+    currentAPIKey,
+    setCurrentAPIKey,
+    isTutorialActive,
+    setCurrentTutorialStep,
+    setIsTutorialRunning,
+    setIsTutorialActive,
+  } = useLancer();
   const [apiKey, setApiKey] = useState<APIKeyInfo>({
     token: "",
     name: "",
     isDefault: false,
   });
   const [oldApiKeyName, setOldApiKeyName] = useState("");
+  const [isTutorialButtonHovered, setIsTutorialButtonHovered] = useState(false);
   const [apiKeys, setApiKeys] = useState<APIKeyInfo[]>([]);
   useEffect(() => {
     const apiKeys = JSON.parse(localStorage.getItem("apiKeys") || "[]");
     setApiKeys(apiKeys);
   }, []);
   useOutsideAlerter(wrapperRef, () => {
-    setShowModal(false);
-    setApiKey({
-      token: "",
-      name: "",
-      isDefault: false,
-    });
-    setOldApiKeyName("");
+    if (!isTutorialActive) {
+      setShowModal(false);
+      setApiKey({
+        token: "",
+        name: "",
+        isDefault: false,
+      });
+      setOldApiKeyName("");
+    }
   });
 
   return (
@@ -52,16 +63,42 @@ const ApiKeyModal: FC<Props> = ({ showModal, setShowModal }) => {
       {showModal ? (
         <div className="modal-wrapper">
           <div className="modal-inner" ref={wrapperRef}>
-            <h2 className="modal-header">Select GitHub API Key</h2>
-            <div>
-              {apiKeys.map(({ name, token, isDefault }) => (
+            <h2 className="modal-header ">
+              Select GitHub API Key{" "}
+              <LinkButton
+                href="https://lancerworks.notion.site/Setting-your-GitHub-API-Token-cbdd37c0502942e4adb775e70e17a9c7?pvs=4"
+                target="_blank"
+                onMouseEnter={() => setIsTutorialButtonHovered(true)}
+                onMouseLeave={() => setIsTutorialButtonHovered(false)}
+                style="text"
+                extraClasses="ml-[10px]"
+                id="github-api-key-tutorial-link"
+                onClick={() => {
+                  if (isTutorialActive) {
+                    setCurrentTutorialStep(3);
+                  }
+                }}
+              >
+                <HelpCircle
+                  height={40}
+                  width={40}
+                  strokeWidth={1.25}
+                  color={isTutorialButtonHovered ? "#14bb88" : "#000"}
+                />
+              </LinkButton>
+            </h2>
+            <div id="api-key-list">
+              {apiKeys.map(({ name, token, isDefault }, index) => (
                 <div className="api-key-row">
-                  <div className="token-info">
+                  <div className="token-info" id={`token-info-${index}`}>
                     <div>{`${name}: `}</div>
                     <div className="token-key">{shortenGHToken(token)}</div>
                   </div>
                   <div className="api-key-row-buttons">
-                    <label className="w-checkbox checkbox-field-2 label-only">
+                    <label
+                      className="w-checkbox checkbox-field-2 label-only"
+                      id={`token-selected-${index}`}
+                    >
                       <div
                         className={classnames(
                           "w-checkbox-input w-checkbox-input--inputType-custom checkbox ",
@@ -76,7 +113,10 @@ const ApiKeyModal: FC<Props> = ({ showModal, setShowModal }) => {
 
                       <label className="check-label label-only">Selected</label>
                     </label>
-                    <label className="w-checkbox checkbox-field-2 label-only">
+                    <label
+                      className="w-checkbox checkbox-field-2 label-only"
+                      id={`token-default-${index}`}
+                    >
                       <div
                         className={classnames(
                           "w-checkbox-input w-checkbox-input--inputType-custom checkbox ",
@@ -113,6 +153,7 @@ const ApiKeyModal: FC<Props> = ({ showModal, setShowModal }) => {
                         setOldApiKeyName(name);
                         setApiKey({ name, token, isDefault });
                       }}
+                      id={`token-edit-${index}`}
                     >
                       <Edit />
                     </button>
@@ -130,7 +171,11 @@ const ApiKeyModal: FC<Props> = ({ showModal, setShowModal }) => {
                           localStorage.getItem("apiKeys") || "[]"
                         );
                         setApiKeys(newApiKeys);
+                        if (isTutorialActive) {
+                          setIsTutorialActive(false);
+                        }
                       }}
+                      id={`token-delete-${index}`}
                     >
                       <X />
                     </button>
@@ -139,7 +184,7 @@ const ApiKeyModal: FC<Props> = ({ showModal, setShowModal }) => {
               ))}
             </div>
             <div className="api-modal-inputs">
-              <div className="api-key-input-wrapper">
+              <div className="api-key-input-wrapper" id="token-name-input">
                 <div className="api-key-input-header">API Token Name</div>
 
                 <input
@@ -150,10 +195,27 @@ const ApiKeyModal: FC<Props> = ({ showModal, setShowModal }) => {
                   onChange={(e) => {
                     setApiKey({ ...apiKey, name: e.target.value });
                   }}
+                  onBlur={() => {
+                    if (isTutorialActive && apiKey.name.length > 0) {
+                      setIsTutorialRunning(true);
+                      setCurrentTutorialStep(4);
+                    }
+                  }}
+                  onMouseLeave={() => {
+                    if (isTutorialActive && apiKey.name.length > 0) {
+                      setIsTutorialRunning(true);
+                      setCurrentTutorialStep(4);
+                    }
+                  }}
+                  onFocus={() => {
+                    if (isTutorialActive) {
+                      setIsTutorialRunning(false);
+                    }
+                  }}
                 />
               </div>
 
-              <div className="api-key-input-wrapper">
+              <div className="api-key-input-wrapper" id="token-input">
                 <div className="api-key-input-header">API Token </div>
                 <input
                   type="text"
@@ -165,6 +227,23 @@ const ApiKeyModal: FC<Props> = ({ showModal, setShowModal }) => {
                       ...apiKey,
                       token: e.target.value,
                     });
+                  }}
+                  onBlur={() => {
+                    if (isTutorialActive && apiKey.token.length > 0) {
+                      setIsTutorialRunning(true);
+                      setCurrentTutorialStep(5);
+                    }
+                  }}
+                  onMouseLeave={() => {
+                    if (isTutorialActive && apiKey.token.length > 0) {
+                      setIsTutorialRunning(true);
+                      setCurrentTutorialStep(5);
+                    }
+                  }}
+                  onFocus={() => {
+                    if (isTutorialActive) {
+                      setIsTutorialRunning(false);
+                    }
                   }}
                 />
               </div>
@@ -181,6 +260,9 @@ const ApiKeyModal: FC<Props> = ({ showModal, setShowModal }) => {
                 if (deleteIndex !== -1) {
                   apiKeys.splice(deleteIndex, 1);
                 }
+                if (apiKeys.length === 0) {
+                  apiKey.isDefault = true;
+                }
 
                 apiKeys.push(apiKey);
                 localStorage.setItem("apiKeys", JSON.stringify(apiKeys));
@@ -188,7 +270,12 @@ const ApiKeyModal: FC<Props> = ({ showModal, setShowModal }) => {
                   localStorage.getItem("apiKeys") || "[]"
                 );
                 setApiKeys(newApiKeys);
+                if (isTutorialActive) {
+                  setIsTutorialRunning(true);
+                  setCurrentTutorialStep(6);
+                }
               }}
+              id="save-api-key-button"
             >
               {oldApiKeyName === ""
                 ? "Save API Key to Local Storage"

@@ -139,6 +139,10 @@ const LancerProvider: FunctionComponent<ILancerState> = ({
       setProvider(provider);
       setProgram(program);
       setCurrentWallet(lancerWallet);
+      if (isTutorialActive) {
+        setIsTutorialRunning(true);
+        setCurrentTutorialStep(2);
+      }
     }
   }, [connected]);
 

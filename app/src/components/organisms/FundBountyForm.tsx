@@ -151,6 +151,15 @@ const Form: React.FC<{ isAccountCreated: boolean }> = ({
                               setCurrentTutorialStep(1);
                             }
                           }}
+                          onMouseLeave={() => {
+                            if (
+                              isTutorialActive &&
+                              formData.fundingAmount > 0
+                            ) {
+                              setIsTutorialRunning(true);
+                              setCurrentTutorialStep(1);
+                            }
+                          }}
                           onFocus={() => {
                             if (isTutorialActive) {
                               setIsTutorialRunning(false);

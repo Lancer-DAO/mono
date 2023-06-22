@@ -10,6 +10,8 @@ import {
   BOUNTIES_PAGE_STEPS,
   BOUNTY_METADATA_STEPS,
   CREATE_BOUNTY_STEPS,
+  GITHUB_API_KEY_STEPS,
+  PROFILE_STEPS,
 } from "./JoyrideWrapper";
 const HEADER_LINKS: LinkButtonProps[] = [
   { href: "/create", children: "New Bounty", id: "create-bounty-link" },
@@ -29,6 +31,7 @@ export const Header = () => {
     setTutorialSteps,
     setIsTutorialManuallyControlled,
     setSpotlightClicks,
+    isTutorialActive,
   } = useLancer();
   const [isTutorialButtonHovered, setIsTutorialButtonHovered] = useState(false);
   return (
@@ -44,7 +47,15 @@ export const Header = () => {
           {HEADER_LINKS.map(({ href, children }) => {
             return <LinkButton href={href} children={children} style="text" />;
           })}
-          <div className="ml-auto" id="wallet-connect-button">
+          <div
+            className="ml-auto"
+            id="wallet-connect-button"
+            onClick={() => {
+              if (isTutorialActive) {
+                setIsTutorialRunning(false);
+              }
+            }}
+          >
             <WalletMultiButtonDynamic className="text-gray-800 flex h-[48px] w-[250px] py-[6px] items-center justify-center border-solid hover:bg-turquoise-500 text-gray-800 hover:text-white-100 transition-colors duration-300 ease-in-out" />
           </div>
 
@@ -53,10 +64,10 @@ export const Header = () => {
             onClick={() => {
               setIsTutorialRunning(true);
               setCurrentTutorialStep(0);
-              setIsTutorialManuallyControlled(false);
+              setIsTutorialManuallyControlled(true);
               setIsTutorialActive(true);
-              setTutorialSteps(BOUNTIES_PAGE_STEPS);
-              setSpotlightClicks(false);
+              setTutorialSteps(GITHUB_API_KEY_STEPS);
+              setSpotlightClicks(true);
             }}
             onMouseEnter={() => setIsTutorialButtonHovered(true)}
             onMouseLeave={() => setIsTutorialButtonHovered(false)}
