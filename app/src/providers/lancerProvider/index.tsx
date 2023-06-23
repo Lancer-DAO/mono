@@ -135,6 +135,7 @@ const LancerProvider: FunctionComponent<ILancerState> = ({
           //   debugger;
           //   router.push("/api/auth/login");
           // }
+          console.error(e);
         }
       };
       getUser();
