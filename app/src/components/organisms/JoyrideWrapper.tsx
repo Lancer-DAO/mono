@@ -353,7 +353,7 @@ export const GITHUB_API_KEY_STEPS: Step[] = [
   },
 ];
 
-export const BOUNTY_ACTION_STEPS: Step[] = [
+export const BOUNTY_ACTION_PRE_SUBMIT_STEPS: Step[] = [
   {
     target: "#bounty-actions",
     content:
@@ -413,6 +413,79 @@ export const BOUNTY_ACTION_STEPS: Step[] = [
   {
     target: "#download-extension-link",
     content: "You can always download the extension and see instructions here.",
+    disableBeacon: true,
+    disableCloseOnEsc: false,
+  },
+];
+
+export const BOUNTY_ACTION_POST_SUBMIT_STEPS: Step[] = [
+  {
+    target: "#task-pull-request-link",
+    content:
+      "Now that you have submitted a pull request closing this issue, you can see that is has been added to the bounty.",
+    disableBeacon: true,
+    disableCloseOnEsc: false,
+  },
+  {
+    target: "#submit-request-bounty-button",
+    content:
+      "You are now able to submit your request for review. This will allow the client to review your work and either approve, request changes, or deny it.",
+    disableBeacon: true,
+    disableCloseOnEsc: false,
+  },
+  {
+    target: "#bounty-actions",
+    content:
+      "Now that you have submitted your work, you can see that the bounty actions have changed. You can either request changes on the submission, deny it, or approve it.",
+    disableBeacon: true,
+    disableCloseOnEsc: false,
+  },
+  {
+    target: "#request-changes-bounty-button",
+    content:
+      "Requesting changes on the task will send it back to the 'In Progress' state. This will allow the freelancer to make changes and resubmit.",
+    disableBeacon: true,
+    disableCloseOnEsc: false,
+  },
+  {
+    target: "#deny-submission-bounty-button",
+    content:
+      "Denying the submission will send it back to the 'Awaiting Applications' state. The freelancer will be removed from the task, and will not be able to make further submissions.",
+    disableBeacon: true,
+    disableCloseOnEsc: false,
+  },
+  {
+    target: "#approve-bounty-button",
+    content:
+      "Approving the submission will close the task, merge the pull request, and pay out the bounty. This will send the task to the 'Completed' state, and send completion badges to each involved party.",
+    disableBeacon: true,
+    disableCloseOnEsc: false,
+  },
+  {
+    target: "#account-options",
+    content: "Now you can go back to your profile and see your completed task!",
+    disableBeacon: true,
+    disableCloseOnEsc: false,
+  },
+  {
+    target: "#account-link",
+    content: "Click here to see your account page.",
+    disableBeacon: true,
+    disableCloseOnEsc: false,
+  },
+
+  {
+    target: "#profile-nft",
+    content:
+      "You can see now that your profile NFT has been updated with your new reputation and skills!",
+    disableBeacon: true,
+    disableCloseOnEsc: false,
+  },
+
+  {
+    target: "#bounties-list",
+    content:
+      "Also, you can see recently completed tasks here. Since you were both the creator and freelancer, you can see both sides of the task.",
     disableBeacon: true,
     disableCloseOnEsc: false,
   },

@@ -171,12 +171,19 @@ export const ApproveSubmission = () => {
     program,
     currentWallet,
     setCurrentBounty,
+    isTutorialActive,
+    setIsTutorialRunning,
+    currentTutorialStep,
+    setCurrentTutorialStep,
   } = useLancer();
   const { mutateAsync } = api.bounties.updateBountyUser.useMutation();
 
   const { currentAPIKey } = useLancer();
 
   const onClick = async () => {
+    if (isTutorialActive) {
+      setIsTutorialRunning(false);
+    }
     // If we are the creator, then skip requesting and add self as approved
     const signature = await approveRequestFFA(
       new PublicKey(currentBounty.currentSubmitter.publicKey),
@@ -296,6 +303,11 @@ export const ApproveSubmission = () => {
         receiverAddress: creatorKey,
       },
     });
+
+    if (isTutorialActive) {
+      setCurrentTutorialStep(currentTutorialStep + 1);
+      setIsTutorialRunning(true);
+    }
   };
 
   return (
@@ -380,12 +392,12 @@ export const DenySubmission = () => {
       currentUserId: currentUser.id,
       userId: currentBounty.currentSubmitter.userid,
       relations: currentBounty.currentSubmitter.relations,
-      state: BountyState.IN_PROGRESS,
+      state: BountyState.ACCEPTING_APPLICATIONS,
       publicKey: currentWallet.publicKey.toString(),
       provider: currentWallet.providerName,
       escrowId: currentBounty.escrowid,
       signature,
-      label: "add-approved-submitter",
+      label: "deny-submitter",
     });
 
     setCurrentBounty(updatedBounty);
@@ -459,10 +471,17 @@ export const SubmitRequest = ({ disabled }: { disabled?: boolean }) => {
     provider,
     program,
     setCurrentBounty,
+    isTutorialActive,
+    setIsTutorialRunning,
+    setCurrentTutorialStep,
+    currentTutorialStep,
   } = useLancer();
   const { mutateAsync } = api.bounties.updateBountyUser.useMutation();
   const onClick = async () => {
     // If we are the creator, then skip requesting and add self as approved
+    if (isTutorialActive) {
+      setIsTutorialRunning(false);
+    }
     const signature = await submitRequestFFA(
       new PublicKey(currentBounty.creator.publicKey),
       currentWallet.publicKey,
@@ -503,6 +522,10 @@ export const SubmitRequest = ({ disabled }: { disabled?: boolean }) => {
     });
 
     setCurrentBounty(updatedBounty);
+    if (isTutorialActive) {
+      setCurrentTutorialStep(currentTutorialStep + 1);
+      setIsTutorialRunning(true);
+    }
   };
 
   return (

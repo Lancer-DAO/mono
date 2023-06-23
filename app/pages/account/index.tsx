@@ -152,7 +152,7 @@ const Account: React.FC = () => {
 
       if (isTutorialActive) {
         setIsTutorialRunning(true);
-        setCurrentTutorialStep(3);
+        // setCurrentTutorialStep(3);
       }
       await fetchBountyNFTs();
     };

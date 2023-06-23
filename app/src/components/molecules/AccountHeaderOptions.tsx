@@ -8,7 +8,14 @@ import { Key, HelpCircle } from "react-feather";
 import Link from "next/link";
 
 const AccountHeaderOptions = () => {
-  const { currentUser } = useLancer();
+  const {
+    currentUser,
+    currentAPIKey,
+    isTutorialActive,
+    setCurrentTutorialStep,
+    currentTutorialStep,
+    setIsTutorialRunning,
+  } = useLancer();
   const [hasExtension, setHasExtension] = useState(false);
   useEffect(() => {
     try {
@@ -24,8 +31,6 @@ const AccountHeaderOptions = () => {
       console.error(e);
     }
   }, []);
-  const { currentAPIKey, isTutorialActive, setCurrentTutorialStep } =
-    useLancer();
   const [showModal, setShowModal] = useState(false);
   const [showOptions, setShowOptions] = useState(false);
   const wrapperRef = useRef(null);
@@ -61,6 +66,12 @@ const AccountHeaderOptions = () => {
               <Link
                 href={"/account"}
                 id="account-link"
+                onClick={() => {
+                  if (isTutorialActive) {
+                    setIsTutorialRunning(false);
+                    setCurrentTutorialStep(currentTutorialStep + 1);
+                  }
+                }}
                 className="flex rounded-t-[20px] h-[48px] py-[6px] items-center justify-center border-b-gray-400 border-b-[1px] hover:bg-turquoise-500 text-gray-800 hover:text-white-100 transition-colors duration-300 ease-in-out"
               >
                 Account
