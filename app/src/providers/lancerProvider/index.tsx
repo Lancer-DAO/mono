@@ -123,21 +123,14 @@ const LancerProvider: FunctionComponent<ILancerState> = ({
   }, [connected]);
 
   useEffect(() => {
+    const getUser = async () => {
+      console.log("logging in user");
+      const userInfo = await getCurrUser();
+      console.log("login response", userInfo);
+      setCurrentUser(userInfo);
+    };
     if (user) {
-      console.log("testing process");
-      console.log(process.env.NEXT_PUBLIC_IS_MAINNET, IS_MAINNET);
-      const getUser = async () => {
-        try {
-          const userInfo = await getCurrUser();
-          setCurrentUser(userInfo);
-        } catch (e) {
-          // if (e.data.httpStatus === 401) {
-          //   debugger;
-          //   router.push("/api/auth/login");
-          // }
-          console.error(e);
-        }
-      };
+      console.log("user", user);
       getUser();
     }
   }, [user]);
