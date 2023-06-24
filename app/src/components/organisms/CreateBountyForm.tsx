@@ -8,23 +8,13 @@ import { api } from "@/src/utils/api";
 import { Octokit } from "octokit";
 import { PublicKey } from "@solana/web3.js";
 import { FORM_SECTION } from "@/pages/create";
-import { FUND_BOUNTY_STEPS } from "./JoyrideWrapper";
 
 const Form: React.FC<{
   setFormSection: (section: FORM_SECTION) => void;
   createAccountPoll: (publicKey: PublicKey) => void;
 }> = ({ setFormSection, createAccountPoll }) => {
-  const {
-    currentWallet,
-    program,
-    provider,
-    currentUser,
-    setCurrentBounty,
-    isTutorialActive,
-    setIsTutorialRunning,
-    setCurrentTutorialStep,
-    setTutorialSteps,
-  } = useLancer();
+  const { currentWallet, program, provider, currentUser, setCurrentBounty } =
+    useLancer();
   const { mutateAsync } = api.bounties.createBounty.useMutation();
   const { mutateAsync: createIssue } = api.issues.createIssue.useMutation();
   const [creationType, setCreationType] = useState<"new" | "existing">("new");
@@ -53,9 +43,9 @@ const Form: React.FC<{
 
   const toggleOpenRepo = () => {
     setIsOpenRepo(!isOpenRepo);
-    if (isTutorialActive && !isOpenRepo) {
-      setIsTutorialRunning(false);
-    }
+    // if (isTutorialActive && !isOpenRepo) {
+    //   setIsTutorialRunning(false);
+    // }
   };
   const toggleOpenIssue = () => setIsOpenIssue(!isOpenIssue);
   const togglePreview = () => setIsPreview(!isPreview);
@@ -84,7 +74,7 @@ const Form: React.FC<{
 
   const createBounty = async () => {
     setIsSubmittingIssue(true);
-    setIsTutorialRunning(false);
+    // setIsTutorialRunning(false);
 
     let issueNumber = issue ? issue.number : null;
     const [organizationName, repositoryName] = repo.full_name.split("/");
@@ -144,11 +134,11 @@ const Form: React.FC<{
     });
     setFormSection("FUND");
 
-    if (isTutorialActive) {
-      setCurrentTutorialStep(0);
-      setTutorialSteps(FUND_BOUNTY_STEPS);
-      setIsTutorialRunning(true);
-    }
+    // if (isTutorialActive) {
+    //   setCurrentTutorialStep(0);
+    //   setTutorialSteps(FUND_BOUNTY_STEPS);
+    //   setIsTutorialRunning(true);
+    // }
     setCurrentBounty(issueResp);
   };
 
@@ -175,10 +165,10 @@ const Form: React.FC<{
     const repo = repos.find((_repo) => _repo.full_name === repoFullName);
     setRepo(repo);
     getRepoIssues(repo);
-    if (isTutorialActive) {
-      setCurrentTutorialStep(1);
-      setIsTutorialRunning(true);
-    }
+    // if (isTutorialActive) {
+    //   setCurrentTutorialStep(1);
+    //   setIsTutorialRunning(true);
+    // }
   };
 
   const handleChangeIssue = (issueNumber: number) => {
@@ -326,21 +316,21 @@ const Form: React.FC<{
                     value={formData.issueTitle}
                     onChange={handleChange}
                     onBlur={() => {
-                      if (isTutorialActive && formData.issueTitle.length > 0) {
-                        setIsTutorialRunning(true);
-                        setCurrentTutorialStep(2);
-                      }
+                      // if (isTutorialActive && formData.issueTitle.length > 0) {
+                      //   setIsTutorialRunning(true);
+                      //   setCurrentTutorialStep(2);
+                      // }
                     }}
                     onMouseLeave={() => {
-                      if (isTutorialActive && formData.issueTitle.length > 0) {
-                        setIsTutorialRunning(true);
-                        setCurrentTutorialStep(2);
-                      }
+                      // if (isTutorialActive && formData.issueTitle.length > 0) {
+                      //   setIsTutorialRunning(true);
+                      //   setCurrentTutorialStep(2);
+                      // }
                     }}
                     onFocus={() => {
-                      if (isTutorialActive) {
-                        setIsTutorialRunning(false);
-                      }
+                      // if (isTutorialActive) {
+                      //   setIsTutorialRunning(false);
+                      // }
                     }}
                   />
                 </div>
@@ -357,27 +347,27 @@ const Form: React.FC<{
                     placeholder="Ex. 3 (hours)"
                     id="issue-time-input"
                     onBlur={() => {
-                      if (
-                        isTutorialActive &&
-                        formData.estimatedTime.length > 0
-                      ) {
-                        setIsTutorialRunning(true);
-                        setCurrentTutorialStep(3);
-                      }
+                      // if (
+                      //   isTutorialActive &&
+                      //   formData.estimatedTime.length > 0
+                      // ) {
+                      //   setIsTutorialRunning(true);
+                      //   setCurrentTutorialStep(3);
+                      // }
                     }}
                     onMouseLeave={() => {
-                      if (
-                        isTutorialActive &&
-                        formData.estimatedTime.length > 0
-                      ) {
-                        setIsTutorialRunning(true);
-                        setCurrentTutorialStep(3);
-                      }
+                      // if (
+                      //   isTutorialActive &&
+                      //   formData.estimatedTime.length > 0
+                      // ) {
+                      //   setIsTutorialRunning(true);
+                      //   setCurrentTutorialStep(3);
+                      // }
                     }}
                     onFocus={() => {
-                      if (isTutorialActive) {
-                        setIsTutorialRunning(false);
-                      }
+                      // if (isTutorialActive) {
+                      //   setIsTutorialRunning(false);
+                      // }
                     }}
                   />
                 </div>
@@ -394,27 +384,27 @@ const Form: React.FC<{
                     placeholder="list seperated by commas"
                     id="issue-requirements-input"
                     onBlur={() => {
-                      if (
-                        isTutorialActive &&
-                        formData.requirements.length > 0
-                      ) {
-                        setIsTutorialRunning(true);
-                        setCurrentTutorialStep(4);
-                      }
+                      // if (
+                      //   isTutorialActive &&
+                      //   formData.requirements.length > 0
+                      // ) {
+                      //   setIsTutorialRunning(true);
+                      //   setCurrentTutorialStep(4);
+                      // }
                     }}
                     onMouseLeave={() => {
-                      if (
-                        isTutorialActive &&
-                        formData.requirements.length > 0
-                      ) {
-                        setIsTutorialRunning(true);
-                        setCurrentTutorialStep(4);
-                      }
+                      // if (
+                      //   isTutorialActive &&
+                      //   formData.requirements.length > 0
+                      // ) {
+                      //   setIsTutorialRunning(true);
+                      //   setCurrentTutorialStep(4);
+                      // }
                     }}
                     onFocus={() => {
-                      if (isTutorialActive) {
-                        setIsTutorialRunning(false);
-                      }
+                      // if (isTutorialActive) {
+                      //   setIsTutorialRunning(false);
+                      // }
                     }}
                   />
                 </div>
@@ -450,27 +440,27 @@ const Form: React.FC<{
                       placeholder="Provide a step by step breakdown of what is needed to complete the task. Include criteria that will determine success. **Markdown Supported** "
                       className="textarea w-input"
                       onBlur={() => {
-                        if (
-                          isTutorialActive &&
-                          formData.issueDescription.length > 0
-                        ) {
-                          setIsTutorialRunning(true);
-                          setCurrentTutorialStep(5);
-                        }
+                        // if (
+                        //   isTutorialActive &&
+                        //   formData.issueDescription.length > 0
+                        // ) {
+                        //   setIsTutorialRunning(true);
+                        //   setCurrentTutorialStep(5);
+                        // }
                       }}
                       onMouseLeave={() => {
-                        if (
-                          isTutorialActive &&
-                          formData.issueDescription.length > 0
-                        ) {
-                          setIsTutorialRunning(true);
-                          setCurrentTutorialStep(5);
-                        }
+                        // if (
+                        //   isTutorialActive &&
+                        //   formData.issueDescription.length > 0
+                        // ) {
+                        //   setIsTutorialRunning(true);
+                        //   setCurrentTutorialStep(5);
+                        // }
                       }}
                       onFocus={() => {
-                        if (isTutorialActive) {
-                          setIsTutorialRunning(false);
-                        }
+                        // if (isTutorialActive) {
+                        //   setIsTutorialRunning(false);
+                        // }
                       }}
                     />
                   )}

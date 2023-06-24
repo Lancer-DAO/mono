@@ -22,6 +22,7 @@ const MultiSelectDropdown = dynamic(
 const ProfileNFTCard = dynamic(() => import("./molecules/ProfileNFTCard"));
 const RangeSlider = dynamic(() => import("./molecules/RangeSlider"));
 const SubmitterSection = dynamic(() => import("./molecules/SubmitterSection"));
+const TutorialsModal = dynamic(() => import("./molecules/TutorialsModal"));
 const WalletInfo = dynamic(() => import("./molecules/WalletInfo"));
 
 // Organisms
@@ -61,4 +62,5 @@ export {
   SubmitterSection,
   JoyrideWrapper,
   AccountHeaderOptions,
+  TutorialsModal,
 };

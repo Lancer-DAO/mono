@@ -50,14 +50,7 @@ export default function Home() {
 const Account: React.FC = () => {
   const router = useRouter();
 
-  const {
-    currentUser,
-    wallets,
-    currentWallet,
-    isTutorialActive,
-    setIsTutorialRunning,
-    setCurrentTutorialStep,
-  } = useLancer();
+  const { currentUser, currentWallet } = useLancer();
   const [showCoinflow, setShowCoinflow] = useState(false);
   const [showTutorial, setShowTutorial] = useState(false);
   const [profileNFT, setProfileNFT] = useState<ProfileNFT>();
@@ -150,10 +143,10 @@ const Account: React.FC = () => {
     const fetchNfts = async () => {
       await fetchProfileNFT();
 
-      if (isTutorialActive) {
-        setIsTutorialRunning(true);
-        // setCurrentTutorialStep(3);
-      }
+      // if (isTutorialActive) {
+      //   setIsTutorialRunning(true);
+      //   // setCurrentTutorialStep(3);
+      // }
       await fetchBountyNFTs();
     };
     if (account && account.profileWalletId) {
@@ -162,9 +155,9 @@ const Account: React.FC = () => {
   }, [account]);
 
   const mintProfileNFT = async () => {
-    if (isTutorialActive) {
-      setIsTutorialRunning(false);
-    }
+    // if (isTutorialActive) {
+    //   setIsTutorialRunning(false);
+    // }
     //   const result = await underdogClient.createNft({
     //     params: PROFILE_PROJECT_PARAMS,
     //     body: {

@@ -26,14 +26,7 @@ const shortenGHToken = (token: string) => {
 
 const ApiKeyModal: FC<Props> = ({ showModal, setShowModal }) => {
   const wrapperRef = useRef(null);
-  const {
-    currentAPIKey,
-    setCurrentAPIKey,
-    isTutorialActive,
-    setCurrentTutorialStep,
-    setIsTutorialRunning,
-    setIsTutorialActive,
-  } = useLancer();
+  const { currentAPIKey, setCurrentAPIKey } = useLancer();
   const [apiKey, setApiKey] = useState<APIKeyInfo>({
     token: "",
     name: "",
@@ -47,15 +40,15 @@ const ApiKeyModal: FC<Props> = ({ showModal, setShowModal }) => {
     setApiKeys(apiKeys);
   }, []);
   useOutsideAlerter(wrapperRef, () => {
-    if (!isTutorialActive) {
-      setShowModal(false);
-      setApiKey({
-        token: "",
-        name: "",
-        isDefault: false,
-      });
-      setOldApiKeyName("");
-    }
+    // if (!isTutorialActive) {
+    setShowModal(false);
+    setApiKey({
+      token: "",
+      name: "",
+      isDefault: false,
+    });
+    setOldApiKeyName("");
+    // }
   });
 
   return (
@@ -74,9 +67,9 @@ const ApiKeyModal: FC<Props> = ({ showModal, setShowModal }) => {
                 extraClasses="ml-[10px]"
                 id="github-api-key-tutorial-link"
                 onClick={() => {
-                  if (isTutorialActive) {
-                    setCurrentTutorialStep(3);
-                  }
+                  // if (isTutorialActive) {
+                  //   setCurrentTutorialStep(3);
+                  // }
                 }}
               >
                 <HelpCircle
@@ -171,9 +164,9 @@ const ApiKeyModal: FC<Props> = ({ showModal, setShowModal }) => {
                           localStorage.getItem("apiKeys") || "[]"
                         );
                         setApiKeys(newApiKeys);
-                        if (isTutorialActive) {
-                          setIsTutorialActive(false);
-                        }
+                        // if (isTutorialActive) {
+                        //   setIsTutorialActive(false);
+                        // }
                       }}
                       id={`token-delete-${index}`}
                     >
@@ -196,21 +189,21 @@ const ApiKeyModal: FC<Props> = ({ showModal, setShowModal }) => {
                     setApiKey({ ...apiKey, name: e.target.value });
                   }}
                   onBlur={() => {
-                    if (isTutorialActive && apiKey.name.length > 0) {
-                      setIsTutorialRunning(true);
-                      setCurrentTutorialStep(4);
-                    }
+                    // if (isTutorialActive && apiKey.name.length > 0) {
+                    //   setIsTutorialRunning(true);
+                    //   setCurrentTutorialStep(4);
+                    // }
                   }}
                   onMouseLeave={() => {
-                    if (isTutorialActive && apiKey.name.length > 0) {
-                      setIsTutorialRunning(true);
-                      setCurrentTutorialStep(4);
-                    }
+                    // if (isTutorialActive && apiKey.name.length > 0) {
+                    //   setIsTutorialRunning(true);
+                    //   setCurrentTutorialStep(4);
+                    // }
                   }}
                   onFocus={() => {
-                    if (isTutorialActive) {
-                      setIsTutorialRunning(false);
-                    }
+                    // if (isTutorialActive) {
+                    //   setIsTutorialRunning(false);
+                    // }
                   }}
                 />
               </div>
@@ -229,21 +222,21 @@ const ApiKeyModal: FC<Props> = ({ showModal, setShowModal }) => {
                     });
                   }}
                   onBlur={() => {
-                    if (isTutorialActive && apiKey.token.length > 0) {
-                      setIsTutorialRunning(true);
-                      setCurrentTutorialStep(5);
-                    }
+                    // if (isTutorialActive && apiKey.token.length > 0) {
+                    //   setIsTutorialRunning(true);
+                    //   setCurrentTutorialStep(5);
+                    // }
                   }}
                   onMouseLeave={() => {
-                    if (isTutorialActive && apiKey.token.length > 0) {
-                      setIsTutorialRunning(true);
-                      setCurrentTutorialStep(5);
-                    }
+                    // if (isTutorialActive && apiKey.token.length > 0) {
+                    //   setIsTutorialRunning(true);
+                    //   setCurrentTutorialStep(5);
+                    // }
                   }}
                   onFocus={() => {
-                    if (isTutorialActive) {
-                      setIsTutorialRunning(false);
-                    }
+                    // if (isTutorialActive) {
+                    //   setIsTutorialRunning(false);
+                    // }
                   }}
                 />
               </div>
@@ -270,10 +263,10 @@ const ApiKeyModal: FC<Props> = ({ showModal, setShowModal }) => {
                   localStorage.getItem("apiKeys") || "[]"
                 );
                 setApiKeys(newApiKeys);
-                if (isTutorialActive) {
-                  setIsTutorialRunning(true);
-                  setCurrentTutorialStep(6);
-                }
+                // if (isTutorialActive) {
+                //   setIsTutorialRunning(true);
+                //   setCurrentTutorialStep(6);
+                // }
               }}
               id="save-api-key-button"
             >

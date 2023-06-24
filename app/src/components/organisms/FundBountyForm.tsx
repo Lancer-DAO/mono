@@ -23,11 +23,6 @@ const Form: React.FC<{ isAccountCreated: boolean }> = ({
     program,
     provider,
     currentWallet,
-
-    isTutorialActive,
-    setIsTutorialRunning,
-    setCurrentTutorialStep,
-    setTutorialSteps,
   } = useLancer();
   const [fundingType, setFundingType] = useState<"wallet" | "card">("wallet");
 
@@ -38,9 +33,9 @@ const Form: React.FC<{ isAccountCreated: boolean }> = ({
     fundingAmount: null,
   });
   useEffect(() => {
-    if (isTutorialActive) {
-      setIsTutorialRunning(true);
-    }
+    // if (isTutorialActive) {
+    //   setIsTutorialRunning(true);
+    // }
   }, []);
   const handleChange = (event) => {
     setFormData({
@@ -49,7 +44,7 @@ const Form: React.FC<{ isAccountCreated: boolean }> = ({
     });
   };
   const onClick = async () => {
-    setIsTutorialRunning(false);
+    // setIsTutorialRunning(false);
     // If we are the creator, then skip requesting and add self as approved
     const signature = await fundFFA(
       formData.fundingAmount,
@@ -143,27 +138,27 @@ const Form: React.FC<{ isAccountCreated: boolean }> = ({
                           value={formData.fundingAmount}
                           onChange={handleChange}
                           onBlur={() => {
-                            if (
-                              isTutorialActive &&
-                              formData.fundingAmount > 0
-                            ) {
-                              setIsTutorialRunning(true);
-                              setCurrentTutorialStep(1);
-                            }
+                            // if (
+                            //   isTutorialActive &&
+                            //   formData.fundingAmount > 0
+                            // ) {
+                            //   setIsTutorialRunning(true);
+                            //   setCurrentTutorialStep(1);
+                            // }
                           }}
                           onMouseLeave={() => {
-                            if (
-                              isTutorialActive &&
-                              formData.fundingAmount > 0
-                            ) {
-                              setIsTutorialRunning(true);
-                              setCurrentTutorialStep(1);
-                            }
+                            // if (
+                            //   isTutorialActive &&
+                            //   formData.fundingAmount > 0
+                            // ) {
+                            //   setIsTutorialRunning(true);
+                            //   setCurrentTutorialStep(1);
+                            // }
                           }}
                           onFocus={() => {
-                            if (isTutorialActive) {
-                              setIsTutorialRunning(false);
-                            }
+                            // if (isTutorialActive) {
+                            //   setIsTutorialRunning(false);
+                            // }
                           }}
                         />
                       </div>

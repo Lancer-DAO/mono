@@ -26,6 +26,7 @@ import MonoProgramJSON from "@/escrow/sdk/idl/mono_program.json";
 import { APIKeyInfo } from "@/src/components/molecules/ApiKeyModal";
 import { IS_MAINNET, MONO_ADDRESS } from "@/src/constants";
 import { Step } from "react-joyride";
+import { Tutorial } from "@/src/types/tutorials";
 
 export const LancerContext = createContext<ILancerContext>({
   currentUser: null,
@@ -39,18 +40,8 @@ export const LancerContext = createContext<ILancerContext>({
   provider: null,
   currentBounty: null,
   currentAPIKey: null,
-  isTutorialRunning: false,
-  isTutorialActive: false,
-  currentTutorialStep: -1,
-  tutorialSteps: [],
-  spotlightClicks: false,
-  isTutorialManuallyControlled: false,
-  setIsTutorialManuallyControlled: () => null,
-  setSpotlightClicks: () => null,
-  setIsTutorialRunning: () => null,
-  setIsTutorialActive: () => null,
-  setTutorialSteps: () => null,
-  setCurrentTutorialStep: () => null,
+  currentTutorialState: null,
+  setCurrentTutorialState: () => null,
   setCurrentAPIKey: () => null,
   setIssue: () => null,
   setIssues: () => null,
@@ -92,13 +83,7 @@ const LancerProvider: FunctionComponent<ILancerState> = ({
   const [currentUser, setCurrentUser] = useState<CurrentUser | null>(null);
   const [currentBounty, setCurrentBounty] = useState<Bounty | null>(null);
   const [issue, setIssue] = useState<Issue | null>(null);
-  const [currentTutorialStep, setCurrentTutorialStep] = useState<number>(-1);
-  const [tutorialSteps, setTutorialSteps] = useState<Step[]>([]);
-  const [isTutorialRunning, setIsTutorialRunning] = useState<boolean>(false);
-  const [isTutorialActive, setIsTutorialActive] = useState<boolean>(false);
-  const [spotlightClicks, setSpotlightClicks] = useState<boolean>(false);
-  const [isTutorialManuallyControlled, setIsTutorialManuallyControlled] =
-    useState<boolean>(false);
+  const [currentTutorialState, setCurrentTutorialState] = useState<Tutorial>();
   const [issues, setIssues] = useState<Issue[] | null>(null);
   const [loginState, setLoginState] = useState<LOGIN_STATE | null>(
     "logged_out"
@@ -139,10 +124,6 @@ const LancerProvider: FunctionComponent<ILancerState> = ({
       setProvider(provider);
       setProgram(program);
       setCurrentWallet(lancerWallet);
-      if (isTutorialActive) {
-        setIsTutorialRunning(true);
-        setCurrentTutorialStep(2);
-      }
     }
   }, [connected]);
 
@@ -187,18 +168,8 @@ const LancerProvider: FunctionComponent<ILancerState> = ({
     setCurrentWallet,
     currentAPIKey,
     setCurrentAPIKey,
-    isTutorialRunning,
-    setIsTutorialRunning,
-    currentTutorialStep,
-    setCurrentTutorialStep,
-    tutorialSteps,
-    setTutorialSteps,
-    isTutorialActive,
-    setIsTutorialActive,
-    setSpotlightClicks,
-    spotlightClicks,
-    isTutorialManuallyControlled,
-    setIsTutorialManuallyControlled,
+    currentTutorialState,
+    setCurrentTutorialState,
   };
   return (
     <LancerContext.Provider value={contextProvider}>

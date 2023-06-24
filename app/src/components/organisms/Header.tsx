@@ -1,19 +1,15 @@
 import Link from "next/link";
 import Logo from "../../assets/Logo";
-import { LinkButton, AccountHeaderOptions } from "@/src/components/";
+import {
+  LinkButton,
+  AccountHeaderOptions,
+  TutorialsModal,
+} from "@/src/components/";
 import { LinkButtonProps } from "@/src/components/atoms/LinkButton";
 import dynamic from "next/dynamic";
 import { HelpCircle } from "react-feather";
 import { useLancer } from "@/src/providers";
 import { useState } from "react";
-import {
-  BOUNTIES_PAGE_STEPS,
-  BOUNTY_ACTION_POST_SUBMIT_STEPS,
-  BOUNTY_METADATA_STEPS,
-  CREATE_BOUNTY_STEPS,
-  GITHUB_API_KEY_STEPS,
-  PROFILE_STEPS,
-} from "./JoyrideWrapper";
 const HEADER_LINKS: LinkButtonProps[] = [
   { href: "/create", children: "New Bounty", id: "create-bounty-link" },
   { href: "/bounties", children: "Bounties", id: "bounties-link" },
@@ -25,16 +21,9 @@ const WalletMultiButtonDynamic = dynamic(
   { ssr: false }
 );
 export const Header = () => {
-  const {
-    setIsTutorialRunning,
-    setCurrentTutorialStep,
-    setIsTutorialActive,
-    setTutorialSteps,
-    setIsTutorialManuallyControlled,
-    setSpotlightClicks,
-    isTutorialActive,
-  } = useLancer();
+  const {} = useLancer();
   const [isTutorialButtonHovered, setIsTutorialButtonHovered] = useState(false);
+  const [showTutorialModal, setShowTutorialModal] = useState(false);
   return (
     <div className="flex sticky py-[20px] bg-white-100 top-0 z-20">
       <div className="flex items-center mx-auto w-[70%]">
@@ -48,27 +37,14 @@ export const Header = () => {
           {HEADER_LINKS.map(({ href, children }) => {
             return <LinkButton href={href} children={children} style="text" />;
           })}
-          <div
-            className="ml-auto"
-            id="wallet-connect-button"
-            onClick={() => {
-              if (isTutorialActive) {
-                setIsTutorialRunning(false);
-              }
-            }}
-          >
+          <div className="ml-auto" id="wallet-connect-button">
             <WalletMultiButtonDynamic className="text-gray-800 flex h-[48px] w-[250px] py-[6px] items-center justify-center border-solid hover:bg-turquoise-500 text-gray-800 hover:text-white-100 transition-colors duration-300 ease-in-out" />
           </div>
 
           <AccountHeaderOptions />
           <button
             onClick={() => {
-              setIsTutorialRunning(true);
-              setCurrentTutorialStep(0);
-              setIsTutorialManuallyControlled(true);
-              setIsTutorialActive(true);
-              setTutorialSteps(BOUNTY_ACTION_POST_SUBMIT_STEPS);
-              setSpotlightClicks(true);
+              setShowTutorialModal(true);
             }}
             onMouseEnter={() => setIsTutorialButtonHovered(true)}
             onMouseLeave={() => setIsTutorialButtonHovered(false)}
@@ -82,6 +58,10 @@ export const Header = () => {
               color={isTutorialButtonHovered ? "#fff" : "#14bb88"}
             />
           </button>
+          <TutorialsModal
+            setShowModal={setShowTutorialModal}
+            showModal={showTutorialModal}
+          />
         </div>
       </div>
     </div>
