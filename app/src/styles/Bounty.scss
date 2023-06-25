@@ -649,6 +649,9 @@
 .account-page-wrapper {
   display: flex;
   flex-direction: row;
+  @media only screen and (max-width: 767px) {
+    flex-direction: column;
+  }
   width: 100%;
   row-gap: 20px;
   column-gap: 80px;
