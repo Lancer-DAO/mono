@@ -8,6 +8,7 @@ import { Edit, Delete, X, HelpCircle } from "react-feather";
 import { FC, useRef } from "react";
 import { useOutsideAlerter } from "../../hooks/useOutsideAlerter";
 import { LinkButton } from "..";
+import { GITHUB_API_KEY_TUTORIAL_INITIAL_STATE } from "@/src/constants/tutorials";
 
 export interface APIKeyInfo {
   token: string;
@@ -26,7 +27,12 @@ const shortenGHToken = (token: string) => {
 
 const ApiKeyModal: FC<Props> = ({ showModal, setShowModal }) => {
   const wrapperRef = useRef(null);
-  const { currentAPIKey, setCurrentAPIKey } = useLancer();
+  const {
+    currentAPIKey,
+    setCurrentAPIKey,
+    currentTutorialState,
+    setCurrentTutorialState,
+  } = useLancer();
   const [apiKey, setApiKey] = useState<APIKeyInfo>({
     token: "",
     name: "",
@@ -40,15 +46,23 @@ const ApiKeyModal: FC<Props> = ({ showModal, setShowModal }) => {
     setApiKeys(apiKeys);
   }, []);
   useOutsideAlerter(wrapperRef, () => {
-    // if (!isTutorialActive) {
-    setShowModal(false);
-    setApiKey({
-      token: "",
-      name: "",
-      isDefault: false,
-    });
-    setOldApiKeyName("");
-    // }
+    if (
+      !!currentTutorialState &&
+      currentTutorialState.isActive &&
+      currentTutorialState.title ===
+        GITHUB_API_KEY_TUTORIAL_INITIAL_STATE.title &&
+      currentTutorialState.currentStep !==
+        GITHUB_API_KEY_TUTORIAL_INITIAL_STATE.steps.length - 1
+    ) {
+    } else {
+      setShowModal(false);
+      setApiKey({
+        token: "",
+        name: "",
+        isDefault: false,
+      });
+      setOldApiKeyName("");
+    }
   });
 
   return (
@@ -67,9 +81,18 @@ const ApiKeyModal: FC<Props> = ({ showModal, setShowModal }) => {
                 extraClasses="ml-[10px]"
                 id="github-api-key-tutorial-link"
                 onClick={() => {
-                  // if (isTutorialActive) {
-                  //   setCurrentTutorialStep(3);
-                  // }
+                  if (!!currentTutorialState && currentTutorialState.isActive) {
+                    if (
+                      currentTutorialState.title ===
+                        GITHUB_API_KEY_TUTORIAL_INITIAL_STATE.title &&
+                      currentTutorialState.currentStep === 2
+                    ) {
+                      setCurrentTutorialState({
+                        ...currentTutorialState,
+                        currentStep: 3,
+                      });
+                    }
+                  }
                 }}
               >
                 <HelpCircle
@@ -189,21 +212,58 @@ const ApiKeyModal: FC<Props> = ({ showModal, setShowModal }) => {
                     setApiKey({ ...apiKey, name: e.target.value });
                   }}
                   onBlur={() => {
-                    // if (isTutorialActive && apiKey.name.length > 0) {
-                    //   setIsTutorialRunning(true);
-                    //   setCurrentTutorialStep(4);
-                    // }
+                    if (
+                      apiKey.name !== "" &&
+                      !!currentTutorialState &&
+                      currentTutorialState.isActive
+                    ) {
+                      if (
+                        currentTutorialState.title ===
+                          GITHUB_API_KEY_TUTORIAL_INITIAL_STATE.title &&
+                        currentTutorialState.currentStep === 3
+                      ) {
+                        setCurrentTutorialState({
+                          ...currentTutorialState,
+                          currentStep: 4,
+                        });
+                      }
+                    }
                   }}
                   onMouseLeave={() => {
-                    // if (isTutorialActive && apiKey.name.length > 0) {
-                    //   setIsTutorialRunning(true);
-                    //   setCurrentTutorialStep(4);
-                    // }
+                    if (
+                      apiKey.name !== "" &&
+                      !!currentTutorialState &&
+                      currentTutorialState.isActive
+                    ) {
+                      if (
+                        currentTutorialState.title ===
+                          GITHUB_API_KEY_TUTORIAL_INITIAL_STATE.title &&
+                        currentTutorialState.currentStep === 3
+                      ) {
+                        setCurrentTutorialState({
+                          ...currentTutorialState,
+                          currentStep: 4,
+                          isRunning: true,
+                        });
+                      }
+                    }
                   }}
                   onFocus={() => {
-                    // if (isTutorialActive) {
-                    //   setIsTutorialRunning(false);
-                    // }
+                    if (
+                      !!currentTutorialState &&
+                      currentTutorialState.isActive
+                    ) {
+                      if (
+                        currentTutorialState.title ===
+                          GITHUB_API_KEY_TUTORIAL_INITIAL_STATE.title &&
+                        currentTutorialState.currentStep === 3
+                      ) {
+                        setCurrentTutorialState({
+                          ...currentTutorialState,
+                          isRunning: false,
+                        });
+                      }
+                    }
                   }}
                 />
               </div>
@@ -222,21 +282,58 @@ const ApiKeyModal: FC<Props> = ({ showModal, setShowModal }) => {
                     });
                   }}
                   onBlur={() => {
-                    // if (isTutorialActive && apiKey.token.length > 0) {
-                    //   setIsTutorialRunning(true);
-                    //   setCurrentTutorialStep(5);
-                    // }
+                    if (
+                      apiKey.token !== "" &&
+                      !!currentTutorialState &&
+                      currentTutorialState.isActive
+                    ) {
+                      if (
+                        currentTutorialState.title ===
+                          GITHUB_API_KEY_TUTORIAL_INITIAL_STATE.title &&
+                        currentTutorialState.currentStep === 4
+                      ) {
+                        setCurrentTutorialState({
+                          ...currentTutorialState,
+                          currentStep: 5,
+                        });
+                      }
+                    }
                   }}
                   onMouseLeave={() => {
-                    // if (isTutorialActive && apiKey.token.length > 0) {
-                    //   setIsTutorialRunning(true);
-                    //   setCurrentTutorialStep(5);
-                    // }
+                    if (
+                      apiKey.token !== "" &&
+                      !!currentTutorialState &&
+                      currentTutorialState.isActive
+                    ) {
+                      if (
+                        currentTutorialState.title ===
+                          GITHUB_API_KEY_TUTORIAL_INITIAL_STATE.title &&
+                        currentTutorialState.currentStep === 4
+                      ) {
+                        setCurrentTutorialState({
+                          ...currentTutorialState,
+                          currentStep: 5,
+                          isRunning: true,
+                        });
+                      }
+                    }
                   }}
                   onFocus={() => {
-                    // if (isTutorialActive) {
-                    //   setIsTutorialRunning(false);
-                    // }
+                    if (
+                      !!currentTutorialState &&
+                      currentTutorialState.isActive
+                    ) {
+                      if (
+                        currentTutorialState.title ===
+                          GITHUB_API_KEY_TUTORIAL_INITIAL_STATE.title &&
+                        currentTutorialState.currentStep === 4
+                      ) {
+                        setCurrentTutorialState({
+                          ...currentTutorialState,
+                          isRunning: false,
+                        });
+                      }
+                    }
                   }}
                 />
               </div>
@@ -263,10 +360,18 @@ const ApiKeyModal: FC<Props> = ({ showModal, setShowModal }) => {
                   localStorage.getItem("apiKeys") || "[]"
                 );
                 setApiKeys(newApiKeys);
-                // if (isTutorialActive) {
-                //   setIsTutorialRunning(true);
-                //   setCurrentTutorialStep(6);
-                // }
+                if (!!currentTutorialState && currentTutorialState.isActive) {
+                  if (
+                    currentTutorialState.title ===
+                      GITHUB_API_KEY_TUTORIAL_INITIAL_STATE.title &&
+                    currentTutorialState.currentStep === 5
+                  ) {
+                    setCurrentTutorialState({
+                      ...currentTutorialState,
+                      currentStep: 6,
+                    });
+                  }
+                }
               }}
               id="save-api-key-button"
             >

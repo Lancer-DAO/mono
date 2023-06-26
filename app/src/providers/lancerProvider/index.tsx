@@ -41,6 +41,7 @@ export const LancerContext = createContext<ILancerContext>({
   currentBounty: null,
   currentAPIKey: null,
   currentTutorialState: null,
+  isRouterReady: false,
   setCurrentTutorialState: () => null,
   setCurrentAPIKey: () => null,
   setIssue: () => null,
@@ -170,6 +171,7 @@ const LancerProvider: FunctionComponent<ILancerState> = ({
     setCurrentAPIKey,
     currentTutorialState,
     setCurrentTutorialState,
+    isRouterReady: router.isReady,
   };
   return (
     <LancerContext.Provider value={contextProvider}>

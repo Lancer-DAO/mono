@@ -32,6 +32,7 @@ export interface ILancerContext {
   currentBounty: Bounty;
   currentAPIKey: APIKeyInfo;
   currentTutorialState: Tutorial;
+  isRouterReady: boolean;
   setCurrentTutorialState: (tutorial: Tutorial) => void;
   setCurrentAPIKey: (apiKey: APIKeyInfo) => void;
   setCurrentBounty: (bounty: Bounty) => void;

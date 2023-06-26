@@ -1,12 +1,10 @@
-import { Step } from "react-joyride";
 import { Tutorial } from "../types/tutorials";
 
 export const CREATE_BOUNTY_TUTORIAL_INITIAL_STATE: Tutorial = {
   title: "Create Bounty Tutorial",
   pages: ["create"],
-  isActive: false,
-  isRunning: false,
-  isManuallyControlled: true,
+  isActive: true,
+  isRunning: true,
   currentStep: 0,
   spotlightClicks: true,
   steps: [
@@ -47,9 +45,8 @@ export const CREATE_BOUNTY_TUTORIAL_INITIAL_STATE: Tutorial = {
 export const FUND_BOUNTY_TUTORIAL_INITIAL_STATE: Tutorial = {
   title: "Fund Bounty Tutorial",
   pages: ["create"],
-  isActive: false,
-  isRunning: false,
-  isManuallyControlled: true,
+  isActive: true,
+  isRunning: true,
   currentStep: 0,
   spotlightClicks: true,
   steps: [
@@ -73,9 +70,8 @@ export const FUND_BOUNTY_TUTORIAL_INITIAL_STATE: Tutorial = {
 export const BOUNTY_INFO_TUTORIAL_INITIAL_STATE: Tutorial = {
   title: "Bounty Info Tutorial",
   pages: ["bounty"],
-  isActive: false,
-  isRunning: false,
-  isManuallyControlled: false,
+  isActive: true,
+  isRunning: true,
   spotlightClicks: false,
   steps: [
     {
@@ -168,9 +164,8 @@ export const BOUNTY_INFO_TUTORIAL_INITIAL_STATE: Tutorial = {
 export const BOUNIES_LIST_TUTORIAL_INITIAL_STATE: Tutorial = {
   title: "Bounties List Tutorial",
   pages: ["bounties"],
-  isActive: false,
-  isRunning: false,
-  isManuallyControlled: false,
+  isActive: true,
+  isRunning: true,
   spotlightClicks: false,
   steps: [
     {
@@ -244,10 +239,10 @@ export const BOUNIES_LIST_TUTORIAL_INITIAL_STATE: Tutorial = {
   ],
 };
 export const PROFILE_TUTORIAL_INITIAL_STATE: Tutorial = {
-  title: "Bounty Info Tutorial",
+  title: "Profile Tutorial",
   pages: ["account"],
-  isActive: false,
-  isRunning: false,
+  isActive: true,
+  isRunning: true,
   isManuallyControlled: false,
   spotlightClicks: false,
   steps: [
@@ -309,11 +304,11 @@ export const PROFILE_TUTORIAL_INITIAL_STATE: Tutorial = {
 export const GITHUB_API_KEY_TUTORIAL_INITIAL_STATE: Tutorial = {
   title: "GitHub API Key Tutorial",
   pages: ["all"],
-  isActive: false,
-  isRunning: false,
+  isActive: true,
+  isRunning: true,
   currentStep: 0,
-  isManuallyControlled: true,
   spotlightClicks: true,
+  manuallyControlledSteps: [0, 1, 2, 3, 4, 5],
   steps: [
     {
       target: "#account-options",
@@ -360,7 +355,7 @@ export const GITHUB_API_KEY_TUTORIAL_INITIAL_STATE: Tutorial = {
     {
       target: "#api-key-list",
       content:
-        "Here, you can see all of your API keys. You can set the curreent API key, select a default key, and edit and delete keys here.",
+        "Here, you can see all of your API keys. You can set the current API key, select a default key, and edit and delete keys here.",
       disableBeacon: true,
       disableCloseOnEsc: false,
     },
@@ -406,10 +401,9 @@ export const GITHUB_API_KEY_TUTORIAL_INITIAL_STATE: Tutorial = {
 export const BOUNTY_ACTIONS_TUTORIAL_I_INITIAL_STATE: Tutorial = {
   title: "Bounty Actions Tutorial I",
   pages: ["bounty"],
-  isActive: false,
-  isRunning: false,
+  isActive: true,
+  isRunning: true,
   currentStep: 0,
-  isManuallyControlled: true,
   spotlightClicks: true,
   steps: [
     {
@@ -482,10 +476,9 @@ export const BOUNTY_ACTIONS_TUTORIAL_I_INITIAL_STATE: Tutorial = {
 export const BOUNTY_ACTIONS_TUTORIAL_II_INITIAL_STATE: Tutorial = {
   title: "Bounty Actions Tutorial II",
   pages: ["bounty"],
-  isActive: false,
-  isRunning: false,
+  isActive: true,
+  isRunning: true,
   currentStep: 0,
-  isManuallyControlled: true,
   spotlightClicks: true,
   steps: [
     {
@@ -561,3 +554,14 @@ export const BOUNTY_ACTIONS_TUTORIAL_II_INITIAL_STATE: Tutorial = {
     },
   ],
 };
+
+export const ALL_TUTORIALS: Tutorial[] = [
+  CREATE_BOUNTY_TUTORIAL_INITIAL_STATE,
+  FUND_BOUNTY_TUTORIAL_INITIAL_STATE,
+  BOUNTY_INFO_TUTORIAL_INITIAL_STATE,
+  BOUNIES_LIST_TUTORIAL_INITIAL_STATE,
+  PROFILE_TUTORIAL_INITIAL_STATE,
+  GITHUB_API_KEY_TUTORIAL_INITIAL_STATE,
+  BOUNTY_ACTIONS_TUTORIAL_I_INITIAL_STATE,
+  BOUNTY_ACTIONS_TUTORIAL_II_INITIAL_STATE,
+];

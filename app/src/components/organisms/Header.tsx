@@ -21,7 +21,7 @@ const WalletMultiButtonDynamic = dynamic(
   { ssr: false }
 );
 export const Header = () => {
-  const {} = useLancer();
+  const { isRouterReady } = useLancer();
   const [isTutorialButtonHovered, setIsTutorialButtonHovered] = useState(false);
   const [showTutorialModal, setShowTutorialModal] = useState(false);
   return (
@@ -58,10 +58,12 @@ export const Header = () => {
               color={isTutorialButtonHovered ? "#fff" : "#14bb88"}
             />
           </button>
-          <TutorialsModal
-            setShowModal={setShowTutorialModal}
-            showModal={showTutorialModal}
-          />
+          {isRouterReady && (
+            <TutorialsModal
+              setShowModal={setShowTutorialModal}
+              showModal={showTutorialModal}
+            />
+          )}
         </div>
       </div>
     </div>

@@ -6,8 +6,7 @@ export type Tutorial = {
   steps: Step[];
   isActive: boolean;
   isRunning: boolean;
-  isManuallyControlled: boolean;
   currentStep?: number;
   spotlightClicks: boolean;
-  callback?: (data: CallBackProps) => void;
+  manuallyControlledSteps?: number[];
 };

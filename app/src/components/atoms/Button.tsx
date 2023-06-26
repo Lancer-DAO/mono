@@ -9,16 +9,23 @@ import { api } from "@/src/utils/api";
 import { useWallet, useConnection } from "@solana/wallet-adapter-react";
 import { PublicKey, Transaction } from "@solana/web3.js";
 import classNames from "classnames";
-import { useState } from "react";
+import { ButtonHTMLAttributes, DetailedHTMLProps, useState } from "react";
 import { getButtonStyle } from "./LinkButton";
 
-interface ButtonProps {
+interface ButtonProps
+  extends DetailedHTMLProps<
+    ButtonHTMLAttributes<HTMLButtonElement>,
+    HTMLButtonElement
+  > {
   onClick?: () => void | Promise<void>;
   disabled?: boolean;
   disabledText?: string;
   children?: React.ReactNode;
-  style?: "filled" | "outlined" | "text";
+  version?: "filled" | "outlined" | "text";
   id?: string;
+
+  extraClasses?: string;
+  props?: any;
 }
 
 const Button = ({
@@ -26,8 +33,10 @@ const Button = ({
   onClick,
   disabled,
   disabledText,
-  style,
+  version,
   id,
+  extraClasses,
+  ...props
 }: ButtonProps) => {
   const [hoveredButton, setHoveredButton] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -43,7 +52,7 @@ const Button = ({
       }}
     >
       <button
-        className={getButtonStyle(style, disabled)}
+        className={getButtonStyle(version, disabled) + " " + extraClasses}
         disabled={disabled}
         onClick={async () => {
           setIsLoading(true);
@@ -51,6 +60,7 @@ const Button = ({
           setIsLoading(false);
         }}
         id={id}
+        {...props}
       >
         {isLoading ? "Processing..." : children}
       </button>

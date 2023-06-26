@@ -6,15 +6,18 @@ import { useOutsideAlerter } from "@/src/hooks/useOutsideAlerter";
 import dynamic from "next/dynamic";
 import { Key, HelpCircle } from "react-feather";
 import Link from "next/link";
+import {
+  BOUNTY_ACTIONS_TUTORIAL_II_INITIAL_STATE,
+  BOUNTY_ACTIONS_TUTORIAL_I_INITIAL_STATE,
+  GITHUB_API_KEY_TUTORIAL_INITIAL_STATE,
+} from "@/src/constants/tutorials";
 
 const AccountHeaderOptions = () => {
   const {
     currentUser,
     currentAPIKey,
-    isTutorialActive,
-    setCurrentTutorialStep,
-    currentTutorialStep,
-    setIsTutorialRunning,
+    currentTutorialState,
+    setCurrentTutorialState,
   } = useLancer();
   const [hasExtension, setHasExtension] = useState(false);
   useEffect(() => {
@@ -44,9 +47,25 @@ const AccountHeaderOptions = () => {
           <div
             onClick={() => {
               setShowOptions(true);
-              if (isTutorialActive) {
-                // setCurrentTutorialStep(1);
-                setCurrentTutorialStep(8);
+              if (!!currentTutorialState && currentTutorialState.isActive) {
+                if (
+                  currentTutorialState.title ===
+                    GITHUB_API_KEY_TUTORIAL_INITIAL_STATE.title &&
+                  currentTutorialState.currentStep === 0
+                ) {
+                  setCurrentTutorialState({
+                    ...currentTutorialState,
+                    currentStep: 1,
+                  });
+                } else if (
+                  currentTutorialState.title ===
+                  BOUNTY_ACTIONS_TUTORIAL_I_INITIAL_STATE.title
+                ) {
+                } else if (
+                  currentTutorialState.title ===
+                  BOUNTY_ACTIONS_TUTORIAL_II_INITIAL_STATE.title
+                ) {
+                }
               }
             }}
             id="account-options"
@@ -67,9 +86,16 @@ const AccountHeaderOptions = () => {
                 href={"/account"}
                 id="account-link"
                 onClick={() => {
-                  if (isTutorialActive) {
-                    setIsTutorialRunning(false);
-                    setCurrentTutorialStep(currentTutorialStep + 1);
+                  if (!!currentTutorialState && currentTutorialState.isActive) {
+                    if (
+                      currentTutorialState.title ===
+                      GITHUB_API_KEY_TUTORIAL_INITIAL_STATE.title
+                    ) {
+                      setCurrentTutorialState({
+                        ...currentTutorialState,
+                        currentStep: 2,
+                      });
+                    }
                   }
                 }}
                 className="flex rounded-t-[20px] h-[48px] py-[6px] items-center justify-center border-b-gray-400 border-b-[1px] hover:bg-turquoise-500 text-gray-800 hover:text-white-100 transition-colors duration-300 ease-in-out"
@@ -80,8 +106,17 @@ const AccountHeaderOptions = () => {
                 onClick={() => {
                   setShowModal(true);
 
-                  if (isTutorialActive) {
-                    setCurrentTutorialStep(2);
+                  if (!!currentTutorialState && currentTutorialState.isActive) {
+                    if (
+                      currentTutorialState.title ===
+                        GITHUB_API_KEY_TUTORIAL_INITIAL_STATE.title &&
+                      currentTutorialState.currentStep === 1
+                    ) {
+                      setCurrentTutorialState({
+                        ...currentTutorialState,
+                        currentStep: 2,
+                      });
+                    }
                   }
                 }}
                 id="api-key-link"
