@@ -12,6 +12,9 @@ export const login = protectedProcedure.mutation(async ({ ctx }) => {
       if (maybeUser) {
         return maybeUser;
       }
+    } catch (e) {
+      console.error(e);
+
       console.log("creating user");
       await prisma.user.create({
         data: {
@@ -24,8 +27,6 @@ export const login = protectedProcedure.mutation(async ({ ctx }) => {
       const user = await helpers.getUser(email);
       console.log("got user");
       return user;
-    } catch (e) {
-      console.error(e);
     }
   } else {
     const user = await helpers.getUser(email);
