@@ -25,7 +25,7 @@ import {
     Transaction,
     TransactionInstruction,
   } from '@solana/web3.js';
-import { LANCER_ADMIN, LANCER_COMPANY_TOKENS, LANCER_COMPLETER_TOKENS, LANCER_DAO, MINT_AUTHORITY, MONO_DATA } from "./constants";
+import { LANCER_ADMIN, LANCER_COMPANY_TOKENS, LANCER_COMPLETER_TOKENS, LANCER_DAO, MINT_AUTHORITY, MONO_DATA, REFERRER } from "./constants";
 import { program } from "@project-serum/anchor/dist/cjs/native/system";
   
 // TODO write docs on sdk functions
@@ -160,4 +160,19 @@ export const findProgramMintAuthority = async (
         ],
         program.programId,
     )    
+}
+
+export const findReferralDataAccount = async (
+    creator: PublicKey,
+    feature_data_account: PublicKey,
+    program: Program<MonoProgram>
+) => {
+    return await anchor.web3.PublicKey.findProgramAddressSync(
+        [
+            Buffer.from(REFERRER),
+            feature_data_account.toBuffer(),
+            creator.toBuffer()
+        ],
+        program.programId
+    )
 }
