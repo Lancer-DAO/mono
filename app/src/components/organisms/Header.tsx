@@ -48,6 +48,7 @@ export const Header = () => {
             id="wallet-connect-button"
             onClick={() => {
               if (
+                !!currentTutorialState &&
                 currentTutorialState.title ===
                   PROFILE_TUTORIAL_INITIAL_STATE.title &&
                 currentTutorialState.currentStep === 1
