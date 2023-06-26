@@ -27,6 +27,7 @@ import { APIKeyInfo } from "@/src/components/molecules/ApiKeyModal";
 import { IS_MAINNET, MONO_ADDRESS } from "@/src/constants";
 import { Step } from "react-joyride";
 import { Tutorial } from "@/src/types/tutorials";
+import { PROFILE_TUTORIAL_INITIAL_STATE } from "@/src/constants/tutorials";
 
 export const LancerContext = createContext<ILancerContext>({
   currentUser: null,
@@ -125,6 +126,18 @@ const LancerProvider: FunctionComponent<ILancerState> = ({
       setProvider(provider);
       setProgram(program);
       setCurrentWallet(lancerWallet);
+      if (
+        currentTutorialState.title === PROFILE_TUTORIAL_INITIAL_STATE.title &&
+        currentTutorialState.currentStep === 1
+      ) {
+        setCurrentTutorialState({
+          ...currentTutorialState,
+          currentStep: currentUser.hasProfileNFT ? 3 : 2,
+          isRunning: true,
+          spotlightClicks: false,
+        });
+        return;
+      }
     }
   }, [connected]);
 

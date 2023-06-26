@@ -10,6 +10,7 @@ import dynamic from "next/dynamic";
 import { HelpCircle } from "react-feather";
 import { useLancer } from "@/src/providers";
 import { useState } from "react";
+import { PROFILE_TUTORIAL_INITIAL_STATE } from "@/src/constants/tutorials";
 const HEADER_LINKS: LinkButtonProps[] = [
   { href: "/create", children: "New Bounty", id: "create-bounty-link" },
   { href: "/bounties", children: "Bounties", id: "bounties-link" },
@@ -21,7 +22,12 @@ const WalletMultiButtonDynamic = dynamic(
   { ssr: false }
 );
 export const Header = () => {
-  const { isRouterReady } = useLancer();
+  const {
+    isRouterReady,
+    currentTutorialState,
+    setCurrentTutorialState,
+    currentUser,
+  } = useLancer();
   const [isTutorialButtonHovered, setIsTutorialButtonHovered] = useState(false);
   const [showTutorialModal, setShowTutorialModal] = useState(false);
   return (
@@ -37,7 +43,23 @@ export const Header = () => {
           {HEADER_LINKS.map(({ href, children }) => {
             return <LinkButton href={href} children={children} style="text" />;
           })}
-          <div className="ml-auto" id="wallet-connect-button">
+          <div
+            className="ml-auto"
+            id="wallet-connect-button"
+            onClick={() => {
+              if (
+                currentTutorialState.title ===
+                  PROFILE_TUTORIAL_INITIAL_STATE.title &&
+                currentTutorialState.currentStep === 1
+              ) {
+                setCurrentTutorialState({
+                  ...currentTutorialState,
+                  isRunning: false,
+                });
+                return;
+              }
+            }}
+          >
             <WalletMultiButtonDynamic className="text-gray-800 flex h-[48px] w-[250px] py-[6px] items-center justify-center border-solid hover:bg-turquoise-500 text-gray-800 hover:text-white-100 transition-colors duration-300 ease-in-out" />
           </div>
 

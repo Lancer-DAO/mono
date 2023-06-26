@@ -9,4 +9,5 @@ export type Tutorial = {
   currentStep?: number;
   spotlightClicks: boolean;
   manuallyControlledSteps?: number[];
+  callback?: (data: CallBackProps) => void;
 };

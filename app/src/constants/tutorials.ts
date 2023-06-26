@@ -243,8 +243,8 @@ export const PROFILE_TUTORIAL_INITIAL_STATE: Tutorial = {
   pages: ["account"],
   isActive: true,
   isRunning: true,
-  isManuallyControlled: false,
   spotlightClicks: false,
+  manuallyControlledSteps: [1],
   steps: [
     {
       target: "#start-tutorial-link",

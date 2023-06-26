@@ -1,9 +1,15 @@
+import { PROFILE_TUTORIAL_INITIAL_STATE } from "@/src/constants/tutorials";
 import { useLancer } from "@/src/providers";
 import { useRouter } from "next/router";
 import Joyride, { CallBackProps, Step } from "react-joyride";
 
 const JoyrideWrapper = () => {
-  const { currentTutorialState, setCurrentTutorialState } = useLancer();
+  const {
+    currentTutorialState,
+    setCurrentTutorialState,
+    currentUser,
+    currentWallet,
+  } = useLancer();
   console.log("re-render");
 
   if (!currentTutorialState) return null;
@@ -14,8 +20,27 @@ const JoyrideWrapper = () => {
       continuous
       hideCloseButton
       callback={(data) => {
-        console.log("callback", data);
         const { index, type } = data;
+        if (
+          currentTutorialState.title === PROFILE_TUTORIAL_INITIAL_STATE.title &&
+          type === "step:after" &&
+          index === 0
+        ) {
+          if (!!currentWallet) {
+            setCurrentTutorialState({
+              ...currentTutorialState,
+              currentStep: currentUser.hasProfileNFT ? 3 : 2,
+            });
+          } else {
+            setCurrentTutorialState({
+              ...currentTutorialState,
+              currentStep: 1,
+              spotlightClicks: true,
+            });
+          }
+          return;
+        }
+
         if (
           type === "step:after" &&
           !(currentTutorialState.manuallyControlledSteps || []).includes(index)
