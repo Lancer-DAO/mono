@@ -13296,6 +13296,19 @@
     text-align: center;
   }
 
+  .referral {
+
+  }
+
+  .referral-link {
+    display: flex;
+    align-items: center;
+  }
+
+  .referral-link > span {
+    margin-right: 8px;
+  }
+
 
   .tag-list {
     display: flex;

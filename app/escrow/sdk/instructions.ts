@@ -15,6 +15,7 @@ import {
 } from "@solana/spl-token";
 
 import {
+  AccountMeta,
   ComputeBudgetProgram,
   Keypair,
   LAMPORTS_PER_SOL,
@@ -116,6 +117,7 @@ export const addApprovedSubmittersInstruction = async (
   timestamp: string,
   creator: PublicKey,
   submitter: PublicKey,
+  remainingAccounts: AccountMeta[],
   program: Program<MonoProgram>
 ): Promise<TransactionInstruction> => {
   const [feature_data_account] = await findFeatureAccount(
@@ -131,6 +133,7 @@ export const addApprovedSubmittersInstruction = async (
       submitter: submitter,
       featureDataAccount: feature_data_account,
     })
+    .remainingAccounts(remainingAccounts)
     .instruction();
 };
 

@@ -27,6 +27,7 @@ import {
 } from "@/src/constants";
 import { createUnderdogClient } from "@underdog-protocol/js";
 import dayjs from "dayjs";
+import { useReferral } from "@/src/providers/referralProvider";
 const underdogClient = createUnderdogClient({});
 
 const BountyActions = () => {
@@ -122,13 +123,17 @@ const RequestToSubmit = () => {
   } = useLancer();
   const { mutateAsync } = api.bounties.updateBountyUser.useMutation();
 
+  const { createReferralMember, getRemainingAccounts } = useReferral();
+
   const onClick = async () => {
     if (currentBounty.isCreator) {
       // If we are the creator, then skip requesting and add self as approved
+      const remainingAccounts = await getRemainingAccounts();
       const signature = await addSubmitterFFA(
         currentWallet.publicKey,
         currentBounty.escrow,
         currentWallet,
+        remainingAccounts,
         program,
         provider
       );
@@ -149,6 +154,12 @@ const RequestToSubmit = () => {
 
       setCurrentBounty(updatedBounty);
     } else {
+      // If member already exists, no on chain action and returns memberPDA
+      const result = await createReferralMember();
+
+      const referralKey = result?.memberPDA;
+      const signature = result?.txId;
+
       // Request to submit. Does not interact on chain
       const { updatedBounty } = await mutateAsync({
         currentUserId: currentUser.id,
