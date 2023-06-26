@@ -13484,7 +13484,10 @@
     top: -30px;
     left: 0px;
     width: 600px;
-    color: red;
+    color: black;
+    &.error {
+      color: red;
+    }
     }
 
     .job-post-title {

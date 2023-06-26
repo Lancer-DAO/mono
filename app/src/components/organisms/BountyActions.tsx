@@ -77,7 +77,7 @@ const BountyActions = () => {
               />
               {hoveredButton === "submit" &&
                 currentBounty.pullRequests.length === 0 && (
-                  <div className="hover-tooltip">
+                  <div className="hover-tooltip error">
                     Please open a PR closing the GitHub Issue before submitting
                   </div>
                 )}

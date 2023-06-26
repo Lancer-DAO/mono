@@ -3,7 +3,13 @@ import { getSolscanTX } from "@/src/utils";
 import { useEffect, useState } from "react";
 import { useLancer } from "@/src/providers/lancerProvider";
 import classnames from "classnames";
-import { ExternalLink, RefreshCcw, Play, Pause } from "react-feather";
+import {
+  ExternalLink,
+  RefreshCcw,
+  Play,
+  Pause,
+  HelpCircle,
+} from "react-feather";
 import { Button } from "@/components";
 
 import { FC, useRef } from "react";
@@ -104,14 +110,38 @@ const TutorialRow: FC<{
             </Button>
           )}
           {type === "unavailable" && (
-            <Button version="text">
-              <ExternalLink
-                onMouseEnter={() => setIsPageButtonHovered(true)}
-                onMouseLeave={() => setIsPageButtonHovered(false)}
-                color={isPageButtonHovered ? "#14bb88" : "#000"}
-                height={24}
-                width={24}
-              />
+            <Button
+              version="text"
+              onClick={() => {
+                if (tutorial.pages.includes("bounty")) {
+                  router.push(`/bounties`);
+                } else {
+                  router.push(`/${tutorial.pages[0]}`);
+                }
+              }}
+              hoveredText={
+                tutorial.pages.includes("bounty")
+                  ? "You must select a bounty from the bounty list before accessing this tutorial"
+                  : undefined
+              }
+            >
+              {tutorial.pages.includes("bounty") ? (
+                <HelpCircle
+                  onMouseEnter={() => setIsPageButtonHovered(true)}
+                  onMouseLeave={() => setIsPageButtonHovered(false)}
+                  color={isPageButtonHovered ? "#14bb88" : "#000"}
+                  height={24}
+                  width={24}
+                />
+              ) : (
+                <ExternalLink
+                  onMouseEnter={() => setIsPageButtonHovered(true)}
+                  onMouseLeave={() => setIsPageButtonHovered(false)}
+                  color={isPageButtonHovered ? "#14bb88" : "#000"}
+                  height={24}
+                  width={24}
+                />
+              )}
             </Button>
           )}
         </div>

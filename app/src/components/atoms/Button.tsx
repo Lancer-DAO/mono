@@ -20,6 +20,7 @@ interface ButtonProps
   onClick?: () => void | Promise<void>;
   disabled?: boolean;
   disabledText?: string;
+  hoveredText?: string;
   children?: React.ReactNode;
   version?: "filled" | "outlined" | "text";
   id?: string;
@@ -33,6 +34,7 @@ const Button = ({
   onClick,
   disabled,
   disabledText,
+  hoveredText,
   version,
   id,
   extraClasses,
@@ -65,7 +67,10 @@ const Button = ({
         {isLoading ? "Processing..." : children}
       </button>
       {hoveredButton && disabledText && disabled && (
-        <div className="hover-tooltip">{disabledText}</div>
+        <div className="hover-tooltip error">{disabledText}</div>
+      )}
+      {hoveredButton && hoveredText && !disabled && (
+        <div className="hover-tooltip">{hoveredText}</div>
       )}
     </div>
   );
