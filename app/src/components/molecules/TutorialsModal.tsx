@@ -9,6 +9,7 @@ import {
   Play,
   Pause,
   HelpCircle,
+  X,
 } from "react-feather";
 import { Button } from "@/components";
 
@@ -42,15 +43,9 @@ const TutorialRow: FC<{
                 extraClasses="mr-[10px]"
                 onClick={() => {
                   setCurrentTutorialState(null);
-
-                  setShowModal(false);
-                  // need to give the props a full refresh for joyride to properly reset
-                  setTimeout(() => {
-                    setCurrentTutorialState(tutorial);
-                  }, 100);
                 }}
               >
-                <RefreshCcw
+                <X
                   onMouseEnter={() => setIsResetButtonHovered(true)}
                   onMouseLeave={() => setIsResetButtonHovered(false)}
                   color={isResetButtonHovered ? "#14bb88" : "#000"}
