@@ -73,7 +73,15 @@ export const getBounty = async (id: number, currentUserId: number) => {
       },
       users: {
         include: {
-          user: true,
+          user: {
+            include: {
+              wallets: {
+                where: {
+                  isDefault: true,
+                },
+              },
+            },
+          },
         },
       },
       issue: true,
@@ -81,8 +89,8 @@ export const getBounty = async (id: number, currentUserId: number) => {
       pullRequests: true,
     },
   });
-  const allWallets = bounty.escrow.transactions.map((tx) =>
-    tx.wallets.map((wallet) => wallet.walletid)
+  const allWallets = bounty.users.map((user) =>
+    user.user.wallets.map((wallet) => wallet.id)
   );
 
   const uniqueIds = uniqueNumbers(allWallets);
@@ -185,7 +193,9 @@ const getBountyRelations = (
   })[],
   wallets: Prisma.Wallet[]
 ) => {
+  console.log(wallets);
   const allUsers = rawUsers.map((user) => {
+    console.log(user);
     return {
       ...user,
       relations: user.relations
@@ -195,6 +205,7 @@ const getBountyRelations = (
         ?.publicKey,
     };
   });
+  // console.log(allUsers);
   const newBounty: BountyUserRelations = {
     all: allUsers,
     creator: allUsers.find((submitter) =>
