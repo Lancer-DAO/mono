@@ -470,6 +470,7 @@ export const BOUNTY_ACTIONS_TUTORIAL_II_INITIAL_STATE: Tutorial = {
   isRunning: true,
   currentStep: 0,
   spotlightClicks: true,
+  manuallyControlledSteps: [1, 5, 6, 7],
   steps: [
     {
       target: "#task-pull-request-link",

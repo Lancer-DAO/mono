@@ -331,7 +331,7 @@ export const ApproveSubmission = () => {
     if (
       currentTutorialState?.title ===
         BOUNTY_ACTIONS_TUTORIAL_II_INITIAL_STATE.title &&
-      currentTutorialState.currentStep === 0
+      currentTutorialState.currentStep === 5
     ) {
       setCurrentTutorialState({
         ...currentTutorialState,
@@ -567,6 +567,7 @@ export const SubmitRequest = ({ disabled }: { disabled?: boolean }) => {
       setCurrentTutorialState({
         ...currentTutorialState,
         isRunning: true,
+        currentStep: 2,
       });
     }
   };

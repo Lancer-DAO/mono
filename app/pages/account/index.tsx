@@ -30,6 +30,7 @@ import {
 } from "@underdog-protocol/js";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
+import { BOUNTY_ACTIONS_TUTORIAL_II_INITIAL_STATE } from "@/src/constants/tutorials";
 dayjs.extend(relativeTime);
 
 const underdogClient = createUnderdogClient({});
@@ -50,7 +51,12 @@ export default function Home() {
 const Account: React.FC = () => {
   const router = useRouter();
 
-  const { currentUser, currentWallet } = useLancer();
+  const {
+    currentUser,
+    currentWallet,
+    currentTutorialState,
+    setCurrentTutorialState,
+  } = useLancer();
   const [showCoinflow, setShowCoinflow] = useState(false);
   const [showTutorial, setShowTutorial] = useState(false);
   const [profileNFT, setProfileNFT] = useState<ProfileNFT>();
@@ -143,11 +149,17 @@ const Account: React.FC = () => {
     const fetchNfts = async () => {
       await fetchProfileNFT();
 
-      // if (isTutorialActive) {
-      //   setIsTutorialRunning(true);
-      //   // setCurrentTutorialStep(3);
-      // }
       await fetchBountyNFTs();
+      if (
+        currentTutorialState?.title ===
+          BOUNTY_ACTIONS_TUTORIAL_II_INITIAL_STATE.title &&
+        currentTutorialState.currentStep === 8
+      ) {
+        setCurrentTutorialState({
+          ...currentTutorialState,
+          isRunning: true,
+        });
+      }
     };
     if (account && account.profileWalletId) {
       fetchNfts();

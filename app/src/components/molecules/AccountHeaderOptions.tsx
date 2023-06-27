@@ -68,8 +68,13 @@ const AccountHeaderOptions = () => {
                   });
                 } else if (
                   currentTutorialState?.title ===
-                  BOUNTY_ACTIONS_TUTORIAL_II_INITIAL_STATE.title
+                    BOUNTY_ACTIONS_TUTORIAL_II_INITIAL_STATE.title &&
+                  currentTutorialState.currentStep === 6
                 ) {
+                  setCurrentTutorialState({
+                    ...currentTutorialState,
+                    currentStep: 7,
+                  });
                 }
               }
             }}
@@ -94,11 +99,13 @@ const AccountHeaderOptions = () => {
                   if (!!currentTutorialState && currentTutorialState.isActive) {
                     if (
                       currentTutorialState?.title ===
-                      GITHUB_API_KEY_TUTORIAL_INITIAL_STATE.title
+                        BOUNTY_ACTIONS_TUTORIAL_II_INITIAL_STATE.title &&
+                      currentTutorialState.currentStep === 7
                     ) {
                       setCurrentTutorialState({
                         ...currentTutorialState,
-                        currentStep: 2,
+                        currentStep: 8,
+                        isRunning: false,
                       });
                     }
                   }
