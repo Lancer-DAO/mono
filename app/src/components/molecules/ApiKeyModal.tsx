@@ -77,7 +77,7 @@ const ApiKeyModal: FC<Props> = ({ showModal, setShowModal }) => {
                 target="_blank"
                 onMouseEnter={() => setIsTutorialButtonHovered(true)}
                 onMouseLeave={() => setIsTutorialButtonHovered(false)}
-                style="text"
+                version="text"
                 extraClasses="ml-[10px]"
                 id="github-api-key-tutorial-link"
                 onClick={() => {

@@ -41,7 +41,9 @@ export const Header = () => {
         </Link>
         <div className="ml-[20px] flex gap-[10px] items-center w-full">
           {HEADER_LINKS.map(({ href, children }) => {
-            return <LinkButton href={href} children={children} style="text" />;
+            return (
+              <LinkButton href={href} children={children} version="text" />
+            );
           })}
           <div
             className="ml-auto"
