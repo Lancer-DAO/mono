@@ -44,6 +44,7 @@ const TutorialRow: FC<{
                 onClick={() => {
                   setCurrentTutorialState(null);
                 }}
+                hoveredText="Clear current tutorial"
               >
                 <X
                   onMouseEnter={() => setIsResetButtonHovered(true)}
@@ -66,6 +67,7 @@ const TutorialRow: FC<{
                     }
                   }
                 }}
+                hoveredText={currentTutorialState.isRunning ? "Pause" : "Play"}
               >
                 {currentTutorialState.isRunning ? (
                   <Pause
@@ -94,6 +96,7 @@ const TutorialRow: FC<{
                 setCurrentTutorialState(tutorial);
                 setShowModal(false);
               }}
+              hoveredText="Start Tutorial"
             >
               <Play
                 onMouseEnter={() => setIsPlayButtonHovered(true)}
