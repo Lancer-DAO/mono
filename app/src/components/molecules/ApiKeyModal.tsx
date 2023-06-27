@@ -49,7 +49,7 @@ const ApiKeyModal: FC<Props> = ({ showModal, setShowModal }) => {
     if (
       !!currentTutorialState &&
       currentTutorialState.isActive &&
-      currentTutorialState.title ===
+      currentTutorialState?.title ===
         GITHUB_API_KEY_TUTORIAL_INITIAL_STATE.title &&
       currentTutorialState.currentStep !==
         GITHUB_API_KEY_TUTORIAL_INITIAL_STATE.steps.length - 1
@@ -83,7 +83,7 @@ const ApiKeyModal: FC<Props> = ({ showModal, setShowModal }) => {
                 onClick={() => {
                   if (!!currentTutorialState && currentTutorialState.isActive) {
                     if (
-                      currentTutorialState.title ===
+                      currentTutorialState?.title ===
                         GITHUB_API_KEY_TUTORIAL_INITIAL_STATE.title &&
                       currentTutorialState.currentStep === 2
                     ) {
@@ -187,9 +187,6 @@ const ApiKeyModal: FC<Props> = ({ showModal, setShowModal }) => {
                           localStorage.getItem("apiKeys") || "[]"
                         );
                         setApiKeys(newApiKeys);
-                        // if (isTutorialActive) {
-                        //   setIsTutorialActive(false);
-                        // }
                       }}
                       id={`token-delete-${index}`}
                     >
@@ -218,7 +215,7 @@ const ApiKeyModal: FC<Props> = ({ showModal, setShowModal }) => {
                       currentTutorialState.isActive
                     ) {
                       if (
-                        currentTutorialState.title ===
+                        currentTutorialState?.title ===
                           GITHUB_API_KEY_TUTORIAL_INITIAL_STATE.title &&
                         currentTutorialState.currentStep === 3
                       ) {
@@ -236,7 +233,7 @@ const ApiKeyModal: FC<Props> = ({ showModal, setShowModal }) => {
                       currentTutorialState.isActive
                     ) {
                       if (
-                        currentTutorialState.title ===
+                        currentTutorialState?.title ===
                           GITHUB_API_KEY_TUTORIAL_INITIAL_STATE.title &&
                         currentTutorialState.currentStep === 3
                       ) {
@@ -254,7 +251,7 @@ const ApiKeyModal: FC<Props> = ({ showModal, setShowModal }) => {
                       currentTutorialState.isActive
                     ) {
                       if (
-                        currentTutorialState.title ===
+                        currentTutorialState?.title ===
                           GITHUB_API_KEY_TUTORIAL_INITIAL_STATE.title &&
                         currentTutorialState.currentStep === 3
                       ) {
@@ -288,7 +285,7 @@ const ApiKeyModal: FC<Props> = ({ showModal, setShowModal }) => {
                       currentTutorialState.isActive
                     ) {
                       if (
-                        currentTutorialState.title ===
+                        currentTutorialState?.title ===
                           GITHUB_API_KEY_TUTORIAL_INITIAL_STATE.title &&
                         currentTutorialState.currentStep === 4
                       ) {
@@ -306,7 +303,7 @@ const ApiKeyModal: FC<Props> = ({ showModal, setShowModal }) => {
                       currentTutorialState.isActive
                     ) {
                       if (
-                        currentTutorialState.title ===
+                        currentTutorialState?.title ===
                           GITHUB_API_KEY_TUTORIAL_INITIAL_STATE.title &&
                         currentTutorialState.currentStep === 4
                       ) {
@@ -324,7 +321,7 @@ const ApiKeyModal: FC<Props> = ({ showModal, setShowModal }) => {
                       currentTutorialState.isActive
                     ) {
                       if (
-                        currentTutorialState.title ===
+                        currentTutorialState?.title ===
                           GITHUB_API_KEY_TUTORIAL_INITIAL_STATE.title &&
                         currentTutorialState.currentStep === 4
                       ) {
@@ -362,7 +359,7 @@ const ApiKeyModal: FC<Props> = ({ showModal, setShowModal }) => {
                 setApiKeys(newApiKeys);
                 if (!!currentTutorialState && currentTutorialState.isActive) {
                   if (
-                    currentTutorialState.title ===
+                    currentTutorialState?.title ===
                       GITHUB_API_KEY_TUTORIAL_INITIAL_STATE.title &&
                     currentTutorialState.currentStep === 5
                   ) {

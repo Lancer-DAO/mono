@@ -12,6 +12,7 @@ import { fundFFA, getFundFFATX } from "@/escrow/adapters";
 import { USDC_MINT } from "@/src/constants";
 import { useConnection, useWallet } from "@solana/wallet-adapter-react";
 import { CoinflowFund } from "@/src/components";
+import { CREATE_BOUNTY_TUTORIAL_INITIAL_STATE } from "@/src/constants/tutorials";
 
 const Form: React.FC<{ isAccountCreated: boolean }> = ({
   isAccountCreated,
@@ -23,6 +24,8 @@ const Form: React.FC<{ isAccountCreated: boolean }> = ({
     program,
     provider,
     currentWallet,
+    currentTutorialState,
+    setCurrentTutorialState,
   } = useLancer();
   const [fundingType, setFundingType] = useState<"wallet" | "card">("wallet");
 
@@ -33,9 +36,17 @@ const Form: React.FC<{ isAccountCreated: boolean }> = ({
     fundingAmount: null,
   });
   useEffect(() => {
-    // if (isTutorialActive) {
-    //   setIsTutorialRunning(true);
-    // }
+    if (
+      currentTutorialState?.title ===
+        CREATE_BOUNTY_TUTORIAL_INITIAL_STATE.title &&
+      currentTutorialState.currentStep === 5
+    ) {
+      setCurrentTutorialState({
+        ...currentTutorialState,
+        isRunning: true,
+        currentStep: 6,
+      });
+    }
   }, []);
   const handleChange = (event) => {
     setFormData({
@@ -44,7 +55,16 @@ const Form: React.FC<{ isAccountCreated: boolean }> = ({
     });
   };
   const onClick = async () => {
-    // setIsTutorialRunning(false);
+    if (
+      currentTutorialState?.title ===
+        CREATE_BOUNTY_TUTORIAL_INITIAL_STATE.title &&
+      currentTutorialState.currentStep === 7
+    ) {
+      setCurrentTutorialState({
+        ...currentTutorialState,
+        isRunning: false,
+      });
+    }
     // If we are the creator, then skip requesting and add self as approved
     const signature = await fundFFA(
       formData.fundingAmount,
@@ -138,27 +158,58 @@ const Form: React.FC<{ isAccountCreated: boolean }> = ({
                           value={formData.fundingAmount}
                           onChange={handleChange}
                           onBlur={() => {
-                            // if (
-                            //   isTutorialActive &&
-                            //   formData.fundingAmount > 0
-                            // ) {
-                            //   setIsTutorialRunning(true);
-                            //   setCurrentTutorialStep(1);
-                            // }
+                            if (
+                              formData.fundingAmount !== "" &&
+                              !!currentTutorialState &&
+                              currentTutorialState.isActive
+                            ) {
+                              if (
+                                currentTutorialState?.title ===
+                                  CREATE_BOUNTY_TUTORIAL_INITIAL_STATE.title &&
+                                currentTutorialState.currentStep === 6
+                              ) {
+                                setCurrentTutorialState({
+                                  ...currentTutorialState,
+                                  currentStep: 7,
+                                });
+                              }
+                            }
                           }}
                           onMouseLeave={() => {
-                            // if (
-                            //   isTutorialActive &&
-                            //   formData.fundingAmount > 0
-                            // ) {
-                            //   setIsTutorialRunning(true);
-                            //   setCurrentTutorialStep(1);
-                            // }
+                            if (
+                              formData.fundingAmount !== "" &&
+                              !!currentTutorialState &&
+                              currentTutorialState.isActive
+                            ) {
+                              if (
+                                currentTutorialState?.title ===
+                                  CREATE_BOUNTY_TUTORIAL_INITIAL_STATE.title &&
+                                currentTutorialState.currentStep === 6
+                              ) {
+                                setCurrentTutorialState({
+                                  ...currentTutorialState,
+                                  currentStep: 7,
+                                  isRunning: true,
+                                });
+                              }
+                            }
                           }}
                           onFocus={() => {
-                            // if (isTutorialActive) {
-                            //   setIsTutorialRunning(false);
-                            // }
+                            if (
+                              !!currentTutorialState &&
+                              currentTutorialState.isActive
+                            ) {
+                              if (
+                                currentTutorialState?.title ===
+                                  CREATE_BOUNTY_TUTORIAL_INITIAL_STATE.title &&
+                                currentTutorialState.currentStep === 6
+                              ) {
+                                setCurrentTutorialState({
+                                  ...currentTutorialState,
+                                  isRunning: false,
+                                });
+                              }
+                            }
                           }}
                         />
                       </div>

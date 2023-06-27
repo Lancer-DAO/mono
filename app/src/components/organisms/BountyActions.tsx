@@ -23,15 +23,18 @@ import { decimalToNumber } from "@/src/utils";
 import { BOUNTY_PROJECT_PARAMS, PROFILE_PROJECT_PARAMS } from "@/src/constants";
 import { createUnderdogClient } from "@underdog-protocol/js";
 import dayjs from "dayjs";
+import {
+  BOUNTY_ACTIONS_TUTORIAL_II_INITIAL_STATE,
+  BOUNTY_ACTIONS_TUTORIAL_I_INITIAL_STATE,
+} from "@/src/constants/tutorials";
 const underdogClient = createUnderdogClient({});
 
 const BountyActions = () => {
   const {
     currentUser,
     currentBounty,
-    isTutorialActive,
-    setIsTutorialRunning,
-    currentTutorialStep,
+    currentTutorialState,
+    setCurrentTutorialState,
   } = useLancer();
   const [hoveredButton, setHoveredButton] = useState("none");
   if (false) {
@@ -51,7 +54,8 @@ const BountyActions = () => {
     <div className="bounty-buttons" id="bounty-actions">
       <>
         {currentBounty.isCreator &&
-          isTutorialActive &&
+          currentTutorialState?.title ===
+            BOUNTY_ACTIONS_TUTORIAL_I_INITIAL_STATE.title &&
           currentBounty.currentUserRelationsList.length < 2 && (
             <RequestToSubmit />
           )}
@@ -121,16 +125,22 @@ const RequestToSubmit = () => {
     currentBounty,
     currentWallet,
     setCurrentBounty,
-    isTutorialActive,
-    setIsTutorialRunning,
-    setCurrentTutorialStep,
+    currentTutorialState,
+    setCurrentTutorialState,
   } = useLancer();
   const { mutateAsync } = api.bounties.updateBountyUser.useMutation();
 
   const onClick = async () => {
     // Request to submit. Does not interact on chain
-    if (isTutorialActive) {
-      setIsTutorialRunning(false);
+    if (
+      currentTutorialState?.title ===
+        BOUNTY_ACTIONS_TUTORIAL_I_INITIAL_STATE.title &&
+      currentTutorialState.currentStep === 1
+    ) {
+      setCurrentTutorialState({
+        ...currentTutorialState,
+        isRunning: false,
+      });
     }
     const { updatedBounty } = await mutateAsync({
       currentUserId: currentUser.id,
@@ -150,9 +160,18 @@ const RequestToSubmit = () => {
     });
 
     setCurrentBounty(updatedBounty);
-    if (isTutorialActive) {
-      setCurrentTutorialStep(2);
-      setIsTutorialRunning(true);
+    if (
+      currentTutorialState?.title ===
+        BOUNTY_ACTIONS_TUTORIAL_I_INITIAL_STATE.title &&
+      currentTutorialState.currentStep === 1
+    ) {
+      setTimeout(() => {
+        setCurrentTutorialState({
+          ...currentTutorialState,
+          isRunning: true,
+          currentStep: 2,
+        });
+      }, 100);
     }
   };
 
@@ -171,18 +190,23 @@ export const ApproveSubmission = () => {
     program,
     currentWallet,
     setCurrentBounty,
-    isTutorialActive,
-    setIsTutorialRunning,
-    currentTutorialStep,
-    setCurrentTutorialStep,
+    currentTutorialState,
+    setCurrentTutorialState,
   } = useLancer();
   const { mutateAsync } = api.bounties.updateBountyUser.useMutation();
 
   const { currentAPIKey } = useLancer();
 
   const onClick = async () => {
-    if (isTutorialActive) {
-      setIsTutorialRunning(false);
+    if (
+      currentTutorialState?.title ===
+        BOUNTY_ACTIONS_TUTORIAL_II_INITIAL_STATE.title &&
+      currentTutorialState.currentStep === 5
+    ) {
+      setCurrentTutorialState({
+        ...currentTutorialState,
+        isRunning: false,
+      });
     }
     // If we are the creator, then skip requesting and add self as approved
     const signature = await approveRequestFFA(
@@ -304,9 +328,16 @@ export const ApproveSubmission = () => {
       },
     });
 
-    if (isTutorialActive) {
-      setCurrentTutorialStep(currentTutorialStep + 1);
-      setIsTutorialRunning(true);
+    if (
+      currentTutorialState?.title ===
+        BOUNTY_ACTIONS_TUTORIAL_II_INITIAL_STATE.title &&
+      currentTutorialState.currentStep === 0
+    ) {
+      setCurrentTutorialState({
+        ...currentTutorialState,
+        isRunning: true,
+        currentStep: 6,
+      });
     }
   };
 
@@ -471,16 +502,22 @@ export const SubmitRequest = ({ disabled }: { disabled?: boolean }) => {
     provider,
     program,
     setCurrentBounty,
-    isTutorialActive,
-    setIsTutorialRunning,
-    setCurrentTutorialStep,
-    currentTutorialStep,
+
+    currentTutorialState,
+    setCurrentTutorialState,
   } = useLancer();
   const { mutateAsync } = api.bounties.updateBountyUser.useMutation();
   const onClick = async () => {
     // If we are the creator, then skip requesting and add self as approved
-    if (isTutorialActive) {
-      setIsTutorialRunning(false);
+    if (
+      currentTutorialState?.title ===
+        BOUNTY_ACTIONS_TUTORIAL_II_INITIAL_STATE.title &&
+      currentTutorialState.currentStep === 1
+    ) {
+      setCurrentTutorialState({
+        ...currentTutorialState,
+        isRunning: false,
+      });
     }
     const signature = await submitRequestFFA(
       new PublicKey(currentBounty.creator.publicKey),
@@ -522,9 +559,15 @@ export const SubmitRequest = ({ disabled }: { disabled?: boolean }) => {
     });
 
     setCurrentBounty(updatedBounty);
-    if (isTutorialActive) {
-      setCurrentTutorialStep(currentTutorialStep + 1);
-      setIsTutorialRunning(true);
+    if (
+      currentTutorialState?.title ===
+        BOUNTY_ACTIONS_TUTORIAL_II_INITIAL_STATE.title &&
+      currentTutorialState.currentStep === 1
+    ) {
+      setCurrentTutorialState({
+        ...currentTutorialState,
+        isRunning: true,
+      });
     }
   };
 

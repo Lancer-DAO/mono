@@ -49,7 +49,7 @@ const AccountHeaderOptions = () => {
               setShowOptions(true);
               if (!!currentTutorialState && currentTutorialState.isActive) {
                 if (
-                  currentTutorialState.title ===
+                  currentTutorialState?.title ===
                     GITHUB_API_KEY_TUTORIAL_INITIAL_STATE.title &&
                   currentTutorialState.currentStep === 0
                 ) {
@@ -58,11 +58,16 @@ const AccountHeaderOptions = () => {
                     currentStep: 1,
                   });
                 } else if (
-                  currentTutorialState.title ===
-                  BOUNTY_ACTIONS_TUTORIAL_I_INITIAL_STATE.title
+                  currentTutorialState?.title ===
+                    BOUNTY_ACTIONS_TUTORIAL_I_INITIAL_STATE.title &&
+                  currentTutorialState.currentStep === 7
                 ) {
+                  setCurrentTutorialState({
+                    ...currentTutorialState,
+                    currentStep: 8,
+                  });
                 } else if (
-                  currentTutorialState.title ===
+                  currentTutorialState?.title ===
                   BOUNTY_ACTIONS_TUTORIAL_II_INITIAL_STATE.title
                 ) {
                 }
@@ -88,7 +93,7 @@ const AccountHeaderOptions = () => {
                 onClick={() => {
                   if (!!currentTutorialState && currentTutorialState.isActive) {
                     if (
-                      currentTutorialState.title ===
+                      currentTutorialState?.title ===
                       GITHUB_API_KEY_TUTORIAL_INITIAL_STATE.title
                     ) {
                       setCurrentTutorialState({
@@ -108,7 +113,7 @@ const AccountHeaderOptions = () => {
 
                   if (!!currentTutorialState && currentTutorialState.isActive) {
                     if (
-                      currentTutorialState.title ===
+                      currentTutorialState?.title ===
                         GITHUB_API_KEY_TUTORIAL_INITIAL_STATE.title &&
                       currentTutorialState.currentStep === 1
                     ) {

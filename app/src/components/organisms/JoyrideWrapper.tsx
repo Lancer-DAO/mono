@@ -22,7 +22,8 @@ const JoyrideWrapper = () => {
       callback={(data) => {
         const { index, type } = data;
         if (
-          currentTutorialState.title === PROFILE_TUTORIAL_INITIAL_STATE.title &&
+          currentTutorialState?.title ===
+            PROFILE_TUTORIAL_INITIAL_STATE.title &&
           type === "step:after" &&
           index === 0
         ) {

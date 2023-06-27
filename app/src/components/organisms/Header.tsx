@@ -49,7 +49,7 @@ export const Header = () => {
             onClick={() => {
               if (
                 !!currentTutorialState &&
-                currentTutorialState.title ===
+                currentTutorialState?.title ===
                   PROFILE_TUTORIAL_INITIAL_STATE.title &&
                 currentTutorialState.currentStep === 1
               ) {

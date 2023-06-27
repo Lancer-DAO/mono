@@ -128,7 +128,7 @@ const LancerProvider: FunctionComponent<ILancerState> = ({
       setCurrentWallet(lancerWallet);
       if (
         !!currentTutorialState &&
-        currentTutorialState.title === PROFILE_TUTORIAL_INITIAL_STATE.title &&
+        currentTutorialState?.title === PROFILE_TUTORIAL_INITIAL_STATE.title &&
         currentTutorialState.currentStep === 1
       ) {
         setCurrentTutorialState({

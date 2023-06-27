@@ -39,17 +39,6 @@ export const CREATE_BOUNTY_TUTORIAL_INITIAL_STATE: Tutorial = {
       target: "#create-bounty-button",
       content: "Create your task!",
     },
-  ],
-};
-
-export const FUND_BOUNTY_TUTORIAL_INITIAL_STATE: Tutorial = {
-  title: "Fund Bounty Tutorial",
-  pages: ["create"],
-  isActive: true,
-  isRunning: true,
-  currentStep: 0,
-  spotlightClicks: true,
-  steps: [
     {
       target: "#issue-amount-input",
       content:
@@ -405,6 +394,7 @@ export const BOUNTY_ACTIONS_TUTORIAL_I_INITIAL_STATE: Tutorial = {
   isRunning: true,
   currentStep: 0,
   spotlightClicks: true,
+  manuallyControlledSteps: [1, 4, 7],
   steps: [
     {
       target: "#bounty-actions",
@@ -557,7 +547,6 @@ export const BOUNTY_ACTIONS_TUTORIAL_II_INITIAL_STATE: Tutorial = {
 
 export const ALL_TUTORIALS: Tutorial[] = [
   CREATE_BOUNTY_TUTORIAL_INITIAL_STATE,
-  FUND_BOUNTY_TUTORIAL_INITIAL_STATE,
   BOUNTY_INFO_TUTORIAL_INITIAL_STATE,
   BOUNIES_LIST_TUTORIAL_INITIAL_STATE,
   PROFILE_TUTORIAL_INITIAL_STATE,
