@@ -17,8 +17,90 @@ import { FC, useRef } from "react";
 import { useOutsideAlerter } from "../../hooks/useOutsideAlerter";
 import { LinkButton } from "..";
 import { useRouter } from "next/router";
-import { ALL_TUTORIALS } from "@/src/constants/tutorials";
+import {
+  ALL_TUTORIALS,
+  APPLY_BOUNTY_STEP,
+  BOUNTY_ACTIONS_WRAPPER_STEP,
+  BOUNTY_CANCELED_STEP,
+  BOUNTY_COMPLETED_STEP,
+  CANCEL_STEP,
+  MANAGE_REQUESTED_SUBMITTER_STEPS,
+  REQUEST_DENIED_STEP,
+  REQUEST_PENDING_STEP,
+  REVIEW_BOUNTY_STEPS,
+  SUBMISSION_DENIED_STEP,
+  SUBMISSION_PENDING_STEP,
+  SUBMIT_REQUEST_HAS_PULL_REQUEST_STEPS,
+  SUBMIT_REQUEST_NEEDS_PULL_REQUEST_STEPS,
+  VOTE_TO_CANCEL_STEP,
+} from "@/src/constants/tutorials";
 import { Tutorial } from "@/src/types/tutorials";
+import { Step } from "react-joyride";
+import { Bounty, BountyState } from "@/src/types";
+
+const getCurrentBountyTutorialInitialState = (
+  currentBounty: Bounty
+): Tutorial => {
+  const steps: Step[] = [BOUNTY_ACTIONS_WRAPPER_STEP];
+  if (currentBounty?.state === BountyState.COMPLETE) {
+    steps.push(BOUNTY_COMPLETED_STEP);
+  }
+  if (currentBounty?.state === BountyState.CANCELED) {
+    steps.push(BOUNTY_CANCELED_STEP);
+  }
+  if (!currentBounty.currentUserRelationsList) {
+    steps.push(APPLY_BOUNTY_STEP);
+  }
+  if (
+    currentBounty.isCreator ||
+    currentBounty.isCurrentSubmitter ||
+    currentBounty.isDeniedSubmitter ||
+    currentBounty.isChangesRequestedSubmitter
+  ) {
+    steps.push(VOTE_TO_CANCEL_STEP);
+  }
+  if (currentBounty.isCreator && currentBounty.needsToVote.length === 0) {
+    steps.push(CANCEL_STEP);
+  }
+  if (currentBounty.isRequestedSubmitter) {
+    steps.push(REQUEST_PENDING_STEP);
+  }
+  if (currentBounty.isDeniedRequester) {
+    steps.push(REQUEST_DENIED_STEP);
+  }
+  if (currentBounty.isApprovedSubmitter && !currentBounty.currentSubmitter) {
+    if (currentBounty.pullRequests.length === 0) {
+      steps.push(...SUBMIT_REQUEST_NEEDS_PULL_REQUEST_STEPS);
+    } else {
+      steps.push(...SUBMIT_REQUEST_HAS_PULL_REQUEST_STEPS);
+    }
+  }
+  if (currentBounty.isCurrentSubmitter) {
+    steps.push(SUBMISSION_PENDING_STEP);
+  }
+
+  if (currentBounty.isCurrentSubmitter) {
+    steps.push(SUBMISSION_DENIED_STEP);
+  }
+
+  if (currentBounty.isCreator && currentBounty.requestedSubmitters.length > 0) {
+    steps.push(...MANAGE_REQUESTED_SUBMITTER_STEPS);
+  }
+
+  if (currentBounty.isCreator && currentBounty.currentSubmitter) {
+    steps.push(...REVIEW_BOUNTY_STEPS);
+  }
+
+  return {
+    title: "Current Bounty Actions",
+    pages: ["bounty"],
+    isActive: true,
+    isRunning: true,
+    currentStep: 0,
+    spotlightClicks: false,
+    steps,
+  };
+};
 
 const TutorialRow: FC<{
   tutorial: Tutorial;
@@ -157,12 +239,7 @@ const TutorialsModal: FC<Props> = ({ showModal, setShowModal }) => {
   const wrapperRef = useRef(null);
   const router = useRouter();
 
-  const {
-    currentAPIKey,
-    setCurrentAPIKey,
-    setCurrentTutorialState,
-    currentTutorialState,
-  } = useLancer();
+  const { currentTutorialState, currentBounty } = useLancer();
   useOutsideAlerter(wrapperRef, () => {
     setShowModal(false);
   });
@@ -173,6 +250,11 @@ const TutorialsModal: FC<Props> = ({ showModal, setShowModal }) => {
       (tutorial.pages.includes(currentPage) || tutorial.pages.includes("all"))
     );
   });
+  if (currentPage === "bounty" && !!currentBounty) {
+    availableTutorials.push(
+      getCurrentBountyTutorialInitialState(currentBounty)
+    );
+  }
   const unavailableTutorials = ALL_TUTORIALS.filter((tutorial) => {
     return (
       currentTutorialState?.title !== tutorial.title &&

@@ -135,7 +135,7 @@ const LancerProvider: FunctionComponent<ILancerState> = ({
           ...currentTutorialState,
           currentStep: currentUser.hasProfileNFT ? 3 : 2,
           isRunning: true,
-          spotlightClicks: false,
+          spotlightClicks: !currentUser.hasProfileNFT,
         });
         return;
       }

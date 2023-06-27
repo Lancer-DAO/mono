@@ -1,4 +1,181 @@
+import { Step } from "react-joyride";
 import { Tutorial } from "../types/tutorials";
+
+export const BOUNTY_ACTIONS_WRAPPER_STEP: Step = {
+  target: "#bounty-actions",
+  content:
+    "This is the bounty actions section. Here, you will see buttons to manage the task based on its current state. We are going to walk through the process of both the Client and Freelancer to give you a full idea of the process.",
+  disableBeacon: true,
+  disableCloseOnEsc: false,
+};
+
+export const APPLY_BOUNTY_STEP: Step = {
+  target: "#apply-bounty-button",
+  content:
+    "As a freelancer, you can apply to the task here. This will allow you to work on the task. This is only viewable if you are not the issue creator.",
+  disableBeacon: true,
+  disableCloseOnEsc: false,
+};
+
+export const VOTE_TO_CANCEL_STEP: Step = {
+  target: "#vote-to-cancel-bounty-button",
+  content:
+    "Click this button to vote to cancel the bounty. The bounty creator, and any approved submitters can vote to cancel the bounty. If all parties vote to cancel, then the creator can cancel the bounty, and the funds will be returned to the bounty creator.",
+  disableBeacon: true,
+  disableCloseOnEsc: false,
+};
+
+export const CANCEL_STEP: Step = {
+  target: "#cancel-bounty-button",
+  content:
+    "Click this button to cancel the bounty and the funds will be returned to the bounty creator.",
+  disableBeacon: true,
+  disableCloseOnEsc: false,
+};
+
+export const BOUNTY_CANCELED_STEP: Step = {
+  target: "#bounty-canceled",
+  content:
+    "This bounty has been canceled. The funds have been returned to the bounty creator.",
+  disableBeacon: true,
+  disableCloseOnEsc: false,
+};
+
+export const BOUNTY_COMPLETED_STEP: Step = {
+  target: "#bounty-completed",
+  content:
+    "This bounty has been completed. The funds have been sent to the freelancer.",
+  disableBeacon: true,
+  disableCloseOnEsc: false,
+};
+
+export const REQUEST_PENDING_STEP: Step = {
+  target: "#request-pending",
+  content:
+    "You have requested to work on this bounty. The creator can approve or deny the request.",
+  disableBeacon: true,
+  disableCloseOnEsc: false,
+};
+
+export const REQUEST_DENIED_STEP: Step = {
+  target: "#request-denied",
+  content:
+    "Your request to work on this bounty has been denied. You can no longer work on this bounty.",
+  disableBeacon: true,
+  disableCloseOnEsc: false,
+};
+
+export const SUBMISSION_PENDING_STEP: Step = {
+  target: "#submission-pending",
+  content:
+    "You have submitted a pull request closing this issue. The client can approve, deny, or request changes on the submission.",
+  disableBeacon: true,
+  disableCloseOnEsc: false,
+};
+
+export const SUBMISSION_DENIED_STEP: Step = {
+  target: "#submission-denied",
+  content:
+    "Your submission has been denied. You can no longer make submissions for this bounty.",
+  disableBeacon: true,
+  disableCloseOnEsc: false,
+};
+
+export const MANAGE_REQUESTED_SUBMITTER_STEPS: Step[] = [
+  {
+    target: "#submitter-section-requested-0",
+    content:
+      "Here you can see an active request to submit. This means a freelancer would like to work on this bounty.",
+    disableBeacon: true,
+    disableCloseOnEsc: false,
+  },
+
+  {
+    target: "#submitter-section-deny-requested-0",
+    content:
+      "You can click this button to deny the application. This will remove the freelancer from the task and prevent them from making future applications.",
+    disableBeacon: true,
+    disableCloseOnEsc: false,
+  },
+
+  {
+    target: "#submitter-section-approve-requested-0",
+    content:
+      "Instead, you can click this button to approve the application. This will add the freelancer to the task and allow them to submit pull requests for review.",
+    disableBeacon: true,
+    disableCloseOnEsc: false,
+  },
+];
+
+export const SUBMIT_REQUEST_NEEDS_PULL_REQUEST_STEPS: Step[] = [
+  {
+    target: "#submit-request-bounty-button",
+    content:
+      "After you submit a Pull Request closing this issue, you will be able to submit!",
+    disableBeacon: true,
+    disableCloseOnEsc: false,
+  },
+  {
+    target: "#account-options",
+    content: "Before you do that, make sure you have the extension downloaded!",
+    disableBeacon: true,
+    disableCloseOnEsc: false,
+  },
+  {
+    target: "#download-extension-link",
+    content: "You can always download the extension and see instructions here.",
+    disableBeacon: true,
+    disableCloseOnEsc: false,
+  },
+];
+
+export const SUBMIT_REQUEST_HAS_PULL_REQUEST_STEPS: Step[] = [
+  {
+    target: "#task-pull-request-link",
+    content:
+      "Now that you have submitted a pull request closing this issue, you can see that is has been added to the bounty.",
+    disableBeacon: true,
+    disableCloseOnEsc: false,
+  },
+  {
+    target: "#submit-request-bounty-button",
+    content:
+      "You are now able to submit your request for review. This will allow the client to review your work and either approve, request changes, or deny it.",
+    disableBeacon: true,
+    disableCloseOnEsc: false,
+  },
+];
+
+export const REVIEW_BOUNTY_STEPS: Step[] = [
+  {
+    target: "#bounty-actions",
+    content:
+      "Now that you have submitted your work, you can see that the bounty actions have changed. You can either request changes on the submission, deny it, or approve it.",
+    disableBeacon: true,
+    disableCloseOnEsc: false,
+  },
+  {
+    target: "#request-changes-bounty-button",
+    content:
+      "Requesting changes on the task will send it back to the 'In Progress' state. This will allow the freelancer to make changes and resubmit.",
+    disableBeacon: true,
+    disableCloseOnEsc: false,
+  },
+  {
+    target: "#deny-submission-bounty-button",
+    content:
+      "Denying the submission will send it back to the 'Awaiting Applications' state. The freelancer will be removed from the task, and will not be able to make further submissions.",
+    disableBeacon: true,
+    disableCloseOnEsc: false,
+  },
+  {
+    target: "#approve-bounty-button",
+    content:
+      "Approving the submission will close the task, merge the pull request, and pay out the bounty. This will send the task to the 'Completed' state, and send completion badges to each involved party.",
+    disableBeacon: true,
+    disableCloseOnEsc: false,
+  },
+];
 
 export const CREATE_BOUNTY_TUTORIAL_INITIAL_STATE: Tutorial = {
   title: "Create Bounty Tutorial",
@@ -233,7 +410,7 @@ export const PROFILE_TUTORIAL_INITIAL_STATE: Tutorial = {
   isActive: true,
   isRunning: true,
   spotlightClicks: false,
-  manuallyControlledSteps: [1],
+  manuallyControlledSteps: [1, 2],
   steps: [
     {
       target: "#start-tutorial-link",
@@ -245,7 +422,7 @@ export const PROFILE_TUTORIAL_INITIAL_STATE: Tutorial = {
     {
       target: "#wallet-connect-button",
       content:
-        "First, you will need to connect your wallet. Click this button to connect your wallet.",
+        "First, you will need to connect your wallet. If you see this black indicator, it means the tutorial is awaiting your input. Click this button to connect your wallet.",
       disableBeacon: true,
       disableCloseOnEsc: false,
     },
@@ -396,13 +573,7 @@ export const BOUNTY_ACTIONS_TUTORIAL_I_INITIAL_STATE: Tutorial = {
   spotlightClicks: true,
   manuallyControlledSteps: [1, 4, 7],
   steps: [
-    {
-      target: "#bounty-actions",
-      content:
-        "This is the bounty actions section. Here, you will see buttons to manage the task based on its current state. We are going to walk through the process of both the Client and Freelancer to give you a full idea of the process.",
-      disableBeacon: true,
-      disableCloseOnEsc: false,
-    },
+    BOUNTY_ACTIONS_WRAPPER_STEP,
     {
       target: "#apply-bounty-button",
       content:
@@ -439,27 +610,7 @@ export const BOUNTY_ACTIONS_TUTORIAL_I_INITIAL_STATE: Tutorial = {
       disableBeacon: true,
       disableCloseOnEsc: false,
     },
-    {
-      target: "#submit-request-bounty-button",
-      content:
-        "After you submit a Pull Request closing this issue, you will be able to submit!",
-      disableBeacon: true,
-      disableCloseOnEsc: false,
-    },
-    {
-      target: "#account-options",
-      content:
-        "Before you do that, make sure you have the extension downloaded!",
-      disableBeacon: true,
-      disableCloseOnEsc: false,
-    },
-    {
-      target: "#download-extension-link",
-      content:
-        "You can always download the extension and see instructions here.",
-      disableBeacon: true,
-      disableCloseOnEsc: false,
-    },
+    ...SUBMIT_REQUEST_NEEDS_PULL_REQUEST_STEPS,
   ],
 };
 
@@ -472,48 +623,8 @@ export const BOUNTY_ACTIONS_TUTORIAL_II_INITIAL_STATE: Tutorial = {
   spotlightClicks: true,
   manuallyControlledSteps: [1, 5, 6, 7],
   steps: [
-    {
-      target: "#task-pull-request-link",
-      content:
-        "Now that you have submitted a pull request closing this issue, you can see that is has been added to the bounty.",
-      disableBeacon: true,
-      disableCloseOnEsc: false,
-    },
-    {
-      target: "#submit-request-bounty-button",
-      content:
-        "You are now able to submit your request for review. This will allow the client to review your work and either approve, request changes, or deny it.",
-      disableBeacon: true,
-      disableCloseOnEsc: false,
-    },
-    {
-      target: "#bounty-actions",
-      content:
-        "Now that you have submitted your work, you can see that the bounty actions have changed. You can either request changes on the submission, deny it, or approve it.",
-      disableBeacon: true,
-      disableCloseOnEsc: false,
-    },
-    {
-      target: "#request-changes-bounty-button",
-      content:
-        "Requesting changes on the task will send it back to the 'In Progress' state. This will allow the freelancer to make changes and resubmit.",
-      disableBeacon: true,
-      disableCloseOnEsc: false,
-    },
-    {
-      target: "#deny-submission-bounty-button",
-      content:
-        "Denying the submission will send it back to the 'Awaiting Applications' state. The freelancer will be removed from the task, and will not be able to make further submissions.",
-      disableBeacon: true,
-      disableCloseOnEsc: false,
-    },
-    {
-      target: "#approve-bounty-button",
-      content:
-        "Approving the submission will close the task, merge the pull request, and pay out the bounty. This will send the task to the 'Completed' state, and send completion badges to each involved party.",
-      disableBeacon: true,
-      disableCloseOnEsc: false,
-    },
+    ...SUBMIT_REQUEST_HAS_PULL_REQUEST_STEPS,
+    ...REVIEW_BOUNTY_STEPS,
     {
       target: "#account-options",
       content:

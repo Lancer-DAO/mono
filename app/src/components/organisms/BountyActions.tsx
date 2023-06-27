@@ -41,13 +41,29 @@ const BountyActions = () => {
     return <LoadingBar title="Loading On Chain Details" />;
   }
   if (currentBounty.state === BountyState.COMPLETE) {
-    return <Button disabled>Bounty Completed</Button>;
+    return (
+      <div className="bounty-buttons" id="bounty-actions">
+        <Button disabled id="bounty-completed">
+          Bounty Completed
+        </Button>
+      </div>
+    );
   }
   if (currentBounty.state === BountyState.CANCELED) {
-    return <Button disabled>Bounty Canceled</Button>;
+    return (
+      <div className="bounty-buttons" id="bounty-actions">
+        <Button disabled id="bounty-canceled">
+          Bounty Canceled
+        </Button>
+      </div>
+    );
   }
   if (!currentBounty.currentUserRelationsList) {
-    return <RequestToSubmit />;
+    return (
+      <div className="bounty-buttons" id="bounty-actions">
+        <RequestToSubmit />
+      </div>
+    );
   }
 
   return (
@@ -60,10 +76,14 @@ const BountyActions = () => {
             <RequestToSubmit />
           )}
         {currentBounty.isRequestedSubmitter && (
-          <Button disabled={true}>Request Pending</Button>
+          <Button disabled={true} id="request-pending">
+            Request Pending
+          </Button>
         )}
         {currentBounty.isDeniedRequester && (
-          <Button disabled>Submission Request Denied</Button>
+          <Button disabled id="request-denied">
+            Submission Request Denied
+          </Button>
         )}
         {currentBounty.isApprovedSubmitter &&
           !currentBounty.currentSubmitter && (
@@ -88,10 +108,14 @@ const BountyActions = () => {
             </div>
           )}
         {currentBounty.isCurrentSubmitter && !currentBounty.isCreator && (
-          <Button disabled>Submission Pending Review</Button>
+          <Button disabled id="submission-pending">
+            Submission Pending Review
+          </Button>
         )}
         {currentBounty.isDeniedSubmitter && (
-          <Button disabled>Submission Denied</Button>
+          <Button disabled id="submission-denied">
+            Submission Denied
+          </Button>
         )}
         {currentBounty.isChangesRequestedSubmitter && <SubmitRequest />}
         {currentBounty.isCreator &&

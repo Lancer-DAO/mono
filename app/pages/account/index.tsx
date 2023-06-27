@@ -30,7 +30,10 @@ import {
 } from "@underdog-protocol/js";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
-import { BOUNTY_ACTIONS_TUTORIAL_II_INITIAL_STATE } from "@/src/constants/tutorials";
+import {
+  BOUNTY_ACTIONS_TUTORIAL_II_INITIAL_STATE,
+  PROFILE_TUTORIAL_INITIAL_STATE,
+} from "@/src/constants/tutorials";
 dayjs.extend(relativeTime);
 
 const underdogClient = createUnderdogClient({});
@@ -159,6 +162,18 @@ const Account: React.FC = () => {
           ...currentTutorialState,
           isRunning: true,
         });
+      } else if (
+        currentTutorialState?.title === PROFILE_TUTORIAL_INITIAL_STATE.title &&
+        currentTutorialState.currentStep === 2
+      ) {
+        setTimeout(() => {
+          setCurrentTutorialState({
+            ...currentTutorialState,
+            isRunning: true,
+            currentStep: 3,
+            spotlightClicks: false,
+          });
+        }, 100);
       }
     };
     if (account && account.profileWalletId) {
@@ -167,24 +182,30 @@ const Account: React.FC = () => {
   }, [account]);
 
   const mintProfileNFT = async () => {
-    // if (isTutorialActive) {
-    //   setIsTutorialRunning(false);
-    // }
-    //   const result = await underdogClient.createNft({
-    //     params: PROFILE_PROJECT_PARAMS,
-    //     body: {
-    //       name: `${account.githubLogin}`,
-    //       image: "https://i.imgur.com/3uQq5Zo.png",
-    //       attributes: {
-    //         reputation: 0,
-    //         badges: "",
-    //         certifications: "",
-    //         lastUpdated: dayjs().toISOString(),
-    //       },
-    //       upsert: true,
-    //       receiverAddress: currentWallet.publicKey.toString(),
-    //     },
-    //   });
+    if (
+      currentTutorialState?.title === PROFILE_TUTORIAL_INITIAL_STATE.title &&
+      currentTutorialState.currentStep === 2
+    ) {
+      setCurrentTutorialState({
+        ...currentTutorialState,
+        isRunning: false,
+      });
+    }
+    const result = await underdogClient.createNft({
+      params: PROFILE_PROJECT_PARAMS,
+      body: {
+        name: `${account.githubLogin}`,
+        image: "https://i.imgur.com/3uQq5Zo.png",
+        attributes: {
+          reputation: 0,
+          badges: "",
+          certifications: "",
+          lastUpdated: dayjs().toISOString(),
+        },
+        upsert: true,
+        receiverAddress: currentWallet.publicKey.toString(),
+      },
+    });
     const updatedUser = await registerProfileNFT({
       walletPublicKey: currentWallet.publicKey.toString(),
     });
