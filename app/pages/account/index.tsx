@@ -174,7 +174,7 @@ const Account: React.FC = () => {
     <DefaultLayout>
       {account && (
         <div className="account-page-wrapper">
-          <ApiKeyModal showModal={showModal} setShowModal={setShowModal} />
+          {/* <ApiKeyModal showModal={showModal} setShowModal={setShowModal} /> */}
 
           <button
             onClick={() => setShowModal(true)}
