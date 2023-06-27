@@ -32,7 +32,7 @@ const SubmitterSection: React.FC<SubmitterSectionProps> = ({
     setCurrentBounty,
   } = useLancer();
   const { mutateAsync } = api.bounties.updateBountyUser.useMutation();
-  const { referrer, getRemainingAccounts } = useReferral()
+  const { referrer, getRemainingAccounts } = useReferral();
 
   const handleSubmitter = async (cancel?: boolean) => {
     switch (type) {
@@ -77,45 +77,47 @@ const SubmitterSection: React.FC<SubmitterSectionProps> = ({
       case "requested":
         {
           // try {
-            if (cancel) {
-              const { updatedBounty } = await mutateAsync({
-                bountyId: currentBounty.id,
-                currentUserId: currentUser.id,
-                userId: submitter.userid,
-                relations: [BOUNTY_USER_RELATIONSHIP.DeniedRequester],
-                publicKey: currentWallet.publicKey.toString(),
-                escrowId: currentBounty.escrowid,
-                signature: "n/a",
-                label: "deny-submitter",
-              });
-              setCurrentBounty(updatedBounty);
-            } else {
-              console.log(submitter)
-              const remainingAccounts = await getRemainingAccounts(new PublicKey(submitter.publicKey));
-              console.log('ici?', submitter, remainingAccounts)
-              const signature = await addSubmitterFFA(
-                new PublicKey(submitter.publicKey),
-                currentBounty.escrow,
-                currentWallet,
-                referrer,
-                remainingAccounts,
-                program,
-                provider
-              );
-              const { updatedBounty } = await mutateAsync({
-                bountyId: currentBounty.id,
-                userId: submitter.userid,
-                currentUserId: currentUser.id,
-                relations: [BOUNTY_USER_RELATIONSHIP.ApprovedSubmitter],
-                state: BountyState.IN_PROGRESS,
-                publicKey: currentWallet.publicKey.toString(),
-                escrowId: currentBounty.escrowid,
-                signature,
-                label: "add-approved-submitter",
-              });
+          if (cancel) {
+            const { updatedBounty } = await mutateAsync({
+              bountyId: currentBounty.id,
+              currentUserId: currentUser.id,
+              userId: submitter.userid,
+              relations: [BOUNTY_USER_RELATIONSHIP.DeniedRequester],
+              publicKey: currentWallet.publicKey.toString(),
+              escrowId: currentBounty.escrowid,
+              signature: "n/a",
+              label: "deny-submitter",
+            });
+            setCurrentBounty(updatedBounty);
+          } else {
+            console.log(submitter);
+            const remainingAccounts = await getRemainingAccounts(
+              new PublicKey(submitter.publicKey)
+            );
+            console.log("ici?", submitter, remainingAccounts);
+            const signature = await addSubmitterFFA(
+              new PublicKey(submitter.publicKey),
+              currentBounty.escrow,
+              currentWallet,
+              referrer,
+              remainingAccounts,
+              program,
+              provider
+            );
+            // const { updatedBounty } = await mutateAsync({
+            //   bountyId: currentBounty.id,
+            //   userId: submitter.userid,
+            //   currentUserId: currentUser.id,
+            //   relations: [BOUNTY_USER_RELATIONSHIP.ApprovedSubmitter],
+            //   state: BountyState.IN_PROGRESS,
+            //   publicKey: currentWallet.publicKey.toString(),
+            //   escrowId: currentBounty.escrowid,
+            //   signature,
+            //   label: "add-approved-submitter",
+            // });
 
-              setCurrentBounty(updatedBounty);
-            }
+            // setCurrentBounty(updatedBounty);
+          }
           // } catch (e) {
           //   console.error(e);
           // }
