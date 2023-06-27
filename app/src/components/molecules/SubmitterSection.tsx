@@ -11,6 +11,7 @@ import { ContributorInfo } from "@/src/components/";
 import { Check, X } from "react-feather";
 import { PublicKey } from "@solana/web3.js";
 import { api } from "@/src/utils/api";
+import { useReferral } from "@/src/providers/referralProvider";
 
 export type SubmitterSectionType = "approved" | "requested";
 interface SubmitterSectionProps {
@@ -31,6 +32,7 @@ const SubmitterSection: React.FC<SubmitterSectionProps> = ({
     setCurrentBounty,
   } = useLancer();
   const { mutateAsync } = api.bounties.updateBountyUser.useMutation();
+  const { referrer, getRemainingAccounts } = useReferral()
 
   const handleSubmitter = async (cancel?: boolean) => {
     switch (type) {
@@ -74,7 +76,7 @@ const SubmitterSection: React.FC<SubmitterSectionProps> = ({
         break;
       case "requested":
         {
-          try {
+          // try {
             if (cancel) {
               const { updatedBounty } = await mutateAsync({
                 bountyId: currentBounty.id,
@@ -88,10 +90,15 @@ const SubmitterSection: React.FC<SubmitterSectionProps> = ({
               });
               setCurrentBounty(updatedBounty);
             } else {
+              console.log(submitter)
+              const remainingAccounts = await getRemainingAccounts(new PublicKey(submitter.publicKey));
+              console.log('ici?', submitter, remainingAccounts)
               const signature = await addSubmitterFFA(
                 new PublicKey(submitter.publicKey),
                 currentBounty.escrow,
                 currentWallet,
+                referrer,
+                remainingAccounts,
                 program,
                 provider
               );
@@ -109,9 +116,9 @@ const SubmitterSection: React.FC<SubmitterSectionProps> = ({
 
               setCurrentBounty(updatedBounty);
             }
-          } catch (e) {
-            console.error(e);
-          }
+          // } catch (e) {
+          //   console.error(e);
+          // }
         }
         break;
     }

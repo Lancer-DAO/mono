@@ -4,7 +4,7 @@ import {
 } from "@solana/web3.js";
 import { AnchorProvider, Program} from "@project-serum/anchor";
 import { MonoProgram } from "@/escrow/sdk/types/mono_program";
-import {  removeApprovedSubmittersInstruction,
+import {  removeApprovedSubmittersInstruction, removeApprovedSubmittersV1Instruction,
 } from "@/escrow/sdk/instructions";
 import { Escrow } from "@prisma/client";
 import { LancerWallet } from "@/src/types";
@@ -13,7 +13,7 @@ import { LancerWallet } from "@/src/types";
 
 export const removeSubmitterFFA = async (submitter: PublicKey, acc: Escrow, wallet: LancerWallet, program: Program<MonoProgram>, provider: AnchorProvider) => {
 
-      let approveSubmitterIx = await removeApprovedSubmittersInstruction(
+      let approveSubmitterIx = await removeApprovedSubmittersV1Instruction(
         acc.timestamp,
         new PublicKey(wallet.publicKey),
         submitter,

@@ -1,7 +1,7 @@
 import { AccountMeta, PublicKey, Transaction } from "@solana/web3.js";
 import { AnchorProvider, Program } from "@project-serum/anchor";
 import { MonoProgram } from "@/escrow/sdk/types/mono_program";
-import { addApprovedSubmittersInstruction } from "@/escrow/sdk/instructions";
+import { addApprovedSubmittersInstruction, addApprovedSubmittersV1Instruction } from "@/escrow/sdk/instructions";
 
 import { Escrow, LancerWallet } from "@/src/types";
 
@@ -9,13 +9,15 @@ export const addSubmitterFFA = async (
   submitter: PublicKey,
   acc: Escrow,
   wallet: LancerWallet,
+  referrer: PublicKey,
   remainingAccounts: AccountMeta[],
   program: Program<MonoProgram>,
   provider: AnchorProvider
 ) => {
-  let approveSubmitterIx = await addApprovedSubmittersInstruction(
+  let approveSubmitterIx = await addApprovedSubmittersV1Instruction(
     acc.timestamp,
     new PublicKey(wallet.publicKey),
+    referrer,
     submitter,
     remainingAccounts,
     program

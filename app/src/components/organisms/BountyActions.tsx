@@ -123,16 +123,17 @@ const RequestToSubmit = () => {
   } = useLancer();
   const { mutateAsync } = api.bounties.updateBountyUser.useMutation();
 
-  const { createReferralMember, getRemainingAccounts } = useReferral();
+  const { createReferralMember, getRemainingAccounts, referrer } = useReferral();
 
   const onClick = async () => {
     if (currentBounty.isCreator) {
       // If we are the creator, then skip requesting and add self as approved
-      const remainingAccounts = await getRemainingAccounts();
+      const remainingAccounts = await getRemainingAccounts(currentWallet.publicKey);
       const signature = await addSubmitterFFA(
         currentWallet.publicKey,
         currentBounty.escrow,
         currentWallet,
+        referrer,
         remainingAccounts,
         program,
         provider
@@ -160,6 +161,7 @@ const RequestToSubmit = () => {
       const referralKey = result?.memberPDA;
       const signature = result?.txId;
 
+      console.log('out here?', referralKey)
       // Request to submit. Does not interact on chain
       const { updatedBounty } = await mutateAsync({
         currentUserId: currentUser.id,

@@ -9,11 +9,10 @@ import {
   useMemo,
   useState,
 } from "react";
-import { Client, Member, Treasury } from "@ladderlabs/buddy-sdk";
+import { Client, Member, Organization, Treasury } from "@ladderlabs/buddy-sdk";
 import { PublicKey, Transaction } from "@solana/web3.js";
 import { IReferralContext } from "./types";
-import { createHash } from "crypto";
-import * as crypto from "crypto";
+import { getAssociatedTokenAddressSync } from "@solana/spl-token";
 
 const ORGANIZATION_NAME = "lancer";
 
@@ -24,7 +23,7 @@ export const ReferralContext = createContext<IReferralContext>({
   referralId: "",
   claimable: 0,
   initialized: false,
-  referrer: "",
+  referrer: PublicKey.default,
   claim: () => null,
   createReferralMember: () => null,
   getRemainingAccounts: async () => [],
@@ -48,14 +47,16 @@ const ReferralProvider: FunctionComponent<IReferralProps> = ({ children }) => {
   const [client, setClient] = useState<Client | null>(null);
   const [treasury, setTreasury] = useState<Treasury | null>(null);
   const [member, setMember] = useState<Member | null>(null);
+  const [organization, setOrganization] = useState<Organization | null>(null);
   const [claimable, setClaimable] = useState(0);
-  const [referrer, setReferrer] = useState("");
+  const [cachedReferrer, setCachedReferrer] = useState("");
 
   const handleFetches = useCallback(async () => {
     try {
       const organization = await client.organization.getByName(
         ORGANIZATION_NAME
       );
+      setOrganization(organization)
 
       const buddyProfile = await client.buddy.getProfile(publicKey);
       if (!buddyProfile) {
@@ -106,7 +107,6 @@ const ReferralProvider: FunctionComponent<IReferralProps> = ({ children }) => {
 
       return { txId: signature };
     } catch (e) {
-      console.log(e);
       return null;
     }
   }, [treasury, publicKey, connection]);
@@ -134,7 +134,7 @@ const ReferralProvider: FunctionComponent<IReferralProps> = ({ children }) => {
         ...(await client.initialize.createMember(
           ORGANIZATION_NAME,
           name,
-          referrer
+          cachedReferrer
         ))
       );
 
@@ -145,65 +145,28 @@ const ReferralProvider: FunctionComponent<IReferralProps> = ({ children }) => {
 
       return { txId: signature, memberPDA };
     } catch (e) {
-      console.log("dafuq", e);
       return null;
     }
-  }, [client, member, referrer, publicKey]);
+  }, [client, member, cachedReferrer, publicKey]);
 
-  const getRemainingAccounts = useCallback(async () => {
+  const getRemainingAccounts = useCallback(async (wallet: PublicKey) => {
     if (!client) throw CLIENT_NOT_SET;
     const organization = await client.organization.getByName(ORGANIZATION_NAME);
 
-    // const remainingAccounts = await client.initialize.validateReferrerAccounts(
-    //   organization.account.mainTokenMint,
-    //   member.account.pda
-    // );
-    const remainingAccounts: any = {};
+    const buddyProfile = await client.buddy.getProfile(wallet);
+    if(!buddyProfile) return [];
+    const treasury = await client.treasury.getByBuddy(buddyProfile);
+    if(!treasury) return [];
+    const member = (await client.member.getByTreasuryOwner(treasury.account.pda))[0]
+    const remainingAccounts = await client.initialize.validateReferrerAccounts(
+      organization.account.mainTokenMint,
+      member.account.pda
+    );
+    console.log(JSON.stringify(remainingAccounts))
 
     if (remainingAccounts.member.toString() === PublicKey.default.toString()) {
-      // pass default
-      return [
-        // {
-        //   pubkey: remainingAccounts.programId,
-        //   isWritable: false,
-        //   isSigner: false,
-        // },
-        // {
-        //   pubkey: remainingAccounts.buddyProfile,
-        //   isWritable: false,
-        //   isSigner: false,
-        // },
-        // {
-        //   pubkey: remainingAccounts.buddy,
-        //   isWritable: false,
-        //   isSigner: false,
-        // },
-        // {
-        //   pubkey: remainingAccounts.member,
-        //   isWritable: false,
-        //   isSigner: false,
-        // },
-        // {
-        //   pubkey: remainingAccounts.referrerTreasury,
-        //   isWritable: false,
-        //   isSigner: false,
-        // },
-        // {
-        //   pubkey: remainingAccounts.referrerTreasuryReward,
-        //   isWritable: false,
-        //   isSigner: false,
-        // },
-        // {
-        //   pubkey: remainingAccounts.mint,
-        //   isWritable: false,
-        //   isSigner: false,
-        // },
-        // {
-        //   pubkey: remainingAccounts.referrerATA,
-        //   isWritable: false,
-        //   isSigner: false,
-        // },
-      ];
+      console.log('faak me')
+      return [];
     }
 
     return [
@@ -257,8 +220,20 @@ const ReferralProvider: FunctionComponent<IReferralProps> = ({ children }) => {
     return "";
   }, [member]);
 
+  const referrer = useMemo(() => {
+    if(member && member.account.referrer.toString() !== PublicKey.default.toString()){
+      if(organization.account.mainTokenMint.toString() === PublicKey.default.toString()){
+        return member.account.referrer;
+      } else {
+        return getAssociatedTokenAddressSync(organization.account.mainTokenMint,member.account.referrer, true)
+      }
+    }
+
+    return PublicKey.default;
+  }, [member])
+
   useEffect(() => {
-    setReferrer(localStorage.getItem("referrer"));
+    setCachedReferrer(localStorage.getItem("referrer"));
   }, []);
 
   useEffect(() => {
