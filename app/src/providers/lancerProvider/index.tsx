@@ -143,6 +143,12 @@ const LancerProvider: FunctionComponent<ILancerState> = ({
   }, [connected]);
 
   useEffect(() => {
+    const getUser = async () => {
+      console.log("logging in user");
+      const userInfo = await getCurrUser();
+      console.log("login response", userInfo);
+      setCurrentUser(userInfo);
+    };
     if (user) {
       const getUser = async () => {
         try {

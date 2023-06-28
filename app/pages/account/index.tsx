@@ -9,6 +9,7 @@ import {
   Button,
   BountyNFTCard,
   JoyrideWrapper,
+  ApiKeyModal,
 } from "@/src/components";
 import {
   BOUNTY_PROJECT_PARAMS,
@@ -34,6 +35,8 @@ import {
   BOUNTY_ACTIONS_TUTORIAL_II_INITIAL_STATE,
   PROFILE_TUTORIAL_INITIAL_STATE,
 } from "@/src/constants/tutorials";
+import BountyNFTCard from "@/src/components/molecules/BountyNFTCard";
+import { Key } from "react-feather";
 dayjs.extend(relativeTime);
 
 const underdogClient = createUnderdogClient({});
@@ -66,6 +69,8 @@ const Account: React.FC = () => {
   const [bountyNFTs, setBountyNFTs] = useState<BountyNFT[]>([]);
   const { mutateAsync: getUser } = api.users.getUser.useMutation();
   const [account, setAccount] = useState<CurrentUser>();
+  const [showModal, setShowModal] = useState(false);
+  const { currentAPIKey } = useLancer();
 
   const { mutateAsync: registerProfileNFT } =
     api.users.registerProfileNFT.useMutation();
@@ -216,8 +221,17 @@ const Account: React.FC = () => {
     <DefaultLayout>
       {account && (
         <>
-          <div className="account-page-wrapper">
-            {/* {currentUser?.githubLogin && (
+        <div className="account-page-wrapper">
+          {/* <ApiKeyModal showModal={showModal} setShowModal={setShowModal} /> */}
+
+          <button
+            onClick={() => setShowModal(true)}
+            className="flex h-[48px] w-full gap-[10px] py-[6px] items-center justify-center border-b-gray-400 border-b-[1px] hover:bg-turquoise-500 text-gray-800 hover:text-white-100 transition-colors duration-300 ease-in-out"
+          >
+            <Key />
+            {currentAPIKey ? currentAPIKey.name : "Set API Key"}
+          </button>
+          {/* {currentUser?.githubLogin && (
             <div>GitHub User: {currentUser.githubLogin}</div>
           )}
           <a href="/api/auth/logout">Logout</a> */}
