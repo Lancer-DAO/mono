@@ -43,6 +43,7 @@ export const LancerContext = createContext<ILancerContext>({
   currentAPIKey: null,
   currentTutorialState: null,
   isRouterReady: false,
+  isMobile: false,
   setCurrentTutorialState: () => null,
   setCurrentAPIKey: () => null,
   setIssue: () => null,
@@ -95,6 +96,14 @@ const LancerProvider: FunctionComponent<ILancerState> = ({
   const [provider, setProvider] = useState<AnchorProvider>();
   const [program, setProgram] = useState<Program<MonoProgram>>();
   const [currentAPIKey, setCurrentAPIKey] = useState<APIKeyInfo>();
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const userAgent = window.navigator.userAgent;
+    const isMobileDevice =
+      /Mobile|iP(hone|od|ad)|Android|BlackBerry|IEMobile/.test(userAgent);
+    setIsMobile(isMobileDevice);
+  }, []);
 
   useEffect(() => {
     const apiKeys = JSON.parse(localStorage.getItem("apiKeys") || "[]");
@@ -192,6 +201,7 @@ const LancerProvider: FunctionComponent<ILancerState> = ({
     currentTutorialState,
     setCurrentTutorialState,
     isRouterReady: router.isReady,
+    isMobile,
   };
   return (
     <LancerContext.Provider value={contextProvider}>

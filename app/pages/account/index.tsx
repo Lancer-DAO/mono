@@ -61,6 +61,7 @@ const Account: React.FC = () => {
     currentWallet,
     currentTutorialState,
     setCurrentTutorialState,
+    isMobile,
   } = useLancer();
   const [showCoinflow, setShowCoinflow] = useState(false);
   const [showTutorial, setShowTutorial] = useState(false);
@@ -223,13 +224,15 @@ const Account: React.FC = () => {
           <div className="account-page-wrapper">
             {/* <ApiKeyModal showModal={showModal} setShowModal={setShowModal} /> */}
 
-            <button
-              onClick={() => setShowModal(true)}
-              className="flex h-[48px] w-full gap-[10px] py-[6px] items-center justify-center border-b-gray-400 border-b-[1px] hover:bg-turquoise-500 text-gray-800 hover:text-white-100 transition-colors duration-300 ease-in-out"
-            >
-              <Key />
-              {currentAPIKey ? currentAPIKey.name : "Set API Key"}
-            </button>
+            {isMobile && (
+              <button
+                onClick={() => setShowModal(true)}
+                className="flex h-[48px] w-full gap-[10px] py-[6px] items-center justify-center border-b-gray-400 border-b-[1px] hover:bg-turquoise-500 text-gray-800 hover:text-white-100 transition-colors duration-300 ease-in-out"
+              >
+                <Key />
+                {currentAPIKey ? currentAPIKey.name : "Set API Key"}
+              </button>
+            )}
             {/* {currentUser?.githubLogin && (
             <div>GitHub User: {currentUser.githubLogin}</div>
           )}
