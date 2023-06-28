@@ -8,13 +8,21 @@ import { api } from "@/src/utils/api";
 import { Octokit } from "octokit";
 import { PublicKey } from "@solana/web3.js";
 import { FORM_SECTION } from "@/pages/create";
+import { CREATE_BOUNTY_TUTORIAL_INITIAL_STATE } from "@/src/constants/tutorials";
 
 const Form: React.FC<{
   setFormSection: (section: FORM_SECTION) => void;
   createAccountPoll: (publicKey: PublicKey) => void;
 }> = ({ setFormSection, createAccountPoll }) => {
-  const { currentWallet, program, provider, currentUser, setCurrentBounty } =
-    useLancer();
+  const {
+    currentWallet,
+    program,
+    provider,
+    currentUser,
+    setCurrentBounty,
+    currentTutorialState,
+    setCurrentTutorialState,
+  } = useLancer();
   const { mutateAsync } = api.bounties.createBounty.useMutation();
   const { mutateAsync: createIssue } = api.issues.createIssue.useMutation();
   const [creationType, setCreationType] = useState<"new" | "existing">("new");
@@ -41,7 +49,19 @@ const Form: React.FC<{
   const [isPreview, setIsPreview] = useState(false);
   const [isSubmittingIssue, setIsSubmittingIssue] = useState(false);
 
-  const toggleOpenRepo = () => setIsOpenRepo(!isOpenRepo);
+  const toggleOpenRepo = () => {
+    setIsOpenRepo(!isOpenRepo);
+    if (
+      currentTutorialState?.title ===
+        CREATE_BOUNTY_TUTORIAL_INITIAL_STATE.title &&
+      currentTutorialState.currentStep === 0
+    ) {
+      setCurrentTutorialState({
+        ...currentTutorialState,
+        isRunning: false,
+      });
+    }
+  };
   const toggleOpenIssue = () => setIsOpenIssue(!isOpenIssue);
   const togglePreview = () => setIsPreview(!isPreview);
 
@@ -69,6 +89,16 @@ const Form: React.FC<{
 
   const createBounty = async () => {
     setIsSubmittingIssue(true);
+    if (
+      currentTutorialState?.title ===
+        CREATE_BOUNTY_TUTORIAL_INITIAL_STATE.title &&
+      currentTutorialState.currentStep === 5
+    ) {
+      setCurrentTutorialState({
+        ...currentTutorialState,
+        isRunning: false,
+      });
+    }
 
     let issueNumber = issue ? issue.number : null;
     const [organizationName, repositoryName] = repo.full_name.split("/");
@@ -127,6 +157,7 @@ const Form: React.FC<{
       currentUserId: currentUser.id,
     });
     setFormSection("FUND");
+
     setCurrentBounty(issueResp);
   };
 
@@ -153,6 +184,19 @@ const Form: React.FC<{
     const repo = repos.find((_repo) => _repo.full_name === repoFullName);
     setRepo(repo);
     getRepoIssues(repo);
+    if (
+      currentTutorialState?.title ===
+        CREATE_BOUNTY_TUTORIAL_INITIAL_STATE.title &&
+      currentTutorialState.currentStep === 0
+    ) {
+      setTimeout(() => {
+        setCurrentTutorialState({
+          ...currentTutorialState,
+          isRunning: true,
+          currentStep: 1,
+        });
+      }, 100);
+    }
   };
 
   const handleChangeIssue = (issueNumber: number) => {
@@ -225,7 +269,10 @@ const Form: React.FC<{
                   className="w-dropdown"
                   onClick={toggleOpenRepo}
                 >
-                  <main className="dropdown-toggle-2 w-dropdown-toggle">
+                  <main
+                    className="dropdown-toggle-2 w-dropdown-toggle"
+                    id="repo-dropdown-select"
+                  >
                     {
                       <>
                         <div className="w-icon-dropdown-toggle"></div>
@@ -293,9 +340,63 @@ const Form: React.FC<{
                     className="input w-input"
                     name="issueTitle"
                     placeholder="Ex. Add New Feature "
-                    id="Issue"
+                    id="issue-title-input"
                     value={formData.issueTitle}
                     onChange={handleChange}
+                    onBlur={() => {
+                      if (
+                        formData.issueTitle !== "" &&
+                        !!currentTutorialState &&
+                        currentTutorialState.isActive
+                      ) {
+                        if (
+                          currentTutorialState?.title ===
+                            CREATE_BOUNTY_TUTORIAL_INITIAL_STATE.title &&
+                          currentTutorialState.currentStep === 1
+                        ) {
+                          setCurrentTutorialState({
+                            ...currentTutorialState,
+                            currentStep: 2,
+                          });
+                        }
+                      }
+                    }}
+                    onMouseLeave={() => {
+                      if (
+                        formData.issueTitle !== "" &&
+                        !!currentTutorialState &&
+                        currentTutorialState.isActive
+                      ) {
+                        if (
+                          currentTutorialState?.title ===
+                            CREATE_BOUNTY_TUTORIAL_INITIAL_STATE.title &&
+                          currentTutorialState.currentStep === 1
+                        ) {
+                          setCurrentTutorialState({
+                            ...currentTutorialState,
+                            currentStep: 2,
+                            isRunning: true,
+                          });
+                        }
+                      }
+                    }}
+                    onFocus={() => {
+                      if (
+                        !!currentTutorialState &&
+                        currentTutorialState.isActive
+                      ) {
+                        if (
+                          currentTutorialState?.title ===
+                            CREATE_BOUNTY_TUTORIAL_INITIAL_STATE.title &&
+                          currentTutorialState.currentStep === 1
+                        ) {
+                          setCurrentTutorialState({
+                            ...currentTutorialState,
+                            isRunning: false,
+                          });
+                        }
+                      }
+                    }}
                   />
                 </div>
                 <div>
@@ -309,7 +410,61 @@ const Form: React.FC<{
                     value={formData.estimatedTime}
                     onChange={handleChange}
                     placeholder="Ex. 3 (hours)"
-                    id="Issue-Description"
+                    id="issue-time-input"
+                    onBlur={() => {
+                      if (
+                        formData.estimatedTime !== "" &&
+                        !!currentTutorialState &&
+                        currentTutorialState.isActive
+                      ) {
+                        if (
+                          currentTutorialState?.title ===
+                            CREATE_BOUNTY_TUTORIAL_INITIAL_STATE.title &&
+                          currentTutorialState.currentStep === 3
+                        ) {
+                          setCurrentTutorialState({
+                            ...currentTutorialState,
+                            currentStep: 3,
+                          });
+                        }
+                      }
+                    }}
+                    onMouseLeave={() => {
+                      if (
+                        formData.estimatedTime !== "" &&
+                        !!currentTutorialState &&
+                        currentTutorialState.isActive
+                      ) {
+                        if (
+                          currentTutorialState?.title ===
+                            CREATE_BOUNTY_TUTORIAL_INITIAL_STATE.title &&
+                          currentTutorialState.currentStep === 2
+                        ) {
+                          setCurrentTutorialState({
+                            ...currentTutorialState,
+                            currentStep: 3,
+                            isRunning: true,
+                          });
+                        }
+                      }
+                    }}
+                    onFocus={() => {
+                      if (
+                        !!currentTutorialState &&
+                        currentTutorialState.isActive
+                      ) {
+                        if (
+                          currentTutorialState?.title ===
+                            CREATE_BOUNTY_TUTORIAL_INITIAL_STATE.title &&
+                          currentTutorialState.currentStep === 2
+                        ) {
+                          setCurrentTutorialState({
+                            ...currentTutorialState,
+                            isRunning: false,
+                          });
+                        }
+                      }
+                    }}
                   />
                 </div>
                 <div>
@@ -323,7 +478,61 @@ const Form: React.FC<{
                     value={formData.requirements}
                     onChange={handleRequirementsChange}
                     placeholder="list seperated by commas"
-                    id="Job-Location-2"
+                    id="issue-requirements-input"
+                    onBlur={() => {
+                      if (
+                        formData.requirements.length !== 0 &&
+                        !!currentTutorialState &&
+                        currentTutorialState.isActive
+                      ) {
+                        if (
+                          currentTutorialState?.title ===
+                            CREATE_BOUNTY_TUTORIAL_INITIAL_STATE.title &&
+                          currentTutorialState.currentStep === 3
+                        ) {
+                          setCurrentTutorialState({
+                            ...currentTutorialState,
+                            currentStep: 4,
+                          });
+                        }
+                      }
+                    }}
+                    onMouseLeave={() => {
+                      if (
+                        formData.requirements.length !== 0 &&
+                        !!currentTutorialState &&
+                        currentTutorialState.isActive
+                      ) {
+                        if (
+                          currentTutorialState?.title ===
+                            CREATE_BOUNTY_TUTORIAL_INITIAL_STATE.title &&
+                          currentTutorialState.currentStep === 3
+                        ) {
+                          setCurrentTutorialState({
+                            ...currentTutorialState,
+                            currentStep: 4,
+                            isRunning: true,
+                          });
+                        }
+                      }
+                    }}
+                    onFocus={() => {
+                      if (
+                        !!currentTutorialState &&
+                        currentTutorialState.isActive
+                      ) {
+                        if (
+                          currentTutorialState?.title ===
+                            CREATE_BOUNTY_TUTORIAL_INITIAL_STATE.title &&
+                          currentTutorialState.currentStep === 3
+                        ) {
+                          setCurrentTutorialState({
+                            ...currentTutorialState,
+                            isRunning: false,
+                          });
+                        }
+                      }
+                    }}
                   />
                 </div>
                 <div
@@ -351,19 +560,73 @@ const Form: React.FC<{
                     />
                   ) : (
                     <textarea
-                      id="Job-Description"
+                      id="issue-description-input"
                       name="issueDescription"
                       value={formData.issueDescription}
                       onChange={handleDescriptionChange}
                       placeholder="Provide a step by step breakdown of what is needed to complete the task. Include criteria that will determine success. **Markdown Supported** "
                       className="textarea w-input"
+                      onBlur={() => {
+                        if (
+                          formData.issueDescription !== "" &&
+                          !!currentTutorialState &&
+                          currentTutorialState.isActive
+                        ) {
+                          if (
+                            currentTutorialState?.title ===
+                              CREATE_BOUNTY_TUTORIAL_INITIAL_STATE.title &&
+                            currentTutorialState.currentStep === 4
+                          ) {
+                            setCurrentTutorialState({
+                              ...currentTutorialState,
+                              currentStep: 5,
+                            });
+                          }
+                        }
+                      }}
+                      onMouseLeave={() => {
+                        if (
+                          formData.issueDescription !== "" &&
+                          !!currentTutorialState &&
+                          currentTutorialState.isActive
+                        ) {
+                          if (
+                            currentTutorialState?.title ===
+                              CREATE_BOUNTY_TUTORIAL_INITIAL_STATE.title &&
+                            currentTutorialState.currentStep === 4
+                          ) {
+                            setCurrentTutorialState({
+                              ...currentTutorialState,
+                              currentStep: 5,
+                              isRunning: true,
+                            });
+                          }
+                        }
+                      }}
+                      onFocus={() => {
+                        if (
+                          !!currentTutorialState &&
+                          currentTutorialState.isActive
+                        ) {
+                          if (
+                            currentTutorialState?.title ===
+                              CREATE_BOUNTY_TUTORIAL_INITIAL_STATE.title &&
+                            currentTutorialState.currentStep === 4
+                          ) {
+                            setCurrentTutorialState({
+                              ...currentTutorialState,
+                              isRunning: false,
+                            });
+                          }
+                        }
+                      }}
                     />
                   )}
                 </div>
                 <div className="required-helper">
                   <span className="color-red">* </span> Required
                 </div>
-                <label className="w-checkbox checkbox-field-2">
+                {/* <label className="w-checkbox checkbox-field-2">
                   <div
                     className={classnames(
                       "w-checkbox-input w-checkbox-input--inputType-custom checkbox",
@@ -382,7 +645,7 @@ const Form: React.FC<{
                   <p className="check-paragraph">
                     Only GitHub collaborators will have access to see this.
                   </p>
-                </label>
+                </label> */}
 
                 <Button
                   disabled={
@@ -397,6 +660,7 @@ const Form: React.FC<{
                       : "Please fill all required fields"
                   }
                   onClick={createBounty}
+                  id="create-bounty-button"
                 >
                   {failedToCreateIssue
                     ? "Failed to Create Issue"
@@ -498,6 +762,7 @@ const Form: React.FC<{
                       : "Please fill all required fields"
                   }
                   onClick={createBounty}
+                  id="create-bounty-button"
                 >
                   {failedToCreateIssue ? "Failed to Create Issue" : "Submit"}
                 </Button>

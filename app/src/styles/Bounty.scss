@@ -647,7 +647,8 @@
 
 
 .account-page-wrapper {
-  display: flex;
+  display: grid;
+  grid-template-columns: 300px 1fr;
   flex-direction: row;
   @media only screen and (max-width: 767px) {
     flex-direction: column;

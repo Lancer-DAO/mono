@@ -1,33 +1,37 @@
 import Link from "next/link";
 import Logo from "../../assets/Logo";
-import { useLancer } from "@/src/providers";
-import { getWalletProviderImage } from "@/src/utils";
-import { useState } from "react";
-
-import styles from "@/styles/Home.module.css";
-import { LinkButton, ApiKeyModal } from "@/src/components/";
+import {
+  LinkButton,
+  AccountHeaderOptions,
+  TutorialsModal,
+} from "@/src/components/";
 import { LinkButtonProps } from "@/src/components/atoms/LinkButton";
-import AccountHeaderOptions from "../molecules/AccountHeaderOptions";
 import dynamic from "next/dynamic";
+import { HelpCircle } from "react-feather";
+import { useLancer } from "@/src/providers";
+import { useState } from "react";
+import { PROFILE_TUTORIAL_INITIAL_STATE } from "@/src/constants/tutorials";
 const HEADER_LINKS: LinkButtonProps[] = [
-  { href: "/create", children: "New Bounty" },
-  { href: "/bounties", children: "Bounties" },
+  { href: "/create", children: "New Bounty", id: "create-bounty-link" },
+  { href: "/bounties", children: "Bounties", id: "bounties-link" },
 ];
 
-interface HeaderButtonProps {
-  href: string;
-  text: string;
-}
 const WalletMultiButtonDynamic = dynamic(
   async () =>
     (await import("@solana/wallet-adapter-react-ui")).WalletMultiButton,
   { ssr: false }
 );
 export const Header = () => {
-  const [isWalletSelectOpen, setIsWalletSelectOpen] = useState(false);
-
+  const {
+    isRouterReady,
+    currentTutorialState,
+    setCurrentTutorialState,
+    currentUser,
+  } = useLancer();
+  const [isTutorialButtonHovered, setIsTutorialButtonHovered] = useState(false);
+  const [showTutorialModal, setShowTutorialModal] = useState(false);
   return (
-    <div className="flex sticky py-[20px] bg-white-100 top-0">
+    <div className="flex sticky py-[20px] bg-white-100 top-0 z-20">
       <div className="flex items-center mx-auto w-[70%]">
         <Link
           href="/"
@@ -37,13 +41,54 @@ export const Header = () => {
         </Link>
         <div className="ml-[20px] flex gap-[10px] items-center w-full">
           {HEADER_LINKS.map(({ href, children }) => {
-            return <LinkButton href={href} children={children} style="text" />;
+            return (
+              <LinkButton href={href} children={children} version="text" />
+            );
           })}
-          <div className="ml-auto">
+          <div
+            className="ml-auto"
+            id="wallet-connect-button"
+            onClick={() => {
+              if (
+                !!currentTutorialState &&
+                currentTutorialState?.title ===
+                  PROFILE_TUTORIAL_INITIAL_STATE.title &&
+                currentTutorialState.currentStep === 1
+              ) {
+                setCurrentTutorialState({
+                  ...currentTutorialState,
+                  isRunning: false,
+                });
+                return;
+              }
+            }}
+          >
             <WalletMultiButtonDynamic className="text-gray-800 flex h-[48px] w-[250px] py-[6px] items-center justify-center border-solid hover:bg-turquoise-500 text-gray-800 hover:text-white-100 transition-colors duration-300 ease-in-out" />
           </div>
 
           <AccountHeaderOptions />
+          <button
+            onClick={() => {
+              setShowTutorialModal(true);
+            }}
+            onMouseEnter={() => setIsTutorialButtonHovered(true)}
+            onMouseLeave={() => setIsTutorialButtonHovered(false)}
+            id="start-tutorial-link"
+            className="flex rounded-full h-[48px] w-[48px] gap-[10px] py-[6px] items-center justify-center hover:bg-turquoise-500 "
+          >
+            <HelpCircle
+              height={48}
+              width={48}
+              strokeWidth={1.25}
+              color={isTutorialButtonHovered ? "#fff" : "#14bb88"}
+            />
+          </button>
+          {isRouterReady && (
+            <TutorialsModal
+              setShowModal={setShowTutorialModal}
+              showModal={showTutorialModal}
+            />
+          )}
         </div>
       </div>
     </div>

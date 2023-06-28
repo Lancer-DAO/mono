@@ -7,7 +7,7 @@ import "@/src/styles/webflow.scss";
 import { api } from "@/src/utils/api";
 import { AllProviders } from "@/src/providers";
 import Hotjar from "@hotjar/browser";
-
+import { useEffect, useState } from "react";
 const siteId = 3506102;
 const hotjarVersion = 6;
 

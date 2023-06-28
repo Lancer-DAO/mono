@@ -11,16 +11,19 @@ import { ContributorInfo } from "@/src/components/";
 import { Check, X } from "react-feather";
 import { PublicKey } from "@solana/web3.js";
 import { api } from "@/src/utils/api";
+import { BOUNTY_ACTIONS_TUTORIAL_I_INITIAL_STATE } from "@/src/constants/tutorials";
 
 export type SubmitterSectionType = "approved" | "requested";
 interface SubmitterSectionProps {
   submitter: Contributor;
   type: SubmitterSectionType;
+  index?: number;
 }
 
 const SubmitterSection: React.FC<SubmitterSectionProps> = ({
   submitter,
   type,
+  index,
 }: SubmitterSectionProps) => {
   const {
     currentBounty,
@@ -29,6 +32,8 @@ const SubmitterSection: React.FC<SubmitterSectionProps> = ({
     program,
     currentUser,
     setCurrentBounty,
+    currentTutorialState,
+    setCurrentTutorialState,
   } = useLancer();
   const { mutateAsync } = api.bounties.updateBountyUser.useMutation();
 
@@ -81,7 +86,13 @@ const SubmitterSection: React.FC<SubmitterSectionProps> = ({
                 bountyId: currentBounty.id,
                 currentUserId: currentUser.id,
                 userId: submitter.userid,
-                relations: [BOUNTY_USER_RELATIONSHIP.DeniedRequester],
+                relations:
+                  submitter.userid === currentUser.id
+                    ? [
+                        BOUNTY_USER_RELATIONSHIP.Creator,
+                        BOUNTY_USER_RELATIONSHIP.DeniedRequester,
+                      ]
+                    : [BOUNTY_USER_RELATIONSHIP.DeniedRequester],
                 publicKey: currentWallet.publicKey.toString(),
                 provider: currentWallet.providerName,
                 escrowId: currentBounty.escrowid,
@@ -90,6 +101,16 @@ const SubmitterSection: React.FC<SubmitterSectionProps> = ({
               });
               setCurrentBounty(updatedBounty);
             } else {
+              if (
+                currentTutorialState?.title ===
+                  BOUNTY_ACTIONS_TUTORIAL_I_INITIAL_STATE.title &&
+                currentTutorialState.currentStep === 4
+              ) {
+                setCurrentTutorialState({
+                  ...currentTutorialState,
+                  isRunning: false,
+                });
+              }
               const signature = await addSubmitterFFA(
                 new PublicKey(submitter.publicKey),
                 currentBounty.escrow,
@@ -101,7 +122,13 @@ const SubmitterSection: React.FC<SubmitterSectionProps> = ({
                 bountyId: currentBounty.id,
                 userId: submitter.userid,
                 currentUserId: currentUser.id,
-                relations: [BOUNTY_USER_RELATIONSHIP.ApprovedSubmitter],
+                relations:
+                  submitter.userid === currentUser.id
+                    ? [
+                        BOUNTY_USER_RELATIONSHIP.Creator,
+                        BOUNTY_USER_RELATIONSHIP.ApprovedSubmitter,
+                      ]
+                    : [BOUNTY_USER_RELATIONSHIP.ApprovedSubmitter],
                 state: BountyState.IN_PROGRESS,
                 publicKey: currentWallet.publicKey.toString(),
                 provider: currentWallet.providerName,
@@ -111,6 +138,19 @@ const SubmitterSection: React.FC<SubmitterSectionProps> = ({
               });
 
               setCurrentBounty(updatedBounty);
+              if (
+                currentTutorialState?.title ===
+                  BOUNTY_ACTIONS_TUTORIAL_I_INITIAL_STATE.title &&
+                currentTutorialState.currentStep === 4
+              ) {
+                setTimeout(() => {
+                  setCurrentTutorialState({
+                    ...currentTutorialState,
+                    isRunning: true,
+                    currentStep: 5,
+                  });
+                }, 100);
+              }
             }
           } catch (e) {
             console.error(e);
@@ -121,17 +161,26 @@ const SubmitterSection: React.FC<SubmitterSectionProps> = ({
   };
 
   return (
-    <div className="submitter-section">
+    <div
+      className="submitter-section"
+      id={`submitter-section-${type}-${index}`}
+    >
       <ContributorInfo user={submitter} />
 
       {type === "approved" ? (
         <div className="empty-submitter-cell"></div>
       ) : (
-        <button onClick={() => handleSubmitter()}>
+        <button
+          onClick={() => handleSubmitter()}
+          id={`submitter-section-approve-${type}-${index}`}
+        >
           <Check color="#1488bb" width="20px" height="20px" />
         </button>
       )}
-      <button onClick={() => handleSubmitter(true)}>
+      <button
+        onClick={() => handleSubmitter(true)}
+        id={`submitter-section-deny-${type}-${index}`}
+      >
         <X color="red" width="20px" height="20px" />
       </button>
     </div>

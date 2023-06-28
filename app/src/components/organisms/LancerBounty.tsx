@@ -9,7 +9,7 @@ import relativeTime from "dayjs/plugin/relativeTime";
 import { decimalToNumber } from "@/src/utils";
 dayjs.extend(relativeTime);
 
-const LancerBounty = ({ bounty }: { bounty: Bounty }) => {
+const LancerBounty = ({ bounty, id }: { bounty: Bounty; id?: string }) => {
   const search = useLocation().search;
 
   const params = new URLSearchParams(search);
@@ -23,7 +23,7 @@ const LancerBounty = ({ bounty }: { bounty: Bounty }) => {
   const bountyAmount = decimalToNumber(bounty.escrow.amount).toFixed(2);
   return (
     <div
-      id="w-node-cff91d78-63a9-e923-e5c8-4e09d47abde6-06e9cdab"
+      id={id}
       data-w-id="cff91d78-63a9-e923-e5c8-4e09d47abde6"
       role="listitem"
       className="companies-card"

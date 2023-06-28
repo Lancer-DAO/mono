@@ -151,7 +151,7 @@ const BountyList: React.FC<{}> = () => {
     return true;
   });
   return (
-    <div className="bounty-table">
+    <div className="bounty-table" id="bounties-table">
       <div className="empty-cell" />
       <h1 className="page-header">{`Bounties`}</h1>
 
@@ -164,9 +164,13 @@ const BountyList: React.FC<{}> = () => {
         setFilters={setFilters}
         setBounties={setBounties}
       />
-      <div className="issue-list">
+      <div className="issue-list" id="bounties-list">
         {filteredBountys.map((bounty, index) => (
-          <LancerBounty bounty={bounty} key={index} />
+          <LancerBounty
+            bounty={bounty}
+            key={index}
+            id={`bounty-item-${index}`}
+          />
         ))}
       </div>
     </div>

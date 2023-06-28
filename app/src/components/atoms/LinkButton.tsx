@@ -1,17 +1,20 @@
 import Link from "next/link";
 
-export interface LinkButtonProps {
+export interface LinkButtonProps extends React.ComponentProps<typeof Link> {
   href: string;
   children?: React.ReactNode;
-  style?: "filled" | "outlined" | "text";
+  version?: "filled" | "outlined" | "text";
   target?: string;
+  id?: string;
+  extraClasses?: string;
+  props?: any;
 }
 
 export const getButtonStyle = (
-  style: LinkButtonProps["style"],
+  version: LinkButtonProps["version"],
   disabled?: boolean
 ) => {
-  switch (style) {
+  switch (version) {
     case "filled":
       return "py-4 px-6 rounded-md bg-turquoise-500 shadow-md transition duration-300 ease-in-out hover:bg-turquoise-600 hover:text-white-100 transform hover:-translate-y-1 text-white-100 text-base font-bold text-center uppercase";
 
@@ -29,9 +32,23 @@ export const getButtonStyle = (
   }
 };
 
-const HeaderButton = ({ href, children, style, target }: LinkButtonProps) => {
+const HeaderButton = ({
+  href,
+  children,
+  version,
+  target,
+  id,
+  extraClasses,
+  ...props
+}: LinkButtonProps) => {
   return (
-    <Link href={href} className={getButtonStyle(style)} target={target}>
+    <Link
+      href={href}
+      className={getButtonStyle(version) + " " + extraClasses}
+      id={id}
+      target={target}
+      {...props}
+    >
       {children}
     </Link>
   );

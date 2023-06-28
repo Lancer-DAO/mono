@@ -5,6 +5,7 @@ export const MAINNET_USDC_MINT = "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v";
 export const EXTENSION_DEV = true;
 export const APP_ENDPOINT = "https://app.lancer.so";
 export const DEMO_ENDPOINT = "https://demo.lancer.so";
+export const TUTORIAL_ENDPOINT = "https://dev-jtl4whohw-lancer-so.vercel.app";
 export const LOCAL_ENDPOINT = "http://localhost:3000";
 
 export const getExtensionEndpoint = (env: string) => {
@@ -12,6 +13,8 @@ export const getExtensionEndpoint = (env: string) => {
     return APP_ENDPOINT;
   } else if (env === "demo") {
     return DEMO_ENDPOINT;
+  } else if (env === "tutorial") {
+    return TUTORIAL_ENDPOINT;
   } else {
     return LOCAL_ENDPOINT;
   }
