@@ -52,10 +52,11 @@ const getCurrentBountyTutorialInitialState = (
     steps.push(APPLY_BOUNTY_STEP);
   }
   if (
-    currentBounty.isCreator ||
-    currentBounty.isCurrentSubmitter ||
-    currentBounty.isDeniedSubmitter ||
-    currentBounty.isChangesRequestedSubmitter
+    (currentBounty.isCreator ||
+      currentBounty.isCurrentSubmitter ||
+      currentBounty.isDeniedSubmitter ||
+      currentBounty.isChangesRequestedSubmitter) &&
+    !currentBounty.isVotingCancel
   ) {
     steps.push(VOTE_TO_CANCEL_STEP);
   }
@@ -75,11 +76,11 @@ const getCurrentBountyTutorialInitialState = (
       steps.push(...SUBMIT_REQUEST_HAS_PULL_REQUEST_STEPS);
     }
   }
-  if (currentBounty.isCurrentSubmitter) {
+  if (currentBounty.isDeniedRequester) {
     steps.push(SUBMISSION_PENDING_STEP);
   }
 
-  if (currentBounty.isCurrentSubmitter) {
+  if (currentBounty.isDeniedSubmitter) {
     steps.push(SUBMISSION_DENIED_STEP);
   }
 

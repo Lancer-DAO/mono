@@ -86,12 +86,13 @@ const SubmitterSection: React.FC<SubmitterSectionProps> = ({
                 bountyId: currentBounty.id,
                 currentUserId: currentUser.id,
                 userId: submitter.userid,
-                relations: currentBounty.isCreator
-                  ? [
-                      BOUNTY_USER_RELATIONSHIP.Creator,
-                      BOUNTY_USER_RELATIONSHIP.DeniedRequester,
-                    ]
-                  : [BOUNTY_USER_RELATIONSHIP.DeniedRequester],
+                relations:
+                  submitter.userid === currentUser.id
+                    ? [
+                        BOUNTY_USER_RELATIONSHIP.Creator,
+                        BOUNTY_USER_RELATIONSHIP.DeniedRequester,
+                      ]
+                    : [BOUNTY_USER_RELATIONSHIP.DeniedRequester],
                 publicKey: currentWallet.publicKey.toString(),
                 provider: currentWallet.providerName,
                 escrowId: currentBounty.escrowid,
@@ -121,12 +122,13 @@ const SubmitterSection: React.FC<SubmitterSectionProps> = ({
                 bountyId: currentBounty.id,
                 userId: submitter.userid,
                 currentUserId: currentUser.id,
-                relations: currentBounty.isCreator
-                  ? [
-                      BOUNTY_USER_RELATIONSHIP.Creator,
-                      BOUNTY_USER_RELATIONSHIP.ApprovedSubmitter,
-                    ]
-                  : [BOUNTY_USER_RELATIONSHIP.ApprovedSubmitter],
+                relations:
+                  submitter.userid === currentUser.id
+                    ? [
+                        BOUNTY_USER_RELATIONSHIP.Creator,
+                        BOUNTY_USER_RELATIONSHIP.ApprovedSubmitter,
+                      ]
+                    : [BOUNTY_USER_RELATIONSHIP.ApprovedSubmitter],
                 state: BountyState.IN_PROGRESS,
                 publicKey: currentWallet.publicKey.toString(),
                 provider: currentWallet.providerName,
