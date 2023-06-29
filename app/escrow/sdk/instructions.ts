@@ -16,7 +16,6 @@ import {
   } from "@solana/spl-token";
   
   import {
-    AccountMeta,
     ComputeBudgetProgram,
     Keypair,
     LAMPORTS_PER_SOL,
@@ -35,11 +34,10 @@ import { LANCER_ADMIN } from "./constants";
 export const createFeatureFundingAccountInstruction = async(
   mint: PublicKey,
   creator: PublicKey,
-  program: Program<MonoProgram>,
-  timestamp: string
+  program: Program<MonoProgram>
 ): Promise<TransactionInstruction> => {
-  // const timestamp = Date.now().toString();
-  // console.log("timestamp = ", timestamp);
+  const timestamp = Date.now().toString();
+  console.log("timestamp = ", timestamp);
   const [feature_account] = await findFeatureAccount(
       timestamp, 
       creator, 
@@ -133,7 +131,6 @@ export const addApprovedSubmittersV1Instruction = async (
   creator: PublicKey,
   referrer: PublicKey,
   submitter: PublicKey,
-  remainingAccounts: AccountMeta[],
   program: Program<MonoProgram>
 ): Promise<TransactionInstruction> =>  {
   const [feature_data_account] = await findFeatureAccount(
@@ -150,13 +147,11 @@ export const addApprovedSubmittersV1Instruction = async (
   return  await program.methods.addApprovedSubmittersV1()
           .accounts({
             creator: creator,
-            referrer: referrer,
             submitter: submitter,
-            featureDataAccount: feature_data_account,
-            referralDataAccount: referral_data_account
-          })
-          .remainingAccounts(remainingAccounts)
-          .instruction()
+            referrer: referrer,
+            referralDataAccount: referral_data_account,
+            featureDataAccount: feature_data_account
+          }).instruction()
 }
 
 export const removeApprovedSubmittersInstruction = async (
@@ -258,8 +253,7 @@ export const approveRequestInstruction = async (
   submitter: PublicKey,
   submitter_token_account: PublicKey,
   mint: PublicKey,
-  program: Program<MonoProgram>,
-  third_party_token_account?: PublicKey
+  program: Program<MonoProgram>
 ): Promise<TransactionInstruction> =>  {
 
   const [feature_data_account] = await findFeatureAccount(
@@ -286,40 +280,23 @@ export const approveRequestInstruction = async (
 
   const [lancer_token_program_authority] = await findLancerProgramAuthority(program);
 
-  if(third_party_token_account){
-    return await program.methods.approveRequestThirdParty()
-    .accounts({
-      creator: creator,
-      submitter: submitter,
-      payoutAccount: submitter_token_account,
-      featureDataAccount: feature_data_account,
-      featureTokenAccount: feature_token_account,
-      programAuthority: program_authority,
-      thirdParty: third_party_token_account,
-      lancerDaoTokenAccount: lancer_dao_token_account,
-      tokenProgram: TOKEN_PROGRAM_ID,
-    }).instruction();
-  }else{
-    return await program.methods.approveRequest()// TODO remove this
-    .accounts({
-      creator: creator,
-      submitter: submitter,
-      payoutAccount: submitter_token_account,
-      featureDataAccount: feature_data_account,
-      featureTokenAccount: feature_token_account,
-      programAuthority: program_authority,
-      lancerDaoTokenAccount: lancer_dao_token_account,
-      lancerTokenProgramAuthority: lancer_token_program_authority,
-      tokenProgram: TOKEN_PROGRAM_ID,
-    }).instruction();
-  }
+
+  return await program.methods.approveRequest()// TODO remove this
+  .accounts({
+    creator: creator,
+    submitter: submitter,
+    payoutAccount: submitter_token_account,
+    featureDataAccount: feature_data_account,
+    featureTokenAccount: feature_token_account,
+    programAuthority: program_authority,
+    lancerDaoTokenAccount: lancer_dao_token_account,
+    lancerTokenProgramAuthority: lancer_token_program_authority,
+    tokenProgram: TOKEN_PROGRAM_ID,
+  }).instruction();
 }
 
-export const approveRequestThirdPartyInstruction = async (
+export const approveRequestWithReferralInstruction = async (
   timestamp: string,
-  third_party_token_account: PublicKey,
-  // payout_completer_tokens_account: PublicKey,
-  // creator_company_tokens_account: PublicKey,
   creator: PublicKey,
   submitter: PublicKey,
   submitter_token_account: PublicKey,
@@ -348,8 +325,14 @@ export const approveRequestThirdPartyInstruction = async (
     mint,
     program
   );
+  let [referral_data_account] = await findReferralDataAccount(
+    creator,
+    feature_data_account,
+    program,
+  );
 
-  return await program.methods.approveRequestThirdParty()
+
+  return await program.methods.approveRequestWithReferral()
   .accounts({
     creator: creator,
     submitter: submitter,
@@ -357,7 +340,7 @@ export const approveRequestThirdPartyInstruction = async (
     featureDataAccount: feature_data_account,
     featureTokenAccount: feature_token_account,
     programAuthority: program_authority,
-    thirdParty: third_party_token_account,
+    referralDataAccount: referral_data_account,
     lancerDaoTokenAccount: lancer_dao_token_account,
     tokenProgram: TOKEN_PROGRAM_ID,
   }).instruction();
@@ -608,8 +591,8 @@ export const approveRequestMultipleTransaction = async (
   timestamp: string,
   creator: PublicKey,
   mint: PublicKey,
+  has_referrer: boolean,
   program: Program<MonoProgram>,
-  third_party?: PublicKey,
 ): Promise<Transaction> =>  {
   let modifyComputeUnits = ComputeBudgetProgram.setComputeUnitLimit({
     units: 1400000
@@ -670,9 +653,14 @@ export const approveRequestMultipleTransaction = async (
   }
 
   let approve_request_multiple_ix;
-  if (third_party) {
-    let third_party_token_account = await getAssociatedTokenAddress(mint, third_party);
-    approve_request_multiple_ix = await program.methods.approveRequestMultipleThirdParty()
+  let [referral_data_account] = await findReferralDataAccount(
+    creator,
+    feature_data_account,
+    program,
+  );
+ 
+  if (has_referrer) {
+    approve_request_multiple_ix = await program.methods.approveRequestMultipleWithReferral()
       .accounts({
         creator: creator,
         featureDataAccount: feature_data_account,
@@ -680,7 +668,7 @@ export const approveRequestMultipleTransaction = async (
         lancerDaoTokenAccount: lancer_dao_token_account,
         lancerTokenProgramAuthority: lancer_token_program_authority,
         programAuthority: program_authority,
-        thirdParty: third_party_token_account,
+        referralDataAccount: referral_data_account,
         tokenProgram: TOKEN_PROGRAM_ID,
         systemProgram: SystemProgram.programId
       })

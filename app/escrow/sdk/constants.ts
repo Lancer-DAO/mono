@@ -18,9 +18,9 @@ export const MINT_DECIMALS = 9;
 export const MINT_AUTHORITY = "mint_authority";
 export const REFERRER = "referrer";
 export const LANCER_ADMIN = new PublicKey(
-  "WbmLPptTGZTFK5ZSks7oaa4Qx69qS3jFXMrAsbWz1or"
+  "admbKYEXAPNHZbzNADk7arzf8ZbDiZ9u4qzNS3XwRXx"
 );
 export const COMPLETER_FEE = 0.95;
-export const THIRD_PARTY = 0.01;
-export const LANCER_FEE_THIRD_PARTY = 0.09;
+export const REFERRAL_FEE = 0.01;
+export const LANCER_FEE_MINUS_REFERRAL = 0.09;
 export const LANCER_FEE = 0.1; // 5% from both parties

@@ -1,15 +1,14 @@
 import * as anchor from "@project-serum/anchor";
 import { AnchorError, Program } from "@project-serum/anchor";
-import { ASSOCIATED_TOKEN_PROGRAM_ID, createAccount, createInitializeAccount3Instruction, createMint, createSyncNativeInstruction, getAccount, getMint, getOrCreateAssociatedTokenAccount, NATIVE_MINT, TOKEN_2022_PROGRAM_ID, TOKEN_PROGRAM_ID } from "@solana/spl-token";
+import { getOrCreateAssociatedTokenAccount } from "@solana/spl-token";
 import { MonoProgram } from "../sdk/types/mono_program";
 import  MonoProgramJSON  from "../sdk/idl/mono_program.json";
-import { COMPLETER_FEE, LANCER_FEE, LANCER_FEE_THIRD_PARTY, MINT_DECIMALS, MONO_DEVNET, THIRD_PARTY, WSOL_ADDRESS } from "../sdk/constants";
-import { ComputeBudgetInstruction, ComputeBudgetProgram, Keypair, LAMPORTS_PER_SOL, PublicKey, SystemProgram, SYSVAR_RENT_PUBKEY, Transaction } from "@solana/web3.js";
+import { MONO_DEVNET, WSOL_ADDRESS } from "../sdk/constants";
+import { LAMPORTS_PER_SOL, PublicKey, Transaction } from "@solana/web3.js";
 import { add_more_token, createKeypair } from "./utils";
-import { findFeatureAccount, findFeatureTokenAccount, findLancerCompanyTokens, findLancerCompleterTokens, findLancerProgramAuthority, findLancerTokenAccount, findProgramAuthority, findProgramMintAuthority } from "../sdk/pda";
-import { addApprovedSubmittersInstruction, approveRequestInstruction, approveRequestMultipleTransaction, approveRequestThirdPartyInstruction, cancelFeatureInstruction, createFeatureFundingAccountInstruction, createLancerTokenAccountInstruction, denyRequestInstruction, enableMultipleSubmittersInstruction, fundFeatureInstruction, removeApprovedSubmittersInstruction, setShareMultipleSubmittersInstruction, submitRequestInstruction, submitRequestMultipleInstruction, voteToCancelInstruction, withdrawTokensInstruction } from "../sdk/instructions";
+import { findFeatureAccount, findProgramAuthority } from "../sdk/pda";
+import { addApprovedSubmittersInstruction, createFeatureFundingAccountInstruction, enableMultipleSubmittersInstruction, submitRequestInstruction, submitRequestMultipleInstruction } from "../sdk/instructions";
 import { assert } from "chai";
-import { min } from "bn.js";
 
 describe("submit Request tests", () => {
     // Configure the client to use the local cluster.

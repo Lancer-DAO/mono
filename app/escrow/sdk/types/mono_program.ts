@@ -803,146 +803,6 @@ export type MonoProgram = {
       ]
     },
     {
-      "name": "approveRequestThirdParty",
-      "accounts": [
-        {
-          "name": "creator",
-          "isMut": true,
-          "isSigner": true
-        },
-        {
-          "name": "thirdParty",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "submitter",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "payoutAccount",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "featureDataAccount",
-          "isMut": true,
-          "isSigner": false,
-          "pda": {
-            "seeds": [
-              {
-                "kind": "const",
-                "type": "string",
-                "value": "mono"
-              },
-              {
-                "kind": "account",
-                "type": "string",
-                "account": "FeatureDataAccount",
-                "path": "feature_data_account.unix_timestamp"
-              },
-              {
-                "kind": "account",
-                "type": "publicKey",
-                "path": "creator"
-              }
-            ]
-          }
-        },
-        {
-          "name": "featureTokenAccount",
-          "isMut": true,
-          "isSigner": false,
-          "pda": {
-            "seeds": [
-              {
-                "kind": "const",
-                "type": "string",
-                "value": "mono"
-              },
-              {
-                "kind": "account",
-                "type": "string",
-                "account": "FeatureDataAccount",
-                "path": "feature_data_account.unix_timestamp"
-              },
-              {
-                "kind": "account",
-                "type": "publicKey",
-                "path": "creator"
-              },
-              {
-                "kind": "account",
-                "type": "publicKey",
-                "account": "FeatureDataAccount",
-                "path": "feature_data_account.funds_mint"
-              }
-            ]
-          }
-        },
-        {
-          "name": "lancerDaoTokenAccount",
-          "isMut": true,
-          "isSigner": false,
-          "pda": {
-            "seeds": [
-              {
-                "kind": "const",
-                "type": "string",
-                "value": "mono"
-              },
-              {
-                "kind": "const",
-                "type": "string",
-                "value": "LANCER_DAO"
-              },
-              {
-                "kind": "account",
-                "type": "publicKey",
-                "account": "TokenAccount",
-                "path": "feature_token_account.mint"
-              }
-            ]
-          }
-        },
-        {
-          "name": "lancerTokenProgramAuthority",
-          "isMut": false,
-          "isSigner": false,
-          "pda": {
-            "seeds": [
-              {
-                "kind": "const",
-                "type": "string",
-                "value": "LANCER_DAO"
-              }
-            ]
-          }
-        },
-        {
-          "name": "programAuthority",
-          "isMut": false,
-          "isSigner": false,
-          "pda": {
-            "seeds": [
-              {
-                "kind": "const",
-                "type": "string",
-                "value": "mono"
-              }
-            ]
-          }
-        },
-        {
-          "name": "tokenProgram",
-          "isMut": false,
-          "isSigner": false
-        }
-      ],
-      "args": []
-    },
-    {
       "name": "enableMultipleSubmitters",
       "accounts": [
         {
@@ -1071,141 +931,6 @@ export type MonoProgram = {
           "name": "creator",
           "isMut": true,
           "isSigner": true
-        },
-        {
-          "name": "featureDataAccount",
-          "isMut": true,
-          "isSigner": false,
-          "pda": {
-            "seeds": [
-              {
-                "kind": "const",
-                "type": "string",
-                "value": "mono"
-              },
-              {
-                "kind": "account",
-                "type": "string",
-                "account": "FeatureDataAccount",
-                "path": "feature_data_account.unix_timestamp"
-              },
-              {
-                "kind": "account",
-                "type": "publicKey",
-                "path": "creator"
-              }
-            ]
-          }
-        },
-        {
-          "name": "featureTokenAccount",
-          "isMut": true,
-          "isSigner": false,
-          "pda": {
-            "seeds": [
-              {
-                "kind": "const",
-                "type": "string",
-                "value": "mono"
-              },
-              {
-                "kind": "account",
-                "type": "string",
-                "account": "FeatureDataAccount",
-                "path": "feature_data_account.unix_timestamp"
-              },
-              {
-                "kind": "account",
-                "type": "publicKey",
-                "path": "creator"
-              },
-              {
-                "kind": "account",
-                "type": "publicKey",
-                "account": "FeatureDataAccount",
-                "path": "feature_data_account.funds_mint"
-              }
-            ]
-          }
-        },
-        {
-          "name": "lancerDaoTokenAccount",
-          "isMut": true,
-          "isSigner": false,
-          "pda": {
-            "seeds": [
-              {
-                "kind": "const",
-                "type": "string",
-                "value": "mono"
-              },
-              {
-                "kind": "const",
-                "type": "string",
-                "value": "LANCER_DAO"
-              },
-              {
-                "kind": "account",
-                "type": "publicKey",
-                "account": "TokenAccount",
-                "path": "feature_token_account.mint"
-              }
-            ]
-          }
-        },
-        {
-          "name": "lancerTokenProgramAuthority",
-          "isMut": false,
-          "isSigner": false,
-          "pda": {
-            "seeds": [
-              {
-                "kind": "const",
-                "type": "string",
-                "value": "LANCER_DAO"
-              }
-            ]
-          }
-        },
-        {
-          "name": "programAuthority",
-          "isMut": false,
-          "isSigner": false,
-          "pda": {
-            "seeds": [
-              {
-                "kind": "const",
-                "type": "string",
-                "value": "mono"
-              }
-            ]
-          }
-        },
-        {
-          "name": "tokenProgram",
-          "isMut": false,
-          "isSigner": false
-        },
-        {
-          "name": "systemProgram",
-          "isMut": false,
-          "isSigner": false
-        }
-      ],
-      "args": []
-    },
-    {
-      "name": "approveRequestMultipleThirdParty",
-      "accounts": [
-        {
-          "name": "creator",
-          "isMut": true,
-          "isSigner": true
-        },
-        {
-          "name": "thirdParty",
-          "isMut": true,
-          "isSigner": false
         },
         {
           "name": "featureDataAccount",
@@ -1550,7 +1275,7 @@ export type MonoProgram = {
         },
         {
           "name": "referrer",
-          "isMut": true,
+          "isMut": false,
           "isSigner": false
         },
         {
@@ -1676,6 +1401,321 @@ export type MonoProgram = {
         }
       ],
       "args": []
+    },
+    {
+      "name": "approveRequestWithReferral",
+      "accounts": [
+        {
+          "name": "creator",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "submitter",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "payoutAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "featureDataAccount",
+          "isMut": true,
+          "isSigner": false,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "type": "string",
+                "value": "mono"
+              },
+              {
+                "kind": "account",
+                "type": "string",
+                "account": "FeatureDataAccount",
+                "path": "feature_data_account.unix_timestamp"
+              },
+              {
+                "kind": "account",
+                "type": "publicKey",
+                "path": "creator"
+              }
+            ]
+          }
+        },
+        {
+          "name": "featureTokenAccount",
+          "isMut": true,
+          "isSigner": false,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "type": "string",
+                "value": "mono"
+              },
+              {
+                "kind": "account",
+                "type": "string",
+                "account": "FeatureDataAccount",
+                "path": "feature_data_account.unix_timestamp"
+              },
+              {
+                "kind": "account",
+                "type": "publicKey",
+                "path": "creator"
+              },
+              {
+                "kind": "account",
+                "type": "publicKey",
+                "account": "FeatureDataAccount",
+                "path": "feature_data_account.funds_mint"
+              }
+            ]
+          }
+        },
+        {
+          "name": "lancerDaoTokenAccount",
+          "isMut": true,
+          "isSigner": false,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "type": "string",
+                "value": "mono"
+              },
+              {
+                "kind": "const",
+                "type": "string",
+                "value": "LANCER_DAO"
+              },
+              {
+                "kind": "account",
+                "type": "publicKey",
+                "account": "TokenAccount",
+                "path": "feature_token_account.mint"
+              }
+            ]
+          }
+        },
+        {
+          "name": "lancerTokenProgramAuthority",
+          "isMut": false,
+          "isSigner": false,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "type": "string",
+                "value": "LANCER_DAO"
+              }
+            ]
+          }
+        },
+        {
+          "name": "programAuthority",
+          "isMut": false,
+          "isSigner": false,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "type": "string",
+                "value": "mono"
+              }
+            ]
+          }
+        },
+        {
+          "name": "tokenProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "referralDataAccount",
+          "isMut": false,
+          "isSigner": false,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "type": "string",
+                "value": "referrer"
+              },
+              {
+                "kind": "account",
+                "type": "publicKey",
+                "account": "FeatureDataAccount",
+                "path": "feature_data_account"
+              },
+              {
+                "kind": "account",
+                "type": "publicKey",
+                "path": "creator"
+              }
+            ]
+          }
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "approveRequestMultipleWithReferral",
+      "accounts": [
+        {
+          "name": "creator",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "featureDataAccount",
+          "isMut": true,
+          "isSigner": false,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "type": "string",
+                "value": "mono"
+              },
+              {
+                "kind": "account",
+                "type": "string",
+                "account": "FeatureDataAccount",
+                "path": "feature_data_account.unix_timestamp"
+              },
+              {
+                "kind": "account",
+                "type": "publicKey",
+                "path": "creator"
+              }
+            ]
+          }
+        },
+        {
+          "name": "featureTokenAccount",
+          "isMut": true,
+          "isSigner": false,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "type": "string",
+                "value": "mono"
+              },
+              {
+                "kind": "account",
+                "type": "string",
+                "account": "FeatureDataAccount",
+                "path": "feature_data_account.unix_timestamp"
+              },
+              {
+                "kind": "account",
+                "type": "publicKey",
+                "path": "creator"
+              },
+              {
+                "kind": "account",
+                "type": "publicKey",
+                "account": "FeatureDataAccount",
+                "path": "feature_data_account.funds_mint"
+              }
+            ]
+          }
+        },
+        {
+          "name": "lancerDaoTokenAccount",
+          "isMut": true,
+          "isSigner": false,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "type": "string",
+                "value": "mono"
+              },
+              {
+                "kind": "const",
+                "type": "string",
+                "value": "LANCER_DAO"
+              },
+              {
+                "kind": "account",
+                "type": "publicKey",
+                "account": "TokenAccount",
+                "path": "feature_token_account.mint"
+              }
+            ]
+          }
+        },
+        {
+          "name": "lancerTokenProgramAuthority",
+          "isMut": false,
+          "isSigner": false,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "type": "string",
+                "value": "LANCER_DAO"
+              }
+            ]
+          }
+        },
+        {
+          "name": "programAuthority",
+          "isMut": false,
+          "isSigner": false,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "type": "string",
+                "value": "mono"
+              }
+            ]
+          }
+        },
+        {
+          "name": "tokenProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "referralDataAccount",
+          "isMut": false,
+          "isSigner": false,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "type": "string",
+                "value": "referrer"
+              },
+              {
+                "kind": "account",
+                "type": "publicKey",
+                "account": "FeatureDataAccount",
+                "path": "feature_data_account"
+              },
+              {
+                "kind": "account",
+                "type": "publicKey",
+                "path": "creator"
+              }
+            ]
+          }
+        }
+      ],
+      "args": []
     }
   ],
   "accounts": [
@@ -1773,10 +1813,6 @@ export type MonoProgram = {
           {
             "name": "referralDataAccountBump",
             "type": "u8"
-          },
-          {
-            "name": "currentReferrer",
-            "type": "publicKey"
           },
           {
             "name": "approvedReferrers",
@@ -1880,6 +1916,11 @@ export type MonoProgram = {
       "code": 6016,
       "name": "CannotWithdrawPartially",
       "msg": "Cannot withdraw full funds."
+    },
+    {
+      "code": 6017,
+      "name": "InvalidReferral",
+      "msg": "Invalid referral provided."
     }
   ]
 };
@@ -2689,146 +2730,6 @@ export const IDL: MonoProgram = {
       ]
     },
     {
-      "name": "approveRequestThirdParty",
-      "accounts": [
-        {
-          "name": "creator",
-          "isMut": true,
-          "isSigner": true
-        },
-        {
-          "name": "thirdParty",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "submitter",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "payoutAccount",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "featureDataAccount",
-          "isMut": true,
-          "isSigner": false,
-          "pda": {
-            "seeds": [
-              {
-                "kind": "const",
-                "type": "string",
-                "value": "mono"
-              },
-              {
-                "kind": "account",
-                "type": "string",
-                "account": "FeatureDataAccount",
-                "path": "feature_data_account.unix_timestamp"
-              },
-              {
-                "kind": "account",
-                "type": "publicKey",
-                "path": "creator"
-              }
-            ]
-          }
-        },
-        {
-          "name": "featureTokenAccount",
-          "isMut": true,
-          "isSigner": false,
-          "pda": {
-            "seeds": [
-              {
-                "kind": "const",
-                "type": "string",
-                "value": "mono"
-              },
-              {
-                "kind": "account",
-                "type": "string",
-                "account": "FeatureDataAccount",
-                "path": "feature_data_account.unix_timestamp"
-              },
-              {
-                "kind": "account",
-                "type": "publicKey",
-                "path": "creator"
-              },
-              {
-                "kind": "account",
-                "type": "publicKey",
-                "account": "FeatureDataAccount",
-                "path": "feature_data_account.funds_mint"
-              }
-            ]
-          }
-        },
-        {
-          "name": "lancerDaoTokenAccount",
-          "isMut": true,
-          "isSigner": false,
-          "pda": {
-            "seeds": [
-              {
-                "kind": "const",
-                "type": "string",
-                "value": "mono"
-              },
-              {
-                "kind": "const",
-                "type": "string",
-                "value": "LANCER_DAO"
-              },
-              {
-                "kind": "account",
-                "type": "publicKey",
-                "account": "TokenAccount",
-                "path": "feature_token_account.mint"
-              }
-            ]
-          }
-        },
-        {
-          "name": "lancerTokenProgramAuthority",
-          "isMut": false,
-          "isSigner": false,
-          "pda": {
-            "seeds": [
-              {
-                "kind": "const",
-                "type": "string",
-                "value": "LANCER_DAO"
-              }
-            ]
-          }
-        },
-        {
-          "name": "programAuthority",
-          "isMut": false,
-          "isSigner": false,
-          "pda": {
-            "seeds": [
-              {
-                "kind": "const",
-                "type": "string",
-                "value": "mono"
-              }
-            ]
-          }
-        },
-        {
-          "name": "tokenProgram",
-          "isMut": false,
-          "isSigner": false
-        }
-      ],
-      "args": []
-    },
-    {
       "name": "enableMultipleSubmitters",
       "accounts": [
         {
@@ -2957,141 +2858,6 @@ export const IDL: MonoProgram = {
           "name": "creator",
           "isMut": true,
           "isSigner": true
-        },
-        {
-          "name": "featureDataAccount",
-          "isMut": true,
-          "isSigner": false,
-          "pda": {
-            "seeds": [
-              {
-                "kind": "const",
-                "type": "string",
-                "value": "mono"
-              },
-              {
-                "kind": "account",
-                "type": "string",
-                "account": "FeatureDataAccount",
-                "path": "feature_data_account.unix_timestamp"
-              },
-              {
-                "kind": "account",
-                "type": "publicKey",
-                "path": "creator"
-              }
-            ]
-          }
-        },
-        {
-          "name": "featureTokenAccount",
-          "isMut": true,
-          "isSigner": false,
-          "pda": {
-            "seeds": [
-              {
-                "kind": "const",
-                "type": "string",
-                "value": "mono"
-              },
-              {
-                "kind": "account",
-                "type": "string",
-                "account": "FeatureDataAccount",
-                "path": "feature_data_account.unix_timestamp"
-              },
-              {
-                "kind": "account",
-                "type": "publicKey",
-                "path": "creator"
-              },
-              {
-                "kind": "account",
-                "type": "publicKey",
-                "account": "FeatureDataAccount",
-                "path": "feature_data_account.funds_mint"
-              }
-            ]
-          }
-        },
-        {
-          "name": "lancerDaoTokenAccount",
-          "isMut": true,
-          "isSigner": false,
-          "pda": {
-            "seeds": [
-              {
-                "kind": "const",
-                "type": "string",
-                "value": "mono"
-              },
-              {
-                "kind": "const",
-                "type": "string",
-                "value": "LANCER_DAO"
-              },
-              {
-                "kind": "account",
-                "type": "publicKey",
-                "account": "TokenAccount",
-                "path": "feature_token_account.mint"
-              }
-            ]
-          }
-        },
-        {
-          "name": "lancerTokenProgramAuthority",
-          "isMut": false,
-          "isSigner": false,
-          "pda": {
-            "seeds": [
-              {
-                "kind": "const",
-                "type": "string",
-                "value": "LANCER_DAO"
-              }
-            ]
-          }
-        },
-        {
-          "name": "programAuthority",
-          "isMut": false,
-          "isSigner": false,
-          "pda": {
-            "seeds": [
-              {
-                "kind": "const",
-                "type": "string",
-                "value": "mono"
-              }
-            ]
-          }
-        },
-        {
-          "name": "tokenProgram",
-          "isMut": false,
-          "isSigner": false
-        },
-        {
-          "name": "systemProgram",
-          "isMut": false,
-          "isSigner": false
-        }
-      ],
-      "args": []
-    },
-    {
-      "name": "approveRequestMultipleThirdParty",
-      "accounts": [
-        {
-          "name": "creator",
-          "isMut": true,
-          "isSigner": true
-        },
-        {
-          "name": "thirdParty",
-          "isMut": true,
-          "isSigner": false
         },
         {
           "name": "featureDataAccount",
@@ -3436,7 +3202,7 @@ export const IDL: MonoProgram = {
         },
         {
           "name": "referrer",
-          "isMut": true,
+          "isMut": false,
           "isSigner": false
         },
         {
@@ -3562,6 +3328,321 @@ export const IDL: MonoProgram = {
         }
       ],
       "args": []
+    },
+    {
+      "name": "approveRequestWithReferral",
+      "accounts": [
+        {
+          "name": "creator",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "submitter",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "payoutAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "featureDataAccount",
+          "isMut": true,
+          "isSigner": false,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "type": "string",
+                "value": "mono"
+              },
+              {
+                "kind": "account",
+                "type": "string",
+                "account": "FeatureDataAccount",
+                "path": "feature_data_account.unix_timestamp"
+              },
+              {
+                "kind": "account",
+                "type": "publicKey",
+                "path": "creator"
+              }
+            ]
+          }
+        },
+        {
+          "name": "featureTokenAccount",
+          "isMut": true,
+          "isSigner": false,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "type": "string",
+                "value": "mono"
+              },
+              {
+                "kind": "account",
+                "type": "string",
+                "account": "FeatureDataAccount",
+                "path": "feature_data_account.unix_timestamp"
+              },
+              {
+                "kind": "account",
+                "type": "publicKey",
+                "path": "creator"
+              },
+              {
+                "kind": "account",
+                "type": "publicKey",
+                "account": "FeatureDataAccount",
+                "path": "feature_data_account.funds_mint"
+              }
+            ]
+          }
+        },
+        {
+          "name": "lancerDaoTokenAccount",
+          "isMut": true,
+          "isSigner": false,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "type": "string",
+                "value": "mono"
+              },
+              {
+                "kind": "const",
+                "type": "string",
+                "value": "LANCER_DAO"
+              },
+              {
+                "kind": "account",
+                "type": "publicKey",
+                "account": "TokenAccount",
+                "path": "feature_token_account.mint"
+              }
+            ]
+          }
+        },
+        {
+          "name": "lancerTokenProgramAuthority",
+          "isMut": false,
+          "isSigner": false,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "type": "string",
+                "value": "LANCER_DAO"
+              }
+            ]
+          }
+        },
+        {
+          "name": "programAuthority",
+          "isMut": false,
+          "isSigner": false,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "type": "string",
+                "value": "mono"
+              }
+            ]
+          }
+        },
+        {
+          "name": "tokenProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "referralDataAccount",
+          "isMut": false,
+          "isSigner": false,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "type": "string",
+                "value": "referrer"
+              },
+              {
+                "kind": "account",
+                "type": "publicKey",
+                "account": "FeatureDataAccount",
+                "path": "feature_data_account"
+              },
+              {
+                "kind": "account",
+                "type": "publicKey",
+                "path": "creator"
+              }
+            ]
+          }
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "approveRequestMultipleWithReferral",
+      "accounts": [
+        {
+          "name": "creator",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "featureDataAccount",
+          "isMut": true,
+          "isSigner": false,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "type": "string",
+                "value": "mono"
+              },
+              {
+                "kind": "account",
+                "type": "string",
+                "account": "FeatureDataAccount",
+                "path": "feature_data_account.unix_timestamp"
+              },
+              {
+                "kind": "account",
+                "type": "publicKey",
+                "path": "creator"
+              }
+            ]
+          }
+        },
+        {
+          "name": "featureTokenAccount",
+          "isMut": true,
+          "isSigner": false,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "type": "string",
+                "value": "mono"
+              },
+              {
+                "kind": "account",
+                "type": "string",
+                "account": "FeatureDataAccount",
+                "path": "feature_data_account.unix_timestamp"
+              },
+              {
+                "kind": "account",
+                "type": "publicKey",
+                "path": "creator"
+              },
+              {
+                "kind": "account",
+                "type": "publicKey",
+                "account": "FeatureDataAccount",
+                "path": "feature_data_account.funds_mint"
+              }
+            ]
+          }
+        },
+        {
+          "name": "lancerDaoTokenAccount",
+          "isMut": true,
+          "isSigner": false,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "type": "string",
+                "value": "mono"
+              },
+              {
+                "kind": "const",
+                "type": "string",
+                "value": "LANCER_DAO"
+              },
+              {
+                "kind": "account",
+                "type": "publicKey",
+                "account": "TokenAccount",
+                "path": "feature_token_account.mint"
+              }
+            ]
+          }
+        },
+        {
+          "name": "lancerTokenProgramAuthority",
+          "isMut": false,
+          "isSigner": false,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "type": "string",
+                "value": "LANCER_DAO"
+              }
+            ]
+          }
+        },
+        {
+          "name": "programAuthority",
+          "isMut": false,
+          "isSigner": false,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "type": "string",
+                "value": "mono"
+              }
+            ]
+          }
+        },
+        {
+          "name": "tokenProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "referralDataAccount",
+          "isMut": false,
+          "isSigner": false,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "type": "string",
+                "value": "referrer"
+              },
+              {
+                "kind": "account",
+                "type": "publicKey",
+                "account": "FeatureDataAccount",
+                "path": "feature_data_account"
+              },
+              {
+                "kind": "account",
+                "type": "publicKey",
+                "path": "creator"
+              }
+            ]
+          }
+        }
+      ],
+      "args": []
     }
   ],
   "accounts": [
@@ -3659,10 +3740,6 @@ export const IDL: MonoProgram = {
           {
             "name": "referralDataAccountBump",
             "type": "u8"
-          },
-          {
-            "name": "currentReferrer",
-            "type": "publicKey"
           },
           {
             "name": "approvedReferrers",
@@ -3766,6 +3843,11 @@ export const IDL: MonoProgram = {
       "code": 6016,
       "name": "CannotWithdrawPartially",
       "msg": "Cannot withdraw full funds."
+    },
+    {
+      "code": 6017,
+      "name": "InvalidReferral",
+      "msg": "Invalid referral provided."
     }
   ]
 };
