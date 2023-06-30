@@ -2,15 +2,9 @@ import { PublicKey, Transaction } from "@solana/web3.js";
 import { getAssociatedTokenAddress } from "@solana/spl-token";
 import { AnchorProvider, Program } from "@project-serum/anchor";
 import { MonoProgram } from "@/escrow/sdk/types/mono_program";
-import { approveRequestInstruction } from "@/escrow/sdk/instructions";
+import { approveRequestWithReferralInstruction } from "@/escrow/sdk/instructions";
 import { USDC_MINT } from "@/src/constants";
-import { Escrow, EscrowContract, LancerWallet } from "@/src/types";
-import {
-  findLancerCompanyTokens,
-  findLancerCompleterTokens,
-} from "@/escrow/sdk/pda";
-import { maybeCreateTokenAccount } from "@/src/utils";
-import { Mingzat } from "@next/font/google";
+import { Escrow,  LancerWallet } from "@/src/types";
 
 export const approveRequestFFA = async (
   submitter: PublicKey,
@@ -24,7 +18,7 @@ export const approveRequestFFA = async (
     new PublicKey(USDC_MINT),
     submitter
   );
-  let approveSubmitterIx = await approveRequestInstruction(
+  let approveSubmitterIx = await approveRequestWithReferralInstruction(
     acc.timestamp,
     creator,
     submitter,

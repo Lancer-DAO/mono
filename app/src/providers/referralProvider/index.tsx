@@ -56,7 +56,7 @@ const ReferralProvider: FunctionComponent<IReferralProps> = ({ children }) => {
       const organization = await client.organization.getByName(
         ORGANIZATION_NAME
       );
-      setOrganization(organization)
+      setOrganization(organization);
 
       const buddyProfile = await client.buddy.getProfile(publicKey);
       if (!buddyProfile) {
@@ -149,69 +149,78 @@ const ReferralProvider: FunctionComponent<IReferralProps> = ({ children }) => {
     }
   }, [client, member, cachedReferrer, publicKey]);
 
-  const getRemainingAccounts = useCallback(async (wallet: PublicKey) => {
-    if (!client) throw CLIENT_NOT_SET;
-    const organization = await client.organization.getByName(ORGANIZATION_NAME);
+  const getRemainingAccounts = useCallback(
+    async (wallet: PublicKey) => {
+      if (!client) throw CLIENT_NOT_SET;
+      const organization = await client.organization.getByName(
+        ORGANIZATION_NAME
+      );
 
-    const buddyProfile = await client.buddy.getProfile(wallet);
-    if(!buddyProfile) return [];
-    const treasury = await client.treasury.getByBuddy(buddyProfile);
-    if(!treasury) return [];
-    const member = (await client.member.getByTreasuryOwner(treasury.account.pda))[0]
-    const remainingAccounts = await client.initialize.validateReferrerAccounts(
-      organization.account.mainTokenMint,
-      member.account.pda
-    );
-    console.log(JSON.stringify(remainingAccounts))
+      const buddyProfile = await client.buddy.getProfile(wallet);
+      if (!buddyProfile) return [];
+      const treasury = await client.treasury.getByBuddy(buddyProfile);
+      if (!treasury) return [];
+      const member = (
+        await client.member.getByTreasuryOwner(treasury.account.pda)
+      )[0];
+      const remainingAccounts =
+        await client.initialize.validateReferrerAccounts(
+          organization.account.mainTokenMint,
+          member.account.pda
+        );
+      console.log(JSON.stringify(remainingAccounts));
 
-    if (remainingAccounts.member.toString() === PublicKey.default.toString()) {
-      console.log('faak me')
-      return [];
-    }
+      if (
+        remainingAccounts.member.toString() === PublicKey.default.toString()
+      ) {
+        return [];
+      }
 
-    return [
-      {
-        pubkey: remainingAccounts.programId,
-        isWritable: false,
-        isSigner: false,
-      },
-      {
-        pubkey: remainingAccounts.buddyProfile,
-        isWritable: false,
-        isSigner: false,
-      },
-      {
-        pubkey: remainingAccounts.buddy,
-        isWritable: false,
-        isSigner: false,
-      },
-      {
-        pubkey: remainingAccounts.member,
-        isWritable: false,
-        isSigner: false,
-      },
-      {
-        pubkey: remainingAccounts.referrerTreasury,
-        isWritable: false,
-        isSigner: false,
-      },
-      {
-        pubkey: remainingAccounts.referrerTreasuryReward,
-        isWritable: false,
-        isSigner: false,
-      },
-      {
-        pubkey: remainingAccounts.mint,
-        isWritable: false,
-        isSigner: false,
-      },
-      {
-        pubkey: remainingAccounts.referrerATA,
-        isWritable: false,
-        isSigner: false,
-      },
-    ];
-  }, [client, member]);
+      return [
+        {
+          pubkey: remainingAccounts.programId,
+          isWritable: false,
+          isSigner: false,
+        },
+        {
+          pubkey: remainingAccounts.buddyProfile,
+          isWritable: false,
+          isSigner: false,
+        },
+        {
+          pubkey: remainingAccounts.buddy,
+          isWritable: false,
+          isSigner: false,
+        },
+        {
+          pubkey: remainingAccounts.member,
+          isWritable: false,
+          isSigner: false,
+        },
+        {
+          pubkey: remainingAccounts.referrerTreasury,
+          isWritable: false,
+          isSigner: false,
+        },
+        {
+          pubkey: remainingAccounts.referrerTreasuryReward,
+          isWritable: false,
+          isSigner: false,
+        },
+        {
+          pubkey: remainingAccounts.mint,
+          isWritable: false,
+          isSigner: false,
+        },
+        {
+          pubkey: remainingAccounts.referrerATA,
+          isWritable: false,
+          isSigner: false,
+        },
+      ];
+    },
+    [client, member]
+  );
 
   const referralId = useMemo(() => {
     if (member) {
@@ -221,16 +230,26 @@ const ReferralProvider: FunctionComponent<IReferralProps> = ({ children }) => {
   }, [member]);
 
   const referrer = useMemo(() => {
-    if(member && member.account.referrer.toString() !== PublicKey.default.toString()){
-      if(organization.account.mainTokenMint.toString() === PublicKey.default.toString()){
+    if (
+      member &&
+      member.account.referrer.toString() !== PublicKey.default.toString()
+    ) {
+      if (
+        organization.account.mainTokenMint.toString() ===
+        PublicKey.default.toString()
+      ) {
         return member.account.referrer;
       } else {
-        return getAssociatedTokenAddressSync(organization.account.mainTokenMint,member.account.referrer, true)
+        return getAssociatedTokenAddressSync(
+          organization.account.mainTokenMint,
+          member.account.referrer,
+          true
+        );
       }
     }
 
     return PublicKey.default;
-  }, [member])
+  }, [member]);
 
   useEffect(() => {
     setCachedReferrer(localStorage.getItem("referrer"));
@@ -238,7 +257,7 @@ const ReferralProvider: FunctionComponent<IReferralProps> = ({ children }) => {
 
   useEffect(() => {
     if (publicKey && connection)
-      setClient(new Client(connection, publicKey, DEVNET_PROGRAM_ID));
+      setClient(new Client(connection, publicKey, DEVNET_PROGRAM_ID)); // Remvoe 3rd parameter for mainnet
   }, [publicKey, connection]);
 
   useEffect(() => {

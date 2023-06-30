@@ -123,12 +123,15 @@ const RequestToSubmit = () => {
   } = useLancer();
   const { mutateAsync } = api.bounties.updateBountyUser.useMutation();
 
-  const { createReferralMember, getRemainingAccounts, referrer } = useReferral();
+  const { createReferralMember, getRemainingAccounts, referrer } =
+    useReferral();
 
   const onClick = async () => {
     if (currentBounty.isCreator) {
       // If we are the creator, then skip requesting and add self as approved
-      const remainingAccounts = await getRemainingAccounts(currentWallet.publicKey);
+      const remainingAccounts = await getRemainingAccounts(
+        currentWallet.publicKey
+      );
       const signature = await addSubmitterFFA(
         currentWallet.publicKey,
         currentBounty.escrow,
@@ -161,7 +164,7 @@ const RequestToSubmit = () => {
       const referralKey = result?.memberPDA;
       const signature = result?.txId;
 
-      console.log('out here?', referralKey)
+      console.log("out here?", referralKey);
       // Request to submit. Does not interact on chain
       const { updatedBounty } = await mutateAsync({
         currentUserId: currentUser.id,
@@ -460,6 +463,7 @@ export const SubmitRequest = ({ disabled }: { disabled?: boolean }) => {
   } = useLancer();
   const { mutateAsync } = api.bounties.updateBountyUser.useMutation();
   const onClick = async () => {
+    console.log(currentBounty.creator.publicKey);
     // If we are the creator, then skip requesting and add self as approved
     const signature = await submitRequestFFA(
       new PublicKey(currentBounty.creator.publicKey),
@@ -469,37 +473,37 @@ export const SubmitRequest = ({ disabled }: { disabled?: boolean }) => {
       program,
       provider
     );
-    currentBounty.currentUserRelationsList.push(
-      BOUNTY_USER_RELATIONSHIP.CurrentSubmitter
-    );
-    const index = currentBounty.currentUserRelationsList.indexOf(
-      BOUNTY_USER_RELATIONSHIP.ApprovedSubmitter
-    );
+    // currentBounty.currentUserRelationsList.push(
+    //   BOUNTY_USER_RELATIONSHIP.CurrentSubmitter
+    // );
+    // const index = currentBounty.currentUserRelationsList.indexOf(
+    //   BOUNTY_USER_RELATIONSHIP.ApprovedSubmitter
+    // );
 
-    if (index !== -1) {
-      currentBounty.currentUserRelationsList.splice(index, 1);
-    }
+    // if (index !== -1) {
+    //   currentBounty.currentUserRelationsList.splice(index, 1);
+    // }
 
-    const index2 = currentBounty.currentUserRelationsList.indexOf(
-      BOUNTY_USER_RELATIONSHIP.ChangesRequestedSubmitter
-    );
+    // const index2 = currentBounty.currentUserRelationsList.indexOf(
+    //   BOUNTY_USER_RELATIONSHIP.ChangesRequestedSubmitter
+    // );
 
-    if (index2 !== -1) {
-      currentBounty.currentUserRelationsList.splice(index2, 1);
-    }
-    const { updatedBounty } = await mutateAsync({
-      bountyId: currentBounty.id,
-      currentUserId: currentUser.id,
-      userId: currentUser.id,
-      relations: currentBounty.currentUserRelationsList,
-      state: BountyState.AWAITING_REVIEW,
-      publicKey: currentWallet.publicKey.toString(),
-      escrowId: currentBounty.escrowid,
-      signature,
-      label: "submit-request",
-    });
+    // if (index2 !== -1) {
+    //   currentBounty.currentUserRelationsList.splice(index2, 1);
+    // }
+    // const { updatedBounty } = await mutateAsync({
+    //   bountyId: currentBounty.id,
+    //   currentUserId: currentUser.id,
+    //   userId: currentUser.id,
+    //   relations: currentBounty.currentUserRelationsList,
+    //   state: BountyState.AWAITING_REVIEW,
+    //   publicKey: currentWallet.publicKey.toString(),
+    //   escrowId: currentBounty.escrowid,
+    //   signature,
+    //   label: "submit-request",
+    // });
 
-    setCurrentBounty(updatedBounty);
+    // setCurrentBounty(updatedBounty);
   };
 
   return (

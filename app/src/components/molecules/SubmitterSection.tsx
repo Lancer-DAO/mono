@@ -104,19 +104,19 @@ const SubmitterSection: React.FC<SubmitterSectionProps> = ({
               program,
               provider
             );
-            // const { updatedBounty } = await mutateAsync({
-            //   bountyId: currentBounty.id,
-            //   userId: submitter.userid,
-            //   currentUserId: currentUser.id,
-            //   relations: [BOUNTY_USER_RELATIONSHIP.ApprovedSubmitter],
-            //   state: BountyState.IN_PROGRESS,
-            //   publicKey: currentWallet.publicKey.toString(),
-            //   escrowId: currentBounty.escrowid,
-            //   signature,
-            //   label: "add-approved-submitter",
-            // });
+            const { updatedBounty } = await mutateAsync({
+              bountyId: currentBounty.id,
+              userId: submitter.userid,
+              currentUserId: currentUser.id,
+              relations: [BOUNTY_USER_RELATIONSHIP.ApprovedSubmitter],
+              state: BountyState.IN_PROGRESS,
+              publicKey: currentWallet.publicKey.toString(),
+              escrowId: currentBounty.escrowid,
+              signature,
+              label: "add-approved-submitter",
+            });
 
-            // setCurrentBounty(updatedBounty);
+            setCurrentBounty(updatedBounty);
           }
           // } catch (e) {
           //   console.error(e);

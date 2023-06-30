@@ -1,7 +1,10 @@
 import { PublicKey, Transaction } from "@solana/web3.js";
 import { AnchorProvider, Program } from "@project-serum/anchor";
 import { MonoProgram } from "@/escrow/sdk/types/mono_program";
-import { createFeatureFundingAccountInstruction, createReferralDataAccountInstruction } from "@/escrow/sdk/instructions";
+import {
+  createFeatureFundingAccountInstruction,
+  createReferralDataAccountInstruction,
+} from "@/escrow/sdk/instructions";
 import { USDC_MINT } from "@/src/constants";
 import { findFeatureAccount } from "@/escrow/sdk/pda";
 import { LancerWallet } from "@/src/types";
@@ -24,12 +27,12 @@ export const createFFA = async (
     new PublicKey(wallet.publicKey),
     program
   );
-  
+
   const referralAccountIx = await createReferralDataAccountInstruction(
     new PublicKey(wallet.publicKey),
-    feature_account, 
+    feature_account,
     program
-  )
+  );
   const { blockhash, lastValidBlockHeight } =
     await provider.connection.getLatestBlockhash();
   const txInfo = {
