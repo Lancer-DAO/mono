@@ -70,14 +70,14 @@ const BountyActions = () => {
               }}
             >
               <SubmitRequest
-                disabled={currentBounty.pullRequests.length === 0}
+              // disabled={currentBounty.pullRequests.length === 0}
               />
-              {hoveredButton === "submit" &&
+              {/* {hoveredButton === "submit" &&
                 currentBounty.pullRequests.length === 0 && (
                   <div className="hover-tooltip">
                     Please open a PR closing the GitHub Issue before submitting
                   </div>
-                )}
+                )} */}
             </div>
           )}
         {currentBounty.isCurrentSubmitter && !currentBounty.isCreator && (
@@ -160,6 +160,7 @@ const RequestToSubmit = () => {
     } else {
       // If member already exists, no on chain action and returns memberPDA
       const result = await createReferralMember();
+      debugger;
 
       const referralKey = result?.memberPDA;
       const signature = result?.txId;
@@ -182,6 +183,67 @@ const RequestToSubmit = () => {
   };
 
   return <Button onClick={onClick}>Apply</Button>;
+};
+
+export const SubmitRequest = ({ disabled }: { disabled?: boolean }) => {
+  const {
+    currentUser,
+    currentBounty,
+    currentWallet,
+    provider,
+    program,
+    setCurrentBounty,
+  } = useLancer();
+  const { mutateAsync } = api.bounties.updateBountyUser.useMutation();
+  const onClick = async () => {
+    console.log(currentBounty.creator.publicKey);
+    // If we are the creator, then skip requesting and add self as approved
+    // const signature = await submitRequestFFA(
+    //   new PublicKey(currentBounty.creator.publicKey),
+    //   currentWallet.publicKey,
+    //   currentBounty.escrow,
+    //   currentWallet,
+    //   program,
+    //   provider
+    // );
+    currentBounty.currentUserRelationsList.push(
+      BOUNTY_USER_RELATIONSHIP.CurrentSubmitter
+    );
+    const index = currentBounty.currentUserRelationsList.indexOf(
+      BOUNTY_USER_RELATIONSHIP.ApprovedSubmitter
+    );
+
+    if (index !== -1) {
+      currentBounty.currentUserRelationsList.splice(index, 1);
+    }
+
+    const index2 = currentBounty.currentUserRelationsList.indexOf(
+      BOUNTY_USER_RELATIONSHIP.ChangesRequestedSubmitter
+    );
+
+    if (index2 !== -1) {
+      currentBounty.currentUserRelationsList.splice(index2, 1);
+    }
+    const { updatedBounty } = await mutateAsync({
+      bountyId: currentBounty.id,
+      currentUserId: currentUser.id,
+      userId: currentUser.id,
+      relations: currentBounty.currentUserRelationsList,
+      state: BountyState.AWAITING_REVIEW,
+      publicKey: currentWallet.publicKey.toString(),
+      escrowId: currentBounty.escrowid,
+      signature: "",
+      label: "submit-request",
+    });
+
+    setCurrentBounty(updatedBounty);
+  };
+
+  return (
+    <Button disabled={disabled} onClick={onClick}>
+      Submit
+    </Button>
+  );
 };
 
 export const ApproveSubmission = () => {
@@ -223,17 +285,17 @@ export const ApproveSubmission = () => {
 
     setCurrentBounty(updatedBounty);
 
-    const octokit = new Octokit({
-      auth: currentAPIKey.token,
-    });
-    const octokitResponse = await octokit.request(
-      "PUT /repos/{owner}/{repo}/pulls/{pull_number}/merge",
-      {
-        owner: currentBounty.repository.organization,
-        repo: currentBounty.repository.name,
-        pull_number: decimalToNumber(currentBounty.pullRequests[0].number),
-      }
-    );
+    // const octokit = new Octokit({
+    //   auth: currentAPIKey.token,
+    // });
+    // const octokitResponse = await octokit.request(
+    //   "PUT /repos/{owner}/{repo}/pulls/{pull_number}/merge",
+    //   {
+    //     owner: currentBounty.repository.organization,
+    //     repo: currentBounty.repository.name,
+    //     pull_number: decimalToNumber(currentBounty.pullRequests[0].number),
+    //   }
+    // );
 
     const submitterKey = currentBounty.currentSubmitter.publicKey;
     const creatorKey = currentBounty.creator.publicKey;
@@ -319,42 +381,6 @@ export const ApproveSubmission = () => {
   };
 
   return <Button onClick={onClick}>Approve</Button>;
-};
-
-export const CancelEscrow = () => {
-  const {
-    currentUser,
-    currentBounty,
-    currentWallet,
-    provider,
-    program,
-    setCurrentBounty,
-  } = useLancer();
-  const { mutateAsync } = api.bounties.updateBountyUser.useMutation();
-  const onClick = async () => {
-    // If we are the creator, then skip requesting and add self as approved
-    const signature = await cancelFFA(
-      currentBounty.escrow,
-      currentWallet,
-      program,
-      provider
-    );
-    const { updatedBounty } = await mutateAsync({
-      bountyId: currentBounty.id,
-      currentUserId: currentUser.id,
-      userId: currentUser.id,
-      relations: [...currentBounty.currentUserRelationsList, "canceler"],
-      state: BountyState.CANCELED,
-      publicKey: currentWallet.publicKey.toString(),
-      escrowId: currentBounty.escrowid,
-      signature,
-      label: "cancel-escrow",
-    });
-
-    setCurrentBounty(updatedBounty);
-  };
-
-  return <Button onClick={onClick}>Cancel</Button>;
 };
 
 export const DenySubmission = () => {
@@ -452,67 +478,6 @@ export const RequestChanges = () => {
   return <Button onClick={onClick}>Request Changes</Button>;
 };
 
-export const SubmitRequest = ({ disabled }: { disabled?: boolean }) => {
-  const {
-    currentUser,
-    currentBounty,
-    currentWallet,
-    provider,
-    program,
-    setCurrentBounty,
-  } = useLancer();
-  const { mutateAsync } = api.bounties.updateBountyUser.useMutation();
-  const onClick = async () => {
-    console.log(currentBounty.creator.publicKey);
-    // If we are the creator, then skip requesting and add self as approved
-    const signature = await submitRequestFFA(
-      new PublicKey(currentBounty.creator.publicKey),
-      currentWallet.publicKey,
-      currentBounty.escrow,
-      currentWallet,
-      program,
-      provider
-    );
-    // currentBounty.currentUserRelationsList.push(
-    //   BOUNTY_USER_RELATIONSHIP.CurrentSubmitter
-    // );
-    // const index = currentBounty.currentUserRelationsList.indexOf(
-    //   BOUNTY_USER_RELATIONSHIP.ApprovedSubmitter
-    // );
-
-    // if (index !== -1) {
-    //   currentBounty.currentUserRelationsList.splice(index, 1);
-    // }
-
-    // const index2 = currentBounty.currentUserRelationsList.indexOf(
-    //   BOUNTY_USER_RELATIONSHIP.ChangesRequestedSubmitter
-    // );
-
-    // if (index2 !== -1) {
-    //   currentBounty.currentUserRelationsList.splice(index2, 1);
-    // }
-    // const { updatedBounty } = await mutateAsync({
-    //   bountyId: currentBounty.id,
-    //   currentUserId: currentUser.id,
-    //   userId: currentUser.id,
-    //   relations: currentBounty.currentUserRelationsList,
-    //   state: BountyState.AWAITING_REVIEW,
-    //   publicKey: currentWallet.publicKey.toString(),
-    //   escrowId: currentBounty.escrowid,
-    //   signature,
-    //   label: "submit-request",
-    // });
-
-    // setCurrentBounty(updatedBounty);
-  };
-
-  return (
-    <Button disabled={disabled} onClick={onClick}>
-      Submit
-    </Button>
-  );
-};
-
 export const VoteToCancel = () => {
   const {
     currentUser,
@@ -555,4 +520,40 @@ export const VoteToCancel = () => {
   };
 
   return <Button onClick={onClick}>Vote To Cancel</Button>;
+};
+
+export const CancelEscrow = () => {
+  const {
+    currentUser,
+    currentBounty,
+    currentWallet,
+    provider,
+    program,
+    setCurrentBounty,
+  } = useLancer();
+  const { mutateAsync } = api.bounties.updateBountyUser.useMutation();
+  const onClick = async () => {
+    // If we are the creator, then skip requesting and add self as approved
+    const signature = await cancelFFA(
+      currentBounty.escrow,
+      currentWallet,
+      program,
+      provider
+    );
+    const { updatedBounty } = await mutateAsync({
+      bountyId: currentBounty.id,
+      currentUserId: currentUser.id,
+      userId: currentUser.id,
+      relations: [...currentBounty.currentUserRelationsList, "canceler"],
+      state: BountyState.CANCELED,
+      publicKey: currentWallet.publicKey.toString(),
+      escrowId: currentBounty.escrowid,
+      signature,
+      label: "cancel-escrow",
+    });
+
+    setCurrentBounty(updatedBounty);
+  };
+
+  return <Button onClick={onClick}>Cancel</Button>;
 };

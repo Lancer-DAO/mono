@@ -94,6 +94,8 @@ const SubmitterSection: React.FC<SubmitterSectionProps> = ({
             const remainingAccounts = await getRemainingAccounts(
               new PublicKey(submitter.publicKey)
             );
+            debugger;
+
             console.log("ici?", submitter, remainingAccounts);
             const signature = await addSubmitterFFA(
               new PublicKey(submitter.publicKey),
