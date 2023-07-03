@@ -2,7 +2,7 @@ import { useLancer } from "@/src/providers";
 import { LinkButton, ApiKeyModal } from "@/components";
 import { useEffect, useRef, useState } from "react";
 import { useOutsideAlerter } from "@/src/hooks/useOutsideAlerter";
-
+import styles from "../../../pages/account/style.module.css"
 import dynamic from "next/dynamic";
 import { Key, HelpCircle } from "react-feather";
 import Link from "next/link";
@@ -45,47 +45,15 @@ const AccountHeaderOptions = () => {
       {currentUser !== null ? (
         <>
           <div
-            onClick={() => {
-              setShowOptions(true);
-              if (!!currentTutorialState && currentTutorialState.isActive) {
-                if (
-                  currentTutorialState?.title ===
-                    GITHUB_API_KEY_TUTORIAL_INITIAL_STATE.title &&
-                  currentTutorialState.currentStep === 0
-                ) {
-                  setCurrentTutorialState({
-                    ...currentTutorialState,
-                    currentStep: 1,
-                  });
-                } else if (
-                  currentTutorialState?.title ===
-                    BOUNTY_ACTIONS_TUTORIAL_I_INITIAL_STATE.title &&
-                  currentTutorialState.currentStep === 7
-                ) {
-                  setCurrentTutorialState({
-                    ...currentTutorialState,
-                    currentStep: 8,
-                  });
-                } else if (
-                  currentTutorialState?.title ===
-                    BOUNTY_ACTIONS_TUTORIAL_II_INITIAL_STATE.title &&
-                  currentTutorialState.currentStep === 6
-                ) {
-                  setCurrentTutorialState({
-                    ...currentTutorialState,
-                    currentStep: 7,
-                  });
-                }
-              }
-            }}
             id="account-options"
           >
-            <img
-              src={`https://avatars.githubusercontent.com/u/${
-                currentUser.githubId.split("|")[1]
-              }?s=60&v=4`}
-              className="h-[40px] w-[40px] rounded-full border-[1px] border-gray-600"
-            />
+               <Link
+                href={"/api/auth/logout"}
+                id="logout-link"
+                className={styles.log}
+              >
+                Logout
+              </Link>
           </div>
           {showOptions && (
             <div

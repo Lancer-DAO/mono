@@ -2,6 +2,9 @@ import Head from "next/head";
 import { withPageAuthRequired } from "@auth0/nextjs-auth0";
 import { useLancer } from "@/src/providers";
 import dynamic from "next/dynamic";
+import styles from "./style.module.css";
+import Header from "@/src/components/organisms/Header";
+import { useAnchorWallet } from '@solana/wallet-adapter-react';
 import {
   DefaultLayout,
   ProfileNFTCard,
@@ -36,7 +39,14 @@ import {
   PROFILE_TUTORIAL_INITIAL_STATE,
 } from "@/src/constants/tutorials";
 import { Key } from "react-feather";
+import { Style_Script } from "@next/font/google";
 dayjs.extend(relativeTime);
+
+const WalletMultiButtonDynamic = dynamic(
+  async () =>
+    (await import("@solana/wallet-adapter-react-ui")).WalletMultiButton,
+  { ssr: false }
+);
 
 const underdogClient = createUnderdogClient({});
 export default function Home() {
@@ -160,7 +170,7 @@ const Account: React.FC = () => {
       await fetchBountyNFTs();
       if (
         currentTutorialState?.title ===
-          BOUNTY_ACTIONS_TUTORIAL_II_INITIAL_STATE.title &&
+        BOUNTY_ACTIONS_TUTORIAL_II_INITIAL_STATE.title &&
         currentTutorialState.currentStep === 8
       ) {
         setCurrentTutorialState({
@@ -218,82 +228,34 @@ const Account: React.FC = () => {
   };
 
   return (
-    <DefaultLayout>
-      {account && (
-        <>
-          <div className="account-page-wrapper">
-            {/* <ApiKeyModal showModal={showModal} setShowModal={setShowModal} /> */}
+    <div className={styles.cll}>
 
-            {isMobile && (
-              <button
-                onClick={() => setShowModal(true)}
-                className="flex h-[48px] w-full gap-[10px] py-[6px] items-center justify-center border-b-gray-400 border-b-[1px] hover:bg-turquoise-500 text-gray-800 hover:text-white-100 transition-colors duration-300 ease-in-out"
-              >
-                <Key />
-                {currentAPIKey ? currentAPIKey.name : "Set API Key"}
-              </button>
-            )}
-            {/* {currentUser?.githubLogin && (
-            <div>GitHub User: {currentUser.githubLogin}</div>
+      <Header />
+
+      <div className={styles.center}>
+        <div className={styles.info}>
+          {currentUser?.githubLogin && (
+            <div className={styles.name}>{currentUser.githubLogin}</div>
           )}
-          <a href="/api/auth/logout">Logout</a> */}
+          {useAnchorWallet() ? <div className={styles.con}>
+            <div className={styles.sbal}>
+              <p>Sol Balance : <span className={styles.white}>0</span></p>
+            </div>
+            <div className={styles.sbal}>
+              <p>USDC Balance : <span className={styles.white}>0</span></p>
+            </div>
+          </div> : <div className={styles.noC}>Connect wallet to withdraw from your account</div>}</div>
 
-            {/* {wallets &&
-            wallets.map((wallet) => (
-              <WalletInfo wallet={wallet} key={wallet.publicKey.toString()} />
-            ))} */}
-
-            {/* {!IS_MAINNET && (
-            <a
-              href="https://staging.coinflow.cash/faucet"
-              target={"_blank"}
-              rel="noreferrer"
-            >
-              USDC Faucet
-            </a>
-          )} */}
-            {profileNFT ? (
-              <>
-                <ProfileNFTCard
-                  profileNFT={profileNFT}
-                  githubId={account.githubId}
-                />
-
-                <div className="profile-bounty-list" id="bounties-list">
-                  <h2>Bounties</h2>
-                  {bountyNFTs.length > 0 ? (
-                    bountyNFTs.map((bountyNFT) => (
-                      <BountyNFTCard bountyNFT={bountyNFT} />
-                    ))
-                  ) : (
-                    <div>No bounties yet!</div>
-                  )}
-                </div>
-
-                <button
-                  className="my-first-step"
-                  onClick={() => {
-                    setShowCoinflow(!showCoinflow);
-                  }}
-                >
-                  Cash Out
-                </button>
-
-                {showCoinflow && <CoinflowOfframp />}
-              </>
-            ) : (
-              <Button
-                disabled={!currentWallet}
-                disabledText={"Please connect a wallet"}
-                onClick={mintProfileNFT}
-                id="mint-profile-nft"
-              >
-                Mint Profile NFT
-              </Button>
-            )}
+        {useAnchorWallet() ? <div className={styles.after}>
+          <div className={styles.walletbar}>
+          BuxU...EXks
           </div>
-        </>
-      )}
-    </DefaultLayout>
+        <div className={styles.verify} >Verify Wallet</div>
+        <div className={styles.withdraw} ><img className={styles.down} src="https://media.discordapp.net/attachments/996247310080147507/1125477353276047541/Frame.png?width=22&height=23"/>Withdraw</div>
+        </div> : <WalletMultiButtonDynamic className={styles.connect} />}
+
+
+      </div>
+    </div>
   );
 };

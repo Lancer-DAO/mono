@@ -1,5 +1,7 @@
 import Link from "next/link";
 import Logo from "../../assets/Logo";
+import lgo from "../../../lgoo.png"
+import styles from "../../../pages/account/style.module.css"
 import {
   LinkButton,
   AccountHeaderOptions,
@@ -31,7 +33,7 @@ export const Header = () => {
   const [isTutorialButtonHovered, setIsTutorialButtonHovered] = useState(false);
   const [showTutorialModal, setShowTutorialModal] = useState(false);
   return (
-    <div className="flex sticky py-[20px] bg-white-100 top-0 z-20">
+    <div className={styles.nav}>
       <div className="flex items-center mx-auto w-[70%]">
         <Link
           href="/"
@@ -40,11 +42,7 @@ export const Header = () => {
           <Logo width="auto" height="50px" />
         </Link>
         <div className="ml-[20px] flex gap-[10px] items-center w-full">
-          {HEADER_LINKS.map(({ href, children }) => {
-            return (
-              <LinkButton href={href} children={children} version="text" />
-            );
-          })}
+          
           <div
             className="ml-auto"
             id="wallet-connect-button"
@@ -63,7 +61,7 @@ export const Header = () => {
               }
             }}
           >
-            <WalletMultiButtonDynamic className="text-gray-800 flex h-[48px] w-[250px] py-[6px] items-center justify-center border-solid hover:bg-turquoise-500 text-gray-800 hover:text-white-100 transition-colors duration-300 ease-in-out" />
+
           </div>
 
           <AccountHeaderOptions />
