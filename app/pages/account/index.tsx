@@ -239,19 +239,19 @@ const Account: React.FC = () => {
           )}
           {useAnchorWallet() ? <div className={styles.con}>
             <div className={styles.sbal}>
-              <p>Sol Balance : <span className={styles.white}>0</span></p>
+              <p>Sol Balance : <span className={styles.white}>0 {/**dummy text*/}</span></p>
             </div>
             <div className={styles.sbal}>
-              <p>USDC Balance : <span className={styles.white}>0</span></p>
+              <p>USDC Balance : <span className={styles.white}>0 {/**dummy text*/}</span></p>
             </div>
           </div> : <div className={styles.noC}>Connect wallet to withdraw from your account</div>}</div>
 
         {useAnchorWallet() ? <div className={styles.after}>
           <div className={styles.walletbar}>
-          BuxU...EXks
+            BuxU...EXks {/**dummy text*/}
           </div>
-        <div className={styles.verify} >Verify Wallet</div>
-        <div className={styles.withdraw} ><img className={styles.down} src="https://media.discordapp.net/attachments/996247310080147507/1125477353276047541/Frame.png?width=22&height=23"/>Withdraw</div>
+          <div className={styles.verify} >Verify Wallet</div>
+          <div className={styles.withdraw} ><img className={styles.down} src="https://media.discordapp.net/attachments/996247310080147507/1125477353276047541/Frame.png?width=22&height=23" />Withdraw</div>
         </div> : <WalletMultiButtonDynamic className={styles.connect} />}
 
 

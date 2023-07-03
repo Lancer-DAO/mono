@@ -28,6 +28,7 @@ align-items: flex-start;
 }
 
 .connect{
+    cursor: pointer;
     border-radius: 14px;
     display: flex;
 width: 20.4375rem;
@@ -107,6 +108,7 @@ margin-top: 2rem;
 }
 
 .verify{
+    cursor: pointer;
     display: flex;
 width: 20.4375rem;
 height: 4.5rem;
