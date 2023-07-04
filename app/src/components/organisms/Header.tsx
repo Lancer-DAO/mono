@@ -34,7 +34,7 @@ export const Header = () => {
   const [showTutorialModal, setShowTutorialModal] = useState(false);
   return (
     <div className={styles.nav}>
-      <div className="flex items-center mx-auto w-[70%]">
+      <div className="flex items-center mx-auto">
         <Link
           href="/"
           className="relative float-left text-blue-500 transition-colors duration-400 ease-in-out hover:text-blue-600 no-underline"

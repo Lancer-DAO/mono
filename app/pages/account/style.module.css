@@ -41,7 +41,10 @@ background: #333;
 }
 
 .nav{
-    padding: 1rem;
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+    padding-left: 2rem;
+    padding-right: 2rem;
     background: #111; 
 }
 
