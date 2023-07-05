@@ -10,6 +10,7 @@ export interface IReferralContext {
   claimable: number;
   initialized: boolean;
   referrer: PublicKey;
+  getSubmitterReferrer: (submitter: PublicKey) => Promise<PublicKey>;
   claim: () => Promise<ITransactionInfo | null>;
   createReferralMember: () => Promise<ITransactionInfo | null>;
   getRemainingAccounts: (wallet: PublicKey) => Promise<AccountMeta[]>;

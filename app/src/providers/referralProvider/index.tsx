@@ -24,6 +24,7 @@ export const ReferralContext = createContext<IReferralContext>({
   claimable: 0,
   initialized: false,
   referrer: PublicKey.default,
+  getSubmitterReferrer: async () => PublicKey.default,
   claim: () => null,
   createReferralMember: () => null,
   getRemainingAccounts: async () => [],
@@ -155,23 +156,33 @@ const ReferralProvider: FunctionComponent<IReferralProps> = ({ children }) => {
       const organization = await client.organization.getByName(
         ORGANIZATION_NAME
       );
+      console.log("hello?");
 
       const buddyProfile = await client.buddy.getProfile(wallet);
+      console.log("profile", buddyProfile);
       if (!buddyProfile) return [];
-      const treasury = await client.treasury.getByBuddy(buddyProfile);
-      if (!treasury) return [];
-      const member = (
-        await client.member.getByTreasuryOwner(treasury.account.pda)
-      )[0];
+
+      const treasuryPDA = client.pda.getTreasuryPDA(
+        [buddyProfile.account.pda],
+        [10_000],
+        organization.account.mainTokenMint
+      );
+
+      const member =
+        (await client.member.getByTreasuryOwner(treasuryPDA))[0] || null;
+
+      if (!member) return [];
+
       const remainingAccounts =
         await client.initialize.validateReferrerAccounts(
           organization.account.mainTokenMint,
           member.account.pda
         );
-      console.log(JSON.stringify(remainingAccounts));
+
+      console.log("jason", JSON.stringify(remainingAccounts));
 
       if (
-        remainingAccounts.member.toString() === PublicKey.default.toString()
+        remainingAccounts.memberPDA.toString() === PublicKey.default.toString()
       ) {
         return [];
       }
@@ -193,7 +204,7 @@ const ReferralProvider: FunctionComponent<IReferralProps> = ({ children }) => {
           isSigner: false,
         },
         {
-          pubkey: remainingAccounts.member,
+          pubkey: remainingAccounts.memberPDA,
           isWritable: false,
           isSigner: false,
         },
@@ -229,6 +240,47 @@ const ReferralProvider: FunctionComponent<IReferralProps> = ({ children }) => {
     return "";
   }, [member]);
 
+  const getSubmitterReferrer = useCallback(
+    async (submitter: PublicKey) => {
+      const organization = await client.organization.getByName(
+        ORGANIZATION_NAME
+      );
+
+      const buddyProfile = await client.buddy.getProfile(submitter);
+      if (buddyProfile) {
+        const treasuryPDA = client.pda.getTreasuryPDA(
+          [buddyProfile.account.pda],
+          [10_000],
+          organization.account.mainTokenMint
+        );
+
+        const member =
+          (await client.member.getByTreasuryOwner(treasuryPDA))[0] || null;
+
+        if (
+          member &&
+          member.account.referrer.toString() !== PublicKey.default.toString()
+        ) {
+          if (
+            organization.account.mainTokenMint.toString() ===
+            PublicKey.default.toString()
+          ) {
+            return member.account.referrer;
+          } else {
+            return getAssociatedTokenAddressSync(
+              organization.account.mainTokenMint,
+              member.account.referrer,
+              true
+            );
+          }
+        }
+      }
+
+      return PublicKey.default;
+    },
+    [client]
+  );
+
   const referrer = useMemo(() => {
     if (
       member &&
@@ -249,7 +301,7 @@ const ReferralProvider: FunctionComponent<IReferralProps> = ({ children }) => {
     }
 
     return PublicKey.default;
-  }, [member]);
+  }, [member, organization]);
 
   useEffect(() => {
     setCachedReferrer(localStorage.getItem("referrer"));
@@ -277,6 +329,7 @@ const ReferralProvider: FunctionComponent<IReferralProps> = ({ children }) => {
     claimable,
     initialized,
     referrer,
+    getSubmitterReferrer,
     claim,
     createReferralMember,
     getRemainingAccounts,

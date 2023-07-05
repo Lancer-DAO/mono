@@ -355,9 +355,11 @@ export const approveRequestWithReferralInstruction = async (
     program
   );
 
-  console.log(
-    await program.account.referralDataAccount.fetch(referral_data_account)
+  const [lancer_token_program_authority] = await findLancerProgramAuthority(
+    program
   );
+
+  console.log(lancer_dao_token_account.toString());
 
   return await program.methods
     .approveRequestWithReferral()
@@ -367,10 +369,11 @@ export const approveRequestWithReferralInstruction = async (
       payoutAccount: submitter_token_account,
       featureDataAccount: feature_data_account,
       featureTokenAccount: feature_token_account,
-      programAuthority: program_authority,
-      referralDataAccount: referral_data_account,
       lancerDaoTokenAccount: lancer_dao_token_account,
+      lancerTokenProgramAuthority: lancer_token_program_authority,
+      programAuthority: program_authority,
       tokenProgram: TOKEN_PROGRAM_ID,
+      referralDataAccount: referral_data_account,
     })
     .instruction();
 };

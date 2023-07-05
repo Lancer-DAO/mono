@@ -2082,10 +2082,10 @@
     bs58 "^5.0.0"
     uuid "^8.3.2"
 
-"@ladderlabs/buddy-sdk@^0.1.14":
-  version "0.1.14"
-  resolved "https://registry.yarnpkg.com/@ladderlabs/buddy-sdk/-/buddy-sdk-0.1.14.tgz#05f8052c608136eb380e30ce2fb6ad99099bf3b5"
-  integrity sha512-dEmwg2aXGHO8f/RsTHjSA7AwZ6fbP5sI2HYY1gHBuBUXCLE227N6aBYHQk/Jz6tWwgY/xYbk1mEuulpyakfRpg==
+"@ladderlabs/buddy-sdk@^0.1.17":
+  version "0.1.17"
+  resolved "https://registry.yarnpkg.com/@ladderlabs/buddy-sdk/-/buddy-sdk-0.1.17.tgz#36476fcbb367eb222b8ef2f9d18c519c83c143a9"
+  integrity sha512-k5aVPiFdyyTQGA6DSb7zoMkmL8itmER6nx2E6Io/5jVptVKuMMlRW0sslLHCuzKBklrDcgwpYzw69cjYKGKy4w==
   dependencies:
     "@metaplex-foundation/mpl-token-metadata" "2.9.1"
     "@project-serum/anchor" "^0.26.0"
@@ -2094,6 +2094,7 @@
     "@types/mocha" "^10.0.1"
     lz-string "1.5.0"
     nanoid "^4.0.2"
+    tslib "^2.5.3"
     typescript "^4.8.4"
 
 "@ledgerhq/devices@6.27.1", "@ledgerhq/devices@^6.27.1":
