@@ -40,6 +40,7 @@ import {
   MAINNET_RPC,
   MAINNET_USDC_MINT,
   MONO_ADDRESS,
+  IS_MAINNET,
 } from "@/src/constants";
 import { AnchorProvider, Program } from "@project-serum/anchor";
 import { MonoProgram } from "@/escrow/sdk/types/mono_program";
@@ -77,7 +78,7 @@ export const SendSOLToRandomAddress: FC = () => {
     );
     const create_lancer_token_account_ix =
       await createLancerTokenAccountInstruction(
-        new PublicKey(MAINNET_USDC_MINT),
+        new PublicKey(USDC_MINT),
         program
       );
     await provider.sendAndConfirm(
@@ -173,11 +174,11 @@ const Home: NextPage = () => {
 
 const App: FC<AppProps> = ({ Component, pageProps }) => {
   // Can be set to 'devnet', 'testnet', or 'mainnet-beta'
-  const network = MAINNET_RPC;
-
-  // You can also provide a custom RPC endpoint
-  const endpoint = useMemo(() => network, [network]);
-
+  const endpoint = useMemo(
+    () =>
+      IS_MAINNET ? MAINNET_RPC : clusterApiUrl(WalletAdapterNetwork.Devnet),
+    [IS_MAINNET]
+  );
   const wallets = useMemo(
     () => [
       /**
@@ -195,7 +196,7 @@ const App: FC<AppProps> = ({ Component, pageProps }) => {
       new PhantomWalletAdapter(),
     ],
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [network]
+    [endpoint]
   );
 
   return (

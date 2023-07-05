@@ -2,7 +2,7 @@
 seeds = true
 skip-lint = false
 [programs.devnet]
-mono_program = "LnCrQyE83MgFTT8XftEMxzZedEbYx7ishUQ5ytA7pyk"
+mono_program = "LAnCQFuCsqVgekkfYwZDoKjhZscnK1hbKuWQFNP9DXG"
 
 [registry]
 url = "https://api.apr.dev"
