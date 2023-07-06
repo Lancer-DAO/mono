@@ -1,6 +1,7 @@
 import { PublicKey } from "@solana/web3.js";
 
-export const MONO_DEVNET = "LAnCQFuCsqVgekkfYwZDoKjhZscnK1hbKuWQFNP9DXG";
+export const MONO_DEVNET = "LANCKV4vDYRfYJCnKnZLxFcFa2m8DiiGjYEaMEGPYF6";
+export const MONO_MAINNET = "LNCRQTZfeLMFHsSggvVc9kQWb1A98PEqHxVzBraWpQs";
 
 export const MONO_DATA = "mono";
 export const LANCER_DAO = "LANCER_DAO";
@@ -17,7 +18,7 @@ export const MINT_DECIMALS = 9;
 export const MINT_AUTHORITY = "mint_authority";
 export const REFERRER = "referrer";
 export const LANCER_ADMIN = new PublicKey(
-  "WbmLPptTGZTFK5ZSks7oaa4Qx69qS3jFXMrAsbWz1or"
+  "admbKYEXAPNHZbzNADk7arzf8ZbDiZ9u4qzNS3XwRXx"
 );
 export const COMPLETER_FEE = 0.95;
 export const REFERRAL_FEE = 0.01;
