@@ -74,22 +74,14 @@ export const findFeatureAccount = async (
   creator: anchor.web3.PublicKey,
   program: Program<MonoProgram>
 ): Promise<[anchor.web3.PublicKey, number]> => {
-  const mono = Buffer.from(MONO_DATA);
-  const timestamp = anchor.utils.bytes.utf8.encode(unix_timestamp);
-  const cr = creator.toBuffer();
-  console.log("mtc", mono, timestamp, cr, creator.toBase58());
-  console.log(
-    "mtcs",
-    mono.toLocaleString(),
-    timestamp.toLocaleString(),
-    cr.toLocaleString()
-  );
-  const acc = await anchor.web3.PublicKey.findProgramAddressSync(
-    [mono, timestamp, cr],
+  return await anchor.web3.PublicKey.findProgramAddressSync(
+    [
+      Buffer.from(MONO_DATA),
+      anchor.utils.bytes.utf8.encode(unix_timestamp),
+      creator.toBuffer(),
+    ],
     program.programId
   );
-  console.log(acc);
-  return acc;
 };
 
 /**

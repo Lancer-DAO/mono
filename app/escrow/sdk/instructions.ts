@@ -16,7 +16,6 @@ import {
 } from "@solana/spl-token";
 
 import {
-  AccountMeta,
   ComputeBudgetProgram,
   Keypair,
   LAMPORTS_PER_SOL,
@@ -44,11 +43,10 @@ import { LANCER_ADMIN } from "./constants";
 export const createFeatureFundingAccountInstruction = async (
   mint: PublicKey,
   creator: PublicKey,
-  program: Program<MonoProgram>,
-  timestamp: string
+  program: Program<MonoProgram>
 ): Promise<TransactionInstruction> => {
-  // const timestamp = Date.now().toString();
-  // console.log("timestamp = ", timestamp);
+  const timestamp = Date.now().toString();
+  console.log("timestamp = ", timestamp);
   const [feature_account] = await findFeatureAccount(
     timestamp,
     creator,
@@ -144,7 +142,6 @@ export const addApprovedSubmittersV1Instruction = async (
   creator: PublicKey,
   referrer: PublicKey,
   submitter: PublicKey,
-  remainingAccounts: AccountMeta[],
   program: Program<MonoProgram>
 ): Promise<TransactionInstruction> => {
   const [feature_data_account] = await findFeatureAccount(
@@ -157,7 +154,7 @@ export const addApprovedSubmittersV1Instruction = async (
     feature_data_account,
     program
   );
-  debugger;
+
   return await program.methods
     .addApprovedSubmittersV1()
     .accounts({
@@ -167,7 +164,6 @@ export const addApprovedSubmittersV1Instruction = async (
       referralDataAccount: referral_data_account,
       featureDataAccount: feature_data_account,
     })
-    .remainingAccounts(remainingAccounts)
     .instruction();
 };
 
@@ -233,12 +229,6 @@ export const submitRequestInstruction = async (
     creator,
     program
   );
-
-  console.log(feature_data_account.toString());
-  console.log(program.programId.toString());
-
-  console.log(JSON.stringify(await program.account.featureDataAccount.all()));
-  // debugger;
 
   return await program.methods
     .submitRequest()
@@ -356,12 +346,6 @@ export const approveRequestWithReferralInstruction = async (
     program
   );
 
-  const [lancer_token_program_authority] = await findLancerProgramAuthority(
-    program
-  );
-
-  console.log(lancer_dao_token_account.toString());
-
   return await program.methods
     .approveRequestWithReferral()
     .accounts({
@@ -370,11 +354,10 @@ export const approveRequestWithReferralInstruction = async (
       payoutAccount: submitter_token_account,
       featureDataAccount: feature_data_account,
       featureTokenAccount: feature_token_account,
-      lancerDaoTokenAccount: lancer_dao_token_account,
-      lancerTokenProgramAuthority: lancer_token_program_authority,
       programAuthority: program_authority,
-      tokenProgram: TOKEN_PROGRAM_ID,
       referralDataAccount: referral_data_account,
+      lancerDaoTokenAccount: lancer_dao_token_account,
+      tokenProgram: TOKEN_PROGRAM_ID,
     })
     .instruction();
 };
