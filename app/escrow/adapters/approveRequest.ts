@@ -4,7 +4,7 @@ import { AnchorProvider, Program } from "@project-serum/anchor";
 import { MonoProgram } from "@/escrow/sdk/types/mono_program";
 import { approveRequestWithReferralInstruction } from "@/escrow/sdk/instructions";
 import { USDC_MINT } from "@/src/constants";
-import { Escrow,  LancerWallet } from "@/src/types";
+import { Escrow, LancerWallet } from "@/src/types";
 
 export const approveRequestFFA = async (
   submitter: PublicKey,
@@ -40,6 +40,7 @@ export const approveRequestFFA = async (
   const tx = await wallet.signAndSendTransaction(
     new Transaction(txInfo).add(approveSubmitterIx)
   );
+  debugger;
 
   // buddylinkprogram
   // mint

@@ -157,7 +157,7 @@ export const addApprovedSubmittersV1Instruction = async (
     feature_data_account,
     program
   );
-
+  debugger;
   return await program.methods
     .addApprovedSubmittersV1()
     .accounts({
@@ -238,6 +238,7 @@ export const submitRequestInstruction = async (
   console.log(program.programId.toString());
 
   console.log(JSON.stringify(await program.account.featureDataAccount.all()));
+  // debugger;
 
   return await program.methods
     .submitRequest()

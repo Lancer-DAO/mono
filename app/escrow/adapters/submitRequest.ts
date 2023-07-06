@@ -1,49 +1,48 @@
-import {
-  PublicKey,
-  Transaction,
-} from "@solana/web3.js";
-import {
-  getAssociatedTokenAddress,
-} from "@solana/spl-token";
-import { AnchorProvider, Program} from "@project-serum/anchor";
+import { PublicKey, Transaction } from "@solana/web3.js";
+import { getAssociatedTokenAddress } from "@solana/spl-token";
+import { AnchorProvider, Program } from "@project-serum/anchor";
 import { MonoProgram } from "@/escrow/sdk/types/mono_program";
-import {  submitRequestInstruction,
-} from "@/escrow/sdk/instructions";
+import { submitRequestInstruction } from "@/escrow/sdk/instructions";
 
 import { USDC_MINT } from "@/src/constants";
 import { Escrow } from "@prisma/client";
 import { LancerWallet } from "@/src/types";
 import { maybeCreateTokenAccount } from "@/src/utils";
 
+export const submitRequestFFA = async (
+  creator: PublicKey,
+  submitter: PublicKey,
+  acc: Escrow,
+  wallet: LancerWallet,
+  program: Program<MonoProgram>,
+  provider: AnchorProvider
+) => {
+  const tokenAddress = await getAssociatedTokenAddress(
+    new PublicKey(USDC_MINT),
+    submitter
+  );
+  // await maybeCreateTokenAccount(tokenAddress, submitter, new PublicKey(USDC_MINT), wallet,provider.connection)
 
-export const submitRequestFFA = async (creator: PublicKey,submitter: PublicKey, acc: Escrow, wallet: LancerWallet, program: Program<MonoProgram>, provider: AnchorProvider) => {
+  let approveSubmitterIx = await submitRequestInstruction(
+    acc.timestamp,
+    creator,
+    submitter,
+    tokenAddress,
+    program
+  );
 
-        const tokenAddress = await getAssociatedTokenAddress(
-            new PublicKey(USDC_MINT),
-            submitter
-          );
-    await maybeCreateTokenAccount(tokenAddress, submitter, new PublicKey(USDC_MINT), wallet,provider.connection)
-
-      let approveSubmitterIx = await submitRequestInstruction(
-        acc.timestamp,
-        creator,
-        submitter,
-        tokenAddress,
-        program
-      )
-
-      const {blockhash, lastValidBlockHeight} = (await provider.connection.getLatestBlockhash());
-      const txInfo = {
-                /** The transaction fee payer */
-                feePayer: submitter,
-                /** A recent blockhash */
-                blockhash: blockhash,
-                /** the last block chain can advance to before tx is exportd expired */
-                lastValidBlockHeight: lastValidBlockHeight,
-              }
-      const tx = await wallet.signAndSendTransaction(
-        new Transaction(txInfo).add(approveSubmitterIx)
-      );
-      return tx;
-
+  const { blockhash, lastValidBlockHeight } =
+    await provider.connection.getLatestBlockhash();
+  const txInfo = {
+    /** The transaction fee payer */
+    feePayer: submitter,
+    /** A recent blockhash */
+    blockhash: blockhash,
+    /** the last block chain can advance to before tx is exportd expired */
+    lastValidBlockHeight: lastValidBlockHeight,
   };
+  const tx = await wallet.signAndSendTransaction(
+    new Transaction(txInfo).add(approveSubmitterIx)
+  );
+  return tx;
+};

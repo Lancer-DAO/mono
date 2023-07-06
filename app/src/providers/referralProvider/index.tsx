@@ -182,6 +182,7 @@ const ReferralProvider: FunctionComponent<IReferralProps> = ({ children }) => {
       console.log("jason", JSON.stringify(remainingAccounts));
 
       if (
+        !!remainingAccounts.memberPDA &&
         remainingAccounts.memberPDA.toString() === PublicKey.default.toString()
       ) {
         return [];
