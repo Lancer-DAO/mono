@@ -13,7 +13,7 @@ export const registerProfileNFT = protectedProcedure
     const { email } = ctx.user;
     const user = await helpers.getUser(email);
 
-    const wallet = await helpers.getOrCreateWallet(user, walletPublicKey);
+    const wallet = await helpers.getOrCreateWallet(user, walletPublicKey, true);
 
     const updatedUser = await prisma.user.update({
       where: {

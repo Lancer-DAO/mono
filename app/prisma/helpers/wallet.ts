@@ -3,7 +3,8 @@ import * as Prisma from "@prisma/client";
 
 export const getOrCreateWallet = async (
   user: Prisma.User,
-  publicKey: string
+  publicKey: string,
+  isDefault?: boolean
 ): Promise<Prisma.Wallet> => {
   let wallet = await prisma.wallet.findUnique({
     where: {
@@ -15,6 +16,7 @@ export const getOrCreateWallet = async (
       data: {
         publicKey,
         userid: user.id,
+        isDefault,
       },
     });
   }
