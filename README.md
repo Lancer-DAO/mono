@@ -1,4 +1,4 @@
-## Figma Link: 
+## Figma Link:  
 https://www.figma.com/file/y5KwskdwqOLHZk7TfwNpdE/Lancer-x-Developer-DAO-x-Texaglo?type=design&node-id=31%3A8833&t=PANeGlnY9LQOVJLb-1
 
 ## Getting Started with Lancer
