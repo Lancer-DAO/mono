@@ -255,6 +255,7 @@ export const ApproveSubmission = () => {
     currentWallet,
     setCurrentBounty,
   } = useLancer();
+  const { programId: buddylinkProgramId } = useReferral();
   const { mutateAsync } = api.bounties.updateBountyUser.useMutation();
 
   const { currentAPIKey } = useLancer();
@@ -265,119 +266,120 @@ export const ApproveSubmission = () => {
       new PublicKey(currentBounty.currentSubmitter.publicKey),
       currentBounty.escrow,
       currentWallet,
+      buddylinkProgramId,
       program,
       provider
     );
-    // currentBounty.currentUserRelationsList.push(
-    //   BOUNTY_USER_RELATIONSHIP.Completer
+    currentBounty.currentUserRelationsList.push(
+      BOUNTY_USER_RELATIONSHIP.Completer
+    );
+    const { updatedBounty } = await mutateAsync({
+      bountyId: currentBounty.id,
+      currentUserId: currentUser.id,
+      userId: currentUser.id,
+      relations: currentBounty.currentUserRelationsList,
+      state: BountyState.COMPLETE,
+      publicKey: currentWallet.publicKey.toString(),
+      escrowId: currentBounty.escrowid,
+      signature,
+      label: "complete-bounty",
+    });
+
+    setCurrentBounty(updatedBounty);
+
+    // const octokit = new Octokit({
+    //   auth: currentAPIKey.token,
+    // });
+    // const octokitResponse = await octokit.request(
+    //   "PUT /repos/{owner}/{repo}/pulls/{pull_number}/merge",
+    //   {
+    //     owner: currentBounty.repository.organization,
+    //     repo: currentBounty.repository.name,
+    //     pull_number: decimalToNumber(currentBounty.pullRequests[0].number),
+    //   }
     // );
-    // const { updatedBounty } = await mutateAsync({
-    //   bountyId: currentBounty.id,
-    //   currentUserId: currentUser.id,
-    //   userId: currentUser.id,
-    //   relations: currentBounty.currentUserRelationsList,
-    //   state: BountyState.COMPLETE,
-    //   publicKey: currentWallet.publicKey.toString(),
-    //   escrowId: currentBounty.escrowid,
-    //   signature,
-    //   label: "complete-bounty",
-    // });
 
-    // setCurrentBounty(updatedBounty);
+    const submitterKey = currentBounty.currentSubmitter.publicKey;
+    const creatorKey = currentBounty.creator.publicKey;
+    let nfts = await underdogClient.getNfts({
+      params: PROFILE_PROJECT_PARAMS,
+      query: {
+        page: 1,
+        limit: 1,
+        ownerAddress: submitterKey,
+      },
+    });
+    const reputationIncrease =
+      100 * decimalToNumber(currentBounty.estimatedTime);
+    if (nfts.totalResults > 0) {
+      const profileNFT = nfts.results[0];
+      underdogClient.partialUpdateNft({
+        params: { ...PROFILE_PROJECT_PARAMS, nftId: nfts.results[0].id },
+        body: {
+          attributes: {
+            lastUpdated: new Date().toISOString(),
+            reputation:
+              (profileNFT.attributes.reputation as number) + reputationIncrease,
+          },
+        },
+      });
+    }
+    await underdogClient.createNft({
+      params: BOUNTY_PROJECT_PARAMS,
+      body: {
+        name: `Bounty Completer: ${currentBounty.id}`,
+        image: "https://i.imgur.com/3uQq5Zo.png",
+        description: currentBounty.description,
+        attributes: {
+          reputation: reputationIncrease,
+          completed: dayjs().toISOString(),
+          tags: currentBounty.tags.map((tag) => tag.name).join(","),
+          role: "completer",
+        },
+        upsert: false,
+        receiverAddress: submitterKey,
+      },
+    });
 
-    // // const octokit = new Octokit({
-    // //   auth: currentAPIKey.token,
-    // // });
-    // // const octokitResponse = await octokit.request(
-    // //   "PUT /repos/{owner}/{repo}/pulls/{pull_number}/merge",
-    // //   {
-    // //     owner: currentBounty.repository.organization,
-    // //     repo: currentBounty.repository.name,
-    // //     pull_number: decimalToNumber(currentBounty.pullRequests[0].number),
-    // //   }
-    // // );
+    nfts = await underdogClient.getNfts({
+      params: PROFILE_PROJECT_PARAMS,
+      query: {
+        page: 1,
+        limit: 1,
+        ownerAddress: creatorKey,
+      },
+    });
 
-    // const submitterKey = currentBounty.currentSubmitter.publicKey;
-    // const creatorKey = currentBounty.creator.publicKey;
-    // let nfts = await underdogClient.getNfts({
-    //   params: PROFILE_PROJECT_PARAMS,
-    //   query: {
-    //     page: 1,
-    //     limit: 1,
-    //     ownerAddress: submitterKey,
-    //   },
-    // });
-    // const reputationIncrease =
-    //   100 * decimalToNumber(currentBounty.estimatedTime);
-    // if (nfts.totalResults > 0) {
-    //   const profileNFT = nfts.results[0];
-    //   underdogClient.partialUpdateNft({
-    //     params: { ...PROFILE_PROJECT_PARAMS, nftId: nfts.results[0].id },
-    //     body: {
-    //       attributes: {
-    //         lastUpdated: new Date().toISOString(),
-    //         reputation:
-    //           (profileNFT.attributes.reputation as number) + reputationIncrease,
-    //       },
-    //     },
-    //   });
-    // }
-    // await underdogClient.createNft({
-    //   params: BOUNTY_PROJECT_PARAMS,
-    //   body: {
-    //     name: `Bounty Completer: ${currentBounty.id}`,
-    //     image: "https://i.imgur.com/3uQq5Zo.png",
-    //     description: currentBounty.description,
-    //     attributes: {
-    //       reputation: reputationIncrease,
-    //       completed: dayjs().toISOString(),
-    //       tags: currentBounty.tags.map((tag) => tag.name).join(","),
-    //       role: "completer",
-    //     },
-    //     upsert: false,
-    //     receiverAddress: submitterKey,
-    //   },
-    // });
+    if (nfts.totalResults > 0) {
+      const profileNFT = nfts.results[0];
+      underdogClient.partialUpdateNft({
+        params: { ...PROFILE_PROJECT_PARAMS, nftId: nfts.results[0].id },
+        body: {
+          attributes: {
+            lastUpdated: new Date().toISOString(),
+            reputation:
+              (profileNFT.attributes.reputation as number) + reputationIncrease,
+          },
+        },
+      });
+    }
 
-    // nfts = await underdogClient.getNfts({
-    //   params: PROFILE_PROJECT_PARAMS,
-    //   query: {
-    //     page: 1,
-    //     limit: 1,
-    //     ownerAddress: creatorKey,
-    //   },
-    // });
-
-    // if (nfts.totalResults > 0) {
-    //   const profileNFT = nfts.results[0];
-    //   underdogClient.partialUpdateNft({
-    //     params: { ...PROFILE_PROJECT_PARAMS, nftId: nfts.results[0].id },
-    //     body: {
-    //       attributes: {
-    //         lastUpdated: new Date().toISOString(),
-    //         reputation:
-    //           (profileNFT.attributes.reputation as number) + reputationIncrease,
-    //       },
-    //     },
-    //   });
-    // }
-
-    // await underdogClient.createNft({
-    //   params: BOUNTY_PROJECT_PARAMS,
-    //   body: {
-    //     name: `Bounty Creator: ${currentBounty.id}`,
-    //     image: "https://i.imgur.com/3uQq5Zo.png",
-    //     description: currentBounty.description,
-    //     attributes: {
-    //       reputation: reputationIncrease,
-    //       completed: dayjs().toISOString(),
-    //       tags: currentBounty.tags.map((tag) => tag.name).join(","),
-    //       role: "creator",
-    //     },
-    //     upsert: false,
-    //     receiverAddress: creatorKey,
-    //   },
-    // });
+    await underdogClient.createNft({
+      params: BOUNTY_PROJECT_PARAMS,
+      body: {
+        name: `Bounty Creator: ${currentBounty.id}`,
+        image: "https://i.imgur.com/3uQq5Zo.png",
+        description: currentBounty.description,
+        attributes: {
+          reputation: reputationIncrease,
+          completed: dayjs().toISOString(),
+          tags: currentBounty.tags.map((tag) => tag.name).join(","),
+          role: "creator",
+        },
+        upsert: false,
+        receiverAddress: creatorKey,
+      },
+    });
   };
 
   return <Button onClick={onClick}>Approve</Button>;

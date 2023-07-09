@@ -10,6 +10,7 @@ export const approveRequestFFA = async (
   submitter: PublicKey,
   acc: Escrow,
   wallet: LancerWallet,
+  buddylinkProgramId: PublicKey,
   program: Program<MonoProgram>,
   provider: AnchorProvider
 ) => {
@@ -23,6 +24,7 @@ export const approveRequestFFA = async (
     creator,
     submitter,
     tokenAddress,
+    buddylinkProgramId,
     new PublicKey(USDC_MINT),
     program
   );
@@ -40,7 +42,6 @@ export const approveRequestFFA = async (
   const tx = await wallet.signAndSendTransaction(
     new Transaction(txInfo).add(approveSubmitterIx)
   );
-  debugger;
 
   // buddylinkprogram
   // mint

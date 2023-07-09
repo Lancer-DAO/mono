@@ -16,6 +16,7 @@ import {
 } from "@solana/spl-token";
 
 import {
+  AccountMeta,
   ComputeBudgetProgram,
   Keypair,
   LAMPORTS_PER_SOL,
@@ -142,6 +143,7 @@ export const addApprovedSubmittersV1Instruction = async (
   creator: PublicKey,
   referrer: PublicKey,
   submitter: PublicKey,
+  remainingAccounts: AccountMeta[],
   program: Program<MonoProgram>
 ): Promise<TransactionInstruction> => {
   const [feature_data_account] = await findFeatureAccount(
@@ -159,11 +161,12 @@ export const addApprovedSubmittersV1Instruction = async (
     .addApprovedSubmittersV1()
     .accounts({
       creator: creator,
-      submitter: submitter,
       referrer: referrer,
-      referralDataAccount: referral_data_account,
+      submitter: submitter,
       featureDataAccount: feature_data_account,
+      referralDataAccount: referral_data_account,
     })
+    .remainingAccounts(remainingAccounts)
     .instruction();
 };
 
@@ -318,6 +321,7 @@ export const approveRequestWithReferralInstruction = async (
   creator: PublicKey,
   submitter: PublicKey,
   submitter_token_account: PublicKey,
+  buddylinkProgramId: PublicKey,
   mint: PublicKey,
   program: Program<MonoProgram>
 ): Promise<TransactionInstruction> => {
@@ -346,6 +350,28 @@ export const approveRequestWithReferralInstruction = async (
     program
   );
 
+  const [lancer_token_program_authority] = await findLancerProgramAuthority(
+    program
+  );
+
+  const referralAccount = await program.account.referralDataAccount.fetch(
+    referral_data_account
+  );
+
+  const remainingAccounts = [
+    { pubkey: buddylinkProgramId, isWritable: false, isSigner: false },
+    { pubkey: mint, isWritable: false, isSigner: false },
+    ...referralAccount.approvedReferrers
+      .filter(
+        (referrer) => referrer.toString() !== PublicKey.default.toString()
+      )
+      .map((referrer) => ({
+        pubkey: referrer,
+        isWritable: true,
+        isSigner: false,
+      })),
+  ];
+
   return await program.methods
     .approveRequestWithReferral()
     .accounts({
@@ -357,8 +383,10 @@ export const approveRequestWithReferralInstruction = async (
       programAuthority: program_authority,
       referralDataAccount: referral_data_account,
       lancerDaoTokenAccount: lancer_dao_token_account,
+      lancerTokenProgramAuthority: lancer_token_program_authority,
       tokenProgram: TOKEN_PROGRAM_ID,
     })
+    .remainingAccounts(remainingAccounts)
     .instruction();
 };
 
