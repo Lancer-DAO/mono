@@ -2,7 +2,7 @@ import type { NextPage } from "next";
 import dynamic from "next/dynamic";
 import Head from "next/head";
 import Image from "next/image";
-import React, { useCallback, useMemo } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 import styles from "../styles/Home.module.css";
 import MonoProgramJSON from "@/escrow/sdk/idl/mono_program.json";
 import {
@@ -63,6 +63,17 @@ export const SendSOLToRandomAddress: FC = () => {
   const { publicKey, wallet, signAllTransactions, signTransaction } =
     useWallet();
 
+  const [formData, setFormData] = useState({
+    fundingAmount: null,
+  });
+
+  const handleChange = (event) => {
+    setFormData({
+      ...formData,
+      [event.target.name]: event.target.value,
+    });
+  };
+
   const createFeesAccount = useCallback(async () => {
     if (!publicKey) throw new WalletNotConnectedError();
     const provider = new AnchorProvider(
@@ -99,24 +110,24 @@ export const SendSOLToRandomAddress: FC = () => {
       provider
     );
     const withdrawer = new PublicKey(
-      "BuxU7uwwkoobF8p4Py7nRoTgxWRJfni8fc4U3YKGEXKs"
+      "9TWkAtKRLffNrdZpdXmuXYkou7txZAFfjhPQeArZRHqF"
     );
-    const withdrawerTokenAccount = await getAssociatedTokenAddress(
-      new PublicKey(USDC_MINT),
-      withdrawer
-    );
+    // const withdrawerTokenAccount = await getAssociatedTokenAddress(
+    //   new PublicKey(USDC_MINT),
+    //   withdrawer
+    // );
     const create_lancer_token_account_ix = await withdrawTokensInstruction(
-      1,
+      formData.fundingAmount * 10 ** 6,
       new PublicKey(USDC_MINT),
       withdrawer,
-      withdrawerTokenAccount,
+      new PublicKey("8JUa3qKQrRN9dhotQLtxMcKxZZieioBsgc2W6Q34S6CH"),
       program
     );
     await provider.sendAndConfirm(
       new Transaction().add(create_lancer_token_account_ix),
       []
     );
-  }, [publicKey, connection]);
+  }, [publicKey, connection, formData]);
 
   return (
     connection && (
@@ -126,13 +137,24 @@ export const SendSOLToRandomAddress: FC = () => {
           <WalletDisconnectButtonDynamic />
         </div>
 
-        <button onClick={createFeesAccount} disabled={!publicKey}>
+        {/* <button onClick={createFeesAccount} disabled={!publicKey}>
           Create New Mint Fees Account
-        </button>
+        </button> */}
+        <>
+          <input
+            type="number"
+            className="input w-input"
+            name="fundingAmount"
+            placeholder="1000 (USD)"
+            id="Issue"
+            value={formData.fundingAmount}
+            onChange={handleChange}
+          />
 
-        <button onClick={withdrawTokens} disabled={!publicKey}>
-          Withdraw Tokens
-        </button>
+          <button onClick={withdrawTokens} disabled={!publicKey}>
+            Withdraw Tokens
+          </button>
+        </>
       </>
     )
   );

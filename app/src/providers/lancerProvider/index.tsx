@@ -25,6 +25,8 @@ export * from "./types";
 import MonoProgramJSON from "@/escrow/sdk/idl/mono_program.json";
 import { APIKeyInfo } from "@/src/components/molecules/ApiKeyModal";
 import { IS_MAINNET, MONO_ADDRESS } from "@/src/constants";
+import { Tutorial } from "@/src/types/tutorials";
+import { PROFILE_TUTORIAL_INITIAL_STATE } from "@/src/constants/tutorials";
 
 export const LancerContext = createContext<ILancerContext>({
   currentUser: null,
@@ -38,6 +40,10 @@ export const LancerContext = createContext<ILancerContext>({
   provider: null,
   currentBounty: null,
   currentAPIKey: null,
+  currentTutorialState: null,
+  isRouterReady: false,
+  isMobile: false,
+  setCurrentTutorialState: () => null,
   setCurrentAPIKey: () => null,
   setIssue: () => null,
   setIssues: () => null,
@@ -79,6 +85,7 @@ const LancerProvider: FunctionComponent<ILancerState> = ({
   const [currentUser, setCurrentUser] = useState<CurrentUser | null>(null);
   const [currentBounty, setCurrentBounty] = useState<Bounty | null>(null);
   const [issue, setIssue] = useState<Issue | null>(null);
+  const [currentTutorialState, setCurrentTutorialState] = useState<Tutorial>();
   const [issues, setIssues] = useState<Issue[] | null>(null);
   const [loginState, setLoginState] = useState<LOGIN_STATE | null>(
     "logged_out"
@@ -88,6 +95,14 @@ const LancerProvider: FunctionComponent<ILancerState> = ({
   const [provider, setProvider] = useState<AnchorProvider>();
   const [program, setProgram] = useState<Program<MonoProgram>>();
   const [currentAPIKey, setCurrentAPIKey] = useState<APIKeyInfo>();
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const userAgent = window.navigator.userAgent;
+    const isMobileDevice =
+      /Mobile|iP(hone|od|ad)|Android|BlackBerry|IEMobile/.test(userAgent);
+    setIsMobile(isMobileDevice);
+  }, []);
 
   useEffect(() => {
     const apiKeys = JSON.parse(localStorage.getItem("apiKeys") || "[]");
@@ -106,8 +121,7 @@ const LancerProvider: FunctionComponent<ILancerState> = ({
         signTransaction,
         connected,
         signAndSendTransaction: async (transaction: Transaction) => {
-          // await signTransaction(transaction);
-          return await sendTransaction(transaction, connection, {skipPreflight: true});
+          return await sendTransaction(transaction, connection);
         },
         providerName: "Phantom",
       };
@@ -120,13 +134,30 @@ const LancerProvider: FunctionComponent<ILancerState> = ({
       setProvider(provider);
       setProgram(program);
       setCurrentWallet(lancerWallet);
+      if (
+        !!currentTutorialState &&
+        currentTutorialState?.title === PROFILE_TUTORIAL_INITIAL_STATE.title &&
+        currentTutorialState.currentStep === 1
+      ) {
+        setCurrentTutorialState({
+          ...currentTutorialState,
+          currentStep: currentUser.hasProfileNFT ? 3 : 2,
+          isRunning: true,
+          spotlightClicks: !currentUser.hasProfileNFT,
+        });
+        return;
+      }
     }
   }, [connected]);
 
   useEffect(() => {
+    const getUser = async () => {
+      console.log("logging in user");
+      const userInfo = await getCurrUser();
+      console.log("login response", userInfo);
+      setCurrentUser(userInfo);
+    };
     if (user) {
-      console.log("testing process");
-      console.log(process.env.NEXT_PUBLIC_IS_MAINNET, IS_MAINNET);
       const getUser = async () => {
         try {
           const userInfo = await getCurrUser();
@@ -166,6 +197,10 @@ const LancerProvider: FunctionComponent<ILancerState> = ({
     setCurrentWallet,
     currentAPIKey,
     setCurrentAPIKey,
+    currentTutorialState,
+    setCurrentTutorialState,
+    isRouterReady: router.isReady,
+    isMobile,
   };
   return (
     <LancerContext.Provider value={contextProvider}>

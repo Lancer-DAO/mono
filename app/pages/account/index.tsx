@@ -6,7 +6,10 @@ import {
   DefaultLayout,
   ProfileNFTCard,
   CoinflowOfframp,
-  WalletInfo,
+  Button,
+  BountyNFTCard,
+  JoyrideWrapper,
+  ApiKeyModal,
 } from "@/src/components";
 import {
   BOUNTY_PROJECT_PARAMS,
@@ -17,6 +20,7 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { api } from "@/src/utils/api";
 import { BountyNFT, CurrentUser, ProfileNFT } from "@/src/types";
+import { last } from "lodash";
 export const getServerSideProps = withPageAuthRequired();
 
 import {
@@ -27,8 +31,12 @@ import {
 } from "@underdog-protocol/js";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
-import BountyNFTCard from "@/src/components/molecules/BountyNFTCard";
 import AddReferrerModal from "@/src/components/molecules/AddReferrerModal";
+import {
+  BOUNTY_ACTIONS_TUTORIAL_II_INITIAL_STATE,
+  PROFILE_TUTORIAL_INITIAL_STATE,
+} from "@/src/constants/tutorials";
+import { Key } from "react-feather";
 dayjs.extend(relativeTime);
 
 const underdogClient = createUnderdogClient({});
@@ -49,12 +57,21 @@ export default function Home() {
 const Account: React.FC = () => {
   const router = useRouter();
 
-  const { currentUser, wallets, currentWallet } = useLancer();
+  const {
+    currentUser,
+    currentWallet,
+    currentTutorialState,
+    setCurrentTutorialState,
+    isMobile,
+  } = useLancer();
   const [showCoinflow, setShowCoinflow] = useState(false);
+  const [showTutorial, setShowTutorial] = useState(false);
   const [profileNFT, setProfileNFT] = useState<ProfileNFT>();
   const [bountyNFTs, setBountyNFTs] = useState<BountyNFT[]>([]);
   const { mutateAsync: getUser } = api.users.getUser.useMutation();
   const [account, setAccount] = useState<CurrentUser>();
+  const [showModal, setShowModal] = useState(false);
+  const { currentAPIKey } = useLancer();
 
   const { mutateAsync: registerProfileNFT } =
     api.users.registerProfileNFT.useMutation();
@@ -138,17 +155,52 @@ const Account: React.FC = () => {
   }, [currentUser, router.isReady]);
 
   useEffect(() => {
+    const fetchNfts = async () => {
+      await fetchProfileNFT();
+
+      await fetchBountyNFTs();
+      if (
+        currentTutorialState?.title ===
+          BOUNTY_ACTIONS_TUTORIAL_II_INITIAL_STATE.title &&
+        currentTutorialState.currentStep === 8
+      ) {
+        setCurrentTutorialState({
+          ...currentTutorialState,
+          isRunning: true,
+        });
+      } else if (
+        currentTutorialState?.title === PROFILE_TUTORIAL_INITIAL_STATE.title &&
+        currentTutorialState.currentStep === 2
+      ) {
+        setTimeout(() => {
+          setCurrentTutorialState({
+            ...currentTutorialState,
+            isRunning: true,
+            currentStep: 3,
+            spotlightClicks: false,
+          });
+        }, 100);
+      }
+    };
     if (account && account.profileWalletId) {
-      fetchProfileNFT();
-      fetchBountyNFTs();
+      fetchNfts();
     }
   }, [account]);
 
   const mintProfileNFT = async () => {
+    if (
+      currentTutorialState?.title === PROFILE_TUTORIAL_INITIAL_STATE.title &&
+      currentTutorialState.currentStep === 2
+    ) {
+      setCurrentTutorialState({
+        ...currentTutorialState,
+        isRunning: false,
+      });
+    }
     const result = await underdogClient.createNft({
       params: PROFILE_PROJECT_PARAMS,
       body: {
-        name: `Profile NFT for ${account.githubLogin}`,
+        name: `${account.githubLogin}`,
         image: "https://i.imgur.com/3uQq5Zo.png",
         attributes: {
           reputation: 0,
@@ -160,26 +212,39 @@ const Account: React.FC = () => {
         receiverAddress: currentWallet.publicKey.toString(),
       },
     });
-    await registerProfileNFT({
+    const updatedUser = await registerProfileNFT({
       walletPublicKey: currentWallet.publicKey.toString(),
     });
+    setAccount(updatedUser);
   };
 
   return (
     <DefaultLayout>
       {account && (
-        <div className="account-page-wrapper">
-          {/* {currentUser?.githubLogin && (
+        <>
+          <div className="account-page-wrapper">
+            {/* <ApiKeyModal showModal={showModal} setShowModal={setShowModal} /> */}
+
+            {isMobile && (
+              <button
+                onClick={() => setShowModal(true)}
+                className="flex h-[48px] w-full gap-[10px] py-[6px] items-center justify-center border-b-gray-400 border-b-[1px] hover:bg-turquoise-500 text-gray-800 hover:text-white-100 transition-colors duration-300 ease-in-out"
+              >
+                <Key />
+                {currentAPIKey ? currentAPIKey.name : "Set API Key"}
+              </button>
+            )}
+            {/* {currentUser?.githubLogin && (
             <div>GitHub User: {currentUser.githubLogin}</div>
           )}
           <a href="/api/auth/logout">Logout</a> */}
 
-          {/* {wallets &&
+            {/* {wallets &&
             wallets.map((wallet) => (
               <WalletInfo wallet={wallet} key={wallet.publicKey.toString()} />
             ))} */}
 
-          {/* {!IS_MAINNET && (
+            {/* {!IS_MAINNET && (
             <a
               href="https://staging.coinflow.cash/faucet"
               target={"_blank"}
@@ -188,32 +253,47 @@ const Account: React.FC = () => {
               USDC Faucet
             </a>
           )} */}
-          <div>
-            {profileNFT && (
-              <ProfileNFTCard profileNFT={profileNFT} user={account} />
+            {profileNFT ? (
+              <>
+                <ProfileNFTCard
+                  profileNFT={profileNFT}
+                  githubId={account.githubId}
+                />
+
+                <div className="profile-bounty-list" id="bounties-list">
+                  <h2>Bounties</h2>
+                  {bountyNFTs.length > 0 ? (
+                    bountyNFTs.map((bountyNFT) => (
+                      <BountyNFTCard bountyNFT={bountyNFT} />
+                    ))
+                  ) : (
+                    <div>No bounties yet!</div>
+                  )}
+                </div>
+
+                <button
+                  className="my-first-step"
+                  onClick={() => {
+                    setShowCoinflow(!showCoinflow);
+                  }}
+                >
+                  Cash Out
+                </button>
+
+                {showCoinflow && <CoinflowOfframp />}
+              </>
+            ) : (
+              <Button
+                disabled={!currentWallet}
+                disabledText={"Please connect a wallet"}
+                onClick={mintProfileNFT}
+                id="mint-profile-nft"
+              >
+                Mint Profile NFT
+              </Button>
             )}
           </div>
-          {bountyNFTs.length > 0 && (
-            <div className="profile-bounty-list">
-              <h2>Bounties</h2>
-              {bountyNFTs.map((bountyNFT) => (
-                <BountyNFTCard bountyNFT={bountyNFT} />
-              ))}
-            </div>
-          )}
-          {!account?.hasProfileNFT && (
-            <button onClick={mintProfileNFT}>Mint Profile NFT</button>
-          )}
-
-          {/* <button
-            onClick={() => {
-              setShowCoinflow(!showCoinflow);
-            }}
-          >
-            Cash Out
-          </button> */}
-          {showCoinflow && <CoinflowOfframp />}
-        </div>
+        </>
       )}
     </DefaultLayout>
   );

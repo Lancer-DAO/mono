@@ -138,13 +138,13 @@ export type ContributorCompensationInfo = {
 
 export enum BountyState {
   NEW = "new",
+  CANCELED = "canceled",
+  COMPLETE = "complete",
   FUNDED = "funded",
   ACCEPTING_APPLICATIONS = "accepting_applications",
   IN_PROGRESS = "in_progress",
   AWAITING_REVIEW = "awaiting_review",
-  COMPLETE = "complete",
   VOTING_TO_CANCEL = "voting_to_cancel",
-  CANCELED = "canceled",
 }
 
 export enum IssueType {

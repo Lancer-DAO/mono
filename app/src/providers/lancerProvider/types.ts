@@ -1,12 +1,14 @@
 import { MonoProgram } from "@/escrow/sdk/types/mono_program";
 import { APIKeyInfo } from "@/src/components/molecules/ApiKeyModal";
 import { Bounty, CurrentUser, Issue, LancerWallet, User } from "@/src/types";
+import { Tutorial } from "@/src/types/tutorials";
 import { SolanaWalletContextState } from "@coinflowlabs/react";
 import { AnchorProvider, Program } from "@project-serum/anchor";
 import { PublicKey, Transaction } from "@solana/web3.js";
 import { SafeEventEmitterProvider } from "@web3auth/base";
 import { Web3AuthCore } from "@web3auth/core";
 import { SolanaWallet } from "@web3auth/solana-provider";
+import { Step } from "react-joyride";
 
 export type LOGIN_STATE = "logged_out" | "logging_in" | "logged_in";
 
@@ -29,6 +31,10 @@ export interface ILancerContext {
   wallets: LancerWallet[];
   currentBounty: Bounty;
   currentAPIKey: APIKeyInfo;
+  currentTutorialState: Tutorial;
+  isRouterReady: boolean;
+  isMobile: boolean;
+  setCurrentTutorialState: (tutorial: Tutorial) => void;
   setCurrentAPIKey: (apiKey: APIKeyInfo) => void;
   setCurrentBounty: (bounty: Bounty) => void;
   setIssue: (issue: Issue) => void;

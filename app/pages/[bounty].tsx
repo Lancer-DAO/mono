@@ -89,7 +89,7 @@ const Bounty: React.FC = () => {
       <div className="container-default">
         <div className="w-layout-grid grid-job-post">
           <div
-            id="w-node-_9d97a6aa-31d5-1276-53c2-e76c8908f874-fde9cdb1"
+            id="task-container"
             data-w-id="9d97a6aa-31d5-1276-53c2-e76c8908f874"
             className="job-post-container"
           >
@@ -107,11 +107,13 @@ const Bounty: React.FC = () => {
                     className="job-post-company-name"
                     target="_blank"
                     rel="noreferrer"
+                    id="task-organization-link"
                   >
                     {currentBounty.repository.organization}
                   </a>
                   <div
                     className={`currentBounty-state ${currentBounty.state} text-start`}
+                    id="task-state"
                   >
                     {currentBounty.state.split("_").join(" ")}
                   </div>
@@ -121,11 +123,12 @@ const Bounty: React.FC = () => {
                   href={`${currentBounty.repository.githubLink}/issues/${currentBounty.issue.number}`}
                   target="_blank"
                   rel="noreferrer"
+                  id="task-title"
                 >
                   {currentBounty.title}
                 </a>
                 <div className="bounty-title-row-1">
-                  <div className="job-post-date">
+                  <div className="job-post-date" id="task-posted-date">
                     {`${dayjs
                       .unix(parseInt(currentBounty.createdAt) / 1000)
                       .format("MMMM D, YYYY h:mm A")}`}
@@ -138,6 +141,7 @@ const Bounty: React.FC = () => {
                       className="job-post-company-name"
                       target="_blank"
                       rel="noreferrer"
+                      id="task-escrow-link"
                     >
                       Escrow Contract
                     </a>
@@ -147,14 +151,14 @@ const Bounty: React.FC = () => {
             </div>
             <div></div>
             <div className="job-post-middle">
-              <div className="job-post-info-container">
+              <div className="job-post-info-container" id="task-estimated-time">
                 <Clock />
                 <div className="job-post-info-text icon-left">
                   {`${currentBounty.estimatedTime}`} HOURS
                 </div>
               </div>
               <div className="job-post-info-divider"></div>
-              <div className="job-post-info-container">
+              <div className="job-post-info-container" id="task-requirements">
                 <div className="tag-list">
                   {currentBounty.tags.map((tag) => (
                     <div
@@ -168,7 +172,7 @@ const Bounty: React.FC = () => {
                 </div>
               </div>
               <div className="job-post-info-divider"></div>
-              <div className="job-post-info-container">
+              <div className="job-post-info-container" id="task-funded-amount">
                 <div className="job-post-info-text icon-right">
                   {bountyAmount}
                 </div>
@@ -176,11 +180,13 @@ const Bounty: React.FC = () => {
               </div>
             </div>
             <div className="job-post-bottom">
-              <h2 className="job-post-subtitle">Job description</h2>
-              <div
-                className="bounty-markdown-preview"
-                dangerouslySetInnerHTML={previewMarkup()}
-              />
+              <div id="task-description">
+                <h2 className="job-post-subtitle">Job description</h2>
+                <div
+                  className="bounty-markdown-full"
+                  dangerouslySetInnerHTML={previewMarkup()}
+                />
+              </div>
               {<BountyActions />}
             </div>
           </div>
@@ -188,13 +194,14 @@ const Bounty: React.FC = () => {
             id="w-node-_272b1d4e-bae1-2928-a444-208d5db4485b-fde9cdb1"
             className="w-form"
           >
-            <div className="contributors-section">
+            <div className="contributors-section" id="links-section">
               <h2>Links</h2>
               {currentBounty.issue && (
                 <a
                   href={`${currentBounty.repository.githubLink}/issues/${currentBounty.issue.number}`}
                   target="_blank"
                   rel="noreferrer"
+                  id="task-issue-link"
                 >
                   GitHub Issue
                 </a>
@@ -204,21 +211,22 @@ const Bounty: React.FC = () => {
                   href={`${currentBounty.repository.githubLink}/issues/${currentBounty.pullRequests[0].number}`}
                   target="_blank"
                   rel="noreferrer"
+                  id="task-pull-request-link"
                 >
                   GitHub Pull Request
                 </a>
               )}
             </div>
-            <div className="contributors-section">
+            <div className="contributors-section" id="contributors-section">
               <h2>Contributors</h2>
               {currentBounty?.creator && (
-                <div>
+                <div id="task-creator">
                   <label className="field-label-10">Creator</label>
                   <ContributorInfo user={currentBounty.creator.user} />
                 </div>
               )}
               {currentBounty && currentBounty.deniedRequesters.length > 0 && (
-                <div>
+                <div id="task-denied-requested-submitters">
                   <label className="field-label-5">Denied Requesters</label>
                   {currentBounty.deniedRequesters.map((submitter) => (
                     <ContributorInfo
@@ -231,43 +239,49 @@ const Bounty: React.FC = () => {
               {currentBounty &&
                 currentBounty.requestedSubmitters.length > 0 &&
                 currentBounty.isCreator && (
-                  <div>
+                  <div id="task-requested-submitters">
                     <label className="field-label-5">
                       Requested Applicants
                     </label>
-                    {currentBounty.requestedSubmitters.map((submitter) => (
-                      <SubmitterSection
-                        submitter={submitter}
-                        type="requested"
-                        key={`requested-submitters-${submitter.userid}`}
-                      />
-                    ))}
+                    {currentBounty.requestedSubmitters.map(
+                      (submitter, index) => (
+                        <SubmitterSection
+                          submitter={submitter}
+                          type="requested"
+                          key={`requested-submitters-${submitter.userid}`}
+                          index={index}
+                        />
+                      )
+                    )}
                   </div>
                 )}
 
               {currentBounty &&
                 currentBounty.approvedSubmitters.length > 0 &&
                 currentBounty.isCreator && (
-                  <div>
+                  <div id="task-approved-submitters">
                     <label className="field-label-5">Approved Applicants</label>
-                    {currentBounty.approvedSubmitters.map((submitter) => (
-                      <SubmitterSection
-                        submitter={submitter}
-                        type="approved"
-                        key={`approved-submitters-${submitter.userid}`}
-                      />
-                    ))}
+                    {currentBounty.approvedSubmitters.map(
+                      (submitter, index) => (
+                        <SubmitterSection
+                          submitter={submitter}
+                          type="approved"
+                          key={`approved-submitters-${submitter.userid}`}
+                          index={index}
+                        />
+                      )
+                    )}
                   </div>
                 )}
               {currentBounty.state === BountyState.AWAITING_REVIEW && (
-                <div>
+                <div id="task-current-submitter">
                   <label className="field-label-10">Submissions</label>
                   <ContributorInfo user={currentBounty.currentSubmitter.user} />
                 </div>
               )}
               {currentBounty.isCreator &&
                 currentBounty.changesRequestedSubmitters.length > 0 && (
-                  <div>
+                  <div id="task-changes-requested-submitters">
                     <label className="field-label-5">Changes Requested</label>
                     {currentBounty.changesRequestedSubmitters.map(
                       (submitter) => (
@@ -281,7 +295,7 @@ const Bounty: React.FC = () => {
                 )}
               {currentBounty.isCreator &&
                 currentBounty.deniedSubmitters.length > 0 && (
-                  <div>
+                  <div id="task-denied-submitters">
                     <label className="field-label-5">Denied Submitters</label>
                     {currentBounty.deniedSubmitters.map((submitter) => (
                       <ContributorInfo
@@ -292,14 +306,14 @@ const Bounty: React.FC = () => {
                   </div>
                 )}
               {currentBounty.completer && (
-                <div>
+                <div id="task-completer">
                   <label className="field-label-10">Bounty Completer</label>
                   <ContributorInfo user={currentBounty.completer.user} />
                 </div>
               )}
               {currentBounty.isCreator &&
                 currentBounty.votingToCancel.length > 0 && (
-                  <div>
+                  <div id="task-voting-to-cancel">
                     <label className="field-label-5">Voting To Cancel</label>
                     {currentBounty.votingToCancel.map((submitter) => (
                       <ContributorInfo
@@ -311,7 +325,7 @@ const Bounty: React.FC = () => {
                 )}
               {currentBounty.isCreator &&
                 currentBounty.needsToVote.length > 0 && (
-                  <div>
+                  <div id="task-votes-needed-to-cancel">
                     <label className="field-label-5">
                       Votes Needed to Cancel
                     </label>

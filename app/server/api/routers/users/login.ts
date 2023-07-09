@@ -21,6 +21,7 @@ export const login = protectedProcedure.mutation(async ({ ctx }) => {
           email,
           githubId: sub,
           githubLogin: nickname,
+          createdAt: Date.now().toString(),
         },
       });
       console.log("created user");

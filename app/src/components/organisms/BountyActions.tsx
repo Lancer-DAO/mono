@@ -28,32 +28,67 @@ import {
 import { createUnderdogClient } from "@underdog-protocol/js";
 import dayjs from "dayjs";
 import { useReferral } from "@/src/providers/referralProvider";
+import {
+  BOUNTY_ACTIONS_TUTORIAL_II_INITIAL_STATE,
+  BOUNTY_ACTIONS_TUTORIAL_I_INITIAL_STATE,
+} from "@/src/constants/tutorials";
 const underdogClient = createUnderdogClient({});
 
 const BountyActions = () => {
-  const { currentUser, currentBounty } = useLancer();
+  const {
+    currentUser,
+    currentBounty,
+    currentTutorialState,
+    setCurrentTutorialState,
+  } = useLancer();
   const [hoveredButton, setHoveredButton] = useState("none");
   if (false) {
     return <LoadingBar title="Loading On Chain Details" />;
   }
   if (currentBounty.state === BountyState.COMPLETE) {
-    return <Button disabled>Bounty Completed</Button>;
+    return (
+      <div className="bounty-buttons" id="bounty-actions">
+        <Button disabled id="bounty-completed">
+          Bounty Completed
+        </Button>
+      </div>
+    );
   }
   if (currentBounty.state === BountyState.CANCELED) {
-    return <Button disabled>Bounty Canceled</Button>;
+    return (
+      <div className="bounty-buttons" id="bounty-actions">
+        <Button disabled id="bounty-canceled">
+          Bounty Canceled
+        </Button>
+      </div>
+    );
   }
   if (!currentBounty.currentUserRelationsList) {
-    return <RequestToSubmit />;
+    return (
+      <div className="bounty-buttons" id="bounty-actions">
+        <RequestToSubmit />
+      </div>
+    );
   }
 
   return (
-    <div className="bounty-buttons">
+    <div className="bounty-buttons" id="bounty-actions">
       <>
+        {currentBounty.isCreator &&
+          currentTutorialState?.title ===
+            BOUNTY_ACTIONS_TUTORIAL_I_INITIAL_STATE.title &&
+          currentBounty.currentUserRelationsList.length < 2 && (
+            <RequestToSubmit />
+          )}
         {currentBounty.isRequestedSubmitter && (
-          <Button disabled>Request Pending</Button>
+          <Button disabled={true} id="request-pending">
+            Request Pending
+          </Button>
         )}
         {currentBounty.isDeniedRequester && (
-          <Button disabled>Submission Request Denied</Button>
+          <Button disabled id="request-denied">
+            Submission Request Denied
+          </Button>
         )}
         {!IS_MAINNET &&
           currentBounty.isCreator &&
@@ -70,21 +105,19 @@ const BountyActions = () => {
               }}
             >
               <SubmitRequest
-              // disabled={currentBounty.pullRequests.length === 0}
+                disabled={currentBounty.pullRequests.length === 0}
               />
-              {/* {hoveredButton === "submit" &&
-                currentBounty.pullRequests.length === 0 && (
-                  <div className="hover-tooltip">
-                    Please open a PR closing the GitHub Issue before submitting
-                  </div>
-                )} */}
             </div>
           )}
         {currentBounty.isCurrentSubmitter && !currentBounty.isCreator && (
-          <Button disabled>Submission Pending Review</Button>
+          <Button disabled id="submission-pending">
+            Submission Pending Review
+          </Button>
         )}
         {currentBounty.isDeniedSubmitter && (
-          <Button disabled>Submission Denied</Button>
+          <Button disabled id="submission-denied">
+            Submission Denied
+          </Button>
         )}
         {currentBounty.isChangesRequestedSubmitter && <SubmitRequest />}
         {currentBounty.isCreator &&
@@ -117,9 +150,9 @@ const RequestToSubmit = () => {
     currentUser,
     currentBounty,
     currentWallet,
-    provider,
-    program,
     setCurrentBounty,
+    currentTutorialState,
+    setCurrentTutorialState,
   } = useLancer();
   const { mutateAsync } = api.bounties.updateBountyUser.useMutation();
 
@@ -127,121 +160,52 @@ const RequestToSubmit = () => {
     useReferral();
 
   const onClick = async () => {
-    if (currentBounty.isCreator) {
-      // If we are the creator, then skip requesting and add self as approved
-      const remainingAccounts = await getRemainingAccounts(
-        currentWallet.publicKey
-      );
-      const submitterWallet = currentWallet.publicKey;
-
-      const signature = await addSubmitterFFA(
-        submitterWallet,
-        currentBounty.escrow,
-        currentWallet,
-        await getSubmitterReferrer(submitterWallet),
-        remainingAccounts,
-        program,
-        provider
-      );
-      currentBounty.currentUserRelationsList.push(
-        BOUNTY_USER_RELATIONSHIP.ApprovedSubmitter
-      );
-      const { updatedBounty } = await mutateAsync({
-        bountyId: currentBounty.id,
-        currentUserId: currentUser.id,
-        userId: currentUser.id,
-        relations: currentBounty.currentUserRelationsList,
-        state: BountyState.IN_PROGRESS,
-        publicKey: currentWallet.publicKey.toString(),
-        escrowId: currentBounty.escrowid,
-        signature,
-        label: "add-approved-submitter",
+    // Request to submit. Does not interact on chain
+    if (
+      currentTutorialState?.title ===
+        BOUNTY_ACTIONS_TUTORIAL_I_INITIAL_STATE.title &&
+      currentTutorialState.currentStep === 1
+    ) {
+      setCurrentTutorialState({
+        ...currentTutorialState,
+        isRunning: false,
       });
-
-      setCurrentBounty(updatedBounty);
-    } else {
-      // If member already exists, no on chain action and returns memberPDA
-      const result = await createReferralMember();
-
-      const referralKey = result?.memberPDA;
-      const signature = result?.txId;
-
-      // Request to submit. Does not interact on chain
-      const { updatedBounty } = await mutateAsync({
-        currentUserId: currentUser.id,
-        bountyId: currentBounty.id,
-        userId: currentUser.id,
-        relations: [BOUNTY_USER_RELATIONSHIP.RequestedSubmitter],
-        publicKey: currentWallet.publicKey.toString(),
-        escrowId: currentBounty.escrowid,
-        label: "request-to-submit",
-        signature: "n/a",
-      });
-
-      setCurrentBounty(updatedBounty);
-    }
-  };
-
-  return <Button onClick={onClick}>Apply</Button>;
-};
-
-export const SubmitRequest = ({ disabled }: { disabled?: boolean }) => {
-  const {
-    currentUser,
-    currentBounty,
-    currentWallet,
-    provider,
-    program,
-    setCurrentBounty,
-  } = useLancer();
-  const { mutateAsync } = api.bounties.updateBountyUser.useMutation();
-  const onClick = async () => {
-    console.log(currentBounty.creator.publicKey);
-    // If we are the creator, then skip requesting and add self as approved
-    const signature = await submitRequestFFA(
-      new PublicKey(currentBounty.creator.publicKey),
-      currentWallet.publicKey,
-      currentBounty.escrow,
-      currentWallet,
-      program,
-      provider
-    );
-    currentBounty.currentUserRelationsList.push(
-      BOUNTY_USER_RELATIONSHIP.CurrentSubmitter
-    );
-    const index = currentBounty.currentUserRelationsList.indexOf(
-      BOUNTY_USER_RELATIONSHIP.ApprovedSubmitter
-    );
-
-    if (index !== -1) {
-      currentBounty.currentUserRelationsList.splice(index, 1);
-    }
-
-    const index2 = currentBounty.currentUserRelationsList.indexOf(
-      BOUNTY_USER_RELATIONSHIP.ChangesRequestedSubmitter
-    );
-
-    if (index2 !== -1) {
-      currentBounty.currentUserRelationsList.splice(index2, 1);
     }
     const { updatedBounty } = await mutateAsync({
-      bountyId: currentBounty.id,
       currentUserId: currentUser.id,
+      bountyId: currentBounty.id,
       userId: currentUser.id,
-      relations: currentBounty.currentUserRelationsList,
-      state: BountyState.AWAITING_REVIEW,
+      relations: currentBounty.isCreator
+        ? [
+            ...currentBounty.currentUserRelationsList,
+            BOUNTY_USER_RELATIONSHIP.RequestedSubmitter,
+          ]
+        : [BOUNTY_USER_RELATIONSHIP.RequestedSubmitter],
       publicKey: currentWallet.publicKey.toString(),
       escrowId: currentBounty.escrowid,
-      signature: "",
-      label: "submit-request",
+      label: "request-to-submit",
+      signature: "n/a",
     });
 
     setCurrentBounty(updatedBounty);
+    if (
+      currentTutorialState?.title ===
+        BOUNTY_ACTIONS_TUTORIAL_I_INITIAL_STATE.title &&
+      currentTutorialState.currentStep === 1
+    ) {
+      setTimeout(() => {
+        setCurrentTutorialState({
+          ...currentTutorialState,
+          isRunning: true,
+          currentStep: 2,
+        });
+      }, 100);
+    }
   };
 
   return (
-    <Button disabled={disabled} onClick={onClick}>
-      Submit
+    <Button onClick={onClick} id="apply-bounty-button">
+      Apply
     </Button>
   );
 };
@@ -254,6 +218,8 @@ export const ApproveSubmission = () => {
     program,
     currentWallet,
     setCurrentBounty,
+    currentTutorialState,
+    setCurrentTutorialState,
   } = useLancer();
   const { programId: buddylinkProgramId } = useReferral();
   const { mutateAsync } = api.bounties.updateBountyUser.useMutation();
@@ -261,6 +227,16 @@ export const ApproveSubmission = () => {
   const { currentAPIKey } = useLancer();
 
   const onClick = async () => {
+    if (
+      currentTutorialState?.title ===
+        BOUNTY_ACTIONS_TUTORIAL_II_INITIAL_STATE.title &&
+      currentTutorialState.currentStep === 5
+    ) {
+      setCurrentTutorialState({
+        ...currentTutorialState,
+        isRunning: false,
+      });
+    }
     // If we are the creator, then skip requesting and add self as approved
     const signature = await approveRequestFFA(
       new PublicKey(currentBounty.currentSubmitter.publicKey),
@@ -380,9 +356,65 @@ export const ApproveSubmission = () => {
         receiverAddress: creatorKey,
       },
     });
+
+    if (
+      currentTutorialState?.title ===
+        BOUNTY_ACTIONS_TUTORIAL_II_INITIAL_STATE.title &&
+      currentTutorialState.currentStep === 5
+    ) {
+      setCurrentTutorialState({
+        ...currentTutorialState,
+        isRunning: true,
+        currentStep: 6,
+      });
+    }
   };
 
-  return <Button onClick={onClick}>Approve</Button>;
+  return (
+    <Button onClick={onClick} id="approve-bounty-button">
+      Approve
+    </Button>
+  );
+};
+
+export const CancelEscrow = () => {
+  const {
+    currentUser,
+    currentBounty,
+    currentWallet,
+    provider,
+    program,
+    setCurrentBounty,
+  } = useLancer();
+  const { mutateAsync } = api.bounties.updateBountyUser.useMutation();
+  const onClick = async () => {
+    // If we are the creator, then skip requesting and add self as approved
+    const signature = await cancelFFA(
+      currentBounty.escrow,
+      currentWallet,
+      program,
+      provider
+    );
+    const { updatedBounty } = await mutateAsync({
+      bountyId: currentBounty.id,
+      currentUserId: currentUser.id,
+      userId: currentUser.id,
+      relations: [...currentBounty.currentUserRelationsList, "canceler"],
+      state: BountyState.CANCELED,
+      publicKey: currentWallet.publicKey.toString(),
+      escrowId: currentBounty.escrowid,
+      signature,
+      label: "cancel-escrow",
+    });
+
+    setCurrentBounty(updatedBounty);
+  };
+
+  return (
+    <Button onClick={onClick} id="cancel-bounty-button">
+      Cancel
+    </Button>
+  );
 };
 
 export const DenySubmission = () => {
@@ -419,17 +451,21 @@ export const DenySubmission = () => {
       currentUserId: currentUser.id,
       userId: currentBounty.currentSubmitter.userid,
       relations: currentBounty.currentSubmitter.relations,
-      state: BountyState.IN_PROGRESS,
+      state: BountyState.ACCEPTING_APPLICATIONS,
       publicKey: currentWallet.publicKey.toString(),
       escrowId: currentBounty.escrowid,
       signature,
-      label: "add-approved-submitter",
+      label: "deny-submitter",
     });
 
     setCurrentBounty(updatedBounty);
   };
 
-  return <Button onClick={onClick}>Deny</Button>;
+  return (
+    <Button onClick={onClick} id="deny-submission-bounty-button">
+      Deny
+    </Button>
+  );
 };
 
 export const RequestChanges = () => {
@@ -477,7 +513,100 @@ export const RequestChanges = () => {
     setCurrentBounty(updatedBounty);
   };
 
-  return <Button onClick={onClick}>Request Changes</Button>;
+  return (
+    <Button onClick={onClick} id="request-changes-bounty-button">
+      Request Changes
+    </Button>
+  );
+};
+
+export const SubmitRequest = ({ disabled }: { disabled?: boolean }) => {
+  const {
+    currentUser,
+    currentBounty,
+    currentWallet,
+    provider,
+    program,
+    setCurrentBounty,
+
+    currentTutorialState,
+    setCurrentTutorialState,
+  } = useLancer();
+  const { mutateAsync } = api.bounties.updateBountyUser.useMutation();
+  const onClick = async () => {
+    // If we are the creator, then skip requesting and add self as approved
+    if (
+      currentTutorialState?.title ===
+        BOUNTY_ACTIONS_TUTORIAL_II_INITIAL_STATE.title &&
+      currentTutorialState.currentStep === 1
+    ) {
+      setCurrentTutorialState({
+        ...currentTutorialState,
+        isRunning: false,
+      });
+    }
+    const signature = await submitRequestFFA(
+      new PublicKey(currentBounty.creator.publicKey),
+      currentWallet.publicKey,
+      currentBounty.escrow,
+      currentWallet,
+      program,
+      provider
+    );
+    currentBounty.currentUserRelationsList.push(
+      BOUNTY_USER_RELATIONSHIP.CurrentSubmitter
+    );
+    const index = currentBounty.currentUserRelationsList.indexOf(
+      BOUNTY_USER_RELATIONSHIP.ApprovedSubmitter
+    );
+
+    if (index !== -1) {
+      currentBounty.currentUserRelationsList.splice(index, 1);
+    }
+
+    const index2 = currentBounty.currentUserRelationsList.indexOf(
+      BOUNTY_USER_RELATIONSHIP.ChangesRequestedSubmitter
+    );
+
+    if (index2 !== -1) {
+      currentBounty.currentUserRelationsList.splice(index2, 1);
+    }
+    const { updatedBounty } = await mutateAsync({
+      bountyId: currentBounty.id,
+      currentUserId: currentUser.id,
+      userId: currentUser.id,
+      relations: currentBounty.currentUserRelationsList,
+      state: BountyState.AWAITING_REVIEW,
+      publicKey: currentWallet.publicKey.toString(),
+      escrowId: currentBounty.escrowid,
+      signature,
+      label: "submit-request",
+    });
+
+    setCurrentBounty(updatedBounty);
+    if (
+      currentTutorialState?.title ===
+        BOUNTY_ACTIONS_TUTORIAL_II_INITIAL_STATE.title &&
+      currentTutorialState.currentStep === 1
+    ) {
+      setCurrentTutorialState({
+        ...currentTutorialState,
+        isRunning: true,
+        currentStep: 2,
+      });
+    }
+  };
+
+  return (
+    <Button
+      disabled={disabled}
+      onClick={onClick}
+      id="submit-request-bounty-button"
+      disabledText="Please open a PR closing the GitHub Issue before submitting"
+    >
+      Submit
+    </Button>
+  );
 };
 
 export const VoteToCancel = () => {
@@ -521,41 +650,9 @@ export const VoteToCancel = () => {
     setCurrentBounty(updatedBounty);
   };
 
-  return <Button onClick={onClick}>Vote To Cancel</Button>;
-};
-
-export const CancelEscrow = () => {
-  const {
-    currentUser,
-    currentBounty,
-    currentWallet,
-    provider,
-    program,
-    setCurrentBounty,
-  } = useLancer();
-  const { mutateAsync } = api.bounties.updateBountyUser.useMutation();
-  const onClick = async () => {
-    // If we are the creator, then skip requesting and add self as approved
-    const signature = await cancelFFA(
-      currentBounty.escrow,
-      currentWallet,
-      program,
-      provider
-    );
-    const { updatedBounty } = await mutateAsync({
-      bountyId: currentBounty.id,
-      currentUserId: currentUser.id,
-      userId: currentUser.id,
-      relations: [...currentBounty.currentUserRelationsList, "canceler"],
-      state: BountyState.CANCELED,
-      publicKey: currentWallet.publicKey.toString(),
-      escrowId: currentBounty.escrowid,
-      signature,
-      label: "cancel-escrow",
-    });
-
-    setCurrentBounty(updatedBounty);
-  };
-
-  return <Button onClick={onClick}>Cancel</Button>;
+  return (
+    <Button onClick={onClick} id="vote-to-cancel-bounty-button">
+      Vote To Cancel
+    </Button>
+  );
 };

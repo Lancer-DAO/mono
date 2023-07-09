@@ -12486,7 +12486,7 @@
     margin-right: auto;
     margin-bottom: 10px;
     width: 100%;
-    z-index: 900;
+    z-index: 1;
     border: 1px solid #cccccc;
     border-radius: 4px;
     &.hug {
@@ -13402,9 +13402,15 @@
     width: 100%;
   }
 
-  .bounty-markdown-preview {
+  .bounty-markdown-full {
     margin-top: 10px;
     min-height: 200px;
+  }
+  
+  .bounty-markdown-preview {
+    margin-top: 10px;
+    max-height: 200px;
+    overflow: hidden;
   }
 
   .spacer-filled {
@@ -13482,6 +13488,8 @@
 
   .hover-tooltip-wrapper{
     position: relative;
+    display: flex;
+    align-items: center;
   }
 
   .hover-tooltip {
@@ -13489,7 +13497,10 @@
     top: -30px;
     left: 0px;
     width: 600px;
-    color: red;
+    color: black;
+    &.error {
+      color: red;
+    }
     }
 
     .job-post-title {

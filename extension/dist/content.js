@@ -3528,12 +3528,13 @@ insertIntoPage();
 "use strict";
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.getMintName = exports.getExtensionEndpoint = exports.LOCAL_ENDPOINT = exports.DEMO_ENDPOINT = exports.APP_ENDPOINT = exports.EXTENSION_DEV = exports.MAINNET_USDC_MINT = exports.USDC_MINT = void 0;
+exports.getMintName = exports.getExtensionEndpoint = exports.LOCAL_ENDPOINT = exports.TUTORIAL_ENDPOINT = exports.DEMO_ENDPOINT = exports.APP_ENDPOINT = exports.EXTENSION_DEV = exports.MAINNET_USDC_MINT = exports.USDC_MINT = void 0;
 exports.USDC_MINT = "4zMMC9srt5Ri5X14GAgXhaHii3GnPAEERYPJgZJDncDU";
 exports.MAINNET_USDC_MINT = "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v";
 exports.EXTENSION_DEV = true;
 exports.APP_ENDPOINT = "https://app.lancer.so";
 exports.DEMO_ENDPOINT = "https://demo.lancer.so";
+exports.TUTORIAL_ENDPOINT = "https://dev-jtl4whohw-lancer-so.vercel.app";
 exports.LOCAL_ENDPOINT = "http://localhost:3000";
 const getExtensionEndpoint = (env) => {
     if (env === "app") {
@@ -3541,6 +3542,9 @@ const getExtensionEndpoint = (env) => {
     }
     else if (env === "demo") {
         return exports.DEMO_ENDPOINT;
+    }
+    else if (env === "tutorial") {
+        return exports.TUTORIAL_ENDPOINT;
     }
     else {
         return exports.LOCAL_ENDPOINT;

@@ -297,6 +297,7 @@ model User {
   email                String?  @unique @db.VarChar(128)
   profileWalletId      Int?     @unique
   refferralTreasuryKey String?  @unique @db.VarChar(128)
+  createdAt            String   @default("") @db.VarChar(24)
 
   // Relations
   wallets      Wallet[]

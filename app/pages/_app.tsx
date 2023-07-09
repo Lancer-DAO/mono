@@ -12,21 +12,20 @@ import { useRouter } from "next/router";
 
 const siteId = 3506102;
 const hotjarVersion = 6;
-const COOKIE_REF = 'referrer'
+const COOKIE_REF = "referrer";
 
 Hotjar.init(siteId, hotjarVersion);
 const App = ({ Component, pageProps }: AppProps) => {
   const router = useRouter();
   useEffect(() => {
-    const {r} = router.query;
+    const { r } = router.query;
     if (r) {
-      const hasReferrer = localStorage.getItem(COOKIE_REF, )
+      const hasReferrer = localStorage.getItem(COOKIE_REF);
       if (!hasReferrer) {
-        localStorage.setItem(COOKIE_REF, r as string)
+        localStorage.setItem(COOKIE_REF, r as string);
       }
     }
   }, []);
-
 
   return (
     <AllProviders>
