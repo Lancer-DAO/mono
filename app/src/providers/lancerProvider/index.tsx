@@ -121,7 +121,9 @@ const LancerProvider: FunctionComponent<ILancerState> = ({
         signTransaction,
         connected,
         signAndSendTransaction: async (transaction: Transaction) => {
-          return await sendTransaction(transaction, connection);
+          return await sendTransaction(transaction, connection, {
+            skipPreflight: true,
+          });
         },
         providerName: "Phantom",
       };

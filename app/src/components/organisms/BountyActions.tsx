@@ -105,7 +105,7 @@ const BountyActions = () => {
               }}
             >
               <SubmitRequest
-                disabled={currentBounty.pullRequests.length === 0}
+              // disabled={currentBounty.pullRequests.length === 0}
               />
             </div>
           )}
@@ -171,6 +171,10 @@ const RequestToSubmit = () => {
         isRunning: false,
       });
     }
+    const result = await createReferralMember();
+
+    const referralKey = result?.memberPDA;
+    const signature = result?.txId;
     const { updatedBounty } = await mutateAsync({
       currentUserId: currentUser.id,
       bountyId: currentBounty.id,

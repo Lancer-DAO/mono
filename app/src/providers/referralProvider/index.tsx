@@ -13,6 +13,7 @@ import { Client, Member, Organization, Treasury } from "@ladderlabs/buddy-sdk";
 import { PublicKey, Transaction } from "@solana/web3.js";
 import { IReferralContext } from "./types";
 import { getAssociatedTokenAddressSync } from "@solana/spl-token";
+import { IS_MAINNET } from "@/src/constants";
 
 const ORGANIZATION_NAME = "lancer";
 
@@ -141,8 +142,10 @@ const ReferralProvider: FunctionComponent<IReferralProps> = ({ children }) => {
           cachedReferrer
         ))
       );
+      // debugger;
 
       const signature = await sendTransaction(transaction, connection);
+      // debugger;
       await connection.confirmTransaction(signature);
 
       await handleFetches();
@@ -151,6 +154,7 @@ const ReferralProvider: FunctionComponent<IReferralProps> = ({ children }) => {
 
       return { txId: signature, memberPDA };
     } catch (e) {
+      console.error(e);
       return null;
     }
   }, [client, member, cachedReferrer, publicKey]);
@@ -163,7 +167,7 @@ const ReferralProvider: FunctionComponent<IReferralProps> = ({ children }) => {
       );
 
       const buddyProfile = await client.buddy.getProfile(wallet);
-
+      debugger;
       if (!buddyProfile) return [];
 
       const treasuryPDA = client.pda.getTreasuryPDA(
@@ -310,8 +314,13 @@ const ReferralProvider: FunctionComponent<IReferralProps> = ({ children }) => {
   }, []);
 
   useEffect(() => {
-    if (publicKey && connection)
-      setClient(new Client(connection, publicKey, DEVNET_PROGRAM_ID)); // Remvoe 3rd parameter for mainnet
+    if (publicKey && connection) {
+      if (IS_MAINNET) {
+        setClient(new Client(connection, publicKey));
+      } else {
+        setClient(new Client(connection, publicKey, DEVNET_PROGRAM_ID));
+      }
+    }
   }, [publicKey, connection]);
 
   useEffect(() => {
