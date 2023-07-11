@@ -24,6 +24,19 @@ document.addEventListener('DOMContentLoaded', function() {
   }, false);
 
   document.addEventListener('DOMContentLoaded', function() {
+    var checkPageButton = document.getElementById('button-tutorial');
+    checkPageButton.addEventListener('click', function() {
+  
+      chrome.storage.local.set({environment: 'tutorial'}, function() {
+        console.log('Value is set to ' + 'tutorial');
+    chrome.runtime.sendMessage({ message: "getEnvironment" });
+        
+        
+      })
+    }, false);
+  }, false);
+
+  document.addEventListener('DOMContentLoaded', function() {
     var checkPageButton = document.getElementById('button-local');
     checkPageButton.addEventListener('click', function() {
   

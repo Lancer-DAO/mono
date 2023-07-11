@@ -28,9 +28,10 @@ const BountyFilters = ({
     <form
       onSubmit={(event) => event.preventDefault()}
       className="bounty-filters"
+      id="bounty-filters"
     >
-      <div className="filter-section">
-        <label className="w-checkbox checkbox-field-2 label-only no-left-padding">
+      <div className="filter-section" id="filter-my-bounties">
+        <label className="w-checkbox checkbox-field-2 label-only ">
           <div
             className={classnames(
               "w-checkbox-input w-checkbox-input--inputType-custom checkbox ",
@@ -49,6 +50,8 @@ const BountyFilters = ({
 
           <label className="check-label label-only">Only My Bounties</label>
         </label>
+      </div>
+      <div className="filter-section" id="filter-payout-mints">
         <label>Payout Mints</label>
         <MultiSelectDropdown
           options={mints.map((mint) => {
@@ -71,7 +74,7 @@ const BountyFilters = ({
           }}
         />
       </div>
-      <div className="filter-section">
+      <div className="filter-section" id="filter-creators">
         <label>Creators</label>
         <MultiSelectDropdown
           options={orgs.map((org) => {
@@ -94,8 +97,8 @@ const BountyFilters = ({
           }}
         />
       </div>
-      <div className="filter-section">
-        <label>Tags</label>
+      <div className="filter-section" id="filter-requirements">
+        <label>Requirements</label>
         <MultiSelectDropdown
           options={tags.map((tag) => {
             return {
@@ -117,7 +120,7 @@ const BountyFilters = ({
           }}
         />
       </div>
-      <div className="filter-section">
+      <div className="filter-section" id="filter-states">
         <label>States</label>
         <MultiSelectDropdown
           options={BOUNTY_STATES.map((state) => {
@@ -146,7 +149,7 @@ const BountyFilters = ({
           }}
         />
       </div>
-      <div className="filter-section">
+      <div className="filter-section" id="filter-time">
         <label htmlFor="estimatedTime">Estimated Time (hours)</label>
         <div className="range-bounds">
           <div>{timeBounds[0]}</div>

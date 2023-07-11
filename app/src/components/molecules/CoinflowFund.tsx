@@ -21,6 +21,7 @@ const FundBounty: React.FC<{ amount: number }> = ({
   const [fundTx, setFundTx] = useState<Transaction>(null);
   useEffect(() => {
     const getFundTransaction = async () => {
+      console.log("coinflow amount", amount);
       const transaction = await getFundFFATX(
         amount,
         currentBounty.escrow,
@@ -31,7 +32,7 @@ const FundBounty: React.FC<{ amount: number }> = ({
       setFundTx(transaction);
     };
     getFundTransaction();
-  }, []);
+  }, [amount]);
 
   const onSuccess = () => {
     fundB({

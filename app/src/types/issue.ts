@@ -55,6 +55,8 @@ export interface Repository extends Prisma.Repository {}
 
 export interface PullRequest extends Prisma.PullRequest {}
 
+export interface RefferrerReferree extends Prisma.ReferrerReferree {}
+
 export interface User extends Prisma.User {
   isCreator?: boolean;
   isRequestedSubmitter?: boolean;
@@ -67,8 +69,14 @@ export interface User extends Prisma.User {
   isVotingCancel?: boolean;
   repos?: any[];
   relations?: BOUNTY_USER_RELATIONSHIP[];
-  wallets: Wallet[];
+  wallets?: Wallet[];
   currentWallet?: Wallet;
+  referrers?: (Prisma.ReferrerReferree & {
+    referrer: Prisma.User;
+  })[];
+  referrees?: (Prisma.ReferrerReferree & {
+    referree: Prisma.User;
+  })[];
 }
 
 export interface CurrentUser extends User {
@@ -130,13 +138,13 @@ export type ContributorCompensationInfo = {
 
 export enum BountyState {
   NEW = "new",
+  CANCELED = "canceled",
+  COMPLETE = "complete",
   FUNDED = "funded",
   ACCEPTING_APPLICATIONS = "accepting_applications",
   IN_PROGRESS = "in_progress",
   AWAITING_REVIEW = "awaiting_review",
-  COMPLETE = "complete",
   VOTING_TO_CANCEL = "voting_to_cancel",
-  CANCELED = "canceled",
 }
 
 export enum IssueType {

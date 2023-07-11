@@ -332,6 +332,9 @@
 
 .wallet-adapter-button-start-icon {
     margin-right: 12px;
+    display: flex;
+    width: 30px;
+    height: 30px
 }
 
 .wallet-adapter-collapse {
@@ -524,6 +527,7 @@
 .wallet-adapter-modal-list .wallet-adapter-button-start-icon img {
     width: 28px;
     height: 28px;
+    display: flex;
 }
 
 .wallet-adapter-modal-list .wallet-adapter-button span {
@@ -646,8 +650,12 @@
 
 
 .account-page-wrapper {
-  display: flex;
+  display: grid;
+  grid-template-columns: 300px 1fr;
   flex-direction: row;
+  @media only screen and (max-width: 767px) {
+    flex-direction: column;
+  }
   width: 100%;
   row-gap: 20px;
   column-gap: 80px;
@@ -712,4 +720,19 @@
   .token-key {
     opacity: 0.5;
   }
+}
+.wallet-adapter-button {
+  background-color: transparent;
+  border: none;
+  color: #fff;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  font-family: 'DM Sans', 'Roboto', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-size: 16px;
+  font-weight: 600;
+  height: 48px;
+  line-height: 48px;
+  padding: 0 24px;
+  border-radius: 4px;
 }

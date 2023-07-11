@@ -12,7 +12,7 @@ const CoinflowOfframp: React.FC = () => {
           merchantId="lancer"
           connection={provider.connection}
           blockchain={"solana"}
-          env="sandbox"
+          env="prod"
         />
       </div>
     )

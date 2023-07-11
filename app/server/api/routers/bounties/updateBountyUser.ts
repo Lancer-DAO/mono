@@ -80,7 +80,7 @@ export const updateBountyUser = protectedProcedure
           bountyid: bountyId,
           userid: userId,
           type: label,
-          timestamp: new dayjs.Dayjs().toString(),
+          timestamp: dayjs().toISOString(),
         },
       });
       if (state) {

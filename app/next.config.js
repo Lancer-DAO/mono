@@ -1,14 +1,15 @@
 /** @type {import('next').NextConfig} */
-const withFonts = require('next-fonts');
+const withFonts = require("next-fonts");
 const nextConfig = {
   reactStrictMode: true,
   images: {
     unoptimized: true,
-  },optimization: {
-    minimize: false
-},
+  },
+  optimization: {
+    minimize: false,
+  },
   env: {
-    AUTH0_BASE_URL: process.env.VERCEL_URL || 'http://localhost:3000'
+    AUTH0_BASE_URL: process.env.VERCEL_URL || "http://localhost:3000",
   },
   webpack: (config) => {
     config.watchOptions = {
@@ -19,7 +20,7 @@ const nextConfig = {
       fs: false,
       path: false,
       os: false,
-      crypto: false,
+      crypto: require.resolve("crypto-browserify"),
       assert: false,
       process: false,
       util: false,
@@ -45,15 +46,14 @@ const nextConfig = {
           stream: require.resolve("stream-browserify"),
           zlib: require.resolve("browserify-zlib"),
           http: require.resolve("http-browserify"),
-          https: require.resolve("https-browserify")
+          https: require.resolve("https-browserify"),
         },
       },
     };
   },
 };
 
-module.exports = withFonts(nextConfig)
-
+module.exports = withFonts(nextConfig);
 
 // Injected content via Sentry wizard below
 

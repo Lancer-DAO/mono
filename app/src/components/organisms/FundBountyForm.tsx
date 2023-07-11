@@ -12,6 +12,7 @@ import { fundFFA, getFundFFATX } from "@/escrow/adapters";
 import { USDC_MINT } from "@/src/constants";
 import { useConnection, useWallet } from "@solana/wallet-adapter-react";
 import { CoinflowFund } from "@/src/components";
+import { CREATE_BOUNTY_TUTORIAL_INITIAL_STATE } from "@/src/constants/tutorials";
 
 const Form: React.FC<{ isAccountCreated: boolean }> = ({
   isAccountCreated,
@@ -23,6 +24,8 @@ const Form: React.FC<{ isAccountCreated: boolean }> = ({
     program,
     provider,
     currentWallet,
+    currentTutorialState,
+    setCurrentTutorialState,
   } = useLancer();
   const [fundingType, setFundingType] = useState<"wallet" | "card">("wallet");
 
@@ -32,6 +35,19 @@ const Form: React.FC<{ isAccountCreated: boolean }> = ({
   const [formData, setFormData] = useState({
     fundingAmount: null,
   });
+  useEffect(() => {
+    if (
+      currentTutorialState?.title ===
+        CREATE_BOUNTY_TUTORIAL_INITIAL_STATE.title &&
+      currentTutorialState.currentStep === 5
+    ) {
+      setCurrentTutorialState({
+        ...currentTutorialState,
+        isRunning: true,
+        currentStep: 6,
+      });
+    }
+  }, []);
   const handleChange = (event) => {
     setFormData({
       ...formData,
@@ -39,6 +55,16 @@ const Form: React.FC<{ isAccountCreated: boolean }> = ({
     });
   };
   const onClick = async () => {
+    if (
+      currentTutorialState?.title ===
+        CREATE_BOUNTY_TUTORIAL_INITIAL_STATE.title &&
+      currentTutorialState.currentStep === 7
+    ) {
+      setCurrentTutorialState({
+        ...currentTutorialState,
+        isRunning: false,
+      });
+    }
     // If we are the creator, then skip requesting and add self as approved
     const signature = await fundFFA(
       formData.fundingAmount,
@@ -128,17 +154,75 @@ const Form: React.FC<{ isAccountCreated: boolean }> = ({
                           className="input w-input"
                           name="fundingAmount"
                           placeholder="1000 (USD)"
-                          id="Issue"
+                          id="issue-amount-input"
                           value={formData.fundingAmount}
                           onChange={handleChange}
+                          onBlur={() => {
+                            if (
+                              formData.fundingAmount !== "" &&
+                              !!currentTutorialState &&
+                              currentTutorialState.isActive
+                            ) {
+                              if (
+                                currentTutorialState?.title ===
+                                  CREATE_BOUNTY_TUTORIAL_INITIAL_STATE.title &&
+                                currentTutorialState.currentStep === 6
+                              ) {
+                                setCurrentTutorialState({
+                                  ...currentTutorialState,
+                                  currentStep: 7,
+                                });
+                              }
+                            }
+                          }}
+                          onMouseLeave={() => {
+                            if (
+                              formData.fundingAmount !== "" &&
+                              !!currentTutorialState &&
+                              currentTutorialState.isActive
+                            ) {
+                              if (
+                                currentTutorialState?.title ===
+                                  CREATE_BOUNTY_TUTORIAL_INITIAL_STATE.title &&
+                                currentTutorialState.currentStep === 6
+                              ) {
+                                setCurrentTutorialState({
+                                  ...currentTutorialState,
+                                  currentStep: 7,
+                                  isRunning: true,
+                                });
+                              }
+                            }
+                          }}
+                          onFocus={() => {
+                            if (
+                              !!currentTutorialState &&
+                              currentTutorialState.isActive
+                            ) {
+                              if (
+                                currentTutorialState?.title ===
+                                  CREATE_BOUNTY_TUTORIAL_INITIAL_STATE.title &&
+                                currentTutorialState.currentStep === 6
+                              ) {
+                                setCurrentTutorialState({
+                                  ...currentTutorialState,
+                                  isRunning: false,
+                                });
+                              }
+                            }
+                          }}
                         />
                       </div>
                     </div>
+                    {formData.fundingAmount && (
+                      <div>Total Cost: {1.05 * formData.fundingAmount}</div>
+                    )}
                     <button
                       className={classNames("button-primary", {
                         disabled: !formData.fundingAmount,
                       })}
                       onClick={onClick}
+                      id="issue-funding-submit"
                     >
                       Submit
                     </button>
