@@ -6,6 +6,7 @@ const CoinflowOfframp = dynamic(() => import("./atoms/CoinflowOfframp"));
 const ContributorInfo = dynamic(() => import("./atoms/ContributorInfo"));
 const LinkButton = dynamic(() => import("./atoms/LinkButton"));
 const LoadingBar = dynamic(() => import("./atoms/LoadingBar"));
+const ProgressBar = dynamic(() => import("./atoms/ProgressBar"));
 const PubKey = dynamic(() => import("./atoms/PubKey"));
 
 // Molecules
@@ -38,29 +39,37 @@ const LancerBounty = dynamic(() => import("./organisms/LancerBounty"));
 const DefaultLayout = dynamic(() => import("./templates/DefaultLayout"));
 
 export {
+  // atoms
+  Button,
+  CoinflowOfframp,
   ContributorInfo,
   LinkButton,
-  Header,
-  DefaultLayout,
   LoadingBar,
-  ApiKeyModal,
-  ProfileNFTCard,
-  CoinflowOfframp,
-  Button,
+  ProgressBar,
   PubKey,
+
+  // molecules
+  AccountHeaderOptions,
+  ApiKeyModal,
+  BountyActions,
   BountyNFTCard,
+  CoinflowFund,
   MultiSelectDropdown,
+  ProfileNFTCard,
   RangeSlider,
+  SubmitterSection,
+  TutorialsModal,
   WalletInfo,
+
+  // organisms
   BountyFilters,
   BountyTable,
-  LancerBounty,
   CreateBountyForm,
   FundBountyForm,
-  CoinflowFund,
-  BountyActions,
-  SubmitterSection,
+  Header,
   JoyrideWrapper,
-  AccountHeaderOptions,
-  TutorialsModal,
+  LancerBounty,
+
+  // templates
+  DefaultLayout,
 };
