@@ -20,9 +20,14 @@ import { api } from "@/src/utils/api";
 import { PublicKey } from "@solana/web3.js";
 import { Octokit } from "octokit";
 import { decimalToNumber } from "@/src/utils";
-import { BOUNTY_PROJECT_PARAMS, PROFILE_PROJECT_PARAMS } from "@/src/constants";
+import {
+  BOUNTY_PROJECT_PARAMS,
+  IS_MAINNET,
+  PROFILE_PROJECT_PARAMS,
+} from "@/src/constants";
 import { createUnderdogClient } from "@underdog-protocol/js";
 import dayjs from "dayjs";
+import { useReferral } from "@/src/providers/referralProvider";
 import {
   BOUNTY_ACTIONS_TUTORIAL_II_INITIAL_STATE,
   BOUNTY_ACTIONS_TUTORIAL_I_INITIAL_STATE,
@@ -85,6 +90,9 @@ const BountyActions = () => {
             Submission Request Denied
           </Button>
         )}
+        {!IS_MAINNET &&
+          currentBounty.isCreator &&
+          !currentBounty.isApprovedSubmitter && <RequestToSubmit />}
         {currentBounty.isApprovedSubmitter &&
           !currentBounty.currentSubmitter && (
             <div
@@ -97,14 +105,8 @@ const BountyActions = () => {
               }}
             >
               <SubmitRequest
-                disabled={currentBounty.pullRequests.length === 0}
+              // disabled={currentBounty.pullRequests.length === 0}
               />
-              {hoveredButton === "submit" &&
-                currentBounty.pullRequests.length === 0 && (
-                  <div className="hover-tooltip error">
-                    Please open a PR closing the GitHub Issue before submitting
-                  </div>
-                )}
             </div>
           )}
         {currentBounty.isCurrentSubmitter && !currentBounty.isCreator && (
@@ -154,6 +156,9 @@ const RequestToSubmit = () => {
   } = useLancer();
   const { mutateAsync } = api.bounties.updateBountyUser.useMutation();
 
+  const { createReferralMember, getRemainingAccounts, getSubmitterReferrer } =
+    useReferral();
+
   const onClick = async () => {
     // Request to submit. Does not interact on chain
     if (
@@ -166,6 +171,10 @@ const RequestToSubmit = () => {
         isRunning: false,
       });
     }
+    const result = await createReferralMember();
+
+    const referralKey = result?.memberPDA;
+    const signature = result?.txId;
     const { updatedBounty } = await mutateAsync({
       currentUserId: currentUser.id,
       bountyId: currentBounty.id,
@@ -177,7 +186,6 @@ const RequestToSubmit = () => {
           ]
         : [BOUNTY_USER_RELATIONSHIP.RequestedSubmitter],
       publicKey: currentWallet.publicKey.toString(),
-      provider: currentWallet.providerName,
       escrowId: currentBounty.escrowid,
       label: "request-to-submit",
       signature: "n/a",
@@ -217,6 +225,7 @@ export const ApproveSubmission = () => {
     currentTutorialState,
     setCurrentTutorialState,
   } = useLancer();
+  const { programId: buddylinkProgramId } = useReferral();
   const { mutateAsync } = api.bounties.updateBountyUser.useMutation();
 
   const { currentAPIKey } = useLancer();
@@ -237,6 +246,7 @@ export const ApproveSubmission = () => {
       new PublicKey(currentBounty.currentSubmitter.publicKey),
       currentBounty.escrow,
       currentWallet,
+      buddylinkProgramId,
       program,
       provider
     );
@@ -250,7 +260,6 @@ export const ApproveSubmission = () => {
       relations: currentBounty.currentUserRelationsList,
       state: BountyState.COMPLETE,
       publicKey: currentWallet.publicKey.toString(),
-      provider: currentWallet.providerName,
       escrowId: currentBounty.escrowid,
       signature,
       label: "complete-bounty",
@@ -258,17 +267,17 @@ export const ApproveSubmission = () => {
 
     setCurrentBounty(updatedBounty);
 
-    const octokit = new Octokit({
-      auth: currentAPIKey.token,
-    });
-    const octokitResponse = await octokit.request(
-      "PUT /repos/{owner}/{repo}/pulls/{pull_number}/merge",
-      {
-        owner: currentBounty.repository.organization,
-        repo: currentBounty.repository.name,
-        pull_number: decimalToNumber(currentBounty.pullRequests[0].number),
-      }
-    );
+    // const octokit = new Octokit({
+    //   auth: currentAPIKey.token,
+    // });
+    // const octokitResponse = await octokit.request(
+    //   "PUT /repos/{owner}/{repo}/pulls/{pull_number}/merge",
+    //   {
+    //     owner: currentBounty.repository.organization,
+    //     repo: currentBounty.repository.name,
+    //     pull_number: decimalToNumber(currentBounty.pullRequests[0].number),
+    //   }
+    // );
 
     const submitterKey = currentBounty.currentSubmitter.publicKey;
     const creatorKey = currentBounty.creator.publicKey;
@@ -397,7 +406,6 @@ export const CancelEscrow = () => {
       relations: [...currentBounty.currentUserRelationsList, "canceler"],
       state: BountyState.CANCELED,
       publicKey: currentWallet.publicKey.toString(),
-      provider: currentWallet.providerName,
       escrowId: currentBounty.escrowid,
       signature,
       label: "cancel-escrow",
@@ -449,7 +457,6 @@ export const DenySubmission = () => {
       relations: currentBounty.currentSubmitter.relations,
       state: BountyState.ACCEPTING_APPLICATIONS,
       publicKey: currentWallet.publicKey.toString(),
-      provider: currentWallet.providerName,
       escrowId: currentBounty.escrowid,
       signature,
       label: "deny-submitter",
@@ -502,7 +509,6 @@ export const RequestChanges = () => {
       relations: currentBounty.currentSubmitter.relations,
       state: BountyState.IN_PROGRESS,
       publicKey: currentWallet.publicKey.toString(),
-      provider: currentWallet.providerName,
       escrowId: currentBounty.escrowid,
       signature,
       label: "request-changes",
@@ -576,7 +582,6 @@ export const SubmitRequest = ({ disabled }: { disabled?: boolean }) => {
       relations: currentBounty.currentUserRelationsList,
       state: BountyState.AWAITING_REVIEW,
       publicKey: currentWallet.publicKey.toString(),
-      provider: currentWallet.providerName,
       escrowId: currentBounty.escrowid,
       signature,
       label: "submit-request",
@@ -601,6 +606,7 @@ export const SubmitRequest = ({ disabled }: { disabled?: boolean }) => {
       disabled={disabled}
       onClick={onClick}
       id="submit-request-bounty-button"
+      disabledText="Please open a PR closing the GitHub Issue before submitting"
     >
       Submit
     </Button>
@@ -641,7 +647,6 @@ export const VoteToCancel = () => {
       relations: currentBounty.currentUserRelationsList,
       state: BountyState.VOTING_TO_CANCEL,
       publicKey: currentWallet.publicKey.toString(),
-      provider: currentWallet.providerName,
       escrowId: currentBounty.escrowid,
       signature,
       label: "vote-to-cancel",

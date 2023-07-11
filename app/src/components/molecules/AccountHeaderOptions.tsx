@@ -82,7 +82,7 @@ const AccountHeaderOptions = () => {
           >
             <img
               src={`https://avatars.githubusercontent.com/u/${
-                currentUser.githubId.split("|")[1]
+                currentUser?.githubId?.split("|")[1]
               }?s=60&v=4`}
               className="h-[40px] w-[40px] rounded-full border-[1px] border-gray-600"
             />

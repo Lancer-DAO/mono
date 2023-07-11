@@ -1,6 +1,7 @@
 import { prisma } from "@/server/db";
 import { protectedProcedure } from "../../trpc";
 import { z } from "zod";
+import * as helpers from "@/prisma/helpers";
 
 export const getUser = protectedProcedure
   .input(
@@ -9,14 +10,7 @@ export const getUser = protectedProcedure
     })
   )
   .mutation(async ({ input: { id } }) => {
-    const user = await prisma.user.findUnique({
-      where: {
-        id,
-      },
-      include: {
-        wallets: true,
-      },
-    });
+    const user = await helpers.getUserById(id);
 
     return { ...user, currentWallet: user.wallets[0] };
   });

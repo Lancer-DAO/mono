@@ -12,6 +12,7 @@ import { WalletModalProvider } from "@solana/wallet-adapter-react-ui";
 import LancerProvider from "@/src/providers/lancerProvider";
 import { useRouter } from "next/router";
 import { IS_MAINNET, MAINNET_RPC } from "../constants";
+import ReferralProvider from "./referralProvider";
 export * from "./lancerProvider";
 
 export const AllProviders: React.FC<{ children: ReactNode }> = ({
@@ -49,7 +50,9 @@ export const AllProviders: React.FC<{ children: ReactNode }> = ({
       <ConnectionProvider endpoint={endpoint}>
         <WalletProvider wallets={walletProviders} autoConnect>
           <WalletModalProvider>
-            <LancerProvider>{children}</LancerProvider>
+            <LancerProvider>
+              <ReferralProvider>{children}</ReferralProvider>
+            </LancerProvider>
           </WalletModalProvider>
         </WalletProvider>
       </ConnectionProvider>

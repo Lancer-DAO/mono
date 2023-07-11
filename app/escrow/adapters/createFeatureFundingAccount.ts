@@ -1,7 +1,10 @@
 import { PublicKey, Transaction } from "@solana/web3.js";
 import { AnchorProvider, Program } from "@project-serum/anchor";
 import { MonoProgram } from "@/escrow/sdk/types/mono_program";
-import { createFeatureFundingAccountInstruction } from "@/escrow/sdk/instructions";
+import {
+  createFeatureFundingAccountInstruction,
+  createReferralDataAccountInstruction,
+} from "@/escrow/sdk/instructions";
 import { USDC_MINT } from "@/src/constants";
 import { findFeatureAccount } from "@/escrow/sdk/pda";
 import { LancerWallet } from "@/src/types";
@@ -19,6 +22,17 @@ export const createFFA = async (
     program,
     timestamp
   );
+  const [feature_account] = await findFeatureAccount(
+    timestamp,
+    new PublicKey(wallet.publicKey),
+    program
+  );
+
+  const referralAccountIx = await createReferralDataAccountInstruction(
+    new PublicKey(wallet.publicKey),
+    feature_account,
+    program
+  );
   const { blockhash, lastValidBlockHeight } =
     await provider.connection.getLatestBlockhash();
   const txInfo = {
@@ -28,14 +42,10 @@ export const createFFA = async (
     blockhash: blockhash,
     /** the last block chain can advance to before tx is exportd expired */
     lastValidBlockHeight: lastValidBlockHeight,
+    skipPreflight: true,
   };
   const signature = await wallet.signAndSendTransaction(
-    new Transaction(txInfo).add(ix)
-  );
-  const [feature_account] = await findFeatureAccount(
-    timestamp,
-    new PublicKey(wallet.publicKey),
-    program
+    new Transaction(txInfo).add(ix).add(referralAccountIx)
   );
   return {
     timestamp,

@@ -3,7 +3,8 @@ import * as Prisma from "@prisma/client";
 
 export const getOrCreateWallet = async (
   user: Prisma.User,
-  publicKey: string
+  publicKey: string,
+  isDefault?: boolean
 ): Promise<Prisma.Wallet> => {
   let wallet = await prisma.wallet.findUnique({
     where: {
@@ -15,8 +16,24 @@ export const getOrCreateWallet = async (
       data: {
         publicKey,
         userid: user.id,
+        isDefault,
       },
     });
+  }
+  return wallet;
+};
+
+export const getWalletOrThrow = async (
+  user: Prisma.User,
+  publicKey: string
+): Promise<Prisma.Wallet> => {
+  const wallet = await prisma.wallet.findUniqueOrThrow({
+    where: {
+      publicKey,
+    },
+  });
+  if (wallet.userid !== user.id) {
+    throw new Error("Wallet does not belong to specified user");
   }
   return wallet;
 };

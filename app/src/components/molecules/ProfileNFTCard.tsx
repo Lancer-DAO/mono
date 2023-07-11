@@ -1,7 +1,15 @@
-import { ProfileNFT } from "@/src/types";
+import { ProfileNFT, User } from "@/src/types";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
+import { useCallback, useState } from "react";
+import { Button } from "..";
+import AddReferrerModal from "./AddReferrerModal";
+import { useReferral } from "@/src/providers/referralProvider";
+import { Copy } from "react-feather";
 dayjs.extend(relativeTime);
+
+// TODO: change to config file
+const SITE_URL = "lancer.so";
 
 const ProfileNFTCard = ({
   profileNFT,
@@ -10,6 +18,23 @@ const ProfileNFTCard = ({
   profileNFT: ProfileNFT;
   githubId: string;
 }) => {
+  const [showReferrerModal, setShowReferrerModal] = useState(false);
+  const { referralId, initialized, createReferralMember, claimable, claim } =
+    useReferral();
+
+  const handleCreateLink = useCallback(async () => {
+    await createReferralMember();
+
+    // TODO: success logic
+  }, [initialized]);
+
+  const handleClaim = useCallback(async () => {
+    if (claimable) {
+      await claim();
+      // TODO: success logic
+    }
+  }, [claimable, initialized]);
+
   return (
     <>
       <div className="profile-nft" id="profile-nft">
@@ -62,7 +87,39 @@ const ProfileNFTCard = ({
 
         <h4>Last Updated</h4>
         <div>{profileNFT.lastUpdated?.fromNow()}</div>
+
+        <div className="divider"></div>
+
+        <h4>Refer your friends</h4>
+        {referralId && initialized ? (
+          <div className="referral">
+            <div className="referral-link">
+              <span>
+                {SITE_URL}/?r={referralId}
+              </span>
+              <Copy />
+            </div>
+          </div>
+        ) : (
+          <div>
+            <Button onClick={handleCreateLink}>Generate link</Button>
+          </div>
+        )}
+
+        {claimable ? (
+          <>
+            <div className="divider"></div>
+            <h4>Claim your rewards</h4>
+
+            <Button onClick={handleClaim}>Claim {claimable} USDC</Button>
+          </>
+        ) : null}
       </div>
+
+      <AddReferrerModal
+        setShowModal={setShowReferrerModal}
+        showModal={showReferrerModal}
+      />
     </>
   );
 };

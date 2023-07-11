@@ -11,6 +11,7 @@ import { ContributorInfo } from "@/src/components/";
 import { Check, X } from "react-feather";
 import { PublicKey } from "@solana/web3.js";
 import { api } from "@/src/utils/api";
+import { useReferral } from "@/src/providers/referralProvider";
 import { BOUNTY_ACTIONS_TUTORIAL_I_INITIAL_STATE } from "@/src/constants/tutorials";
 
 export type SubmitterSectionType = "approved" | "requested";
@@ -36,6 +37,7 @@ const SubmitterSection: React.FC<SubmitterSectionProps> = ({
     setCurrentTutorialState,
   } = useLancer();
   const { mutateAsync } = api.bounties.updateBountyUser.useMutation();
+  const { getRemainingAccounts, getSubmitterReferrer } = useReferral();
 
   const handleSubmitter = async (cancel?: boolean) => {
     switch (type) {
@@ -66,7 +68,6 @@ const SubmitterSection: React.FC<SubmitterSectionProps> = ({
               relations: currentBounty.currentUserRelationsList,
 
               publicKey: currentWallet.publicKey.toString(),
-              provider: currentWallet.providerName,
               escrowId: currentBounty.escrowid,
               signature: "test",
               label: "remove-submitter",
@@ -94,13 +95,17 @@ const SubmitterSection: React.FC<SubmitterSectionProps> = ({
                       ]
                     : [BOUNTY_USER_RELATIONSHIP.DeniedRequester],
                 publicKey: currentWallet.publicKey.toString(),
-                provider: currentWallet.providerName,
                 escrowId: currentBounty.escrowid,
                 signature: "n/a",
                 label: "deny-submitter",
               });
               setCurrentBounty(updatedBounty);
             } else {
+              const submitterWallet = new PublicKey(submitter.publicKey);
+              const remainingAccounts = await getRemainingAccounts(
+                submitterWallet
+              );
+              debugger;
               if (
                 currentTutorialState?.title ===
                   BOUNTY_ACTIONS_TUTORIAL_I_INITIAL_STATE.title &&
@@ -112,9 +117,11 @@ const SubmitterSection: React.FC<SubmitterSectionProps> = ({
                 });
               }
               const signature = await addSubmitterFFA(
-                new PublicKey(submitter.publicKey),
+                submitterWallet,
                 currentBounty.escrow,
                 currentWallet,
+                await getSubmitterReferrer(submitterWallet),
+                remainingAccounts,
                 program,
                 provider
               );
@@ -131,7 +138,6 @@ const SubmitterSection: React.FC<SubmitterSectionProps> = ({
                     : [BOUNTY_USER_RELATIONSHIP.ApprovedSubmitter],
                 state: BountyState.IN_PROGRESS,
                 publicKey: currentWallet.publicKey.toString(),
-                provider: currentWallet.providerName,
                 escrowId: currentBounty.escrowid,
                 signature,
                 label: "add-approved-submitter",
@@ -161,11 +167,8 @@ const SubmitterSection: React.FC<SubmitterSectionProps> = ({
   };
 
   return (
-    <div
-      className="submitter-section"
-      id={`submitter-section-${type}-${index}`}
-    >
-      <ContributorInfo user={submitter} />
+    <div className="submitter-section">
+      <ContributorInfo user={submitter.user} />
 
       {type === "approved" ? (
         <div className="empty-submitter-cell"></div>

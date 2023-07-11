@@ -25,7 +25,6 @@ export * from "./types";
 import MonoProgramJSON from "@/escrow/sdk/idl/mono_program.json";
 import { APIKeyInfo } from "@/src/components/molecules/ApiKeyModal";
 import { IS_MAINNET, MONO_ADDRESS } from "@/src/constants";
-import { Step } from "react-joyride";
 import { Tutorial } from "@/src/types/tutorials";
 import { PROFILE_TUTORIAL_INITIAL_STATE } from "@/src/constants/tutorials";
 
@@ -122,7 +121,9 @@ const LancerProvider: FunctionComponent<ILancerState> = ({
         signTransaction,
         connected,
         signAndSendTransaction: async (transaction: Transaction) => {
-          return await sendTransaction(transaction, connection);
+          return await sendTransaction(transaction, connection, {
+            skipPreflight: true,
+          });
         },
         providerName: "Phantom",
       };
