@@ -105,7 +105,6 @@ const SubmitterSection: React.FC<SubmitterSectionProps> = ({
               const remainingAccounts = await getRemainingAccounts(
                 submitterWallet
               );
-              debugger;
               if (
                 currentTutorialState?.title ===
                   BOUNTY_ACTIONS_TUTORIAL_I_INITIAL_STATE.title &&

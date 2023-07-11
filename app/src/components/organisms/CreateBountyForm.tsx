@@ -9,6 +9,7 @@ import { Octokit } from "octokit";
 import { PublicKey } from "@solana/web3.js";
 import { FORM_SECTION } from "@/pages/create";
 import { CREATE_BOUNTY_TUTORIAL_INITIAL_STATE } from "@/src/constants/tutorials";
+import { BONK_MINT, USDC_MINT } from "@/src/constants";
 
 const Form: React.FC<{
   setFormSection: (section: FORM_SECTION) => void;
@@ -27,6 +28,8 @@ const Form: React.FC<{
   const { mutateAsync: createIssue } = api.issues.createIssue.useMutation();
   const [creationType, setCreationType] = useState<"new" | "existing">("new");
   const [repo, setRepo] = useState<any>();
+  const [fundingMint, setFundingMint] = useState<"usdc" | "bonk">("usdc");
+
   const [issue, setIssue] = useState<any>();
   const [formData, setFormData] = useState({
     organizationName: "",
@@ -123,7 +126,10 @@ const Form: React.FC<{
     const { timestamp, signature, escrowKey } = await createFFA(
       currentWallet,
       program,
-      provider
+      provider,
+      fundingMint === "usdc"
+        ? new PublicKey(USDC_MINT)
+        : new PublicKey(BONK_MINT)
     );
     createAccountPoll(escrowKey);
     const { bounty } = await mutateAsync({
@@ -143,6 +149,8 @@ const Form: React.FC<{
       timestamp: timestamp,
       chainName: "Solana",
       network: "mainnet",
+
+      mint: fundingMint === "usdc" ? USDC_MINT : BONK_MINT,
     });
 
     const issueResp = await createIssue({
@@ -646,6 +654,18 @@ const Form: React.FC<{
                     Only GitHub collaborators will have access to see this.
                   </p>
                 </label> */}
+
+                <label>
+                  Funding Type<span className="color-red">*</span>
+                </label>
+                <select
+                  onChange={(e) => {
+                    setFundingMint(e.target.value as any);
+                  }}
+                >
+                  <option value="usdc">USDC</option>
+                  <option value="bonk">BONK</option>
+                </select>
 
                 <Button
                   disabled={

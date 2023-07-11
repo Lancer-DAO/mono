@@ -21,9 +21,11 @@ import { PublicKey } from "@solana/web3.js";
 import { Octokit } from "octokit";
 import { decimalToNumber } from "@/src/utils";
 import {
+  BONK_MINT,
   BOUNTY_PROJECT_PARAMS,
   IS_MAINNET,
   PROFILE_PROJECT_PARAMS,
+  USDC_MINT,
 } from "@/src/constants";
 import { createUnderdogClient } from "@underdog-protocol/js";
 import dayjs from "dayjs";
@@ -248,7 +250,8 @@ export const ApproveSubmission = () => {
       currentWallet,
       buddylinkProgramId,
       program,
-      provider
+      provider,
+      new PublicKey(currentBounty.escrow.mint)
     );
     currentBounty.currentUserRelationsList.push(
       BOUNTY_USER_RELATIONSHIP.Completer
@@ -555,7 +558,8 @@ export const SubmitRequest = ({ disabled }: { disabled?: boolean }) => {
       currentBounty.escrow,
       currentWallet,
       program,
-      provider
+      provider,
+      new PublicKey(currentBounty.escrow.mint)
     );
     currentBounty.currentUserRelationsList.push(
       BOUNTY_USER_RELATIONSHIP.CurrentSubmitter

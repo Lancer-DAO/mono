@@ -15,13 +15,20 @@ export const submitRequestFFA = async (
   acc: Escrow,
   wallet: LancerWallet,
   program: Program<MonoProgram>,
-  provider: AnchorProvider
+  provider: AnchorProvider,
+  mint?: PublicKey
 ) => {
   const tokenAddress = await getAssociatedTokenAddress(
-    new PublicKey(USDC_MINT),
+    mint ? mint : new PublicKey(USDC_MINT),
     submitter
   );
-  // await maybeCreateTokenAccount(tokenAddress, submitter, new PublicKey(USDC_MINT), wallet,provider.connection)
+  await maybeCreateTokenAccount(
+    tokenAddress,
+    submitter,
+    mint ? mint : new PublicKey(USDC_MINT),
+    wallet,
+    provider.connection
+  );
 
   let approveSubmitterIx = await submitRequestInstruction(
     acc.timestamp,
