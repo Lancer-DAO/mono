@@ -13,7 +13,10 @@ export interface IReferralContext {
   initialized: boolean;
   referrer: PublicKey;
   programId: PublicKey;
-  getSubmitterReferrer: (submitter: PublicKey) => Promise<PublicKey>;
+  getSubmitterReferrer: (
+    submitter: PublicKey,
+    alternateMint?: PublicKey
+  ) => Promise<PublicKey>;
   claim: (treasury: Treasury) => Promise<ITransactionInfo | null>;
   createReferralMember: (mint?: PublicKey) => Promise<ITransactionInfo | null>;
   getRemainingAccounts: (

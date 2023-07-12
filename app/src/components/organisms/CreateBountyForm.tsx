@@ -643,11 +643,9 @@ const Form: React.FC<{
                   onChange={handleCheckboxChange}
                 />
 
-                <label className="check-label">
-                  Is this a Bounty discoverable?
-                </label>
+                <label className="check-label">Is this a Bounty private?</label>
                 <p className="check-paragraph">
-                  If not, only users with the link will be able to see it.
+                  If so, only users with the link will be able to see it.
                 </p>
               </label>
               <label>

@@ -152,6 +152,7 @@ const ReferralProvider: FunctionComponent<IReferralProps> = ({ children }) => {
         let memberPDA = null;
         if (member) {
           memberPDA = member.account.pda;
+
           if (mint) {
             const treasury = await client.treasury.getByPDA(
               member.account.owner
@@ -168,17 +169,16 @@ const ReferralProvider: FunctionComponent<IReferralProps> = ({ children }) => {
 
             if (!treasuryRewards) {
               instructions.push(
-                await client.initialize.createTreasuryByBuddyPDA(
+                ...(await client.initialize.createTreasuryByBuddyPDA(
                   treasury.account.owners[0].ownerPda,
                   mint
-                )
+                ))
               );
             }
           }
         } else {
           const name = Client.generateMemberName();
           memberPDA = client.pda.getMemberPDA(ORGANIZATION_NAME, name);
-
           if (mint) {
             instructions.push(
               ...(await client.initialize.createMemberWithRewards(
@@ -206,6 +206,7 @@ const ReferralProvider: FunctionComponent<IReferralProps> = ({ children }) => {
           blockhash: blockhash,
           lastValidBlockHeight: lastValidBlockHeight,
         };
+        debugger;
 
         const transaction = new Transaction(txInfo).add(...instructions);
         const signature = await sendTransaction(transaction, connection);
@@ -308,7 +309,7 @@ const ReferralProvider: FunctionComponent<IReferralProps> = ({ children }) => {
   }, [member]);
 
   const getSubmitterReferrer = useCallback(
-    async (submitter: PublicKey) => {
+    async (submitter: PublicKey, alternateMint?: PublicKey) => {
       const organization = await client.organization.getByName(
         ORGANIZATION_NAME
       );
@@ -318,7 +319,7 @@ const ReferralProvider: FunctionComponent<IReferralProps> = ({ children }) => {
         const treasuryPDA = client.pda.getTreasuryPDA(
           [buddyProfile.account.pda],
           [10_000],
-          organization.account.mainTokenMint
+          alternateMint || organization.account.mainTokenMint
         );
 
         const member =
@@ -335,7 +336,7 @@ const ReferralProvider: FunctionComponent<IReferralProps> = ({ children }) => {
             return member.account.referrer;
           } else {
             return getAssociatedTokenAddressSync(
-              organization.account.mainTokenMint,
+              alternateMint,
               member.account.referrer,
               true
             );

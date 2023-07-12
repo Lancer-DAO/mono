@@ -116,11 +116,15 @@ const SubmitterSection: React.FC<SubmitterSectionProps> = ({
                   isRunning: false,
                 });
               }
+              debugger;
               const signature = await addSubmitterFFA(
                 submitterWallet,
                 currentBounty.escrow,
                 currentWallet,
-                await getSubmitterReferrer(submitterWallet),
+                await getSubmitterReferrer(
+                  submitterWallet,
+                  new PublicKey(currentBounty.escrow.mint)
+                ),
                 remainingAccounts,
                 program,
                 provider
