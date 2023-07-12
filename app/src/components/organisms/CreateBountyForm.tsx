@@ -241,7 +241,7 @@ const Form: React.FC<{
               id="w-node-a3d1ad77-e5aa-114b-bcd7-cde3db1bb746-0ae9cdc2"
               className="form-subtitle"
             >
-              New Lancer Bounty
+              New Lancer Quest
             </h2>
 
             {/* <label>
