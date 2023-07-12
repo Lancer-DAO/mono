@@ -17,12 +17,11 @@ import { IS_MAINNET } from "@/src/constants";
 
 const ORGANIZATION_NAME = "lancer";
 
-const TREASURY_NO_CLAIM = "No treasury to claim";
 const CLIENT_NOT_SET = "Client is not initialized";
 
 export const ReferralContext = createContext<IReferralContext>({
   referralId: "",
-  claimable: 0,
+  claimables: [],
   initialized: false,
   referrer: PublicKey.default,
   programId: PublicKey.default,
@@ -40,7 +39,27 @@ interface IReferralProps {
   children?: ReactNode;
 }
 
+export interface Claimable {
+  amount: number;
+  treasury: Treasury;
+}
+
 const DEVNET_PROGRAM_ID = "9zE4EQ5tJbEeMYwtS2w8KrSHTtTW4UPqwfbBSEkUrNCA";
+
+export const mints = [
+  {
+    mint: IS_MAINNET
+      ? "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v"
+      : "4zMMC9srt5Ri5X14GAgXhaHii3GnPAEERYPJgZJDncDU",
+    decimal: 6,
+    symbol: "USDC",
+  },
+  {
+    mint: IS_MAINNET ? "DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263" : "",
+    decimal: 5,
+    symbol: "BONK",
+  },
+];
 
 const ReferralProvider: FunctionComponent<IReferralProps> = ({ children }) => {
   const { publicKey, sendTransaction } = useWallet();
@@ -48,10 +67,10 @@ const ReferralProvider: FunctionComponent<IReferralProps> = ({ children }) => {
 
   const [initialized, setInitialized] = useState(false);
   const [client, setClient] = useState<Client | null>(null);
-  const [treasury, setTreasury] = useState<Treasury | null>(null);
+  const [treasuries, setTreasuries] = useState<Treasury[] | null>(null);
   const [member, setMember] = useState<Member | null>(null);
   const [organization, setOrganization] = useState<Organization | null>(null);
-  const [claimable, setClaimable] = useState(0);
+  const [claimables, setClaimables] = useState<Claimable[]>([]);
   const [cachedReferrer, setCachedReferrer] = useState("");
   const [programId, setProgramId] = useState<PublicKey>(PublicKey.default);
 
@@ -78,7 +97,13 @@ const ReferralProvider: FunctionComponent<IReferralProps> = ({ children }) => {
 
       if (member) {
         setMember(member);
-        setTreasury(await member.getOwner());
+
+        const treasuries = (
+          await client.treasury.getAllSimpleByBuddy(buddyProfile.account.pda)
+        ).filter((treasury) =>
+          mints.find((mint) => mint.mint === treasury.account.mint.toString())
+        );
+        setTreasuries(treasuries);
       }
     } catch (e) {
       console.log(e);
@@ -88,83 +113,119 @@ const ReferralProvider: FunctionComponent<IReferralProps> = ({ children }) => {
     }
   }, [client]);
 
-  const claim = useCallback(async () => {
-    if (!treasury) throw TREASURY_NO_CLAIM;
-    try {
-      const { blockhash, lastValidBlockHeight } =
-        await connection.getLatestBlockhash();
-      const txInfo = {
-        feePayer: publicKey,
-        blockhash: blockhash,
-        lastValidBlockHeight: lastValidBlockHeight,
-      };
-
-      const transaction = new Transaction(txInfo).add(
-        ...(await treasury.claim())
-      );
-
-      const signature = await sendTransaction(transaction, connection, {
-        skipPreflight: true,
-      });
-      await connection.confirmTransaction(signature);
-
-      await handleFetches();
-
-      return { txId: signature };
-    } catch (e) {
-      return null;
-    }
-  }, [treasury, publicKey, connection]);
-
-  const createReferralMember = useCallback(async () => {
-    if (!client) throw CLIENT_NOT_SET;
-    try {
-      if (member)
-        return {
-          memberPDA: member.account.pda,
+  const claim = useCallback(
+    async (treasury: Treasury) => {
+      try {
+        const { blockhash, lastValidBlockHeight } =
+          await connection.getLatestBlockhash();
+        const txInfo = {
+          feePayer: publicKey,
+          blockhash: blockhash,
+          lastValidBlockHeight: lastValidBlockHeight,
         };
 
-      const { blockhash, lastValidBlockHeight } =
-        await connection.getLatestBlockhash();
-      const txInfo = {
-        feePayer: publicKey,
-        blockhash: blockhash,
-        lastValidBlockHeight: lastValidBlockHeight,
-      };
+        const transaction = new Transaction(txInfo).add(
+          ...(await treasury.claim())
+        );
 
-      const name = Client.generateMemberName();
-      const memberPDA = client.pda.getMemberPDA(ORGANIZATION_NAME, name);
+        const signature = await sendTransaction(transaction, connection, {
+          skipPreflight: true,
+        });
+        await connection.confirmTransaction(signature);
 
-      const transaction = new Transaction(txInfo).add(
-        ...(await client.initialize.createMember(
-          ORGANIZATION_NAME,
-          name,
-          cachedReferrer
-        ))
-      );
-      // debugger;
+        await handleFetches();
 
-      const signature = await sendTransaction(transaction, connection);
-      // debugger;
-      await connection.confirmTransaction(signature);
+        return { txId: signature };
+      } catch (e) {
+        return null;
+      }
+    },
+    [publicKey, connection]
+  );
 
-      await handleFetches();
+  const createReferralMember = useCallback(
+    async (mint?: PublicKey) => {
+      if (!client) throw CLIENT_NOT_SET;
+      try {
+        const instructions = [];
 
-      localStorage.removeItem("referrer");
+        let memberPDA = null;
+        if (member) {
+          memberPDA = member.account.pda;
+          if (mint) {
+            const treasury = await client.treasury.getByPDA(
+              member.account.owner
+            );
+            const owners = [treasury.account.owners[0].ownerPda];
+            const treasuryRewardsPDA = client.pda.getTreasuryPDA(
+              owners,
+              [10_000],
+              mint
+            );
+            const treasuryRewards = await client.treasury.getByPDA(
+              treasuryRewardsPDA
+            );
 
-      return { txId: signature, memberPDA };
-    } catch (e) {
-      console.error(e);
-      return null;
-    }
-  }, [client, member, cachedReferrer, publicKey]);
+            if (!treasuryRewards) {
+              instructions.push(
+                await client.initialize.createTreasuryByBuddyPDA(
+                  treasury.account.owners[0].ownerPda,
+                  mint
+                )
+              );
+            }
+          }
+        } else {
+          const name = Client.generateMemberName();
+          memberPDA = client.pda.getMemberPDA(ORGANIZATION_NAME, name);
+
+          if (mint) {
+            instructions.push(
+              ...(await client.initialize.createMemberWithRewards(
+                ORGANIZATION_NAME,
+                name,
+                mint,
+                cachedReferrer
+              ))
+            );
+          } else {
+            instructions.push(
+              ...(await client.initialize.createMember(
+                ORGANIZATION_NAME,
+                name,
+                cachedReferrer
+              ))
+            );
+          }
+        }
+
+        const { blockhash, lastValidBlockHeight } =
+          await connection.getLatestBlockhash();
+        const txInfo = {
+          feePayer: publicKey,
+          blockhash: blockhash,
+          lastValidBlockHeight: lastValidBlockHeight,
+        };
+
+        const transaction = new Transaction(txInfo).add(...instructions);
+        const signature = await sendTransaction(transaction, connection);
+        await connection.confirmTransaction(signature);
+
+        await handleFetches();
+        localStorage.removeItem("referrer");
+
+        return { txId: signature, memberPDA };
+      } catch (e) {
+        console.error(e);
+        return null;
+      }
+    },
+    [client, member, cachedReferrer, publicKey, organization]
+  );
 
   const getRemainingAccounts = useCallback(
-    async (wallet: PublicKey) => {
+    async (wallet: PublicKey, mint: PublicKey) => {
       if (!client) throw CLIENT_NOT_SET;
-      const organization = await client.organization.getByName(
-        ORGANIZATION_NAME
-      );
 
       const buddyProfile = await client.buddy.getProfile(wallet);
       debugger;
@@ -173,7 +234,7 @@ const ReferralProvider: FunctionComponent<IReferralProps> = ({ children }) => {
       const treasuryPDA = client.pda.getTreasuryPDA(
         [buddyProfile.account.pda],
         [10_000],
-        organization.account.mainTokenMint
+        mint
       );
 
       const member =
@@ -183,7 +244,7 @@ const ReferralProvider: FunctionComponent<IReferralProps> = ({ children }) => {
 
       const remainingAccounts =
         await client.initialize.validateReferrerAccounts(
-          organization.account.mainTokenMint,
+          mint,
           member.account.pda
         );
 
@@ -309,6 +370,25 @@ const ReferralProvider: FunctionComponent<IReferralProps> = ({ children }) => {
     return PublicKey.default;
   }, [member, organization]);
 
+  const handleTreasuries = useCallback(async () => {
+    const claimables = [];
+    for (const treasury of treasuries) {
+      const amount = await treasury.getClaimableBalance();
+
+      console.log(treasury.account.mint.toString());
+      const decimal = mints.find(
+        (mint) => mint.mint === treasury.account.mint.toString()
+      )?.decimal;
+
+      claimables.push({
+        amount: amount / Math.pow(10, decimal),
+        treasury,
+      });
+    }
+
+    setClaimables(claimables);
+  }, [treasuries]);
+
   useEffect(() => {
     setCachedReferrer(localStorage.getItem("referrer"));
   }, []);
@@ -330,17 +410,14 @@ const ReferralProvider: FunctionComponent<IReferralProps> = ({ children }) => {
   }, [client]);
 
   useEffect(() => {
-    if (treasury) {
-      // hardcoded for usdc
-      treasury
-        .getClaimableBalance()
-        .then((amount) => setClaimable(amount / 1e6));
+    if (treasuries) {
+      handleTreasuries();
     }
-  }, [treasury]);
+  }, [treasuries]);
 
   const contextProvider = {
     referralId,
-    claimable,
+    claimables,
     initialized,
     referrer,
     programId,
@@ -357,3 +434,8 @@ const ReferralProvider: FunctionComponent<IReferralProps> = ({ children }) => {
 };
 
 export default ReferralProvider;
+
+// TODO: for claim, add multi mints
+// TODO: for remaining accounts, check mint - DONE
+// TODO: rewards distribution - DONE
+// TODO: on create buddy, create treasury if doesn't have the treasury - DONE

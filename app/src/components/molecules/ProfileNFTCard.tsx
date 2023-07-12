@@ -1,11 +1,12 @@
 import { ProfileNFT, User } from "@/src/types";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
-import { useCallback, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { Button } from "..";
 import AddReferrerModal from "./AddReferrerModal";
 import { useReferral } from "@/src/providers/referralProvider";
 import { Copy } from "react-feather";
+import { Treasury } from "@ladderlabs/buddy-sdk";
 dayjs.extend(relativeTime);
 
 // TODO: change to config file
@@ -19,7 +20,7 @@ const ProfileNFTCard = ({
   githubId: string;
 }) => {
   const [showReferrerModal, setShowReferrerModal] = useState(false);
-  const { referralId, initialized, createReferralMember, claimable, claim } =
+  const { referralId, initialized, createReferralMember, claimables, claim } =
     useReferral();
 
   const handleCreateLink = useCallback(async () => {
@@ -28,12 +29,17 @@ const ProfileNFTCard = ({
     // TODO: success logic
   }, [initialized]);
 
-  const handleClaim = useCallback(async () => {
-    if (claimable) {
-      await claim();
-      // TODO: success logic
-    }
-  }, [claimable, initialized]);
+  const handleClaim = async (amount: number, treasury: Treasury) => {
+    if (amount) await claim(treasury);
+  };
+
+  const claimButtons = useMemo(() => {
+    return claimables.map((claimable) => (
+      <Button onClick={() => handleClaim(claimable.amount, claimable.treasury)}>
+        Claim {claimable.amount} USDC
+      </Button>
+    ));
+  }, [claimables]);
 
   return (
     <>
@@ -106,12 +112,11 @@ const ProfileNFTCard = ({
           </div>
         )}
 
-        {claimable ? (
+        {claimButtons.length ? (
           <>
             <div className="divider"></div>
             <h4>Claim your rewards</h4>
-
-            <Button onClick={handleClaim}>Claim {claimable} USDC</Button>
+            {claimButtons}
           </>
         ) : null}
       </div>

@@ -158,8 +158,7 @@ const RequestToSubmit = () => {
   } = useLancer();
   const { mutateAsync } = api.bounties.updateBountyUser.useMutation();
 
-  const { createReferralMember, getRemainingAccounts, getSubmitterReferrer } =
-    useReferral();
+  const { createReferralMember } = useReferral();
 
   const onClick = async () => {
     // Request to submit. Does not interact on chain
@@ -173,7 +172,9 @@ const RequestToSubmit = () => {
         isRunning: false,
       });
     }
-    const result = await createReferralMember();
+    const result = await createReferralMember(
+      new PublicKey(currentBounty.escrow.mint)
+    );
 
     const referralKey = result?.memberPDA;
     const signature = result?.txId;
