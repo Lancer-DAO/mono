@@ -16,8 +16,8 @@ export const createBounty = async (
   title: string,
   escrow: Prisma.Escrow,
   tags: Prisma.Tag[],
-  user: Prisma.User,
-  repository: Prisma.Repository
+  user: Prisma.User
+  // repository: Prisma.Repository
 ): Promise<Prisma.Bounty> => {
   const bounty = await prisma.bounty.create({
     data: {
@@ -45,11 +45,11 @@ export const createBounty = async (
           relations: "[creator]",
         },
       },
-      repository: {
-        connect: {
-          id: repository.id,
-        },
-      },
+      // repository: {
+      //   connect: {
+      //     id: repository.id,
+      //   },
+      // },
     },
   });
   return bounty;
@@ -124,67 +124,82 @@ export const getBounty = async (id: number, currentUserId: number) => {
   };
 };
 
-export const getBounties = async (currentUserId: number) => {
-  const bounties = currentUserId
-    ? await prisma.bounty.findMany({
-        where: {
-          users: {
-            some: {
-              userid: currentUserId,
-            },
+export const getBounties = async (
+  currentUserId: number,
+  onlyMyBounties?: boolean
+) => {
+  if (onlyMyBounties) {
+    return prisma.bounty.findMany({
+      where: {
+        users: {
+          some: {
+            userid: currentUserId,
           },
         },
-        include: {
-          repository: true,
-          escrow: {
-            include: {
-              transactions: {
-                include: {
-                  wallets: true,
-                },
+      },
+      include: {
+        repository: true,
+        escrow: {
+          include: {
+            transactions: {
+              include: {
+                wallets: true,
               },
             },
           },
-          users: {
-            include: {
-              user: true,
-            },
+        },
+        users: {
+          include: {
+            user: true,
           },
-          issue: true,
-          tags: true,
-          pullRequests: true,
         },
-        orderBy: {
-          createdAt: "desc",
-        },
-      })
-    : await prisma.bounty.findMany({
-        include: {
-          repository: true,
-          escrow: {
-            include: {
-              transactions: {
-                include: {
-                  wallets: true,
-                },
+        issue: true,
+        tags: true,
+        pullRequests: true,
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+    });
+  } else {
+    const bounties = await prisma.bounty.findMany({
+      include: {
+        repository: true,
+        escrow: {
+          include: {
+            transactions: {
+              include: {
+                wallets: true,
               },
             },
           },
-          users: {
-            include: {
-              user: true,
-            },
+        },
+        users: {
+          include: {
+            user: true,
           },
-          issue: true,
-          tags: true,
-          pullRequests: true,
         },
-        orderBy: {
-          createdAt: "desc",
-        },
-      });
+        issue: true,
+        tags: true,
+        pullRequests: true,
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+    });
+    const filteredByPrivate = bounties.filter((bounty) => {
+      if (bounty.isPrivate) {
+        const bountyUsers = bounty.users.map((user) => user.user.id);
+        if (bountyUsers.includes(currentUserId)) {
+          return true;
+        }
+        return false;
+      }
+      return true;
+    });
 
-  return bounties;
+    return filteredByPrivate;
+  }
 };
 
 const getBountyRelations = (

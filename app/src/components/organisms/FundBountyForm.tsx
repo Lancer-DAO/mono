@@ -97,7 +97,7 @@ const Form: React.FC<{ isAccountCreated: boolean }> = ({
                 id="w-node-a3d1ad77-e5aa-114b-bcd7-cde3db1bb746-0ae9cdc2"
                 className="form-subtitle"
               >
-                Fund Lancer Bounty
+                Fund Lancer Quest
               </h2>
               <div className="issue-creation-type">
                 <div
