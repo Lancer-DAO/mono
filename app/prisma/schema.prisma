@@ -36,8 +36,8 @@ model Bounty {
   guild        Guild?              @relation(fields: [guildid], references: [id])
   guildid      Int?
   pullRequests PullRequest[]
-  repository   Repository          @relation(fields: [repositoryid], references: [id])
-  repositoryid Int
+  repository   Repository?         @relation(fields: [repositoryid], references: [id])
+  repositoryid Int?
   tags         Tag[]
   users        BountyUser[]
 }

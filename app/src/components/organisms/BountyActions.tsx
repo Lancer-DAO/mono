@@ -75,8 +75,10 @@ const BountyActions = () => {
     <div className="bounty-buttons" id="bounty-actions">
       <>
         {currentBounty.isCreator &&
-          currentTutorialState?.title ===
-            BOUNTY_ACTIONS_TUTORIAL_I_INITIAL_STATE.title &&
+          ((!!currentTutorialState &&
+            currentTutorialState?.title ===
+              BOUNTY_ACTIONS_TUTORIAL_I_INITIAL_STATE.title) ||
+            !IS_MAINNET) &&
           currentBounty.currentUserRelationsList.length < 2 && (
             <RequestToSubmit />
           )}
@@ -90,9 +92,6 @@ const BountyActions = () => {
             Submission Request Denied
           </Button>
         )}
-        {!IS_MAINNET &&
-          currentBounty.isCreator &&
-          !currentBounty.isApprovedSubmitter && <RequestToSubmit />}
         {currentBounty.isApprovedSubmitter &&
           !currentBounty.currentSubmitter && (
             <div
