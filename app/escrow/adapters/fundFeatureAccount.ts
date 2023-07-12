@@ -11,16 +11,18 @@ export const getFundFFATX = async (
   acc: Escrow,
   wallet: LancerWallet,
   program: Program<MonoProgram>,
-  provider: AnchorProvider
+  provider: AnchorProvider,
+  decimals?: number,
+  mint?: PublicKey
 ) => {
-  const amount = baseAmount * Math.pow(10, 6);
+  const amount = baseAmount * Math.pow(10, decimals ? decimals : 6);
   console.log("baseAmount, amount", baseAmount, amount);
   // check balaance before funding feature
   let fund_feature_ix = await fundFeatureInstruction(
     amount,
     acc.timestamp,
     wallet.publicKey,
-    new PublicKey(USDC_MINT),
+    mint ? mint : new PublicKey(USDC_MINT),
     program
   );
   const { blockhash, lastValidBlockHeight } =
@@ -42,9 +44,19 @@ export const fundFFA = async (
   acc: Escrow,
   wallet: LancerWallet,
   program: Program<MonoProgram>,
-  provider: AnchorProvider
+  provider: AnchorProvider,
+  decimals?: number,
+  mint?: PublicKey
 ) => {
-  const tx = await getFundFFATX(baseAmount, acc, wallet, program, provider);
+  const tx = await getFundFFATX(
+    baseAmount,
+    acc,
+    wallet,
+    program,
+    provider,
+    decimals,
+    mint
+  );
 
   return await wallet.signAndSendTransaction(tx);
 };

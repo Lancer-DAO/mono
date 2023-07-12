@@ -12,12 +12,13 @@ import { LancerWallet } from "@/src/types";
 export const createFFA = async (
   wallet: LancerWallet,
   program: Program<MonoProgram>,
-  provider: AnchorProvider
+  provider: AnchorProvider,
+  mint?: PublicKey
 ) => {
   const timestamp = Date.now().toString();
 
   const ix = await createFeatureFundingAccountInstruction(
-    new PublicKey(USDC_MINT),
+    mint ? mint : new PublicKey(USDC_MINT),
     new PublicKey(wallet.publicKey),
     program,
     timestamp

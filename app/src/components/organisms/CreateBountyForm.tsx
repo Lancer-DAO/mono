@@ -9,6 +9,7 @@ import { Octokit } from "octokit";
 import { PublicKey } from "@solana/web3.js";
 import { FORM_SECTION } from "@/pages/create";
 import { CREATE_BOUNTY_TUTORIAL_INITIAL_STATE } from "@/src/constants/tutorials";
+import { BONK_MINT, USDC_MINT } from "@/src/constants";
 import { IS_MAINNET } from "@/src/constants";
 
 const Form: React.FC<{
@@ -28,6 +29,8 @@ const Form: React.FC<{
   const { mutateAsync: createIssue } = api.issues.createIssue.useMutation();
   const [creationType, setCreationType] = useState<"new" | "existing">("new");
   const [repo, setRepo] = useState<any>();
+  const [fundingMint, setFundingMint] = useState<"usdc" | "bonk">("usdc");
+
   const [issue, setIssue] = useState<any>();
   const [formData, setFormData] = useState({
     organizationName: "",
@@ -124,7 +127,10 @@ const Form: React.FC<{
     const { timestamp, signature, escrowKey } = await createFFA(
       currentWallet,
       program,
-      provider
+      provider,
+      fundingMint === "usdc"
+        ? new PublicKey(USDC_MINT)
+        : new PublicKey(BONK_MINT)
     );
     createAccountPoll(escrowKey);
     const bounty = await mutateAsync({
@@ -143,6 +149,8 @@ const Form: React.FC<{
       provider: currentWallet.providerName,
       timestamp: timestamp,
       chainName: "Solana",
+
+      mint: fundingMint === "usdc" ? USDC_MINT : BONK_MINT,
       network: IS_MAINNET ? "mainnet" : "devnet",
     });
 
@@ -635,13 +643,22 @@ const Form: React.FC<{
                   onChange={handleCheckboxChange}
                 />
 
-                <label className="check-label">
-                  Is this a Bounty discoverable?
-                </label>
+                <label className="check-label">Is this a Bounty private?</label>
                 <p className="check-paragraph">
-                  If not, only users with the link will be able to see it.
+                  If so, only users with the link will be able to see it.
                 </p>
               </label>
+              <label>
+                Funding Type<span className="color-red">*</span>
+              </label>
+              <select
+                onChange={(e) => {
+                  setFundingMint(e.target.value as any);
+                }}
+              >
+                <option value="usdc">USDC</option>
+                <option value="bonk">BONK</option>
+              </select>
 
               <div className="required-helper">
                 <span className="color-red">* </span> Required

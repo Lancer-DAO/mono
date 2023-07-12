@@ -9,10 +9,9 @@ export const fundBounty = protectedProcedure
       bountyId: z.number(),
       escrowId: z.number(),
       amount: z.number(),
-      mint: z.string(),
     })
   )
-  .mutation(async ({ input: { bountyId, escrowId, amount, mint } }) => {
+  .mutation(async ({ input: { bountyId, escrowId, amount } }) => {
     const bounty = await prisma.bounty.update({
       where: {
         id: bountyId,
@@ -28,7 +27,6 @@ export const fundBounty = protectedProcedure
       },
       data: {
         amount,
-        mint,
       },
     });
 

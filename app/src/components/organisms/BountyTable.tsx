@@ -1,4 +1,4 @@
-import { TABLE_BOUNTY_STATES } from "@/src/constants";
+import { TABLE_BOUNTY_STATES, TABLE_MY_BOUNTY_STATES } from "@/src/constants";
 import { getMintName, getUniqueItems } from "@/src/utils";
 import { useState } from "react";
 import { LancerBounty, BountyFilters } from "@/src/components/";

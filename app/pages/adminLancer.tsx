@@ -40,6 +40,7 @@ import {
   MAINNET_RPC,
   MAINNET_USDC_MINT,
   MONO_ADDRESS,
+  BONK_MINT,
 } from "@/src/constants";
 import { AnchorProvider, Program } from "@project-serum/anchor";
 import { MonoProgram } from "@/escrow/sdk/types/mono_program";
@@ -88,7 +89,7 @@ export const SendSOLToRandomAddress: FC = () => {
     );
     const create_lancer_token_account_ix =
       await createLancerTokenAccountInstruction(
-        new PublicKey(MAINNET_USDC_MINT),
+        new PublicKey(BONK_MINT),
         program
       );
     await provider.sendAndConfirm(
@@ -137,9 +138,9 @@ export const SendSOLToRandomAddress: FC = () => {
           <WalletDisconnectButtonDynamic />
         </div>
 
-        {/* <button onClick={createFeesAccount} disabled={!publicKey}>
+        <button onClick={createFeesAccount} disabled={!publicKey}>
           Create New Mint Fees Account
-        </button> */}
+        </button>
         <>
           <input
             type="number"
