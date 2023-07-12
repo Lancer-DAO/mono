@@ -114,7 +114,7 @@ const AccountHeaderOptions = () => {
               >
                 Account
               </Link>
-              <button
+              {/* <button
                 onClick={() => {
                   setShowModal(true);
 
@@ -136,7 +136,7 @@ const AccountHeaderOptions = () => {
               >
                 <Key />
                 {currentAPIKey ? currentAPIKey.name : "Set API Key"}
-              </button>
+              </button> */}
               <Link
                 href={"/download_extension"}
                 id="download-extension-link"

@@ -9,6 +9,7 @@ import { Octokit } from "octokit";
 import { PublicKey } from "@solana/web3.js";
 import { FORM_SECTION } from "@/pages/create";
 import { CREATE_BOUNTY_TUTORIAL_INITIAL_STATE } from "@/src/constants/tutorials";
+import { IS_MAINNET } from "@/src/constants";
 
 const Form: React.FC<{
   setFormSection: (section: FORM_SECTION) => void;
@@ -35,7 +36,7 @@ const Form: React.FC<{
     issueDescription: "",
     requirements: [],
     estimatedTime: "",
-    isPrivate: false,
+    isPrivate: true,
   });
   const [isOpenRepo, setIsOpenRepo] = useState(false);
   const [isOpenIssue, setIsOpenIssue] = useState(false);
@@ -49,43 +50,43 @@ const Form: React.FC<{
   const [isPreview, setIsPreview] = useState(false);
   const [isSubmittingIssue, setIsSubmittingIssue] = useState(false);
 
-  const toggleOpenRepo = () => {
-    setIsOpenRepo(!isOpenRepo);
-    if (
-      currentTutorialState?.title ===
-        CREATE_BOUNTY_TUTORIAL_INITIAL_STATE.title &&
-      currentTutorialState.currentStep === 0
-    ) {
-      setCurrentTutorialState({
-        ...currentTutorialState,
-        isRunning: false,
-      });
-    }
-  };
-  const toggleOpenIssue = () => setIsOpenIssue(!isOpenIssue);
+  // const toggleOpenRepo = () => {
+  //   setIsOpenRepo(!isOpenRepo);
+  //   if (
+  //     currentTutorialState?.title ===
+  //       CREATE_BOUNTY_TUTORIAL_INITIAL_STATE.title &&
+  //     currentTutorialState.currentStep === 0
+  //   ) {
+  //     setCurrentTutorialState({
+  //       ...currentTutorialState,
+  //       isRunning: false,
+  //     });
+  //   }
+  // };
+  // const toggleOpenIssue = () => setIsOpenIssue(!isOpenIssue);
   const togglePreview = () => setIsPreview(!isPreview);
 
-  useEffect(() => {
-    const getRepos = async () => {
-      try {
-        const octokit = new Octokit({
-          auth: currentAPIKey.token,
-        });
-        const octokitResponse = await octokit.request("GET /user/repos", {
-          type: "all",
-          per_page: 100,
-        });
-        setRepos(octokitResponse.data);
-        setOctokit(octokit);
-      } catch (error) {
-        setFailedToGetRepos(true);
-        setRepos([]);
-      }
-    };
-    if (currentAPIKey) {
-      getRepos();
-    }
-  }, [currentAPIKey]);
+  // useEffect(() => {
+  //   const getRepos = async () => {
+  //     try {
+  //       const octokit = new Octokit({
+  //         auth: currentAPIKey.token,
+  //       });
+  //       const octokitResponse = await octokit.request("GET /user/repos", {
+  //         type: "all",
+  //         per_page: 100,
+  //       });
+  //       setRepos(octokitResponse.data);
+  //       setOctokit(octokit);
+  //     } catch (error) {
+  //       setFailedToGetRepos(true);
+  //       setRepos([]);
+  //     }
+  //   };
+  //   if (currentAPIKey) {
+  //     getRepos();
+  //   }
+  // }, [currentAPIKey]);
 
   const createBounty = async () => {
     setIsSubmittingIssue(true);
@@ -100,65 +101,65 @@ const Form: React.FC<{
       });
     }
 
-    let issueNumber = issue ? issue.number : null;
-    const [organizationName, repositoryName] = repo.full_name.split("/");
-    try {
-      if (creationType === "new") {
-        const octokitData = await octokit.request(
-          "POST /repos/{owner}/{repo}/issues",
-          {
-            owner: organizationName,
-            repo: repositoryName,
-            title: formData.issueTitle,
-            body: formData.issueDescription,
-          }
-        );
-        issueNumber = octokitData.data.number;
-      }
-    } catch (error) {
-      setFailedToCreateIssue(true);
-      setIsSubmittingIssue(false);
-      return;
-    }
+    // let issueNumber = issue ? issue.number : null;
+    // const [organizationName, repositoryName] = repo.full_name.split("/");
+    // try {
+    //   if (creationType === "new") {
+    //     const octokitData = await octokit.request(
+    //       "POST /repos/{owner}/{repo}/issues",
+    //       {
+    //         owner: organizationName,
+    //         repo: repositoryName,
+    //         title: formData.issueTitle,
+    //         body: formData.issueDescription,
+    //       }
+    //     );
+    //     issueNumber = octokitData.data.number;
+    //   }
+    // } catch (error) {
+    //   setFailedToCreateIssue(true);
+    //   setIsSubmittingIssue(false);
+    //   return;
+    // }
     const { timestamp, signature, escrowKey } = await createFFA(
       currentWallet,
       program,
       provider
     );
     createAccountPoll(escrowKey);
-    const { bounty } = await mutateAsync({
+    const bounty = await mutateAsync({
       email: currentUser.email,
       description: formData.issueDescription,
       estimatedTime: parseFloat(formData.estimatedTime),
-      isPrivate: formData.isPrivate || repo ? repo.private : false,
-      isPrivateRepo: formData.isPrivate || repo ? repo.private : false,
+      isPrivate: formData.isPrivate,
+      // isPrivateRepo: formData.isPrivate || repo ? repo.private : false,
       title: formData.issueTitle,
       tags: formData.requirements,
-      organizationName,
-      repositoryName,
+      organizationName: "",
+      repositoryName: "",
       publicKey: currentWallet.publicKey.toString(),
       escrowKey: escrowKey.toString(),
       transactionSignature: signature,
       provider: currentWallet.providerName,
       timestamp: timestamp,
       chainName: "Solana",
-      network: "mainnet",
+      network: IS_MAINNET ? "mainnet" : "devnet",
     });
 
-    const issueResp = await createIssue({
-      number: issueNumber,
-      description: formData.issueDescription,
-      title: formData.issueTitle,
+    // const issueResp = await createIssue({
+    //   number: issueNumber,
+    //   description: formData.issueDescription,
+    //   title: formData.issueTitle,
 
-      organizationName: repo ? repo.full_name.split("/")[0] : "Lancer-DAO",
-      repositoryName: repo ? repo.full_name.split("/")[1] : "github-app",
-      bountyId: bounty.id,
-      linkingMethod: creationType,
-      currentUserId: currentUser.id,
-    });
+    //   organizationName: repo ? repo.full_name.split("/")[0] : "Lancer-DAO",
+    //   repositoryName: repo ? repo.full_name.split("/")[1] : "github-app",
+    //   bountyId: bounty.id,
+    //   linkingMethod: creationType,
+    //   currentUserId: currentUser.id,
+    // });
     setFormSection("FUND");
 
-    setCurrentBounty(issueResp);
+    setCurrentBounty(bounty);
   };
 
   const getRepoIssues = async (_repo) => {
@@ -243,7 +244,7 @@ const Form: React.FC<{
               New Lancer Bounty
             </h2>
 
-            <label>
+            {/* <label>
               Project<span className="color-red">*</span>
             </label>
             <div
@@ -328,349 +329,347 @@ const Form: React.FC<{
                   Link an Existing GitHub Issue
                 </div>
               </div>
-            )}
-            {repo && creationType === "new" && (
-              <>
-                <div>
+            )} */}
+            {/* {repo && creationType === "new" && ( */}
+            <>
+              <div>
+                <label>
+                  Issue Title<span className="color-red">*</span>
+                </label>
+                <input
+                  type="text"
+                  className="input w-input"
+                  name="issueTitle"
+                  placeholder="Ex. Add New Feature "
+                  id="issue-title-input"
+                  value={formData.issueTitle}
+                  onChange={handleChange}
+                  onBlur={() => {
+                    if (
+                      formData.issueTitle !== "" &&
+                      !!currentTutorialState &&
+                      currentTutorialState.isActive
+                    ) {
+                      if (
+                        currentTutorialState?.title ===
+                          CREATE_BOUNTY_TUTORIAL_INITIAL_STATE.title &&
+                        currentTutorialState.currentStep === 1
+                      ) {
+                        setCurrentTutorialState({
+                          ...currentTutorialState,
+                          currentStep: 2,
+                        });
+                      }
+                    }
+                  }}
+                  onMouseLeave={() => {
+                    if (
+                      formData.issueTitle !== "" &&
+                      !!currentTutorialState &&
+                      currentTutorialState.isActive
+                    ) {
+                      if (
+                        currentTutorialState?.title ===
+                          CREATE_BOUNTY_TUTORIAL_INITIAL_STATE.title &&
+                        currentTutorialState.currentStep === 1
+                      ) {
+                        setCurrentTutorialState({
+                          ...currentTutorialState,
+                          currentStep: 2,
+                          isRunning: true,
+                        });
+                      }
+                    }
+                  }}
+                  onFocus={() => {
+                    if (
+                      !!currentTutorialState &&
+                      currentTutorialState.isActive
+                    ) {
+                      if (
+                        currentTutorialState?.title ===
+                          CREATE_BOUNTY_TUTORIAL_INITIAL_STATE.title &&
+                        currentTutorialState.currentStep === 1
+                      ) {
+                        setCurrentTutorialState({
+                          ...currentTutorialState,
+                          isRunning: false,
+                        });
+                      }
+                    }
+                  }}
+                />
+              </div>
+              <div>
+                <label className="field-label-2">
+                  Est. Time to Completion<span className="color-red">*</span>
+                </label>
+                <input
+                  type="number"
+                  className="input w-input"
+                  name="estimatedTime"
+                  value={formData.estimatedTime}
+                  onChange={handleChange}
+                  placeholder="Ex. 3 (hours)"
+                  id="issue-time-input"
+                  onBlur={() => {
+                    if (
+                      formData.estimatedTime !== "" &&
+                      !!currentTutorialState &&
+                      currentTutorialState.isActive
+                    ) {
+                      if (
+                        currentTutorialState?.title ===
+                          CREATE_BOUNTY_TUTORIAL_INITIAL_STATE.title &&
+                        currentTutorialState.currentStep === 3
+                      ) {
+                        setCurrentTutorialState({
+                          ...currentTutorialState,
+                          currentStep: 3,
+                        });
+                      }
+                    }
+                  }}
+                  onMouseLeave={() => {
+                    if (
+                      formData.estimatedTime !== "" &&
+                      !!currentTutorialState &&
+                      currentTutorialState.isActive
+                    ) {
+                      if (
+                        currentTutorialState?.title ===
+                          CREATE_BOUNTY_TUTORIAL_INITIAL_STATE.title &&
+                        currentTutorialState.currentStep === 2
+                      ) {
+                        setCurrentTutorialState({
+                          ...currentTutorialState,
+                          currentStep: 3,
+                          isRunning: true,
+                        });
+                      }
+                    }
+                  }}
+                  onFocus={() => {
+                    if (
+                      !!currentTutorialState &&
+                      currentTutorialState.isActive
+                    ) {
+                      if (
+                        currentTutorialState?.title ===
+                          CREATE_BOUNTY_TUTORIAL_INITIAL_STATE.title &&
+                        currentTutorialState.currentStep === 2
+                      ) {
+                        setCurrentTutorialState({
+                          ...currentTutorialState,
+                          isRunning: false,
+                        });
+                      }
+                    }
+                  }}
+                />
+              </div>
+              <div>
+                <label className="field-label">
+                  Coding Languages<span className="color-red">* </span>
+                </label>
+                <input
+                  type="text"
+                  className="input w-input"
+                  name="requirements"
+                  value={formData.requirements}
+                  onChange={handleRequirementsChange}
+                  placeholder="list seperated by commas"
+                  id="issue-requirements-input"
+                  onBlur={() => {
+                    if (
+                      formData.requirements.length !== 0 &&
+                      !!currentTutorialState &&
+                      currentTutorialState.isActive
+                    ) {
+                      if (
+                        currentTutorialState?.title ===
+                          CREATE_BOUNTY_TUTORIAL_INITIAL_STATE.title &&
+                        currentTutorialState.currentStep === 3
+                      ) {
+                        setCurrentTutorialState({
+                          ...currentTutorialState,
+                          currentStep: 4,
+                        });
+                      }
+                    }
+                  }}
+                  onMouseLeave={() => {
+                    if (
+                      formData.requirements.length !== 0 &&
+                      !!currentTutorialState &&
+                      currentTutorialState.isActive
+                    ) {
+                      if (
+                        currentTutorialState?.title ===
+                          CREATE_BOUNTY_TUTORIAL_INITIAL_STATE.title &&
+                        currentTutorialState.currentStep === 3
+                      ) {
+                        setCurrentTutorialState({
+                          ...currentTutorialState,
+                          currentStep: 4,
+                          isRunning: true,
+                        });
+                      }
+                    }
+                  }}
+                  onFocus={() => {
+                    if (
+                      !!currentTutorialState &&
+                      currentTutorialState.isActive
+                    ) {
+                      if (
+                        currentTutorialState?.title ===
+                          CREATE_BOUNTY_TUTORIAL_INITIAL_STATE.title &&
+                        currentTutorialState.currentStep === 3
+                      ) {
+                        setCurrentTutorialState({
+                          ...currentTutorialState,
+                          isRunning: false,
+                        });
+                      }
+                    }
+                  }}
+                />
+              </div>
+              <div
+                id="w-node-_19e3179a-ebf7-e568-5dcf-3c0e607846d8-0ae9cdc2"
+                className="input-container-full-width"
+              >
+                <div className="description-label">
                   <label>
-                    Issue Title<span className="color-red">*</span>
+                    Description<span className="color-red">*</span>
                   </label>
-                  <input
-                    type="text"
-                    className="input w-input"
-                    name="issueTitle"
-                    placeholder="Ex. Add New Feature "
-                    id="issue-title-input"
-                    value={formData.issueTitle}
-                    onChange={handleChange}
-                    onBlur={() => {
-                      if (
-                        formData.issueTitle !== "" &&
-                        !!currentTutorialState &&
-                        currentTutorialState.isActive
-                      ) {
-                        if (
-                          currentTutorialState?.title ===
-                            CREATE_BOUNTY_TUTORIAL_INITIAL_STATE.title &&
-                          currentTutorialState.currentStep === 1
-                        ) {
-                          setCurrentTutorialState({
-                            ...currentTutorialState,
-                            currentStep: 2,
-                          });
-                        }
-                      }
+                  <button
+                    className="button-primary hug no-box-shadow"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      togglePreview();
                     }}
-                    onMouseLeave={() => {
-                      if (
-                        formData.issueTitle !== "" &&
-                        !!currentTutorialState &&
-                        currentTutorialState.isActive
-                      ) {
-                        if (
-                          currentTutorialState?.title ===
-                            CREATE_BOUNTY_TUTORIAL_INITIAL_STATE.title &&
-                          currentTutorialState.currentStep === 1
-                        ) {
-                          setCurrentTutorialState({
-                            ...currentTutorialState,
-                            currentStep: 2,
-                            isRunning: true,
-                          });
-                        }
-                      }
-                    }}
-                    onFocus={() => {
-                      if (
-                        !!currentTutorialState &&
-                        currentTutorialState.isActive
-                      ) {
-                        if (
-                          currentTutorialState?.title ===
-                            CREATE_BOUNTY_TUTORIAL_INITIAL_STATE.title &&
-                          currentTutorialState.currentStep === 1
-                        ) {
-                          setCurrentTutorialState({
-                            ...currentTutorialState,
-                            isRunning: false,
-                          });
-                        }
-                      }
-                    }}
-                  />
+                  >
+                    {isPreview ? "Edit" : "Preview"}
+                  </button>
                 </div>
-                <div>
-                  <label className="field-label-2">
-                    Est. Time to Completion<span className="color-red">*</span>
-                  </label>
-                  <input
-                    type="number"
-                    className="input w-input"
-                    name="estimatedTime"
-                    value={formData.estimatedTime}
-                    onChange={handleChange}
-                    placeholder="Ex. 3 (hours)"
-                    id="issue-time-input"
-                    onBlur={() => {
-                      if (
-                        formData.estimatedTime !== "" &&
-                        !!currentTutorialState &&
-                        currentTutorialState.isActive
-                      ) {
-                        if (
-                          currentTutorialState?.title ===
-                            CREATE_BOUNTY_TUTORIAL_INITIAL_STATE.title &&
-                          currentTutorialState.currentStep === 3
-                        ) {
-                          setCurrentTutorialState({
-                            ...currentTutorialState,
-                            currentStep: 3,
-                          });
-                        }
-                      }
-                    }}
-                    onMouseLeave={() => {
-                      if (
-                        formData.estimatedTime !== "" &&
-                        !!currentTutorialState &&
-                        currentTutorialState.isActive
-                      ) {
-                        if (
-                          currentTutorialState?.title ===
-                            CREATE_BOUNTY_TUTORIAL_INITIAL_STATE.title &&
-                          currentTutorialState.currentStep === 2
-                        ) {
-                          setCurrentTutorialState({
-                            ...currentTutorialState,
-                            currentStep: 3,
-                            isRunning: true,
-                          });
-                        }
-                      }
-                    }}
-                    onFocus={() => {
-                      if (
-                        !!currentTutorialState &&
-                        currentTutorialState.isActive
-                      ) {
-                        if (
-                          currentTutorialState?.title ===
-                            CREATE_BOUNTY_TUTORIAL_INITIAL_STATE.title &&
-                          currentTutorialState.currentStep === 2
-                        ) {
-                          setCurrentTutorialState({
-                            ...currentTutorialState,
-                            isRunning: false,
-                          });
-                        }
-                      }
-                    }}
-                  />
-                </div>
-                <div>
-                  <label className="field-label">
-                    Coding Languages<span className="color-red">* </span>
-                  </label>
-                  <input
-                    type="text"
-                    className="input w-input"
-                    name="requirements"
-                    value={formData.requirements}
-                    onChange={handleRequirementsChange}
-                    placeholder="list seperated by commas"
-                    id="issue-requirements-input"
-                    onBlur={() => {
-                      if (
-                        formData.requirements.length !== 0 &&
-                        !!currentTutorialState &&
-                        currentTutorialState.isActive
-                      ) {
-                        if (
-                          currentTutorialState?.title ===
-                            CREATE_BOUNTY_TUTORIAL_INITIAL_STATE.title &&
-                          currentTutorialState.currentStep === 3
-                        ) {
-                          setCurrentTutorialState({
-                            ...currentTutorialState,
-                            currentStep: 4,
-                          });
-                        }
-                      }
-                    }}
-                    onMouseLeave={() => {
-                      if (
-                        formData.requirements.length !== 0 &&
-                        !!currentTutorialState &&
-                        currentTutorialState.isActive
-                      ) {
-                        if (
-                          currentTutorialState?.title ===
-                            CREATE_BOUNTY_TUTORIAL_INITIAL_STATE.title &&
-                          currentTutorialState.currentStep === 3
-                        ) {
-                          setCurrentTutorialState({
-                            ...currentTutorialState,
-                            currentStep: 4,
-                            isRunning: true,
-                          });
-                        }
-                      }
-                    }}
-                    onFocus={() => {
-                      if (
-                        !!currentTutorialState &&
-                        currentTutorialState.isActive
-                      ) {
-                        if (
-                          currentTutorialState?.title ===
-                            CREATE_BOUNTY_TUTORIAL_INITIAL_STATE.title &&
-                          currentTutorialState.currentStep === 3
-                        ) {
-                          setCurrentTutorialState({
-                            ...currentTutorialState,
-                            isRunning: false,
-                          });
-                        }
-                      }
-                    }}
-                  />
-                </div>
-                <div
-                  id="w-node-_19e3179a-ebf7-e568-5dcf-3c0e607846d8-0ae9cdc2"
-                  className="input-container-full-width"
-                >
-                  <div className="description-label">
-                    <label>
-                      Description<span className="color-red">*</span>
-                    </label>
-                    <button
-                      className="button-primary hug no-box-shadow"
-                      onClick={(e) => {
-                        e.preventDefault();
-                        togglePreview();
-                      }}
-                    >
-                      {isPreview ? "Edit" : "Preview"}
-                    </button>
-                  </div>
-                  {isPreview ? (
-                    <div
-                      className="markdown-preview"
-                      dangerouslySetInnerHTML={previewMarkup()}
-                    />
-                  ) : (
-                    <textarea
-                      id="issue-description-input"
-                      name="issueDescription"
-                      value={formData.issueDescription}
-                      onChange={handleDescriptionChange}
-                      placeholder="Provide a step by step breakdown of what is needed to complete the task. Include criteria that will determine success. **Markdown Supported** "
-                      className="textarea w-input"
-                      onBlur={() => {
-                        if (
-                          formData.issueDescription !== "" &&
-                          !!currentTutorialState &&
-                          currentTutorialState.isActive
-                        ) {
-                          if (
-                            currentTutorialState?.title ===
-                              CREATE_BOUNTY_TUTORIAL_INITIAL_STATE.title &&
-                            currentTutorialState.currentStep === 4
-                          ) {
-                            setCurrentTutorialState({
-                              ...currentTutorialState,
-                              currentStep: 5,
-                            });
-                          }
-                        }
-                      }}
-                      onMouseLeave={() => {
-                        if (
-                          formData.issueDescription !== "" &&
-                          !!currentTutorialState &&
-                          currentTutorialState.isActive
-                        ) {
-                          if (
-                            currentTutorialState?.title ===
-                              CREATE_BOUNTY_TUTORIAL_INITIAL_STATE.title &&
-                            currentTutorialState.currentStep === 4
-                          ) {
-                            setCurrentTutorialState({
-                              ...currentTutorialState,
-                              currentStep: 5,
-                              isRunning: true,
-                            });
-                          }
-                        }
-                      }}
-                      onFocus={() => {
-                        if (
-                          !!currentTutorialState &&
-                          currentTutorialState.isActive
-                        ) {
-                          if (
-                            currentTutorialState?.title ===
-                              CREATE_BOUNTY_TUTORIAL_INITIAL_STATE.title &&
-                            currentTutorialState.currentStep === 4
-                          ) {
-                            setCurrentTutorialState({
-                              ...currentTutorialState,
-                              isRunning: false,
-                            });
-                          }
-                        }
-                      }}
-                    />
-                  )}
-                </div>
-                <div className="required-helper">
-                  <span className="color-red">* </span> Required
-                </div>
-                {/* <label className="w-checkbox checkbox-field-2">
+                {isPreview ? (
                   <div
-                    className={classnames(
-                      "w-checkbox-input w-checkbox-input--inputType-custom checkbox",
-                      {
-                        checked:
-                          formData.isPrivate || repo ? repo.private : false,
-                        disabled: repo ? repo.private : false,
-                      }
-                    )}
-                    onChange={handleCheckboxChange}
+                    className="markdown-preview"
+                    dangerouslySetInnerHTML={previewMarkup()}
                   />
+                ) : (
+                  <textarea
+                    id="issue-description-input"
+                    name="issueDescription"
+                    value={formData.issueDescription}
+                    onChange={handleDescriptionChange}
+                    placeholder="Provide a step by step breakdown of what is needed to complete the task. Include criteria that will determine success. **Markdown Supported** "
+                    className="textarea w-input"
+                    onBlur={() => {
+                      if (
+                        formData.issueDescription !== "" &&
+                        !!currentTutorialState &&
+                        currentTutorialState.isActive
+                      ) {
+                        if (
+                          currentTutorialState?.title ===
+                            CREATE_BOUNTY_TUTORIAL_INITIAL_STATE.title &&
+                          currentTutorialState.currentStep === 4
+                        ) {
+                          setCurrentTutorialState({
+                            ...currentTutorialState,
+                            currentStep: 5,
+                          });
+                        }
+                      }
+                    }}
+                    onMouseLeave={() => {
+                      if (
+                        formData.issueDescription !== "" &&
+                        !!currentTutorialState &&
+                        currentTutorialState.isActive
+                      ) {
+                        if (
+                          currentTutorialState?.title ===
+                            CREATE_BOUNTY_TUTORIAL_INITIAL_STATE.title &&
+                          currentTutorialState.currentStep === 4
+                        ) {
+                          setCurrentTutorialState({
+                            ...currentTutorialState,
+                            currentStep: 5,
+                            isRunning: true,
+                          });
+                        }
+                      }
+                    }}
+                    onFocus={() => {
+                      if (
+                        !!currentTutorialState &&
+                        currentTutorialState.isActive
+                      ) {
+                        if (
+                          currentTutorialState?.title ===
+                            CREATE_BOUNTY_TUTORIAL_INITIAL_STATE.title &&
+                          currentTutorialState.currentStep === 4
+                        ) {
+                          setCurrentTutorialState({
+                            ...currentTutorialState,
+                            isRunning: false,
+                          });
+                        }
+                      }
+                    }}
+                  />
+                )}
+              </div>
+              <div className="required-helper">
+                <span className="color-red">* </span> Required
+              </div>
+              <label className="w-checkbox checkbox-field-2">
+                <div
+                  className={classnames(
+                    "w-checkbox-input w-checkbox-input--inputType-custom checkbox",
+                    {
+                      checked: formData.isPrivate,
+                    }
+                  )}
+                  onChange={handleCheckboxChange}
+                />
 
-                  <label className="check-label">
-                    Is this a Private Issue?
-                  </label>
-                  <p className="check-paragraph">
-                    Only GitHub collaborators will have access to see this.
-                  </p>
-                </label> */}
+                <label className="check-label">
+                  Is this a Bounty discoverable?
+                </label>
+                <p className="check-paragraph">
+                  If not, only users with the link will be able to see it.
+                </p>
+              </label>
 
-                <Button
-                  disabled={
-                    failedToCreateIssue ||
-                    !formData.estimatedTime ||
-                    !formData.requirements ||
-                    !currentWallet
-                  }
-                  disabledText={
-                    failedToCreateIssue
-                      ? "Failed to Create Issue"
-                      : "Please fill all required fields"
-                  }
-                  onClick={createBounty}
-                  id="create-bounty-button"
-                >
-                  {failedToCreateIssue
+              <Button
+                disabled={
+                  failedToCreateIssue ||
+                  !formData.estimatedTime ||
+                  !formData.requirements ||
+                  !currentWallet
+                }
+                disabledText={
+                  failedToCreateIssue
                     ? "Failed to Create Issue"
-                    : !!currentWallet
-                    ? "Submit"
-                    : "Please connect your wallet"}
-                </Button>
-              </>
-            )}
-            {repo && creationType === "existing" && (
+                    : "Please fill all required fields"
+                }
+                onClick={createBounty}
+                id="create-bounty-button"
+              >
+                {failedToCreateIssue
+                  ? "Failed to Create Issue"
+                  : !!currentWallet
+                  ? "Submit"
+                  : "Please connect your wallet"}
+              </Button>
+            </>
+            {/* )} */}
+            {/* {repo && creationType === "existing" && (
               <>
                 <label>
                   Issue<span className="color-red">*</span>
@@ -767,7 +766,7 @@ const Form: React.FC<{
                   {failedToCreateIssue ? "Failed to Create Issue" : "Submit"}
                 </Button>
               </>
-            )}
+            )} */}
           </div>
         </>
       </div>
