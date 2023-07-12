@@ -229,13 +229,12 @@ const ReferralProvider: FunctionComponent<IReferralProps> = ({ children }) => {
       if (!client) throw CLIENT_NOT_SET;
 
       const buddyProfile = await client.buddy.getProfile(wallet);
-      debugger;
       if (!buddyProfile) return [];
 
       const treasuryPDA = client.pda.getTreasuryPDA(
         [buddyProfile.account.pda],
         [10_000],
-        mint
+        organization.account.mainTokenMint
       );
 
       const member =
@@ -315,11 +314,12 @@ const ReferralProvider: FunctionComponent<IReferralProps> = ({ children }) => {
       );
 
       const buddyProfile = await client.buddy.getProfile(submitter);
+      debugger;
       if (buddyProfile) {
         const treasuryPDA = client.pda.getTreasuryPDA(
           [buddyProfile.account.pda],
           [10_000],
-          alternateMint || organization.account.mainTokenMint
+          organization.account.mainTokenMint
         );
 
         const member =
