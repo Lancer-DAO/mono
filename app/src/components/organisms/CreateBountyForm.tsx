@@ -624,9 +624,6 @@ const Form: React.FC<{
                   />
                 )}
               </div>
-              <div className="required-helper">
-                <span className="color-red">* </span> Required
-              </div>
               <label className="w-checkbox checkbox-field-2">
                 <div
                   className={classnames(
@@ -646,6 +643,9 @@ const Form: React.FC<{
                 </p>
               </label>
 
+              <div className="required-helper">
+                <span className="color-red">* </span> Required
+              </div>
               <Button
                 disabled={
                   failedToCreateIssue ||
