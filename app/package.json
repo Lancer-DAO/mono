@@ -20,7 +20,7 @@
     "@auth0/nextjs-auth0": "2.6.0",
     "@coinflowlabs/react": "1.2.0",
     "@hotjar/browser": "^1.0.7",
-    "@ladderlabs/buddy-sdk": "^0.1.19",
+    "@ladderlabs/buddy-sdk": "^0.1.20",
     "@magic-ext/oauth": "9.0.0",
     "@magic-ext/solana": "11.0.0",
     "@magic-sdk/admin": "1.9.2",

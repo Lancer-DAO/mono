@@ -175,6 +175,30 @@ const ReferralProvider: FunctionComponent<IReferralProps> = ({ children }) => {
                 ))
               );
             }
+
+            const treasuryReferrer = await client.treasury.getByPDA(
+              member.account.referrer
+            );
+            const ownersReferrer = [
+              treasuryReferrer.account.owners[0].ownerPda,
+            ];
+            const treasuryRewardsReferrerPDA = client.pda.getTreasuryPDA(
+              ownersReferrer,
+              [10_000],
+              mint
+            );
+            const treasuryRewardsReferrer = await client.treasury.getByPDA(
+              treasuryRewardsReferrerPDA
+            );
+
+            if (!treasuryRewardsReferrer) {
+              instructions.push(
+                ...(await client.initialize.createTreasuryByBuddyPDA(
+                  treasuryReferrer.account.owners[0].ownerPda,
+                  mint
+                ))
+              );
+            }
           }
         } else {
           const name = Client.generateMemberName();
