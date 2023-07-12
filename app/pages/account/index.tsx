@@ -1,7 +1,6 @@
 import Head from "next/head";
 import { withPageAuthRequired } from "@auth0/nextjs-auth0";
 import { useLancer } from "@/src/providers";
-import dynamic from "next/dynamic";
 import {
   DefaultLayout,
   ProfileNFTCard,
@@ -71,6 +70,8 @@ const Account: React.FC = () => {
   const { mutateAsync: getUser } = api.users.getUser.useMutation();
   const [account, setAccount] = useState<CurrentUser>();
   const [showModal, setShowModal] = useState(false);
+  const [bountiesLoading, setBountiesLoading] = useState(false);
+
   const { currentAPIKey } = useLancer();
 
   const { mutateAsync: registerProfileNFT } =
@@ -110,6 +111,7 @@ const Account: React.FC = () => {
   };
 
   const fetchBountyNFTs = async () => {
+    setBountiesLoading(true);
     const profileNFTHolder = account.wallets.find(
       (wallet) => wallet.id === account.profileWalletId
     );
@@ -138,6 +140,7 @@ const Account: React.FC = () => {
     });
     bountyNFTs.reverse();
     setBountyNFTs(bountyNFTs);
+    setBountiesLoading(false);
   };
 
   useEffect(() => {
@@ -222,7 +225,7 @@ const Account: React.FC = () => {
     <DefaultLayout>
       {account && (
         <>
-          <div className="account-page-wrapper">
+          <div className="w-full flex flex-col md:flex-row items-center md:items-start gap-10 md:gap-5 justify-center">
             {/* <ApiKeyModal showModal={showModal} setShowModal={setShowModal} /> */}
 
             {isMobile && (
@@ -235,24 +238,24 @@ const Account: React.FC = () => {
               </button>
             )}
             {/* {currentUser?.githubLogin && (
-            <div>GitHub User: {currentUser.githubLogin}</div>
-          )}
-          <a href="/api/auth/logout">Logout</a> */}
+                <div>GitHub User: {currentUser.githubLogin}</div>
+              )}
+                <a href="/api/auth/logout">Logout</a> */}
 
             {/* {wallets &&
-            wallets.map((wallet) => (
-              <WalletInfo wallet={wallet} key={wallet.publicKey.toString()} />
-            ))} */}
+                wallets.map((wallet) => (
+                  <WalletInfo wallet={wallet} key={wallet.publicKey.toString()} />
+                ))} */}
 
             {/* {!IS_MAINNET && (
-            <a
-              href="https://staging.coinflow.cash/faucet"
-              target={"_blank"}
-              rel="noreferrer"
-            >
-              USDC Faucet
-            </a>
-          )} */}
+                  <a
+                    href="https://staging.coinflow.cash/faucet"
+                    target={"_blank"}
+                    rel="noreferrer"
+                  >
+                    USDC Faucet
+                  </a>
+                )} */}
             {profileNFT ? (
               <>
                 <ProfileNFTCard
@@ -260,9 +263,18 @@ const Account: React.FC = () => {
                   githubId={account.githubId}
                 />
 
-                <div className="profile-bounty-list" id="bounties-list">
-                  <h2>Bounties</h2>
-                  {bountyNFTs.length > 0 ? (
+                <div
+                  className="flex flex-col gap-3 w-full md:w-[60%] px-5 pb-20"
+                  id="bounties-list"
+                >
+                  <p className="text-5xl flex items-center justify-center pb-3">
+                    Bounties
+                  </p>
+                  {bountiesLoading ? (
+                    <div className="flex justify-center items-center">
+                      <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-gray-900"></div>
+                    </div>
+                  ) : bountyNFTs.length > 0 ? (
                     bountyNFTs.map((bountyNFT) => (
                       <BountyNFTCard bountyNFT={bountyNFT} />
                     ))
@@ -271,7 +283,7 @@ const Account: React.FC = () => {
                   )}
                 </div>
 
-                <button
+                {/* <button
                   className="my-first-step"
                   onClick={() => {
                     setShowCoinflow(!showCoinflow);
@@ -280,7 +292,7 @@ const Account: React.FC = () => {
                   Cash Out
                 </button>
 
-                {showCoinflow && <CoinflowOfframp />}
+                {showCoinflow && <CoinflowOfframp />} */}
               </>
             ) : (
               <Button

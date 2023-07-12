@@ -19,6 +19,7 @@ const ProfileNFTCard = ({
   githubId: string;
 }) => {
   const [showReferrerModal, setShowReferrerModal] = useState(false);
+  const [isCopied, setIsCopied] = useState(false);
   const { referralId, initialized, createReferralMember, claimable, claim } =
     useReferral();
 
@@ -35,9 +36,23 @@ const ProfileNFTCard = ({
     }
   }, [claimable, initialized]);
 
+  const copyToClipboard = async (text: string) => {
+    try {
+      await navigator.clipboard.writeText(text);
+      setIsCopied(true);
+    } catch (err) {
+      console.error("Failed to copy text: ", err);
+    }
+  };
+
+  const handleCopyClick = (text: string) => {
+    copyToClipboard(text);
+    setTimeout(() => setIsCopied(false), 2000); // Reset the isCopied state after 2 seconds
+  };
+
   return (
-    <>
-      <div className="profile-nft" id="profile-nft">
+    <div className="w-full md:w-[40%] px-5">
+      <div className="flex flex-col gap-3">
         {/* <img src={profileNFT.image} className="profile-picture" /> */}
         <img
           src={`https://avatars.githubusercontent.com/u/${
@@ -46,12 +61,12 @@ const ProfileNFTCard = ({
           className="profile-picture"
         />
 
-        <div className="profile-nft-header">
-          <h4>{profileNFT.name}</h4>
+        <div className="flex items-center justify-between">
+          <h4 className="text-xl">{profileNFT.name.split("for ")[1]}</h4>
           <div>{profileNFT.reputation} Pts</div>
         </div>
 
-        <div className="profile-section" id="badges-section">
+        <div>
           <div className="divider"></div>
           <h4>Badges</h4>
           {profileNFT.badges?.length > 0 ? (
@@ -67,7 +82,7 @@ const ProfileNFTCard = ({
           )}
         </div>
 
-        <div className="profile-section" id="certificates-section">
+        <div>
           <div className="divider"></div>
 
           <h4>Certificates</h4>
@@ -83,44 +98,58 @@ const ProfileNFTCard = ({
             <div>No certificates yet!</div>
           )}
         </div>
-        <div className="divider"></div>
+        <div>
+          <div className="divider"></div>
 
-        <h4>Last Updated</h4>
-        <div>{profileNFT.lastUpdated?.fromNow()}</div>
+          <h4>Last Updated</h4>
+          <div>{profileNFT.lastUpdated?.fromNow()}</div>
+        </div>
 
-        <div className="divider"></div>
+        <div>
+          <div className="divider"></div>
 
-        <h4>Refer your friends</h4>
-        {referralId && initialized ? (
-          <div className="referral">
-            <div className="referral-link">
-              <span>
-                {SITE_URL}/?r={referralId}
-              </span>
-              <Copy />
+          <h4>Refer your friends</h4>
+          {referralId && initialized ? (
+            <>
+              <div className="flex items-center gap-2">
+                <span className="text-blue-300">
+                  {SITE_URL}/?r={referralId}
+                </span>
+                <Copy
+                  className="cursor-pointer"
+                  onClick={() =>
+                    handleCopyClick(`${SITE_URL}/?r=${referralId}`)
+                  }
+                />
+              </div>
+              <div className="text-base">{isCopied ? "Copied!" : ""}</div>
+            </>
+          ) : (
+            <div>
+              <Button className="mb-6" onClick={handleCreateLink}>
+                Generate link
+              </Button>
             </div>
-          </div>
-        ) : (
-          <div>
-            <Button onClick={handleCreateLink}>Generate link</Button>
-          </div>
-        )}
+          )}
+        </div>
 
-        {claimable ? (
-          <>
-            <div className="divider"></div>
-            <h4>Claim your rewards</h4>
+        <div>
+          {claimable && claimable > 0 ? (
+            <>
+              <div className="divider"></div>
+              <h4>Claim your rewards</h4>
 
-            <Button onClick={handleClaim}>Claim {claimable} USDC</Button>
-          </>
-        ) : null}
+              <Button onClick={handleClaim}>Claim {claimable} USDC</Button>
+            </>
+          ) : null}
+        </div>
       </div>
 
       <AddReferrerModal
         setShowModal={setShowReferrerModal}
         showModal={showReferrerModal}
       />
-    </>
+    </div>
   );
 };
 
