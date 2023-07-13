@@ -9,6 +9,7 @@ import {
   BountyNFTCard,
   JoyrideWrapper,
   ApiKeyModal,
+  LoadingBar,
 } from "@/src/components";
 import {
   BOUNTY_PROJECT_PARAMS,
@@ -71,12 +72,15 @@ const Account: React.FC = () => {
   const [account, setAccount] = useState<CurrentUser>();
   const [showModal, setShowModal] = useState(false);
   const [bountiesLoading, setBountiesLoading] = useState(false);
+  const [profileLoading, setProfileLoading] = useState(false);
 
   const { currentAPIKey } = useLancer();
 
   const { mutateAsync: registerProfileNFT } =
     api.users.registerProfileNFT.useMutation();
+
   const fetchProfileNFT = async () => {
+    setProfileLoading(true);
     const profileNFTHolder = account.wallets.find(
       (wallet) => wallet.id === account.profileWalletId
     );
@@ -108,6 +112,7 @@ const Account: React.FC = () => {
       };
       setProfileNFT(profileNFT);
     }
+    setProfileLoading(false);
   };
 
   const fetchBountyNFTs = async () => {
@@ -256,7 +261,9 @@ const Account: React.FC = () => {
                     USDC Faucet
                   </a>
                 )} */}
-            {profileNFT ? (
+            {profileLoading ? (
+              <LoadingBar title="Loading Profile" />
+            ) : profileNFT ? (
               <>
                 <ProfileNFTCard
                   profileNFT={profileNFT}
