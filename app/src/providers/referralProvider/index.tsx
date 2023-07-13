@@ -166,7 +166,7 @@ const ReferralProvider: FunctionComponent<IReferralProps> = ({ children }) => {
             const treasuryRewards = await client.treasury.getByPDA(
               treasuryRewardsPDA
             );
-
+            debugger;
             if (!treasuryRewards) {
               instructions.push(
                 ...(await client.initialize.createTreasuryByBuddyPDA(
