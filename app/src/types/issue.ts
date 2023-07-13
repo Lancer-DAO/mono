@@ -31,10 +31,10 @@ export interface Bounty
     BountyUserRelations,
     CurrentUserBountyInclusions {
   escrow: Escrow;
-  repository: Repository;
-  issue: Issue;
+  repository?: Repository;
+  issue?: Issue;
   tags: Tag[];
-  pullRequests: PullRequest[];
+  pullRequests?: PullRequest[];
   wallets?: Wallet[];
   currentUserRelationsList?: BOUNTY_USER_RELATIONSHIP[];
 }

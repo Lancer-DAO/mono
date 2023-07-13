@@ -21,9 +21,11 @@ import { PublicKey } from "@solana/web3.js";
 import { Octokit } from "octokit";
 import { decimalToNumber } from "@/src/utils";
 import {
+  BONK_MINT,
   BOUNTY_PROJECT_PARAMS,
   IS_MAINNET,
   PROFILE_PROJECT_PARAMS,
+  USDC_MINT,
 } from "@/src/constants";
 import { createUnderdogClient } from "@underdog-protocol/js";
 import dayjs from "dayjs";
@@ -75,8 +77,10 @@ const BountyActions = () => {
     <div className="bounty-buttons" id="bounty-actions">
       <>
         {currentBounty.isCreator &&
-          currentTutorialState?.title ===
-            BOUNTY_ACTIONS_TUTORIAL_I_INITIAL_STATE.title &&
+          ((!!currentTutorialState &&
+            currentTutorialState?.title ===
+              BOUNTY_ACTIONS_TUTORIAL_I_INITIAL_STATE.title) ||
+            !IS_MAINNET) &&
           currentBounty.currentUserRelationsList.length < 2 && (
             <RequestToSubmit />
           )}
@@ -90,9 +94,6 @@ const BountyActions = () => {
             Submission Request Denied
           </Button>
         )}
-        {!IS_MAINNET &&
-          currentBounty.isCreator &&
-          !currentBounty.isApprovedSubmitter && <RequestToSubmit />}
         {currentBounty.isApprovedSubmitter &&
           !currentBounty.currentSubmitter && (
             <div
@@ -156,8 +157,7 @@ const RequestToSubmit = () => {
   } = useLancer();
   const { mutateAsync } = api.bounties.updateBountyUser.useMutation();
 
-  const { createReferralMember, getRemainingAccounts, getSubmitterReferrer } =
-    useReferral();
+  const { createReferralMember } = useReferral();
 
   const onClick = async () => {
     // Request to submit. Does not interact on chain
@@ -171,7 +171,9 @@ const RequestToSubmit = () => {
         isRunning: false,
       });
     }
-    const result = await createReferralMember();
+    const result = await createReferralMember(
+      new PublicKey(currentBounty.escrow.mint)
+    );
 
     const referralKey = result?.memberPDA;
     const signature = result?.txId;
@@ -248,7 +250,8 @@ export const ApproveSubmission = () => {
       currentWallet,
       buddylinkProgramId,
       program,
-      provider
+      provider,
+      new PublicKey(currentBounty.escrow.mint)
     );
     currentBounty.currentUserRelationsList.push(
       BOUNTY_USER_RELATIONSHIP.Completer
@@ -555,7 +558,8 @@ export const SubmitRequest = ({ disabled }: { disabled?: boolean }) => {
       currentBounty.escrow,
       currentWallet,
       program,
-      provider
+      provider,
+      new PublicKey(currentBounty.escrow.mint)
     );
     currentBounty.currentUserRelationsList.push(
       BOUNTY_USER_RELATIONSHIP.CurrentSubmitter

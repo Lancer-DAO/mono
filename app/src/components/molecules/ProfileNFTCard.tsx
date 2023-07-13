@@ -1,11 +1,12 @@
 import { ProfileNFT, User } from "@/src/types";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
-import { useCallback, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { Button } from "..";
 import AddReferrerModal from "./AddReferrerModal";
 import { useReferral } from "@/src/providers/referralProvider";
 import { Copy } from "react-feather";
+import { Treasury } from "@ladderlabs/buddy-sdk";
 dayjs.extend(relativeTime);
 
 // TODO: change to config file
@@ -20,7 +21,7 @@ const ProfileNFTCard = ({
 }) => {
   const [showReferrerModal, setShowReferrerModal] = useState(false);
   const [isCopied, setIsCopied] = useState(false);
-  const { referralId, initialized, createReferralMember, claimable, claim } =
+  const { referralId, initialized, createReferralMember, claimables, claim } =
     useReferral();
 
   const handleCreateLink = useCallback(async () => {
@@ -29,12 +30,17 @@ const ProfileNFTCard = ({
     // TODO: success logic
   }, [initialized]);
 
-  const handleClaim = useCallback(async () => {
-    if (claimable) {
-      await claim();
-      // TODO: success logic
-    }
-  }, [claimable, initialized]);
+  const handleClaim = async (amount: number, treasury: Treasury) => {
+    if (amount) await claim(treasury);
+  };
+
+  const claimButtons = useMemo(() => {
+    return claimables.map((claimable) => (
+      <Button onClick={() => handleClaim(claimable.amount, claimable.treasury)}>
+        Claim {claimable.amount} USDC
+      </Button>
+    ));
+  }, [claimables]);
 
   const copyToClipboard = async (text: string) => {
     try {
@@ -134,12 +140,13 @@ const ProfileNFTCard = ({
         </div>
 
         <div>
-          {claimable && claimable > 0 ? (
+          {claimables && claimables.length > 0 ? (
             <>
               <div className="divider"></div>
               <h4>Claim your rewards</h4>
 
-              <Button onClick={handleClaim}>Claim {claimable} USDC</Button>
+              {/* TODO: integrate multiple claimables */}
+              {/* <Button onClick={handleClaim}>Claim {claimables} USDC</Button> */}
             </>
           ) : null}
         </div>

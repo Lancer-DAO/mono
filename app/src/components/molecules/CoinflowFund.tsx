@@ -38,7 +38,6 @@ const FundBounty: React.FC<{ amount: number }> = ({
     fundB({
       bountyId: currentBounty.id,
       escrowId: currentBounty.escrow.id,
-      mint: USDC_MINT,
       amount,
     });
     router.push(`/bounty?id=${currentBounty.id}`);

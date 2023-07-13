@@ -1,4 +1,4 @@
-import { TABLE_BOUNTY_STATES } from "@/src/constants";
+import { TABLE_BOUNTY_STATES, TABLE_MY_BOUNTY_STATES } from "@/src/constants";
 import { getMintName, getUniqueItems } from "@/src/utils";
 import { useState } from "react";
 import { LancerBounty, BountyFilters } from "@/src/components/";
@@ -52,9 +52,10 @@ const BountyList: React.FC<{}> = () => {
   useEffect(() => {
     const getBs = async () => {
       if (router.isReady && currentUser?.id) {
-        const bounties = await getBounties(
-          filters.isMyBounties ? { currentUserId: currentUser.id } : {}
-        );
+        const bounties = await getBounties({
+          currentUserId: currentUser.id,
+          onlyMyBounties: filters.isMyBounties,
+        });
         setBounties(bounties);
       }
     };
@@ -79,7 +80,7 @@ const BountyList: React.FC<{}> = () => {
         );
       const uniqueTags = getUniqueItems(allTags);
       const uniqueOrgs = getUniqueItems(
-        bounties.map((bounty) => bounty.repository.organization)
+        bounties.map((bounty) => bounty.repository?.organization)
       );
       const uniqueMints = getUniqueItems(
         bounties.map((bounty) =>
@@ -125,7 +126,7 @@ const BountyList: React.FC<{}> = () => {
       return false;
     }
 
-    if (!filters.orgs.includes(bounty.repository.organization)) {
+    if (!filters.orgs.includes(bounty.repository?.organization)) {
       return false;
     }
 

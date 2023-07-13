@@ -103,9 +103,9 @@ const SubmitterSection: React.FC<SubmitterSectionProps> = ({
             } else {
               const submitterWallet = new PublicKey(submitter.publicKey);
               const remainingAccounts = await getRemainingAccounts(
-                submitterWallet
+                submitterWallet,
+                new PublicKey(currentBounty.escrow.mint)
               );
-              debugger;
               if (
                 currentTutorialState?.title ===
                   BOUNTY_ACTIONS_TUTORIAL_I_INITIAL_STATE.title &&
@@ -116,11 +116,15 @@ const SubmitterSection: React.FC<SubmitterSectionProps> = ({
                   isRunning: false,
                 });
               }
+              debugger;
               const signature = await addSubmitterFFA(
                 submitterWallet,
                 currentBounty.escrow,
                 currentWallet,
-                await getSubmitterReferrer(submitterWallet),
+                await getSubmitterReferrer(
+                  submitterWallet,
+                  new PublicKey(currentBounty.escrow.mint)
+                ),
                 remainingAccounts,
                 program,
                 provider

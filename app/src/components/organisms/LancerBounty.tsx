@@ -1,17 +1,25 @@
 import USDC from "../../assets/USDC";
-import { Clock } from "react-feather";
+import { Clock, EyeOff } from "react-feather";
 import { marked } from "marked";
-import { Bounty } from "@/src/types";
+import { Bounty, BOUNTY_USER_RELATIONSHIP, Contributor } from "@/src/types";
 import { useLocation } from "react-router-dom";
 import Logo from "@/src/assets/Logo";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import { decimalToNumber } from "@/src/utils";
+import { ContributorInfo } from "@/src/components";
+import { useState } from "react";
 dayjs.extend(relativeTime);
 
-const LancerBounty = ({ bounty, id }: { bounty: Bounty; id?: string }) => {
+const LancerBounty = ({
+  bounty,
+  id,
+}: {
+  bounty: Bounty & { users: Contributor[] };
+  id?: string;
+}) => {
   const search = useLocation().search;
-
+  const [isPrivateHovered, setIsPrivateHovered] = useState(false);
   const params = new URLSearchParams(search);
   const jwt = params.get("token");
   const previewMarkup = () => {
@@ -20,6 +28,10 @@ const LancerBounty = ({ bounty, id }: { bounty: Bounty; id?: string }) => {
     const markdown = marked.parse(bounty.description, { breaks: true });
     return { __html: markdown };
   };
+
+  const creator = bounty.users.find((user) =>
+    user.relations.includes(BOUNTY_USER_RELATIONSHIP.Creator)
+  );
   const bountyAmount = decimalToNumber(bounty.escrow.amount).toFixed(2);
   return (
     <div
@@ -33,8 +45,27 @@ const LancerBounty = ({ bounty, id }: { bounty: Bounty; id?: string }) => {
         className="company-card-link-wrapper w-inline-block"
       >
         <div className="bounty-card-content">
-          <div className="w-row">
+          <div className="flex items-center">
             <h2 className="heading no-padding-margin">{bounty.title}</h2>
+            {bounty.isPrivate && (
+              <div
+                className="ml-auto relative"
+                onMouseEnter={() => {
+                  setIsPrivateHovered(true);
+                }}
+                onMouseLeave={() => {
+                  setIsPrivateHovered(false);
+                }}
+              >
+                <EyeOff size={"32px"} color="#14bb88" />
+                {isPrivateHovered && (
+                  <div className="absolute top-[40px] w-[400px] bg-aqua-100 justify-center rounded-[10px] p-[10px]">
+                    This issue is private. Only people with the link, or active
+                    contributors can see it.
+                  </div>
+                )}
+              </div>
+            )}
           </div>
           <div className="container-3">
             <div
@@ -71,16 +102,7 @@ const LancerBounty = ({ bounty, id }: { bounty: Bounty; id?: string }) => {
 
           <div className="bounty-footer">
             <div className="bounty-card-funder">
-              <div className="contributor-picture">
-                <Logo width="auto" height="36px" />
-              </div>
-
-              <div className="bounty-funder-text">
-                <h3 className="no-padding-margin">
-                  {bounty.repository.organization}
-                </h3>
-                <div>{bounty.repository.name}</div>
-              </div>
+              {creator && <ContributorInfo user={creator.user} />}
             </div>
             <div className="bounty-funding">
               <h3 className="no-padding-margin">{bountyAmount}</h3>

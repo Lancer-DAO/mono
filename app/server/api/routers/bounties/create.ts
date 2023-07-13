@@ -10,7 +10,6 @@ export const createBounty = protectedProcedure
       description: z.string(),
       estimatedTime: z.number(),
       isPrivate: z.boolean(),
-      isPrivateRepo: z.boolean(),
       title: z.string(),
       tags: z.array(z.string()),
       organizationName: z.string(),
@@ -22,6 +21,7 @@ export const createBounty = protectedProcedure
       timestamp: z.string(),
       chainName: z.string(),
       network: z.string(),
+      mint: z.string(),
     })
   )
   .mutation(
@@ -31,7 +31,6 @@ export const createBounty = protectedProcedure
         description,
         estimatedTime,
         isPrivate,
-        isPrivateRepo,
         title,
         tags,
         organizationName,
@@ -43,21 +42,23 @@ export const createBounty = protectedProcedure
         timestamp,
         chainName,
         network,
+        mint,
       },
     }) => {
       const user = await helpers.getUser(email);
       const wallet = await helpers.getOrCreateWallet(user, publicKey);
-      const repository = await helpers.getOrCreateRepository(
-        repositoryName,
-        organizationName,
-        isPrivateRepo
-      );
+      // const repository = await helpers.getOrCreateRepository(
+      //   repositoryName,
+      //   organizationName,
+      //   isPrivateRepo
+      // );
       const chain = await helpers.getOrCreateChain(chainName, network);
       const escrow = await helpers.createEscrow(
         timestamp,
         escrowKey,
         chain,
-        user
+        user,
+        mint
       );
       const createTx = await helpers.createTransaction(
         timestamp,
@@ -78,16 +79,9 @@ export const createBounty = protectedProcedure
         title,
         escrow,
         _tags,
-        user,
-        repository
+        user
+        // repository
       );
-      return {
-        bounty: bounty,
-        tags: _tags,
-        escrow: escrow,
-        repository: repository,
-        creator: user,
-        transactions: [createTx],
-      };
+      return helpers.getBounty(bounty.id, user.id);
     }
   );

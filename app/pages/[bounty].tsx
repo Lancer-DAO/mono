@@ -102,15 +102,17 @@ const Bounty: React.FC = () => {
               </div>
               <div className="bounty-page-title-section">
                 <div className="bounty-title-row-1">
-                  <a
-                    href={`https://github.com/${currentBounty.repository.organization}`}
-                    className="job-post-company-name"
-                    target="_blank"
-                    rel="noreferrer"
-                    id="task-organization-link"
-                  >
-                    {currentBounty.repository.organization}
-                  </a>
+                  {currentBounty.repository && (
+                    <a
+                      href={`https://github.com/${currentBounty.repository.organization}`}
+                      className="job-post-company-name"
+                      target="_blank"
+                      rel="noreferrer"
+                      id="task-organization-link"
+                    >
+                      {currentBounty.repository.organization}
+                    </a>
+                  )}
                   <div
                     className={`currentBounty-state ${currentBounty.state} text-start`}
                     id="task-state"
@@ -118,15 +120,22 @@ const Bounty: React.FC = () => {
                     {currentBounty.state.split("_").join(" ")}
                   </div>
                 </div>
-                <a
-                  className="job-post-title"
-                  href={`${currentBounty.repository.githubLink}/issues/${currentBounty.issue.number}`}
-                  target="_blank"
-                  rel="noreferrer"
-                  id="task-title"
-                >
-                  {currentBounty.title}
-                </a>
+                {currentBounty.repository ? (
+                  <a
+                    className="job-post-title"
+                    href={`${currentBounty.repository.githubLink}/issues/${currentBounty.issue.number}`}
+                    target="_blank"
+                    rel="noreferrer"
+                    id="task-title"
+                  >
+                    {currentBounty.title}
+                  </a>
+                ) : (
+                  <div className="job-post-title" id="task-title">
+                    {currentBounty.title}
+                  </div>
+                )}
+
                 <div className="bounty-title-row-1">
                   <div className="job-post-date" id="task-posted-date">
                     {`${dayjs
@@ -195,16 +204,18 @@ const Bounty: React.FC = () => {
             className="w-form"
           >
             <div className="contributors-section" id="links-section">
-              <h2>Links</h2>
               {currentBounty.issue && (
-                <a
-                  href={`${currentBounty.repository.githubLink}/issues/${currentBounty.issue.number}`}
-                  target="_blank"
-                  rel="noreferrer"
-                  id="task-issue-link"
-                >
-                  GitHub Issue
-                </a>
+                <>
+                  <h2>Links</h2>
+                  <a
+                    href={`${currentBounty.repository.githubLink}/issues/${currentBounty.issue.number}`}
+                    target="_blank"
+                    rel="noreferrer"
+                    id="task-issue-link"
+                  >
+                    GitHub Issue
+                  </a>
+                </>
               )}
               {currentBounty.pullRequests.length > 0 && (
                 <a

@@ -6,9 +6,10 @@ import { getBounties } from "@/prisma/helpers";
 export const getAllBounties = protectedProcedure
   .input(
     z.object({
-      currentUserId: z.optional(z.number()),
+      currentUserId: z.number(),
+      onlyMyBounties: z.boolean(),
     })
   )
-  .mutation(async ({ input: { currentUserId } }) => {
-    return await getBounties(currentUserId);
+  .mutation(async ({ input: { currentUserId, onlyMyBounties } }) => {
+    return await getBounties(currentUserId, onlyMyBounties);
   });

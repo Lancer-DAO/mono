@@ -1,6 +1,6 @@
 import MultiSelectDropdown from "@/src/components/molecules/MultiSelectDropdown";
 import RangeSlider from "@/src/components/molecules/RangeSlider";
-import { BOUNTY_STATES } from "@/src/constants";
+import { BOUNTY_STATES, TABLE_MY_BOUNTY_STATES } from "@/src/constants";
 import classnames from "classnames";
 import { capitalize } from "lodash";
 import { Filters } from "./BountyTable";
@@ -43,6 +43,7 @@ const BountyFilters = ({
               setFilters({
                 ...filters,
                 isMyBounties: !filters.isMyBounties,
+                states: TABLE_MY_BOUNTY_STATES,
               });
               setBounties([]);
             }}
