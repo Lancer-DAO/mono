@@ -117,7 +117,7 @@
   align-items: center;
   margin: 10 auto;
 }
-.rwabtn{
+.rwabtn {
   visibility: hidden;
 }
 
@@ -146,24 +146,24 @@
   }
 }
 
-.hide{
+.hide {
   display: none;
 }
 
-.walogo{
+.walogo {
   display: flex;
   justify-content: center;
   align-items: center;
   height: 4rem;
   margin-top: 10px;
 }
-.appMargin{
+.appMargin {
   margin-top: 0.3rem;
   margin-left: 0.5rem;
   margin-right: 0.5rem;
 }
 
-.toggleRow{
+.toggleRow {
   margin-left: auto;
   margin-right: auto;
   display: flex;
