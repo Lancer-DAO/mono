@@ -2,7 +2,7 @@ import { ProfileNFT, User } from "@/src/types";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import { useCallback, useMemo, useState } from "react";
-import { Button } from "..";
+import { Button, CoinflowOfframp } from "@/components";
 import AddReferrerModal from "./AddReferrerModal";
 import { useReferral } from "@/src/providers/referralProvider";
 import { Copy } from "react-feather";
@@ -19,6 +19,7 @@ const ProfileNFTCard = ({
   profileNFT: ProfileNFT;
   githubId: string;
 }) => {
+  const [showCoinflow, setShowCoinflow] = useState(false);
   const [showReferrerModal, setShowReferrerModal] = useState(false);
   const [isCopied, setIsCopied] = useState(false);
   const { referralId, initialized, createReferralMember, claimables, claim } =
@@ -57,7 +58,7 @@ const ProfileNFTCard = ({
   };
 
   return (
-    <div className="w-full md:w-[40%] px-5">
+    <div className="w-full md:w-[40%] px-5 pb-20">
       <div className="flex flex-col gap-3">
         {/* <img src={profileNFT.image} className="profile-picture" /> */}
         <img
@@ -144,11 +145,23 @@ const ProfileNFTCard = ({
             <>
               <div className="divider"></div>
               <h4>Claim your rewards</h4>
-
-              {/* TODO: integrate multiple claimables */}
-              {/* <Button onClick={handleClaim}>Claim {claimables} USDC</Button> */}
+              {claimButtons}
             </>
           ) : null}
+        </div>
+        <div>
+          <div className="divider mb-[10px]"></div>
+          <div className="my-[10px]">
+            <Button
+              onClick={() => {
+                setShowCoinflow(!showCoinflow);
+              }}
+            >
+              Cash Out
+            </Button>
+          </div>
+
+          {showCoinflow && <CoinflowOfframp />}
         </div>
       </div>
 

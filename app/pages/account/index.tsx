@@ -64,7 +64,6 @@ const Account: React.FC = () => {
     setCurrentTutorialState,
     isMobile,
   } = useLancer();
-  const [showCoinflow, setShowCoinflow] = useState(false);
   const [showTutorial, setShowTutorial] = useState(false);
   const [profileNFT, setProfileNFT] = useState<ProfileNFT>();
   const [bountyNFTs, setBountyNFTs] = useState<BountyNFT[]>([]);
@@ -274,8 +273,8 @@ const Account: React.FC = () => {
                   className="flex flex-col gap-3 w-full md:w-[60%] px-5 pb-20"
                   id="bounties-list"
                 >
-                  <p className="text-5xl flex items-center justify-center pb-3">
-                    Bounties
+                  <p className="text-4xl flex items-center justify-center pb-3">
+                    Completed Bounties
                   </p>
                   {bountiesLoading ? (
                     <div className="flex justify-center items-center">
@@ -289,17 +288,6 @@ const Account: React.FC = () => {
                     <div>No bounties yet!</div>
                   )}
                 </div>
-
-                {/* <button
-                  className="my-first-step"
-                  onClick={() => {
-                    setShowCoinflow(!showCoinflow);
-                  }}
-                >
-                  Cash Out
-                </button>
-
-                {showCoinflow && <CoinflowOfframp />} */}
               </>
             ) : (
               <Button
