@@ -9,6 +9,7 @@ import relativeTime from "dayjs/plugin/relativeTime";
 import { decimalToNumber } from "@/src/utils";
 import { ContributorInfo } from "@/src/components";
 import { useState } from "react";
+import Image from "next/image";
 dayjs.extend(relativeTime);
 
 const LancerBounty = ({
@@ -106,7 +107,13 @@ const LancerBounty = ({
             </div>
             <div className="bounty-funding">
               <h3 className="no-padding-margin">{bountyAmount}</h3>
-              <USDC width="36px" height="36px" />
+              <Image
+                className="rounded-[50%]"
+                src={bounty.escrow.mint.logo}
+                alt={bounty.escrow.mint.name}
+                width={36}
+                height={36}
+              />
             </div>
           </div>
         </div>

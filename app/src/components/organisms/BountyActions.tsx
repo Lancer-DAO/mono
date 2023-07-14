@@ -172,7 +172,7 @@ const RequestToSubmit = () => {
       });
     }
     const result = await createReferralMember(
-      new PublicKey(currentBounty.escrow.mint)
+      new PublicKey(currentBounty.escrow.mint.publicKey)
     );
 
     const referralKey = result?.memberPDA;
@@ -250,8 +250,7 @@ export const ApproveSubmission = () => {
       currentWallet,
       buddylinkProgramId,
       program,
-      provider,
-      new PublicKey(currentBounty.escrow.mint)
+      provider
     );
     currentBounty.currentUserRelationsList.push(
       BOUNTY_USER_RELATIONSHIP.Completer
@@ -558,8 +557,7 @@ export const SubmitRequest = ({ disabled }: { disabled?: boolean }) => {
       currentBounty.escrow,
       currentWallet,
       program,
-      provider,
-      new PublicKey(currentBounty.escrow.mint)
+      provider
     );
     currentBounty.currentUserRelationsList.push(
       BOUNTY_USER_RELATIONSHIP.CurrentSubmitter

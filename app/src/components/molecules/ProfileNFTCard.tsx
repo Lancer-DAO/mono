@@ -1,16 +1,19 @@
 import { ProfileNFT, User } from "@/src/types";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { Button } from "..";
 import AddReferrerModal from "./AddReferrerModal";
 import { useReferral } from "@/src/providers/referralProvider";
 import { Copy } from "react-feather";
 import { Treasury } from "@ladderlabs/buddy-sdk";
+import { api } from "@/src/utils/api";
+import * as Prisma from "@prisma/client";
+
 dayjs.extend(relativeTime);
 
 // TODO: change to config file
-const SITE_URL = "lancer.so";
+const SITE_URL = "https://app.lancer.so/account?r=";
 
 const ProfileNFTCard = ({
   profileNFT,
@@ -22,7 +25,15 @@ const ProfileNFTCard = ({
   const [showReferrerModal, setShowReferrerModal] = useState(false);
   const { referralId, initialized, createReferralMember, claimables, claim } =
     useReferral();
-
+  const { mutateAsync: getMintsAPI } = api.mints.getMints.useMutation();
+  const [mints, setMints] = useState<Prisma.Mint[]>([]);
+  useEffect(() => {
+    const getMints = async () => {
+      const mints = await getMintsAPI();
+      setMints(mints);
+    };
+    getMints();
+  }, []);
   const handleCreateLink = useCallback(async () => {
     await createReferralMember();
 
@@ -34,12 +45,21 @@ const ProfileNFTCard = ({
   };
 
   const claimButtons = useMemo(() => {
-    return claimables.map((claimable) => (
-      <Button onClick={() => handleClaim(claimable.amount, claimable.treasury)}>
-        Claim {claimable.amount} USDC
-      </Button>
-    ));
-  }, [claimables]);
+    return claimables.map((claimable) => {
+      if (claimable.amount === 0) return null;
+      const claimMintKey = claimable.treasury.account.mint.toString();
+      const claimMint = mints.filter(
+        (mint) => mint.publicKey === claimMintKey
+      )[0];
+      return (
+        <Button
+          onClick={() => handleClaim(claimable.amount, claimable.treasury)}
+        >
+          Claim {claimable.amount} {claimMint?.ticker}
+        </Button>
+      );
+    });
+  }, [claimables, mints]);
 
   return (
     <>
@@ -101,7 +121,8 @@ const ProfileNFTCard = ({
           <div className="referral">
             <div className="referral-link">
               <span>
-                {SITE_URL}/?r={referralId}
+                {SITE_URL}
+                {referralId}
               </span>
               <Copy />
             </div>

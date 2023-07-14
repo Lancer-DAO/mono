@@ -21,7 +21,7 @@ export const createBounty = protectedProcedure
       timestamp: z.string(),
       chainName: z.string(),
       network: z.string(),
-      mint: z.string(),
+      mint: z.number(),
     })
   )
   .mutation(

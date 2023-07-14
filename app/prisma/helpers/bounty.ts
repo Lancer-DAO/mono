@@ -69,6 +69,7 @@ export const getBounty = async (id: number, currentUserId: number) => {
               wallets: true,
             },
           },
+          mint: true,
         },
       },
       users: {
@@ -146,6 +147,7 @@ export const getBounties = async (
                 wallets: true,
               },
             },
+            mint: true,
           },
         },
         users: {
@@ -172,6 +174,7 @@ export const getBounties = async (
                 wallets: true,
               },
             },
+            mint: true,
           },
         },
         users: {

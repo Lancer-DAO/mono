@@ -415,6 +415,7 @@ const ReferralProvider: FunctionComponent<IReferralProps> = ({ children }) => {
   }, [treasuries]);
 
   useEffect(() => {
+    // TODO UPDATE THIS TO CHECK IF THE DB HAS A REFERRER STORED
     setCachedReferrer(localStorage.getItem("referrer"));
   }, []);
 

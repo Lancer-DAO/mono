@@ -76,8 +76,8 @@ const Form: React.FC<{ isAccountCreated: boolean }> = ({
       currentWallet,
       program,
       provider,
-      currentBounty.escrow.mint === USDC_MINT ? USDC_DECIMALS : BONK_DEMICALS,
-      new PublicKey(currentBounty.escrow.mint)
+      currentBounty.escrow.mint.decimals,
+      new PublicKey(currentBounty.escrow.mint.publicKey)
     );
     await fundB({
       bountyId: currentBounty.id,
@@ -159,7 +159,7 @@ const Form: React.FC<{ isAccountCreated: boolean }> = ({
                           type="number"
                           className="input w-input"
                           name="fundingAmount"
-                          placeholder="1000 (USD)"
+                          placeholder={`1000 (${currentBounty.escrow.mint.ticker})`}
                           id="issue-amount-input"
                           value={formData.fundingAmount}
                           onChange={handleChange}

@@ -83,11 +83,7 @@ const BountyList: React.FC<{}> = () => {
         bounties.map((bounty) => bounty.repository?.organization)
       );
       const uniqueMints = getUniqueItems(
-        bounties.map((bounty) =>
-          bounty.escrow.mint
-            ? getMintName(new PublicKey(bounty.escrow.mint))
-            : "USDC"
-        )
+        bounties.map((bounty) => bounty.escrow.mint.ticker)
       );
       setTags(uniqueTags);
       setOrgs(uniqueOrgs);
@@ -120,9 +116,7 @@ const BountyList: React.FC<{}> = () => {
     if (!bounty.escrow.publicKey || !bounty.escrow.mint) {
       return false;
     }
-    if (
-      !filters.mints.includes(getMintName(new PublicKey(bounty.escrow.mint)))
-    ) {
+    if (!filters.mints.includes(bounty.escrow.mint.ticker)) {
       return false;
     }
 

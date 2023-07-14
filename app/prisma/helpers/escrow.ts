@@ -7,7 +7,7 @@ export const createEscrow = async (
   escrowKey: string,
   chain: Prisma.Chain,
   user: Prisma.User,
-  mint: string
+  mint: number
 ): Promise<Prisma.Escrow> => {
   const escrow = await prisma.escrow.create({
     data: {
@@ -18,7 +18,11 @@ export const createEscrow = async (
           id: chain.id,
         },
       },
-      mint,
+      mint: {
+        connect: {
+          id: mint,
+        },
+      },
       users: {
         create: {
           userid: user.id,

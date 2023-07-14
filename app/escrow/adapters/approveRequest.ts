@@ -12,21 +12,18 @@ export const approveRequestFFA = async (
   wallet: LancerWallet,
   buddylinkProgramId: PublicKey,
   program: Program<MonoProgram>,
-  provider: AnchorProvider,
-  mint?: PublicKey
+  provider: AnchorProvider
 ) => {
   const creator = new PublicKey(wallet.publicKey);
-  const tokenAddress = await getAssociatedTokenAddress(
-    mint ? mint : new PublicKey(USDC_MINT),
-    submitter
-  );
+  const mint = new PublicKey(acc.mint.publicKey);
+  const tokenAddress = await getAssociatedTokenAddress(mint, submitter);
   let approveSubmitterIx = await approveRequestWithReferralInstruction(
     acc.timestamp,
     creator,
     submitter,
     tokenAddress,
     buddylinkProgramId,
-    mint ? mint : new PublicKey(USDC_MINT),
+    mint,
     program
   );
 
