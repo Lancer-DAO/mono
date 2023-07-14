@@ -45,21 +45,24 @@ const ProfileNFTCard = ({
   };
 
   const claimButtons = useMemo(() => {
-    return claimables.map((claimable) => {
-      if (claimable.amount === 0) return null;
-      const claimMintKey = claimable.treasury.account.mint.toString();
-      const claimMint = mints.filter(
-        (mint) => mint.publicKey === claimMintKey
-      )[0];
-      return (
-        <Button
-          onClick={() => handleClaim(claimable.amount, claimable.treasury)}
-        >
-          Claim {claimable.amount} {claimMint?.ticker}
-        </Button>
-      );
-    });
+    return claimables
+      .filter((claimable) => claimable.amount !== 0)
+      .map((claimable) => {
+        const claimMintKey = claimable.treasury.account.mint.toString();
+        const claimMint = mints.filter(
+          (mint) => mint.publicKey === claimMintKey
+        )[0];
+        return (
+          <Button
+            onClick={() => handleClaim(claimable.amount, claimable.treasury)}
+          >
+            Claim {claimable.amount} {claimMint?.ticker}
+          </Button>
+        );
+      });
   }, [claimables, mints]);
+
+  const referralLink = `${SITE_URL}${referralId}`;
 
   return (
     <>
@@ -118,15 +121,19 @@ const ProfileNFTCard = ({
 
         <h4>Refer your friends</h4>
         {referralId && initialized ? (
-          <div className="referral">
+          <Button
+            className="referral "
+            version="text"
+            onClick={async () => {
+              await navigator.clipboard.writeText(referralLink);
+              alert(`Copied Referral Link: ${referralLink}`);
+            }}
+          >
             <div className="referral-link">
-              <span>
-                {SITE_URL}
-                {referralId}
-              </span>
+              <span>{referralId}</span>
               <Copy />
             </div>
-          </div>
+          </Button>
         ) : (
           <div>
             <Button onClick={handleCreateLink}>Generate link</Button>
