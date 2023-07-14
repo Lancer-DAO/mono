@@ -60,6 +60,7 @@ export const updateBountyUser = protectedProcedure
             userid: userId,
             bountyid: bountyId,
             relations: relations.join(),
+            walletid: wallet.id,
           },
         });
       } else {

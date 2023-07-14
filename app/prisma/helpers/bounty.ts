@@ -16,7 +16,8 @@ export const createBounty = async (
   title: string,
   escrow: Prisma.Escrow,
   tags: Prisma.Tag[],
-  user: Prisma.User
+  user: Prisma.User,
+  wallet: Prisma.Wallet
   // repository: Prisma.Repository
 ): Promise<Prisma.Bounty> => {
   const bounty = await prisma.bounty.create({
@@ -43,6 +44,7 @@ export const createBounty = async (
         create: {
           userid: user.id,
           relations: "[creator]",
+          walletid: wallet.id,
         },
       },
       // repository: {
@@ -74,15 +76,8 @@ export const getBounty = async (id: number, currentUserId: number) => {
       },
       users: {
         include: {
-          user: {
-            include: {
-              wallets: {
-                where: {
-                  isDefault: true,
-                },
-              },
-            },
-          },
+          user: true,
+          wallet: true,
         },
       },
       issue: true,
@@ -90,23 +85,7 @@ export const getBounty = async (id: number, currentUserId: number) => {
       pullRequests: true,
     },
   });
-  const allWallets = bounty.users.map((user) =>
-    user.user.wallets.map((wallet) => wallet.id)
-  );
-
-  const uniqueIds = uniqueNumbers(allWallets);
-  const wallets = await prisma.wallet.findMany({
-    where: {
-      id: {
-        in: uniqueIds,
-      },
-    },
-    include: {
-      user: true,
-      transactions: true,
-    },
-  });
-  const relations = getBountyRelations(bounty.users, wallets);
+  const relations = getBountyRelations(bounty.users);
   const currentUserRelationsList: BOUNTY_USER_RELATIONSHIP[] = bounty.users
     .find((user) => user.userid === currentUserId)
     ?.relations.replace(/[\[\]]/g, "")
@@ -118,7 +97,6 @@ export const getBounty = async (id: number, currentUserId: number) => {
 
   return {
     ...bounty,
-    wallets: wallets,
     ...relations,
     ...currentUserRelations,
     currentUserRelationsList,
@@ -208,19 +186,16 @@ export const getBounties = async (
 const getBountyRelations = (
   rawUsers: (Prisma.BountyUser & {
     user: Prisma.User;
-  })[],
-  wallets: Prisma.Wallet[]
+    wallet: Prisma.Wallet;
+  })[]
 ) => {
-  console.log(wallets);
   const allUsers = rawUsers.map((user) => {
-    console.log(user);
     return {
       ...user,
       relations: user.relations
         .replace(/[\[\]]/g, "")
         .split(",") as BOUNTY_USER_RELATIONSHIP[],
-      publicKey: wallets.find((wallet) => wallet.userid === user.userid)
-        ?.publicKey,
+      publicKey: user.wallet.publicKey,
     };
   });
   // console.log(allUsers);

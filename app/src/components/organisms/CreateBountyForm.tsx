@@ -148,7 +148,6 @@ const Form: React.FC<{
       provider: currentWallet.providerName,
       timestamp: timestamp,
       chainName: "Solana",
-
       mint: mint.id,
       network: IS_MAINNET ? "mainnet" : "devnet",
     });

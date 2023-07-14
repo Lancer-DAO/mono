@@ -79,7 +79,8 @@ export const createBounty = protectedProcedure
         title,
         escrow,
         _tags,
-        user
+        user,
+        wallet
         // repository
       );
       return helpers.getBounty(bounty.id, user.id);
