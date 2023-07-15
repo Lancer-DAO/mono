@@ -1,7 +1,7 @@
 import { prisma } from "@/server/db";
 import { protectedProcedure } from "../../trpc";
 import { z } from "zod";
-import * as helpers from "@/prisma/helpers";
+import * as queries from "@/prisma/queries";
 
 export const registerProfileNFT = protectedProcedure
   .input(
@@ -11,9 +11,13 @@ export const registerProfileNFT = protectedProcedure
   )
   .mutation(async ({ ctx, input: { walletPublicKey } }) => {
     const { email } = ctx.user;
-    const user = await helpers.getUser(email);
+    const user = await queries.user.getByEmail(email);
 
-    const wallet = await helpers.getOrCreateWallet(user, walletPublicKey, true);
+    const wallet = await queries.wallet.getOrCreate(
+      user,
+      walletPublicKey,
+      true
+    );
 
     await prisma.user.update({
       where: {
@@ -25,14 +29,7 @@ export const registerProfileNFT = protectedProcedure
       },
     });
 
-    const updatedUser = await prisma.user.findUnique({
-      where: {
-        id: ctx.user.id,
-      },
-      include: {
-        wallets: true,
-      },
-    });
+    const updatedUser = await queries.user.getByEmail(email);
 
     return { ...updatedUser, currentWallet: updatedUser.wallets[0] };
   });
