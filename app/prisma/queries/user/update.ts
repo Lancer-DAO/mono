@@ -23,3 +23,18 @@ export const updateReferrer = async (
     },
   });
 };
+
+export const updateProfileNFT = async (
+  id: number,
+  walletId: number
+): Promise<Prisma.User> => {
+  return await prisma.user.update({
+    where: {
+      id: id,
+    },
+    data: {
+      hasProfileNFT: true,
+      profileWalletId: walletId,
+    },
+  });
+};

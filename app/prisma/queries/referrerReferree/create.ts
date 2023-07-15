@@ -3,12 +3,20 @@ import * as Prisma from "@prisma/client";
 
 export const create = async (
   id: number,
-  referrerId: number
+  refferralTreasuryKey: string
 ): Promise<Prisma.ReferrerReferree> => {
-  return await prisma.referrerReferree.findFirst({
-    where: {
-      referrerid: referrerId,
+  const referrer = await prisma.user.findFirstOrThrow({
+    where: { refferralTreasuryKey },
+  });
+  const wallet = await prisma.wallet.findFirstOrThrow({
+    where: { userid: referrer.id, isDefault: true },
+  });
+  return await prisma.referrerReferree.create({
+    data: {
+      referrerid: referrer.id,
       referreeid: id,
+      walletid: wallet.id,
+      relations: "referrer-referree-normal",
     },
   });
 };

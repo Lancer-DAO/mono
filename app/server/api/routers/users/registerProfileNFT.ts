@@ -10,7 +10,7 @@ export const registerProfileNFT = protectedProcedure
     })
   )
   .mutation(async ({ ctx, input: { walletPublicKey } }) => {
-    const { email } = ctx.user;
+    const { email, id } = ctx.user;
     const user = await queries.user.getByEmail(email);
 
     const wallet = await queries.wallet.getOrCreate(
@@ -19,15 +19,7 @@ export const registerProfileNFT = protectedProcedure
       true
     );
 
-    await prisma.user.update({
-      where: {
-        id: ctx.user.id,
-      },
-      data: {
-        hasProfileNFT: true,
-        profileWalletId: wallet.id,
-      },
-    });
+    await queries.user.updateProfileNFT(id, wallet.id);
 
     const updatedUser = await queries.user.getByEmail(email);
 
