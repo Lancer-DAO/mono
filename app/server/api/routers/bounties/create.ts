@@ -21,7 +21,7 @@ export const createBounty = protectedProcedure
       timestamp: z.string(),
       chainName: z.string(),
       network: z.string(),
-      mint: z.string(),
+      mint: z.number(),
     })
   )
   .mutation(
@@ -79,7 +79,8 @@ export const createBounty = protectedProcedure
         title,
         escrow,
         _tags,
-        user
+        user,
+        wallet
         // repository
       );
       return helpers.getBounty(bounty.id, user.id);

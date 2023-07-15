@@ -15,6 +15,8 @@ import { IReferralContext } from "./types";
 import { getAssociatedTokenAddressSync } from "@solana/spl-token";
 import { IS_MAINNET } from "@/src/constants";
 
+import { api } from "@/src/utils/api";
+import * as Prisma from "@prisma/client";
 const ORGANIZATION_NAME = "lancer";
 
 const CLIENT_NOT_SET = "Client is not initialized";
@@ -46,21 +48,6 @@ export interface Claimable {
 
 const DEVNET_PROGRAM_ID = "9zE4EQ5tJbEeMYwtS2w8KrSHTtTW4UPqwfbBSEkUrNCA";
 
-export const mints = [
-  {
-    mint: IS_MAINNET
-      ? "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v"
-      : "4zMMC9srt5Ri5X14GAgXhaHii3GnPAEERYPJgZJDncDU",
-    decimal: 6,
-    symbol: "USDC",
-  },
-  {
-    mint: IS_MAINNET ? "DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263" : "",
-    decimal: 5,
-    symbol: "BONK",
-  },
-];
-
 const ReferralProvider: FunctionComponent<IReferralProps> = ({ children }) => {
   const { publicKey, sendTransaction } = useWallet();
   const { connection } = useConnection();
@@ -73,6 +60,15 @@ const ReferralProvider: FunctionComponent<IReferralProps> = ({ children }) => {
   const [claimables, setClaimables] = useState<Claimable[]>([]);
   const [cachedReferrer, setCachedReferrer] = useState("");
   const [programId, setProgramId] = useState<PublicKey>(PublicKey.default);
+  const { mutateAsync: getMintsAPI } = api.mints.getMints.useMutation();
+  const [mints, setMints] = useState<Prisma.Mint[]>([]);
+  useEffect(() => {
+    const getMints = async () => {
+      const mints = await getMintsAPI();
+      setMints(mints);
+    };
+    getMints();
+  }, []);
 
   const handleFetches = useCallback(async () => {
     try {
@@ -101,7 +97,9 @@ const ReferralProvider: FunctionComponent<IReferralProps> = ({ children }) => {
         const treasuries = (
           await client.treasury.getAllSimpleByBuddy(buddyProfile.account.pda)
         ).filter((treasury) =>
-          mints.find((mint) => mint.mint === treasury.account.mint.toString())
+          mints.find(
+            (mint) => mint.publicKey === treasury.account.mint.toString()
+          )
         );
         setTreasuries(treasuries);
       }
@@ -402,8 +400,8 @@ const ReferralProvider: FunctionComponent<IReferralProps> = ({ children }) => {
 
       console.log(treasury.account.mint.toString());
       const decimal = mints.find(
-        (mint) => mint.mint === treasury.account.mint.toString()
-      )?.decimal;
+        (mint) => mint.publicKey === treasury.account.mint.toString()
+      )?.decimals;
 
       claimables.push({
         amount: amount / Math.pow(10, decimal),
@@ -415,6 +413,7 @@ const ReferralProvider: FunctionComponent<IReferralProps> = ({ children }) => {
   }, [treasuries]);
 
   useEffect(() => {
+    // TODO UPDATE THIS TO CHECK IF THE DB HAS A REFERRER STORED
     setCachedReferrer(localStorage.getItem("referrer"));
   }, []);
 

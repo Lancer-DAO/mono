@@ -99,7 +99,6 @@ model Escrow {
 
   // Fields
   amount    Decimal? @db.Decimal(20, 10)
-  mint      String?  @db.VarChar(100)
   publicKey String?  @db.VarChar(100)
   timestamp String?  @db.VarChar(24)
 
@@ -112,6 +111,8 @@ model Escrow {
   transactions Transaction[]
   users        EscrowUser[]
   milestoneid  Int?
+  mintid       Int
+  mint         Mint          @relation(fields: [mintid], references: [id])
 }
 
 model Guild {
@@ -168,6 +169,22 @@ model Milestone {
   projectid Int
   tags      Tag[]
   users     MilestoneUser[]
+}
+
+model Mint {
+  id Int @id @default(autoincrement())
+
+  // Fields
+  name          String  @unique @db.VarChar(128)
+  ticker        String  @unique @db.VarChar(128)
+  logo          String  @db.VarChar(2000)
+  publicKey     String? @db.VarChar(100)
+  website       String? @db.VarChar(128)
+  decimals      Int
+  defaultOffset Int
+
+  // Relations
+  escrows Escrow[]
 }
 
 model Project {
@@ -297,6 +314,7 @@ model User {
   email                String?  @unique @db.VarChar(128)
   profileWalletId      Int?     @unique
   refferralTreasuryKey String?  @unique @db.VarChar(128)
+  referralId           String?  @unique @db.VarChar(128)
   createdAt            String   @default("") @db.VarChar(24)
 
   // Relations
@@ -316,15 +334,17 @@ model User {
 }
 
 model Wallet {
-  id           Int                 @id @default(autoincrement())
-  publicKey    String?             @unique @db.VarChar(64)
-  isDefault    Boolean?
-  userid       Int
-  user         User                @relation(fields: [userid], references: [id])
-  providers    Provider[]
-  transactions TransactionWallet[]
-  chains       ChainWallet[]
-  reffering    ReferrerReferree[]  @relation("wallet")
+  id            Int                 @id @default(autoincrement())
+  publicKey     String?             @unique @db.VarChar(64)
+  isDefault     Boolean?
+  hasProfileNFT Boolean?
+  userid        Int
+  user          User                @relation(fields: [userid], references: [id])
+  providers     Provider[]
+  transactions  TransactionWallet[]
+  chains        ChainWallet[]
+  reffering     ReferrerReferree[]  @relation("wallet")
+  bountyUsers   BountyUser[]
 }
 
 /// RELATIONS
@@ -362,10 +382,12 @@ model BountyComment {
 model BountyUser {
   userid           Int
   bountyid         Int
-  relations        String @db.VarChar(256)
-  user             User   @relation(fields: [userid], references: [id])
-  bounty           Bounty @relation(fields: [bountyid], references: [id])
-  onChainPublicKey String @default("") @db.VarChar(256)
+  walletid         Int?
+  relations        String  @db.VarChar(256)
+  user             User    @relation(fields: [userid], references: [id])
+  bounty           Bounty  @relation(fields: [bountyid], references: [id])
+  wallet           Wallet? @relation(fields: [walletid], references: [id])
+  onChainPublicKey String  @default("") @db.VarChar(256)
 
   // Relations
   actions BountyUserAction[]

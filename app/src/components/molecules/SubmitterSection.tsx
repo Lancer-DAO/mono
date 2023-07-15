@@ -104,7 +104,7 @@ const SubmitterSection: React.FC<SubmitterSectionProps> = ({
               const submitterWallet = new PublicKey(submitter.publicKey);
               const remainingAccounts = await getRemainingAccounts(
                 submitterWallet,
-                new PublicKey(currentBounty.escrow.mint)
+                new PublicKey(currentBounty.escrow.mint.publicKey)
               );
               if (
                 currentTutorialState?.title ===
@@ -123,7 +123,7 @@ const SubmitterSection: React.FC<SubmitterSectionProps> = ({
                 currentWallet,
                 await getSubmitterReferrer(
                   submitterWallet,
-                  new PublicKey(currentBounty.escrow.mint)
+                  new PublicKey(currentBounty.escrow.mint.publicKey)
                 ),
                 remainingAccounts,
                 program,

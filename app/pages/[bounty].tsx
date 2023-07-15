@@ -21,6 +21,8 @@ import { useRouter } from "next/router";
 import { api } from "@/src/utils/api";
 dayjs.extend(localizedFormat);
 import { withPageAuthRequired } from "@auth0/nextjs-auth0";
+import Image from "next/image";
+
 export const getServerSideProps = withPageAuthRequired();
 export default function Home() {
   // Placed before router component to ensure window is defined
@@ -185,7 +187,13 @@ const Bounty: React.FC = () => {
                 <div className="job-post-info-text icon-right">
                   {bountyAmount}
                 </div>
-                <USDC height="24px" width="24px" />
+                <Image
+                  className="rounded-[50%]"
+                  src={currentBounty.escrow.mint.logo}
+                  alt={currentBounty.escrow.mint.name}
+                  width={36}
+                  height={36}
+                />
               </div>
             </div>
             <div className="job-post-bottom">
