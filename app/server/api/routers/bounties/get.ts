@@ -1,7 +1,7 @@
 import { prisma } from "@/server/db";
 import { protectedProcedure } from "../../trpc";
 import { z } from "zod";
-import { getBounty as helper } from "@/prisma/helpers";
+import * as queries from "@/prisma/queries";
 
 export const getBounty = protectedProcedure
   .input(
@@ -11,5 +11,5 @@ export const getBounty = protectedProcedure
     })
   )
   .mutation(async ({ input: { id, currentUserId } }) => {
-    return await helper(id, currentUserId);
+    return await queries.bounty.get(id, currentUserId);
   });

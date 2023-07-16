@@ -1,7 +1,6 @@
 import { protectedProcedure } from "../../trpc";
-import { z } from "zod";
-import { getMints as helper } from "@/prisma/helpers";
+import * as queries from "@/prisma/queries";
 
 export const getMints = protectedProcedure.mutation(async () => {
-  return await helper();
+  return await queries.mint.getAll();
 });

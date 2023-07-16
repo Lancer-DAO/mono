@@ -61,6 +61,7 @@ const ReferralProvider: FunctionComponent<IReferralProps> = ({ children }) => {
   const [cachedReferrer, setCachedReferrer] = useState("");
   const [programId, setProgramId] = useState<PublicKey>(PublicKey.default);
   const { mutateAsync: getMintsAPI } = api.mints.getMints.useMutation();
+  const { mutateAsync: addReferrer } = api.users.addReferrer.useMutation();
   const [mints, setMints] = useState<Prisma.Mint[]>([]);
   useEffect(() => {
     const getMints = async () => {
@@ -164,7 +165,6 @@ const ReferralProvider: FunctionComponent<IReferralProps> = ({ children }) => {
             const treasuryRewards = await client.treasury.getByPDA(
               treasuryRewardsPDA
             );
-            debugger;
             if (!treasuryRewards) {
               instructions.push(
                 ...(await client.initialize.createTreasuryByBuddyPDA(
@@ -236,6 +236,7 @@ const ReferralProvider: FunctionComponent<IReferralProps> = ({ children }) => {
 
         await handleFetches();
         localStorage.removeItem("referrer");
+        await addReferrer({ refferralTreasuryKey: cachedReferrer });
 
         return { txId: signature, memberPDA };
       } catch (e) {

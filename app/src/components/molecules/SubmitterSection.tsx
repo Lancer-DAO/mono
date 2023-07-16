@@ -36,7 +36,7 @@ const SubmitterSection: React.FC<SubmitterSectionProps> = ({
     currentTutorialState,
     setCurrentTutorialState,
   } = useLancer();
-  const { mutateAsync } = api.bounties.updateBountyUser.useMutation();
+  const { mutateAsync } = api.bountyUsers.update.useMutation();
   const { getRemainingAccounts, getSubmitterReferrer } = useReferral();
 
   const handleSubmitter = async (cancel?: boolean) => {
