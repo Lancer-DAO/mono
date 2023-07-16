@@ -7,7 +7,7 @@ import {
   BountyState,
 } from "@/src/types";
 import { addSubmitterFFA, removeSubmitterFFA } from "@/escrow/adapters";
-import { ContributorInfo } from "@/src/components/";
+import { ContributorInfo } from "@/components";
 import { Check, X } from "react-feather";
 import { PublicKey } from "@solana/web3.js";
 import { api } from "@/src/utils/api";

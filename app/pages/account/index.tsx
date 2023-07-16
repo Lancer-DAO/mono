@@ -10,7 +10,7 @@ import {
   BountyNFTCard,
   JoyrideWrapper,
   ApiKeyModal,
-} from "@/src/components";
+} from "@/components";
 import {
   BOUNTY_PROJECT_PARAMS,
   IS_MAINNET,
@@ -31,7 +31,7 @@ import {
 } from "@underdog-protocol/js";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
-import AddReferrerModal from "@/src/components/molecules/AddReferrerModal";
+import AddReferrerModal from "@/components/molecules/AddReferrerModal";
 import {
   BOUNTY_ACTIONS_TUTORIAL_II_INITIAL_STATE,
   PROFILE_TUTORIAL_INITIAL_STATE,

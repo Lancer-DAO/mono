@@ -1,9 +1,9 @@
-import MultiSelectDropdown from "@/src/components/molecules/MultiSelectDropdown";
-import RangeSlider from "@/src/components/molecules/RangeSlider";
+import MultiSelectDropdown from "@/components/molecules/MultiSelectDropdown";
+import RangeSlider from "@/components/molecules/RangeSlider";
 import { BOUNTY_STATES, TABLE_MY_BOUNTY_STATES } from "@/src/constants";
 import classnames from "classnames";
 import { capitalize } from "lodash";
-import { Filters } from "./BountyTable";
+import { Filters } from "../BountyTable";
 
 interface BountyFiltersProps {
   mints: string[];

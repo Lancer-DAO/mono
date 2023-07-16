@@ -26,13 +26,13 @@ const TutorialsModal = dynamic(() => import("./molecules/TutorialsModal"));
 const WalletInfo = dynamic(() => import("./molecules/WalletInfo"));
 
 // Organisms
-const BountyFilters = dynamic(() => import("./organisms/BountyFilters"));
-const BountyTable = dynamic(() => import("./organisms/BountyTable"));
+const BountyFilters = dynamic(
+  () => import("./bounties/components/BountyTable/components/BountyFilters")
+);
 const CreateBountyForm = dynamic(() => import("./organisms/CreateBountyForm"));
 const FundBountyForm = dynamic(() => import("./organisms/FundBountyForm"));
 const Header = dynamic(() => import("./organisms/Header"));
 const JoyrideWrapper = dynamic(() => import("./organisms/JoyrideWrapper"));
-const LancerBounty = dynamic(() => import("./organisms/LancerBounty"));
 
 // Templates
 const DefaultLayout = dynamic(() => import("./templates/DefaultLayout"));
@@ -53,8 +53,6 @@ export {
   RangeSlider,
   WalletInfo,
   BountyFilters,
-  BountyTable,
-  LancerBounty,
   CreateBountyForm,
   FundBountyForm,
   CoinflowFund,

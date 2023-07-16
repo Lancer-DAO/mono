@@ -1,15 +1,13 @@
-import { TABLE_BOUNTY_STATES, TABLE_MY_BOUNTY_STATES } from "@/src/constants";
-import { getMintName, getUniqueItems } from "@/src/utils";
+import { TABLE_BOUNTY_STATES } from "@/src/constants";
+import { getUniqueItems } from "@/src/utils";
 import { useState } from "react";
-import { LancerBounty, BountyFilters } from "@/src/components/";
 import { useLancer } from "@/src/providers";
 import { useEffect } from "react";
-import axios from "axios";
-import { LoadingBar } from "@/src/components";
-import { Bounty, User } from "@/src/types";
-import { PublicKey } from "@solana/web3.js";
+import { LoadingBar } from "@/components";
 import { api } from "@/src/utils/api";
 import { useRouter } from "next/router";
+import BountyFilters from "./components/BountyFilters";
+import LancerBounty from "./components/LancerBounty";
 export const BOUNTY_USER_RELATIONSHIP = [
   "Creator",
   "Requested Submitter",

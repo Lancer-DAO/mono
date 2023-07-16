@@ -1,12 +1,7 @@
 import Head from "next/head";
 import { useEffect, useState } from "react";
 import { BrowserRouter as Router } from "react-router-dom";
-import {
-  DefaultLayout,
-  BountyTable,
-  Button,
-  LinkButton,
-} from "@/src/components";
+import { DefaultLayout, Button, LinkButton } from "@/components";
 
 import { withPageAuthRequired } from "@auth0/nextjs-auth0";
 export const getServerSideProps = withPageAuthRequired();

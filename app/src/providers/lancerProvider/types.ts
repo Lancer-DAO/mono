@@ -1,5 +1,5 @@
 import { MonoProgram } from "@/escrow/sdk/types/mono_program";
-import { APIKeyInfo } from "@/src/components/molecules/ApiKeyModal";
+import { APIKeyInfo } from "@/components/molecules/ApiKeyModal";
 import { Bounty, CurrentUser, Issue, LancerWallet, User } from "@/src/types";
 import { Tutorial } from "@/src/types/tutorials";
 import { SolanaWalletContextState } from "@coinflowlabs/react";

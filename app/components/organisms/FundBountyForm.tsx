@@ -16,7 +16,7 @@ import {
   USDC_MINT,
 } from "@/src/constants";
 import { useConnection, useWallet } from "@solana/wallet-adapter-react";
-import { CoinflowFund } from "@/src/components";
+import { CoinflowFund } from "@/components";
 import { CREATE_BOUNTY_TUTORIAL_INITIAL_STATE } from "@/src/constants/tutorials";
 
 const Form: React.FC<{ isAccountCreated: boolean }> = ({
