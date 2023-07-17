@@ -1,17 +1,20 @@
 import { ProfileNFT, User } from "@/src/types";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { Button, CoinflowOfframp } from "@/components";
 import AddReferrerModal from "./AddReferrerModal";
 import { useReferral } from "@/src/providers/referralProvider";
 import { Copy } from "react-feather";
 import { Treasury } from "@ladderlabs/buddy-sdk";
 import { useLancer } from "@/src/providers";
+import { api } from "@/src/utils/api";
+import * as Prisma from "@prisma/client";
+
 dayjs.extend(relativeTime);
 
 // TODO: change to config file
-const SITE_URL = "lancer.so";
+const SITE_URL = "https://app.lancer.so/account?r=";
 
 const ProfileNFTCard = ({
   profileNFT,
@@ -27,6 +30,16 @@ const ProfileNFTCard = ({
     useReferral();
   const { currentWallet } = useLancer();
 
+  const { mutateAsync: getMintsAPI } = api.mints.getMints.useMutation();
+  const [mints, setMints] = useState<Prisma.Mint[]>([]);
+
+  useEffect(() => {
+    const getMints = async () => {
+      const mints = await getMintsAPI();
+      setMints(mints);
+    };
+    getMints();
+  }, []);
   const handleCreateLink = useCallback(async () => {
     await createReferralMember();
 
@@ -38,15 +51,24 @@ const ProfileNFTCard = ({
   };
 
   const claimButtons = useMemo(() => {
-    return claimables.map((claimable) => (
-      <Button
-        disabled={!currentWallet.publicKey}
-        onClick={() => handleClaim(claimable.amount, claimable.treasury)}
-      >
-        Claim {claimable.amount} USDC
-      </Button>
-    ));
-  }, [claimables]);
+    return claimables
+      .filter((claimable) => claimable.amount !== 0)
+      .map((claimable) => {
+        const claimMintKey = claimable.treasury.account.mint.toString();
+        const claimMint = mints.filter(
+          (mint) => mint.publicKey === claimMintKey
+        )[0];
+        return (
+          <Button
+            onClick={() => handleClaim(claimable.amount, claimable.treasury)}
+          >
+            Claim {claimable.amount} {claimMint?.ticker}
+          </Button>
+        );
+      });
+  }, [claimables, mints]);
+
+  const referralLink = `${SITE_URL}${referralId}`;
 
   const copyToClipboard = async (text: string) => {
     try {

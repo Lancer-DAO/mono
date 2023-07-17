@@ -5,8 +5,7 @@ import { MonoProgram } from "@/escrow/sdk/types/mono_program";
 import { submitRequestInstruction } from "@/escrow/sdk/instructions";
 
 import { USDC_MINT } from "@/src/constants";
-import { Escrow } from "@prisma/client";
-import { LancerWallet } from "@/src/types";
+import { LancerWallet, Escrow } from "@/src/types";
 import { maybeCreateTokenAccount } from "@/src/utils";
 
 export const submitRequestFFA = async (
@@ -15,17 +14,15 @@ export const submitRequestFFA = async (
   acc: Escrow,
   wallet: LancerWallet,
   program: Program<MonoProgram>,
-  provider: AnchorProvider,
-  mint?: PublicKey
+  provider: AnchorProvider
 ) => {
-  const tokenAddress = await getAssociatedTokenAddress(
-    mint ? mint : new PublicKey(USDC_MINT),
-    submitter
-  );
+  const mint = new PublicKey(acc.mint.publicKey);
+
+  const tokenAddress = await getAssociatedTokenAddress(mint, submitter);
   await maybeCreateTokenAccount(
     tokenAddress,
     submitter,
-    mint ? mint : new PublicKey(USDC_MINT),
+    mint,
     wallet,
     provider.connection
   );

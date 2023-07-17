@@ -1,7 +1,7 @@
 import { prisma } from "@/server/db";
 import { protectedProcedure } from "../../trpc";
 import { z } from "zod";
-import * as helpers from "@/prisma/helpers";
+import * as queries from "@/prisma/queries";
 
 export const getUser = protectedProcedure
   .input(
@@ -10,7 +10,7 @@ export const getUser = protectedProcedure
     })
   )
   .mutation(async ({ input: { id } }) => {
-    const user = await helpers.getUserById(id);
+    const user = await queries.user.getById(id);
 
     return { ...user, currentWallet: user.wallets[0] };
   });

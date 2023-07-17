@@ -1,7 +1,7 @@
-import { prisma } from "@/server/db";
 import { protectedProcedure } from "../../trpc";
 import { z } from "zod";
 import { BountyState } from "@/src/types";
+import * as queries from "@/prisma/queries";
 
 export const fundBounty = protectedProcedure
   .input(
@@ -12,23 +12,12 @@ export const fundBounty = protectedProcedure
     })
   )
   .mutation(async ({ input: { bountyId, escrowId, amount } }) => {
-    const bounty = await prisma.bounty.update({
-      where: {
-        id: bountyId,
-      },
-      data: {
-        state: BountyState.ACCEPTING_APPLICATIONS,
-      },
-    });
+    const bounty = await queries.bounty.updateState(
+      bountyId,
+      BountyState.ACCEPTING_APPLICATIONS
+    );
 
-    const escrow = await prisma.escrow.update({
-      where: {
-        id: escrowId,
-      },
-      data: {
-        amount,
-      },
-    });
+    const escrow = await queries.escrow.updateAmount(escrowId, amount);
 
     return { bounty, escrow };
   });

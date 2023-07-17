@@ -58,12 +58,7 @@ const AddReferrerModal: FC<Props> = ({ showModal, setShowModal }) => {
         (wallet) => wallet.id === referrer.profileWalletId
       );
       //   USE THIS PUBLIC KEY TO ADD REFERRER
-      const referrerWalletPublicKey = new PublicKey(referrerWallet.publicKey);
-      const user = await addReferrerAPI({
-        referrerId: referrer.id,
-        walletId: referrer.profileWalletId,
-      });
-      setCurrentUser(user);
+
       setShowModal(false);
     } catch (error) {
       console.log(error);

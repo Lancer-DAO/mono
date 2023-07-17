@@ -1,7 +1,7 @@
 import { prisma } from "@/server/db";
 import { protectedProcedure } from "../../trpc";
 import { z } from "zod";
-import * as helpers from "@/prisma/helpers";
+import * as queries from "@/prisma/queries";
 
 export const search = protectedProcedure
   .input(
@@ -11,7 +11,7 @@ export const search = protectedProcedure
     })
   )
   .mutation(async ({ input: { query, includeCurrentUser }, ctx }) => {
-    const users = await helpers.searchUserByName(
+    const users = await queries.user.searchByName(
       query,
       includeCurrentUser,
       ctx.user.id

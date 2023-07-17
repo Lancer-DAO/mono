@@ -1,7 +1,5 @@
 import { PublicKey } from "@solana/web3.js";
 import * as Prisma from "@prisma/client";
-import { OAuthExtension, OAuthRedirectResult } from "@magic-ext/oauth";
-import { SolanaExtension } from "@magic-ext/solana";
 
 export enum BOUNTY_USER_RELATIONSHIP {
   Creator = "creator",
@@ -49,6 +47,7 @@ export interface Transaction extends Prisma.Transaction {
 
 export interface Escrow extends Prisma.Escrow {
   transactions: Transaction[];
+  mint: Prisma.Mint;
 }
 
 export interface Repository extends Prisma.Repository {}

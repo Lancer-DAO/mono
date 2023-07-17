@@ -11,6 +11,8 @@ import { FORM_SECTION } from "@/pages/create";
 import { CREATE_BOUNTY_TUTORIAL_INITIAL_STATE } from "@/src/constants/tutorials";
 import { BONK_MINT, USDC_MINT } from "@/src/constants";
 import { IS_MAINNET } from "@/src/constants";
+import * as Prisma from "@prisma/client";
+import Image from "next/image";
 
 const Form: React.FC<{
   setFormSection: (section: FORM_SECTION) => void;
@@ -26,10 +28,9 @@ const Form: React.FC<{
     setCurrentTutorialState,
   } = useLancer();
   const { mutateAsync } = api.bounties.createBounty.useMutation();
-  const { mutateAsync: createIssue } = api.issues.createIssue.useMutation();
+  const { mutateAsync: getMintsAPI } = api.mints.getMints.useMutation();
   const [creationType, setCreationType] = useState<"new" | "existing">("new");
-  const [repo, setRepo] = useState<any>();
-  const [fundingMint, setFundingMint] = useState<"usdc" | "bonk">("usdc");
+  const [mint, setMint] = useState<Prisma.Mint>();
 
   const [issue, setIssue] = useState<any>();
   const [formData, setFormData] = useState({
@@ -41,9 +42,9 @@ const Form: React.FC<{
     estimatedTime: "",
     isPrivate: true,
   });
-  const [isOpenRepo, setIsOpenRepo] = useState(false);
+  const [isOpenMints, setIsOpenMints] = useState(false);
   const [isOpenIssue, setIsOpenIssue] = useState(false);
-  const [repos, setRepos] = useState(null);
+  const [mints, setMints] = useState<Prisma.Mint[]>([]);
   const [failedToGetRepos, setFailedToGetRepos] = useState(false);
   const [failedToCreateIssue, setFailedToCreateIssue] = useState(false);
   const [issues, setIssues] = useState(null);
@@ -53,21 +54,19 @@ const Form: React.FC<{
   const [isPreview, setIsPreview] = useState(false);
   const [isSubmittingIssue, setIsSubmittingIssue] = useState(false);
 
-  // const toggleOpenRepo = () => {
-  //   setIsOpenRepo(!isOpenRepo);
-  //   if (
-  //     currentTutorialState?.title ===
-  //       CREATE_BOUNTY_TUTORIAL_INITIAL_STATE.title &&
-  //     currentTutorialState.currentStep === 0
-  //   ) {
-  //     setCurrentTutorialState({
-  //       ...currentTutorialState,
-  //       isRunning: false,
-  //     });
-  //   }
-  // };
+  const toggleOpenRepo = () => {
+    setIsOpenMints(!isOpenMints);
+  };
   // const toggleOpenIssue = () => setIsOpenIssue(!isOpenIssue);
   const togglePreview = () => setIsPreview(!isPreview);
+
+  useEffect(() => {
+    const getMints = async () => {
+      const mints = await getMintsAPI();
+      setMints(mints);
+    };
+    getMints();
+  }, []);
 
   // useEffect(() => {
   //   const getRepos = async () => {
@@ -124,13 +123,13 @@ const Form: React.FC<{
     //   setIsSubmittingIssue(false);
     //   return;
     // }
+    const mintKey = new PublicKey(mint.publicKey);
+
     const { timestamp, signature, escrowKey } = await createFFA(
       currentWallet,
       program,
       provider,
-      fundingMint === "usdc"
-        ? new PublicKey(USDC_MINT)
-        : new PublicKey(BONK_MINT)
+      mintKey
     );
     createAccountPoll(escrowKey);
     const bounty = await mutateAsync({
@@ -141,16 +140,12 @@ const Form: React.FC<{
       // isPrivateRepo: formData.isPrivate || repo ? repo.private : false,
       title: formData.issueTitle,
       tags: formData.requirements,
-      organizationName: "",
-      repositoryName: "",
       publicKey: currentWallet.publicKey.toString(),
       escrowKey: escrowKey.toString(),
       transactionSignature: signature,
-      provider: currentWallet.providerName,
       timestamp: timestamp,
       chainName: "Solana",
-
-      mint: fundingMint === "usdc" ? USDC_MINT : BONK_MINT,
+      mint: mint.id,
       network: IS_MAINNET ? "mainnet" : "devnet",
     });
 
@@ -189,23 +184,9 @@ const Form: React.FC<{
     });
   };
 
-  const handleChangeRepo = (repoFullName: string) => {
-    const repo = repos.find((_repo) => _repo.full_name === repoFullName);
-    setRepo(repo);
-    getRepoIssues(repo);
-    if (
-      currentTutorialState?.title ===
-        CREATE_BOUNTY_TUTORIAL_INITIAL_STATE.title &&
-      currentTutorialState.currentStep === 0
-    ) {
-      setTimeout(() => {
-        setCurrentTutorialState({
-          ...currentTutorialState,
-          isRunning: true,
-          currentStep: 1,
-        });
-      }, 100);
-    }
+  const handleChangeMint = (mint: Prisma.Mint) => {
+    const newMint = mints.find((_mint) => _mint.name === mint.name);
+    setMint(newMint);
   };
 
   const handleChangeIssue = (issueNumber: number) => {
@@ -651,15 +632,69 @@ const Form: React.FC<{
               <label>
                 Funding Type<span className="color-red">*</span>
               </label>
-              <select
-                onChange={(e) => {
-                  setFundingMint(e.target.value as any);
-                }}
-              >
-                {/* TODO: set currency options in config */}
-                <option value="usdc">USDC</option>
-                <option value="bonk">BONK</option>
-              </select>
+              {mints && (
+                <div
+                  data-delay="0"
+                  data-hover="false"
+                  id="w-node-b1521c3c-4fa1-4011-ae36-88dcb6e746fb-0ae9cdc2"
+                  className="w-dropdown"
+                  onClick={toggleOpenRepo}
+                >
+                  <main
+                    className="dropdown-toggle-2 w-dropdown-toggle"
+                    id="repo-dropdown-select"
+                  >
+                    {
+                      <>
+                        <div className="w-icon-dropdown-toggle"></div>
+                        <div>
+                          {mint ? (
+                            <div className="flex">
+                              <Image
+                                className="rounded-[50%] mr-[10px]"
+                                src={mint.logo}
+                                alt={mint.name}
+                                width={36}
+                                height={36}
+                              />
+                              <div>{mint.name}</div>
+                            </div>
+                          ) : (
+                            <div>
+                              Select Mint <span className="color-red">* </span>
+                            </div>
+                          )}
+                        </div>
+                      </>
+                    }
+                  </main>
+                  {isOpenMints && mints && (
+                    <div
+                      className="w-dropdown-list"
+                      onMouseLeave={() => setIsOpenMints(false)}
+                    >
+                      {mints.map((mint) => (
+                        <div
+                          onClick={() => handleChangeMint(mint)}
+                          key={mint.name}
+                          className="w-dropdown-link flex"
+                        >
+                          <div className="flex">
+                            <Image
+                              className="rounded-[50%] mr-[10px]"
+                              src={mint.logo}
+                              alt={mint.name}
+                              width={36}
+                              height={36}
+                            />
+                            <div>{mint.name}</div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
 
               <div className="required-helper">
                 <span className="color-red">* </span> Required

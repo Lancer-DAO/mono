@@ -152,7 +152,7 @@ const RequestToSubmit = () => {
     currentTutorialState,
     setCurrentTutorialState,
   } = useLancer();
-  const { mutateAsync } = api.bounties.updateBountyUser.useMutation();
+  const { mutateAsync } = api.bountyUsers.update.useMutation();
 
   const { createReferralMember } = useReferral();
 
@@ -169,7 +169,7 @@ const RequestToSubmit = () => {
       });
     }
     const result = await createReferralMember(
-      new PublicKey(currentBounty.escrow.mint)
+      new PublicKey(currentBounty.escrow.mint.publicKey)
     );
 
     const referralKey = result?.memberPDA;
@@ -229,7 +229,7 @@ export const ApproveSubmission = () => {
     setCurrentTutorialState,
   } = useLancer();
   const { programId: buddylinkProgramId } = useReferral();
-  const { mutateAsync } = api.bounties.updateBountyUser.useMutation();
+  const { mutateAsync } = api.bountyUsers.update.useMutation();
 
   // const { currentAPIKey } = useLancer();
 
@@ -251,8 +251,7 @@ export const ApproveSubmission = () => {
       currentWallet,
       buddylinkProgramId,
       program,
-      provider,
-      new PublicKey(currentBounty.escrow.mint)
+      provider
     );
     currentBounty.currentUserRelationsList.push(
       BOUNTY_USER_RELATIONSHIP.Completer
@@ -398,7 +397,7 @@ export const CancelEscrow = () => {
     program,
     setCurrentBounty,
   } = useLancer();
-  const { mutateAsync } = api.bounties.updateBountyUser.useMutation();
+  const { mutateAsync } = api.bountyUsers.update.useMutation();
   const onClick = async () => {
     // If we are the creator, then skip requesting and add self as approved
     const signature = await cancelFFA(
@@ -442,7 +441,7 @@ export const DenySubmission = () => {
     program,
     setCurrentBounty,
   } = useLancer();
-  const { mutateAsync } = api.bounties.updateBountyUser.useMutation();
+  const { mutateAsync } = api.bountyUsers.update.useMutation();
   const onClick = async () => {
     // If we are the creator, then skip requesting and add self as approved
     const signature = await denyRequestFFA(
@@ -497,7 +496,7 @@ export const RequestChanges = () => {
     program,
     setCurrentBounty,
   } = useLancer();
-  const { mutateAsync } = api.bounties.updateBountyUser.useMutation();
+  const { mutateAsync } = api.bountyUsers.update.useMutation();
   const onClick = async () => {
     // If we are the creator, then skip requesting and add self as approved
     const signature = await denyRequestFFA(
@@ -556,7 +555,7 @@ export const SubmitRequest = ({ disabled }: { disabled?: boolean }) => {
     currentTutorialState,
     setCurrentTutorialState,
   } = useLancer();
-  const { mutateAsync } = api.bounties.updateBountyUser.useMutation();
+  const { mutateAsync } = api.bountyUsers.update.useMutation();
   const onClick = async () => {
     // If we are the creator, then skip requesting and add self as approved
     if (
@@ -575,8 +574,7 @@ export const SubmitRequest = ({ disabled }: { disabled?: boolean }) => {
       currentBounty.escrow,
       currentWallet,
       program,
-      provider,
-      new PublicKey(currentBounty.escrow.mint)
+      provider
     );
     currentBounty.currentUserRelationsList.push(
       BOUNTY_USER_RELATIONSHIP.CurrentSubmitter
@@ -643,7 +641,7 @@ export const VoteToCancel = () => {
     program,
     setCurrentBounty,
   } = useLancer();
-  const { mutateAsync } = api.bounties.updateBountyUser.useMutation();
+  const { mutateAsync } = api.bountyUsers.update.useMutation();
   const onClick = async () => {
     // If we are the submitter, vote to cancel as submitter
     let signature = "";
