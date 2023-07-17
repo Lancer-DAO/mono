@@ -13,14 +13,14 @@ export const cancelFFA = async (
   provider: AnchorProvider
 ) => {
   const tokenAddress = await getAssociatedTokenAddress(
-    new PublicKey(acc.mint),
+    new PublicKey(acc.mint.publicKey),
     new PublicKey(wallet.publicKey)
   );
   let approveSubmitterIx = await cancelFeatureInstruction(
     acc.timestamp,
     new PublicKey(wallet.publicKey),
     tokenAddress,
-    new PublicKey(acc.mint),
+    new PublicKey(acc.mint.publicKey),
     program
   );
 
