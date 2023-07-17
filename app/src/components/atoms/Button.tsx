@@ -1,15 +1,3 @@
-// import { addSubmitterFFA } from "@/escrow/adapters";
-// import { useLancer } from "@/src/providers";
-// import {
-//   BOUNTY_USER_RELATIONSHIP,
-//   BountyState,
-//   LancerWallet,
-// } from "@/src/types";
-// import { api } from "@/src/utils/api";
-// import { useWallet, useConnection } from "@solana/wallet-adapter-react";
-// import { PublicKey, Transaction } from "@solana/web3.js";
-// import classNames from "classnames";
-
 import { ButtonHTMLAttributes, DetailedHTMLProps, useState } from "react";
 import { getButtonStyle } from "./LinkButton";
 
@@ -25,7 +13,6 @@ interface ButtonProps
   children?: React.ReactNode;
   version?: "filled" | "outlined" | "text";
   id?: string;
-
   extraClasses?: string;
   props?: any;
 }

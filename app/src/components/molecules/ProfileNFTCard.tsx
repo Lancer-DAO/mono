@@ -7,6 +7,7 @@ import AddReferrerModal from "./AddReferrerModal";
 import { useReferral } from "@/src/providers/referralProvider";
 import { Copy } from "react-feather";
 import { Treasury } from "@ladderlabs/buddy-sdk";
+import { useLancer } from "@/src/providers";
 dayjs.extend(relativeTime);
 
 // TODO: change to config file
@@ -24,6 +25,7 @@ const ProfileNFTCard = ({
   const [isCopied, setIsCopied] = useState(false);
   const { referralId, initialized, createReferralMember, claimables, claim } =
     useReferral();
+  const { currentWallet } = useLancer();
 
   const handleCreateLink = useCallback(async () => {
     await createReferralMember();
@@ -37,7 +39,10 @@ const ProfileNFTCard = ({
 
   const claimButtons = useMemo(() => {
     return claimables.map((claimable) => (
-      <Button onClick={() => handleClaim(claimable.amount, claimable.treasury)}>
+      <Button
+        disabled={!currentWallet.publicKey}
+        onClick={() => handleClaim(claimable.amount, claimable.treasury)}
+      >
         Claim {claimable.amount} USDC
       </Button>
     ));
@@ -117,7 +122,7 @@ const ProfileNFTCard = ({
 
           <h4>Refer your friends</h4>
           {referralId && initialized ? (
-            <>
+            <div className="relative w-full">
               <div className="flex items-center gap-2">
                 <span className="text-blue-300">
                   {SITE_URL}/?r={referralId}
@@ -129,8 +134,10 @@ const ProfileNFTCard = ({
                   }
                 />
               </div>
-              <div className="text-base">{isCopied ? "Copied!" : ""}</div>
-            </>
+              <div className="absolute right-0 text-base">
+                {isCopied ? "Copied!" : ""}
+              </div>
+            </div>
           ) : (
             <div>
               <Button className="mb-6" onClick={handleCreateLink}>
@@ -141,7 +148,8 @@ const ProfileNFTCard = ({
         </div>
 
         <div>
-          {claimables && claimables.length > 0 ? (
+          {claimables &&
+          claimables.filter((claimable) => claimable.amount > 0).length > 0 ? (
             <>
               <div className="divider"></div>
               <h4>Claim your rewards</h4>
@@ -150,7 +158,7 @@ const ProfileNFTCard = ({
           ) : null}
         </div>
         <div>
-          <div className="divider mb-[10px]"></div>
+          <div className="divider" />
           <div className="my-[10px]">
             <Button
               onClick={() => {

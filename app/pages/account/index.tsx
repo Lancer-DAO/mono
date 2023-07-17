@@ -232,7 +232,7 @@ const Account: React.FC = () => {
           <div className="w-full flex flex-col md:flex-row items-center md:items-start gap-10 md:gap-5 justify-center">
             {/* <ApiKeyModal showModal={showModal} setShowModal={setShowModal} /> */}
 
-            {isMobile && (
+            {/* {isMobile && (
               <button
                 onClick={() => setShowModal(true)}
                 className="flex h-[48px] w-full gap-[10px] py-[6px] items-center justify-center border-b-gray-400 border-b-[1px] hover:bg-turquoise-500 text-gray-800 hover:text-white-100 transition-colors duration-300 ease-in-out"
@@ -240,7 +240,7 @@ const Account: React.FC = () => {
                 <Key />
                 {currentAPIKey ? currentAPIKey.name : "Set API Key"}
               </button>
-            )}
+            )} */}
             {/* {currentUser?.githubLogin && (
                 <div>GitHub User: {currentUser.githubLogin}</div>
               )}

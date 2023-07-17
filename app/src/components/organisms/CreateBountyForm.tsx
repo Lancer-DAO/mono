@@ -643,7 +643,7 @@ const Form: React.FC<{
                   onChange={handleCheckboxChange}
                 />
 
-                <label className="check-label">Is this a Bounty private?</label>
+                <label className="check-label">Is this a private Bounty?</label>
                 <p className="check-paragraph">
                   If so, only users with the link will be able to see it.
                 </p>
@@ -656,6 +656,7 @@ const Form: React.FC<{
                   setFundingMint(e.target.value as any);
                 }}
               >
+                {/* TODO: set currency options in config */}
                 <option value="usdc">USDC</option>
                 <option value="bonk">BONK</option>
               </select>
