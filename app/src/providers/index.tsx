@@ -10,6 +10,7 @@ import {
 } from "@solana/wallet-adapter-react";
 import { WalletModalProvider } from "@solana/wallet-adapter-react-ui";
 import LancerProvider from "@/src/providers/lancerProvider";
+import Web3AuthLancerProvider from "@/src/providers/web3authProvider";
 import { useRouter } from "next/router";
 import { IS_MAINNET, MAINNET_RPC } from "../constants";
 import ReferralProvider from "./referralProvider";
@@ -45,17 +46,19 @@ export const AllProviders: React.FC<{ children: ReactNode }> = ({
     [IS_MAINNET]
   );
 
+  return <Web3AuthLancerProvider>{children}</Web3AuthLancerProvider>;
+
   return (
-    <UserProvider>
-      <ConnectionProvider endpoint={endpoint}>
-        <WalletProvider wallets={walletProviders} autoConnect>
-          <WalletModalProvider>
-            <LancerProvider>
-              <ReferralProvider>{children}</ReferralProvider>
-            </LancerProvider>
-          </WalletModalProvider>
-        </WalletProvider>
-      </ConnectionProvider>
-    </UserProvider>
+    // <UserProvider>
+    <ConnectionProvider endpoint={endpoint}>
+      <WalletProvider wallets={walletProviders} autoConnect>
+        <WalletModalProvider>
+          {/* <Web3AuthLancerProvider> */}
+          <ReferralProvider>{children}</ReferralProvider>
+          {/* </Web3AuthLancerProvider> */}
+        </WalletModalProvider>
+      </WalletProvider>
+    </ConnectionProvider>
+    // </UserProvider>
   );
 };
