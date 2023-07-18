@@ -228,7 +228,6 @@ const ReferralProvider: FunctionComponent<IReferralProps> = ({ children }) => {
           blockhash: blockhash,
           lastValidBlockHeight: lastValidBlockHeight,
         };
-        debugger;
 
         const transaction = new Transaction(txInfo).add(...instructions);
         const signature = await sendTransaction(transaction, connection);
@@ -294,6 +293,11 @@ const ReferralProvider: FunctionComponent<IReferralProps> = ({ children }) => {
           isSigner: false,
         },
         {
+          pubkey: remainingAccounts.buddyTreasury,
+          isWritable: true,
+          isSigner: false,
+        },
+        {
           pubkey: remainingAccounts.memberPDA,
           isWritable: false,
           isSigner: false,
@@ -337,7 +341,6 @@ const ReferralProvider: FunctionComponent<IReferralProps> = ({ children }) => {
       );
 
       const buddyProfile = await client.buddy.getProfile(submitter);
-      debugger;
       if (buddyProfile) {
         const treasuryPDA = client.pda.getTreasuryPDA(
           [buddyProfile.account.pda],
