@@ -110,70 +110,70 @@ const LancerProvider: FunctionComponent<ILancerState> = ({
     setCurrentAPIKey(defaultKey);
   }, []);
 
-  useEffect(() => {
-    if (connected) {
-      const lancerWallet: LancerWallet = {
-        wallet,
-        publicKey,
-        sendTransaction,
-        signAllTransactions,
-        signMessage,
-        signTransaction,
-        connected,
-        signAndSendTransaction: async (transaction: Transaction) => {
-          return await sendTransaction(transaction, connection, {
-            skipPreflight: true,
-          });
-        },
-        providerName: "Phantom",
-      };
-      const provider = new AnchorProvider(connection, lancerWallet, {});
-      const program = new Program<MonoProgram>(
-        MonoProgramJSON as unknown as MonoProgram,
-        new PublicKey(MONO_ADDRESS),
-        provider
-      );
-      setProvider(provider);
-      setProgram(program);
-      setCurrentWallet(lancerWallet);
-      if (
-        !!currentTutorialState &&
-        currentTutorialState?.title === PROFILE_TUTORIAL_INITIAL_STATE.title &&
-        currentTutorialState.currentStep === 1
-      ) {
-        setCurrentTutorialState({
-          ...currentTutorialState,
-          currentStep: currentUser.hasProfileNFT ? 3 : 2,
-          isRunning: true,
-          spotlightClicks: !currentUser.hasProfileNFT,
-        });
-        return;
-      }
-    }
-  }, [connected]);
+  // useEffect(() => {
+  //   if (connected) {
+  //     const lancerWallet: LancerWallet = {
+  //       wallet,
+  //       publicKey,
+  //       sendTransaction,
+  //       signAllTransactions,
+  //       signMessage,
+  //       signTransaction,
+  //       connected,
+  //       signAndSendTransaction: async (transaction: Transaction) => {
+  //         return await sendTransaction(transaction, connection, {
+  //           skipPreflight: true,
+  //         });
+  //       },
+  //       providerName: "Phantom",
+  //     };
+  //     const provider = new AnchorProvider(connection, lancerWallet, {});
+  //     const program = new Program<MonoProgram>(
+  //       MonoProgramJSON as unknown as MonoProgram,
+  //       new PublicKey(MONO_ADDRESS),
+  //       provider
+  //     );
+  //     setProvider(provider);
+  //     setProgram(program);
+  //     setCurrentWallet(lancerWallet);
+  //     if (
+  //       !!currentTutorialState &&
+  //       currentTutorialState?.title === PROFILE_TUTORIAL_INITIAL_STATE.title &&
+  //       currentTutorialState.currentStep === 1
+  //     ) {
+  //       setCurrentTutorialState({
+  //         ...currentTutorialState,
+  //         currentStep: currentUser.hasProfileNFT ? 3 : 2,
+  //         isRunning: true,
+  //         spotlightClicks: !currentUser.hasProfileNFT,
+  //       });
+  //       return;
+  //     }
+  //   }
+  // }, [connected]);
 
-  useEffect(() => {
-    const getUser = async () => {
-      console.log("logging in user");
-      const userInfo = await getCurrUser();
-      console.log("login response", userInfo);
-      setCurrentUser(userInfo);
-    };
-    if (user) {
-      const getUser = async () => {
-        try {
-          const userInfo = await getCurrUser();
-          setCurrentUser(userInfo);
-        } catch (e) {
-          // if (e.data.httpStatus === 401) {
-          //   debugger;
-          //   router.push("/api/auth/login");
-          // }
-        }
-      };
-      getUser();
-    }
-  }, [user]);
+  // useEffect(() => {
+  //   const getUser = async () => {
+  //     console.log("logging in user");
+  //     const userInfo = await getCurrUser();
+  //     console.log("login response", userInfo);
+  //     setCurrentUser(userInfo);
+  //   };
+  //   if (user) {
+  //     const getUser = async () => {
+  //       try {
+  //         const userInfo = await getCurrUser();
+  //         setCurrentUser(userInfo);
+  //       } catch (e) {
+  //         // if (e.data.httpStatus === 401) {
+  //         //   debugger;
+  //         //   router.push("/api/auth/login");
+  //         // }
+  //       }
+  //     };
+  //     getUser();
+  //   }
+  // }, [user]);
 
   const [issueLoadingState, setIssueLoadingState] =
     useState<ISSUE_LOAD_STATE>("initializing");

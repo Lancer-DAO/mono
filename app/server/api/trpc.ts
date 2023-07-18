@@ -57,7 +57,7 @@ export const createTRPCContext = async (_opts: CreateNextContextOptions) => {
   try {
     const metadata = await getSession(req, res);
     const tokenRes = await getAccessToken(req, res);
-    const token = tokenRes.accessToken;
+    const token = tokenRes?.accessToken || metadata.token;
     const { email, sub, nickname } = metadata.user;
 
     const user = await prisma.user.findUnique({

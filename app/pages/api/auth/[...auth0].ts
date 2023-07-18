@@ -1,4 +1,4 @@
-import { handleAuth, handleLogin } from "@auth0/nextjs-auth0";
+import { handleAuth, handleLogin, handleCallback } from "@auth0/nextjs-auth0";
 
 export default handleAuth({
   async login(req, res) {
@@ -14,5 +14,9 @@ export default handleAuth({
       console.log("error");
       res.status(error.status || 500).end();
     }
+  },
+  async callback(req, res) {
+    console.log("hi from callback");
+    handleCallback(req, res);
   },
 });

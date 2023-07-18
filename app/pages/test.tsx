@@ -1,131 +1,108 @@
 import { WALLET_ADAPTERS } from "@web3auth/base";
-// import "./App.css";
-// import RPC from './evm.web3';
-import { useLancerWeb3Auth } from "@/src/providers/web3authProvider";
+import { useWeb3Auth } from "@/src/providers/web3authProvider";
 
-const clientId =
-  "BDKhjMpf2-LsH5SyWrKFe2SBbGjeLS64a7pobYFQJapKW4qqRkREoUcrsi9cNRh40ZjGGQTH3izCNQjqq7fxb3E";
+import styles from "../styles/Home.module.css";
+import { useRouter } from "next/router";
+import { useEffect } from "react";
+import { api } from "@/src/utils/api";
+import { createFFA } from "@/escrow/adapters";
+import { useLancer } from "@/src/providers";
+import { PublicKey } from "@solana/web3.js";
+import { USDC_MINT } from "@/src/constants";
 
-function App() {
-  const { web3auth, loggedIn, setLoggedIn, setProviderWeb3Auth } =
-    useLancerWeb3Auth();
+const Main = () => {
+  const {
+    loginRWA,
+    logout,
+    getUserInfo,
+    isLoading,
+    provider,
+    program,
+    web3Auth,
+    setIsLoading,
+    isWeb3AuthInit,
+    wallet,
+  } = useWeb3Auth();
+  const search = useRouter().query;
+  const jwt = search.jwt == null ? "" : (search.jwt as string);
+  const token = jwt == null ? "" : jwt;
+  const { mutateAsync: getCurrUser } = api.users.login.useMutation();
 
-  const getIdToken = async () => {
-    // Get ID Token from server
-    const res = await fetch("http://localhost:8080/api/token", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-    const data = await res.json();
-    return data?.token;
+  const handleAuthLogin = async () => {
+    try {
+      setIsLoading(true);
+      await loginRWA(WALLET_ADAPTERS.OPENLOGIN, "jwt", token);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
-  const login = async () => {
-    if (!web3auth) {
-      uiConsole("web3auth not initialized yet");
-      return;
-    }
-    const web3authProvider = await web3auth.connectTo(
-      WALLET_ADAPTERS.OPENLOGIN,
-      {
-        loginProvider: "github",
-      }
-    );
-    setProviderWeb3Auth(web3authProvider);
-    setLoggedIn(true);
-  };
+  useEffect(() => {
+    handleAuthLogin();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isWeb3AuthInit]);
 
-  const authenticateUser = async () => {
-    if (!web3auth) {
-      uiConsole("web3auth not initialized yet");
-      return;
-    }
-    const idToken = await web3auth.authenticateUser();
-    uiConsole(idToken);
-  };
-
-  const getUserInfo = async () => {
-    if (!web3auth) {
-      uiConsole("web3auth not initialized yet");
-      return;
-    }
-    const user = await web3auth.getUserInfo();
-    uiConsole(user);
-  };
-
-  const logout = async () => {
-    if (!web3auth) {
-      uiConsole("web3auth not initialized yet");
-      return;
-    }
-    await web3auth.logout();
-    setLoggedIn(false);
-    setProviderWeb3Auth(null);
-  };
-
-  function uiConsole(...args: any[]): void {
-    const el = document.querySelector("#console>p");
-    if (el) {
-      el.innerHTML = JSON.stringify(args || {}, null, 2);
-    }
-  }
-
-  const loginView = (
+  const loggedInView = (
     <>
-      <div className="flex-container">
-        <div>
-          <button onClick={getUserInfo} className="card">
-            User Info
-          </button>
-        </div>
-        <div>
-          <button onClick={authenticateUser} className="card">
-            Get ID Token
-          </button>
-        </div>
-        <div>
-          <button onClick={logout} className="card">
-            Log Out
-          </button>
-        </div>
-      </div>
+      <button onClick={getUserInfo} className={styles.card}>
+        Get User Info
+      </button>
+      <button onClick={logout} className={styles.card}>
+        Log Out
+      </button>
+      <button
+        onClick={() => {
+          console.log(wallet.publicKey.toBase58());
+        }}
+        className={styles.card}
+      >
+        Account
+      </button>
+      <button
+        onClick={async () => {
+          const user = await getCurrUser();
+          console.log(user);
+        }}
+        className={styles.card}
+      >
+        Current User
+      </button>
 
-      <div id="console" style={{ whiteSpace: "pre-line" }}>
-        <p style={{ whiteSpace: "pre-line" }}>Logged in Successfully!</p>
+      <button
+        onClick={async () => {
+          const { timestamp, signature, escrowKey } = await createFFA(
+            wallet,
+            program,
+            provider,
+            new PublicKey(USDC_MINT)
+          );
+          console.log(timestamp, signature, escrowKey);
+        }}
+        className={styles.card}
+      >
+        Create Bounty
+      </button>
+
+      <div className={styles.console} id="console">
+        <p className={styles.code}></p>
       </div>
     </>
   );
 
-  const logoutView = (
-    <button onClick={login} className="card">
-      Login
-    </button>
-  );
-
-  return (
-    <div className="container">
-      <h1 className="title">
-        <a target="_blank" href="http://web3auth.io/" rel="noreferrer">
-          Web3Auth
-        </a>{" "}
-        & ReactJS-Express Custom JWT Login
-      </h1>
-
-      <div className="grid">{loggedIn ? loginView : logoutView}</div>
-
-      <footer className="footer">
-        <a
-          href="https://github.com/Web3Auth/examples/tree/main/web-no-modal-sdk/custom-authentication/custom-jwt-react-express-no-modal-example"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Source code
-        </a>
-      </footer>
+  const unloggedInView = (
+    <div className={styles.centerFlex}>
+      <button onClick={handleAuthLogin} className={styles.rwabtn} id="rwaLogin">
+        Verify Token with web3auth
+      </button>
     </div>
   );
-}
+  return isLoading ? (
+    <div className={styles.centerFlex}></div>
+  ) : (
+    <div className={styles.grid}>
+      {provider ? loggedInView : unloggedInView}
+    </div>
+  );
+};
 
-export default App;
+export default Main;

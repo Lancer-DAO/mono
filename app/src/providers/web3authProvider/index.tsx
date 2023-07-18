@@ -1,286 +1,310 @@
-import { CHAIN_NAMESPACES, SafeEventEmitterProvider } from "@web3auth/base";
+import {
+  ADAPTER_EVENTS,
+  CHAIN_NAMESPACES,
+  CustomChainConfig,
+  SafeEventEmitterProvider,
+  WALLET_ADAPTER_TYPE,
+} from "@web3auth/base";
 import { Web3AuthNoModal } from "@web3auth/no-modal";
-import { OpenloginAdapter } from "@web3auth/openlogin-adapter";
+import {
+  SolanaPrivateKeyProvider,
+  SolanaWallet,
+} from "@web3auth/solana-provider";
+import {
+  LOGIN_PROVIDER_TYPE,
+  LoginConfig,
+  OpenloginAdapter,
+  PrivateKeyProvider,
+} from "@web3auth/openlogin-adapter";
 import {
   createContext,
   FunctionComponent,
   ReactNode,
+  useCallback,
   useContext,
   useEffect,
+  useMemo,
   useState,
 } from "react";
-import { AnchorProvider, Program } from "@project-serum/anchor";
-import { MonoProgram } from "@/escrow/sdk/types/mono_program";
-import { Issue, CurrentUser, LancerWallet, Bounty } from "@/src/types";
+import solanaProvider, { WalletActions } from "./solanaProvider";
+import axios from "axios";
 import {
-  ILancerContext,
-  ISSUE_LOAD_STATE,
-  LOGIN_STATE,
-} from "@/src/providers/lancerProvider/types";
-import { api } from "@/src/utils/api";
-import { useConnection, useWallet } from "@solana/wallet-adapter-react";
-import { PublicKey, Transaction } from "@solana/web3.js";
-import { useRouter } from "next/router";
+  Connection,
+  PublicKey,
+  Transaction,
+  VersionedTransaction,
+} from "@solana/web3.js";
+import { useConnection } from "@solana/wallet-adapter-react";
+import { LancerWallet } from "@/src/types";
+import { MonoProgram } from "@/escrow/sdk/types/mono_program";
 import MonoProgramJSON from "@/escrow/sdk/idl/mono_program.json";
-import { APIKeyInfo } from "@/src/components/molecules/ApiKeyModal";
-import { MONO_ADDRESS } from "@/src/constants";
-import { Tutorial } from "@/src/types/tutorials";
-import { PROFILE_TUTORIAL_INITIAL_STATE } from "@/src/constants/tutorials";
-import { SolanaPrivateKeyProvider } from "@web3auth/solana-provider";
-const clientId =
-  "BDKhjMpf2-LsH5SyWrKFe2SBbGjeLS64a7pobYFQJapKW4qqRkREoUcrsi9cNRh40ZjGGQTH3izCNQjqq7fxb3E";
+import { IS_MAINNET, MONO_ADDRESS } from "@/src/constants";
 
-interface IWeb3AuthLancerContext extends ILancerContext {
-  web3auth: Web3AuthNoModal | null;
-  providerWeb3Auth: SafeEventEmitterProvider | null;
-  loggedIn: boolean | null;
-  setLoggedIn: (loggedIn: boolean) => void;
-  setProviderWeb3Auth: (provider: SafeEventEmitterProvider) => void;
+import { AnchorProvider, Program } from "@project-serum/anchor";
+const SOLANA_CHAIN_CONFIG = {
+  solana: {
+    chainNamespace: CHAIN_NAMESPACES.SOLANA,
+    chainId: "0x3", // Please use 0x1 for Mainnet, 0x2 for Testnet, 0x3 for Devnet
+    rpcTarget: "https://api.devnet.solana.com",
+    displayName: "Solana Devnet",
+    blockExplorer: "https://explorer.solana.com",
+    ticker: "SOL",
+    tickerName: "Solana Token",
+  } as CustomChainConfig,
+};
+
+export const WEB3AUTH_NETWORK = {
+  cyan: {
+    displayName: "Cyan",
+  },
+  testnet: {
+    displayName: "Test",
+  },
+} as const;
+export type WEB3AUTH_NETWORK_TYPE = keyof typeof WEB3AUTH_NETWORK;
+
+export interface IWeb3AuthContext {
+  web3Auth: Web3AuthNoModal | null;
+  wallet: LancerWallet | null;
+  isLoading: boolean;
+  user: unknown;
+  isWeb3AuthInit: boolean;
+  loginRWA: (
+    adapter: WALLET_ADAPTER_TYPE,
+    provider: LOGIN_PROVIDER_TYPE,
+    jwtToken: string
+  ) => Promise<void>;
+  logout: () => Promise<void>;
+  setIsLoading: (loading: boolean) => void;
+  getUserInfo: () => Promise<any>;
+
+  program: Program<MonoProgram>;
+  provider: AnchorProvider;
 }
 
-export const Web3AuthLancerContext = createContext<IWeb3AuthLancerContext>({
-  currentUser: null,
-  issue: null,
-  issues: [],
-  loginState: "logged_out",
-  issueLoadingState: "initializing",
-  program: null,
-  currentWallet: null,
-  wallets: null,
+export const Web3AuthContext = createContext<IWeb3AuthContext>({
+  web3Auth: null,
+  isLoading: false,
+  user: null,
+  isWeb3AuthInit: false,
+  setIsLoading: (loading: boolean) => {},
+  loginRWA: async (
+    adapter: WALLET_ADAPTER_TYPE,
+    provider: LOGIN_PROVIDER_TYPE,
+    jwtToken: string
+  ) => {},
+  logout: async () => {},
+  getUserInfo: async () => {},
   provider: null,
-  currentBounty: null,
-  currentAPIKey: null,
-  currentTutorialState: null,
-  isRouterReady: false,
-  isMobile: false,
-  setCurrentTutorialState: () => null,
-  setCurrentAPIKey: () => null,
-  setIssue: () => null,
-  setIssues: () => null,
-  setWallets: () => null,
-  setLoginState: () => null,
-  setCurrentUser: () => null,
-  setIssueLoadingState: (state: ISSUE_LOAD_STATE) => null,
-  setCurrentBounty: () => null,
-  setCurrentWallet: () => null,
-  web3auth: null,
-  providerWeb3Auth: null,
-  loggedIn: false,
-  setLoggedIn: () => null,
-  setProviderWeb3Auth: () => null,
+  program: null,
+  wallet: null,
 });
 
-export function useLancerWeb3Auth(): IWeb3AuthLancerContext {
-  return useContext(Web3AuthLancerContext);
+export function useWeb3Auth(): IWeb3AuthContext {
+  return useContext(Web3AuthContext);
 }
 
-interface ILancerState {
+interface IWeb3AuthState {
+  web3AuthNetwork: WEB3AUTH_NETWORK_TYPE;
   children?: React.ReactNode;
 }
-interface ILancerProps {
+interface IWeb3AuthProps {
   children?: ReactNode;
+  web3AuthNetwork: WEB3AUTH_NETWORK_TYPE;
 }
 
-const Web3AuthLancerProvider: FunctionComponent<ILancerState> = ({
+export const Web3AuthProvider: FunctionComponent<IWeb3AuthState> = ({
   children,
-}: ILancerProps) => {
-  const { mutateAsync: getCurrUser } = api.users.login.useMutation();
-  const router = useRouter();
-  const {
-    wallet,
-    publicKey,
-    sendTransaction,
-    signAllTransactions,
-    signMessage,
-    signTransaction,
-    connected,
-  } = useWallet();
+  web3AuthNetwork,
+}: IWeb3AuthProps) => {
+  const [web3Auth, setWeb3Auth] = useState<Web3AuthNoModal | null>(null);
+  const [walletAction, setWalletActions] = useState<WalletActions | null>(null);
+  const [wallet, setWallet] = useState<LancerWallet | null>(null);
   const { connection } = useConnection();
-  const [web3auth, setWeb3auth] = useState<Web3AuthNoModal | null>(null);
-  const [providerWeb3Auth, setProviderWeb3Auth] =
-    useState<SafeEventEmitterProvider | null>(null);
-  const [loggedIn, setLoggedIn] = useState<boolean | null>(false);
-  const [currentUser, setCurrentUser] = useState<CurrentUser | null>(null);
-  const [currentBounty, setCurrentBounty] = useState<Bounty | null>(null);
-  const [issue, setIssue] = useState<Issue | null>(null);
-  const [currentTutorialState, setCurrentTutorialState] = useState<Tutorial>();
-  const [issues, setIssues] = useState<Issue[] | null>(null);
-  const [loginState, setLoginState] = useState<LOGIN_STATE | null>(
-    "logged_out"
-  );
-  const [currentWallet, setCurrentWallet] = useState<LancerWallet>();
-  const [wallets, setWallets] = useState<LancerWallet[]>();
+  const [user, setUser] = useState<unknown | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isWeb3AuthInit, setweb3authinit] = useState(false);
+
+  const [web3AuthProvider, setWeb3AuthProvider] =
+    useState<SafeEventEmitterProvider>();
   const [provider, setProvider] = useState<AnchorProvider>();
   const [program, setProgram] = useState<Program<MonoProgram>>();
-  const [currentAPIKey, setCurrentAPIKey] = useState<APIKeyInfo>();
-  const [isMobile, setIsMobile] = useState(false);
 
-  useEffect(() => {
-    const userAgent = window.navigator.userAgent;
-    const isMobileDevice =
-      /Mobile|iP(hone|od|ad)|Android|BlackBerry|IEMobile/.test(userAgent);
-    setIsMobile(isMobileDevice);
-  }, []);
-
-  useEffect(() => {
-    const apiKeys = JSON.parse(localStorage.getItem("apiKeys") || "[]");
-    const defaultKey = apiKeys.find((key: APIKeyInfo) => key.isDefault);
-    setCurrentAPIKey(defaultKey);
-  }, []);
-
-  useEffect(() => {
-    const init = async () => {
-      try {
-        const chainConfig = {
-          chainNamespace: CHAIN_NAMESPACES.SOLANA,
-          chainId: "0x3", // Please use 0x1 for Mainnet, 0x2 for Testnet, 0x3 for Devnet
-          rpcTarget: "https://api.devnet.solana.com",
-          displayName: "Solana Devnet",
-          blockExplorer: "https://explorer.solana.com",
-          ticker: "SOL",
-          tickerName: "Solana Token",
+  const setWalletProvider = useCallback(
+    (web3authProvider: SafeEventEmitterProvider) => {
+      const walletProvider = solanaProvider(web3authProvider, uiConsole);
+      const solanaWallet = new SolanaWallet(web3authProvider);
+      setTimeout(async () => {
+        const acc = await solanaWallet.requestAccounts();
+        const wallet = {
+          ...walletProvider,
+          connected: true,
+          publicKey: new PublicKey(acc[0]),
+          wallet: null,
         };
-        const web3auth = new Web3AuthNoModal({
-          clientId,
-          chainConfig,
-          web3AuthNetwork: "testnet",
-          useCoreKitKey: false,
-        });
-        const privateKeyProvider = new SolanaPrivateKeyProvider({
-          config: { chainConfig },
-        });
+        setWallet(wallet);
 
-        const openloginAdapter = new OpenloginAdapter({
-          adapterSettings: {
-            loginConfig: {
-              jwt: {
-                verifier: "lancer-dev",
-                typeOfLogin: "jwt",
-                clientId,
-              },
-            },
-          },
-          privateKeyProvider,
-        });
-        web3auth.configureAdapter(openloginAdapter);
-        setWeb3auth(web3auth);
+        const provider = new AnchorProvider(connection, wallet, {});
+        const program = new Program<MonoProgram>(
+          MonoProgramJSON as unknown as MonoProgram,
+          new PublicKey(MONO_ADDRESS),
+          provider
+        );
+        setProvider(provider);
+        setProgram(program);
+        setWeb3AuthProvider(web3authProvider);
+      }, 1000);
+    },
+    []
+  );
 
-        await web3auth.init();
-        setProviderWeb3Auth(web3auth.provider);
-        if (web3auth.connected) {
-          setLoggedIn(true);
-        }
-      } catch (error) {
-        console.error(error);
-      }
+  useEffect(() => {
+    const subscribeAuthEvents = (web3auth: Web3AuthNoModal) => {
+      // Can subscribe to all ADAPTER_EVENTS and LOGIN_MODAL_EVENTS
+      web3auth.on(ADAPTER_EVENTS.CONNECTED, (data: unknown) => {
+        console.log("Yeah!, you are successfully logged in", data);
+        axios.post("/api/web3auth/registerToken", { data: data });
+        setUser(data);
+        setWalletProvider(web3auth.provider!);
+      });
+
+      web3auth.on(ADAPTER_EVENTS.CONNECTING, () => {
+        console.log("connecting");
+      });
+
+      web3auth.on(ADAPTER_EVENTS.DISCONNECTED, () => {
+        console.log("disconnected");
+        setUser(null);
+      });
+
+      web3auth.on(ADAPTER_EVENTS.ERRORED, (error) => {
+        console.error("some error or user has cancelled login request", error);
+      });
     };
 
-    init();
-  }, []);
+    const currentChainConfig = SOLANA_CHAIN_CONFIG.solana;
 
-  useEffect(() => {
-    if (connected) {
-      const lancerWallet: LancerWallet = {
-        wallet,
-        publicKey,
-        sendTransaction,
-        signAllTransactions,
-        signMessage,
-        signTransaction,
-        connected,
-        signAndSendTransaction: async (transaction: Transaction) => {
-          return await sendTransaction(transaction, connection, {
-            skipPreflight: true,
-          });
-        },
-        providerName: "Phantom",
-      };
-      const provider = new AnchorProvider(connection, lancerWallet, {});
-      const program = new Program<MonoProgram>(
-        MonoProgramJSON as unknown as MonoProgram,
-        new PublicKey(MONO_ADDRESS),
-        provider
-      );
-      setProvider(provider);
-      setProgram(program);
-      setCurrentWallet(lancerWallet);
-      if (
-        !!currentTutorialState &&
-        currentTutorialState?.title === PROFILE_TUTORIAL_INITIAL_STATE.title &&
-        currentTutorialState.currentStep === 1
-      ) {
-        setCurrentTutorialState({
-          ...currentTutorialState,
-          currentStep: currentUser.hasProfileNFT ? 3 : 2,
-          isRunning: true,
-          spotlightClicks: !currentUser.hasProfileNFT,
+    async function init() {
+      try {
+        setIsLoading(true);
+        // get your client id from https://dashboard.web3auth.io by registering a plug and play application.
+        const clientId =
+          "BDKhjMpf2-LsH5SyWrKFe2SBbGjeLS64a7pobYFQJapKW4qqRkREoUcrsi9cNRh40ZjGGQTH3izCNQjqq7fxb3E";
+
+        const web3AuthInstance = new Web3AuthNoModal({
+          chainConfig: currentChainConfig,
+          clientId,
+          web3AuthNetwork,
         });
-        return;
+        subscribeAuthEvents(web3AuthInstance);
+        var loginConfig: LoginConfig = {
+          jwt: {
+            verifier: "lancer-devnet",
+            typeOfLogin: "jwt",
+            clientId: "0j9xN7veV1ofNVAgCMfHf6S4m09lLzW0",
+          },
+        };
+
+        const privateKeyProvider = new SolanaPrivateKeyProvider({
+          config: { chainConfig: currentChainConfig },
+        });
+
+        const adapter = new OpenloginAdapter({
+          privateKeyProvider,
+          adapterSettings: {
+            clientId,
+            uxMode: "redirect",
+            loginConfig,
+          },
+        });
+        web3AuthInstance.configureAdapter(adapter);
+        await web3AuthInstance.init();
+        setWeb3Auth(web3AuthInstance);
+        setweb3authinit(true);
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setIsLoading(false);
       }
     }
-  }, [connected]);
+    init();
+  }, [web3AuthNetwork, setWalletProvider]);
 
-  //   useEffect(() => {
-  //     const getUser = async () => {
-  //       console.log("logging in user");
-  //       const userInfo = await getCurrUser();
-  //       console.log("login response", userInfo);
-  //       setCurrentUser(userInfo);
-  //     };
-  //     if (user) {
-  //       const getUser = async () => {
-  //         try {
-  //           const userInfo = await getCurrUser();
-  //           setCurrentUser(userInfo);
-  //         } catch (e) {
-  //           // if (e.data.httpStatus === 401) {
-  //           //   debugger;
-  //           //   router.push("/api/auth/login");
-  //           // }
-  //         }
-  //       };
-  //       getUser();
-  //     }
-  //   }, [user]);
+  const loginRWA = async (
+    adapter: WALLET_ADAPTER_TYPE,
+    loginProvider: LOGIN_PROVIDER_TYPE,
+    jwt_token: string
+  ) => {
+    try {
+      setIsLoading(true);
+      if (!web3Auth) {
+        console.log("web3auth not initialized yet");
+        uiConsole("web3auth not initialized yet");
+        return;
+      }
+      const localProvider = await web3Auth.connectTo(adapter, {
+        loginProvider,
+        extraLoginOptions: {
+          id_token: jwt_token,
+          domain: "https://auth.lancer.so",
+          verifierIdField: "sub",
+        },
+      });
+      setWalletProvider(localProvider!);
+    } catch (error) {
+      console.log("error", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
-  const [issueLoadingState, setIssueLoadingState] =
-    useState<ISSUE_LOAD_STATE>("initializing");
+  const logout = async () => {
+    if (!web3Auth) {
+      console.log("web3auth not initialized yet");
+      uiConsole("web3auth not initialized yet");
+      return;
+    }
+    await web3Auth.logout();
+    // window.open("https://auth.lancer.so" + "/v2/logout?federated");
+
+    setProvider(null);
+    window.sessionStorage.clear();
+    window.location.href = "/";
+  };
+
+  const getUserInfo = async () => {
+    if (!web3Auth) {
+      console.log("web3auth not initialized yet");
+      uiConsole("web3auth not initialized yet");
+      return;
+    }
+    const user = await web3Auth.getUserInfo();
+    uiConsole(user);
+  };
+
+  const uiConsole = (...args: unknown[]): void => {
+    const el = document.querySelector("#console>p");
+    if (el) {
+      el.innerHTML = JSON.stringify(args || {}, null, 2);
+    }
+  };
 
   const contextProvider = {
-    currentUser,
-    setCurrentUser,
-    loginState,
-    setLoginState,
-    issue,
-    setIssue,
-    issues,
-    setIssues,
-    issueLoadingState,
-    setIssueLoadingState,
-    program,
+    web3Auth,
+    user,
+    isLoading,
+    isWeb3AuthInit,
+    setIsLoading,
+    loginRWA,
+    logout,
+    getUserInfo,
+    wallet,
     provider,
-    setWallets,
-    wallets,
-    currentBounty,
-    setCurrentBounty,
-    currentWallet,
-    setCurrentWallet,
-    currentAPIKey,
-    setCurrentAPIKey,
-    currentTutorialState,
-    setCurrentTutorialState,
-    isRouterReady: router.isReady,
-    isMobile,
-    web3auth,
-    providerWeb3Auth,
-    loggedIn,
-    setLoggedIn,
-    setProviderWeb3Auth,
+    program,
   };
   return (
-    <Web3AuthLancerContext.Provider value={contextProvider}>
+    <Web3AuthContext.Provider value={contextProvider}>
       {children}
-    </Web3AuthLancerContext.Provider>
+    </Web3AuthContext.Provider>
   );
 };
-export default Web3AuthLancerProvider;
