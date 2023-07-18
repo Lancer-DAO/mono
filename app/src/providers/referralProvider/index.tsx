@@ -294,6 +294,11 @@ const ReferralProvider: FunctionComponent<IReferralProps> = ({ children }) => {
           isSigner: false,
         },
         {
+          pubkey: remainingAccounts.buddyTreasury,
+          isWritable: true,
+          isSigner: false,
+        },
+        {
           pubkey: remainingAccounts.memberPDA,
           isWritable: false,
           isSigner: false,

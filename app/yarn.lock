@@ -2087,10 +2087,10 @@
     bs58 "^5.0.0"
     uuid "^8.3.2"
 
-"@ladderlabs/buddy-sdk@^0.1.20":
-  version "0.1.20"
-  resolved "https://registry.yarnpkg.com/@ladderlabs/buddy-sdk/-/buddy-sdk-0.1.20.tgz#65eadbfd532d44389412dcc6627938da12a4027f"
-  integrity sha512-Uz8bvzuyfjJIcc5SVaivNrrpBZmzPAMQYbh15yan9MG9JJwAML6TsH7E1WUAWtpFqrI0z9COurS6bb6Tw8nDjQ==
+"@ladderlabs/buddy-sdk@^0.1.21":
+  version "0.1.21"
+  resolved "https://registry.yarnpkg.com/@ladderlabs/buddy-sdk/-/buddy-sdk-0.1.21.tgz#675a374cfef396f8c413e5b437d0ca1cb7c79b7b"
+  integrity sha512-heroG1RlERQ/bxG03qyOzMKDhSPFxr4dR5BO1dKa8FuYbsU/5yXGSYeoROTSNpS/1pGrAgpLMvRfkBhu2vC2Ow==
   dependencies:
     "@metaplex-foundation/mpl-token-metadata" "2.9.1"
     "@project-serum/anchor" "^0.26.0"
