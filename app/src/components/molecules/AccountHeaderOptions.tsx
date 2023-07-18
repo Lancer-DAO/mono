@@ -146,7 +146,7 @@ const AccountHeaderOptions = () => {
                 {hasExtension ? "Extension Detected" : "Download Extension"}
               </Link>
               <Link
-                href={"https://discord.gg/H6HXzYsc"}
+                href={"https://discord.gg/gqSpskjvxy"}
                 target="_blank"
                 id="discord-link"
                 className="flex h-[48px] border-b-gray-400 border-b-[1px] py-[6px] items-center justify-center  hover:bg-turquoise-500 text-gray-800 hover:text-white-100 transition-colors duration-300 ease-in-out"
