@@ -7,7 +7,7 @@ import { marked } from "marked";
 import { useLancer } from "@/src/providers/lancerProvider";
 import SubmitterSection from "@/src/components/molecules/SubmitterSection";
 import { Clock } from "react-feather";
-import USDC from "@/src/assets/USDC";
+import { USDC, Logo } from "@/components";
 import dayjs from "dayjs";
 import localizedFormat from "dayjs/plugin/localizedFormat";
 import {
@@ -15,7 +15,6 @@ import {
   ContributorInfo,
   DefaultLayout,
 } from "@/src/components/";
-import Logo from "@/src/assets/Logo";
 import { PublicKey } from "@solana/web3.js";
 import { useRouter } from "next/router";
 import { api } from "@/src/utils/api";

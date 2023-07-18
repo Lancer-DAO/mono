@@ -1,5 +1,6 @@
-import PhantomLogo from "@/src/assets/PhantomLogo";
 import "react";
+import { PhantomLogo } from "@/components";
+
 export const getWalletProviderImage = (providerName: string) => {
   if (providerName === "Magic Link") {
     return (
