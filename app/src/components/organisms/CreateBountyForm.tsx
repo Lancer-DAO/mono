@@ -621,7 +621,7 @@ const Form: React.FC<{
                       checked: formData.isPrivate,
                     }
                   )}
-                  onChange={handleCheckboxChange}
+                  onClick={handleCheckboxChange}
                 />
 
                 <label className="check-label">Is this a Bounty private?</label>
