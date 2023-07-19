@@ -11,7 +11,7 @@ const CoinflowOfframp = dynamic(() => import("./atoms/CoinflowOfframp"));
 const ContributorInfo = dynamic(() => import("./atoms/ContributorInfo"));
 const LinkButton = dynamic(() => import("./atoms/LinkButton"));
 const LoadingBar = dynamic(() => import("./atoms/LoadingBar"));
-const ProgressBar = dynamic(() => import("./atoms/ProgressBar"));
+const ProgressBar = dynamic(() => import("./atoms/progressBar"));
 const PubKey = dynamic(() => import("./atoms/PubKey"));
 
 // molecules
