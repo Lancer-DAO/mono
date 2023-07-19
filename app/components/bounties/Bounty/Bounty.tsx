@@ -1,47 +1,20 @@
-import Head from "next/head";
-import { useEffect, useState } from "react";
-import { BrowserRouter as Router } from "react-router-dom";
-import { decimalToNumber, getSolscanAddress } from "@/src/utils";
-import { BountyState } from "@/types";
-import { marked } from "marked";
-import { useLancer } from "@/src/providers/lancerProvider";
-import SubmitterSection from "@/components/molecules/SubmitterSection";
-import { Clock } from "react-feather";
-import USDC from "@/src/assets/USDC";
-import dayjs from "dayjs";
-import localizedFormat from "dayjs/plugin/localizedFormat";
-import { BountyActions, ContributorInfo, DefaultLayout } from "@/components";
-import Logo from "@/src/assets/Logo";
-import { PublicKey } from "@solana/web3.js";
+import React, { useEffect, useState } from "react";
+import { useLancer } from "../../../src/providers";
 import { useRouter } from "next/router";
-import { api } from "@/src/utils/api";
-dayjs.extend(localizedFormat);
-import { withPageAuthRequired } from "@auth0/nextjs-auth0";
+import { api } from "../../../src/utils/api";
+import { decimalToNumber, getSolscanAddress } from "../../../src/utils";
+import { marked } from "marked";
+import Logo from "../../../src/assets/Logo";
+import dayjs from "dayjs";
+import { PublicKey } from "@solana/web3.js";
+import { Clock } from "react-feather";
 import Image from "next/image";
+import { ContributorInfo } from "../..";
+import { BountyState } from "../../../src/types";
+import BountyActions from "./components/BountyActions";
+import SubmitterSection from "./components/SubmitterSection";
 
-export const getServerSideProps = withPageAuthRequired();
-export default function Home() {
-  // Placed before router component to ensure window is defined
-  const [ready, setReady] = useState(false);
-  useEffect(() => setReady(true), []);
-  return (
-    <>
-      <Head>
-        <title>Lancer | Bounty</title>
-        <meta name="description" content="Lancer Github Extension" />
-      </Head>
-      <main>
-        {ready && (
-          <Router>
-            <App />
-          </Router>
-        )}
-      </main>
-    </>
-  );
-}
-
-const Bounty: React.FC = () => {
+export const Bounty = () => {
   const { currentUser, currentBounty, setCurrentBounty } = useLancer();
   const [pollId, setPollId] = useState(null);
   const [bountyAmount, setBountyAmount] = useState("");
@@ -51,8 +24,9 @@ const Bounty: React.FC = () => {
   useEffect(() => {
     if (router.isReady && currentUser?.id) {
       const getB = async () => {
+        debugger;
         const bounty = await getBounty({
-          id: parseInt(router.query.id as string),
+          id: parseInt(router.query.bounty as string),
           currentUserId: currentUser.id,
         });
         setCurrentBounty(bounty);
@@ -359,11 +333,3 @@ const Bounty: React.FC = () => {
     </section>
   );
 };
-
-function App() {
-  return (
-    <DefaultLayout>
-      <Bounty />
-    </DefaultLayout>
-  );
-}

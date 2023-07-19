@@ -13,7 +13,6 @@ const AccountHeaderOptions = dynamic(
   () => import("./molecules/AccountHeaderOptions")
 );
 const ApiKeyModal = dynamic(() => import("./molecules/ApiKeyModal"));
-const BountyActions = dynamic(() => import("./organisms/BountyActions"));
 const BountyNFTCard = dynamic(() => import("./molecules/BountyNFTCard"));
 const CoinflowFund = dynamic(() => import("./molecules/CoinflowFund"));
 const MultiSelectDropdown = dynamic(
@@ -21,13 +20,13 @@ const MultiSelectDropdown = dynamic(
 );
 const ProfileNFTCard = dynamic(() => import("./molecules/ProfileNFTCard"));
 const RangeSlider = dynamic(() => import("./molecules/RangeSlider"));
-const SubmitterSection = dynamic(() => import("./molecules/SubmitterSection"));
+const SubmitterSection = dynamic(() => import("./bounties/Bounty/components/SubmitterSection"));
 const TutorialsModal = dynamic(() => import("./molecules/TutorialsModal"));
 const WalletInfo = dynamic(() => import("./molecules/WalletInfo"));
 
 // Organisms
 const BountyFilters = dynamic(
-  () => import("./bounties/components/BountyTable/components/BountyFilters")
+  () => import("./bounties/Bounties/components/BountyTable/components/BountyFilters")
 );
 const CreateBountyForm = dynamic(() => import("./organisms/CreateBountyForm"));
 const FundBountyForm = dynamic(() => import("./organisms/FundBountyForm"));
@@ -56,7 +55,6 @@ export {
   CreateBountyForm,
   FundBountyForm,
   CoinflowFund,
-  BountyActions,
   SubmitterSection,
   JoyrideWrapper,
   AccountHeaderOptions,

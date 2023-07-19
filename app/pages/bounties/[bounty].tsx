@@ -1,9 +1,13 @@
 import Head from "next/head";
 import { useEffect, useState } from "react";
 import { BrowserRouter as Router } from "react-router-dom";
-
+import dayjs from "dayjs";
+import localizedFormat from "dayjs/plugin/localizedFormat";
+import { DefaultLayout } from "@/components";
+dayjs.extend(localizedFormat);
 import { withPageAuthRequired } from "@auth0/nextjs-auth0";
-import { Bounties } from "@/components/bounties/Bounties";
+import { Bounty } from "../../components/bounties/Bounty/Bounty";
+
 export const getServerSideProps = withPageAuthRequired();
 export default function Home() {
   // Placed before router component to ensure window is defined
@@ -12,8 +16,8 @@ export default function Home() {
   return (
     <>
       <Head>
-        <title>Lancer | Bounties</title>
-        <meta name="description" content="Lancer Bounties" />
+        <title>Lancer | Bounty</title>
+        <meta name="description" content="Lancer Github Extension" />
       </Head>
       <main>
         {ready && (
@@ -26,8 +30,14 @@ export default function Home() {
   );
 }
 
-const App: React.FC = () => {
-  return (
-    <Bounties />
-  );
+const LancerBounty: React.FC = () => {
+  return <Bounty />;
 };
+
+function App() {
+  return (
+    <DefaultLayout>
+      <LancerBounty />
+    </DefaultLayout>
+  );
+}

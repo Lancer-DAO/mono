@@ -9,10 +9,7 @@ import {
   createLancerTokenAccountInstruction,
   withdrawTokensInstruction,
 } from "@/escrow/sdk/instructions";
-import {
-  WalletAdapterNetwork,
-  WalletNotConnectedError,
-} from "@solana/wallet-adapter-base";
+import { WalletNotConnectedError } from "@solana/wallet-adapter-base";
 import {
   ConnectionProvider,
   useConnection,
@@ -20,35 +17,22 @@ import {
   WalletProvider,
 } from "@solana/wallet-adapter-react";
 import { WalletModalProvider } from "@solana/wallet-adapter-react-ui";
-import {
-  PhantomWalletAdapter,
-  UnsafeBurnerWalletAdapter,
-} from "@solana/wallet-adapter-wallets";
-import {
-  clusterApiUrl,
-  Connection,
-  Keypair,
-  PublicKey,
-  SystemProgram,
-  Transaction,
-} from "@solana/web3.js";
+import { PhantomWalletAdapter } from "@solana/wallet-adapter-wallets";
+import { PublicKey, Transaction } from "@solana/web3.js";
 import type { AppProps } from "next/app";
 import type { FC } from "react";
-import { createFeatureFundingAccountInstruction } from "@/escrow/sdk/instructions";
 import {
   USDC_MINT,
   MAINNET_RPC,
-  MAINNET_USDC_MINT,
   MONO_ADDRESS,
   BONK_MINT,
 } from "@/src/constants";
 import { AnchorProvider, Program } from "@project-serum/anchor";
 import { MonoProgram } from "@/escrow/sdk/types/mono_program";
-import { getMint } from "@solana/spl-token";
 
 import { withPageAuthRequired } from "@auth0/nextjs-auth0";
 export const getServerSideProps = withPageAuthRequired();
-import { getAssociatedTokenAddress } from "@solana/spl-token";
+
 const WalletDisconnectButtonDynamic = dynamic(
   async () =>
     (await import("@solana/wallet-adapter-react-ui")).WalletDisconnectButton,
