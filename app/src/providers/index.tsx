@@ -13,7 +13,8 @@ import { Web3AuthProvider } from "@/src/providers/web3authProvider";
 import AppContextProvider from "./appContextProvider";
 import BountyProvider from "./bountyProvider";
 import TutorialProvider from "./tutorialProvider";
-import UserWalletProvider from "./userWalletProvider";
+import NonCustodialWalletProvider from "./userWalletProvider/nonCustodialProvider";
+import CustodialWalletProvider from "./userWalletProvider/custodialProvider";
 import { useRouter } from "next/router";
 import { IS_CUSTODIAL, IS_MAINNET, MAINNET_RPC } from "../constants";
 import ReferralProvider from "./referralProvider";
@@ -53,9 +54,15 @@ export const AllProviders: React.FC<{ children: ReactNode }> = ({
     <ConnectionProvider endpoint={endpoint}>
       <WalletProvider wallets={walletProviders} autoConnect>
         <WalletModalProvider>
-          <Web3AuthProvider web3AuthNetwork="testnet">
-            <ReferralProvider>{children}</ReferralProvider>
-          </Web3AuthProvider>
+          <AppContextProvider>
+            <TutorialProvider>
+              <CustodialWalletProvider web3AuthNetwork="testnet">
+                <BountyProvider>
+                  <ReferralProvider>{children}</ReferralProvider>
+                </BountyProvider>
+              </CustodialWalletProvider>
+            </TutorialProvider>
+          </AppContextProvider>
         </WalletModalProvider>
       </WalletProvider>
     </ConnectionProvider>
@@ -66,11 +73,11 @@ export const AllProviders: React.FC<{ children: ReactNode }> = ({
           <WalletModalProvider>
             <AppContextProvider>
               <TutorialProvider>
-                <UserWalletProvider>
+                <NonCustodialWalletProvider>
                   <BountyProvider>
                     <ReferralProvider>{children}</ReferralProvider>
                   </BountyProvider>
-                </UserWalletProvider>
+                </NonCustodialWalletProvider>
               </TutorialProvider>
             </AppContextProvider>
           </WalletModalProvider>
