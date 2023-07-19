@@ -1,9 +1,7 @@
-import USDC from "../../assets/USDC";
 import { Clock, EyeOff } from "react-feather";
 import { marked } from "marked";
 import { Bounty, BOUNTY_USER_RELATIONSHIP, Contributor } from "@/src/types";
 import { useLocation } from "react-router-dom";
-import Logo from "@/src/assets/Logo";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import { decimalToNumber } from "@/src/utils";
@@ -42,7 +40,7 @@ const LancerBounty = ({
       className="companies-card"
     >
       <a
-        href={`/bounty?id=${bounty.id}${jwt ? `&token=${jwt}` : ""}`}
+        href={`/bounties/bounty?id=${bounty.id}${jwt ? `&token=${jwt}` : ""}`}
         className="company-card-link-wrapper w-inline-block"
       >
         <div className="bounty-card-content">

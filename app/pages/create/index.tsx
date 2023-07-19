@@ -30,7 +30,7 @@ export default function Home() {
 }
 
 function App() {
-  const { provider, program } = useLancer();
+  const { provider } = useLancer();
   const [formSection, setFormSection] = useState<FORM_SECTION>("CREATE");
   const [isAccountCreated, setIsAccountCreated] = useState(false);
   const createAccountPoll = (publicKey: PublicKey) => {

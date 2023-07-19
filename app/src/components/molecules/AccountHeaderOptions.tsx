@@ -1,10 +1,7 @@
 import { useLancer } from "@/src/providers";
-import { LinkButton, ApiKeyModal } from "@/components";
+import { ApiKeyModal } from "@/components";
 import { useEffect, useRef, useState } from "react";
 import { useOutsideAlerter } from "@/src/hooks/useOutsideAlerter";
-
-import dynamic from "next/dynamic";
-import { Key, HelpCircle } from "react-feather";
 import Link from "next/link";
 import {
   BOUNTY_ACTIONS_TUTORIAL_II_INITIAL_STATE,
@@ -15,7 +12,7 @@ import {
 const AccountHeaderOptions = () => {
   const {
     currentUser,
-    currentAPIKey,
+    // currentAPIKey,
     currentTutorialState,
     setCurrentTutorialState,
   } = useLancer();
@@ -42,9 +39,10 @@ const AccountHeaderOptions = () => {
   });
   return (
     <div className="relative ">
-      {currentUser !== null ? (
+      {currentUser !== null && (
         <>
           <div
+            className="cursor-pointer"
             onClick={() => {
               setShowOptions(true);
               if (!!currentTutorialState && currentTutorialState.isActive) {
@@ -89,7 +87,8 @@ const AccountHeaderOptions = () => {
           </div>
           {showOptions && (
             <div
-              className="absolute items-center justify-center left-[-105px] top-[50px]  bg-white w-[250px] rounded-[20px] shadow-md"
+              className="absolute items-center justify-center left-[-105px] top-[50px]  
+              bg-white w-[250px] rounded-[20px] shadow-md"
               ref={wrapperRef}
             >
               <Link
@@ -110,7 +109,9 @@ const AccountHeaderOptions = () => {
                     }
                   }
                 }}
-                className="flex rounded-t-[20px] h-[48px] py-[6px] items-center justify-center border-b-gray-400 border-b-[1px] hover:bg-turquoise-500 text-gray-800 hover:text-white-100 transition-colors duration-300 ease-in-out"
+                className="flex rounded-t-[20px] h-[48px] py-[6px] items-center justify-center 
+                border-b-gray-400 border-b-[1px] hover:bg-turquoise-500 text-gray-800 
+                hover:text-white-100 transition-colors duration-300 ease-in-out"
               >
                 Account
               </Link>
@@ -174,8 +175,6 @@ const AccountHeaderOptions = () => {
           )}
           <ApiKeyModal showModal={showModal} setShowModal={setShowModal} />
         </>
-      ) : (
-        <LinkButton href="/api/auth/login"> Login</LinkButton>
       )}
     </div>
   );

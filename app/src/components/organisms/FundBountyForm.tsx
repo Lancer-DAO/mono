@@ -225,7 +225,7 @@ const Form: React.FC<{ isAccountCreated: boolean }> = ({
                     )}
                     <button
                       className={classNames("button-primary", {
-                        disabled: !formData.fundingAmount,
+                        disabled: !formData.fundingAmount || !currentWallet,
                       })}
                       onClick={onClick}
                       id="issue-funding-submit"

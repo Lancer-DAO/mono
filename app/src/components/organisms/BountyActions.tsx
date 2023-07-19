@@ -1,6 +1,6 @@
 import { Button, LoadingBar } from "@/src/components";
 import {
-  addSubmitterFFA,
+  // addSubmitterFFA,
   approveRequestFFA,
   cancelFFA,
   denyRequestFFA,
@@ -9,16 +9,13 @@ import {
 } from "@/escrow/adapters";
 import { useLancer } from "@/src/providers";
 import {
-  Contributor,
+  // Contributor,
   BountyState,
   BOUNTY_USER_RELATIONSHIP,
 } from "@/src/types";
-import axios from "axios";
-import classNames from "classnames";
 import { useState } from "react";
 import { api } from "@/src/utils/api";
 import { PublicKey } from "@solana/web3.js";
-import { Octokit } from "octokit";
 import { decimalToNumber } from "@/src/utils";
 import {
   BONK_MINT,
@@ -40,13 +37,15 @@ const BountyActions = () => {
   const {
     currentUser,
     currentBounty,
+    currentWallet,
     currentTutorialState,
     setCurrentTutorialState,
   } = useLancer();
   const [hoveredButton, setHoveredButton] = useState("none");
-  if (false) {
-    return <LoadingBar title="Loading On Chain Details" />;
-  }
+
+  // if (false) {
+  //   return <LoadingBar title="Loading On Chain Details" />;
+  // }
   if (currentBounty.state === BountyState.COMPLETE) {
     return (
       <div className="bounty-buttons" id="bounty-actions">
@@ -85,7 +84,7 @@ const BountyActions = () => {
             <RequestToSubmit />
           )}
         {currentBounty.isRequestedSubmitter && (
-          <Button disabled={true} id="request-pending">
+          <Button disabled id="request-pending">
             Request Pending
           </Button>
         )}
@@ -105,9 +104,7 @@ const BountyActions = () => {
                 setHoveredButton("none");
               }}
             >
-              <SubmitRequest
-              // disabled={currentBounty.pullRequests.length === 0}
-              />
+              <SubmitRequest disabled={!currentWallet.publicKey} />
             </div>
           )}
         {currentBounty.isCurrentSubmitter && !currentBounty.isCreator && (
@@ -210,7 +207,11 @@ const RequestToSubmit = () => {
   };
 
   return (
-    <Button onClick={onClick} id="apply-bounty-button">
+    <Button
+      onClick={onClick}
+      disabled={!currentWallet.publicKey}
+      id="apply-bounty-button"
+    >
       Apply
     </Button>
   );
@@ -230,7 +231,7 @@ export const ApproveSubmission = () => {
   const { programId: buddylinkProgramId } = useReferral();
   const { mutateAsync } = api.bountyUsers.update.useMutation();
 
-  const { currentAPIKey } = useLancer();
+  // const { currentAPIKey } = useLancer();
 
   const onClick = async () => {
     if (
@@ -377,7 +378,11 @@ export const ApproveSubmission = () => {
   };
 
   return (
-    <Button onClick={onClick} id="approve-bounty-button">
+    <Button
+      onClick={onClick}
+      disabled={!currentWallet.publicKey}
+      id="approve-bounty-button"
+    >
       Approve
     </Button>
   );
@@ -417,7 +422,11 @@ export const CancelEscrow = () => {
   };
 
   return (
-    <Button onClick={onClick} id="cancel-bounty-button">
+    <Button
+      onClick={onClick}
+      disabled={!currentWallet.publicKey}
+      id="cancel-bounty-button"
+    >
       Cancel
     </Button>
   );
@@ -468,7 +477,11 @@ export const DenySubmission = () => {
   };
 
   return (
-    <Button onClick={onClick} id="deny-submission-bounty-button">
+    <Button
+      onClick={onClick}
+      disabled={!currentWallet.publicKey}
+      id="deny-submission-bounty-button"
+    >
       Deny
     </Button>
   );
@@ -520,7 +533,11 @@ export const RequestChanges = () => {
   };
 
   return (
-    <Button onClick={onClick} id="request-changes-bounty-button">
+    <Button
+      onClick={onClick}
+      disabled={!currentWallet.publicKey}
+      id="request-changes-bounty-button"
+    >
       Request Changes
     </Button>
   );
@@ -657,7 +674,11 @@ export const VoteToCancel = () => {
   };
 
   return (
-    <Button onClick={onClick} id="vote-to-cancel-bounty-button">
+    <Button
+      onClick={onClick}
+      disabled={!currentWallet.publicKey}
+      id="vote-to-cancel-bounty-button"
+    >
       Vote To Cancel
     </Button>
   );
