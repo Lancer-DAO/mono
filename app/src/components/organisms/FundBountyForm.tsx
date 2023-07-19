@@ -84,7 +84,7 @@ const Form: React.FC<{ isAccountCreated: boolean }> = ({
       escrowId: currentBounty.escrow.id,
       amount: parseFloat(formData.fundingAmount),
     });
-    router.push(`/bounty?id=${currentBounty.id}`);
+    router.push(`/bounties/bounty?id=${currentBounty.id}`);
   };
 
   return (
