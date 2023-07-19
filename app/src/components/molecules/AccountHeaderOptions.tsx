@@ -1,4 +1,4 @@
-import { useLancer } from "@/src/providers";
+import { useUserWallet } from "@/src/providers";
 import { LinkButton, ApiKeyModal } from "@/components";
 import { useEffect, useRef, useState } from "react";
 import { useOutsideAlerter } from "@/src/hooks/useOutsideAlerter";
@@ -11,14 +11,11 @@ import {
   BOUNTY_ACTIONS_TUTORIAL_I_INITIAL_STATE,
   GITHUB_API_KEY_TUTORIAL_INITIAL_STATE,
 } from "@/src/constants/tutorials";
+import { useTutorial } from "@/src/providers/tutorialProvider";
 
 const AccountHeaderOptions = () => {
-  const {
-    currentUser,
-    currentAPIKey,
-    currentTutorialState,
-    setCurrentTutorialState,
-  } = useLancer();
+  const { currentUser } = useUserWallet();
+  const { currentTutorialState, setCurrentTutorialState } = useTutorial();
   const [hasExtension, setHasExtension] = useState(false);
   useEffect(() => {
     try {

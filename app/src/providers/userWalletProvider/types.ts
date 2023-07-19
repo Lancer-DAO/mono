@@ -19,29 +19,9 @@ export type ISSUE_LOAD_STATE =
   | "getting_contract"
   | "loaded";
 
-export interface ILancerContext {
+export interface IUserWalletContext {
   currentUser: CurrentUser;
-  issue: Issue;
-  issues: Issue[];
-  loginState: LOGIN_STATE;
-  issueLoadingState: ISSUE_LOAD_STATE;
   program: Program<MonoProgram>;
   provider: AnchorProvider;
   currentWallet: LancerWallet;
-  wallets: LancerWallet[];
-  currentBounty: Bounty;
-  currentAPIKey: APIKeyInfo;
-  currentTutorialState: Tutorial;
-  isRouterReady: boolean;
-  isMobile: boolean;
-  setCurrentTutorialState: (tutorial: Tutorial) => void;
-  setCurrentAPIKey: (apiKey: APIKeyInfo) => void;
-  setCurrentBounty: (bounty: Bounty) => void;
-  setIssue: (issue: Issue) => void;
-  setIssues: (issues: Issue[]) => void;
-  setWallets: (wallets: LancerWallet[]) => void;
-  setCurrentWallet: (wallets: LancerWallet) => void;
-  setLoginState: (state: LOGIN_STATE) => void;
-  setCurrentUser: (user: CurrentUser) => void;
-  setIssueLoadingState: (state: ISSUE_LOAD_STATE) => void;
 }

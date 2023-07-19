@@ -7,7 +7,7 @@ import {
   submitRequestFFA,
   voteToCancelFFA,
 } from "@/escrow/adapters";
-import { useLancer } from "@/src/providers";
+import { useUserWallet } from "@/src/providers";
 import {
   Contributor,
   BountyState,
@@ -34,15 +34,13 @@ import {
   BOUNTY_ACTIONS_TUTORIAL_II_INITIAL_STATE,
   BOUNTY_ACTIONS_TUTORIAL_I_INITIAL_STATE,
 } from "@/src/constants/tutorials";
+import { useBounty } from "@/src/providers/bountyProvider";
+import { useTutorial } from "@/src/providers/tutorialProvider";
 const underdogClient = createUnderdogClient({});
 
 const BountyActions = () => {
-  const {
-    currentUser,
-    currentBounty,
-    currentTutorialState,
-    setCurrentTutorialState,
-  } = useLancer();
+  const { currentBounty } = useBounty();
+  const { currentTutorialState } = useTutorial();
   const [hoveredButton, setHoveredButton] = useState("none");
   if (false) {
     return <LoadingBar title="Loading On Chain Details" />;
@@ -147,14 +145,10 @@ const BountyActions = () => {
 export default BountyActions;
 
 const RequestToSubmit = () => {
-  const {
-    currentUser,
-    currentBounty,
-    currentWallet,
-    setCurrentBounty,
-    currentTutorialState,
-    setCurrentTutorialState,
-  } = useLancer();
+  const { currentUser, currentWallet } = useUserWallet();
+
+  const { currentBounty, setCurrentBounty } = useBounty();
+  const { currentTutorialState, setCurrentTutorialState } = useTutorial();
   const { mutateAsync } = api.bountyUsers.update.useMutation();
 
   const { createReferralMember } = useReferral();
@@ -217,20 +211,12 @@ const RequestToSubmit = () => {
 };
 
 export const ApproveSubmission = () => {
-  const {
-    currentUser,
-    currentBounty,
-    provider,
-    program,
-    currentWallet,
-    setCurrentBounty,
-    currentTutorialState,
-    setCurrentTutorialState,
-  } = useLancer();
+  const { currentUser, currentWallet, program, provider } = useUserWallet();
+
+  const { currentBounty, setCurrentBounty } = useBounty();
+  const { currentTutorialState, setCurrentTutorialState } = useTutorial();
   const { programId: buddylinkProgramId } = useReferral();
   const { mutateAsync } = api.bountyUsers.update.useMutation();
-
-  const { currentAPIKey } = useLancer();
 
   const onClick = async () => {
     if (
@@ -384,14 +370,9 @@ export const ApproveSubmission = () => {
 };
 
 export const CancelEscrow = () => {
-  const {
-    currentUser,
-    currentBounty,
-    currentWallet,
-    provider,
-    program,
-    setCurrentBounty,
-  } = useLancer();
+  const { currentUser, currentWallet, program, provider } = useUserWallet();
+
+  const { currentBounty, setCurrentBounty } = useBounty();
   const { mutateAsync } = api.bountyUsers.update.useMutation();
   const onClick = async () => {
     // If we are the creator, then skip requesting and add self as approved
@@ -424,14 +405,9 @@ export const CancelEscrow = () => {
 };
 
 export const DenySubmission = () => {
-  const {
-    currentUser,
-    currentBounty,
-    currentWallet,
-    provider,
-    program,
-    setCurrentBounty,
-  } = useLancer();
+  const { currentUser, currentWallet, program, provider } = useUserWallet();
+
+  const { currentBounty, setCurrentBounty } = useBounty();
   const { mutateAsync } = api.bountyUsers.update.useMutation();
   const onClick = async () => {
     // If we are the creator, then skip requesting and add self as approved
@@ -475,14 +451,9 @@ export const DenySubmission = () => {
 };
 
 export const RequestChanges = () => {
-  const {
-    currentUser,
-    currentBounty,
-    currentWallet,
-    provider,
-    program,
-    setCurrentBounty,
-  } = useLancer();
+  const { currentUser, currentWallet, program, provider } = useUserWallet();
+
+  const { currentBounty, setCurrentBounty } = useBounty();
   const { mutateAsync } = api.bountyUsers.update.useMutation();
   const onClick = async () => {
     // If we are the creator, then skip requesting and add self as approved
@@ -527,17 +498,10 @@ export const RequestChanges = () => {
 };
 
 export const SubmitRequest = ({ disabled }: { disabled?: boolean }) => {
-  const {
-    currentUser,
-    currentBounty,
-    currentWallet,
-    provider,
-    program,
-    setCurrentBounty,
+  const { currentUser, currentWallet, program, provider } = useUserWallet();
 
-    currentTutorialState,
-    setCurrentTutorialState,
-  } = useLancer();
+  const { currentBounty, setCurrentBounty } = useBounty();
+  const { currentTutorialState, setCurrentTutorialState } = useTutorial();
   const { mutateAsync } = api.bountyUsers.update.useMutation();
   const onClick = async () => {
     // If we are the creator, then skip requesting and add self as approved
@@ -616,14 +580,9 @@ export const SubmitRequest = ({ disabled }: { disabled?: boolean }) => {
 };
 
 export const VoteToCancel = () => {
-  const {
-    currentUser,
-    currentBounty,
-    currentWallet,
-    provider,
-    program,
-    setCurrentBounty,
-  } = useLancer();
+  const { currentUser, currentWallet, program, provider } = useUserWallet();
+
+  const { currentBounty, setCurrentBounty } = useBounty();
   const { mutateAsync } = api.bountyUsers.update.useMutation();
   const onClick = async () => {
     // If we are the submitter, vote to cancel as submitter

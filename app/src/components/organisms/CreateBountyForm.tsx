@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { marked } from "marked";
 import { createFFA } from "@/escrow/adapters";
-import { useLancer } from "@/src/providers/lancerProvider";
+import { useUserWallet } from "@/src/providers/userWalletProvider";
 import classnames from "classnames";
 import { Button, LoadingBar } from "@/src/components";
 import { api } from "@/src/utils/api";
@@ -13,26 +13,22 @@ import { BONK_MINT, USDC_MINT } from "@/src/constants";
 import { IS_MAINNET } from "@/src/constants";
 import * as Prisma from "@prisma/client";
 import Image from "next/image";
+import { useBounty } from "@/src/providers/bountyProvider";
+import { useTutorial } from "@/src/providers/tutorialProvider";
 
 const Form: React.FC<{
   setFormSection: (section: FORM_SECTION) => void;
   createAccountPoll: (publicKey: PublicKey) => void;
 }> = ({ setFormSection, createAccountPoll }) => {
-  const {
-    currentWallet,
-    program,
-    provider,
-    currentUser,
-    setCurrentBounty,
-    currentTutorialState,
-    setCurrentTutorialState,
-  } = useLancer();
+  const { currentUser, currentWallet, program, provider } = useUserWallet();
+
+  const { setCurrentBounty } = useBounty();
+  const { currentTutorialState, setCurrentTutorialState } = useTutorial();
   const { mutateAsync } = api.bounties.createBounty.useMutation();
   const { mutateAsync: getMintsAPI } = api.mints.getMints.useMutation();
   const [creationType, setCreationType] = useState<"new" | "existing">("new");
   const [mint, setMint] = useState<Prisma.Mint>();
 
-  const [issue, setIssue] = useState<any>();
   const [formData, setFormData] = useState({
     organizationName: "",
     repositoryName: "",
@@ -47,9 +43,7 @@ const Form: React.FC<{
   const [mints, setMints] = useState<Prisma.Mint[]>([]);
   const [failedToGetRepos, setFailedToGetRepos] = useState(false);
   const [failedToCreateIssue, setFailedToCreateIssue] = useState(false);
-  const [issues, setIssues] = useState(null);
   const [octokit, setOctokit] = useState(null);
-  const { currentAPIKey } = useLancer();
 
   const [isPreview, setIsPreview] = useState(false);
   const [isSubmittingIssue, setIsSubmittingIssue] = useState(false);
@@ -68,28 +62,6 @@ const Form: React.FC<{
     getMints();
   }, []);
 
-  // useEffect(() => {
-  //   const getRepos = async () => {
-  //     try {
-  //       const octokit = new Octokit({
-  //         auth: currentAPIKey.token,
-  //       });
-  //       const octokitResponse = await octokit.request("GET /user/repos", {
-  //         type: "all",
-  //         per_page: 100,
-  //       });
-  //       setRepos(octokitResponse.data);
-  //       setOctokit(octokit);
-  //     } catch (error) {
-  //       setFailedToGetRepos(true);
-  //       setRepos([]);
-  //     }
-  //   };
-  //   if (currentAPIKey) {
-  //     getRepos();
-  //   }
-  // }, [currentAPIKey]);
-
   const createBounty = async () => {
     setIsSubmittingIssue(true);
     if (
@@ -103,26 +75,6 @@ const Form: React.FC<{
       });
     }
 
-    // let issueNumber = issue ? issue.number : null;
-    // const [organizationName, repositoryName] = repo.full_name.split("/");
-    // try {
-    //   if (creationType === "new") {
-    //     const octokitData = await octokit.request(
-    //       "POST /repos/{owner}/{repo}/issues",
-    //       {
-    //         owner: organizationName,
-    //         repo: repositoryName,
-    //         title: formData.issueTitle,
-    //         body: formData.issueDescription,
-    //       }
-    //     );
-    //     issueNumber = octokitData.data.number;
-    //   }
-    // } catch (error) {
-    //   setFailedToCreateIssue(true);
-    //   setIsSubmittingIssue(false);
-    //   return;
-    // }
     const mintKey = new PublicKey(mint.publicKey);
 
     const { timestamp, signature, escrowKey } = await createFFA(
@@ -149,32 +101,9 @@ const Form: React.FC<{
       network: IS_MAINNET ? "mainnet" : "devnet",
     });
 
-    // const issueResp = await createIssue({
-    //   number: issueNumber,
-    //   description: formData.issueDescription,
-    //   title: formData.issueTitle,
-
-    //   organizationName: repo ? repo.full_name.split("/")[0] : "Lancer-DAO",
-    //   repositoryName: repo ? repo.full_name.split("/")[1] : "github-app",
-    //   bountyId: bounty.id,
-    //   linkingMethod: creationType,
-    //   currentUserId: currentUser.id,
-    // });
     setFormSection("FUND");
 
     setCurrentBounty(bounty);
-  };
-
-  const getRepoIssues = async (_repo) => {
-    const octokitResponse = await octokit.request(
-      "GET /repos/{owner}/{repo}/issues",
-      {
-        owner: _repo.owner.login,
-        repo: _repo.name,
-      }
-    );
-
-    setIssues(octokitResponse.data);
   };
 
   const handleChange = (event) => {
@@ -187,11 +116,6 @@ const Form: React.FC<{
   const handleChangeMint = (mint: Prisma.Mint) => {
     const newMint = mints.find((_mint) => _mint.name === mint.name);
     setMint(newMint);
-  };
-
-  const handleChangeIssue = (issueNumber: number) => {
-    const issue = issues.find((_issue) => _issue.number === issueNumber);
-    setIssue(issue);
   };
 
   const handleCheckboxChange = (event) => {
@@ -233,93 +157,6 @@ const Form: React.FC<{
               New Lancer Quest
             </h2>
 
-            {/* <label>
-              Project<span className="color-red">*</span>
-            </label>
-            <div
-              id="w-node-_11ff66e2-bb63-3205-39c9-a48a569518d9-0ae9cdc2"
-              className="input-container-full-width"
-            >
-              {failedToGetRepos && (
-                <span className="color-red">
-                  THERE WAS A PROBLEM WITH YOUR GITHUB API TOKEN
-                </span>
-              )}
-              {!currentAPIKey && (
-                <span className="color-red">PLEASE SET YOUR API KEY</span>
-              )}
-              {!repos && currentAPIKey && !failedToGetRepos && (
-                <LoadingBar title="Loading Repositories" />
-              )}
-              {repos && (
-                <div
-                  data-delay="0"
-                  data-hover="false"
-                  id="w-node-b1521c3c-4fa1-4011-ae36-88dcb6e746fb-0ae9cdc2"
-                  className="w-dropdown"
-                  onClick={toggleOpenRepo}
-                >
-                  <main
-                    className="dropdown-toggle-2 w-dropdown-toggle"
-                    id="repo-dropdown-select"
-                  >
-                    {
-                      <>
-                        <div className="w-icon-dropdown-toggle"></div>
-                        <div>
-                          {repo ? (
-                            repo.full_name
-                          ) : (
-                            <div>
-                              Select Project{" "}
-                              <span className="color-red">* </span>
-                            </div>
-                          )}
-                        </div>
-                      </>
-                    }
-                  </main>
-                  {isOpenRepo && repos && (
-                    <div
-                      className="w-dropdown-list"
-                      onMouseLeave={() => setIsOpenRepo(false)}
-                    >
-                      {repos.map((project) => (
-                        <div
-                          onClick={() => handleChangeRepo(project.full_name)}
-                          key={project.full_name}
-                          className="w-dropdown-link"
-                        >
-                          {project.full_name}
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              )}
-            </div>
-            {repo && (
-              <div className="issue-creation-type">
-                <div
-                  className={classnames("form-subtitle hover-effect", {
-                    unselected: creationType !== "new",
-                  })}
-                  onClick={() => setCreationType("new")}
-                >
-                  Create a New GitHub Issue
-                </div>
-                <div>OR</div>
-                <div
-                  className={classnames("form-subtitle hover-effect", {
-                    unselected: creationType !== "existing",
-                  })}
-                  onClick={() => setCreationType("existing")}
-                >
-                  Link an Existing GitHub Issue
-                </div>
-              </div>
-            )} */}
-            {/* {repo && creationType === "new" && ( */}
             <>
               <div>
                 <label>
@@ -721,105 +558,6 @@ const Form: React.FC<{
                   : "Please connect your wallet"}
               </Button>
             </>
-            {/* )} */}
-            {/* {repo && creationType === "existing" && (
-              <>
-                <label>
-                  Issue<span className="color-red">*</span>
-                </label>
-                <div
-                  id="w-node-_11ff66e2-bb63-3205-39c9-a48a569518d9-0ae9cdc2"
-                  className="input-container-full-width"
-                >
-                  <div
-                    data-delay="0"
-                    data-hover="false"
-                    id="w-node-b1521c3c-4fa1-4011-ae36-88dcb6e746fb-0ae9cdc2"
-                    className="w-dropdown"
-                    onClick={toggleOpenIssue}
-                  >
-                    <main className="dropdown-toggle-2 w-dropdown-toggle">
-                      <div className="w-icon-dropdown-toggle"></div>
-                      <div>
-                        {issues ? (
-                          issue ? (
-                            `#${issue.number}: ${issue.title}`
-                          ) : (
-                            <div>
-                              Select Issue <span className="color-red">* </span>
-                            </div>
-                          )
-                        ) : (
-                          "Loading Issues"
-                        )}
-                      </div>
-                    </main>
-                    {isOpenIssue && issues && (
-                      <div
-                        className="w-dropdown-list"
-                        onMouseLeave={() => setIsOpenRepo(false)}
-                      >
-                        {issues.map((issue) => (
-                          <div
-                            onClick={() => handleChangeIssue(issue.number)}
-                            key={issue.number}
-                            className="w-dropdown-link"
-                          >
-                            {`#${issue.number}: ${issue.title}`}
-                          </div>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                </div>
-                <div>
-                  <label className="field-label-2">
-                    Est. Time to Completion<span className="color-red">*</span>
-                  </label>
-                  <input
-                    type="number"
-                    className="input w-input"
-                    name="estimatedTime"
-                    value={formData.estimatedTime}
-                    onChange={handleChange}
-                    placeholder="Ex. 3 (hours)"
-                    id="Issue-Description"
-                  />
-                </div>
-                <div>
-                  <label className="field-label">
-                    Coding Languages<span className="color-red">* </span>
-                  </label>
-                  <input
-                    type="text"
-                    className="input w-input"
-                    name="requirements"
-                    value={formData.requirements}
-                    onChange={handleRequirementsChange}
-                    placeholder="list seperated by commas"
-                    id="Job-Location-2"
-                  />
-                </div>
-
-                <Button
-                  disabled={
-                    failedToCreateIssue ||
-                    !issue ||
-                    !formData.estimatedTime ||
-                    !formData.requirements
-                  }
-                  disabledText={
-                    failedToCreateIssue
-                      ? "Failed to Create Issue"
-                      : "Please fill all required fields"
-                  }
-                  onClick={createBounty}
-                  id="create-bounty-button"
-                >
-                  {failedToCreateIssue ? "Failed to Create Issue" : "Submit"}
-                </Button>
-              </>
-            )} */}
           </div>
         </>
       </div>

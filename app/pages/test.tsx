@@ -6,7 +6,6 @@ import { useRouter } from "next/router";
 import { useEffect } from "react";
 import { api } from "@/src/utils/api";
 import { createFFA } from "@/escrow/adapters";
-import { useLancer } from "@/src/providers";
 import { PublicKey } from "@solana/web3.js";
 import { USDC_MINT } from "@/src/constants";
 

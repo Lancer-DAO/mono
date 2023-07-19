@@ -1,6 +1,6 @@
 import Head from "next/head";
 import { withPageAuthRequired } from "@auth0/nextjs-auth0";
-import { useLancer } from "@/src/providers";
+import { useUserWallet } from "@/src/providers";
 import dynamic from "next/dynamic";
 import {
   DefaultLayout,
@@ -37,6 +37,7 @@ import {
   PROFILE_TUTORIAL_INITIAL_STATE,
 } from "@/src/constants/tutorials";
 import { Key } from "react-feather";
+import { useTutorial } from "@/src/providers/tutorialProvider";
 dayjs.extend(relativeTime);
 
 const underdogClient = createUnderdogClient({});
@@ -57,13 +58,8 @@ export default function Home() {
 const Account: React.FC = () => {
   const router = useRouter();
 
-  const {
-    currentUser,
-    currentWallet,
-    currentTutorialState,
-    setCurrentTutorialState,
-    isMobile,
-  } = useLancer();
+  const { currentUser, currentWallet } = useUserWallet();
+  const { currentTutorialState, setCurrentTutorialState } = useTutorial();
   const [showCoinflow, setShowCoinflow] = useState(false);
   const [showTutorial, setShowTutorial] = useState(false);
   const [profileNFT, setProfileNFT] = useState<ProfileNFT>();
@@ -71,7 +67,6 @@ const Account: React.FC = () => {
   const { mutateAsync: getUser } = api.users.getUser.useMutation();
   const [account, setAccount] = useState<CurrentUser>();
   const [showModal, setShowModal] = useState(false);
-  const { currentAPIKey } = useLancer();
 
   const { mutateAsync: registerProfileNFT } =
     api.users.registerProfileNFT.useMutation();
@@ -225,15 +220,6 @@ const Account: React.FC = () => {
           <div className="account-page-wrapper">
             {/* <ApiKeyModal showModal={showModal} setShowModal={setShowModal} /> */}
 
-            {isMobile && (
-              <button
-                onClick={() => setShowModal(true)}
-                className="flex h-[48px] w-full gap-[10px] py-[6px] items-center justify-center border-b-gray-400 border-b-[1px] hover:bg-turquoise-500 text-gray-800 hover:text-white-100 transition-colors duration-300 ease-in-out"
-              >
-                <Key />
-                {currentAPIKey ? currentAPIKey.name : "Set API Key"}
-              </button>
-            )}
             {/* {currentUser?.githubLogin && (
             <div>GitHub User: {currentUser.githubLogin}</div>
           )}

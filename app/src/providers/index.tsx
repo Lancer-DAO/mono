@@ -9,12 +9,15 @@ import {
   WalletProvider,
 } from "@solana/wallet-adapter-react";
 import { WalletModalProvider } from "@solana/wallet-adapter-react-ui";
-import LancerProvider from "@/src/providers/lancerProvider";
 import { Web3AuthProvider } from "@/src/providers/web3authProvider";
+import AppContextProvider from "./appContextProvider";
+import BountyProvider from "./bountyProvider";
+import TutorialProvider from "./tutorialProvider";
+import UserWalletProvider from "./userWalletProvider";
 import { useRouter } from "next/router";
-import { IS_MAINNET, MAINNET_RPC } from "../constants";
+import { IS_CUSTODIAL, IS_MAINNET, MAINNET_RPC } from "../constants";
 import ReferralProvider from "./referralProvider";
-export * from "./lancerProvider";
+export * from "./userWalletProvider";
 
 export const AllProviders: React.FC<{ children: ReactNode }> = ({
   children,
@@ -46,12 +49,7 @@ export const AllProviders: React.FC<{ children: ReactNode }> = ({
     [IS_MAINNET]
   );
 
-  // return (
-  //   <Web3AuthProvider web3AuthNetwork="testnet">{children}</Web3AuthProvider>
-  // );
-
-  return (
-    // <UserProvider>
+  return IS_CUSTODIAL ? (
     <ConnectionProvider endpoint={endpoint}>
       <WalletProvider wallets={walletProviders} autoConnect>
         <WalletModalProvider>
@@ -61,6 +59,23 @@ export const AllProviders: React.FC<{ children: ReactNode }> = ({
         </WalletModalProvider>
       </WalletProvider>
     </ConnectionProvider>
-    // </UserProvider>
+  ) : (
+    <UserProvider>
+      <ConnectionProvider endpoint={endpoint}>
+        <WalletProvider wallets={walletProviders} autoConnect>
+          <WalletModalProvider>
+            <AppContextProvider>
+              <TutorialProvider>
+                <UserWalletProvider>
+                  <BountyProvider>
+                    <ReferralProvider>{children}</ReferralProvider>
+                  </BountyProvider>
+                </UserWalletProvider>
+              </TutorialProvider>
+            </AppContextProvider>
+          </WalletModalProvider>
+        </WalletProvider>
+      </ConnectionProvider>
+    </UserProvider>
   );
 };

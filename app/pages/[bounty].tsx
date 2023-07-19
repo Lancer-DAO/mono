@@ -4,7 +4,7 @@ import { BrowserRouter as Router } from "react-router-dom";
 import { decimalToNumber, getSolscanAddress } from "@/src/utils";
 import { BountyState } from "@/types";
 import { marked } from "marked";
-import { useLancer } from "@/src/providers/lancerProvider";
+import { useUserWallet } from "@/src/providers/userWalletProvider";
 import SubmitterSection from "@/src/components/molecules/SubmitterSection";
 import { Clock } from "react-feather";
 import USDC from "@/src/assets/USDC";
@@ -22,6 +22,7 @@ import { api } from "@/src/utils/api";
 dayjs.extend(localizedFormat);
 import { withPageAuthRequired } from "@auth0/nextjs-auth0";
 import Image from "next/image";
+import { useBounty } from "@/src/providers/bountyProvider";
 
 export const getServerSideProps = withPageAuthRequired();
 export default function Home() {
@@ -46,7 +47,8 @@ export default function Home() {
 }
 
 const Bounty: React.FC = () => {
-  const { currentUser, currentBounty, setCurrentBounty } = useLancer();
+  const { currentBounty, setCurrentBounty } = useBounty();
+  const { currentUser } = useUserWallet();
   const [pollId, setPollId] = useState(null);
   const [bountyAmount, setBountyAmount] = useState("");
   const router = useRouter();

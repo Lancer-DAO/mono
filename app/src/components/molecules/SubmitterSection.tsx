@@ -1,5 +1,5 @@
 import axios from "axios";
-import { useLancer } from "@/src/providers/lancerProvider";
+import { useUserWallet } from "@/src/providers/userWalletProvider";
 import {
   Contributor,
   BOUNTY_USER_RELATIONSHIP,
@@ -13,6 +13,8 @@ import { PublicKey } from "@solana/web3.js";
 import { api } from "@/src/utils/api";
 import { useReferral } from "@/src/providers/referralProvider";
 import { BOUNTY_ACTIONS_TUTORIAL_I_INITIAL_STATE } from "@/src/constants/tutorials";
+import { useBounty } from "@/src/providers/bountyProvider";
+import { useTutorial } from "@/src/providers/tutorialProvider";
 
 export type SubmitterSectionType = "approved" | "requested";
 interface SubmitterSectionProps {
@@ -26,16 +28,9 @@ const SubmitterSection: React.FC<SubmitterSectionProps> = ({
   type,
   index,
 }: SubmitterSectionProps) => {
-  const {
-    currentBounty,
-    currentWallet,
-    provider,
-    program,
-    currentUser,
-    setCurrentBounty,
-    currentTutorialState,
-    setCurrentTutorialState,
-  } = useLancer();
+  const { currentWallet, provider, program, currentUser } = useUserWallet();
+  const { currentBounty, setCurrentBounty } = useBounty();
+  const { currentTutorialState, setCurrentTutorialState } = useTutorial();
   const { mutateAsync } = api.bountyUsers.update.useMutation();
   const { getRemainingAccounts, getSubmitterReferrer } = useReferral();
 
