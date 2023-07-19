@@ -17,6 +17,7 @@ import { IS_MAINNET } from "@/src/constants";
 
 import { api } from "@/src/utils/api";
 import * as Prisma from "@prisma/client";
+import { useUserWallet } from "../userWalletProvider";
 const ORGANIZATION_NAME = "lancer";
 
 const CLIENT_NOT_SET = "Client is not initialized";
@@ -49,7 +50,7 @@ export interface Claimable {
 const DEVNET_PROGRAM_ID = "9zE4EQ5tJbEeMYwtS2w8KrSHTtTW4UPqwfbBSEkUrNCA";
 
 const ReferralProvider: FunctionComponent<IReferralProps> = ({ children }) => {
-  const { publicKey, sendTransaction } = useWallet();
+  const { currentWallet } = useUserWallet();
   const { connection } = useConnection();
 
   const [initialized, setInitialized] = useState(false);
@@ -63,6 +64,8 @@ const ReferralProvider: FunctionComponent<IReferralProps> = ({ children }) => {
   const { mutateAsync: getMintsAPI } = api.mints.getMints.useMutation();
   const { mutateAsync: addReferrer } = api.users.addReferrer.useMutation();
   const [mints, setMints] = useState<Prisma.Mint[]>([]);
+  const publicKey = currentWallet?.publicKey;
+  const sendTransaction = currentWallet?.sendTransaction;
   useEffect(() => {
     const getMints = async () => {
       const mints = await getMintsAPI();

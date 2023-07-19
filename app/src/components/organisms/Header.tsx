@@ -8,7 +8,6 @@ import {
 import { LinkButtonProps } from "@/src/components/atoms/LinkButton";
 import dynamic from "next/dynamic";
 import { HelpCircle } from "react-feather";
-import { useUserWallet } from "@/src/providers";
 import { useState } from "react";
 import { PROFILE_TUTORIAL_INITIAL_STATE } from "@/src/constants/tutorials";
 import { useTutorial } from "@/src/providers/tutorialProvider";

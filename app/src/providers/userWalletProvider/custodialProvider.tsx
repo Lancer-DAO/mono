@@ -171,10 +171,11 @@ export const CustodialWalletProvider: FunctionComponent<IWeb3AuthState> = ({
   }, [user]);
 
   useEffect(() => {
-    if (!isLoading && !user) {
+    console.log("maybeLogin", isLoading, user);
+    if (!isLoading && !user && isWeb3AuthInit) {
       loginRWA(WALLET_ADAPTERS.OPENLOGIN, "jwt", jwt);
     }
-  }, [isLoading, user]);
+  }, [isLoading, user, isWeb3AuthInit]);
 
   useEffect(() => {
     const subscribeAuthEvents = (web3auth: Web3AuthNoModal) => {
@@ -256,6 +257,7 @@ export const CustodialWalletProvider: FunctionComponent<IWeb3AuthState> = ({
     loginProvider: LOGIN_PROVIDER_TYPE,
     jwt_token: string
   ) => {
+    console.log("logging in");
     try {
       setIsLoading(true);
       if (!web3Auth) {
