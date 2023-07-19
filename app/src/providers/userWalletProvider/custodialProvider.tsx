@@ -45,6 +45,7 @@ import { AnchorProvider, Program } from "@project-serum/anchor";
 import { IUserWalletContext } from "./types";
 import { api } from "@/src/utils/api";
 import { useRouter } from "next/router";
+import { getCookie, setCookie } from "cookies-next";
 const SOLANA_CHAIN_CONFIG = {
   solana: {
     chainNamespace: CHAIN_NAMESPACES.SOLANA,
@@ -110,10 +111,16 @@ export const CustodialWalletProvider: FunctionComponent<IWeb3AuthState> = ({
   const [program, setProgram] = useState<Program<MonoProgram>>();
 
   useEffect(() => {
-    const search = useRouter().query;
-    const jwt = search.jwt == null ? "" : (search.jwt as string);
-    const token = jwt == null ? "" : jwt;
-    setJwt(token);
+    const maybeJwt = getCookie("jwt");
+    if (maybeJwt) {
+      setJwt(maybeJwt as string);
+    } else {
+      const search = router.query;
+      const jwt = search.jwt == null ? "" : (search.jwt as string);
+      const token = jwt == null ? "" : jwt;
+      setCookie("jwt", token);
+      setJwt(token);
+    }
   }, [router.isReady]);
 
   const setWalletProvider = useCallback(
@@ -122,6 +129,7 @@ export const CustodialWalletProvider: FunctionComponent<IWeb3AuthState> = ({
       const solanaWallet = new SolanaWallet(web3authProvider);
       setTimeout(async () => {
         const acc = await solanaWallet.requestAccounts();
+        console.log("acc", acc);
         const wallet = {
           ...walletProvider,
           connected: true,
@@ -139,6 +147,7 @@ export const CustodialWalletProvider: FunctionComponent<IWeb3AuthState> = ({
         setProvider(provider);
         setProgram(program);
         setWeb3AuthProvider(web3authProvider);
+        console.log("ready");
       }, 1000);
     },
     []
@@ -194,6 +203,7 @@ export const CustodialWalletProvider: FunctionComponent<IWeb3AuthState> = ({
     const currentChainConfig = SOLANA_CHAIN_CONFIG.solana;
 
     async function init() {
+      console.log("init");
       try {
         setIsLoading(true);
         // get your client id from https://dashboard.web3auth.io by registering a plug and play application.
@@ -228,8 +238,10 @@ export const CustodialWalletProvider: FunctionComponent<IWeb3AuthState> = ({
         });
         web3AuthInstance.configureAdapter(adapter);
         await web3AuthInstance.init();
+        debugger;
         setWeb3Auth(web3AuthInstance);
         setweb3authinit(true);
+        console.log("initialized");
       } catch (error) {
         console.error(error);
       } finally {

@@ -540,8 +540,9 @@ const Form: React.FC<{
                 disabled={
                   failedToCreateIssue ||
                   !formData.estimatedTime ||
-                  !formData.requirements ||
-                  !currentWallet
+                  !formData.requirements
+                  // ||
+                  // !currentWallet
                 }
                 disabledText={
                   failedToCreateIssue
