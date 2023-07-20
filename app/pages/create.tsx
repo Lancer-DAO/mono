@@ -2,9 +2,9 @@ import Head from "next/head";
 
 import { withPageAuthRequired } from "@auth0/nextjs-auth0";
 export const getServerSideProps = withPageAuthRequired();
-
+import Header from "@/src/components/organisms/Header";
 import { useState } from "react";
-
+import styles from "./account/style.module.css";
 import { useLancer } from "@/src/providers";
 import {
   DefaultLayout,
@@ -12,7 +12,11 @@ import {
   FundBountyForm,
 } from "@/src/components/";
 import { PublicKey } from "@solana/web3.js";
-
+import { LinkButtonProps } from "@/src/components/atoms/LinkButton";  
+const HEADER_LINKS: LinkButtonProps[] = [
+  { href: "/create2", children: "New Bounty", id: "create-bounty-link" },
+  { href: "/bounties", children: "Bounties", id: "bounties-link" },
+];
 export type FORM_SECTION = "CREATE" | "FUND";
 
 export default function Home() {
@@ -39,45 +43,79 @@ function App() {
     });
   };
   return (
-    <div>
-      <DefaultLayout>
-        <div className="create-issue-wrapper">
-          <div
-            id="w-node-_8ffcb42d-e16e-0c3e-7b25-93b4dbf873ae-0ae9cdc2"
-            className="form-text-container"
-          >
-            <h1
-              data-w-id="3f54d410-1b35-353e-143c-2d9fcf61c440"
-              className="heading-size-1"
-            >
-              Fund a Github Issue with a Lancer Bounty
-            </h1>
-            <p
-              data-w-id="e4920e8f-9360-7b18-dba3-32770e1bf1b4"
-              className="paragraph"
-            >
-              By funding an issue with Lancer, you are outsourcing a developer
-              task in one of two ways. The first is internally to your team or a
-              free-lancer and the other is a public bounty to our network of
-              developers. <br />
-              <br />
-              <span className="bold">
-                The more clear you are with your descriptions, the better Lancer
-                is at finding the right developer to solve your issue.
-              </span>
-            </p>
-          </div>
-          {formSection === "CREATE" && (
-            <CreateBountyForm
-              setFormSection={setFormSection}
-              createAccountPoll={createAccountPoll}
-            />
-          )}
-          {formSection === "FUND" && (
-            <FundBountyForm isAccountCreated={isAccountCreated} />
-          )}
+    <div className={styles.create}>
+      <Header />
+
+      <div className={styles.MainC} >
+        <div className={styles.wrps}>
+          <p className={styles.sen}>Lets get some work done</p>
+          <p className={styles.sub}>To post a new bounty, import an existing Git Repository.</p>
         </div>
-      </DefaultLayout>
+
+        <div className={styles.area}>
+          <p className={styles.sen2}>Import Git Repository</p>
+          <div className={styles.search}>
+            <div className={styles.change}>
+              <img src="https://media.discordapp.net/attachments/874259441384574976/1130144500090671114/image.png?width=31&height=31" alt="" className={styles.git} />
+              <p className={styles.repo}>JackStuart</p>
+            </div>
+            <div className={styles.sc}>
+              <img src="https://media.discordapp.net/attachments/874259441384574976/1130555471091216384/image.png?width=45&height=45" alt="" className={styles.git} />
+              Search...
+            </div>
+          </div>
+
+
+
+          <div className={styles.repoTable}>
+
+          <div className={styles.row}>
+              <div className={styles.right}>
+                <img src="https://media.discordapp.net/attachments/874259441384574976/1130919952480731186/image.png?width=49&height=50" alt="" className={styles.repoLogo} />
+                <p className={styles.repoName}>project-alpha</p>
+                <img src="https://media.discordapp.net/attachments/874259441384574976/1130923634341466202/image.png?width=31&height=32" alt="" className={styles.ifLocked} />
+                <p className={styles.dot}>.</p>
+                <p className={styles.days}>4d ago</p>
+              </div>
+
+             <a href="/create2"> <button className={styles.import}>Import</button></a>
+            </div><div className={styles.row}>
+              <div className={styles.right}>
+                <img src="https://media.discordapp.net/attachments/874259441384574976/1130919952480731186/image.png?width=49&height=50" alt="" className={styles.repoLogo} />
+                <p className={styles.repoName}>project-alpha</p>
+                <img src="https://media.discordapp.net/attachments/874259441384574976/1130923634341466202/image.png?width=31&height=32" alt="" className={styles.ifLocked} />
+                <p className={styles.dot}>.</p>
+                <p className={styles.days}>4d ago</p>
+              </div>
+
+             <a href="/create2"> <button className={styles.import}>Import</button></a>
+            </div><div className={styles.row}>
+              <div className={styles.right}>
+                <img src="https://media.discordapp.net/attachments/874259441384574976/1130919952480731186/image.png?width=49&height=50" alt="" className={styles.repoLogo} />
+                <p className={styles.repoName}>project-alpha</p>
+                <img src="https://media.discordapp.net/attachments/874259441384574976/1130923634341466202/image.png?width=31&height=32" alt="" className={styles.ifLocked} />
+                <p className={styles.dot}>.</p>
+                <p className={styles.days}>4d ago</p>
+              </div>
+
+             <a href="/create2"> <button className={styles.import}>Import</button></a>
+            </div>
+            
+            <div className={styles.row}>
+              <div className={styles.right}>
+                <img src="https://media.discordapp.net/attachments/874259441384574976/1130919952480731186/image.png?width=49&height=50" alt="" className={styles.repoLogo} />
+                <p className={styles.repoName}>project-alpha</p>
+                <img src="https://media.discordapp.net/attachments/874259441384574976/1130923634341466202/image.png?width=31&height=32" alt="" className={styles.ifLocked} />
+                <p className={styles.dot}>.</p>
+                <p className={styles.days}>4d ago</p>
+              </div>
+
+             <a href="/create2"> <button className={styles.import}>Import</button></a>
+            </div>
+          </div>
+
+        </div>
+      </div>
     </div>
   );
 }

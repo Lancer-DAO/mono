@@ -63,9 +63,12 @@ export const Header = () => {
           >
 
           </div>
-
+          <Link
+          href="/create"
+          className="relative float-left text-blue-500 transition-colors duration-400 ease-in-out hover:text-blue-600 no-underline"
+        >Create</Link>
           <AccountHeaderOptions />
-         
+       
         
         </div>
       </div>
