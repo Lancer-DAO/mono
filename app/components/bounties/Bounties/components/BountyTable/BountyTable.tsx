@@ -1,7 +1,7 @@
 import { TABLE_BOUNTY_STATES } from "@/src/constants";
 import { getUniqueItems } from "@/src/utils";
 import { useState } from "react";
-import { useLancer } from "@/src/providers";
+import { useUserWallet } from "@/src/providers";
 import { useEffect } from "react";
 import { LoadingBar } from "@/components";
 import { api } from "@/src/utils/api";
@@ -27,7 +27,7 @@ export type Filters = {
 };
 
 const BountyList: React.FC<{}> = () => {
-  const { currentUser } = useLancer();
+  const { currentUser } = useUserWallet();
   const router = useRouter();
   const { mutateAsync: getBounties } =
     api.bounties.getAllBounties.useMutation();

@@ -1,44 +1,21 @@
 import { prisma } from "@/server/db";
 import { protectedProcedure } from "../../trpc";
 import { z } from "zod";
-import * as helpers from "@/prisma/helpers";
+import * as queries from "@/prisma/queries";
 
 export const addReferrer = protectedProcedure
   .input(
     z.object({
-      walletId: z.number(),
-      referrerId: z.number(),
+      refferralTreasuryKey: z.string(),
     })
   )
-  .mutation(async ({ ctx, input: { walletId, referrerId } }) => {
+  .mutation(async ({ ctx, input: { refferralTreasuryKey } }) => {
     const { id } = ctx.user;
-    const existingReferrer = await prisma.referrerReferree.findFirst({
-      where: {
-        referrerid: referrerId,
-        referreeid: id,
-      },
-    });
+    const existingReferrer = await queries.referrerReferree.create(
+      id,
+      refferralTreasuryKey
+    );
 
-    if (existingReferrer) {
-      throw new Error("You already have this referrer");
-    }
-
-    await prisma.user.update({
-      where: {
-        id,
-      },
-      data: {
-        referrers: {
-          create: {
-            referrerid: referrerId,
-            walletid: walletId,
-            relations: "referrer-referree-normal",
-          },
-        },
-        refferralTreasuryKey: "UPDATE-ME",
-      },
-    });
-
-    const updatedUser = await helpers.getUserById(id);
+    const updatedUser = await queries.user.getById(id);
     return updatedUser;
   });

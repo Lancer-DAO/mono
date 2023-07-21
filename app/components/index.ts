@@ -1,17 +1,24 @@
 import dynamic from "next/dynamic";
 
-// Atoms
+// @icons
+const Logo = dynamic(() => import("./@icons/Logo"));
+const PhantomLogo = dynamic(() => import("./@icons/PhantomLogo"));
+const USDC = dynamic(() => import("./@icons/USDC"));
+
+// atoms
 const Button = dynamic(() => import("./atoms/Button"));
 const CoinflowOfframp = dynamic(() => import("./atoms/CoinflowOfframp"));
 const ContributorInfo = dynamic(() => import("./atoms/ContributorInfo"));
 const LinkButton = dynamic(() => import("./atoms/LinkButton"));
 const LoadingBar = dynamic(() => import("./atoms/LoadingBar"));
+const ProgressBar = dynamic(() => import("./atoms/progressBar"));
 const PubKey = dynamic(() => import("./atoms/PubKey"));
 
-// Molecules
+// molecules
 const AccountHeaderOptions = dynamic(
   () => import("./molecules/AccountHeaderOptions")
 );
+const AddReferrerModal = dynamic(() => import("./molecules/AddReferrerModal"));
 const ApiKeyModal = dynamic(() => import("./molecules/ApiKeyModal"));
 const BountyNFTCard = dynamic(() => import("./molecules/BountyNFTCard"));
 const CoinflowFund = dynamic(() => import("./molecules/CoinflowFund"));
@@ -20,43 +27,63 @@ const MultiSelectDropdown = dynamic(
 );
 const ProfileNFTCard = dynamic(() => import("./molecules/ProfileNFTCard"));
 const RangeSlider = dynamic(() => import("./molecules/RangeSlider"));
-const SubmitterSection = dynamic(() => import("./bounties/Bounty/components/SubmitterSection"));
+const SubmitterSection = dynamic(
+  () => import("./bounties/Bounty/components/SubmitterSection")
+);
 const TutorialsModal = dynamic(() => import("./molecules/TutorialsModal"));
 const WalletInfo = dynamic(() => import("./molecules/WalletInfo"));
 
 // Organisms
 const BountyFilters = dynamic(
-  () => import("./bounties/Bounties/components/BountyTable/components/BountyFilters")
+  () =>
+    import(
+      "./bounties/Bounties/components/BountyTable/components/BountyFilters"
+    )
 );
+// organisms
 const CreateBountyForm = dynamic(() => import("./organisms/CreateBountyForm"));
 const FundBountyForm = dynamic(() => import("./organisms/FundBountyForm"));
 const Header = dynamic(() => import("./organisms/Header"));
 const JoyrideWrapper = dynamic(() => import("./organisms/JoyrideWrapper"));
 
-// Templates
+// templates
 const DefaultLayout = dynamic(() => import("./templates/DefaultLayout"));
 
 export {
+  // @icons
+  Logo,
+  PhantomLogo,
+  USDC,
+
+  // atoms
+  Button,
+  CoinflowOfframp,
   ContributorInfo,
   LinkButton,
-  Header,
-  DefaultLayout,
   LoadingBar,
-  ApiKeyModal,
-  ProfileNFTCard,
-  CoinflowOfframp,
-  Button,
+  ProgressBar,
   PubKey,
+
+  // molecules
+  AccountHeaderOptions,
+  AddReferrerModal,
+  ApiKeyModal,
   BountyNFTCard,
+  CoinflowFund,
   MultiSelectDropdown,
+  ProfileNFTCard,
   RangeSlider,
+  SubmitterSection,
+  TutorialsModal,
   WalletInfo,
+
+  // organisms
   BountyFilters,
   CreateBountyForm,
   FundBountyForm,
-  CoinflowFund,
-  SubmitterSection,
+  Header,
   JoyrideWrapper,
-  AccountHeaderOptions,
-  TutorialsModal,
+
+  // templates
+  DefaultLayout,
 };

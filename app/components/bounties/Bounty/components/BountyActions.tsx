@@ -1,24 +1,21 @@
 import { Button, LoadingBar } from "@/components";
 import {
-  addSubmitterFFA,
+  // addSubmitterFFA,
   approveRequestFFA,
   cancelFFA,
   denyRequestFFA,
   submitRequestFFA,
   voteToCancelFFA,
 } from "@/escrow/adapters";
-import { useLancer } from "@/src/providers";
+import { useUserWallet } from "@/src/providers";
 import {
-  Contributor,
+  // Contributor,
   BountyState,
   BOUNTY_USER_RELATIONSHIP,
 } from "@/src/types";
-import axios from "axios";
-import classNames from "classnames";
 import { useState } from "react";
 import { api } from "@/src/utils/api";
 import { PublicKey } from "@solana/web3.js";
-import { Octokit } from "octokit";
 import { decimalToNumber } from "@/src/utils";
 import {
   BONK_MINT,
@@ -34,19 +31,19 @@ import {
   BOUNTY_ACTIONS_TUTORIAL_II_INITIAL_STATE,
   BOUNTY_ACTIONS_TUTORIAL_I_INITIAL_STATE,
 } from "@/src/constants/tutorials";
+import { useBounty } from "@/src/providers/bountyProvider";
+import { useTutorial } from "@/src/providers/tutorialProvider";
 const underdogClient = createUnderdogClient({});
 
 const BountyActions = () => {
-  const {
-    currentUser,
-    currentBounty,
-    currentTutorialState,
-    setCurrentTutorialState,
-  } = useLancer();
+  const { currentBounty } = useBounty();
+  const { currentTutorialState } = useTutorial();
+  const { currentWallet } = useUserWallet();
   const [hoveredButton, setHoveredButton] = useState("none");
-  if (false) {
-    return <LoadingBar title="Loading On Chain Details" />;
-  }
+
+  // if (false) {
+  //   return <LoadingBar title="Loading On Chain Details" />;
+  // }
   if (currentBounty.state === BountyState.COMPLETE) {
     return (
       <div className="bounty-buttons" id="bounty-actions">
@@ -85,7 +82,7 @@ const BountyActions = () => {
             <RequestToSubmit />
           )}
         {currentBounty.isRequestedSubmitter && (
-          <Button disabled={true} id="request-pending">
+          <Button disabled id="request-pending">
             Request Pending
           </Button>
         )}
@@ -105,9 +102,7 @@ const BountyActions = () => {
                 setHoveredButton("none");
               }}
             >
-              <SubmitRequest
-              // disabled={currentBounty.pullRequests.length === 0}
-              />
+              <SubmitRequest disabled={!currentWallet.publicKey} />
             </div>
           )}
         {currentBounty.isCurrentSubmitter && !currentBounty.isCreator && (
@@ -147,15 +142,11 @@ const BountyActions = () => {
 export default BountyActions;
 
 const RequestToSubmit = () => {
-  const {
-    currentUser,
-    currentBounty,
-    currentWallet,
-    setCurrentBounty,
-    currentTutorialState,
-    setCurrentTutorialState,
-  } = useLancer();
-  const { mutateAsync } = api.bounties.updateBountyUser.useMutation();
+  const { currentUser, currentWallet } = useUserWallet();
+
+  const { currentBounty, setCurrentBounty } = useBounty();
+  const { currentTutorialState, setCurrentTutorialState } = useTutorial();
+  const { mutateAsync } = api.bountyUsers.update.useMutation();
 
   const { createReferralMember } = useReferral();
 
@@ -210,27 +201,23 @@ const RequestToSubmit = () => {
   };
 
   return (
-    <Button onClick={onClick} id="apply-bounty-button">
+    <Button
+      onClick={onClick}
+      disabled={!currentWallet.publicKey}
+      id="apply-bounty-button"
+    >
       Apply
     </Button>
   );
 };
 
 export const ApproveSubmission = () => {
-  const {
-    currentUser,
-    currentBounty,
-    provider,
-    program,
-    currentWallet,
-    setCurrentBounty,
-    currentTutorialState,
-    setCurrentTutorialState,
-  } = useLancer();
-  const { programId: buddylinkProgramId } = useReferral();
-  const { mutateAsync } = api.bounties.updateBountyUser.useMutation();
+  const { currentUser, currentWallet, program, provider } = useUserWallet();
 
-  const { currentAPIKey } = useLancer();
+  const { currentBounty, setCurrentBounty } = useBounty();
+  const { currentTutorialState, setCurrentTutorialState } = useTutorial();
+  const { programId: buddylinkProgramId } = useReferral();
+  const { mutateAsync } = api.bountyUsers.update.useMutation();
 
   const onClick = async () => {
     if (
@@ -377,22 +364,21 @@ export const ApproveSubmission = () => {
   };
 
   return (
-    <Button onClick={onClick} id="approve-bounty-button">
+    <Button
+      onClick={onClick}
+      disabled={!currentWallet.publicKey}
+      id="approve-bounty-button"
+    >
       Approve
     </Button>
   );
 };
 
 export const CancelEscrow = () => {
-  const {
-    currentUser,
-    currentBounty,
-    currentWallet,
-    provider,
-    program,
-    setCurrentBounty,
-  } = useLancer();
-  const { mutateAsync } = api.bounties.updateBountyUser.useMutation();
+  const { currentUser, currentWallet, program, provider } = useUserWallet();
+
+  const { currentBounty, setCurrentBounty } = useBounty();
+  const { mutateAsync } = api.bountyUsers.update.useMutation();
   const onClick = async () => {
     // If we are the creator, then skip requesting and add self as approved
     const signature = await cancelFFA(
@@ -417,22 +403,21 @@ export const CancelEscrow = () => {
   };
 
   return (
-    <Button onClick={onClick} id="cancel-bounty-button">
+    <Button
+      onClick={onClick}
+      disabled={!currentWallet.publicKey}
+      id="cancel-bounty-button"
+    >
       Cancel
     </Button>
   );
 };
 
 export const DenySubmission = () => {
-  const {
-    currentUser,
-    currentBounty,
-    currentWallet,
-    provider,
-    program,
-    setCurrentBounty,
-  } = useLancer();
-  const { mutateAsync } = api.bounties.updateBountyUser.useMutation();
+  const { currentUser, currentWallet, program, provider } = useUserWallet();
+
+  const { currentBounty, setCurrentBounty } = useBounty();
+  const { mutateAsync } = api.bountyUsers.update.useMutation();
   const onClick = async () => {
     // If we are the creator, then skip requesting and add self as approved
     const signature = await denyRequestFFA(
@@ -468,22 +453,21 @@ export const DenySubmission = () => {
   };
 
   return (
-    <Button onClick={onClick} id="deny-submission-bounty-button">
+    <Button
+      onClick={onClick}
+      disabled={!currentWallet.publicKey}
+      id="deny-submission-bounty-button"
+    >
       Deny
     </Button>
   );
 };
 
 export const RequestChanges = () => {
-  const {
-    currentUser,
-    currentBounty,
-    currentWallet,
-    provider,
-    program,
-    setCurrentBounty,
-  } = useLancer();
-  const { mutateAsync } = api.bounties.updateBountyUser.useMutation();
+  const { currentUser, currentWallet, program, provider } = useUserWallet();
+
+  const { currentBounty, setCurrentBounty } = useBounty();
+  const { mutateAsync } = api.bountyUsers.update.useMutation();
   const onClick = async () => {
     // If we are the creator, then skip requesting and add self as approved
     const signature = await denyRequestFFA(
@@ -520,25 +504,22 @@ export const RequestChanges = () => {
   };
 
   return (
-    <Button onClick={onClick} id="request-changes-bounty-button">
+    <Button
+      onClick={onClick}
+      disabled={!currentWallet.publicKey}
+      id="request-changes-bounty-button"
+    >
       Request Changes
     </Button>
   );
 };
 
 export const SubmitRequest = ({ disabled }: { disabled?: boolean }) => {
-  const {
-    currentUser,
-    currentBounty,
-    currentWallet,
-    provider,
-    program,
-    setCurrentBounty,
+  const { currentUser, currentWallet, program, provider } = useUserWallet();
 
-    currentTutorialState,
-    setCurrentTutorialState,
-  } = useLancer();
-  const { mutateAsync } = api.bounties.updateBountyUser.useMutation();
+  const { currentBounty, setCurrentBounty } = useBounty();
+  const { currentTutorialState, setCurrentTutorialState } = useTutorial();
+  const { mutateAsync } = api.bountyUsers.update.useMutation();
   const onClick = async () => {
     // If we are the creator, then skip requesting and add self as approved
     if (
@@ -616,15 +597,10 @@ export const SubmitRequest = ({ disabled }: { disabled?: boolean }) => {
 };
 
 export const VoteToCancel = () => {
-  const {
-    currentUser,
-    currentBounty,
-    currentWallet,
-    provider,
-    program,
-    setCurrentBounty,
-  } = useLancer();
-  const { mutateAsync } = api.bounties.updateBountyUser.useMutation();
+  const { currentUser, currentWallet, program, provider } = useUserWallet();
+
+  const { currentBounty, setCurrentBounty } = useBounty();
+  const { mutateAsync } = api.bountyUsers.update.useMutation();
   const onClick = async () => {
     // If we are the submitter, vote to cancel as submitter
     let signature = "";
@@ -657,7 +633,11 @@ export const VoteToCancel = () => {
   };
 
   return (
-    <Button onClick={onClick} id="vote-to-cancel-bounty-button">
+    <Button
+      onClick={onClick}
+      disabled={!currentWallet.publicKey}
+      id="vote-to-cancel-bounty-button"
+    >
       Vote To Cancel
     </Button>
   );

@@ -17,6 +17,7 @@ import { IS_MAINNET } from "@/src/constants";
 
 import { api } from "@/src/utils/api";
 import * as Prisma from "@prisma/client";
+import { useUserWallet } from "../userWalletProvider";
 const ORGANIZATION_NAME = "lancer";
 
 const CLIENT_NOT_SET = "Client is not initialized";
@@ -49,7 +50,7 @@ export interface Claimable {
 const DEVNET_PROGRAM_ID = "9zE4EQ5tJbEeMYwtS2w8KrSHTtTW4UPqwfbBSEkUrNCA";
 
 const ReferralProvider: FunctionComponent<IReferralProps> = ({ children }) => {
-  const { publicKey, sendTransaction } = useWallet();
+  const { currentWallet } = useUserWallet();
   const { connection } = useConnection();
 
   const [initialized, setInitialized] = useState(false);
@@ -61,7 +62,10 @@ const ReferralProvider: FunctionComponent<IReferralProps> = ({ children }) => {
   const [cachedReferrer, setCachedReferrer] = useState("");
   const [programId, setProgramId] = useState<PublicKey>(PublicKey.default);
   const { mutateAsync: getMintsAPI } = api.mints.getMints.useMutation();
+  const { mutateAsync: addReferrer } = api.users.addReferrer.useMutation();
   const [mints, setMints] = useState<Prisma.Mint[]>([]);
+  const publicKey = currentWallet?.publicKey;
+  const sendTransaction = currentWallet?.sendTransaction;
   useEffect(() => {
     const getMints = async () => {
       const mints = await getMintsAPI();
@@ -164,7 +168,6 @@ const ReferralProvider: FunctionComponent<IReferralProps> = ({ children }) => {
             const treasuryRewards = await client.treasury.getByPDA(
               treasuryRewardsPDA
             );
-            debugger;
             if (!treasuryRewards) {
               instructions.push(
                 ...(await client.initialize.createTreasuryByBuddyPDA(
@@ -228,7 +231,6 @@ const ReferralProvider: FunctionComponent<IReferralProps> = ({ children }) => {
           blockhash: blockhash,
           lastValidBlockHeight: lastValidBlockHeight,
         };
-        debugger;
 
         const transaction = new Transaction(txInfo).add(...instructions);
         const signature = await sendTransaction(transaction, connection);
@@ -236,6 +238,7 @@ const ReferralProvider: FunctionComponent<IReferralProps> = ({ children }) => {
 
         await handleFetches();
         localStorage.removeItem("referrer");
+        await addReferrer({ refferralTreasuryKey: cachedReferrer });
 
         return { txId: signature, memberPDA };
       } catch (e) {
@@ -293,6 +296,11 @@ const ReferralProvider: FunctionComponent<IReferralProps> = ({ children }) => {
           isSigner: false,
         },
         {
+          pubkey: remainingAccounts.buddyTreasury,
+          isWritable: true,
+          isSigner: false,
+        },
+        {
           pubkey: remainingAccounts.memberPDA,
           isWritable: false,
           isSigner: false,
@@ -336,7 +344,6 @@ const ReferralProvider: FunctionComponent<IReferralProps> = ({ children }) => {
       );
 
       const buddyProfile = await client.buddy.getProfile(submitter);
-      debugger;
       if (buddyProfile) {
         const treasuryPDA = client.pda.getTreasuryPDA(
           [buddyProfile.account.pda],

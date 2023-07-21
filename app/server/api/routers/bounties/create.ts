@@ -1,7 +1,7 @@
 import { prisma } from "@/server/db";
 import { protectedProcedure } from "../../trpc";
 import { z } from "zod";
-import * as helpers from "@/prisma/helpers";
+import * as queries from "@/prisma/queries";
 
 export const createBounty = protectedProcedure
   .input(
@@ -12,12 +12,9 @@ export const createBounty = protectedProcedure
       isPrivate: z.boolean(),
       title: z.string(),
       tags: z.array(z.string()),
-      organizationName: z.string(),
-      repositoryName: z.string(),
       publicKey: z.string(),
       escrowKey: z.string(),
       transactionSignature: z.string(),
-      provider: z.string(),
       timestamp: z.string(),
       chainName: z.string(),
       network: z.string(),
@@ -33,34 +30,26 @@ export const createBounty = protectedProcedure
         isPrivate,
         title,
         tags,
-        organizationName,
-        repositoryName,
         publicKey,
         escrowKey,
         transactionSignature,
-        provider,
         timestamp,
         chainName,
         network,
         mint,
       },
     }) => {
-      const user = await helpers.getUser(email);
-      const wallet = await helpers.getOrCreateWallet(user, publicKey);
-      // const repository = await helpers.getOrCreateRepository(
-      //   repositoryName,
-      //   organizationName,
-      //   isPrivateRepo
-      // );
-      const chain = await helpers.getOrCreateChain(chainName, network);
-      const escrow = await helpers.createEscrow(
+      const user = await queries.user.getByEmail(email);
+      const wallet = await queries.wallet.getOrCreate(user, publicKey);
+      const chain = await queries.chain.getOrCreate(chainName, network);
+      const escrow = await queries.escrow.create(
         timestamp,
         escrowKey,
         chain,
         user,
         mint
       );
-      const createTx = await helpers.createTransaction(
+      const createTx = await queries.transaction.create(
         timestamp,
         transactionSignature,
         "create-escrow",
@@ -69,9 +58,9 @@ export const createBounty = protectedProcedure
         escrow
       );
       const _tags = await Promise.all(
-        tags.map((tag) => helpers.getOrCreateTag(tag))
+        tags.map((tag) => queries.tag.getOrCreate(tag))
       );
-      const bounty = await helpers.createBounty(
+      const bounty = await queries.bounty.create(
         timestamp,
         description,
         estimatedTime,
@@ -81,8 +70,7 @@ export const createBounty = protectedProcedure
         _tags,
         user,
         wallet
-        // repository
       );
-      return helpers.getBounty(bounty.id, user.id);
+      return queries.bounty.get(bounty.id, user.id);
     }
   );

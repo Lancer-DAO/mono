@@ -40,7 +40,7 @@ const LancerBounty = ({
       className="companies-card"
     >
       <a
-        href={`/bounties/${bounty.id}${jwt ? `?token=${jwt}` : ""}`}
+        href={`/bounties/${bounty.id}`}
         className="company-card-link-wrapper w-inline-block"
       >
         <div className="bounty-card-content">

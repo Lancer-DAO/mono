@@ -1,10 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { useLancer } from "../../../src/providers";
 import { useRouter } from "next/router";
 import { api } from "../../../src/utils/api";
 import { decimalToNumber, getSolscanAddress } from "../../../src/utils";
 import { marked } from "marked";
-import Logo from "../../../src/assets/Logo";
 import dayjs from "dayjs";
 import { PublicKey } from "@solana/web3.js";
 import { Clock } from "react-feather";
@@ -13,9 +11,13 @@ import { ContributorInfo } from "../..";
 import { BountyState } from "../../../src/types";
 import BountyActions from "./components/BountyActions";
 import SubmitterSection from "./components/SubmitterSection";
+import { useBounty } from "@/src/providers/bountyProvider";
+import { useUserWallet } from "@/src/providers";
+import Logo from "@/components/@icons/Logo";
 
 export const Bounty = () => {
-  const { currentUser, currentBounty, setCurrentBounty } = useLancer();
+  const { currentBounty, setCurrentBounty } = useBounty();
+  const { currentUser } = useUserWallet();
   const [pollId, setPollId] = useState(null);
   const [bountyAmount, setBountyAmount] = useState("");
   const router = useRouter();

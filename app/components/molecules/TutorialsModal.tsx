@@ -1,7 +1,7 @@
 import { IS_MAINNET, USDC_MINT } from "@/src/constants";
 import { getSolscanTX } from "@/src/utils";
 import { useEffect, useState } from "react";
-import { useLancer } from "@/src/providers/lancerProvider";
+import { useUserWallet } from "@/src/providers/userWalletProvider";
 import classnames from "classnames";
 import {
   ExternalLink,
@@ -37,6 +37,8 @@ import {
 import { Tutorial } from "@/src/types/tutorials";
 import { Step } from "react-joyride";
 import { Bounty, BountyState } from "@/src/types";
+import { useTutorial } from "@/src/providers/tutorialProvider";
+import { useBounty } from "@/src/providers/bountyProvider";
 
 const getCurrentBountyTutorialInitialState = (
   currentBounty: Bounty
@@ -109,7 +111,7 @@ const TutorialRow: FC<{
   setShowModal?: (show: boolean) => void;
 }> = ({ tutorial, type, setShowModal }) => {
   const router = useRouter();
-  const { currentTutorialState, setCurrentTutorialState } = useLancer();
+  const { currentTutorialState, setCurrentTutorialState } = useTutorial();
   const [isPageButtonHovered, setIsPageButtonHovered] = useState(false);
   const [isPlayButtonHovered, setIsPlayButtonHovered] = useState(false);
   const [isResetButtonHovered, setIsResetButtonHovered] = useState(false);
@@ -239,8 +241,9 @@ interface Props {
 const TutorialsModal: FC<Props> = ({ showModal, setShowModal }) => {
   const wrapperRef = useRef(null);
   const router = useRouter();
+  const { currentTutorialState } = useTutorial();
 
-  const { currentTutorialState, currentBounty } = useLancer();
+  const { currentBounty } = useBounty();
   useOutsideAlerter(wrapperRef, () => {
     setShowModal(false);
   });

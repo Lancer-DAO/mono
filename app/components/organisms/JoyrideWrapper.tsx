@@ -1,16 +1,12 @@
 import { PROFILE_TUTORIAL_INITIAL_STATE } from "@/src/constants/tutorials";
-import { useLancer } from "@/src/providers";
+import { useUserWallet } from "@/src/providers";
+import { useTutorial } from "@/src/providers/tutorialProvider";
 import { useRouter } from "next/router";
 import Joyride, { CallBackProps, Step } from "react-joyride";
 
 const JoyrideWrapper = () => {
-  const {
-    currentTutorialState,
-    setCurrentTutorialState,
-    currentUser,
-    currentWallet,
-  } = useLancer();
-  console.log("re-render");
+  const { currentUser, currentWallet } = useUserWallet();
+  const { currentTutorialState, setCurrentTutorialState } = useTutorial();
 
   if (!currentTutorialState) return null;
   const { isRunning, steps, spotlightClicks, currentStep } =

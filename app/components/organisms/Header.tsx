@@ -1,12 +1,13 @@
 import Link from "next/link";
-import Logo from "../../src/assets/Logo";
 import { LinkButton, AccountHeaderOptions, TutorialsModal } from "@/components";
 import { LinkButtonProps } from "@/components/atoms/LinkButton";
+import Logo from "../@icons/Logo";
 import dynamic from "next/dynamic";
 import { HelpCircle } from "react-feather";
-import { useLancer } from "@/src/providers";
 import { useState } from "react";
 import { PROFILE_TUTORIAL_INITIAL_STATE } from "@/src/constants/tutorials";
+import { useTutorial } from "@/src/providers/tutorialProvider";
+import { useAppContext } from "@/src/providers/appContextProvider";
 const HEADER_LINKS: LinkButtonProps[] = [
   { href: "/create", children: "New Bounty", id: "create-bounty-link" },
   { href: "/bounties", children: "Bounties", id: "bounties-link" },
@@ -18,12 +19,8 @@ const WalletMultiButtonDynamic = dynamic(
   { ssr: false }
 );
 export const Header = () => {
-  const {
-    isRouterReady,
-    currentTutorialState,
-    setCurrentTutorialState,
-    currentUser,
-  } = useLancer();
+  const { currentTutorialState, setCurrentTutorialState } = useTutorial();
+  const { isRouterReady } = useAppContext();
   const [isTutorialButtonHovered, setIsTutorialButtonHovered] = useState(false);
   const [showTutorialModal, setShowTutorialModal] = useState(false);
   return (
@@ -31,7 +28,8 @@ export const Header = () => {
       <div className="flex items-center mx-auto w-[70%]">
         <Link
           href="/"
-          className="relative float-left text-blue-500 transition-colors duration-400 ease-in-out hover:text-blue-600 no-underline"
+          className="relative float-left text-blue-500 transition-colors 
+          duration-400 ease-in-out hover:text-blue-600 no-underline"
         >
           <Logo width="auto" height="50px" />
         </Link>
@@ -59,7 +57,11 @@ export const Header = () => {
               }
             }}
           >
-            <WalletMultiButtonDynamic className="text-gray-800 flex h-[48px] w-[250px] py-[6px] items-center justify-center border-solid hover:bg-turquoise-500 text-gray-800 hover:text-white-100 transition-colors duration-300 ease-in-out" />
+            <WalletMultiButtonDynamic
+              className="flex h-[48px] w-[200px] py-[6px] items-center justify-center 
+              border-solid hover:bg-turquoise-500 text-gray-800 hover:!text-white-100 
+              transition-colors duration-300 ease-in-out"
+            />
           </div>
 
           <AccountHeaderOptions />
@@ -70,7 +72,8 @@ export const Header = () => {
             onMouseEnter={() => setIsTutorialButtonHovered(true)}
             onMouseLeave={() => setIsTutorialButtonHovered(false)}
             id="start-tutorial-link"
-            className="flex rounded-full h-[48px] w-[48px] gap-[10px] py-[6px] items-center justify-center hover:bg-turquoise-500 "
+            className="flex rounded-full h-[48px] w-[48px] gap-[10px] py-[6px] 
+            items-center justify-center hover:bg-turquoise-500"
           >
             <HelpCircle
               height={48}

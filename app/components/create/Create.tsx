@@ -1,11 +1,11 @@
 import React, { useState } from "react";
 import { CreateBountyForm, DefaultLayout, FundBountyForm } from "@/components";
-import { useLancer } from "@/src/providers";
 import { PublicKey } from "@solana/web3.js";
 import { FORM_SECTION } from "@/types/forms";
+import { useUserWallet } from "@/src/providers";
 
 export const Create = () => {
-  const { provider, program } = useLancer();
+  const { provider, program } = useUserWallet();
   const [formSection, setFormSection] = useState<FORM_SECTION>("CREATE");
   const [isAccountCreated, setIsAccountCreated] = useState(false);
   const createAccountPoll = (publicKey: PublicKey) => {

@@ -2,19 +2,21 @@ import { USDC_MINT } from "@/src/constants";
 import { getFundFFATX } from "@/escrow/adapters";
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { useLancer } from "@/src/providers/lancerProvider";
+import { useUserWallet } from "@/src/providers/userWalletProvider";
 import { BountyState, LancerWallet } from "@/src/types";
 import { Connection, Transaction } from "@solana/web3.js";
 import { api } from "@/src/utils/api";
 import { useRouter } from "next/router";
 import { CoinflowPurchase } from "@coinflowlabs/react";
+import { useBounty } from "@/src/providers/bountyProvider";
 
 const FundBounty: React.FC<{ amount: number }> = ({
   amount,
 }: {
   amount: number;
 }) => {
-  const { currentBounty, provider, currentWallet, program } = useLancer();
+  const { provider, currentWallet, program } = useUserWallet();
+  const { currentBounty } = useBounty();
   const { mutateAsync: fundB } = api.bounties.fundBounty.useMutation();
   const router = useRouter();
 

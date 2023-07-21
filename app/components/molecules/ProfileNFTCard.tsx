@@ -2,13 +2,14 @@ import { ProfileNFT, User } from "@/src/types";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { Button } from "..";
+import { Button, CoinflowOfframp } from "@/components";
 import AddReferrerModal from "./AddReferrerModal";
 import { useReferral } from "@/src/providers/referralProvider";
 import { Copy } from "react-feather";
 import { Treasury } from "@ladderlabs/buddy-sdk";
 import { api } from "@/src/utils/api";
 import * as Prisma from "@prisma/client";
+import { useUserWallet } from "@/src/providers";
 
 dayjs.extend(relativeTime);
 
@@ -22,11 +23,16 @@ const ProfileNFTCard = ({
   profileNFT: ProfileNFT;
   githubId: string;
 }) => {
+  const [showCoinflow, setShowCoinflow] = useState(false);
   const [showReferrerModal, setShowReferrerModal] = useState(false);
+  const [isCopied, setIsCopied] = useState(false);
   const { referralId, initialized, createReferralMember, claimables, claim } =
     useReferral();
+  const { currentWallet } = useUserWallet();
+
   const { mutateAsync: getMintsAPI } = api.mints.getMints.useMutation();
   const [mints, setMints] = useState<Prisma.Mint[]>([]);
+
   useEffect(() => {
     const getMints = async () => {
       const mints = await getMintsAPI();
@@ -64,9 +70,23 @@ const ProfileNFTCard = ({
 
   const referralLink = `${SITE_URL}${referralId}`;
 
+  const copyToClipboard = async (text: string) => {
+    try {
+      await navigator.clipboard.writeText(text);
+      setIsCopied(true);
+    } catch (err) {
+      console.error("Failed to copy text: ", err);
+    }
+  };
+
+  const handleCopyClick = (text: string) => {
+    copyToClipboard(text);
+    setTimeout(() => setIsCopied(false), 2000); // Reset the isCopied state after 2 seconds
+  };
+
   return (
-    <>
-      <div className="profile-nft" id="profile-nft">
+    <div className="w-full md:w-[40%] px-5 pb-20">
+      <div className="flex flex-col gap-3">
         {/* <img src={profileNFT.image} className="profile-picture" /> */}
         <img
           src={`https://avatars.githubusercontent.com/u/${
@@ -75,12 +95,12 @@ const ProfileNFTCard = ({
           className="profile-picture"
         />
 
-        <div className="profile-nft-header">
-          <h4>{profileNFT.name}</h4>
+        <div className="flex items-center justify-between">
+          <h4 className="text-xl">{profileNFT.name.split("for ")[1]}</h4>
           <div>{profileNFT.reputation} Pts</div>
         </div>
 
-        <div className="profile-section" id="badges-section">
+        <div>
           <div className="divider"></div>
           <h4>Badges</h4>
           {profileNFT.badges?.length > 0 ? (
@@ -96,7 +116,7 @@ const ProfileNFTCard = ({
           )}
         </div>
 
-        <div className="profile-section" id="certificates-section">
+        <div>
           <div className="divider"></div>
 
           <h4>Certificates</h4>
@@ -112,48 +132,74 @@ const ProfileNFTCard = ({
             <div>No certificates yet!</div>
           )}
         </div>
-        <div className="divider"></div>
+        <div>
+          <div className="divider"></div>
 
-        <h4>Last Updated</h4>
-        <div>{profileNFT.lastUpdated?.fromNow()}</div>
+          <h4>Last Updated</h4>
+          <div>{profileNFT.lastUpdated?.fromNow()}</div>
+        </div>
 
-        <div className="divider"></div>
+        <div>
+          <div className="divider"></div>
 
-        <h4>Refer your friends</h4>
-        {referralId && initialized ? (
-          <Button
-            className="referral "
-            version="text"
-            onClick={async () => {
-              await navigator.clipboard.writeText(referralLink);
-              alert(`Copied Referral Link: ${referralLink}`);
-            }}
-          >
-            <div className="referral-link">
-              <span>{referralId}</span>
-              <Copy />
+          <h4>Refer your friends</h4>
+          {referralId && initialized ? (
+            <div className="relative w-full">
+              <div className="flex items-center gap-2">
+                <span className="text-blue-300">
+                  {SITE_URL}/?r={referralId}
+                </span>
+                <Copy
+                  className="cursor-pointer"
+                  onClick={() =>
+                    handleCopyClick(`${SITE_URL}/?r=${referralId}`)
+                  }
+                />
+              </div>
+              <div className="absolute right-0 text-base">
+                {isCopied ? "Copied!" : ""}
+              </div>
             </div>
-          </Button>
-        ) : (
-          <div>
-            <Button onClick={handleCreateLink}>Generate link</Button>
-          </div>
-        )}
+          ) : (
+            <div>
+              <Button className="mb-6" onClick={handleCreateLink}>
+                Generate link
+              </Button>
+            </div>
+          )}
+        </div>
 
-        {claimButtons.length ? (
-          <>
-            <div className="divider"></div>
-            <h4>Claim your rewards</h4>
-            {claimButtons}
-          </>
-        ) : null}
+        <div>
+          {claimables &&
+          claimables.filter((claimable) => claimable.amount > 0).length > 0 ? (
+            <>
+              <div className="divider"></div>
+              <h4>Claim your rewards</h4>
+              {claimButtons}
+            </>
+          ) : null}
+        </div>
+        <div>
+          <div className="divider" />
+          <div className="my-[10px]">
+            <Button
+              onClick={() => {
+                setShowCoinflow(!showCoinflow);
+              }}
+            >
+              Cash Out
+            </Button>
+          </div>
+
+          {showCoinflow && <CoinflowOfframp />}
+        </div>
       </div>
 
       <AddReferrerModal
         setShowModal={setShowReferrerModal}
         showModal={showReferrerModal}
       />
-    </>
+    </div>
   );
 };
 
