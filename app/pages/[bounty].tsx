@@ -7,15 +7,14 @@ import { marked } from "marked";
 import { useUserWallet } from "@/src/providers/userWalletProvider";
 import SubmitterSection from "@/src/components/molecules/SubmitterSection";
 import { Clock } from "react-feather";
-import USDC from "@/src/assets/USDC";
 import dayjs from "dayjs";
 import localizedFormat from "dayjs/plugin/localizedFormat";
 import {
   BountyActions,
   ContributorInfo,
   DefaultLayout,
+  Logo,
 } from "@/src/components/";
-import Logo from "@/src/assets/Logo";
 import { PublicKey } from "@solana/web3.js";
 import { useRouter } from "next/router";
 import { api } from "@/src/utils/api";

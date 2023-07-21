@@ -9,7 +9,6 @@ import {
   WalletProvider,
 } from "@solana/wallet-adapter-react";
 import { WalletModalProvider } from "@solana/wallet-adapter-react-ui";
-import { Web3AuthProvider } from "@/src/providers/web3authProvider";
 import AppContextProvider from "./appContextProvider";
 import BountyProvider from "./bountyProvider";
 import TutorialProvider from "./tutorialProvider";
