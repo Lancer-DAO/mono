@@ -11,10 +11,10 @@ import { AnchorProvider, Program } from "@project-serum/anchor";
 import { MonoProgram } from "@/escrow/sdk/types/mono_program";
 import { Issue, CurrentUser, LancerWallet, Bounty } from "@/src/types";
 import {
-  ILancerContext,
+  IUserWalletContext,
   ISSUE_LOAD_STATE,
   LOGIN_STATE,
-} from "@/src/providers/lancerProvider/types";
+} from "@/src/providers/userWalletProvider/types";
 import { api } from "@/src/utils/api";
 import { getCookie } from "cookies-next";
 import { useConnection, useWallet } from "@solana/wallet-adapter-react";
@@ -27,51 +27,31 @@ import { APIKeyInfo } from "@/src/components/molecules/ApiKeyModal";
 import { IS_MAINNET, MONO_ADDRESS } from "@/src/constants";
 import { Tutorial } from "@/src/types/tutorials";
 import { PROFILE_TUTORIAL_INITIAL_STATE } from "@/src/constants/tutorials";
+import { useTutorial } from "../tutorialProvider";
 
-export const LancerContext = createContext<ILancerContext>({
+export const NonCustodialWalletContext = createContext<IUserWalletContext>({
   currentUser: null,
-  issue: null,
-  issues: [],
-  loginState: "logged_out",
-  issueLoadingState: "initializing",
   program: null,
   currentWallet: null,
-  wallets: null,
   provider: null,
-  currentBounty: null,
-  currentAPIKey: null,
-  currentTutorialState: null,
-  isRouterReady: false,
-  isMobile: false,
-  setCurrentTutorialState: () => null,
-  setCurrentAPIKey: () => null,
-  setIssue: () => null,
-  setIssues: () => null,
-  setWallets: () => null,
-  setLoginState: () => null,
-  setCurrentUser: () => null,
-  setIssueLoadingState: (state: ISSUE_LOAD_STATE) => null,
-  setCurrentBounty: () => null,
-  setCurrentWallet: () => null,
 });
 
-export function useLancer(): ILancerContext {
-  return useContext(LancerContext);
+export function useNonCustodialWallet(): IUserWalletContext {
+  return useContext(NonCustodialWalletContext);
 }
 
-interface ILancerState {
+interface IUserWalletState {
   children?: React.ReactNode;
 }
-interface ILancerProps {
+interface IUserWalletProps {
   children?: ReactNode;
 }
 
-const LancerProvider: FunctionComponent<ILancerState> = ({
+const UserWalletProvider: FunctionComponent<IUserWalletState> = ({
   children,
-}: ILancerProps) => {
+}: IUserWalletProps) => {
   const { mutateAsync: getCurrUser } = api.users.login.useMutation();
   const { user } = useUser();
-  const router = useRouter();
   const {
     wallet,
     publicKey,
@@ -82,33 +62,11 @@ const LancerProvider: FunctionComponent<ILancerState> = ({
     connected,
   } = useWallet();
   const { connection } = useConnection();
+  const { currentTutorialState, setCurrentTutorialState } = useTutorial();
   const [currentUser, setCurrentUser] = useState<CurrentUser | null>(null);
-  const [currentBounty, setCurrentBounty] = useState<Bounty | null>(null);
-  const [issue, setIssue] = useState<Issue | null>(null);
-  const [currentTutorialState, setCurrentTutorialState] = useState<Tutorial>();
-  const [issues, setIssues] = useState<Issue[] | null>(null);
-  const [loginState, setLoginState] = useState<LOGIN_STATE | null>(
-    "logged_out"
-  );
   const [currentWallet, setCurrentWallet] = useState<LancerWallet>();
-  const [wallets, setWallets] = useState<LancerWallet[]>();
   const [provider, setProvider] = useState<AnchorProvider>();
   const [program, setProgram] = useState<Program<MonoProgram>>();
-  const [currentAPIKey, setCurrentAPIKey] = useState<APIKeyInfo>();
-  const [isMobile, setIsMobile] = useState(false);
-
-  useEffect(() => {
-    const userAgent = window.navigator.userAgent;
-    const isMobileDevice =
-      /Mobile|iP(hone|od|ad)|Android|BlackBerry|IEMobile/.test(userAgent);
-    setIsMobile(isMobileDevice);
-  }, []);
-
-  useEffect(() => {
-    const apiKeys = JSON.parse(localStorage.getItem("apiKeys") || "[]");
-    const defaultKey = apiKeys.find((key: APIKeyInfo) => key.isDefault);
-    setCurrentAPIKey(defaultKey);
-  }, []);
 
   useEffect(() => {
     if (connected) {
@@ -153,61 +111,29 @@ const LancerProvider: FunctionComponent<ILancerState> = ({
   }, [connected]);
 
   useEffect(() => {
-    const getUser = async () => {
-      console.log("logging in user");
-      const userInfo = await getCurrUser();
-      console.log("login response", userInfo);
-      setCurrentUser(userInfo);
-    };
     if (user) {
       const getUser = async () => {
         try {
           const userInfo = await getCurrUser();
           setCurrentUser(userInfo);
         } catch (e) {
-          // if (e.data.httpStatus === 401) {
-          //   debugger;
-          //   router.push("/api/auth/login");
-          // }
+          console.error(e);
         }
       };
       getUser();
     }
   }, [user]);
 
-  const [issueLoadingState, setIssueLoadingState] =
-    useState<ISSUE_LOAD_STATE>("initializing");
-
   const contextProvider = {
     currentUser,
-    setCurrentUser,
-    loginState,
-    setLoginState,
-    issue,
-    setIssue,
-    issues,
-    setIssues,
-    issueLoadingState,
-    setIssueLoadingState,
     program,
     provider,
-    setWallets,
-    wallets,
-    currentBounty,
-    setCurrentBounty,
     currentWallet,
-    setCurrentWallet,
-    currentAPIKey,
-    setCurrentAPIKey,
-    currentTutorialState,
-    setCurrentTutorialState,
-    isRouterReady: router.isReady,
-    isMobile,
   };
   return (
-    <LancerContext.Provider value={contextProvider}>
+    <NonCustodialWalletContext.Provider value={contextProvider}>
       {children}
-    </LancerContext.Provider>
+    </NonCustodialWalletContext.Provider>
   );
 };
-export default LancerProvider;
+export default UserWalletProvider;

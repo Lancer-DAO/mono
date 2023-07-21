@@ -2,7 +2,7 @@ import { TABLE_BOUNTY_STATES, TABLE_MY_BOUNTY_STATES } from "@/src/constants";
 import { getMintName, getUniqueItems } from "@/src/utils";
 import { useState } from "react";
 import { LancerBounty, BountyFilters } from "@/src/components/";
-import { useLancer } from "@/src/providers";
+import { useUserWallet } from "@/src/providers";
 import { useEffect } from "react";
 import axios from "axios";
 import { LoadingBar } from "@/src/components";
@@ -29,7 +29,7 @@ export type Filters = {
 };
 
 const BountyList: React.FC<{}> = () => {
-  const { currentUser } = useLancer();
+  const { currentUser } = useUserWallet();
   const router = useRouter();
   const { mutateAsync: getBounties } =
     api.bounties.getAllBounties.useMutation();

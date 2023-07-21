@@ -9,11 +9,15 @@ import {
   WalletProvider,
 } from "@solana/wallet-adapter-react";
 import { WalletModalProvider } from "@solana/wallet-adapter-react-ui";
-import LancerProvider from "@/src/providers/lancerProvider";
+import AppContextProvider from "./appContextProvider";
+import BountyProvider from "./bountyProvider";
+import TutorialProvider from "./tutorialProvider";
+import NonCustodialWalletProvider from "./userWalletProvider/nonCustodialProvider";
+import CustodialWalletProvider from "./userWalletProvider/custodialProvider";
 import { useRouter } from "next/router";
-import { IS_MAINNET, MAINNET_RPC } from "../constants";
+import { IS_CUSTODIAL, IS_MAINNET, MAINNET_RPC } from "../constants";
 import ReferralProvider from "./referralProvider";
-export * from "./lancerProvider";
+export * from "./userWalletProvider";
 
 export const AllProviders: React.FC<{ children: ReactNode }> = ({
   children,
@@ -44,15 +48,38 @@ export const AllProviders: React.FC<{ children: ReactNode }> = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [IS_MAINNET]
   );
+  console.log("IS_CUSTODIAL", IS_CUSTODIAL);
 
-  return (
+  return IS_CUSTODIAL ? (
+    <ConnectionProvider endpoint={endpoint}>
+      <WalletProvider wallets={walletProviders} autoConnect>
+        <WalletModalProvider>
+          <AppContextProvider>
+            <TutorialProvider>
+              <CustodialWalletProvider web3AuthNetwork="testnet">
+                <BountyProvider>
+                  <ReferralProvider>{children}</ReferralProvider>
+                </BountyProvider>
+              </CustodialWalletProvider>
+            </TutorialProvider>
+          </AppContextProvider>
+        </WalletModalProvider>
+      </WalletProvider>
+    </ConnectionProvider>
+  ) : (
     <UserProvider>
       <ConnectionProvider endpoint={endpoint}>
         <WalletProvider wallets={walletProviders} autoConnect>
           <WalletModalProvider>
-            <LancerProvider>
-              <ReferralProvider>{children}</ReferralProvider>
-            </LancerProvider>
+            <AppContextProvider>
+              <TutorialProvider>
+                <NonCustodialWalletProvider>
+                  <BountyProvider>
+                    <ReferralProvider>{children}</ReferralProvider>
+                  </BountyProvider>
+                </NonCustodialWalletProvider>
+              </TutorialProvider>
+            </AppContextProvider>
           </WalletModalProvider>
         </WalletProvider>
       </ConnectionProvider>

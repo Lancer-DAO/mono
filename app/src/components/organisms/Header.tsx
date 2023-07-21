@@ -8,9 +8,10 @@ import {
 import { LinkButtonProps } from "@/src/components/atoms/LinkButton";
 import dynamic from "next/dynamic";
 import { HelpCircle } from "react-feather";
-import { useLancer } from "@/src/providers";
 import { useState } from "react";
 import { PROFILE_TUTORIAL_INITIAL_STATE } from "@/src/constants/tutorials";
+import { useTutorial } from "@/src/providers/tutorialProvider";
+import { useAppContext } from "@/src/providers/appContextProvider";
 const HEADER_LINKS: LinkButtonProps[] = [
   { href: "/create", children: "New Bounty", id: "create-bounty-link" },
   { href: "/bounties", children: "Bounties", id: "bounties-link" },
@@ -22,12 +23,8 @@ const WalletMultiButtonDynamic = dynamic(
   { ssr: false }
 );
 export const Header = () => {
-  const {
-    isRouterReady,
-    currentTutorialState,
-    setCurrentTutorialState,
-    currentUser,
-  } = useLancer();
+  const { currentTutorialState, setCurrentTutorialState } = useTutorial();
+  const { isRouterReady } = useAppContext();
   const [isTutorialButtonHovered, setIsTutorialButtonHovered] = useState(false);
   const [showTutorialModal, setShowTutorialModal] = useState(false);
   return (

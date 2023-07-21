@@ -3,6 +3,7 @@ import { MONO_DEVNET, MONO_MAINNET } from "@/escrow/sdk/constants";
 export const MAINNET_RPC =
   "https://winter-necessary-smoke.solana-mainnet.discover.quiknode.pro";
 export const IS_MAINNET = process.env.NEXT_PUBLIC_IS_MAINNET === "true";
+export const IS_CUSTODIAL = process.env.NEXT_PUBLIC_IS_CUSTODIAL === "true";
 export const DEVNET_USDC_MINT = "4zMMC9srt5Ri5X14GAgXhaHii3GnPAEERYPJgZJDncDU";
 export const MAINNET_USDC_MINT = "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v";
 export const BONK_MINT = "DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263";

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 
 import { BountyState, LancerWallet } from "@/src/types";
-import { useLancer } from "@/src/providers/lancerProvider";
+import { useUserWallet } from "@/src/providers/userWalletProvider";
 import classnames from "classnames";
 import { PublicKey, Transaction } from "@solana/web3.js";
 import { useRouter } from "next/router";
@@ -18,20 +18,15 @@ import {
 import { useConnection, useWallet } from "@solana/wallet-adapter-react";
 import { CoinflowFund } from "@/src/components";
 import { CREATE_BOUNTY_TUTORIAL_INITIAL_STATE } from "@/src/constants/tutorials";
+import { useBounty } from "@/src/providers/bountyProvider";
+import { useTutorial } from "@/src/providers/tutorialProvider";
 
 const Form: React.FC<{ isAccountCreated: boolean }> = ({
   isAccountCreated,
 }) => {
-  const {
-    currentBounty,
-    currentUser,
-    setCurrentBounty,
-    program,
-    provider,
-    currentWallet,
-    currentTutorialState,
-    setCurrentTutorialState,
-  } = useLancer();
+  const { currentWallet, program, provider } = useUserWallet();
+  const { currentBounty } = useBounty();
+  const { currentTutorialState, setCurrentTutorialState } = useTutorial();
   const [fundingType, setFundingType] = useState<"wallet" | "card">("wallet");
   const { mutateAsync: getBounty } = api.bounties.getBounty.useMutation();
   const { mutateAsync: fundB } = api.bounties.fundBounty.useMutation();

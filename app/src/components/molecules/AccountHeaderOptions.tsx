@@ -1,5 +1,5 @@
-import { useLancer } from "@/src/providers";
-import { ApiKeyModal } from "@/components";
+import { useUserWallet } from "@/src/providers";
+import { LinkButton, ApiKeyModal } from "@/components";
 import { useEffect, useRef, useState } from "react";
 import { useOutsideAlerter } from "@/src/hooks/useOutsideAlerter";
 import Link from "next/link";
@@ -8,14 +8,11 @@ import {
   BOUNTY_ACTIONS_TUTORIAL_I_INITIAL_STATE,
   GITHUB_API_KEY_TUTORIAL_INITIAL_STATE,
 } from "@/src/constants/tutorials";
+import { useTutorial } from "@/src/providers/tutorialProvider";
 
 const AccountHeaderOptions = () => {
-  const {
-    currentUser,
-    // currentAPIKey,
-    currentTutorialState,
-    setCurrentTutorialState,
-  } = useLancer();
+  const { currentUser } = useUserWallet();
+  const { currentTutorialState, setCurrentTutorialState } = useTutorial();
   const [hasExtension, setHasExtension] = useState(false);
   useEffect(() => {
     try {
@@ -115,36 +112,7 @@ const AccountHeaderOptions = () => {
               >
                 Account
               </Link>
-              {/* <button
-                onClick={() => {
-                  setShowModal(true);
 
-                  if (!!currentTutorialState && currentTutorialState.isActive) {
-                    if (
-                      currentTutorialState?.title ===
-                        GITHUB_API_KEY_TUTORIAL_INITIAL_STATE.title &&
-                      currentTutorialState.currentStep === 1
-                    ) {
-                      setCurrentTutorialState({
-                        ...currentTutorialState,
-                        currentStep: 2,
-                      });
-                    }
-                  }
-                }}
-                id="api-key-link"
-                className="flex h-[48px] w-full gap-[10px] py-[6px] items-center justify-center border-b-gray-400 border-b-[1px] hover:bg-turquoise-500 text-gray-800 hover:text-white-100 transition-colors duration-300 ease-in-out"
-              >
-                <Key />
-                {currentAPIKey ? currentAPIKey.name : "Set API Key"}
-              </button> */}
-              <Link
-                href={"/download_extension"}
-                id="download-extension-link"
-                className="flex  h-[48px] py-[6px] items-center justify-center border-b-gray-400 border-b-[1px] hover:bg-turquoise-500 text-gray-800 hover:text-white-100 transition-colors duration-300 ease-in-out"
-              >
-                {hasExtension ? "Extension Detected" : "Download Extension"}
-              </Link>
               <Link
                 href={"https://discord.gg/gqSpskjvxy"}
                 target="_blank"

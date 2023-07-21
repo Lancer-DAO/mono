@@ -1,16 +1,10 @@
-import { IS_MAINNET, USDC_MINT } from "@/src/constants";
-import { getSolscanTX } from "@/src/utils";
 import { useEffect, useState } from "react";
-import { useLancer } from "@/src/providers/lancerProvider";
-import classnames from "classnames";
-import { Edit, Delete, X } from "react-feather";
 
 import { FC, useRef } from "react";
 import { useOutsideAlerter, useDebounce } from "@/hooks";
-import { User, Wallet } from "@/src/types";
+import { User } from "@/src/types";
 import { api } from "@/src/utils/api";
 import { Button, ContributorInfo } from "@/components";
-import { PublicKey } from "@solana/web3.js";
 
 interface Props {
   showModal: boolean;
@@ -19,7 +13,6 @@ interface Props {
 
 const AddReferrerModal: FC<Props> = ({ showModal, setShowModal }) => {
   const wrapperRef = useRef(null);
-  const { setCurrentUser } = useLancer();
   const { mutateAsync: search } = api.users.search.useMutation();
   const { mutateAsync: addReferrerAPI } = api.users.addReferrer.useMutation();
   const [query, setQuery] = useState("");

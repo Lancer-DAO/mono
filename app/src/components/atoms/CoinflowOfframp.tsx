@@ -1,8 +1,8 @@
-import { useLancer } from "@/src/providers/lancerProvider";
+import { useUserWallet } from "@/src/providers/userWalletProvider";
 import { CoinflowWithdraw } from "@coinflowlabs/react";
 
 const CoinflowOfframp: React.FC = () => {
-  const { provider, currentWallet } = useLancer();
+  const { provider, currentWallet } = useUserWallet();
   return (
     !!provider &&
     !!currentWallet && (

@@ -5,7 +5,7 @@ export const getServerSideProps = withPageAuthRequired();
 
 import { useState } from "react";
 
-import { useLancer } from "@/src/providers";
+import { useUserWallet } from "@/src/providers";
 import {
   DefaultLayout,
   CreateBountyForm,
@@ -30,7 +30,7 @@ export default function Home() {
 }
 
 function App() {
-  const { provider } = useLancer();
+  const { provider, program } = useUserWallet();
   const [formSection, setFormSection] = useState<FORM_SECTION>("CREATE");
   const [isAccountCreated, setIsAccountCreated] = useState(false);
   const createAccountPoll = (publicKey: PublicKey) => {

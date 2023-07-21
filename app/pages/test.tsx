@@ -1,40 +1,15 @@
-import React, { useEffect } from "react";
-import { withPageAuthRequired } from "@auth0/nextjs-auth0";
-import { useUser } from "@auth0/nextjs-auth0/client";
+import { WALLET_ADAPTERS } from "@web3auth/base";
+
+import styles from "../styles/Home.module.css";
+import { useRouter } from "next/router";
+import { useEffect } from "react";
 import { api } from "@/src/utils/api";
+import { createFFA } from "@/escrow/adapters";
+import { PublicKey } from "@solana/web3.js";
+import { USDC_MINT } from "@/src/constants";
 
-export default function ProtectedPage() {
-  const { user, error, isLoading } = useUser();
-  const { mutateAsync: getCurrUser } = api.users.currentUser.useMutation();
+const Main = () => {
+  return <>hi</>;
+};
 
-  return (
-    <div>
-      <h1>Protected Page</h1>
-
-      {isLoading && <p>Loading profile...</p>}
-
-      {error && (
-        <>
-          <h4>Error</h4>
-          <pre>{error.message}</pre>
-        </>
-      )}
-
-      {user && (
-        <>
-          <h4>Profile</h4>
-          <pre>{JSON.stringify(user, null, 2)}</pre>
-          <button
-            onClick={() => {
-              getCurrUser();
-            }}
-          >
-            Test
-          </button>
-        </>
-      )}
-    </div>
-  );
-}
-
-export const getServerSideProps = withPageAuthRequired();
+export default Main;
