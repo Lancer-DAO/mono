@@ -26,7 +26,6 @@ export const Bounty = () => {
   useEffect(() => {
     if (router.isReady && currentUser?.id) {
       const getB = async () => {
-        debugger;
         const bounty = await getBounty({
           id: parseInt(router.query.bounty as string),
           currentUserId: currentUser.id,

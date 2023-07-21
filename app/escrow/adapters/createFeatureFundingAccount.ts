@@ -16,7 +16,6 @@ export const createFFA = async (
   mint?: PublicKey
 ) => {
   const timestamp = Date.now().toString();
-  debugger;
   const ix = await createFeatureFundingAccountInstruction(
     mint ? mint : new PublicKey(USDC_MINT),
     new PublicKey(wallet.publicKey),

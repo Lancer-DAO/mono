@@ -33,6 +33,7 @@ import {
 } from "@/src/constants/tutorials";
 import { useBounty } from "@/src/providers/bountyProvider";
 import { useTutorial } from "@/src/providers/tutorialProvider";
+import { approveRequestPartialFFA } from "@/escrow/adapters/approvedRequestPartial";
 const underdogClient = createUnderdogClient({});
 
 const BountyActions = () => {
@@ -44,6 +45,15 @@ const BountyActions = () => {
   // if (false) {
   //   return <LoadingBar title="Loading On Chain Details" />;
   // }
+  if (!currentWallet) {
+    return (
+      <div className="bounty-buttons" id="bounty-actions">
+        <Button disabled id="bounty-completed">
+          Please Connect Your Wallet
+        </Button>
+      </div>
+    );
+  }
   if (currentBounty.state === BountyState.COMPLETE) {
     return (
       <div className="bounty-buttons" id="bounty-actions">
@@ -119,6 +129,9 @@ const BountyActions = () => {
         {currentBounty.isCreator &&
           currentBounty.currentSubmitter &&
           !currentBounty.completer && <ApproveSubmission />}
+        {currentBounty.isCreator &&
+          currentBounty.currentSubmitter &&
+          !currentBounty.completer && <ApproveSubmissionPartial />}
         {currentBounty.isCreator &&
           currentBounty.currentSubmitter &&
           !currentBounty.completer && <RequestChanges />}
@@ -374,6 +387,155 @@ export const ApproveSubmission = () => {
   );
 };
 
+export const ApproveSubmissionPartial = () => {
+  const { currentUser, currentWallet, program, provider } = useUserWallet();
+
+  const { currentBounty, setCurrentBounty } = useBounty();
+  const { currentTutorialState, setCurrentTutorialState } = useTutorial();
+  const { programId: buddylinkProgramId } = useReferral();
+  const { mutateAsync } = api.bountyUsers.update.useMutation();
+
+  const onClick = async () => {
+    if (
+      currentTutorialState?.title ===
+        BOUNTY_ACTIONS_TUTORIAL_II_INITIAL_STATE.title &&
+      currentTutorialState.currentStep === 5
+    ) {
+      setCurrentTutorialState({
+        ...currentTutorialState,
+        isRunning: false,
+      });
+    }
+    // If we are the creator, then skip requesting and add self as approved
+    const signature = await approveRequestPartialFFA(
+      new PublicKey(currentBounty.currentSubmitter.publicKey),
+      currentBounty.escrow,
+      currentWallet,
+      program,
+      provider
+    );
+    // currentBounty.currentUserRelationsList.push(
+    //   BOUNTY_USER_RELATIONSHIP.Completer
+    // );
+    // const { updatedBounty } = await mutateAsync({
+    //   bountyId: currentBounty.id,
+    //   currentUserId: currentUser.id,
+    //   userId: currentUser.id,
+    //   relations: currentBounty.currentUserRelationsList,
+    //   state: BountyState.COMPLETE,
+    //   publicKey: currentWallet.publicKey.toString(),
+    //   escrowId: currentBounty.escrowid,
+    //   signature,
+    //   label: "complete-bounty",
+    // });
+
+    // setCurrentBounty(updatedBounty);
+
+    // const submitterKey = currentBounty.currentSubmitter.publicKey;
+    // const creatorKey = currentBounty.creator.publicKey;
+    // let nfts = await underdogClient.getNfts({
+    //   params: PROFILE_PROJECT_PARAMS,
+    //   query: {
+    //     page: 1,
+    //     limit: 1,
+    //     ownerAddress: submitterKey,
+    //   },
+    // });
+    // const reputationIncrease =
+    //   100 * decimalToNumber(currentBounty.estimatedTime);
+    // if (nfts.totalResults > 0) {
+    //   const profileNFT = nfts.results[0];
+    //   underdogClient.partialUpdateNft({
+    //     params: { ...PROFILE_PROJECT_PARAMS, nftId: nfts.results[0].id },
+    //     body: {
+    //       attributes: {
+    //         lastUpdated: new Date().toISOString(),
+    //         reputation:
+    //           (profileNFT.attributes.reputation as number) + reputationIncrease,
+    //       },
+    //     },
+    //   });
+    // }
+    // await underdogClient.createNft({
+    //   params: BOUNTY_PROJECT_PARAMS,
+    //   body: {
+    //     name: `Bounty Completer: ${currentBounty.id}`,
+    //     image: "https://i.imgur.com/3uQq5Zo.png",
+    //     description: currentBounty.description,
+    //     attributes: {
+    //       reputation: reputationIncrease,
+    //       completed: dayjs().toISOString(),
+    //       tags: currentBounty.tags.map((tag) => tag.name).join(","),
+    //       role: "completer",
+    //     },
+    //     upsert: false,
+    //     receiverAddress: submitterKey,
+    //   },
+    // });
+
+    // nfts = await underdogClient.getNfts({
+    //   params: PROFILE_PROJECT_PARAMS,
+    //   query: {
+    //     page: 1,
+    //     limit: 1,
+    //     ownerAddress: creatorKey,
+    //   },
+    // });
+
+    // if (nfts.totalResults > 0) {
+    //   const profileNFT = nfts.results[0];
+    //   underdogClient.partialUpdateNft({
+    //     params: { ...PROFILE_PROJECT_PARAMS, nftId: nfts.results[0].id },
+    //     body: {
+    //       attributes: {
+    //         lastUpdated: new Date().toISOString(),
+    //         reputation:
+    //           (profileNFT.attributes.reputation as number) + reputationIncrease,
+    //       },
+    //     },
+    //   });
+    // }
+
+    // await underdogClient.createNft({
+    //   params: BOUNTY_PROJECT_PARAMS,
+    //   body: {
+    //     name: `Bounty Creator: ${currentBounty.id}`,
+    //     image: "https://i.imgur.com/3uQq5Zo.png",
+    //     description: currentBounty.description,
+    //     attributes: {
+    //       reputation: reputationIncrease,
+    //       completed: dayjs().toISOString(),
+    //       tags: currentBounty.tags.map((tag) => tag.name).join(","),
+    //       role: "creator",
+    //     },
+    //     upsert: false,
+    //     receiverAddress: creatorKey,
+    //   },
+    // });
+
+    // if (
+    //   currentTutorialState?.title ===
+    //     BOUNTY_ACTIONS_TUTORIAL_II_INITIAL_STATE.title &&
+    //   currentTutorialState.currentStep === 5
+    // ) {
+    //   setCurrentTutorialState({
+    //     ...currentTutorialState,
+    //     isRunning: true,
+    //     currentStep: 6,
+    //   });
+    // }
+  };
+
+  return (
+    <Button
+      onClick={onClick}
+      disabled={!currentWallet.publicKey}
+      id="approve-bounty-button"
+    >
+      Approve Partial
+    </Button>
+  );
+};
 export const CancelEscrow = () => {
   const { currentUser, currentWallet, program, provider } = useUserWallet();
 

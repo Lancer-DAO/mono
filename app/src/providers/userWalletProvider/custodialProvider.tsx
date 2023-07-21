@@ -239,7 +239,6 @@ export const CustodialWalletProvider: FunctionComponent<IWeb3AuthState> = ({
         });
         web3AuthInstance.configureAdapter(adapter);
         await web3AuthInstance.init();
-        debugger;
         setWeb3Auth(web3AuthInstance);
         setweb3authinit(true);
         console.log("initialized");
