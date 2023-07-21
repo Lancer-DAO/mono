@@ -7,9 +7,9 @@ import AddReferrerModal from "./AddReferrerModal";
 import { useReferral } from "@/src/providers/referralProvider";
 import { Copy } from "react-feather";
 import { Treasury } from "@ladderlabs/buddy-sdk";
-import { useLancer } from "@/src/providers";
 import { api } from "@/src/utils/api";
 import * as Prisma from "@prisma/client";
+import { useUserWallet } from "@/src/providers";
 
 dayjs.extend(relativeTime);
 
@@ -28,7 +28,7 @@ const ProfileNFTCard = ({
   const [isCopied, setIsCopied] = useState(false);
   const { referralId, initialized, createReferralMember, claimables, claim } =
     useReferral();
-  const { currentWallet } = useLancer();
+  const { currentWallet } = useUserWallet();
 
   const { mutateAsync: getMintsAPI } = api.mints.getMints.useMutation();
   const [mints, setMints] = useState<Prisma.Mint[]>([]);
