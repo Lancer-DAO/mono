@@ -6,7 +6,7 @@ import classnames from "classnames";
 import { Edit, Delete, X, HelpCircle } from "react-feather";
 
 import { FC, useRef } from "react";
-import { useOutsideAlerter } from "../../hooks/useOutsideAlerter";
+import { useOutsideAlerter } from "../../src/hooks/useOutsideAlerter";
 import { LinkButton } from "..";
 import { GITHUB_API_KEY_TUTORIAL_INITIAL_STATE } from "@/src/constants/tutorials";
 

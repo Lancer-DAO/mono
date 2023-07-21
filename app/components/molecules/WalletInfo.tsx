@@ -8,7 +8,7 @@ import {
   getMint,
 } from "@solana/spl-token";
 import { PublicKey } from "@solana/web3.js";
-import { PubKey } from "@/src/components";
+import { PubKey } from "@/components";
 import { LancerWallet } from "@/src/types";
 
 const WalletInfo: React.FC<{ wallet: LancerWallet }> = ({ wallet }) => {

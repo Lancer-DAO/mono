@@ -4,7 +4,6 @@ import {
   ReactNode,
   useContext,
   useEffect,
-  useReducer,
   useState,
 } from "react";
 import { AnchorProvider, Program } from "@project-serum/anchor";
@@ -16,15 +15,14 @@ import {
   LOGIN_STATE,
 } from "@/src/providers/userWalletProvider/types";
 import { api } from "@/src/utils/api";
-import { getCookie } from "cookies-next";
 import { useConnection, useWallet } from "@solana/wallet-adapter-react";
 import { PublicKey, Transaction } from "@solana/web3.js";
 import { useRouter } from "next/router";
 import { useUser } from "@auth0/nextjs-auth0/client";
 export * from "./types";
 import MonoProgramJSON from "@/escrow/sdk/idl/mono_program.json";
-import { APIKeyInfo } from "@/src/components/molecules/ApiKeyModal";
-import { IS_MAINNET, MONO_ADDRESS } from "@/src/constants";
+import { APIKeyInfo } from "@/components/molecules/ApiKeyModal";
+import { MONO_ADDRESS } from "@/src/constants";
 import { Tutorial } from "@/src/types/tutorials";
 import { PROFILE_TUTORIAL_INITIAL_STATE } from "@/src/constants/tutorials";
 import { useTutorial } from "../tutorialProvider";

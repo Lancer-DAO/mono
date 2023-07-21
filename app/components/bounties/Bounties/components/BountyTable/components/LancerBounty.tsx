@@ -5,7 +5,7 @@ import { useLocation } from "react-router-dom";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import { decimalToNumber } from "@/src/utils";
-import { ContributorInfo } from "@/src/components";
+import { ContributorInfo } from "@/components";
 import { useState } from "react";
 import Image from "next/image";
 dayjs.extend(relativeTime);
@@ -40,7 +40,7 @@ const LancerBounty = ({
       className="companies-card"
     >
       <a
-        href={`/bounties/bounty?id=${bounty.id}${jwt ? `&token=${jwt}` : ""}`}
+        href={`/bounties/${bounty.id}`}
         className="company-card-link-wrapper w-inline-block"
       >
         <div className="bounty-card-content">

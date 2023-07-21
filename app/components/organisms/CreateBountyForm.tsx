@@ -3,16 +3,14 @@ import { marked } from "marked";
 import { createFFA } from "@/escrow/adapters";
 import { useUserWallet } from "@/src/providers/userWalletProvider";
 import classnames from "classnames";
-import { Button, LoadingBar } from "@/src/components";
+import { Button } from "@/components";
 import { api } from "@/src/utils/api";
-import { Octokit } from "octokit";
 import { PublicKey } from "@solana/web3.js";
-import { FORM_SECTION } from "@/pages/create";
 import { CREATE_BOUNTY_TUTORIAL_INITIAL_STATE } from "@/src/constants/tutorials";
-import { BONK_MINT, USDC_MINT } from "@/src/constants";
 import { IS_MAINNET } from "@/src/constants";
 import * as Prisma from "@prisma/client";
 import Image from "next/image";
+import { FORM_SECTION } from "@/types/forms";
 import { useBounty } from "@/src/providers/bountyProvider";
 import { useTutorial } from "@/src/providers/tutorialProvider";
 

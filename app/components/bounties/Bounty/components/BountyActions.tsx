@@ -1,4 +1,4 @@
-import { Button, LoadingBar } from "@/src/components";
+import { Button, LoadingBar } from "@/components";
 import {
   // addSubmitterFFA,
   approveRequestFFA,

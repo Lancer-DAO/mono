@@ -14,7 +14,7 @@ import {
 import { Button } from "@/components";
 
 import { FC, useRef } from "react";
-import { useOutsideAlerter } from "../../hooks/useOutsideAlerter";
+import { useOutsideAlerter } from "../../src/hooks/useOutsideAlerter";
 import { LinkButton } from "..";
 import { useRouter } from "next/router";
 import {

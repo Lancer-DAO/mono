@@ -16,7 +16,7 @@ import {
   USDC_MINT,
 } from "@/src/constants";
 import { useConnection, useWallet } from "@solana/wallet-adapter-react";
-import { CoinflowFund } from "@/src/components";
+import { CoinflowFund } from "@/components";
 import { CREATE_BOUNTY_TUTORIAL_INITIAL_STATE } from "@/src/constants/tutorials";
 import { useBounty } from "@/src/providers/bountyProvider";
 import { useTutorial } from "@/src/providers/tutorialProvider";
@@ -79,7 +79,7 @@ const Form: React.FC<{ isAccountCreated: boolean }> = ({
       escrowId: currentBounty.escrow.id,
       amount: parseFloat(formData.fundingAmount),
     });
-    router.push(`/bounties/bounty?id=${currentBounty.id}`);
+    router.push(`/bounties/${currentBounty.id}`);
   };
 
   return (

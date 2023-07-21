@@ -1,4 +1,4 @@
-import { Header, JoyrideWrapper } from "@/src/components";
+import { Header, JoyrideWrapper } from "@/components";
 import { useUserWallet } from "@/src/providers";
 import { ReactNode } from "react";
 

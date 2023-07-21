@@ -1,201 +1,20 @@
-import type { NextPage } from "next";
-import dynamic from "next/dynamic";
-import Head from "next/head";
-import Image from "next/image";
-import React, { useCallback, useMemo, useState } from "react";
-import styles from "../styles/Home.module.css";
-import MonoProgramJSON from "@/escrow/sdk/idl/mono_program.json";
-import {
-  createLancerTokenAccountInstruction,
-  withdrawTokensInstruction,
-} from "@/escrow/sdk/instructions";
-import {
-  WalletAdapterNetwork,
-  WalletNotConnectedError,
-} from "@solana/wallet-adapter-base";
+import React, { useMemo } from "react";
+
 import {
   ConnectionProvider,
-  useConnection,
-  useWallet,
   WalletProvider,
 } from "@solana/wallet-adapter-react";
 import { WalletModalProvider } from "@solana/wallet-adapter-react-ui";
-import {
-  PhantomWalletAdapter,
-  UnsafeBurnerWalletAdapter,
-} from "@solana/wallet-adapter-wallets";
-import {
-  clusterApiUrl,
-  Connection,
-  Keypair,
-  PublicKey,
-  SystemProgram,
-  Transaction,
-} from "@solana/web3.js";
+import { PhantomWalletAdapter } from "@solana/wallet-adapter-wallets";
 import type { AppProps } from "next/app";
-import type { FC } from "react";
-import { createFeatureFundingAccountInstruction } from "@/escrow/sdk/instructions";
-import {
-  USDC_MINT,
-  MAINNET_RPC,
-  MAINNET_USDC_MINT,
-  MONO_ADDRESS,
-  BONK_MINT,
-} from "@/src/constants";
-import { AnchorProvider, Program } from "@project-serum/anchor";
-import { MonoProgram } from "@/escrow/sdk/types/mono_program";
-import { getMint } from "@solana/spl-token";
+import { MAINNET_RPC } from "@/src/constants";
 
 import { withPageAuthRequired } from "@auth0/nextjs-auth0";
+import { AdminLancer } from "../components/adminLancer/AdminLancer";
+import { NextPage } from "next";
 export const getServerSideProps = withPageAuthRequired();
-import { getAssociatedTokenAddress } from "@solana/spl-token";
-const WalletDisconnectButtonDynamic = dynamic(
-  async () =>
-    (await import("@solana/wallet-adapter-react-ui")).WalletDisconnectButton,
-  { ssr: false }
-);
-const WalletMultiButtonDynamic = dynamic(
-  async () =>
-    (await import("@solana/wallet-adapter-react-ui")).WalletMultiButton,
-  { ssr: false }
-);
 
-export const SendSOLToRandomAddress: FC = () => {
-  const { connection } = useConnection();
-  const { publicKey, wallet, signAllTransactions, signTransaction } =
-    useWallet();
-
-  const [formData, setFormData] = useState({
-    fundingAmount: null,
-  });
-
-  const handleChange = (event) => {
-    setFormData({
-      ...formData,
-      [event.target.name]: event.target.value,
-    });
-  };
-
-  const createFeesAccount = useCallback(async () => {
-    if (!publicKey) throw new WalletNotConnectedError();
-    const provider = new AnchorProvider(
-      connection,
-      { ...wallet, signAllTransactions, signTransaction, publicKey },
-      {}
-    );
-    const program = new Program<MonoProgram>(
-      MonoProgramJSON as unknown as MonoProgram,
-      new PublicKey(MONO_ADDRESS),
-      provider
-    );
-    const create_lancer_token_account_ix =
-      await createLancerTokenAccountInstruction(
-        new PublicKey(BONK_MINT),
-        program
-      );
-    await provider.sendAndConfirm(
-      new Transaction().add(create_lancer_token_account_ix),
-      []
-    );
-  }, [publicKey, connection]);
-
-  const withdrawTokens = useCallback(async () => {
-    if (!publicKey) throw new WalletNotConnectedError();
-    const provider = new AnchorProvider(
-      connection,
-      { ...wallet, signAllTransactions, signTransaction, publicKey },
-      {}
-    );
-    const program = new Program<MonoProgram>(
-      MonoProgramJSON as unknown as MonoProgram,
-      new PublicKey(MONO_ADDRESS),
-      provider
-    );
-    const withdrawer = new PublicKey(
-      "9TWkAtKRLffNrdZpdXmuXYkou7txZAFfjhPQeArZRHqF"
-    );
-    // const withdrawerTokenAccount = await getAssociatedTokenAddress(
-    //   new PublicKey(USDC_MINT),
-    //   withdrawer
-    // );
-    const create_lancer_token_account_ix = await withdrawTokensInstruction(
-      formData.fundingAmount * 10 ** 6,
-      new PublicKey(USDC_MINT),
-      withdrawer,
-      new PublicKey("8JUa3qKQrRN9dhotQLtxMcKxZZieioBsgc2W6Q34S6CH"),
-      program
-    );
-    await provider.sendAndConfirm(
-      new Transaction().add(create_lancer_token_account_ix),
-      []
-    );
-  }, [publicKey, connection, formData]);
-
-  return (
-    connection && (
-      <>
-        <div className={styles.walletButtons}>
-          <WalletMultiButtonDynamic />
-          <WalletDisconnectButtonDynamic />
-        </div>
-
-        <button onClick={createFeesAccount} disabled={!publicKey}>
-          Create New Mint Fees Account
-        </button>
-        <>
-          <input
-            type="number"
-            className="input w-input"
-            name="fundingAmount"
-            placeholder="1000 (USD)"
-            id="Issue"
-            value={formData.fundingAmount}
-            onChange={handleChange}
-          />
-
-          <button onClick={withdrawTokens} disabled={!publicKey}>
-            Withdraw Tokens
-          </button>
-        </>
-      </>
-    )
-  );
-};
-
-const Home: NextPage = () => {
-  return (
-    <div className={styles.container}>
-      <Head>
-        <title>Create Next App</title>
-        <meta name="description" content="Generated by create next app" />
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
-
-      <main className={styles.main}>
-        <h1 className={styles.title}>
-          Welcome to <a href="https://nextjs.org">Next.js!</a>
-        </h1>
-
-        <SendSOLToRandomAddress />
-      </main>
-
-      <footer className={styles.footer}>
-        <a
-          href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Powered by{" "}
-          <span className={styles.logo}>
-            <Image src="/vercel.svg" alt="Vercel Logo" width={72} height={16} />
-          </span>
-        </a>
-      </footer>
-    </div>
-  );
-};
-
-const App: FC<AppProps> = ({ Component, pageProps }) => {
+const App: NextPage<AppProps> = ({ Component, pageProps }) => {
   // Can be set to 'devnet', 'testnet', or 'mainnet-beta'
   const network = MAINNET_RPC;
 
@@ -227,7 +46,7 @@ const App: FC<AppProps> = ({ Component, pageProps }) => {
       <ConnectionProvider endpoint={endpoint}>
         <WalletProvider wallets={wallets} autoConnect>
           <WalletModalProvider>
-            <Home />
+            <AdminLancer />
           </WalletModalProvider>
         </WalletProvider>
       </ConnectionProvider>

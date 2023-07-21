@@ -1,11 +1,7 @@
 import Link from "next/link";
-import Logo from "../../../components/@icons/Logo";
-import {
-  LinkButton,
-  AccountHeaderOptions,
-  TutorialsModal,
-} from "@/components/";
+import { LinkButton, AccountHeaderOptions, TutorialsModal } from "@/components";
 import { LinkButtonProps } from "@/components/atoms/LinkButton";
+import Logo from "../@icons/Logo";
 import dynamic from "next/dynamic";
 import { HelpCircle } from "react-feather";
 import { useState } from "react";
