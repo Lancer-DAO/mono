@@ -14,6 +14,7 @@
     "prisma:pull": "prisma db pull",
     "prisma:format": "prisma format",
     "prisma:generate": "prisma generate",
+    "postinstall": "prisma generate",
     "prisma:db:push": "prisma db push"
   },
   "dependencies": {
