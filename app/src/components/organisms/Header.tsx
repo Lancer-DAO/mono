@@ -1,5 +1,5 @@
 import Link from "next/link";
-import Logo from "../../assets/Logo";
+import Logo from "../@icons/Logo";
 import {
   LinkButton,
   AccountHeaderOptions,
@@ -32,7 +32,8 @@ export const Header = () => {
       <div className="flex items-center mx-auto w-[70%]">
         <Link
           href="/"
-          className="relative float-left text-blue-500 transition-colors duration-400 ease-in-out hover:text-blue-600 no-underline"
+          className="relative float-left text-blue-500 transition-colors 
+          duration-400 ease-in-out hover:text-blue-600 no-underline"
         >
           <Logo width="auto" height="50px" />
         </Link>
@@ -60,7 +61,11 @@ export const Header = () => {
               }
             }}
           >
-            <WalletMultiButtonDynamic className="text-gray-800 flex h-[48px] w-[250px] py-[6px] items-center justify-center border-solid hover:bg-turquoise-500 text-gray-800 hover:text-white-100 transition-colors duration-300 ease-in-out" />
+            <WalletMultiButtonDynamic
+              className="flex h-[48px] w-[200px] py-[6px] items-center justify-center 
+              border-solid hover:bg-turquoise-500 text-gray-800 hover:!text-white-100 
+              transition-colors duration-300 ease-in-out"
+            />
           </div>
 
           <AccountHeaderOptions />
@@ -71,7 +76,8 @@ export const Header = () => {
             onMouseEnter={() => setIsTutorialButtonHovered(true)}
             onMouseLeave={() => setIsTutorialButtonHovered(false)}
             id="start-tutorial-link"
-            className="flex rounded-full h-[48px] w-[48px] gap-[10px] py-[6px] items-center justify-center hover:bg-turquoise-500 "
+            className="flex rounded-full h-[48px] w-[48px] gap-[10px] py-[6px] 
+            items-center justify-center hover:bg-turquoise-500"
           >
             <HelpCircle
               height={48}

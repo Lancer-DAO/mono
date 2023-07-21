@@ -13,7 +13,6 @@ interface ButtonProps
   children?: React.ReactNode;
   version?: "filled" | "outlined" | "text";
   id?: string;
-
   extraClasses?: string;
   props?: any;
 }

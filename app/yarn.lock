@@ -2263,7 +2263,7 @@
     bs58 "^5.0.0"
     uuid "^8.3.2"
 
-"@ladderlabs/buddy-sdk@^0.1.20":
+"@ladderlabs/buddy-sdk@^0.1.21":
   version "0.1.21"
   resolved "https://registry.yarnpkg.com/@ladderlabs/buddy-sdk/-/buddy-sdk-0.1.21.tgz#675a374cfef396f8c413e5b437d0ca1cb7c79b7b"
   integrity sha512-heroG1RlERQ/bxG03qyOzMKDhSPFxr4dR5BO1dKa8FuYbsU/5yXGSYeoROTSNpS/1pGrAgpLMvRfkBhu2vC2Ow==
