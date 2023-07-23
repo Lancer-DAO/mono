@@ -73,6 +73,7 @@ export const CustodialWalletContext = createContext<IUserWalletContext>({
   provider: null,
   program: null,
   currentWallet: null,
+  logout: () => {},
 });
 
 export function useCustodialWallet(): IUserWalletContext {
@@ -317,6 +318,7 @@ export const CustodialWalletProvider: FunctionComponent<IWeb3AuthState> = ({
     currentWallet,
     provider,
     program,
+    logout,
   };
   return (
     <CustodialWalletContext.Provider value={contextProvider}>

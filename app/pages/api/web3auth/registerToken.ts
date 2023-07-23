@@ -7,7 +7,6 @@ export default async function handler(
   res: NextApiResponse
 ) {
   const userInfo = req.body.data;
-  console.log("hi", userInfo);
   updateSession(req, res, {
     user: {
       email: userInfo.email,

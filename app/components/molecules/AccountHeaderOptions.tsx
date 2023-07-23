@@ -1,5 +1,5 @@
 import { useUserWallet } from "@/src/providers";
-import { LinkButton, ApiKeyModal } from "@/components";
+import { LinkButton, ApiKeyModal, Button } from "@/components";
 import { useEffect, useRef, useState } from "react";
 import { useOutsideAlerter } from "@/src/hooks/useOutsideAlerter";
 import Link from "next/link";
@@ -9,25 +9,12 @@ import {
   GITHUB_API_KEY_TUTORIAL_INITIAL_STATE,
 } from "@/src/constants/tutorials";
 import { useTutorial } from "@/src/providers/tutorialProvider";
+import { IS_CUSTODIAL } from "@/src/constants";
 
 const AccountHeaderOptions = () => {
-  const { currentUser } = useUserWallet();
+  const { currentUser, logout } = useUserWallet();
   const { currentTutorialState, setCurrentTutorialState } = useTutorial();
-  const [hasExtension, setHasExtension] = useState(false);
-  useEffect(() => {
-    try {
-      const extensionId = localStorage.getItem("lancerExtensionId");
-      chrome.runtime.sendMessage(
-        extensionId,
-        { message: "test connection" },
-        function (response) {
-          if (response.connected) setHasExtension(true);
-        }
-      );
-    } catch (e) {
-      console.error(e);
-    }
-  }, []);
+
   const [showModal, setShowModal] = useState(false);
   const [showOptions, setShowOptions] = useState(false);
   const wrapperRef = useRef(null);
@@ -36,7 +23,7 @@ const AccountHeaderOptions = () => {
   });
   return (
     <div className="relative ">
-      {currentUser !== null && (
+      {true && (
         <>
           <div
             className="cursor-pointer"
@@ -132,13 +119,24 @@ const AccountHeaderOptions = () => {
                 Documentation
               </Link>
 
-              <Link
-                href={"/api/auth/logout"}
-                id="logout-link"
-                className="flex h-[48px] rounded-b-[20px] py-[6px] items-center justify-center  hover:bg-turquoise-500 text-gray-800 hover:text-white-100 transition-colors duration-300 ease-in-out"
-              >
-                Logout
-              </Link>
+              {!IS_CUSTODIAL && (
+                <Link
+                  href={"/api/auth/logout"}
+                  id="logout-link"
+                  className="flex h-[48px] rounded-b-[20px] py-[6px] items-center justify-center  hover:bg-turquoise-500 text-gray-800 hover:text-white-100 transition-colors duration-300 ease-in-out"
+                >
+                  Logout
+                </Link>
+              )}
+              {IS_CUSTODIAL && (
+                <Button
+                  onClick={logout}
+                  id="logout-link"
+                  className="flex h-[48px] rounded-b-[20px] py-[6px] items-center justify-center  hover:bg-turquoise-500 text-gray-800 hover:text-white-100 transition-colors duration-300 ease-in-out"
+                >
+                  Logout
+                </Button>
+              )}
             </div>
           )}
           <ApiKeyModal showModal={showModal} setShowModal={setShowModal} />
