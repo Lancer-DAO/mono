@@ -248,14 +248,11 @@ export const ApproveSubmission = () => {
       program,
       provider
     );
-    currentBounty.currentUserRelationsList.push(
-      BOUNTY_USER_RELATIONSHIP.Completer
-    );
     const { updatedBounty } = await mutateAsync({
       bountyId: currentBounty.id,
       currentUserId: currentUser.id,
-      userId: currentUser.id,
-      relations: currentBounty.currentUserRelationsList,
+      userId: currentBounty.currentSubmitter.userid,
+      relations: [BOUNTY_USER_RELATIONSHIP.Completer],
       state: BountyState.COMPLETE,
       publicKey: currentWallet.publicKey.toString(),
       escrowId: currentBounty.escrowid,

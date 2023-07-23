@@ -26,7 +26,9 @@ const ContributorInfo: React.FC<{ user: User; disableLink?: boolean }> = ({
                 }?s=60&v=4`
           }
         />
-        <div className="ml-[10px]">{user.githubLogin}</div>
+        <div className="ml-[10px]">
+          {user.name ? user.name : user.githubLogin}
+        </div>
       </div>
     )
   );

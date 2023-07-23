@@ -12,6 +12,7 @@ import { fundFFA } from "@/escrow/adapters";
 import {
   BONK_DEMICALS,
   BONK_MINT,
+  IS_CUSTODIAL,
   USDC_DECIMALS,
   USDC_MINT,
 } from "@/src/constants";
@@ -27,7 +28,9 @@ const Form: React.FC<{ isAccountCreated: boolean }> = ({
   const { currentWallet, program, provider } = useUserWallet();
   const { currentBounty } = useBounty();
   const { currentTutorialState, setCurrentTutorialState } = useTutorial();
-  const [fundingType, setFundingType] = useState<"wallet" | "card">("wallet");
+  const [fundingType, setFundingType] = useState<"wallet" | "card">(
+    IS_CUSTODIAL ? "card" : "wallet"
+  );
   const { mutateAsync: getBounty } = api.bounties.getBounty.useMutation();
   const { mutateAsync: fundB } = api.bounties.fundBounty.useMutation();
   const router = useRouter();
@@ -94,25 +97,27 @@ const Form: React.FC<{ isAccountCreated: boolean }> = ({
               >
                 Fund Lancer Quest
               </h2>
-              <div className="issue-creation-type">
-                <div
-                  className={classnames("form-subtitle hover-effect", {
-                    unselected: fundingType !== "wallet",
-                  })}
-                  onClick={() => setFundingType("wallet")}
-                >
-                  Fund with Wallet
+              {!IS_CUSTODIAL && (
+                <div className="issue-creation-type">
+                  <div
+                    className={classnames("form-subtitle hover-effect", {
+                      unselected: fundingType !== "wallet",
+                    })}
+                    onClick={() => setFundingType("wallet")}
+                  >
+                    Fund with Wallet
+                  </div>
+                  <div>OR</div>
+                  <div
+                    className={classnames("form-subtitle hover-effect", {
+                      unselected: fundingType !== "card",
+                    })}
+                    onClick={() => setFundingType("card")}
+                  >
+                    Fund with Card
+                  </div>
                 </div>
-                <div>OR</div>
-                <div
-                  className={classnames("form-subtitle hover-effect", {
-                    unselected: fundingType !== "card",
-                  })}
-                  onClick={() => setFundingType("card")}
-                >
-                  Fund with Card
-                </div>
-              </div>
+              )}
               {/* {!isAccountCreated ? (
                 <LoadingBar title="Loading On Chain Details" />
               ) : ( */}
