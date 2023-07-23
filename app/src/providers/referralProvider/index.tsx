@@ -76,6 +76,7 @@ const ReferralProvider: FunctionComponent<IReferralProps> = ({ children }) => {
 
   const handleFetches = useCallback(async () => {
     try {
+      console.log("handle fetches");
       const organization = await client.organization.getByName(
         ORGANIZATION_NAME
       );
@@ -255,7 +256,7 @@ const ReferralProvider: FunctionComponent<IReferralProps> = ({ children }) => {
 
       const buddyProfile = await client.buddy.getProfile(wallet);
       if (!buddyProfile) return [];
-
+      debugger;
       const treasuryPDA = client.pda.getTreasuryPDA(
         [buddyProfile.account.pda],
         [10_000],
@@ -327,7 +328,7 @@ const ReferralProvider: FunctionComponent<IReferralProps> = ({ children }) => {
         },
       ];
     },
-    [client, member]
+    [client, member, organization]
   );
 
   const referralId = useMemo(() => {
