@@ -1,5 +1,5 @@
 import { useUserWallet } from "@/src/providers";
-import { LinkButton, ApiKeyModal, Button } from "@/components";
+import { LinkButton, ApiKeyModal, Button, PubKey } from "@/components";
 import { useEffect, useRef, useState } from "react";
 import { useOutsideAlerter } from "@/src/hooks/useOutsideAlerter";
 import Link from "next/link";
@@ -12,7 +12,7 @@ import { useTutorial } from "@/src/providers/tutorialProvider";
 import { IS_CUSTODIAL } from "@/src/constants";
 
 const AccountHeaderOptions = () => {
-  const { currentUser, logout } = useUserWallet();
+  const { currentUser, logout, currentWallet } = useUserWallet();
   const { currentTutorialState, setCurrentTutorialState } = useTutorial();
 
   const [showModal, setShowModal] = useState(false);
@@ -129,13 +129,16 @@ const AccountHeaderOptions = () => {
                 </Link>
               )}
               {IS_CUSTODIAL && (
-                <Button
-                  onClick={logout}
-                  id="logout-link"
-                  className="flex h-[48px] rounded-b-[20px] py-[6px] items-center justify-center  hover:bg-turquoise-500 text-gray-800 hover:text-white-100 transition-colors duration-300 ease-in-out"
-                >
-                  Logout
-                </Button>
+                <>
+                  <Button
+                    onClick={logout}
+                    id="logout-link"
+                    className="flex w-full h-[48px] border-b-gray-400 py-[6px] items-center justify-center  hover:bg-turquoise-500 text-gray-800 hover:text-white-100 transition-colors duration-300 ease-in-out"
+                  >
+                    Logout
+                  </Button>
+                  <PubKey pubKey={currentWallet.publicKey} />
+                </>
               )}
             </div>
           )}

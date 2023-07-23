@@ -20,6 +20,7 @@ import { decimalToNumber } from "@/src/utils";
 import {
   BONK_MINT,
   BOUNTY_PROJECT_PARAMS,
+  IS_CUSTODIAL,
   IS_MAINNET,
   PROFILE_PROJECT_PARAMS,
   USDC_MINT,
@@ -41,9 +42,17 @@ const BountyActions = () => {
   const { currentWallet } = useUserWallet();
   const [hoveredButton, setHoveredButton] = useState("none");
 
-  // if (false) {
-  //   return <LoadingBar title="Loading On Chain Details" />;
-  // }
+  if (!currentWallet) {
+    return IS_CUSTODIAL ? (
+      <></>
+    ) : (
+      <div className="bounty-buttons" id="bounty-actions">
+        <Button disabled id="bounty-completed">
+          Please Connect a Wallet
+        </Button>
+      </div>
+    );
+  }
   if (currentBounty.state === BountyState.COMPLETE) {
     return (
       <div className="bounty-buttons" id="bounty-actions">

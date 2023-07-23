@@ -56,7 +56,9 @@ export const AllProviders: React.FC<{ children: ReactNode }> = ({
         <WalletModalProvider>
           <AppContextProvider>
             <TutorialProvider>
-              <CustodialWalletProvider web3AuthNetwork="testnet">
+              <CustodialWalletProvider
+                web3AuthNetwork={IS_MAINNET ? "cyan" : "testnet"}
+              >
                 <BountyProvider>
                   <ReferralProvider>{children}</ReferralProvider>
                 </BountyProvider>

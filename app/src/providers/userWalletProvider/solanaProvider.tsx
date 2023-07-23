@@ -27,7 +27,7 @@ const solanaProvider = (
       method: "solana_provider_config",
       params: [],
     });
-    const conn = new Connection(connectionConfig.rpcTarget);
+    const conn = new Connection(connectionConfig.rpcTarget, "finalized");
     return conn;
   };
 

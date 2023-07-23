@@ -16,7 +16,6 @@ export const createFFA = async (
   mint?: PublicKey
 ) => {
   const timestamp = Date.now().toString();
-  debugger;
   const ix = await createFeatureFundingAccountInstruction(
     mint ? mint : new PublicKey(USDC_MINT),
     new PublicKey(wallet.publicKey),
@@ -45,6 +44,7 @@ export const createFFA = async (
     lastValidBlockHeight: lastValidBlockHeight,
     skipPreflight: true,
   };
+  debugger;
   const signature = await wallet.signAndSendTransaction(
     new Transaction(txInfo).add(ix).add(referralAccountIx)
   );
