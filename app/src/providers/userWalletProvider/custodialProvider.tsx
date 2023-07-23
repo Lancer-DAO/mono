@@ -221,7 +221,7 @@ export const CustodialWalletProvider: FunctionComponent<IWeb3AuthState> = ({
         subscribeAuthEvents(web3AuthInstance);
         var loginConfig: LoginConfig = {
           jwt: {
-            verifier: "lancer",
+            verifier: "lancer-google",
             typeOfLogin: "jwt",
             clientId: "0j9xN7veV1ofNVAgCMfHf6S4m09lLzW0",
           },

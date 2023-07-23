@@ -18,9 +18,11 @@ const SITE_URL = "https://app.lancer.so/account?r=";
 
 const ProfileNFTCard = ({
   profileNFT,
+  picture,
   githubId,
 }: {
   profileNFT: ProfileNFT;
+  picture: string;
   githubId: string;
 }) => {
   const [showCoinflow, setShowCoinflow] = useState(false);
@@ -88,12 +90,18 @@ const ProfileNFTCard = ({
     <div className="w-full md:w-[40%] px-5 pb-20">
       <div className="flex flex-col gap-3">
         {/* <img src={profileNFT.image} className="profile-picture" /> */}
-        <img
-          src={`https://avatars.githubusercontent.com/u/${
-            githubId.split("|")[1]
-          }?s=256&v=4`}
-          className="profile-picture"
-        />
+        {(picture || githubId) && (
+          <img
+            src={
+              picture
+                ? picture
+                : `https://avatars.githubusercontent.com/u/${
+                    githubId.split("|")[1]
+                  }?s=60&v=4`
+            }
+            className="profile-picture"
+          />
+        )}
 
         <div className="flex items-center justify-between">
           <h4 className="text-xl">{profileNFT.name.split("for ")[1]}</h4>

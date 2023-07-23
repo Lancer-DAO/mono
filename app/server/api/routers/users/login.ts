@@ -3,7 +3,7 @@ import { protectedProcedure } from "../../trpc";
 import * as queries from "@/prisma/queries";
 
 export const login = protectedProcedure.mutation(async ({ ctx }) => {
-  const { email, id, sub, nickname } = ctx.user;
+  const { email, id, sub, nickname, picture } = ctx.user;
   if (!id) {
     try {
       const maybeUser = await queries.user.getByEmail(email);
@@ -13,12 +13,17 @@ export const login = protectedProcedure.mutation(async ({ ctx }) => {
     } catch (e) {
       console.error(e);
 
-      await queries.user.create(email, sub, nickname);
+      await queries.user.create(email, sub, nickname, picture);
       const user = await queries.user.getByEmail(email);
       return user;
     }
   } else {
-    const user = await queries.user.getByEmail(email);
+    let user = await queries.user.getByEmail(email);
+    console.log("picture", user.picture);
+    if (!user.picture) {
+      await queries.user.updatePicture(user.id, picture);
+      user = await queries.user.getByEmail(email);
+    }
     return user;
   }
 });

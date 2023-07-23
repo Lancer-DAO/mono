@@ -63,9 +63,13 @@ const AccountHeaderOptions = () => {
             id="account-options"
           >
             <img
-              src={`https://avatars.githubusercontent.com/u/${
-                currentUser?.githubId?.split("|")[1]
-              }?s=60&v=4`}
+              src={
+                currentUser.picture
+                  ? currentUser.picture
+                  : `https://avatars.githubusercontent.com/u/${
+                      currentUser?.githubId?.split("|")[1]
+                    }?s=60&v=4`
+              }
               className="h-[40px] w-[40px] rounded-full border-[1px] border-gray-600"
             />
           </div>
@@ -133,7 +137,7 @@ const AccountHeaderOptions = () => {
                   <Button
                     onClick={logout}
                     id="logout-link"
-                    className="flex w-full h-[48px] border-b-gray-400 py-[6px] items-center justify-center  hover:bg-turquoise-500 text-gray-800 hover:text-white-100 transition-colors duration-300 ease-in-out"
+                    className="flex w-full h-[48px] border-b-gray-400 border-b-[1px] py-[6px] items-center justify-center  hover:bg-turquoise-500 text-gray-800 hover:text-white-100 transition-colors duration-300 ease-in-out"
                   >
                     Logout
                   </Button>

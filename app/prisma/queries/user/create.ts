@@ -3,14 +3,16 @@ import * as Prisma from "@prisma/client";
 
 export const create = async (
   email: string,
-  githubId: string,
-  githubLogin: string
+  googleId: string,
+  name: string,
+  picture?: string
 ): Promise<Prisma.User> => {
   return await prisma.user.create({
     data: {
       email,
-      githubId,
-      githubLogin,
+      name,
+      googleId,
+      picture: picture,
       createdAt: Date.now().toString(),
     },
   });

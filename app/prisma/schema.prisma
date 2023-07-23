@@ -306,7 +306,9 @@ model User {
   verified             Boolean?
   hasProfileNFT        Boolean?
   githubId             String?  @db.VarChar(24)
+  googleId             String?  @db.VarChar(64)
   githubLogin          String?  @db.VarChar(64)
+  picture              String?  @db.VarChar(2000)
   name                 String?  @db.VarChar(128)
   discord              String?  @db.VarChar(64)
   twitter              String?  @db.VarChar(64)

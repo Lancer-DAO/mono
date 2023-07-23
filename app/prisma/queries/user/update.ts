@@ -38,3 +38,17 @@ export const updateProfileNFT = async (
     },
   });
 };
+
+export const updatePicture = async (
+  id: number,
+  picture: string
+): Promise<Prisma.User> => {
+  return await prisma.user.update({
+    where: {
+      id: id,
+    },
+    data: {
+      picture,
+    },
+  });
+};

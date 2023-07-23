@@ -70,9 +70,23 @@ const Account: React.FC = () => {
   const [showModal, setShowModal] = useState(false);
   const [bountiesLoading, setBountiesLoading] = useState(false);
   const [profileLoading, setProfileLoading] = useState(false);
+  // const [profileCreating, setProfileCreating] = useState(false);
 
   const { mutateAsync: registerProfileNFT } =
     api.users.registerProfileNFT.useMutation();
+
+  useEffect(() => {
+    const maybeMintNft = async () => {
+      if (currentUser && router.query.id === undefined) {
+        if (!currentUser.profileWalletId) {
+          // setProfileCreating(true);
+          await mintProfileNFT();
+          // setProfileCreating(false);
+        }
+      }
+    };
+    maybeMintNft();
+  }, [account, router.isReady]);
 
   const fetchProfileNFT = async () => {
     setProfileLoading(true);
@@ -253,6 +267,7 @@ const Account: React.FC = () => {
               <>
                 <ProfileNFTCard
                   profileNFT={profileNFT}
+                  picture={account.picture}
                   githubId={account.githubId}
                 />
 
@@ -277,14 +292,7 @@ const Account: React.FC = () => {
                 </div>
               </>
             ) : (
-              <Button
-                disabled={!currentWallet}
-                disabledText={"Please connect a wallet"}
-                onClick={mintProfileNFT}
-                id="mint-profile-nft"
-              >
-                Mint Profile NFT
-              </Button>
+              <LoadingBar title="Creating Profile" />
             )}
           </div>
         </>
