@@ -70,7 +70,7 @@ const Account: React.FC = () => {
   const [showModal, setShowModal] = useState(false);
   const [bountiesLoading, setBountiesLoading] = useState(false);
   const [profileLoading, setProfileLoading] = useState(false);
-  // const [profileCreating, setProfileCreating] = useState(false);
+  const [profileCreating, setProfileCreating] = useState(false);
 
   const { mutateAsync: registerProfileNFT } =
     api.users.registerProfileNFT.useMutation();
@@ -79,14 +79,14 @@ const Account: React.FC = () => {
     const maybeMintNft = async () => {
       if (currentUser && router.query.id === undefined) {
         if (!currentUser.profileWalletId) {
-          // setProfileCreating(true);
+          setProfileCreating(true);
           await mintProfileNFT();
-          // setProfileCreating(false);
+          setProfileCreating(false);
         }
       }
     };
     maybeMintNft();
-  }, [account, router.isReady]);
+  }, [currentUser, router.isReady]);
 
   const fetchProfileNFT = async () => {
     setProfileLoading(true);
@@ -214,21 +214,32 @@ const Account: React.FC = () => {
         isRunning: false,
       });
     }
-    const result = await underdogClient.createNft({
+    const nfts = await underdogClient.getNfts({
       params: PROFILE_PROJECT_PARAMS,
-      body: {
-        name: `${account.githubLogin}`,
-        image: "https://i.imgur.com/3uQq5Zo.png",
-        attributes: {
-          reputation: 0,
-          badges: "",
-          certifications: "",
-          lastUpdated: dayjs().toISOString(),
-        },
-        upsert: true,
-        receiverAddress: currentWallet.publicKey.toString(),
+      query: {
+        page: 1,
+        limit: 1,
+        ownerAddress: currentWallet.publicKey.toString(),
       },
     });
+    if (nfts.totalResults === 0) {
+      const result = await underdogClient.createNft({
+        params: PROFILE_PROJECT_PARAMS,
+        body: {
+          name: `${account.githubLogin}`,
+          image: "https://i.imgur.com/3uQq5Zo.png",
+          attributes: {
+            reputation: 0,
+            badges: "",
+            certifications: "",
+            lastUpdated: dayjs().toISOString(),
+          },
+          upsert: true,
+          receiverAddress: currentWallet.publicKey.toString(),
+        },
+      });
+    }
+
     const updatedUser = await registerProfileNFT({
       walletPublicKey: currentWallet.publicKey.toString(),
     });
@@ -241,17 +252,14 @@ const Account: React.FC = () => {
         <>
           <div className="w-full flex flex-col md:flex-row items-center md:items-start gap-10 md:gap-5 justify-center">
             {/* <ApiKeyModal showModal={showModal} setShowModal={setShowModal} /> */}
-
             {/* {currentUser?.githubLogin && (
                 <div>GitHub User: {currentUser.githubLogin}</div>
               )}
                 <a href="/api/auth/logout">Logout</a> */}
-
             {/* {wallets &&
                 wallets.map((wallet) => (
                   <WalletInfo wallet={wallet} key={wallet.publicKey.toString()} />
                 ))} */}
-
             {/* {!IS_MAINNET && (
                   <a
                     href="https://staging.coinflow.cash/faucet"
@@ -261,9 +269,9 @@ const Account: React.FC = () => {
                     USDC Faucet
                   </a>
                 )} */}
-            {profileLoading ? (
-              <LoadingBar title="Loading Profile" />
-            ) : profileNFT ? (
+            {profileLoading && <LoadingBar title="Loading Profile" />}{" "}
+            {profileCreating && <LoadingBar title="Creating Profile" />}{" "}
+            {profileNFT && (
               <>
                 <ProfileNFTCard
                   profileNFT={profileNFT}
@@ -291,8 +299,6 @@ const Account: React.FC = () => {
                   )}
                 </div>
               </>
-            ) : (
-              <LoadingBar title="Creating Profile" />
             )}
           </div>
         </>
