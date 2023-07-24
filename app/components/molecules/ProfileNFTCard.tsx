@@ -160,9 +160,7 @@ const ProfileNFTCard = ({
                 </span>
                 <Copy
                   className="cursor-pointer"
-                  onClick={() =>
-                    handleCopyClick(`${SITE_URL}/?r=${referralId}`)
-                  }
+                  onClick={() => handleCopyClick(`${SITE_URL}${referralId}`)}
                 />
               </div>
               <div className="absolute right-0 text-base">
