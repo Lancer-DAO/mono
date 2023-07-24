@@ -12,13 +12,17 @@ export const getOrCreate = async (
     },
   });
   if (!wallet) {
-    wallet = await prisma.wallet.create({
-      data: {
-        publicKey,
-        userid: user.id,
-        isDefault,
-      },
-    });
+    try {
+      wallet = await prisma.wallet.create({
+        data: {
+          publicKey,
+          userid: user.id,
+          isDefault,
+        },
+      });
+    } catch (e) {
+      console.log("e", e);
+    }
   }
   return wallet;
 };

@@ -6,6 +6,7 @@ import { registerProfileNFT } from "./registerProfileNFT";
 import { getUser } from "./get";
 import { search } from "./search";
 import { addReferrer } from "./addReferrer";
+import { maybeInitAccount } from "./maybeInitAccount";
 
 export const users = createTRPCRouter({
   login,
@@ -14,4 +15,5 @@ export const users = createTRPCRouter({
   getUser,
   search,
   addReferrer,
+  maybeInitAccount,
 });

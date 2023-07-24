@@ -8,6 +8,7 @@ import { useState } from "react";
 import { PROFILE_TUTORIAL_INITIAL_STATE } from "@/src/constants/tutorials";
 import { useTutorial } from "@/src/providers/tutorialProvider";
 import { useAppContext } from "@/src/providers/appContextProvider";
+import { IS_CUSTODIAL } from "@/src/constants";
 const HEADER_LINKS: LinkButtonProps[] = [
   { href: "/create", children: "New Bounty", id: "create-bounty-link" },
   { href: "/bounties", children: "Bounties", id: "bounties-link" },
@@ -39,30 +40,34 @@ export const Header = () => {
               <LinkButton href={href} children={children} version="text" />
             );
           })}
-          <div
-            className="ml-auto"
-            id="wallet-connect-button"
-            onClick={() => {
-              if (
-                !!currentTutorialState &&
-                currentTutorialState?.title ===
-                  PROFILE_TUTORIAL_INITIAL_STATE.title &&
-                currentTutorialState.currentStep === 1
-              ) {
-                setCurrentTutorialState({
-                  ...currentTutorialState,
-                  isRunning: false,
-                });
-                return;
-              }
-            }}
-          >
-            <WalletMultiButtonDynamic
-              className="flex h-[48px] w-[200px] py-[6px] items-center justify-center 
+          {IS_CUSTODIAL ? (
+            <div className="ml-auto"></div>
+          ) : (
+            <div
+              className="ml-auto"
+              id="wallet-connect-button"
+              onClick={() => {
+                if (
+                  !!currentTutorialState &&
+                  currentTutorialState?.title ===
+                    PROFILE_TUTORIAL_INITIAL_STATE.title &&
+                  currentTutorialState.currentStep === 1
+                ) {
+                  setCurrentTutorialState({
+                    ...currentTutorialState,
+                    isRunning: false,
+                  });
+                  return;
+                }
+              }}
+            >
+              <WalletMultiButtonDynamic
+                className="flex h-[48px] w-[200px] py-[6px] items-center justify-center 
               border-solid hover:bg-turquoise-500 text-gray-800 hover:!text-white-100 
               transition-colors duration-300 ease-in-out"
-            />
-          </div>
+              />
+            </div>
+          )}
 
           <AccountHeaderOptions />
           <button

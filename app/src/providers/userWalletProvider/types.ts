@@ -16,4 +16,5 @@ export interface IUserWalletContext {
   program: Program<MonoProgram>;
   provider: AnchorProvider;
   currentWallet: LancerWallet;
+  logout?: () => void;
 }

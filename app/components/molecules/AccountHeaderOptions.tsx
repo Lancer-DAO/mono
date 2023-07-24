@@ -1,5 +1,5 @@
 import { useUserWallet } from "@/src/providers";
-import { LinkButton, ApiKeyModal } from "@/components";
+import { LinkButton, ApiKeyModal, Button, PubKey } from "@/components";
 import { useEffect, useRef, useState } from "react";
 import { useOutsideAlerter } from "@/src/hooks/useOutsideAlerter";
 import Link from "next/link";
@@ -9,25 +9,12 @@ import {
   GITHUB_API_KEY_TUTORIAL_INITIAL_STATE,
 } from "@/src/constants/tutorials";
 import { useTutorial } from "@/src/providers/tutorialProvider";
+import { IS_CUSTODIAL } from "@/src/constants";
 
 const AccountHeaderOptions = () => {
-  const { currentUser } = useUserWallet();
+  const { currentUser, logout, currentWallet } = useUserWallet();
   const { currentTutorialState, setCurrentTutorialState } = useTutorial();
-  const [hasExtension, setHasExtension] = useState(false);
-  useEffect(() => {
-    try {
-      const extensionId = localStorage.getItem("lancerExtensionId");
-      chrome.runtime.sendMessage(
-        extensionId,
-        { message: "test connection" },
-        function (response) {
-          if (response.connected) setHasExtension(true);
-        }
-      );
-    } catch (e) {
-      console.error(e);
-    }
-  }, []);
+
   const [showModal, setShowModal] = useState(false);
   const [showOptions, setShowOptions] = useState(false);
   const wrapperRef = useRef(null);
@@ -36,7 +23,7 @@ const AccountHeaderOptions = () => {
   });
   return (
     <div className="relative ">
-      {currentUser !== null && (
+      {!!currentUser && (
         <>
           <div
             className="cursor-pointer"
@@ -76,9 +63,13 @@ const AccountHeaderOptions = () => {
             id="account-options"
           >
             <img
-              src={`https://avatars.githubusercontent.com/u/${
-                currentUser?.githubId?.split("|")[1]
-              }?s=60&v=4`}
+              src={
+                currentUser.picture
+                  ? currentUser.picture
+                  : `https://avatars.githubusercontent.com/u/${
+                      currentUser.githubId?.split("|")[1]
+                    }?s=60&v=4`
+              }
               className="h-[40px] w-[40px] rounded-full border-[1px] border-gray-600"
             />
           </div>
@@ -132,13 +123,27 @@ const AccountHeaderOptions = () => {
                 Documentation
               </Link>
 
-              <Link
-                href={"/api/auth/logout"}
-                id="logout-link"
-                className="flex h-[48px] rounded-b-[20px] py-[6px] items-center justify-center  hover:bg-turquoise-500 text-gray-800 hover:text-white-100 transition-colors duration-300 ease-in-out"
-              >
-                Logout
-              </Link>
+              {!IS_CUSTODIAL && (
+                <Link
+                  href={"/api/auth/logout"}
+                  id="logout-link"
+                  className="flex h-[48px] rounded-b-[20px] py-[6px] items-center justify-center  hover:bg-turquoise-500 text-gray-800 hover:text-white-100 transition-colors duration-300 ease-in-out"
+                >
+                  Logout
+                </Link>
+              )}
+              {IS_CUSTODIAL && (
+                <>
+                  <Button
+                    onClick={logout}
+                    id="logout-link"
+                    className="flex w-full h-[48px] border-b-gray-400 border-b-[1px] py-[6px] items-center justify-center  hover:bg-turquoise-500 text-gray-800 hover:text-white-100 transition-colors duration-300 ease-in-out"
+                  >
+                    Logout
+                  </Button>
+                  <PubKey pubKey={currentWallet.publicKey} />
+                </>
+              )}
             </div>
           )}
           <ApiKeyModal showModal={showModal} setShowModal={setShowModal} />

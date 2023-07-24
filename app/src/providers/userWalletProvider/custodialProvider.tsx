@@ -32,6 +32,7 @@ import axios from "axios";
 import {
   Connection,
   PublicKey,
+  SystemProgram,
   Transaction,
   VersionedTransaction,
 } from "@solana/web3.js";
@@ -39,7 +40,7 @@ import { useConnection } from "@solana/wallet-adapter-react";
 import { CurrentUser, LancerWallet } from "@/src/types";
 import { MonoProgram } from "@/escrow/sdk/types/mono_program";
 import MonoProgramJSON from "@/escrow/sdk/idl/mono_program.json";
-import { IS_MAINNET, MONO_ADDRESS } from "@/src/constants";
+import { IS_MAINNET, MAINNET_RPC, MONO_ADDRESS } from "@/src/constants";
 
 import { AnchorProvider, Program } from "@project-serum/anchor";
 import { IUserWalletContext } from "./types";
@@ -49,8 +50,8 @@ import { getCookie, setCookie } from "cookies-next";
 const SOLANA_CHAIN_CONFIG = {
   solana: {
     chainNamespace: CHAIN_NAMESPACES.SOLANA,
-    chainId: "0x3", // Please use 0x1 for Mainnet, 0x2 for Testnet, 0x3 for Devnet
-    rpcTarget: "https://api.devnet.solana.com",
+    chainId: IS_MAINNET ? "0x1" : "0x3", // Please use 0x1 for Mainnet, 0x2 for Testnet, 0x3 for Devnet
+    rpcTarget: IS_MAINNET ? MAINNET_RPC : "https://api.devnet.solana.com",
     displayName: "Solana Devnet",
     blockExplorer: "https://explorer.solana.com",
     ticker: "SOL",
@@ -73,6 +74,7 @@ export const CustodialWalletContext = createContext<IUserWalletContext>({
   provider: null,
   program: null,
   currentWallet: null,
+  logout: () => {},
 });
 
 export function useCustodialWallet(): IUserWalletContext {
@@ -101,6 +103,8 @@ export const CustodialWalletProvider: FunctionComponent<IWeb3AuthState> = ({
   const [currentUser, setCurrentUser] = useState<CurrentUser | null>(null);
   const [user, setUser] = useState<unknown | null>(null);
   const { mutateAsync: getCurrUser } = api.users.login.useMutation();
+  const { mutateAsync: maybeInitAccount } =
+    api.users.maybeInitAccount.useMutation();
 
   const [isLoading, setIsLoading] = useState(false);
   const [isWeb3AuthInit, setweb3authinit] = useState(false);
@@ -137,7 +141,9 @@ export const CustodialWalletProvider: FunctionComponent<IWeb3AuthState> = ({
           wallet: null,
         };
         setCurrentWallet(wallet);
-
+        maybeInitAccount({
+          publicKey: wallet.publicKey.toBase58(),
+        });
         const provider = new AnchorProvider(connection, wallet, {});
         const program = new Program<MonoProgram>(
           MonoProgramJSON as unknown as MonoProgram,
@@ -208,8 +214,9 @@ export const CustodialWalletProvider: FunctionComponent<IWeb3AuthState> = ({
       try {
         setIsLoading(true);
         // get your client id from https://dashboard.web3auth.io by registering a plug and play application.
-        const clientId =
-          "BDKhjMpf2-LsH5SyWrKFe2SBbGjeLS64a7pobYFQJapKW4qqRkREoUcrsi9cNRh40ZjGGQTH3izCNQjqq7fxb3E";
+        const clientId = IS_MAINNET
+          ? "BNavB2qugFiGgNx1aor3PEhOyk_0LuwtiyNlf39LsLJxELFc_SM1e06p6H0QaP6LNodePsWS3J1ekD_GmTq6Fbs"
+          : "BDKhjMpf2-LsH5SyWrKFe2SBbGjeLS64a7pobYFQJapKW4qqRkREoUcrsi9cNRh40ZjGGQTH3izCNQjqq7fxb3E";
 
         const web3AuthInstance = new Web3AuthNoModal({
           chainConfig: currentChainConfig,
@@ -219,7 +226,7 @@ export const CustodialWalletProvider: FunctionComponent<IWeb3AuthState> = ({
         subscribeAuthEvents(web3AuthInstance);
         var loginConfig: LoginConfig = {
           jwt: {
-            verifier: "lancer-devnet",
+            verifier: "lancer-google",
             typeOfLogin: "jwt",
             clientId: "0j9xN7veV1ofNVAgCMfHf6S4m09lLzW0",
           },
@@ -239,7 +246,6 @@ export const CustodialWalletProvider: FunctionComponent<IWeb3AuthState> = ({
         });
         web3AuthInstance.configureAdapter(adapter);
         await web3AuthInstance.init();
-        debugger;
         setWeb3Auth(web3AuthInstance);
         setweb3authinit(true);
         console.log("initialized");
@@ -317,6 +323,7 @@ export const CustodialWalletProvider: FunctionComponent<IWeb3AuthState> = ({
     currentWallet,
     provider,
     program,
+    logout,
   };
   return (
     <CustodialWalletContext.Provider value={contextProvider}>
