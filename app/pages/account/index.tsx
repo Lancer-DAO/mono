@@ -77,7 +77,7 @@ const Account: React.FC = () => {
 
   useEffect(() => {
     const maybeMintNft = async () => {
-      if (currentUser && router.query.id === undefined) {
+      if (!!currentUser && !!currentWallet && router.query.id === undefined) {
         if (!currentUser.profileWalletId) {
           setProfileCreating(true);
           await mintProfileNFT();
@@ -86,7 +86,7 @@ const Account: React.FC = () => {
       }
     };
     maybeMintNft();
-  }, [currentUser, router.isReady]);
+  }, [currentUser, router.isReady, currentWallet]);
 
   const fetchProfileNFT = async () => {
     setProfileLoading(true);
