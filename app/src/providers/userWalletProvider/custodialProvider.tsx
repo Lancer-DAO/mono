@@ -32,6 +32,7 @@ import axios from "axios";
 import {
   Connection,
   PublicKey,
+  SystemProgram,
   Transaction,
   VersionedTransaction,
 } from "@solana/web3.js";
@@ -102,6 +103,8 @@ export const CustodialWalletProvider: FunctionComponent<IWeb3AuthState> = ({
   const [currentUser, setCurrentUser] = useState<CurrentUser | null>(null);
   const [user, setUser] = useState<unknown | null>(null);
   const { mutateAsync: getCurrUser } = api.users.login.useMutation();
+  const { mutateAsync: maybeInitAccount } =
+    api.users.maybeInitAccount.useMutation();
 
   const [isLoading, setIsLoading] = useState(false);
   const [isWeb3AuthInit, setweb3authinit] = useState(false);
@@ -138,7 +141,9 @@ export const CustodialWalletProvider: FunctionComponent<IWeb3AuthState> = ({
           wallet: null,
         };
         setCurrentWallet(wallet);
-
+        maybeInitAccount({
+          publicKey: wallet.publicKey.toBase58(),
+        });
         const provider = new AnchorProvider(connection, wallet, {});
         const program = new Program<MonoProgram>(
           MonoProgramJSON as unknown as MonoProgram,

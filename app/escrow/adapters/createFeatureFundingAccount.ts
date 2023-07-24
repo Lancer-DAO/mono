@@ -44,7 +44,6 @@ export const createFFA = async (
     lastValidBlockHeight: lastValidBlockHeight,
     skipPreflight: true,
   };
-  debugger;
   const signature = await wallet.signAndSendTransaction(
     new Transaction(txInfo).add(ix).add(referralAccountIx)
   );
