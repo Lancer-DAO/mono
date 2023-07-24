@@ -6,10 +6,13 @@ import * as queries from "@/prisma/queries";
 export const addReferrer = protectedProcedure
   .input(
     z.object({
-      refferralTreasuryKey: z.string(),
+      refferralTreasuryKey: z.optional(z.string()),
     })
   )
   .mutation(async ({ ctx, input: { refferralTreasuryKey } }) => {
+    if (!refferralTreasuryKey) {
+      return;
+    }
     const { id } = ctx.user;
     const existingReferrer = await queries.referrerReferree.create(
       id,

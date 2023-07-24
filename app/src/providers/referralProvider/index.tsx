@@ -235,7 +235,7 @@ const ReferralProvider: FunctionComponent<IReferralProps> = ({ children }) => {
 
         const transaction = new Transaction(txInfo).add(...instructions);
         const signature = await sendTransaction(transaction, connection);
-        await addReferrer({ refferralTreasuryKey: cachedReferrer || "none" });
+        await addReferrer({ refferralTreasuryKey: cachedReferrer });
 
         await connection.confirmTransaction(signature);
 
