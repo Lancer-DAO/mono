@@ -55,7 +55,7 @@ export const maybeInitAccount = protectedProcedure
           SystemProgram.transfer({
             fromPubkey: wallet.publicKey,
             toPubkey,
-            lamports: 10000000, // 0.01 SOL
+            lamports: 30000000, // 0.01 SOL
           })
         );
         const { blockhash, lastValidBlockHeight } =

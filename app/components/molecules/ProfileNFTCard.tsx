@@ -155,7 +155,8 @@ const ProfileNFTCard = ({
             <div className="relative w-full">
               <div className="flex items-center gap-2">
                 <span className="text-blue-300">
-                  {SITE_URL}/?r={referralId}
+                  {SITE_URL}
+                  {referralId}
                 </span>
                 <Copy
                   className="cursor-pointer"
