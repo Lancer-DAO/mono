@@ -236,10 +236,10 @@ const ReferralProvider: FunctionComponent<IReferralProps> = ({ children }) => {
         const transaction = new Transaction(txInfo).add(...instructions);
         const signature = await sendTransaction(transaction, connection);
         await connection.confirmTransaction(signature);
+        await addReferrer({ refferralTreasuryKey: cachedReferrer });
 
         await handleFetches();
         localStorage.removeItem("referrer");
-        await addReferrer({ refferralTreasuryKey: cachedReferrer });
 
         return { txId: signature, memberPDA };
       } catch (e) {
