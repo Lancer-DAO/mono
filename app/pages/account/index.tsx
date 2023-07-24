@@ -14,6 +14,7 @@ import {
 } from "@/components";
 import {
   BOUNTY_PROJECT_PARAMS,
+  IS_CUSTODIAL,
   IS_MAINNET,
   PROFILE_PROJECT_PARAMS,
 } from "@/src/constants";
@@ -269,8 +270,11 @@ const Account: React.FC = () => {
                     USDC Faucet
                   </a>
                 )} */}
-            {profileLoading && <LoadingBar title="Loading Profile" />}{" "}
-            {profileCreating && <LoadingBar title="Creating Profile" />}{" "}
+            {!IS_CUSTODIAL && !currentWallet && (
+              <div>Please Connect a Wallet</div>
+            )}
+            {profileLoading && <LoadingBar title="Loading Profile" />}
+            {profileCreating && <LoadingBar title="Creating Profile" />}
             {profileNFT && (
               <>
                 <ProfileNFTCard
