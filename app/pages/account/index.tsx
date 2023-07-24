@@ -226,7 +226,7 @@ const Account: React.FC = () => {
       const result = await underdogClient.createNft({
         params: PROFILE_PROJECT_PARAMS,
         body: {
-          name: `${account.githubLogin}`,
+          name: `${account.name}`,
           image: "https://i.imgur.com/3uQq5Zo.png",
           attributes: {
             reputation: 0,
