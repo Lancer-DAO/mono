@@ -1,12 +1,9 @@
 import { useEffect, useState } from "react";
-
-import { BountyState, LancerWallet } from "@/src/types";
 import { useUserWallet } from "@/src/providers/userWalletProvider";
 import classnames from "classnames";
 import { PublicKey, Transaction } from "@solana/web3.js";
 import { useRouter } from "next/router";
 import { api } from "@/src/utils/api";
-import { currentUser } from "@/server/api/routers/users/currentUser";
 import classNames from "classnames";
 import { fundFFA } from "@/escrow/adapters";
 import {
@@ -16,7 +13,6 @@ import {
   USDC_DECIMALS,
   USDC_MINT,
 } from "@/src/constants";
-import { useConnection, useWallet } from "@solana/wallet-adapter-react";
 import { CoinflowFund } from "@/components";
 import { CREATE_BOUNTY_TUTORIAL_INITIAL_STATE } from "@/src/constants/tutorials";
 import { useBounty } from "@/src/providers/bountyProvider";
@@ -37,6 +33,47 @@ const Form: React.FC<{ isAccountCreated: boolean }> = ({
   const [formData, setFormData] = useState({
     fundingAmount: null,
   });
+
+  const handleChange = (event) => {
+    setFormData({
+      ...formData,
+      [event.target.name]: event.target.value,
+    });
+  };
+
+  const onClick = async () => {
+    if (
+      currentTutorialState?.title ===
+        CREATE_BOUNTY_TUTORIAL_INITIAL_STATE.title &&
+      currentTutorialState.currentStep === 7
+    ) {
+      setCurrentTutorialState({
+        ...currentTutorialState,
+        isRunning: false,
+      });
+    }
+    // If we are the creator, then skip requesting and add self as approved
+    try {
+      await fundFFA(
+        formData.fundingAmount,
+        currentBounty.escrow,
+        currentWallet,
+        program,
+        provider,
+        currentBounty.escrow.mint.decimals,
+        new PublicKey(currentBounty.escrow.mint.publicKey)
+      );
+      await fundB({
+        bountyId: currentBounty.id,
+        escrowId: currentBounty.escrow.id,
+        amount: parseFloat(formData.fundingAmount),
+      });
+      router.push(`/bounties/${currentBounty.id}`);
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
   useEffect(() => {
     if (
       currentTutorialState?.title ===
@@ -50,40 +87,6 @@ const Form: React.FC<{ isAccountCreated: boolean }> = ({
       });
     }
   }, []);
-  const handleChange = (event) => {
-    setFormData({
-      ...formData,
-      [event.target.name]: event.target.value,
-    });
-  };
-  const onClick = async () => {
-    if (
-      currentTutorialState?.title ===
-        CREATE_BOUNTY_TUTORIAL_INITIAL_STATE.title &&
-      currentTutorialState.currentStep === 7
-    ) {
-      setCurrentTutorialState({
-        ...currentTutorialState,
-        isRunning: false,
-      });
-    }
-    // If we are the creator, then skip requesting and add self as approved
-    const signature = await fundFFA(
-      formData.fundingAmount,
-      currentBounty.escrow,
-      currentWallet,
-      program,
-      provider,
-      currentBounty.escrow.mint.decimals,
-      new PublicKey(currentBounty.escrow.mint.publicKey)
-    );
-    await fundB({
-      bountyId: currentBounty.id,
-      escrowId: currentBounty.escrow.id,
-      amount: parseFloat(formData.fundingAmount),
-    });
-    router.push(`/bounties/${currentBounty.id}`);
-  };
 
   return (
     currentBounty && (
@@ -221,7 +224,9 @@ const Form: React.FC<{ isAccountCreated: boolean }> = ({
                       </div>
                     </div>
                     {formData.fundingAmount && (
-                      <div>Total Cost: {1.05 * formData.fundingAmount}</div>
+                      <div>
+                        Total Cost: {(1.05 * formData.fundingAmount).toFixed(2)}
+                      </div>
                     )}
                     <button
                       className={classNames("button-primary", {

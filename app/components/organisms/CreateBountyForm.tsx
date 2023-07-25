@@ -24,7 +24,6 @@ const Form: React.FC<{
   const { currentTutorialState, setCurrentTutorialState } = useTutorial();
   const { mutateAsync } = api.bounties.createBounty.useMutation();
   const { mutateAsync: getMintsAPI } = api.mints.getMints.useMutation();
-  const [creationType, setCreationType] = useState<"new" | "existing">("new");
   const [mint, setMint] = useState<Prisma.Mint>();
 
   const [formData, setFormData] = useState({
@@ -37,10 +36,10 @@ const Form: React.FC<{
     isPrivate: true,
   });
   const [isOpenMints, setIsOpenMints] = useState(false);
-  const [isOpenIssue, setIsOpenIssue] = useState(false);
+  // const [isOpenIssue, setIsOpenIssue] = useState(false);
   const [mints, setMints] = useState<Prisma.Mint[]>([]);
-  const [failedToGetRepos, setFailedToGetRepos] = useState(false);
-  const [failedToCreateIssue, setFailedToCreateIssue] = useState(false);
+  // const [failedToGetRepos, setFailedToGetRepos] = useState(false);
+  // const [failedToCreateIssue, setFailedToCreateIssue] = useState(false);
   const [octokit, setOctokit] = useState(null);
 
   const [isPreview, setIsPreview] = useState(false);
@@ -75,33 +74,40 @@ const Form: React.FC<{
 
     const mintKey = new PublicKey(mint.publicKey);
 
-    const { timestamp, signature, escrowKey } = await createFFA(
-      currentWallet,
-      program,
-      provider,
-      mintKey
-    );
-    createAccountPoll(escrowKey);
-    const bounty = await mutateAsync({
-      email: currentUser.email,
-      description: formData.issueDescription,
-      estimatedTime: parseFloat(formData.estimatedTime),
-      isPrivate: formData.isPrivate,
-      // isPrivateRepo: formData.isPrivate || repo ? repo.private : false,
-      title: formData.issueTitle,
-      tags: formData.requirements,
-      publicKey: currentWallet.publicKey.toString(),
-      escrowKey: escrowKey.toString(),
-      transactionSignature: signature,
-      timestamp: timestamp,
-      chainName: "Solana",
-      mint: mint.id,
-      network: IS_MAINNET ? "mainnet" : "devnet",
-    });
+    try {
+      const { timestamp, signature, escrowKey } = await createFFA(
+        currentWallet,
+        program,
+        provider,
+        mintKey
+      );
+      createAccountPoll(escrowKey);
+      const bounty = await mutateAsync({
+        email: currentUser.email,
+        description: formData.issueDescription,
+        estimatedTime: parseFloat(formData.estimatedTime),
+        isPrivate: formData.isPrivate,
+        // isPrivateRepo: formData.isPrivate || repo ? repo.private : false,
+        title: formData.issueTitle,
+        tags: formData.requirements,
+        publicKey: currentWallet.publicKey.toString(),
+        escrowKey: escrowKey.toString(),
+        transactionSignature: signature,
+        timestamp: timestamp,
+        chainName: "Solana",
+        mint: mint.id,
+        network: IS_MAINNET ? "mainnet" : "devnet",
+      });
 
-    setFormSection("FUND");
+      setFormSection("FUND");
 
-    setCurrentBounty(bounty);
+      setCurrentBounty(bounty);
+    } catch (error) {
+      console.log(error);
+      // setFailedToCreateIssue(true);
+    } finally {
+      setIsSubmittingIssue(false);
+    }
   };
 
   const handleChange = (event) => {
@@ -535,26 +541,12 @@ const Form: React.FC<{
                 <span className="color-red">* </span> Required
               </div>
               <Button
-                disabled={
-                  failedToCreateIssue ||
-                  !formData.estimatedTime ||
-                  !formData.requirements
-                  // ||
-                  // !currentWallet
-                }
-                disabledText={
-                  failedToCreateIssue
-                    ? "Failed to Create Issue"
-                    : "Please fill all required fields"
-                }
+                disabled={!formData.estimatedTime || !formData.requirements}
+                disabledText={"Please fill all required fields"}
                 onClick={createBounty}
                 id="create-bounty-button"
               >
-                {failedToCreateIssue
-                  ? "Failed to Create Issue"
-                  : !!currentWallet
-                  ? "Submit"
-                  : "Please connect your wallet"}
+                {!!currentWallet ? "Submit" : "Please connect your wallet"}
               </Button>
             </>
           </div>

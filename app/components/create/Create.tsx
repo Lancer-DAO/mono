@@ -33,7 +33,7 @@ export const Create = () => {
             >
               By funding an issue with Lancer, you are outsourcing a developer
               task in one of two ways. The first is internally to your team or a
-              free-lancer and the other is a public bounty to our network of
+              freelancer and the other is a public bounty to our network of
               developers. <br />
               <br />
               <span className="bold">
