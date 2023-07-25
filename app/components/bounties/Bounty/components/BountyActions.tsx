@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { Button } from "@/components";
 import { BountyState } from "@/types";
 import {
@@ -13,7 +12,6 @@ import {
   BOUNTY_ACTIONS_TUTORIAL_II_INITIAL_STATE,
   BOUNTY_ACTIONS_TUTORIAL_I_INITIAL_STATE,
 } from "@/src/constants/tutorials";
-import { createUnderdogClient } from "@underdog-protocol/js";
 import { useUserWallet } from "@/src/providers";
 import { useBounty } from "@/src/providers/bountyProvider";
 import { useTutorial } from "@/src/providers/tutorialProvider";
@@ -26,14 +24,10 @@ import VoteToCancel from "./VoteToCancel";
 import RequestChanges from "./RequestChanges";
 import SubmitRequest from "./SubmitRequest";
 
-const underdogClient = createUnderdogClient({});
-
 const BountyActions = () => {
   const { currentBounty } = useBounty();
   const { currentTutorialState } = useTutorial();
   const { currentWallet } = useUserWallet();
-
-  const [hoveredButton, setHoveredButton] = useState("none");
 
   if (!currentWallet) {
     return IS_CUSTODIAL ? (
@@ -95,17 +89,17 @@ const BountyActions = () => {
         )}
         {currentBounty.isApprovedSubmitter &&
           !currentBounty.currentSubmitter && (
-            <div
-              className="hover-tooltip-wrapper"
-              onMouseEnter={() => {
-                setHoveredButton("submit");
-              }}
-              onMouseLeave={() => {
-                setHoveredButton("none");
-              }}
-            >
-              <SubmitRequest disabled={!currentWallet.publicKey} />
-            </div>
+            // <div
+            //   className="hover-tooltip-wrapper"
+            //   onMouseEnter={() => {
+            //     setHoveredButton("submit");
+            //   }}
+            //   onMouseLeave={() => {
+            //     setHoveredButton("none");
+            //   }}
+            // >
+            <SubmitRequest disabled={!currentWallet.publicKey} />
+            // </div>
           )}
         {currentBounty.isCurrentSubmitter && !currentBounty.isCreator && (
           <Button disabled id="submission-pending">

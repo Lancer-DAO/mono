@@ -1,4 +1,3 @@
-import axios from "axios";
 import { useUserWallet } from "@/src/providers/userWalletProvider";
 import {
   Contributor,
@@ -39,7 +38,7 @@ const SubmitterSection: React.FC<SubmitterSectionProps> = ({
       case "approved":
         {
           try {
-            const signature = await removeSubmitterFFA(
+            await removeSubmitterFFA(
               new PublicKey(submitter.publicKey),
               currentBounty.escrow,
               currentWallet,

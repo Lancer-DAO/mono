@@ -31,8 +31,8 @@ const RequestToSubmit = () => {
       new PublicKey(currentBounty.escrow.mint.publicKey)
     );
 
-    const referralKey = result?.memberPDA;
-    const signature = result?.txId;
+    // const referralKey = result?.memberPDA;
+    // const signature = result?.txId;
     const { updatedBounty } = await mutateAsync({
       currentUserId: currentUser.id,
       bountyId: currentBounty.id,
