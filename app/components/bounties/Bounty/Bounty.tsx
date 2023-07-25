@@ -9,11 +9,10 @@ import { Clock } from "react-feather";
 import Image from "next/image";
 import { ContributorInfo } from "../..";
 import { BountyState } from "../../../src/types";
-import BountyActions from "./components/BountyActions";
-import SubmitterSection from "./components/SubmitterSection";
+import BountyActions from "../Bounty/components/BountyActions";
+import { SubmitterSection, Logo } from "@/components";
 import { useBounty } from "@/src/providers/bountyProvider";
 import { useUserWallet } from "@/src/providers";
-import Logo from "@/components/@icons/Logo";
 
 export const Bounty = () => {
   const { currentBounty, setCurrentBounty } = useBounty();
@@ -64,7 +63,7 @@ export const Bounty = () => {
           <div
             id="task-container"
             data-w-id="9d97a6aa-31d5-1276-53c2-e76c8908f874"
-            className="job-post-container"
+            className="job-post-container mb-20"
           >
             <div
               id="w-node-_9d97a6aa-31d5-1276-53c2-e76c8908f876-fde9cdb1"

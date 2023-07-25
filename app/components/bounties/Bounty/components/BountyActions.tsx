@@ -67,7 +67,7 @@ const BountyActions = () => {
   }
 
   return (
-    <div className="bounty-buttons" id="bounty-actions">
+    <div className="bounty-buttons pt-4" id="bounty-actions">
       <>
         {currentBounty.isCreator &&
           ((!!currentTutorialState &&
