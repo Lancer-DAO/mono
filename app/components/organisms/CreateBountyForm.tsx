@@ -1,18 +1,24 @@
 import { useEffect, useState } from "react";
 import { marked } from "marked";
-import { createFFA } from "@/escrow/adapters";
+import { createCustodialFFA, createFFA } from "@/escrow/adapters";
 import { useUserWallet } from "@/src/providers/userWalletProvider";
 import classnames from "classnames";
 import { Button } from "@/components";
 import { api } from "@/src/utils/api";
 import { PublicKey } from "@solana/web3.js";
 import { CREATE_BOUNTY_TUTORIAL_INITIAL_STATE } from "@/src/constants/tutorials";
-import { IS_MAINNET } from "@/src/constants";
+import {
+  IS_CUSTODIAL,
+  IS_MAINNET,
+  USDC_MINT,
+  USDC_MINT_ID,
+} from "@/src/constants";
 import * as Prisma from "@prisma/client";
 import Image from "next/image";
 import { FORM_SECTION } from "@/types/forms";
 import { useBounty } from "@/src/providers/bountyProvider";
 import { useTutorial } from "@/src/providers/tutorialProvider";
+import e from "express";
 
 const Form: React.FC<{
   setFormSection: (section: FORM_SECTION) => void;
@@ -23,6 +29,7 @@ const Form: React.FC<{
   const { setCurrentBounty } = useBounty();
   const { currentTutorialState, setCurrentTutorialState } = useTutorial();
   const { mutateAsync } = api.bounties.createBounty.useMutation();
+  const { createCustodial } = api.bounties.createCustodial.useMutation();
   const { mutateAsync: getMintsAPI } = api.mints.getMints.useMutation();
   const [creationType, setCreationType] = useState<"new" | "existing">("new");
   const [mint, setMint] = useState<Prisma.Mint>();
@@ -57,7 +64,7 @@ const Form: React.FC<{
       const mints = await getMintsAPI();
       setMints(mints);
     };
-    getMints();
+    if (!IS_CUSTODIAL) getMints();
   }, []);
 
   const createBounty = async () => {
@@ -72,36 +79,54 @@ const Form: React.FC<{
         isRunning: false,
       });
     }
+    if (IS_CUSTODIAL) {
+      const mintKey = new PublicKey(IS_CUSTODIAL ? USDC_MINT : mint.publicKey);
 
-    const mintKey = new PublicKey(mint.publicKey);
+      const {
+        timestamp,
+        signature: transaction,
+        escrowKey,
+      } = await createFFA(currentWallet, program, provider, mintKey);
+      // @ts-ignore
+      const transactionBuffer = transaction.toJSON();
+      console.log(transactionBuffer);
+      // createAccountPoll(escrowKey);
+      const bounty = await createCustodial({});
 
-    const { timestamp, signature, escrowKey } = await createFFA(
-      currentWallet,
-      program,
-      provider,
-      mintKey
-    );
-    createAccountPoll(escrowKey);
-    const bounty = await mutateAsync({
-      email: currentUser.email,
-      description: formData.issueDescription,
-      estimatedTime: parseFloat(formData.estimatedTime),
-      isPrivate: formData.isPrivate,
-      // isPrivateRepo: formData.isPrivate || repo ? repo.private : false,
-      title: formData.issueTitle,
-      tags: formData.requirements,
-      publicKey: currentWallet.publicKey.toString(),
-      escrowKey: escrowKey.toString(),
-      transactionSignature: signature,
-      timestamp: timestamp,
-      chainName: "Solana",
-      mint: mint.id,
-      network: IS_MAINNET ? "mainnet" : "devnet",
-    });
+      // setFormSection("FUND");
 
-    setFormSection("FUND");
+      // setCurrentBounty(bounty);
+    } else {
+      const mintKey = new PublicKey(IS_CUSTODIAL ? USDC_MINT : mint.publicKey);
 
-    setCurrentBounty(bounty);
+      const { timestamp, signature, escrowKey } = await createFFA(
+        currentWallet,
+        program,
+        provider,
+        mintKey
+      );
+      createAccountPoll(escrowKey);
+      const bounty = await mutateAsync({
+        email: currentUser.email,
+        description: formData.issueDescription,
+        estimatedTime: parseFloat(formData.estimatedTime),
+        isPrivate: formData.isPrivate,
+        // isPrivateRepo: formData.isPrivate || repo ? repo.private : false,
+        title: formData.issueTitle,
+        tags: formData.requirements,
+        publicKey: currentWallet.publicKey.toString(),
+        escrowKey: escrowKey.toString(),
+        transactionSignature: signature,
+        timestamp: timestamp,
+        chainName: "Solana",
+        mint: IS_CUSTODIAL ? USDC_MINT_ID : mint.id,
+        network: IS_MAINNET ? "mainnet" : "devnet",
+      });
+
+      setFormSection("FUND");
+
+      setCurrentBounty(bounty);
+    }
   };
 
   const handleChange = (event) => {
@@ -464,71 +489,76 @@ const Form: React.FC<{
                   If so, only users with the link will be able to see it.
                 </p>
               </label>
-              <label>
-                Funding Type<span className="color-red">*</span>
-              </label>
-              {mints && (
-                <div
-                  data-delay="0"
-                  data-hover="false"
-                  id="w-node-b1521c3c-4fa1-4011-ae36-88dcb6e746fb-0ae9cdc2"
-                  className="w-dropdown"
-                  onClick={toggleOpenRepo}
-                >
-                  <main
-                    className="dropdown-toggle-2 w-dropdown-toggle"
-                    id="repo-dropdown-select"
-                  >
-                    {
-                      <>
-                        <div className="w-icon-dropdown-toggle"></div>
-                        <div>
-                          {mint ? (
-                            <div className="flex">
-                              <Image
-                                className="rounded-[50%] mr-[10px]"
-                                src={mint.logo}
-                                alt={mint.name}
-                                width={36}
-                                height={36}
-                              />
-                              <div>{mint.name}</div>
-                            </div>
-                          ) : (
-                            <div>
-                              Select Mint <span className="color-red">* </span>
-                            </div>
-                          )}
-                        </div>
-                      </>
-                    }
-                  </main>
-                  {isOpenMints && mints && (
+              {!IS_CUSTODIAL && (
+                <>
+                  <label>
+                    Funding Type<span className="color-red">*</span>
+                  </label>
+                  {mints && (
                     <div
-                      className="w-dropdown-list"
-                      onMouseLeave={() => setIsOpenMints(false)}
+                      data-delay="0"
+                      data-hover="false"
+                      id="w-node-b1521c3c-4fa1-4011-ae36-88dcb6e746fb-0ae9cdc2"
+                      className="w-dropdown"
+                      onClick={toggleOpenRepo}
                     >
-                      {mints.map((mint) => (
+                      <main
+                        className="dropdown-toggle-2 w-dropdown-toggle"
+                        id="repo-dropdown-select"
+                      >
+                        {
+                          <>
+                            <div className="w-icon-dropdown-toggle"></div>
+                            <div>
+                              {mint ? (
+                                <div className="flex">
+                                  <Image
+                                    className="rounded-[50%] mr-[10px]"
+                                    src={mint.logo}
+                                    alt={mint.name}
+                                    width={36}
+                                    height={36}
+                                  />
+                                  <div>{mint.name}</div>
+                                </div>
+                              ) : (
+                                <div>
+                                  Select Mint{" "}
+                                  <span className="color-red">* </span>
+                                </div>
+                              )}
+                            </div>
+                          </>
+                        }
+                      </main>
+                      {isOpenMints && mints && (
                         <div
-                          onClick={() => handleChangeMint(mint)}
-                          key={mint.name}
-                          className="w-dropdown-link flex"
+                          className="w-dropdown-list"
+                          onMouseLeave={() => setIsOpenMints(false)}
                         >
-                          <div className="flex">
-                            <Image
-                              className="rounded-[50%] mr-[10px]"
-                              src={mint.logo}
-                              alt={mint.name}
-                              width={36}
-                              height={36}
-                            />
-                            <div>{mint.name}</div>
-                          </div>
+                          {mints.map((mint) => (
+                            <div
+                              onClick={() => handleChangeMint(mint)}
+                              key={mint.name}
+                              className="w-dropdown-link flex"
+                            >
+                              <div className="flex">
+                                <Image
+                                  className="rounded-[50%] mr-[10px]"
+                                  src={mint.logo}
+                                  alt={mint.name}
+                                  width={36}
+                                  height={36}
+                                />
+                                <div>{mint.name}</div>
+                              </div>
+                            </div>
+                          ))}
                         </div>
-                      ))}
+                      )}
                     </div>
                   )}
-                </div>
+                </>
               )}
 
               <div className="required-helper">
