@@ -1,5 +1,4 @@
 import { MONO_DEVNET, MONO_MAINNET } from "@/escrow/sdk/constants";
-import { PublicKey } from "@solana/web3.js";
 
 export const MAINNET_RPC =
   "https://winter-necessary-smoke.solana-mainnet.discover.quiknode.pro";
@@ -12,7 +11,3 @@ export const BONK_DEMICALS = 5;
 export const USDC_DECIMALS = 6;
 export const USDC_MINT = IS_MAINNET ? MAINNET_USDC_MINT : DEVNET_USDC_MINT;
 export const MONO_ADDRESS = IS_MAINNET ? MONO_MAINNET : MONO_DEVNET;
-export const USDC_MINT_ID = 1;
-export const FEE_PAYER_ACCOUNT = new PublicKey(
-  "pyrSoEahjKGKZpLWEYwCJ8zQAsYZckZH8ZqJ7yGd1ha"
-);
