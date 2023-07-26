@@ -1,5 +1,5 @@
 import { PublicKey, Transaction } from "@solana/web3.js";
-import { AnchorProvider, Program } from "@project-serum/anchor";
+import { AnchorProvider, Program, Wallet } from "@project-serum/anchor";
 import { MonoProgram } from "@/escrow/sdk/types/mono_program";
 import {
   createCustodialFeatureFundingAccountInstruction,
@@ -45,9 +45,9 @@ export const createFFA = async (
     lastValidBlockHeight: lastValidBlockHeight,
     skipPreflight: true,
   };
-  // const signature = await wallet.signAndSendTransaction(
-  const signature = new Transaction(txInfo).add(ix).add(referralAccountIx);
-  // );
+  const signature = await wallet.signAndSendTransaction(
+    new Transaction(txInfo).add(ix).add(referralAccountIx)
+  );
   return {
     timestamp,
     signature,
@@ -57,7 +57,8 @@ export const createFFA = async (
 };
 
 export const createCustodialFFA = async (
-  wallet: LancerWallet,
+  wallet: Wallet,
+  creator: PublicKey,
   program: Program<MonoProgram>,
   provider: AnchorProvider,
   mint?: PublicKey
@@ -66,18 +67,18 @@ export const createCustodialFFA = async (
   const ix = await createCustodialFeatureFundingAccountInstruction(
     mint ? mint : new PublicKey(USDC_MINT),
     FEE_PAYER_ACCOUNT,
-    new PublicKey(wallet.publicKey),
+    creator,
     program,
     timestamp
   );
   const [feature_account] = await findFeatureAccount(
     timestamp,
-    new PublicKey(wallet.publicKey),
+    creator,
     program
   );
 
   const referralAccountIx = await createReferralDataAccountInstruction(
-    new PublicKey(wallet.publicKey),
+    creator,
     feature_account,
     program
   );
@@ -92,12 +93,13 @@ export const createCustodialFFA = async (
     lastValidBlockHeight: lastValidBlockHeight,
     skipPreflight: true,
   };
-  const transaction = new Transaction(txInfo).add(ix);
-
+  const signature = await wallet.signTransaction(
+    new Transaction(txInfo).add(ix).add(referralAccountIx)
+  );
   debugger;
   return {
     timestamp,
-    transaction,
+    signature,
     creator: new PublicKey(wallet.publicKey),
     escrowKey: feature_account,
   };
