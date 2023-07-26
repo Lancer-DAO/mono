@@ -103,7 +103,7 @@ const Account: React.FC = () => {
       query: {
         page: 1,
         limit: 1,
-        ownerAddress: profileNFTHolder.publicKey,
+        ownerAddress: profileNFTHolder?.publicKey,
       },
     });
     if (nfts.totalResults > 0) {
@@ -139,7 +139,7 @@ const Account: React.FC = () => {
       query: {
         page: 1,
         limit: 10,
-        ownerAddress: profileNFTHolder.publicKey,
+        ownerAddress: profileNFTHolder?.publicKey,
       },
     });
     const bountyNFTs: BountyNFT[] = nfts.results.map((nft) => {
