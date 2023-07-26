@@ -10,7 +10,7 @@ import {
   Transaction,
 } from "@solana/web3.js";
 import { z } from "zod";
-const getFeePayer = () => {
+export const getFeePayer = () => {
   const secret = process.env.FEE_PAYER_KEY;
   const nums = secret.split(",");
   const secretArray = nums.map((val) => parseInt(val));

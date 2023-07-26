@@ -77,6 +77,45 @@ export const createFeatureFundingAccountInstruction = async (
     .instruction();
 };
 
+export const createCustodialFeatureFundingAccountInstruction = async (
+  mint: PublicKey,
+  custodial_fee_payer: PublicKey,
+  creator: PublicKey,
+  program: Program<MonoProgram>,
+  timestamp: string
+): Promise<TransactionInstruction> => {
+  console.log("timestamp = ", timestamp);
+  const [feature_account] = await findFeatureAccount(
+    timestamp,
+    creator,
+    program
+  );
+  const [feature_token_account] = await findFeatureTokenAccount(
+    timestamp,
+    creator,
+    mint,
+    program
+  );
+
+  const [program_authority] = await findProgramAuthority(program);
+
+  return await program.methods
+    .createCustodialFeatureFundingAccount(timestamp)
+    .accounts({
+      creator: creator,
+      custodialFeePayer: custodial_fee_payer,
+      fundsMint: mint,
+      featureDataAccount: feature_account,
+      featureTokenAccount: feature_token_account,
+      programAuthority: program_authority,
+      tokenProgram: TOKEN_PROGRAM_ID,
+      rent: SYSVAR_RENT_PUBKEY,
+      associatedProgram: ASSOCIATED_TOKEN_PROGRAM_ID,
+      systemProgram: SystemProgram.programId,
+    })
+    .instruction();
+};
+
 export const fundFeatureInstruction = async (
   amount: number,
   timestamp: string,

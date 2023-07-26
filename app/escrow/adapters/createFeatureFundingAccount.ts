@@ -2,10 +2,11 @@ import { PublicKey, Transaction } from "@solana/web3.js";
 import { AnchorProvider, Program } from "@project-serum/anchor";
 import { MonoProgram } from "@/escrow/sdk/types/mono_program";
 import {
+  createCustodialFeatureFundingAccountInstruction,
   createFeatureFundingAccountInstruction,
   createReferralDataAccountInstruction,
 } from "@/escrow/sdk/instructions";
-import { USDC_MINT } from "@/src/constants";
+import { FEE_PAYER_ACCOUNT, USDC_MINT } from "@/src/constants";
 import { findFeatureAccount } from "@/escrow/sdk/pda";
 import { LancerWallet } from "@/src/types";
 
@@ -44,12 +45,59 @@ export const createFFA = async (
     lastValidBlockHeight: lastValidBlockHeight,
     skipPreflight: true,
   };
-  const signature = await wallet.signAndSendTransaction(
-    new Transaction(txInfo).add(ix).add(referralAccountIx)
-  );
+  // const signature = await wallet.signAndSendTransaction(
+  const signature = new Transaction(txInfo).add(ix).add(referralAccountIx);
+  // );
   return {
     timestamp,
     signature,
+    creator: new PublicKey(wallet.publicKey),
+    escrowKey: feature_account,
+  };
+};
+
+export const createCustodialFFA = async (
+  wallet: LancerWallet,
+  program: Program<MonoProgram>,
+  provider: AnchorProvider,
+  mint?: PublicKey
+) => {
+  const timestamp = Date.now().toString();
+  const ix = await createCustodialFeatureFundingAccountInstruction(
+    mint ? mint : new PublicKey(USDC_MINT),
+    FEE_PAYER_ACCOUNT,
+    new PublicKey(wallet.publicKey),
+    program,
+    timestamp
+  );
+  const [feature_account] = await findFeatureAccount(
+    timestamp,
+    new PublicKey(wallet.publicKey),
+    program
+  );
+
+  const referralAccountIx = await createReferralDataAccountInstruction(
+    new PublicKey(wallet.publicKey),
+    feature_account,
+    program
+  );
+  const { blockhash, lastValidBlockHeight } =
+    await provider.connection.getLatestBlockhash();
+  const txInfo = {
+    /** The transaction fee payer */
+    feePayer: FEE_PAYER_ACCOUNT,
+    /** A recent blockhash */
+    blockhash: blockhash,
+    /** the last block chain can advance to before tx is exportd expired */
+    lastValidBlockHeight: lastValidBlockHeight,
+    skipPreflight: true,
+  };
+  const transaction = new Transaction(txInfo).add(ix);
+
+  debugger;
+  return {
+    timestamp,
+    transaction,
     creator: new PublicKey(wallet.publicKey),
     escrowKey: feature_account,
   };
