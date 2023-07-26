@@ -16,7 +16,7 @@ export const Create = () => {
   return (
     <div>
       <DefaultLayout>
-        <div className="create-issue-wrapper">
+        <div className="create-issue-wrapper pb-20">
           <div
             id="w-node-_8ffcb42d-e16e-0c3e-7b25-93b4dbf873ae-0ae9cdc2"
             className="form-text-container"
