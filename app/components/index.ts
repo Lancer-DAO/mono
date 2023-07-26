@@ -9,6 +9,7 @@ const USDC = dynamic(() => import("./@icons/USDC"));
 const Button = dynamic(() => import("./atoms/Button"));
 const CoinflowOfframp = dynamic(() => import("./atoms/CoinflowOfframp"));
 const ContributorInfo = dynamic(() => import("./atoms/ContributorInfo"));
+const Form = dynamic(() => import("./atoms/Form"));
 const LinkButton = dynamic(() => import("./atoms/LinkButton"));
 const LoadingBar = dynamic(() => import("./atoms/LoadingBar"));
 const ProgressBar = dynamic(() => import("./atoms/progressBar"));
@@ -59,6 +60,7 @@ export {
   Button,
   CoinflowOfframp,
   ContributorInfo,
+  Form,
   LinkButton,
   LoadingBar,
   ProgressBar,

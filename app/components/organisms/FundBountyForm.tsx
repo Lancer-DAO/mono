@@ -13,12 +13,12 @@ import {
   USDC_DECIMALS,
   USDC_MINT,
 } from "@/src/constants";
-import { CoinflowFund } from "@/components";
+import { CoinflowFund, Form } from "@/components";
 import { CREATE_BOUNTY_TUTORIAL_INITIAL_STATE } from "@/src/constants/tutorials";
 import { useBounty } from "@/src/providers/bountyProvider";
 import { useTutorial } from "@/src/providers/tutorialProvider";
 
-const Form: React.FC<{ isAccountCreated: boolean }> = ({
+const FundBountyForm: React.FC<{ isAccountCreated: boolean }> = ({
   isAccountCreated,
 }) => {
   const { currentWallet, program, provider } = useUserWallet();
@@ -90,163 +90,149 @@ const Form: React.FC<{ isAccountCreated: boolean }> = ({
 
   return (
     currentBounty && (
-      <div className="form-container">
-        <div className="form">
-          <>
-            <div id="job-information" className="form-layout-flex">
-              <h2
-                id="w-node-a3d1ad77-e5aa-114b-bcd7-cde3db1bb746-0ae9cdc2"
-                className="form-subtitle"
-              >
-                Fund Lancer Quest
-              </h2>
-              {!IS_CUSTODIAL && (
-                <div className="issue-creation-type">
-                  <div
-                    className={classnames("form-subtitle hover-effect", {
-                      unselected: fundingType !== "wallet",
-                    })}
-                    onClick={() => setFundingType("wallet")}
-                  >
-                    Fund with Wallet
-                  </div>
-                  <div>OR</div>
-                  <div
-                    className={classnames("form-subtitle hover-effect", {
-                      unselected: fundingType !== "card",
-                    })}
-                    onClick={() => setFundingType("card")}
-                  >
-                    Fund with Card
-                  </div>
-                </div>
-              )}
-              {/* {!isAccountCreated ? (
+      <Form title="Fund Lancer Quest">
+        {!IS_CUSTODIAL && (
+          <div className="issue-creation-type">
+            <div
+              className={classnames("form-subtitle hover-effect", {
+                unselected: fundingType !== "wallet",
+              })}
+              onClick={() => setFundingType("wallet")}
+            >
+              Fund with Wallet
+            </div>
+            <div>OR</div>
+            <div
+              className={classnames("form-subtitle hover-effect", {
+                unselected: fundingType !== "card",
+              })}
+              onClick={() => setFundingType("card")}
+            >
+              Fund with Card
+            </div>
+          </div>
+        )}
+        {/* {!isAccountCreated ? (
                 <LoadingBar title="Loading On Chain Details" />
               ) : ( */}
-              <>
-                {fundingType === "card" && (
-                  <>
-                    <div>
-                      <label>
-                        Funding Amount<span className="color-red">*</span>
-                      </label>
-                      <div>
-                        <input
-                          type="number"
-                          className="input w-input"
-                          name="fundingAmount"
-                          placeholder="1000 (USD)"
-                          id="Issue"
-                          value={formData.fundingAmount}
-                          onChange={handleChange}
-                        />
-                      </div>
-                    </div>
-                    {formData.fundingAmount && (
-                      <CoinflowFund
-                        amount={parseInt(formData.fundingAmount || 0)}
-                      />
-                    )}
-                  </>
-                )}
-                {fundingType === "wallet" && (
-                  <>
-                    <div>
-                      <div></div>
-                      <label>
-                        Funding Amount<span className="color-red">*</span>
-                      </label>
-                      <div>
-                        <input
-                          type="number"
-                          className="input w-input"
-                          name="fundingAmount"
-                          placeholder={`1000 (${currentBounty.escrow.mint.ticker})`}
-                          id="issue-amount-input"
-                          value={formData.fundingAmount}
-                          onChange={handleChange}
-                          onBlur={() => {
-                            if (
-                              formData.fundingAmount !== "" &&
-                              !!currentTutorialState &&
-                              currentTutorialState.isActive
-                            ) {
-                              if (
-                                currentTutorialState?.title ===
-                                  CREATE_BOUNTY_TUTORIAL_INITIAL_STATE.title &&
-                                currentTutorialState.currentStep === 6
-                              ) {
-                                setCurrentTutorialState({
-                                  ...currentTutorialState,
-                                  currentStep: 7,
-                                });
-                              }
-                            }
-                          }}
-                          onMouseLeave={() => {
-                            if (
-                              formData.fundingAmount !== "" &&
-                              !!currentTutorialState &&
-                              currentTutorialState.isActive
-                            ) {
-                              if (
-                                currentTutorialState?.title ===
-                                  CREATE_BOUNTY_TUTORIAL_INITIAL_STATE.title &&
-                                currentTutorialState.currentStep === 6
-                              ) {
-                                setCurrentTutorialState({
-                                  ...currentTutorialState,
-                                  currentStep: 7,
-                                  isRunning: true,
-                                });
-                              }
-                            }
-                          }}
-                          onFocus={() => {
-                            if (
-                              !!currentTutorialState &&
-                              currentTutorialState.isActive
-                            ) {
-                              if (
-                                currentTutorialState?.title ===
-                                  CREATE_BOUNTY_TUTORIAL_INITIAL_STATE.title &&
-                                currentTutorialState.currentStep === 6
-                              ) {
-                                setCurrentTutorialState({
-                                  ...currentTutorialState,
-                                  isRunning: false,
-                                });
-                              }
-                            }
-                          }}
-                        />
-                      </div>
-                    </div>
-                    {formData.fundingAmount && (
-                      <div>
-                        Total Cost: {(1.05 * formData.fundingAmount).toFixed(2)}
-                      </div>
-                    )}
-                    <button
-                      className={classNames("button-primary", {
-                        disabled: !formData.fundingAmount || !currentWallet,
-                      })}
-                      onClick={onClick}
-                      id="issue-funding-submit"
-                    >
-                      Submit
-                    </button>
-                  </>
-                )}
-              </>
-              {/* )} */}
-            </div>
-          </>
-        </div>
-      </div>
+        <>
+          {fundingType === "card" && (
+            <>
+              <div>
+                <label>
+                  Funding Amount<span className="text-[#ff6969]">*</span>
+                </label>
+                <div>
+                  <input
+                    type="number"
+                    className="input w-input"
+                    name="fundingAmount"
+                    placeholder="1000 (USD)"
+                    id="Issue"
+                    value={formData.fundingAmount}
+                    onChange={handleChange}
+                  />
+                </div>
+              </div>
+              {formData.fundingAmount && (
+                <CoinflowFund amount={parseInt(formData.fundingAmount || 0)} />
+              )}
+            </>
+          )}
+          {fundingType === "wallet" && (
+            <>
+              <div>
+                <div></div>
+                <label>
+                  Funding Amount<span className="text-[#ff6969]">*</span>
+                </label>
+                <div>
+                  <input
+                    type="number"
+                    className="input w-input"
+                    name="fundingAmount"
+                    placeholder={`1000 (${currentBounty.escrow.mint.ticker})`}
+                    id="issue-amount-input"
+                    value={formData.fundingAmount}
+                    onChange={handleChange}
+                    onBlur={() => {
+                      if (
+                        formData.fundingAmount !== "" &&
+                        !!currentTutorialState &&
+                        currentTutorialState.isActive
+                      ) {
+                        if (
+                          currentTutorialState?.title ===
+                            CREATE_BOUNTY_TUTORIAL_INITIAL_STATE.title &&
+                          currentTutorialState.currentStep === 6
+                        ) {
+                          setCurrentTutorialState({
+                            ...currentTutorialState,
+                            currentStep: 7,
+                          });
+                        }
+                      }
+                    }}
+                    onMouseLeave={() => {
+                      if (
+                        formData.fundingAmount !== "" &&
+                        !!currentTutorialState &&
+                        currentTutorialState.isActive
+                      ) {
+                        if (
+                          currentTutorialState?.title ===
+                            CREATE_BOUNTY_TUTORIAL_INITIAL_STATE.title &&
+                          currentTutorialState.currentStep === 6
+                        ) {
+                          setCurrentTutorialState({
+                            ...currentTutorialState,
+                            currentStep: 7,
+                            isRunning: true,
+                          });
+                        }
+                      }
+                    }}
+                    onFocus={() => {
+                      if (
+                        !!currentTutorialState &&
+                        currentTutorialState.isActive
+                      ) {
+                        if (
+                          currentTutorialState?.title ===
+                            CREATE_BOUNTY_TUTORIAL_INITIAL_STATE.title &&
+                          currentTutorialState.currentStep === 6
+                        ) {
+                          setCurrentTutorialState({
+                            ...currentTutorialState,
+                            isRunning: false,
+                          });
+                        }
+                      }
+                    }}
+                  />
+                </div>
+              </div>
+              {formData.fundingAmount && (
+                <div>
+                  Total Cost: {(1.05 * formData.fundingAmount).toFixed(2)}
+                </div>
+              )}
+              <button
+                className={classNames("button-primary", {
+                  disabled: !formData.fundingAmount || !currentWallet,
+                })}
+                onClick={onClick}
+                id="issue-funding-submit"
+              >
+                Submit
+              </button>
+            </>
+          )}
+        </>
+        {/* )} */}
+      </Form>
     )
   );
 };
 
-export default Form;
+export default FundBountyForm;
