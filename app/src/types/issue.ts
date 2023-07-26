@@ -76,6 +76,7 @@ export interface User extends Prisma.User {
   referrees?: (Prisma.ReferrerReferree & {
     referree: Prisma.User;
   })[];
+  profileNFTWallet?: Wallet;
 }
 
 export interface CurrentUser extends User {
