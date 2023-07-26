@@ -303,7 +303,7 @@ const Account: React.FC = () => {
                       <BountyNFTCard bountyNFT={bountyNFT} />
                     ))
                   ) : (
-                    <div>No bounties yet!</div>
+                    <div className="w-full text-center">No bounties yet!</div>
                   )}
                 </div>
               </>

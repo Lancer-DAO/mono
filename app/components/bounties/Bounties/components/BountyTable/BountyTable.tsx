@@ -36,6 +36,7 @@ const BountyList: React.FC<{}> = () => {
   const [orgs, setOrgs] = useState<string[]>([]);
   const [bounds, setTimeBounds] = useState<[number, number]>([0, 10]);
   const [bounties, setBounties] = useState<any[]>([]);
+  const [bountiesLoading, setBountiesLoading] = useState(false);
 
   const [filters, setFilters] = useState<Filters>({
     mints: mints,
@@ -50,11 +51,18 @@ const BountyList: React.FC<{}> = () => {
   useEffect(() => {
     const getBs = async () => {
       if (router.isReady && currentUser?.id) {
-        const bounties = await getBounties({
-          currentUserId: currentUser.id,
-          onlyMyBounties: filters.isMyBounties,
-        });
-        setBounties(bounties);
+        setBountiesLoading(true);
+        try {
+          const bounties = await getBounties({
+            currentUserId: currentUser.id,
+            onlyMyBounties: filters.isMyBounties,
+          });
+          setBounties(bounties);
+        } catch (e) {
+          console.log("error getting bounties: ", e);
+        } finally {
+          setBountiesLoading(false);
+        }
       }
     };
     getBs();
@@ -108,8 +116,6 @@ const BountyList: React.FC<{}> = () => {
     }
   }, [bounties]);
 
-  if (bounties.length === 0) return <LoadingBar title="Loading Bounties" />;
-
   const filteredBountys = bounties.filter((bounty) => {
     if (!bounty.escrow.publicKey || !bounty.escrow.mint) {
       return false;
@@ -157,14 +163,30 @@ const BountyList: React.FC<{}> = () => {
         setFilters={setFilters}
         setBounties={setBounties}
       />
+
+      {bountiesLoading && (
+        <div className="w-full flex flex-col items-center">
+          <LoadingBar title="Loading Bounties" />
+        </div>
+      )}
+
       <div className="issue-list" id="bounties-list">
-        {filteredBountys.map((bounty, index) => (
-          <LancerBounty
-            bounty={bounty}
-            key={index}
-            id={`bounty-item-${index}`}
-          />
-        ))}
+        {!bountiesLoading && filteredBountys.length === 0 && (
+          <p className="w-full text-center col-span-2">
+            No matching bounties available!
+          </p>
+        )}
+        {filteredBountys.length > 0 &&
+          filteredBountys?.map((bounty, index) => {
+            // console.log("bounty: ", bounty);
+            return (
+              <LancerBounty
+                bounty={bounty}
+                key={index}
+                id={`bounty-item-${index}`}
+              />
+            );
+          })}
       </div>
     </div>
   );
