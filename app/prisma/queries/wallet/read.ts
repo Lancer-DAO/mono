@@ -15,8 +15,3 @@ export const getOrThrow = async (
   }
   return wallet;
 };
-
-export const getById = async (id: number) => {
-  const wallet = await prisma.wallet.findFirst({ where: { id } });
-  return wallet;
-};

@@ -21,11 +21,7 @@ export const getByEmail = async (email: string) => {
     },
     include: USER_INCLUDE,
   });
-  if (user.profileWalletId) {
-    const profileNFTWallet = await getById(user.profileWalletId);
-    return { ...user, profileNFTWallet: profileNFTWallet };
-  }
-  return { ...user, profileNFTWallet: null };
+  return user;
 };
 
 export const getById = async (id: number) => {
@@ -35,11 +31,7 @@ export const getById = async (id: number) => {
     },
     include: USER_INCLUDE,
   });
-  if (user.profileWalletId) {
-    const profileNFTWallet = await getById(user.profileWalletId);
-    return { ...user, profileNFTWallet: profileNFTWallet };
-  }
-  return { ...user, profileNFTWallet: null };
+  return user;
 };
 
 export const searchByName = async (

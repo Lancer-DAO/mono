@@ -91,13 +91,15 @@ const Account: React.FC = () => {
 
   const fetchProfileNFT = async () => {
     setProfileLoading(true);
-
+    const profileNFTHolder = account.wallets.find(
+      (wallet) => wallet.id === account.profileWalletId
+    );
     const nfts = await underdogClient.getNfts({
       params: PROFILE_PROJECT_PARAMS,
       query: {
         page: 1,
         limit: 1,
-        ownerAddress: account.profileNFTWallet?.publicKey,
+        ownerAddress: profileNFTHolder.publicKey,
       },
     });
     if (nfts.totalResults > 0) {
@@ -198,7 +200,7 @@ const Account: React.FC = () => {
         }, 100);
       }
     };
-    if (account && !!account.profileNFTWallet) {
+    if (account && account.profileWalletId) {
       fetchNfts();
     }
   }, [account]);
