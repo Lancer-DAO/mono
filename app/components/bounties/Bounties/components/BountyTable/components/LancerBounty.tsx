@@ -1,7 +1,6 @@
 import { Clock, EyeOff } from "react-feather";
 import { marked } from "marked";
 import { Bounty, BOUNTY_USER_RELATIONSHIP, Contributor } from "@/src/types";
-import { useLocation } from "react-router-dom";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import { decimalToNumber } from "@/src/utils";
@@ -17,10 +16,7 @@ const LancerBounty = ({
   bounty: Bounty & { users: Contributor[] };
   id?: string;
 }) => {
-  const search = useLocation().search;
   const [isPrivateHovered, setIsPrivateHovered] = useState(false);
-  const params = new URLSearchParams(search);
-  const jwt = params.get("token");
   const previewMarkup = () => {
     if (!bounty.description) return { __html: "<div/>" };
 

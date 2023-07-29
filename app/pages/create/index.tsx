@@ -11,13 +11,7 @@ export default function Home() {
         <title>Lancer | New Bounty</title>
         <meta name="description" content="Lancer Github Extension" />
       </Head>
-      <main>
-        <App />
-      </main>
+      <Create />
     </>
   );
-}
-
-function App() {
-  return <Create />;
 }
