@@ -1,12 +1,7 @@
 import Head from "next/head";
 import { withPageAuthRequired } from "@auth0/nextjs-auth0";
 import { useUserWallet } from "@/src/providers";
-import {
-  DefaultLayout,
-  ProfileNFTCard,
-  BountyNFTCard,
-  LoadingBar,
-} from "@/components";
+import { ProfileNFTCard, BountyNFTCard, LoadingBar } from "@/components";
 import {
   BOUNTY_PROJECT_PARAMS,
   IS_CUSTODIAL,
@@ -16,6 +11,7 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { api } from "@/src/utils/api";
 import { BountyNFT, CurrentUser, ProfileNFT } from "@/src/types";
+import { NextSeo } from "next-seo";
 
 export const getServerSideProps = withPageAuthRequired();
 
@@ -220,10 +216,7 @@ const AccountPage: React.FC = () => {
 
   return (
     <>
-      <Head>
-        <title>Lancer | Account</title>
-        <meta name="description" content="Lancer Account" />
-      </Head>
+      <NextSeo title="Lancer | Account" description="Lancer Account" />
       {account && (
         <>
           <div className="w-full flex flex-col md:flex-row items-center md:items-start gap-10 md:gap-5 justify-center">

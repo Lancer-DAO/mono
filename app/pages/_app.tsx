@@ -11,6 +11,10 @@ import { ReactElement, ReactNode, useEffect } from "react";
 import { useRouter } from "next/router";
 import { NextPage } from "next";
 import { DefaultLayout } from "../components";
+import { DefaultSeo } from "next-seo";
+
+// import your default seo configuration
+import SEO from "../next-seo.config";
 
 const siteId = 3506102;
 const hotjarVersion = 6;
@@ -42,7 +46,12 @@ const App = ({ Component, pageProps }: AppPropsWithLayout) => {
     }
   }, []);
 
-  return <AllProviders>{getLayout(<Component {...pageProps} />)}</AllProviders>;
+  return (
+    <AllProviders>
+      <DefaultSeo {...SEO} />
+      {getLayout(<Component {...pageProps} />)}
+    </AllProviders>
+  );
 };
 
 export default api.withTRPC(App);

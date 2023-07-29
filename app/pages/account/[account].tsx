@@ -20,6 +20,7 @@ import {
 
 import { useTutorial } from "@/src/providers/tutorialProvider";
 import Head from "next/head";
+import { NextSeo } from "next-seo";
 
 dayjs.extend(relativeTime);
 
@@ -220,10 +221,7 @@ const AccountDetailPage: React.FC = () => {
 
   return (
     <>
-      <Head>
-        <title>Lancer | Account</title>
-        <meta name="description" content="Lancer Account" />
-      </Head>
+      <NextSeo title="Lancer | Account" description="Lancer Account" />
       {account && (
         <>
           <div className="w-full flex flex-col md:flex-row items-center md:items-start gap-10 md:gap-5 justify-center">

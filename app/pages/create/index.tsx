@@ -1,17 +1,20 @@
 import Head from "next/head";
 import { withPageAuthRequired } from "@auth0/nextjs-auth0";
 import { Create } from "@/components/create/Create";
+import { NextSeo } from "next-seo";
 
 export const getServerSideProps = withPageAuthRequired();
 
-export default function Home() {
+const CreatePage: React.FC = () => {
   return (
     <>
-      <Head>
-        <title>Lancer | New Bounty</title>
-        <meta name="description" content="Lancer Github Extension" />
-      </Head>
+      <NextSeo
+        title="Lancer | New Bounty"
+        description="Create New Lancer Bounty"
+      />
       <Create />
     </>
   );
-}
+};
+
+export default CreatePage;
