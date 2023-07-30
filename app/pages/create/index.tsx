@@ -1,4 +1,3 @@
-import Head from "next/head";
 import { withPageAuthRequired } from "@auth0/nextjs-auth0";
 import { Create } from "@/components/create/Create";
 import { NextSeo } from "next-seo";

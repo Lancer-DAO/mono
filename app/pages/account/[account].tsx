@@ -19,7 +19,6 @@ import {
 } from "@/src/constants/tutorials";
 
 import { useTutorial } from "@/src/providers/tutorialProvider";
-import Head from "next/head";
 import { NextSeo } from "next-seo";
 
 dayjs.extend(relativeTime);

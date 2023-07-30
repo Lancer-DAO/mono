@@ -1,4 +1,3 @@
-import Head from "next/head";
 import { withPageAuthRequired } from "@auth0/nextjs-auth0";
 import { Bounties } from "@/components/bounties/Bounties/Bounties";
 import { NextSeo } from "next-seo";
