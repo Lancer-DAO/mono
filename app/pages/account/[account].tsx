@@ -224,24 +224,6 @@ const AccountDetailPage: React.FC = () => {
       {account && (
         <>
           <div className="w-full flex flex-col md:flex-row items-center md:items-start gap-10 md:gap-5 justify-center">
-            {/* <ApiKeyModal showModal={showModal} setShowModal={setShowModal} /> */}
-            {/* {currentUser?.githubLogin && (
-              <div>GitHub User: {currentUser.githubLogin}</div>
-            )}
-              <a href="/api/auth/logout">Logout</a> */}
-            {/* {wallets &&
-              wallets.map((wallet) => (
-                <WalletInfo wallet={wallet} key={wallet.publicKey.toString()} />
-              ))} */}
-            {/* {!IS_MAINNET && (
-                <a
-                  href="https://staging.coinflow.cash/faucet"
-                  target={"_blank"}
-                  rel="noreferrer"
-                >
-                  USDC Faucet
-                </a>
-              )} */}
             {!IS_CUSTODIAL && !currentWallet && (
               <div>Please Connect a Wallet</div>
             )}
