@@ -89,17 +89,7 @@ const BountyActions = () => {
         )}
         {currentBounty.isApprovedSubmitter &&
           !currentBounty.currentSubmitter && (
-            // <div
-            //   className="hover-tooltip-wrapper"
-            //   onMouseEnter={() => {
-            //     setHoveredButton("submit");
-            //   }}
-            //   onMouseLeave={() => {
-            //     setHoveredButton("none");
-            //   }}
-            // >
             <SubmitRequest disabled={!currentWallet.publicKey} />
-            // </div>
           )}
         {currentBounty.isCurrentSubmitter && !currentBounty.isCreator && (
           <Button disabled id="submission-pending">

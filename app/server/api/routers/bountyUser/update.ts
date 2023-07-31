@@ -1,10 +1,6 @@
-import { prisma } from "@/server/db";
 import { protectedProcedure } from "../../trpc";
 import { z } from "zod";
 import * as queries from "@/prisma/queries";
-import { Octokit } from "octokit";
-import axios from "axios";
-import dayjs from "dayjs";
 import { BountyState } from "@/src/types";
 
 export const update = protectedProcedure

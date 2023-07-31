@@ -57,18 +57,6 @@ const ApproveSubmission = () => {
 
     setCurrentBounty(updatedBounty);
 
-    // const octokit = new Octokit({
-    //   auth: currentAPIKey.token,
-    // });
-    // const octokitResponse = await octokit.request(
-    //   "PUT /repos/{owner}/{repo}/pulls/{pull_number}/merge",
-    //   {
-    //     owner: currentBounty.repository.organization,
-    //     repo: currentBounty.repository.name,
-    //     pull_number: decimalToNumber(currentBounty.pullRequests[0].number),
-    //   }
-    // );
-
     const submitterKey = currentBounty.currentSubmitter.publicKey;
     const creatorKey = currentBounty.creator.publicKey;
     let nfts = await underdogClient.getNfts({

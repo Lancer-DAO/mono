@@ -16,7 +16,6 @@ const SubmitRequest = ({ disabled }: { disabled?: boolean }) => {
   const { mutateAsync } = api.bountyUsers.update.useMutation();
 
   const onClick = async () => {
-    // If we are the creator, then skip requesting and add self as approved
     if (
       currentTutorialState?.title ===
         BOUNTY_ACTIONS_TUTORIAL_II_INITIAL_STATE.title &&

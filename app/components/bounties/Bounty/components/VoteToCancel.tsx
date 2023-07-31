@@ -12,7 +12,6 @@ const VoteToCancel = () => {
   const { mutateAsync } = api.bountyUsers.update.useMutation();
 
   const onClick = async () => {
-    // If we are the submitter, vote to cancel as submitter
     let signature = "";
     if (currentBounty.isCreator || currentBounty.isCurrentSubmitter) {
       signature = await voteToCancelFFA(
