@@ -4,6 +4,7 @@ import { BOUNTY_STATES, TABLE_MY_BOUNTY_STATES } from "@/src/constants";
 import classnames from "classnames";
 import { capitalize } from "lodash";
 import { Filters } from "../BountyTable";
+import { IAsyncResult } from "@/types/common";
 
 interface BountyFiltersProps {
   mints: string[];
@@ -12,7 +13,7 @@ interface BountyFiltersProps {
   timeBounds: [number, number];
   filters: Filters;
   setFilters: (filters: Filters) => void;
-  setBounties: (bounties: any[]) => void;
+  setBounties: (bounties: IAsyncResult<any[]>) => void;
 }
 
 const BountyFilters = ({
@@ -45,7 +46,7 @@ const BountyFilters = ({
                 isMyBounties: !filters.isMyBounties,
                 states: TABLE_MY_BOUNTY_STATES,
               });
-              setBounties([]);
+              setBounties({ result: [] });
             }}
           />
 
