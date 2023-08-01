@@ -12,7 +12,6 @@ const DenySubmission = () => {
   const { mutateAsync } = api.bountyUsers.update.useMutation();
 
   const onClick = async () => {
-    // If we are the creator, then skip requesting and add self as approved
     const signature = await denyRequestFFA(
       new PublicKey(currentBounty.currentSubmitter.publicKey),
       currentBounty.escrow,
