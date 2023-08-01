@@ -7,7 +7,7 @@ import {
 import { UnwrapArray, UnwrapPromise } from "@/types/Bounties";
 import * as Prisma from "@prisma/client";
 
-export const bountyQuery = async (id: number) => {
+const bountyQuery = async (id: number) => {
   return prisma.bounty.findUnique({
     where: {
       id,
@@ -37,8 +37,9 @@ export const bountyQuery = async (id: number) => {
   });
 };
 
-type Bounty = UnwrapPromise<ReturnType<typeof bountyQuery>>;
-type UserRelation = UnwrapArray<Bounty["users"]>;
+export type BountyType = UnwrapPromise<ReturnType<typeof get>>;
+export type BountyQueryType = UnwrapPromise<ReturnType<typeof bountyQuery>>;
+export type UserRelation = UnwrapArray<BountyQueryType["users"]>;
 
 export const get = async (id: number, currentUserId: number) => {
   const bounty = await bountyQuery(id);

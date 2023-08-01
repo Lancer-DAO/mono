@@ -1,5 +1,7 @@
 import { api } from "@/src/utils/api";
 import { BountyUserType } from "@/prisma/queries/bounty";
+import { BountyType } from "@/prisma/queries/bounty";
+import { UserType, UserSearchType } from "@/prisma/queries/user";
 
 export enum BOUNTY_USER_RELATIONSHIP {
   Creator = "creator",
@@ -48,14 +50,11 @@ export enum BountyState {
   VOTING_TO_CANCEL = "voting_to_cancel",
 }
 
-const { mutateAsync: getBounty } = api.bounties.getBounty.useMutation();
-const { mutateAsync: getUser } = api.users.getUser.useMutation();
-const { mutateAsync: searchUser } = api.users.search.useMutation();
+export type Bounty = BountyType;
+export type User = UserType;
+export type UserSearch = UserSearchType;
 
 export type UnwrapPromise<T> = T extends Promise<infer U> ? U : T;
 export type UnwrapArray<T> = T extends Array<infer U> ? U : T;
-export type Bounty = UnwrapPromise<ReturnType<typeof getBounty>>;
-export type User = UnwrapPromise<ReturnType<typeof getUser>>;
-export type UserSearch = UnwrapPromise<ReturnType<typeof searchUser>>;
 export type UserSearchIndividual = UnwrapArray<UserSearch>;
 export type Escrow = Bounty["escrow"];

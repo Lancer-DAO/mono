@@ -1,6 +1,7 @@
 import { protectedProcedure } from "../../trpc";
 import { z } from "zod";
 import * as queries from "@/prisma/queries";
+import { UnwrapPromise } from "@/types";
 
 export const getUser = protectedProcedure
   .input(
@@ -13,3 +14,5 @@ export const getUser = protectedProcedure
 
     return user;
   });
+
+export type User = UnwrapPromise<ReturnType<typeof getUser>>;

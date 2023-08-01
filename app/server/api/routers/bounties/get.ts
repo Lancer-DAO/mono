@@ -2,6 +2,7 @@ import { prisma } from "@/server/db";
 import { protectedProcedure } from "../../trpc";
 import { z } from "zod";
 import * as queries from "@/prisma/queries";
+import { UnwrapPromise } from "@/types";
 
 export const getBounty = protectedProcedure
   .input(
