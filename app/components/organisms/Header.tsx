@@ -39,10 +39,10 @@ export const Header = () => {
             return (
               <LinkButton
                 href={href}
-                children={children}
                 version="text"
                 key={href}
-              />
+              >
+                {children}</LinkButton>
             );
           })}
           {IS_CUSTODIAL ? (
