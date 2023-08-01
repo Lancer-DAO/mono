@@ -3,6 +3,7 @@ import { Decimal } from "@prisma/client/runtime";
 export * from "./web3";
 export * from "./requests";
 export * from "./wallet";
+export * from "./api";
 
 export function deepCopy<Type>(obj: Type): Type {
   return JSON.parse(JSON.stringify(obj));

@@ -11,5 +11,7 @@ export const getBounty = protectedProcedure
     })
   )
   .mutation(async ({ input: { id, currentUserId } }) => {
-    return await queries.bounty.get(id, currentUserId);
+    const ret = await queries.bounty.get(id, currentUserId);
+    console.log(typeof ret);
+    return ret;
   });

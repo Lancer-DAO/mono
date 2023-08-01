@@ -2,7 +2,8 @@ import { PublicKey, Transaction } from "@solana/web3.js";
 import { AnchorProvider, Program } from "@project-serum/anchor";
 import { MonoProgram } from "@/escrow/sdk/types/mono_program";
 import { voteToCancelInstruction } from "@/escrow/sdk/instructions";
-import { Escrow, LancerWallet } from "@/src/types";
+import { LancerWallet } from "@/types/";
+import { Escrow } from "@/types/";
 
 export const voteToCancelFFA = async (
   creator: PublicKey,

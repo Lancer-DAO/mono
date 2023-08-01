@@ -1,16 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
-import { api } from "../../../src/utils/api";
-import { decimalToNumber, getSolscanAddress } from "../../../src/utils";
+import Image from "next/image";
+import { api, decimalToNumber, getSolscanAddress } from "@/utils";
 import { marked } from "marked";
 import dayjs from "dayjs";
 import { PublicKey } from "@solana/web3.js";
 import { Clock } from "react-feather";
-import Image from "next/image";
-import { ContributorInfo } from "../..";
-import { BountyState } from "../../../src/types";
+import { BountyState } from "@/types/";
 import BountyActions from "../Bounty/components/BountyActions";
-import { SubmitterSection, Logo } from "@/components";
+import { ContributorInfo, SubmitterSection, Logo } from "@/components";
 import { useBounty } from "@/src/providers/bountyProvider";
 import { useUserWallet } from "@/src/providers";
 

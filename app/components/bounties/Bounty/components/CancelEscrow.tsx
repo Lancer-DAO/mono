@@ -2,7 +2,7 @@ import { FC } from "react";
 import { cancelFFA } from "@/escrow/adapters";
 import { useUserWallet } from "@/src/providers";
 import { useBounty } from "@/src/providers/bountyProvider";
-import { BountyState } from "@/src/types";
+import { BountyState } from "@/types/";
 import { api } from "@/src/utils/api";
 import { Button } from "@/components";
 

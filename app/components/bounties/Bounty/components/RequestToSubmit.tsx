@@ -6,7 +6,7 @@ import { useTutorial } from "@/src/providers/tutorialProvider";
 import { useReferral } from "@/src/providers/referralProvider";
 import { api } from "@/src/utils/api";
 import { PublicKey } from "@solana/web3.js";
-import { BOUNTY_USER_RELATIONSHIP } from "@/types";
+import { BOUNTY_USER_RELATIONSHIP } from "@/types/";
 
 const RequestToSubmit = () => {
   const { currentUser, currentWallet } = useUserWallet();

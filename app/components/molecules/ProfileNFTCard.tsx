@@ -1,4 +1,4 @@
-import { ProfileNFT, User } from "@/src/types";
+import { ProfileNFT } from "@/types/";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import { useCallback, useEffect, useMemo, useState } from "react";

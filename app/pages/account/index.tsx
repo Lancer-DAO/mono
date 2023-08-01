@@ -21,8 +21,7 @@ import {
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { api } from "@/src/utils/api";
-import { BountyNFT, CurrentUser, ProfileNFT } from "@/src/types";
-import { last } from "lodash";
+import { BountyNFT, ProfileNFT } from "@/types/";
 export const getServerSideProps = withPageAuthRequired();
 
 import {
@@ -40,6 +39,7 @@ import {
 } from "@/src/constants/tutorials";
 import { Key } from "react-feather";
 import { useTutorial } from "@/src/providers/tutorialProvider";
+import { User } from "@/types/Bounties";
 dayjs.extend(relativeTime);
 
 const underdogClient = createUnderdogClient({});
@@ -67,7 +67,7 @@ const Account: React.FC = () => {
   const [profileNFT, setProfileNFT] = useState<ProfileNFT>();
   const [bountyNFTs, setBountyNFTs] = useState<BountyNFT[]>([]);
   const { mutateAsync: getUser } = api.users.getUser.useMutation();
-  const [account, setAccount] = useState<CurrentUser>();
+  const [account, setAccount] = useState<User>();
   const [showModal, setShowModal] = useState(false);
   const [bountiesLoading, setBountiesLoading] = useState(false);
   const [profileLoading, setProfileLoading] = useState(false);

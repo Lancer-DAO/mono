@@ -1,5 +1,5 @@
 import { Button } from "@/components";
-import { BountyState } from "@/types";
+import { BountyState } from "@/types/";
 import {
   BONK_MINT,
   BOUNTY_PROJECT_PARAMS,

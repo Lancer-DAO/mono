@@ -6,7 +6,8 @@ import {
   addApprovedSubmittersV1Instruction,
 } from "@/escrow/sdk/instructions";
 
-import { Escrow, LancerWallet } from "@/src/types";
+import { LancerWallet } from "@/types/";
+import { Escrow } from "@/types/Bounties";
 
 export const addSubmitterFFA = async (
   submitter: PublicKey,

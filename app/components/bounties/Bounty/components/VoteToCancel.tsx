@@ -4,7 +4,7 @@ import { useUserWallet } from "@/src/providers";
 import { useBounty } from "@/src/providers/bountyProvider";
 import { api } from "@/src/utils/api";
 import { PublicKey } from "@solana/web3.js";
-import { BOUNTY_USER_RELATIONSHIP, BountyState } from "@/types";
+import { BOUNTY_USER_RELATIONSHIP, BountyState } from "@/types/";
 
 const VoteToCancel = () => {
   const { currentUser, currentWallet, program, provider } = useUserWallet();

@@ -68,7 +68,7 @@ const BountyList: React.FC<{}> = () => {
     getBs();
   }, [router, currentUser?.id, filters.isMyBounties]);
 
-  const filteredBounties = bounties?.result.filter((bounty) => {
+  const filteredBounties = bounties?.result?.filter((bounty) => {
     if (!bounty.escrow.publicKey || !bounty.escrow.mint) {
       return false;
     }
@@ -108,10 +108,10 @@ const BountyList: React.FC<{}> = () => {
     // - all orgs posting bounties
     // - all payout mints
     // - upper and lower bounds of estimated time completion
-    if (bounties && bounties?.result.length !== 0) {
+    if (bounties && bounties?.result?.length !== 0) {
       const allTags = bounties?.result
-        .map((bounty) => bounty.tags.map((tag) => tag.name))
-        .reduce(
+        ?.map((bounty) => bounty.tags.map((tag) => tag.name))
+        ?.reduce(
           (accumulator, currentValue) => [
             ...accumulator,
             ...(currentValue ? currentValue : []),
@@ -165,19 +165,19 @@ const BountyList: React.FC<{}> = () => {
         setBounties={setBounties}
       />
 
-      {bounties.isLoading && (
+      {bounties?.isLoading && (
         <div className="w-full flex flex-col items-center">
           <LoadingBar title="Loading Bounties" />
         </div>
       )}
 
       <div className="issue-list" id="bounties-list">
-        {!bounties.isLoading && filteredBounties.length === 0 && (
+        {!bounties?.isLoading && filteredBounties?.length === 0 && (
           <p className="w-full text-center col-span-2">
             No matching bounties available!
           </p>
         )}
-        {filteredBounties.length > 0 &&
+        {filteredBounties?.length > 0 &&
           filteredBounties?.map((bounty, index) => {
             // console.log("bounty: ", bounty);
             return (

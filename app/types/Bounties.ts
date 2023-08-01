@@ -1,96 +1,61 @@
-export interface Bounty {
-  id: number;
-  createdAt: string;
-  description: string;
-  estimatedTime: string;
-  isPrivate: boolean;
-  state: string;
-  title: string;
-  type?: any;
-  escrowid: number;
-  milestoneid?: string;
-  projectid?: string;
-  guildid?: string;
-  repositoryid?: string;
-  repository?: any;
-  escrow: Escrow;
-  users: User[];
-  issue?: any;
-  tags: Tag[];
-  pullRequests: any[];
+import { api } from "@/src/utils/api";
+import { BountyUserType } from "@/prisma/queries/bounty";
+
+export enum BOUNTY_USER_RELATIONSHIP {
+  Creator = "creator",
+  RequestedSubmitter = "requested_submitter",
+  DeniedRequester = "denied_requester",
+  ApprovedSubmitter = "approved_submitter",
+  CurrentSubmitter = "current_submitter",
+  DeniedSubmitter = "denied_submitter",
+  ChangesRequestedSubmitter = "changes_requested_submitter",
+  Completer = "completer",
+  VotingCancel = "voting_cancel",
+}
+export interface CurrentUserBountyInclusions {
+  isCreator?: boolean;
+  isRequestedSubmitter?: boolean;
+  isDeniedRequester?: boolean;
+  isApprovedSubmitter?: boolean;
+  isCurrentSubmitter?: boolean;
+  isDeniedSubmitter?: boolean;
+  isChangesRequestedSubmitter?: boolean;
+  isCompleter?: boolean;
+  isVotingCancel?: boolean;
+}
+export interface BountyUserRelations {
+  all?: BountyUserType[];
+  creator: BountyUserType;
+  requestedSubmitters?: BountyUserType[];
+  deniedRequesters?: BountyUserType[];
+  approvedSubmitters?: BountyUserType[];
+  currentSubmitter?: BountyUserType;
+  changesRequestedSubmitters?: BountyUserType[];
+  deniedSubmitters?: BountyUserType[];
+  completer?: BountyUserType;
+  needsToVote?: BountyUserType[];
+  votingToCancel?: BountyUserType[];
 }
 
-export interface Escrow {
-  id: number;
-  amount: string;
-  publicKey: string;
-  timestamp: string;
-  chainid: number;
-  milestoneid?: string;
-  mintid: number;
-  transactions: Transaction[];
-  mint: Mint;
+export enum BountyState {
+  NEW = "new",
+  CANCELED = "canceled",
+  COMPLETE = "complete",
+  FUNDED = "funded",
+  ACCEPTING_APPLICATIONS = "accepting_applications",
+  IN_PROGRESS = "in_progress",
+  AWAITING_REVIEW = "awaiting_review",
+  VOTING_TO_CANCEL = "voting_to_cancel",
 }
 
-export interface Mint {
-  id: number;
-  name: string;
-  ticker: string;
-  logo: string;
-  publicKey: string;
-  website?: string;
-  decimals: number;
-  defaultOffset: number;
-}
+const { mutateAsync: getBounty } = api.bounties.getBounty.useMutation();
+const { mutateAsync: getUser } = api.users.getUser.useMutation();
+const { mutateAsync: searchUser } = api.users.search.useMutation();
 
-export interface Transaction {
-  id: number;
-  signature: string;
-  timestamp: string;
-  label: string;
-  chainid: number;
-  escrowid: number;
-  wallets: Wallet[];
-}
-
-export interface Wallet {
-  walletid: number;
-  transactionid: number;
-  relations: string;
-}
-
-export interface Tag {
-  id: number;
-  color?: string;
-  description?: string;
-  name: string;
-}
-
-export interface User {
-  userid: number;
-  bountyid: number;
-  walletid: number;
-  relations: string;
-  onChainPublicKey: string;
-  user: UserClass;
-}
-
-export interface UserClass {
-  id: number;
-  isAdmin?: boolean;
-  verified?: boolean;
-  hasProfileNFT: boolean;
-  githubID?: string;
-  googleID?: string;
-  githubLogin: string;
-  picture: string;
-  name?: string;
-  discord?: string;
-  twitter?: string;
-  instagram?: string;
-  email: string;
-  profileWalletID: number;
-  refferralTreasuryKey?: string;
-  referralID?: string;
-  createdAt: string;
-}
+export type UnwrapPromise<T> = T extends Promise<infer U> ? U : T;
+export type UnwrapArray<T> = T extends Array<infer U> ? U : T;
+export type Bounty = UnwrapPromise<ReturnType<typeof getBounty>>;
+export type User = UnwrapPromise<ReturnType<typeof getUser>>;
+export type UserSearch = UnwrapPromise<ReturnType<typeof searchUser>>;
+export type UserSearchIndividual = UnwrapArray<UserSearch>;
+export type Escrow = Bounty["escrow"];

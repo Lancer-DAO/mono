@@ -1,10 +1,5 @@
 import { useUserWallet } from "@/src/providers/userWalletProvider";
-import {
-  Contributor,
-  BOUNTY_USER_RELATIONSHIP,
-  User,
-  BountyState,
-} from "@/src/types";
+import { BOUNTY_USER_RELATIONSHIP, BountyState } from "@/types/";
 import { addSubmitterFFA, removeSubmitterFFA } from "@/escrow/adapters";
 import { ContributorInfo } from "@/components";
 import { Check, X } from "react-feather";
@@ -14,10 +9,11 @@ import { useReferral } from "@/src/providers/referralProvider";
 import { BOUNTY_ACTIONS_TUTORIAL_I_INITIAL_STATE } from "@/src/constants/tutorials";
 import { useBounty } from "@/src/providers/bountyProvider";
 import { useTutorial } from "@/src/providers/tutorialProvider";
+import { BountyUserType } from "@/prisma/queries/bounty";
 
 export type SubmitterSectionType = "approved" | "requested";
 interface SubmitterSectionProps {
-  submitter: Contributor;
+  submitter: BountyUserType;
   type: SubmitterSectionType;
   index?: number;
 }

@@ -4,10 +4,9 @@ import { BOUNTY_ACTIONS_TUTORIAL_II_INITIAL_STATE } from "@/src/constants/tutori
 import { useUserWallet } from "@/src/providers";
 import { useBounty } from "@/src/providers/bountyProvider";
 import { useTutorial } from "@/src/providers/tutorialProvider";
-import { BountyState } from "@/src/types";
 import { api } from "@/src/utils/api";
 import { PublicKey } from "@solana/web3.js";
-import { BOUNTY_USER_RELATIONSHIP } from "@/types";
+import { BOUNTY_USER_RELATIONSHIP, BountyState } from "@/types/";
 
 const SubmitRequest = ({ disabled }: { disabled?: boolean }) => {
   const { currentUser, currentWallet, program, provider } = useUserWallet();

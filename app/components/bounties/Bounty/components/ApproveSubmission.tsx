@@ -10,7 +10,7 @@ import { api } from "@/src/utils/api";
 import { Button } from "@/components";
 import { PublicKey } from "@solana/web3.js";
 import dayjs from "dayjs";
-import { BOUNTY_USER_RELATIONSHIP, BountyState } from "@/types";
+import { BOUNTY_USER_RELATIONSHIP, BountyState } from "@/types/";
 import { createUnderdogClient } from "@underdog-protocol/js";
 
 const underdogClient = createUnderdogClient({});

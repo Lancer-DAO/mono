@@ -5,8 +5,9 @@ import { MonoProgram } from "@/escrow/sdk/types/mono_program";
 import { submitRequestInstruction } from "@/escrow/sdk/instructions";
 
 import { USDC_MINT } from "@/src/constants";
-import { LancerWallet, Escrow } from "@/src/types";
+import { LancerWallet } from "@/types/";
 import { maybeCreateTokenAccount } from "@/src/utils";
+import { Escrow } from "@/types/";
 
 export const submitRequestFFA = async (
   creator: PublicKey,
