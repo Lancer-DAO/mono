@@ -1,21 +1,15 @@
 import Head from "next/head";
 import { withPageAuthRequired } from "@auth0/nextjs-auth0";
 import { useUserWallet } from "@/src/providers";
-import dynamic from "next/dynamic";
 import {
   DefaultLayout,
   ProfileNFTCard,
-  CoinflowOfframp,
-  Button,
   BountyNFTCard,
-  JoyrideWrapper,
-  ApiKeyModal,
   LoadingBar,
 } from "@/components";
 import {
   BOUNTY_PROJECT_PARAMS,
   IS_CUSTODIAL,
-  IS_MAINNET,
   PROFILE_PROJECT_PARAMS,
 } from "@/src/constants";
 import { useRouter } from "next/router";
@@ -24,20 +18,13 @@ import { api } from "@/src/utils/api";
 import { BountyNFT, ProfileNFT } from "@/types/";
 export const getServerSideProps = withPageAuthRequired();
 
-import {
-  createUnderdogClient,
-  useProject,
-  Nft,
-  NetworkEnum,
-} from "@underdog-protocol/js";
+import { createUnderdogClient } from "@underdog-protocol/js";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
-import AddReferrerModal from "@/components/molecules/AddReferrerModal";
 import {
   BOUNTY_ACTIONS_TUTORIAL_II_INITIAL_STATE,
   PROFILE_TUTORIAL_INITIAL_STATE,
 } from "@/src/constants/tutorials";
-import { Key } from "react-feather";
 import { useTutorial } from "@/src/providers/tutorialProvider";
 import { User } from "@/types/Bounties";
 dayjs.extend(relativeTime);
@@ -62,13 +49,10 @@ const Account: React.FC = () => {
 
   const { currentUser, currentWallet } = useUserWallet();
   const { currentTutorialState, setCurrentTutorialState } = useTutorial();
-  const [showCoinflow, setShowCoinflow] = useState(false);
-  const [showTutorial, setShowTutorial] = useState(false);
   const [profileNFT, setProfileNFT] = useState<ProfileNFT>();
   const [bountyNFTs, setBountyNFTs] = useState<BountyNFT[]>([]);
   const { mutateAsync: getUser } = api.users.getUser.useMutation();
   const [account, setAccount] = useState<User>();
-  const [showModal, setShowModal] = useState(false);
   const [bountiesLoading, setBountiesLoading] = useState(false);
   const [profileLoading, setProfileLoading] = useState(false);
   const [profileCreating, setProfileCreating] = useState(false);
@@ -270,7 +254,7 @@ const Account: React.FC = () => {
                     USDC Faucet
                   </a>
                 )} */}
-            {!IS_CUSTODIAL && !currentWallet && (
+            {!IS_CUSTODIAL && !currentWallet && !profileNFT && (
               <div>Please Connect a Wallet</div>
             )}
             {profileLoading && <LoadingBar title="Loading Profile" />}

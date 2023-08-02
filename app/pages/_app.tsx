@@ -12,21 +12,21 @@ import { useRouter } from "next/router";
 const COOKIE_REF = "referrer";
 
 const App = ({ Component, pageProps }: AppProps) => {
-  // const router = useRouter();
-  // useEffect(() => {
-  //   const { r } = router.query;
-  //   if (r) {
-  //     const hasReferrer = localStorage.getItem(COOKIE_REF);
-  //     if (!hasReferrer) {
-  //       localStorage.setItem(COOKIE_REF, r as string);
-  //     }
-  //   }
-  // }, []);
+  const router = useRouter();
+  useEffect(() => {
+    const { r } = router.query;
+    if (r) {
+      const hasReferrer = localStorage.getItem(COOKIE_REF);
+      if (!hasReferrer) {
+        localStorage.setItem(COOKIE_REF, r as string);
+      }
+    }
+  }, []);
 
   return (
-    // <AllProviders>
-    <Component {...pageProps} />
-    // </AllProviders>
+    <AllProviders>
+      <Component {...pageProps} />
+    </AllProviders>
   );
 };
 
