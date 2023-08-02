@@ -10,7 +10,7 @@ import Image from "next/image";
 import { BOUNTY_USER_RELATIONSHIP, Bounty } from "@/types/";
 dayjs.extend(relativeTime);
 
-const LancerBounty = ({ bounty, id }: { bounty: Bounty; id?: string }) => {
+exporconst LancerBounty = ({ bounty, id }: { bounty: Bounty; id?: string }) => {
   const search = useLocation().search;
   const [isPrivateHovered, setIsPrivateHovered] = useState(false);
   const params = new URLSearchParams(search);

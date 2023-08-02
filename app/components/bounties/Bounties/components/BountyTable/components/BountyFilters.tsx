@@ -16,7 +16,7 @@ interface BountyFiltersProps {
   setBounties: (bounties: IAsyncResult<any[]>) => void;
 }
 
-const BountyFilters = ({
+export const BountyFilters = ({
   mints,
   tags,
   orgs,
@@ -169,5 +169,3 @@ const BountyFilters = ({
     </form>
   );
 };
-
-export default BountyFilters;

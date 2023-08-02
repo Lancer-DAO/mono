@@ -13,6 +13,7 @@ export enum BOUNTY_USER_RELATIONSHIP {
   ChangesRequestedSubmitter = "changes_requested_submitter",
   Completer = "completer",
   VotingCancel = "voting_cancel",
+  Canceler = "canceler",
 }
 export interface CurrentUserBountyInclusions {
   isCreator?: boolean;

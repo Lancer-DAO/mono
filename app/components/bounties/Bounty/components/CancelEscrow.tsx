@@ -2,14 +2,18 @@ import { FC } from "react";
 import { cancelFFA } from "@/escrow/adapters";
 import { useUserWallet } from "@/src/providers";
 import { useBounty } from "@/src/providers/bountyProvider";
-import { BountyState } from "@/types/";
+import { BOUNTY_USER_RELATIONSHIP, BountyState } from "@/types/";
 import { api } from "@/src/utils/api";
 import { Button } from "@/components";
+import { updateList } from "@/src/utils";
 
-const CancelEscrow: FC = () => {
+export const CancelEscrow: FC = () => {
   const { currentUser, currentWallet, program, provider } = useUserWallet();
   const { currentBounty, setCurrentBounty } = useBounty();
   const { mutateAsync } = api.bountyUsers.update.useMutation();
+
+  if (!(currentBounty.isCreator && currentBounty.needsToVote.length === 0))
+    return null;
 
   const onClick = async () => {
     // If we are the creator, then skip requesting and add self as approved
@@ -19,11 +23,16 @@ const CancelEscrow: FC = () => {
       program,
       provider
     );
+    const newRelation = updateList(
+      currentBounty.currentUserRelationsList,
+      [],
+      [BOUNTY_USER_RELATIONSHIP.Canceler]
+    );
     const { updatedBounty } = await mutateAsync({
       bountyId: currentBounty.id,
       currentUserId: currentUser.id,
       userId: currentUser.id,
-      relations: [...currentBounty.currentUserRelationsList, "canceler"],
+      relations: newRelation,
       state: BountyState.CANCELED,
       publicKey: currentWallet.publicKey.toString(),
       escrowId: currentBounty.escrowid,
@@ -40,5 +49,3 @@ const CancelEscrow: FC = () => {
     </Button>
   );
 };
-
-export default CancelEscrow;

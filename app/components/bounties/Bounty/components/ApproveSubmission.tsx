@@ -15,13 +15,22 @@ import { createUnderdogClient } from "@underdog-protocol/js";
 
 const underdogClient = createUnderdogClient({});
 
-const ApproveSubmission = () => {
+export const ApproveSubmission = () => {
   const { currentUser, currentWallet, program, provider } = useUserWallet();
 
   const { currentBounty, setCurrentBounty } = useBounty();
   const { currentTutorialState, setCurrentTutorialState } = useTutorial();
   const { programId: buddylinkProgramId } = useReferral();
   const { mutateAsync } = api.bountyUsers.update.useMutation();
+
+  if (
+    !(
+      currentBounty.isCreator &&
+      currentBounty.currentSubmitter &&
+      !currentBounty.completer
+    )
+  )
+    return null;
 
   const onClick = async () => {
     if (
@@ -158,5 +167,3 @@ const ApproveSubmission = () => {
     </Button>
   );
 };
-
-export default ApproveSubmission;

@@ -7,12 +7,19 @@ import { useTutorial } from "@/src/providers/tutorialProvider";
 import { api } from "@/src/utils/api";
 import { PublicKey } from "@solana/web3.js";
 import { BOUNTY_USER_RELATIONSHIP, BountyState } from "@/types/";
+import { updateList } from "@/src/utils";
 
-const SubmitRequest = ({ disabled }: { disabled?: boolean }) => {
+export const SubmitRequest = () => {
   const { currentUser, currentWallet, program, provider } = useUserWallet();
   const { currentBounty, setCurrentBounty } = useBounty();
   const { currentTutorialState, setCurrentTutorialState } = useTutorial();
   const { mutateAsync } = api.bountyUsers.update.useMutation();
+
+  if (
+    !(currentBounty.isApprovedSubmitter && !currentBounty.currentSubmitter) ||
+    !currentBounty.isChangesRequestedSubmitter
+  )
+    return null;
 
   const onClick = async () => {
     if (
@@ -33,29 +40,20 @@ const SubmitRequest = ({ disabled }: { disabled?: boolean }) => {
       program,
       provider
     );
-    currentBounty.currentUserRelationsList.push(
-      BOUNTY_USER_RELATIONSHIP.CurrentSubmitter
-    );
-    const index = currentBounty.currentUserRelationsList.indexOf(
-      BOUNTY_USER_RELATIONSHIP.ApprovedSubmitter
-    );
-
-    if (index !== -1) {
-      currentBounty.currentUserRelationsList.splice(index, 1);
-    }
-
-    const index2 = currentBounty.currentUserRelationsList.indexOf(
-      BOUNTY_USER_RELATIONSHIP.ChangesRequestedSubmitter
+    const newRelations = updateList(
+      currentBounty.currentUserRelationsList,
+      [
+        BOUNTY_USER_RELATIONSHIP.ApprovedSubmitter,
+        BOUNTY_USER_RELATIONSHIP.ChangesRequestedSubmitter,
+      ],
+      [BOUNTY_USER_RELATIONSHIP.CurrentSubmitter]
     );
 
-    if (index2 !== -1) {
-      currentBounty.currentUserRelationsList.splice(index2, 1);
-    }
     const { updatedBounty } = await mutateAsync({
       bountyId: currentBounty.id,
       currentUserId: currentUser.id,
       userId: currentUser.id,
-      relations: currentBounty.currentUserRelationsList,
+      relations: newRelations,
       state: BountyState.AWAITING_REVIEW,
       publicKey: currentWallet.publicKey.toString(),
       escrowId: currentBounty.escrowid,
@@ -79,13 +77,11 @@ const SubmitRequest = ({ disabled }: { disabled?: boolean }) => {
 
   return (
     <Button
-      disabled={disabled}
+      disabled={!currentWallet}
       onClick={onClick}
-      disabledText="Please open a PR closing the GitHub Issue before submitting"
+      disabledText="Please Connect your Wallet"
     >
       Submit
     </Button>
   );
 };
-
-export default SubmitRequest;

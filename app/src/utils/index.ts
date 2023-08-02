@@ -26,3 +26,19 @@ export function uniqueNumbers(lists: number[][]): number[] {
 export function decimalToNumber(decimal: Decimal) {
   return parseFloat(decimal.toString());
 }
+
+export function updateList<T>(
+  originalList: T[],
+  itemsToRemove: T[],
+  itemsToAdd: T[]
+): T[] {
+  // Remove items from the original list
+  const filteredList = originalList.filter(
+    (item) => !itemsToRemove.includes(item)
+  );
+
+  // Add items to the filtered list
+  const updatedList = [...filteredList, ...itemsToAdd];
+
+  return updatedList;
+}

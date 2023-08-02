@@ -5,11 +5,22 @@ import { useBounty } from "@/src/providers/bountyProvider";
 import { api } from "@/src/utils/api";
 import { PublicKey } from "@solana/web3.js";
 import { BOUNTY_USER_RELATIONSHIP, BountyState } from "@/types/";
+import { updateList } from "@/src/utils";
 
-const DenySubmission = () => {
+export const DenySubmission = () => {
   const { currentUser, currentWallet, program, provider } = useUserWallet();
   const { currentBounty, setCurrentBounty } = useBounty();
   const { mutateAsync } = api.bountyUsers.update.useMutation();
+
+  if (
+    !(
+      currentBounty.isCreator &&
+      currentBounty.currentSubmitter &&
+      !currentBounty.completer
+    )
+  ) {
+    return null;
+  }
 
   const onClick = async () => {
     const signature = await denyRequestFFA(
@@ -19,21 +30,18 @@ const DenySubmission = () => {
       program,
       provider
     );
-    currentBounty.currentSubmitter.relations.push(
-      BOUNTY_USER_RELATIONSHIP.DeniedSubmitter
-    );
-    const index = currentBounty.currentSubmitter.relations.indexOf(
-      BOUNTY_USER_RELATIONSHIP.CurrentSubmitter
+
+    const newRelations = updateList(
+      currentBounty.currentUserRelationsList,
+      [],
+      [BOUNTY_USER_RELATIONSHIP.DeniedSubmitter]
     );
 
-    if (index !== -1) {
-      currentBounty.currentSubmitter.relations.splice(index, 1);
-    }
     const { updatedBounty } = await mutateAsync({
       bountyId: currentBounty.id,
       currentUserId: currentUser.id,
       userId: currentBounty.currentSubmitter.userid,
-      relations: currentBounty.currentSubmitter.relations,
+      relations: newRelations,
       state: BountyState.ACCEPTING_APPLICATIONS,
       publicKey: currentWallet.publicKey.toString(),
       escrowId: currentBounty.escrowid,
@@ -50,5 +58,3 @@ const DenySubmission = () => {
     </Button>
   );
 };
-
-export default DenySubmission;

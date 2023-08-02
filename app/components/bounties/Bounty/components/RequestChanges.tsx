@@ -5,11 +5,21 @@ import { useBounty } from "@/src/providers/bountyProvider";
 import { api } from "@/src/utils/api";
 import { PublicKey } from "@solana/web3.js";
 import { BOUNTY_USER_RELATIONSHIP, BountyState } from "@/types/";
+import { updateList } from "@/src/utils";
 
-const RequestChanges = () => {
+export const RequestChanges = () => {
   const { currentUser, currentWallet, program, provider } = useUserWallet();
   const { currentBounty, setCurrentBounty } = useBounty();
   const { mutateAsync } = api.bountyUsers.update.useMutation();
+
+  if (
+    !(
+      currentBounty.isCreator &&
+      currentBounty.currentSubmitter &&
+      !currentBounty.completer
+    )
+  )
+    return null;
 
   const onClick = async () => {
     // If we are the creator, then skip requesting and add self as approved
@@ -21,21 +31,16 @@ const RequestChanges = () => {
       program,
       provider
     );
-    currentBounty.currentSubmitter.relations.push(
-      BOUNTY_USER_RELATIONSHIP.ChangesRequestedSubmitter
+    const newRelations = updateList(
+      currentBounty.currentUserRelationsList,
+      [BOUNTY_USER_RELATIONSHIP.CurrentSubmitter],
+      [BOUNTY_USER_RELATIONSHIP.ChangesRequestedSubmitter]
     );
-    const index = currentBounty.currentSubmitter.relations.indexOf(
-      BOUNTY_USER_RELATIONSHIP.CurrentSubmitter
-    );
-
-    if (index !== -1) {
-      currentBounty.currentSubmitter.relations.splice(index, 1);
-    }
     const { updatedBounty } = await mutateAsync({
       bountyId: currentBounty.id,
       currentUserId: currentUser.id,
       userId: currentBounty.currentSubmitter.userid,
-      relations: currentBounty.currentSubmitter.relations,
+      relations: newRelations,
       state: BountyState.IN_PROGRESS,
       publicKey: currentWallet.publicKey.toString(),
       escrowId: currentBounty.escrowid,
@@ -52,5 +57,3 @@ const RequestChanges = () => {
     </Button>
   );
 };
-
-export default RequestChanges;

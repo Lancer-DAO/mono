@@ -1,13 +1,12 @@
+import { useState, useEffec } from "react";
 import { TABLE_BOUNTY_STATES } from "@/src/constants";
 import { getUniqueItems } from "@/src/utils";
-import { useState } from "react";
 import { useUserWallet } from "@/src/providers";
 import { useEffect } from "react";
 import { LoadingBar } from "@/components";
 import { api } from "@/src/utils/api";
 import { useRouter } from "next/router";
-import BountyFilters from "./components/BountyFilters";
-import LancerBounty from "./components/LancerBounty";
+import { BountyFilters, LancerBounty } from "./components";
 import { IAsyncResult } from "@/types/common";
 export const BOUNTY_USER_RELATIONSHIP = [
   "Creator",

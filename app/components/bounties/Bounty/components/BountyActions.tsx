@@ -15,14 +15,15 @@ import {
 import { useUserWallet } from "@/src/providers";
 import { useBounty } from "@/src/providers/bountyProvider";
 import { useTutorial } from "@/src/providers/tutorialProvider";
-// TODO: properly alias these imports
-import CancelEscrow from "./CancelEscrow";
-import RequestToSubmit from "./RequestToSubmit";
-import ApproveSubmission from "./ApproveSubmission";
-import DenySubmission from "./DenySubmission";
-import VoteToCancel from "./VoteToCancel";
-import RequestChanges from "./RequestChanges";
-import SubmitRequest from "./SubmitRequest";
+import {
+  CancelEscrow,
+  RequestToSubmit,
+  ApproveSubmission,
+  DenySubmission,
+  VoteToCancel,
+  RequestChanges,
+  SubmitRequest,
+} from ".";
 
 const BountyActions = () => {
   const { currentBounty } = useBounty();
@@ -65,61 +66,28 @@ const BountyActions = () => {
       </div>
     );
   }
+  if (currentBounty.isRequestedSubmitter)
+    return (
+      <Button disabled id="request-pending">
+        Request Pending
+      </Button>
+    );
+  if (currentBounty.isDeniedRequester)
+    return (
+      <Button disabled id="request-denied">
+        Submission Request Denied
+      </Button>
+    );
 
   return (
     <div className="bounty-buttons pt-4" id="bounty-actions">
       <>
-        {currentBounty.isCreator &&
-          ((!!currentTutorialState &&
-            currentTutorialState?.title ===
-              BOUNTY_ACTIONS_TUTORIAL_I_INITIAL_STATE.title) ||
-            !IS_MAINNET) &&
-          currentBounty.currentUserRelationsList.length < 2 && (
-            <RequestToSubmit />
-          )}
-        {currentBounty.isRequestedSubmitter && (
-          <Button disabled id="request-pending">
-            Request Pending
-          </Button>
-        )}
-        {currentBounty.isDeniedRequester && (
-          <Button disabled id="request-denied">
-            Submission Request Denied
-          </Button>
-        )}
-        {currentBounty.isApprovedSubmitter &&
-          !currentBounty.currentSubmitter && (
-            <SubmitRequest disabled={!currentWallet.publicKey} />
-          )}
-        {currentBounty.isCurrentSubmitter && !currentBounty.isCreator && (
-          <Button disabled id="submission-pending">
-            Submission Pending Review
-          </Button>
-        )}
-        {currentBounty.isDeniedSubmitter && (
-          <Button disabled id="submission-denied">
-            Submission Denied
-          </Button>
-        )}
-        {currentBounty.isChangesRequestedSubmitter && <SubmitRequest />}
-        {currentBounty.isCreator &&
-          currentBounty.currentSubmitter &&
-          !currentBounty.completer && <ApproveSubmission />}
-        {currentBounty.isCreator &&
-          currentBounty.currentSubmitter &&
-          !currentBounty.completer && <RequestChanges />}
-        {currentBounty.isCreator &&
-          currentBounty.currentSubmitter &&
-          !currentBounty.completer && <DenySubmission />}
-        {(currentBounty.isCreator ||
-          currentBounty.isCurrentSubmitter ||
-          currentBounty.isDeniedSubmitter ||
-          currentBounty.isChangesRequestedSubmitter) &&
-          !currentBounty.isVotingCancel && <VoteToCancel />}
-        {currentBounty.isCreator && currentBounty.needsToVote.length === 0 && (
-          <CancelEscrow />
-        )}
-        {currentBounty.completer && <Button disabled>Complete</Button>}
+        <SubmitRequest />
+        <ApproveSubmission />
+        <RequestChanges />
+        <DenySubmission />
+        <VoteToCancel />
+        <CancelEscrow />
       </>
     </div>
   );

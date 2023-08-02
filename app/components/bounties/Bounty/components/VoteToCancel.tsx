@@ -5,11 +5,24 @@ import { useBounty } from "@/src/providers/bountyProvider";
 import { api } from "@/src/utils/api";
 import { PublicKey } from "@solana/web3.js";
 import { BOUNTY_USER_RELATIONSHIP, BountyState } from "@/types/";
+import { updateList } from "@/src/utils";
 
-const VoteToCancel = () => {
+export const VoteToCancel = () => {
   const { currentUser, currentWallet, program, provider } = useUserWallet();
   const { currentBounty, setCurrentBounty } = useBounty();
   const { mutateAsync } = api.bountyUsers.update.useMutation();
+
+  if (
+    !(
+      (currentBounty.isCreator ||
+        currentBounty.isCurrentSubmitter ||
+        currentBounty.isDeniedSubmitter ||
+        currentBounty.isChangesRequestedSubmitter) &&
+      !currentBounty.isVotingCancel
+    )
+  ) {
+    return null;
+  }
 
   const onClick = async () => {
     let signature = "";
@@ -23,15 +36,16 @@ const VoteToCancel = () => {
         provider
       );
     }
-
-    currentBounty.currentUserRelationsList.push(
-      BOUNTY_USER_RELATIONSHIP.VotingCancel
+    const newRelations = updateList(
+      currentBounty.currentUserRelationsList,
+      [],
+      [BOUNTY_USER_RELATIONSHIP.VotingCancel]
     );
     const { updatedBounty } = await mutateAsync({
       bountyId: currentBounty.id,
       currentUserId: currentUser.id,
       userId: currentUser.id,
-      relations: currentBounty.currentUserRelationsList,
+      relations: newRelations,
       state: BountyState.VOTING_TO_CANCEL,
       publicKey: currentWallet.publicKey.toString(),
       escrowId: currentBounty.escrowid,
@@ -47,5 +61,3 @@ const VoteToCancel = () => {
     </Button>
   );
 };
-
-export default VoteToCancel;

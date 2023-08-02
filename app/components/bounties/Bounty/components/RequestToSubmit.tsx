@@ -7,8 +7,9 @@ import { useReferral } from "@/src/providers/referralProvider";
 import { api } from "@/src/utils/api";
 import { PublicKey } from "@solana/web3.js";
 import { BOUNTY_USER_RELATIONSHIP } from "@/types/";
+import { updateList } from "@/src/utils";
 
-const RequestToSubmit = () => {
+export const RequestToSubmit = () => {
   const { currentUser, currentWallet } = useUserWallet();
   const { currentBounty, setCurrentBounty } = useBounty();
   const { currentTutorialState, setCurrentTutorialState } = useTutorial();
@@ -30,19 +31,16 @@ const RequestToSubmit = () => {
     const result = await createReferralMember(
       new PublicKey(currentBounty.escrow.mint.publicKey)
     );
-
-    // const referralKey = result?.memberPDA;
-    // const signature = result?.txId;
+    const newRelations = updateList(
+      currentBounty.currentUserRelationsList ?? [],
+      [],
+      [BOUNTY_USER_RELATIONSHIP.RequestedSubmitter]
+    );
     const { updatedBounty } = await mutateAsync({
       currentUserId: currentUser.id,
       bountyId: currentBounty.id,
       userId: currentUser.id,
-      relations: currentBounty.isCreator
-        ? [
-            ...currentBounty.currentUserRelationsList,
-            BOUNTY_USER_RELATIONSHIP.RequestedSubmitter,
-          ]
-        : [BOUNTY_USER_RELATIONSHIP.RequestedSubmitter],
+      relations: newRelations,
       publicKey: currentWallet.publicKey.toString(),
       escrowId: currentBounty.escrowid,
       label: "request-to-submit",
@@ -71,5 +69,3 @@ const RequestToSubmit = () => {
     </Button>
   );
 };
-
-export default RequestToSubmit;
