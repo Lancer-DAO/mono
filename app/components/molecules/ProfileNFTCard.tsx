@@ -10,11 +10,12 @@ import { Treasury } from "@ladderlabs/buddy-sdk";
 import { api } from "@/src/utils/api";
 import * as Prisma from "@prisma/client";
 import { useUserWallet } from "@/src/providers";
+import { IS_CUSTODIAL } from "@/src/constants";
 
 dayjs.extend(relativeTime);
 
 // TODO: change to config file
-const SITE_URL = "https://app.lancer.so/account?r=";
+const SITE_URL = `https://${IS_CUSTODIAL ? "app" : "pro"}.lancer.so/account?r=`;
 
 const ProfileNFTCard = ({
   profileNFT,
