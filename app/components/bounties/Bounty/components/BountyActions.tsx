@@ -2,6 +2,7 @@ import { Button, LoadingBar } from "@/components";
 import {
   // addSubmitterFFA,
   approveRequestFFA,
+  approveRequestFFAOld,
   cancelFFA,
   denyRequestFFA,
   submitRequestFFA,
@@ -240,11 +241,18 @@ export const ApproveSubmission = () => {
       });
     }
     // If we are the creator, then skip requesting and add self as approved
-    const signature = await approveRequestFFA(
+    // const signature = await approveRequestFFA(
+    //   new PublicKey(currentBounty.currentSubmitter.publicKey),
+    //   currentBounty.escrow,
+    //   currentWallet,
+    //   buddylinkProgramId,
+    //   program,
+    //   provider
+    // );
+    const signature = await approveRequestFFAOld(
       new PublicKey(currentBounty.currentSubmitter.publicKey),
       currentBounty.escrow,
       currentWallet,
-      buddylinkProgramId,
       program,
       provider
     );
