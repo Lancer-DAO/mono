@@ -1,4 +1,4 @@
-import { approveRequestFFA } from "@/escrow/adapters";
+import { approveRequestFFA, approveRequestFFAOld } from "@/escrow/adapters";
 import { PROFILE_PROJECT_PARAMS, BOUNTY_PROJECT_PARAMS } from "@/src/constants";
 import { BOUNTY_ACTIONS_TUTORIAL_II_INITIAL_STATE } from "@/src/constants/tutorials";
 import { useUserWallet } from "@/src/providers";
@@ -44,11 +44,18 @@ export const ApproveSubmission = () => {
       });
     }
     // If we are the creator, then skip requesting and add self as approved
-    const signature = await approveRequestFFA(
+    // const signature = await approveRequestFFA(
+    //   new PublicKey(currentBounty.currentSubmitter.publicKey),
+    //   currentBounty.escrow,
+    //   currentWallet,
+    //   buddylinkProgramId,
+    //   program,
+    //   provider
+    // );
+    const signature = await approveRequestFFAOld(
       new PublicKey(currentBounty.currentSubmitter.publicKey),
       currentBounty.escrow,
       currentWallet,
-      buddylinkProgramId,
       program,
       provider
     );

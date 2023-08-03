@@ -1,6 +1,10 @@
 import { useUserWallet } from "@/src/providers/userWalletProvider";
 import { BOUNTY_USER_RELATIONSHIP, BountyState } from "@/types/";
-import { addSubmitterFFA, removeSubmitterFFA } from "@/escrow/adapters";
+import {
+  addSubmitterFFA,
+  removeSubmitterFFA,
+  addSubmitterFFAOld,
+} from "@/escrow/adapters";
 import { ContributorInfo } from "@/components";
 import { Check, X } from "react-feather";
 import { PublicKey } from "@solana/web3.js";
@@ -101,15 +105,22 @@ export const SubmitterSection: React.FC<SubmitterSectionProps> = ({
                   isRunning: false,
                 });
               }
-              const signature = await addSubmitterFFA(
+              // const signature = await addSubmitterFFA(
+              //   submitterWallet,
+              //   currentBounty.escrow,
+              //   currentWallet,
+              //   await getSubmitterReferrer(
+              //     submitterWallet,
+              //     new PublicKey(currentBounty.escrow.mint.publicKey)
+              //   ),
+              //   remainingAccounts,
+              //   program,
+              //   provider
+              // );
+              const signature = await addSubmitterFFAOld(
                 submitterWallet,
                 currentBounty.escrow,
                 currentWallet,
-                await getSubmitterReferrer(
-                  submitterWallet,
-                  new PublicKey(currentBounty.escrow.mint.publicKey)
-                ),
-                remainingAccounts,
                 program,
                 provider
               );
