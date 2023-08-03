@@ -14,9 +14,9 @@ import BountyProvider from "./bountyProvider";
 import TutorialProvider from "./tutorialProvider";
 import NonCustodialWalletProvider from "./userWalletProvider/nonCustodialProvider";
 import CustodialWalletProvider from "./userWalletProvider/custodialProvider";
-import { useRouter } from "next/router";
 import { IS_CUSTODIAL, IS_MAINNET, MAINNET_RPC } from "../constants";
 import ReferralProvider from "./referralProvider";
+
 export * from "./userWalletProvider";
 
 export const AllProviders: React.FC<{ children: ReactNode }> = ({

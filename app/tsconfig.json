@@ -32,7 +32,7 @@
       "@/providers": ["./src/providers/index.ts"],
       "@/styles": ["./src/styles"],
       "@/server": ["./server"],
-      "@/types": ["./src/types/index.ts"],
+      "@/types": ["./types/index.ts"],
       "@/utils": ["./src/utils/index.ts"]
     },
     "noEmit": false,

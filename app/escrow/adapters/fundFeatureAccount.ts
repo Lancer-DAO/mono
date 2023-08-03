@@ -4,7 +4,8 @@ import { MonoProgram } from "@/escrow/sdk/types/mono_program";
 import { fundFeatureInstruction } from "@/escrow/sdk/instructions";
 
 import { USDC_MINT } from "@/src/constants";
-import { Escrow, LancerWallet } from "@/src/types";
+import { LancerWallet } from "@/types/";
+import { Escrow } from "@/types/";
 
 export const getFundFFATX = async (
   baseAmount: number,

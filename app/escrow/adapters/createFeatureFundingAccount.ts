@@ -7,7 +7,7 @@ import {
 } from "@/escrow/sdk/instructions";
 import { USDC_MINT } from "@/src/constants";
 import { findFeatureAccount } from "@/escrow/sdk/pda";
-import { LancerWallet } from "@/src/types";
+import { LancerWallet } from "@/types/";
 
 export const createFFA = async (
   wallet: LancerWallet,

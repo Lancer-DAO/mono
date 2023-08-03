@@ -9,7 +9,7 @@ import {
 } from "@solana/web3.js";
 import { SolanaWallet } from "@web3auth/solana-provider";
 import { useEffect, useMemo, useState } from "react";
-import { LancerWallet } from "@/src/types";
+import { LancerWallet } from "@/types/";
 
 export type WalletActions = Omit<
   LancerWallet,

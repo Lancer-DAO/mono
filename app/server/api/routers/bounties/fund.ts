@@ -1,6 +1,6 @@
 import { protectedProcedure } from "../../trpc";
 import { z } from "zod";
-import { BountyState } from "@/src/types";
+import { BountyState } from "@/types/";
 import * as queries from "@/prisma/queries";
 
 export const fundBounty = protectedProcedure

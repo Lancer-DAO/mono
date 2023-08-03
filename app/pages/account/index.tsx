@@ -9,9 +9,9 @@ import {
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { api } from "@/src/utils/api";
-import { BountyNFT, CurrentUser, ProfileNFT } from "@/src/types";
 import { NextSeo } from "next-seo";
 
+import { BountyNFT, ProfileNFT } from "@/types/";
 export const getServerSideProps = withPageAuthRequired();
 
 import { createUnderdogClient } from "@underdog-protocol/js";
@@ -22,6 +22,7 @@ import {
   PROFILE_TUTORIAL_INITIAL_STATE,
 } from "@/src/constants/tutorials";
 import { useTutorial } from "@/src/providers/tutorialProvider";
+import { User } from "@/types/Bounties";
 dayjs.extend(relativeTime);
 
 const underdogClient = createUnderdogClient({});
@@ -34,7 +35,7 @@ const AccountPage: React.FC = () => {
   const [profileNFT, setProfileNFT] = useState<ProfileNFT>();
   const [bountyNFTs, setBountyNFTs] = useState<BountyNFT[]>([]);
   const { mutateAsync: getUser } = api.users.getUser.useMutation();
-  const [account, setAccount] = useState<CurrentUser>();
+  const [account, setAccount] = useState<User>();
   const [bountiesLoading, setBountiesLoading] = useState(false);
   const [profileLoading, setProfileLoading] = useState(false);
   const [profileCreating, setProfileCreating] = useState(false);
@@ -65,7 +66,7 @@ const AccountPage: React.FC = () => {
       query: {
         page: 1,
         limit: 1,
-        ownerAddress: profileNFTHolder.publicKey,
+        ownerAddress: profileNFTHolder?.publicKey,
       },
     });
     if (nfts.totalResults > 0) {
@@ -101,7 +102,7 @@ const AccountPage: React.FC = () => {
       query: {
         page: 1,
         limit: 10,
-        ownerAddress: profileNFTHolder.publicKey,
+        ownerAddress: profileNFTHolder?.publicKey,
       },
     });
     const bountyNFTs: BountyNFT[] = nfts.results.map((nft) => {
@@ -219,25 +220,7 @@ const AccountPage: React.FC = () => {
       {account && (
         <>
           <div className="w-full flex flex-col md:flex-row items-center md:items-start gap-10 md:gap-5 justify-center">
-            {/* <ApiKeyModal showModal={showModal} setShowModal={setShowModal} /> */}
-            {/* {currentUser?.githubLogin && (
-                <div>GitHub User: {currentUser.githubLogin}</div>
-              )}
-                <a href="/api/auth/logout">Logout</a> */}
-            {/* {wallets &&
-                wallets.map((wallet) => (
-                  <WalletInfo wallet={wallet} key={wallet.publicKey.toString()} />
-                ))} */}
-            {/* {!IS_MAINNET && (
-                  <a
-                    href="https://staging.coinflow.cash/faucet"
-                    target={"_blank"}
-                    rel="noreferrer"
-                  >
-                    USDC Faucet
-                  </a>
-                )} */}
-            {!IS_CUSTODIAL && !currentWallet && (
+            {!IS_CUSTODIAL && !currentWallet && !profileNFT && (
               <div>Please Connect a Wallet</div>
             )}
             {profileLoading && <LoadingBar title="Loading Profile" />}
@@ -266,7 +249,7 @@ const AccountPage: React.FC = () => {
                       <BountyNFTCard bountyNFT={bountyNFT} />
                     ))
                   ) : (
-                    <div>No bounties yet!</div>
+                    <div className="w-full text-center">No bounties yet!</div>
                   )}
                 </div>
               </>

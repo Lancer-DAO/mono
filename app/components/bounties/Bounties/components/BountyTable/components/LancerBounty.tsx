@@ -1,19 +1,19 @@
 import { Clock, EyeOff } from "react-feather";
 import { marked } from "marked";
-import { Bounty, BOUNTY_USER_RELATIONSHIP, Contributor } from "@/src/types";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import { decimalToNumber } from "@/src/utils";
 import { ContributorInfo } from "@/components";
 import { useState } from "react";
 import Image from "next/image";
+import { BOUNTY_USER_RELATIONSHIP, BountyPreview } from "@/types/";
 dayjs.extend(relativeTime);
 
-const LancerBounty = ({
+export const LancerBounty = ({
   bounty,
   id,
 }: {
-  bounty: Bounty & { users: Contributor[] };
+  bounty: BountyPreview;
   id?: string;
 }) => {
   const [isPrivateHovered, setIsPrivateHovered] = useState(false);

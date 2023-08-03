@@ -6,8 +6,7 @@ import "@/src/styles/webflow.scss";
 
 import { api } from "@/src/utils/api";
 import { AllProviders } from "@/src/providers";
-import Hotjar from "@hotjar/browser";
-import { ReactElement, ReactNode, useEffect } from "react";
+import { useEffect, ReactNode, ReactElement } from "react";
 import { useRouter } from "next/router";
 import { NextPage } from "next";
 import { DefaultLayout } from "../components";
@@ -16,11 +15,7 @@ import { DefaultSeo } from "next-seo";
 // import your default seo configuration
 import SEO from "../next-seo.config";
 
-const siteId = 3506102;
-const hotjarVersion = 6;
 const COOKIE_REF = "referrer";
-
-Hotjar.init(siteId, hotjarVersion);
 
 export type NextPageWithLayout<P = {}, IP = P> = NextPage<P, IP> & {
   getLayout?: (page: ReactElement) => ReactNode;

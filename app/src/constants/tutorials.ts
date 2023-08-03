@@ -1,5 +1,5 @@
 import { Step } from "react-joyride";
-import { Tutorial } from "../types/tutorials";
+import { Tutorial } from "@/types/";
 
 export const BOUNTY_ACTIONS_WRAPPER_STEP: Step = {
   target: "#bounty-actions",

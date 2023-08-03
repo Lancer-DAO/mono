@@ -1,6 +1,11 @@
 import { withPageAuthRequired } from "@auth0/nextjs-auth0";
 import { useUserWallet } from "@/src/providers";
-import { ProfileNFTCard, BountyNFTCard, LoadingBar } from "@/components";
+import {
+  DefaultLayout,
+  ProfileNFTCard,
+  BountyNFTCard,
+  LoadingBar,
+} from "@/components";
 import {
   BOUNTY_PROJECT_PARAMS,
   IS_CUSTODIAL,
@@ -9,7 +14,8 @@ import {
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { api } from "@/src/utils/api";
-import { BountyNFT, CurrentUser, ProfileNFT } from "@/src/types";
+import { BountyNFT, ProfileNFT } from "@/types/";
+
 import { createUnderdogClient } from "@underdog-protocol/js";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
@@ -18,9 +24,10 @@ import {
   PROFILE_TUTORIAL_INITIAL_STATE,
 } from "@/src/constants/tutorials";
 
-import { useTutorial } from "@/src/providers/tutorialProvider";
 import { NextSeo } from "next-seo";
 
+import { useTutorial } from "@/src/providers/tutorialProvider";
+import { User } from "@/types/Bounties";
 dayjs.extend(relativeTime);
 
 const underdogClient = createUnderdogClient({});
@@ -35,7 +42,7 @@ const AccountDetailPage: React.FC = () => {
   const [profileNFT, setProfileNFT] = useState<ProfileNFT>();
   const [bountyNFTs, setBountyNFTs] = useState<BountyNFT[]>([]);
   const { mutateAsync: getUser } = api.users.getUser.useMutation();
-  const [account, setAccount] = useState<CurrentUser>();
+  const [account, setAccount] = useState<User>();
   const [bountiesLoading, setBountiesLoading] = useState(false);
   const [profileLoading, setProfileLoading] = useState(false);
   const [profileCreating, setProfileCreating] = useState(false);
@@ -45,11 +52,7 @@ const AccountDetailPage: React.FC = () => {
 
   useEffect(() => {
     const maybeMintNft = async () => {
-      if (
-        !!currentUser &&
-        !!currentWallet &&
-        router.query.account === undefined
-      ) {
+      if (!!currentUser && !!currentWallet && router.query.id === undefined) {
         if (!currentUser.profileWalletId) {
           setProfileCreating(true);
           await mintProfileNFT();
@@ -70,7 +73,7 @@ const AccountDetailPage: React.FC = () => {
       query: {
         page: 1,
         limit: 1,
-        ownerAddress: profileNFTHolder.publicKey,
+        ownerAddress: profileNFTHolder?.publicKey,
       },
     });
     if (nfts.totalResults > 0) {
@@ -106,7 +109,7 @@ const AccountDetailPage: React.FC = () => {
       query: {
         page: 1,
         limit: 10,
-        ownerAddress: profileNFTHolder.publicKey,
+        ownerAddress: profileNFTHolder?.publicKey,
       },
     });
     const bountyNFTs: BountyNFT[] = nfts.results.map((nft) => {
@@ -130,10 +133,10 @@ const AccountDetailPage: React.FC = () => {
   };
 
   useEffect(() => {
-    if (router.query.account !== undefined) {
+    if (router.query.id !== undefined) {
       const fetchAccount = async () => {
         const account = await getUser({
-          id: parseInt(router.query.account as string),
+          id: parseInt(router.query.id as string),
         });
         setAccount(account);
       };
@@ -224,7 +227,7 @@ const AccountDetailPage: React.FC = () => {
       {account && (
         <>
           <div className="w-full flex flex-col md:flex-row items-center md:items-start gap-10 md:gap-5 justify-center">
-            {!IS_CUSTODIAL && !currentWallet && (
+            {!IS_CUSTODIAL && !currentWallet && !profileNFT && (
               <div>Please Connect a Wallet</div>
             )}
             {profileLoading && <LoadingBar title="Loading Profile" />}
@@ -253,7 +256,7 @@ const AccountDetailPage: React.FC = () => {
                       <BountyNFTCard bountyNFT={bountyNFT} />
                     ))
                   ) : (
-                    <div>No bounties yet!</div>
+                    <div className="w-full text-center">No bounties yet!</div>
                   )}
                 </div>
               </>

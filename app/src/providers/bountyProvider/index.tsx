@@ -1,4 +1,4 @@
-import { Bounty } from "@/src/types";
+import { Bounty } from "@/types/";
 import {
   createContext,
   FunctionComponent,

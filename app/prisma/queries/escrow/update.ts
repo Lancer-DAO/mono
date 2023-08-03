@@ -1,6 +1,6 @@
 import { prisma } from "@/server/db";
 import * as Prisma from "@prisma/client";
-import { BountyState } from "@/src/types";
+import { BountyState } from "@/types/";
 
 export const updateAmount = async (
   escrowId: number,

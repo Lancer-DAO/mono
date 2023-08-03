@@ -1,19 +1,17 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
-import { api } from "../../../src/utils/api";
-import { decimalToNumber, getSolscanAddress } from "../../../src/utils";
+import Image from "next/image";
+import { api, decimalToNumber, getSolscanAddress } from "@/utils";
 import { marked } from "marked";
 import dayjs from "dayjs";
 import { PublicKey } from "@solana/web3.js";
 import { Clock } from "react-feather";
-import Image from "next/image";
-import { ContributorInfo } from "../..";
-import { BountyState } from "../../../src/types";
-import BountyActions from "./components/BountyActions";
-import SubmitterSection from "./components/SubmitterSection";
+import { BountyState } from "@/types/";
+import BountyActions from "../Bounty/components/BountyActions";
+import { ContributorInfo, Logo } from "@/components";
+import { SubmitterSection } from "./components";
 import { useBounty } from "@/src/providers/bountyProvider";
 import { useUserWallet } from "@/src/providers";
-import Logo from "@/components/@icons/Logo";
 
 export const Bounty = () => {
   const { currentBounty, setCurrentBounty } = useBounty();
@@ -64,7 +62,7 @@ export const Bounty = () => {
           <div
             id="task-container"
             data-w-id="9d97a6aa-31d5-1276-53c2-e76c8908f874"
-            className="job-post-container"
+            className="job-post-container mb-20"
           >
             <div
               id="w-node-_9d97a6aa-31d5-1276-53c2-e76c8908f876-fde9cdb1"
@@ -263,12 +261,16 @@ export const Bounty = () => {
                     )}
                   </div>
                 )}
-              {currentBounty.state === BountyState.AWAITING_REVIEW && (
-                <div id="task-current-submitter">
-                  <label className="field-label-10">Submissions</label>
-                  <ContributorInfo user={currentBounty.currentSubmitter.user} />
-                </div>
-              )}
+              {currentBounty &&
+                currentBounty.currentSubmitter &&
+                currentBounty.isCreator && (
+                  <div id="task-current-submitter">
+                    <label className="field-label-10">Submissions</label>
+                    <ContributorInfo
+                      user={currentBounty.currentSubmitter.user}
+                    />
+                  </div>
+                )}
               {currentBounty.isCreator &&
                 currentBounty.changesRequestedSubmitters.length > 0 && (
                   <div id="task-changes-requested-submitters">
