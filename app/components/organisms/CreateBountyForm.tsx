@@ -41,7 +41,6 @@ const Form: React.FC<{
   const [mints, setMints] = useState<Prisma.Mint[]>([]);
   const [failedToGetRepos, setFailedToGetRepos] = useState(false);
   const [failedToCreateIssue, setFailedToCreateIssue] = useState(false);
-  const [octokit, setOctokit] = useState(null);
 
   const [isPreview, setIsPreview] = useState(false);
   const [isSubmittingIssue, setIsSubmittingIssue] = useState(false);

@@ -1,4 +1,4 @@
-import { BountyNFT } from "@/src/types";
+import { BountyNFT } from "@/types/";
 import Image from "next/image";
 
 const BountyNFTCard = ({ bountyNFT }: { bountyNFT: BountyNFT }) => {

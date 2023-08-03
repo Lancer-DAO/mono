@@ -1,5 +1,6 @@
 import { MonoProgram } from "@/escrow/sdk/types/mono_program";
-import { Bounty, CurrentUser, Issue, LancerWallet, User } from "@/src/types";
+import { LancerWallet } from "@/types/";
+import { User } from "@/types/Bounties";
 import { AnchorProvider, Program } from "@project-serum/anchor";
 
 export type LOGIN_STATE = "logged_out" | "logging_in" | "logged_in";
@@ -12,7 +13,7 @@ export type ISSUE_LOAD_STATE =
   | "loaded";
 
 export interface IUserWalletContext {
-  currentUser: CurrentUser;
+  currentUser: User;
   program: Program<MonoProgram>;
   provider: AnchorProvider;
   currentWallet: LancerWallet;

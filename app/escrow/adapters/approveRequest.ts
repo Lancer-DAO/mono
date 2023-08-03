@@ -7,7 +7,8 @@ import {
   approveRequestInstruction,
 } from "@/escrow/sdk/instructions";
 import { USDC_MINT } from "@/src/constants";
-import { Escrow, LancerWallet } from "@/src/types";
+import { LancerWallet } from "@/types/";
+import { Escrow } from "@/types/Bounties";
 
 export const approveRequestFFA = async (
   submitter: PublicKey,

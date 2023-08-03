@@ -1,15 +1,15 @@
 import dayjs from "dayjs";
 
-export interface ProfileNFT {
+export type ProfileNFT = {
   name: string;
   reputation: number;
   badges: string[];
   certifications: string[];
   image: string;
   lastUpdated?: dayjs.Dayjs;
-}
+};
 
-export interface BountyNFT {
+export type BountyNFT = {
   name: string;
   reputation: number;
   tags: string[];
@@ -17,4 +17,4 @@ export interface BountyNFT {
   completed?: dayjs.Dayjs;
   description: string;
   role: string;
-}
+};
