@@ -7,10 +7,16 @@ import { decimalToNumber } from "@/src/utils";
 import { ContributorInfo } from "@/components";
 import { useState } from "react";
 import Image from "next/image";
-import { BOUNTY_USER_RELATIONSHIP, Bounty } from "@/types/";
+import { BOUNTY_USER_RELATIONSHIP, Bounty, BountyPreview } from "@/types/";
 dayjs.extend(relativeTime);
 
-exporconst LancerBounty = ({ bounty, id }: { bounty: Bounty; id?: string }) => {
+export const LancerBounty = ({
+  bounty,
+  id,
+}: {
+  bounty: BountyPreview;
+  id?: string;
+}) => {
   const search = useLocation().search;
   const [isPrivateHovered, setIsPrivateHovered] = useState(false);
   const params = new URLSearchParams(search);

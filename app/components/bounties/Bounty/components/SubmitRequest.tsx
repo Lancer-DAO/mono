@@ -16,8 +16,10 @@ export const SubmitRequest = () => {
   const { mutateAsync } = api.bountyUsers.update.useMutation();
 
   if (
-    !(currentBounty.isApprovedSubmitter && !currentBounty.currentSubmitter) ||
-    !currentBounty.isChangesRequestedSubmitter
+    !(
+      (currentBounty.isApprovedSubmitter && !currentBounty.currentSubmitter) ||
+      currentBounty.isChangesRequestedSubmitter
+    )
   )
     return null;
 

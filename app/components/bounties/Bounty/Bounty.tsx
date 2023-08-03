@@ -261,12 +261,16 @@ export const Bounty = () => {
                     )}
                   </div>
                 )}
-              {currentBounty.state === BountyState.AWAITING_REVIEW && (
-                <div id="task-current-submitter">
-                  <label className="field-label-10">Submissions</label>
-                  <ContributorInfo user={currentBounty.currentSubmitter.user} />
-                </div>
-              )}
+              {currentBounty &&
+                currentBounty.currentSubmitter &&
+                currentBounty.isCreator && (
+                  <div id="task-current-submitter">
+                    <label className="field-label-10">Submissions</label>
+                    <ContributorInfo
+                      user={currentBounty.currentSubmitter.user}
+                    />
+                  </div>
+                )}
               {currentBounty.isCreator &&
                 currentBounty.changesRequestedSubmitters.length > 0 && (
                   <div id="task-changes-requested-submitters">

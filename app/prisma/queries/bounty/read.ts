@@ -38,6 +38,9 @@ const bountyQuery = async (id: number) => {
 };
 
 export type BountyType = UnwrapPromise<ReturnType<typeof get>>;
+export type BountyPreviewType = UnwrapArray<
+  UnwrapPromise<ReturnType<typeof getMany>>
+>;
 export type BountyQueryType = UnwrapPromise<ReturnType<typeof bountyQuery>>;
 export type UserRelation = UnwrapArray<BountyQueryType["users"]>;
 

@@ -125,7 +125,9 @@ export const SubmitterSection: React.FC<SubmitterSectionProps> = ({
                 provider
               );
               const newRelations = updateList(
-                currentBounty.currentUserRelationsList,
+                submitter.userid === currentUser.id
+                  ? currentBounty.currentUserRelationsList
+                  : [],
                 [BOUNTY_USER_RELATIONSHIP.RequestedSubmitter],
                 [BOUNTY_USER_RELATIONSHIP.ApprovedSubmitter]
               );

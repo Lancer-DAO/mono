@@ -1,5 +1,5 @@
 import { api } from "@/src/utils/api";
-import { BountyUserType } from "@/prisma/queries/bounty";
+import { BountyPreviewType, BountyUserType } from "@/prisma/queries/bounty";
 import { BountyType } from "@/prisma/queries/bounty";
 import { UserType, UserSearchType } from "@/prisma/queries/user";
 
@@ -52,6 +52,7 @@ export enum BountyState {
 }
 
 export type Bounty = BountyType;
+export type BountyPreview = BountyPreviewType;
 export type User = UserType;
 export type UserSearch = UserSearchType;
 

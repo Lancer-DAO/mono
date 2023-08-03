@@ -44,7 +44,6 @@ export const BountyFilters = ({
               setFilters({
                 ...filters,
                 isMyBounties: !filters.isMyBounties,
-                states: TABLE_MY_BOUNTY_STATES,
               });
               setBounties({ result: [] });
             }}
