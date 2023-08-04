@@ -7,7 +7,7 @@ import { api } from "@/src/utils/api";
 import { useRouter } from "next/router";
 import { BountyFilters, LancerBounty } from "./components";
 import { IAsyncResult } from "@/types/common";
-import { Bounty, BountyPreview } from "@/types";
+import { BountyPreview } from "@/types";
 export const BOUNTY_USER_RELATIONSHIP = [
   "Creator",
   "Requested Submitter",
@@ -184,7 +184,6 @@ const BountyList: React.FC<{}> = () => {
         )}
         {filteredBounties?.length > 0 &&
           filteredBounties?.map((bounty, index) => {
-            // console.log("bounty: ", bounty);
             return (
               <LancerBounty
                 bounty={bounty}

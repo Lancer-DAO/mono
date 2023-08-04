@@ -1,22 +1,21 @@
+import { useCallback, useEffect, useMemo, useState } from "react";
+import Image from "next/image";
 import { ProfileNFT } from "@/types/";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
-import { useCallback, useEffect, useMemo, useState } from "react";
-import { Button, CoinflowOfframp } from "@/components";
-import AddReferrerModal from "./AddReferrerModal";
+import { Button, CoinflowOfframp, AddReferrerModal } from "@/components";
 import { useReferral } from "@/src/providers/referralProvider";
 import { Copy } from "react-feather";
 import { Treasury } from "@ladderlabs/buddy-sdk";
 import { api } from "@/src/utils/api";
 import * as Prisma from "@prisma/client";
-import Image from "next/image";
+import { IS_CUSTODIAL } from "@/src/constants";
 
 dayjs.extend(relativeTime);
 
-// TODO: change to config file
-const SITE_URL = "https://app.lancer.so/account?r=";
+const SITE_URL = `https://${IS_CUSTODIAL ? "app" : "pro"}.lancer.so/account?r=`;
 
-const ProfileNFTCard = ({
+export const ProfileNFTCard = ({
   profileNFT,
   picture,
   githubId,
@@ -62,8 +61,6 @@ const ProfileNFTCard = ({
       });
   }, [claimables, mints]);
 
-  const referralLink = `${SITE_URL}${referralId}`;
-
   const copyToClipboard = async (text: string) => {
     try {
       await navigator.clipboard.writeText(text);
@@ -89,16 +86,12 @@ const ProfileNFTCard = ({
   return (
     <div className="w-full md:w-[40%] px-5 pb-20">
       <div className="flex flex-col gap-3">
-        {/* <img src={profileNFT.image} className="profile-picture" /> */}
         {(picture || githubId) && (
           <Image
             src={
               picture
                 ? picture
-                : // : `https://avatars.githubusercontent.com/u/${
-                  //     githubId.split("|")[1]
-                  //   }?s=60&v=4`
-                  "/assets/images/Lancer-Green-No-Background-p-800.png"
+                : "/assets/images/Lancer-Green-No-Background-p-800.png"
             }
             width={200}
             height={200}
@@ -213,5 +206,3 @@ const ProfileNFTCard = ({
     </div>
   );
 };
-
-export default ProfileNFTCard;

@@ -1,7 +1,7 @@
 import { BountyNFT } from "@/types/";
 import Image from "next/image";
 
-const BountyNFTCard = ({ bountyNFT }: { bountyNFT: BountyNFT }) => {
+export const BountyNFTCard = ({ bountyNFT }: { bountyNFT: BountyNFT }) => {
   return (
     <>
       <div className="flex items-center gap-10 border border-white-900 rounded-[20px] p-4 max-w-[600px] mx-auto">
@@ -33,5 +33,3 @@ const BountyNFTCard = ({ bountyNFT }: { bountyNFT: BountyNFT }) => {
     </>
   );
 };
-
-export default BountyNFTCard;
