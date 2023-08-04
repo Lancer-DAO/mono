@@ -13,6 +13,7 @@ export const createFFA = async (
   wallet: LancerWallet,
   program: Program<MonoProgram>,
   provider: AnchorProvider,
+  referrer: PublicKey,
   mint?: PublicKey
 ) => {
   const timestamp = Date.now().toString();
@@ -31,6 +32,7 @@ export const createFFA = async (
   const referralAccountIx = await createReferralDataAccountInstruction(
     new PublicKey(wallet.publicKey),
     feature_account,
+    referrer,
     program
   );
   const { blockhash, lastValidBlockHeight } =

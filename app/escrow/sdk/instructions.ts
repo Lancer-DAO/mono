@@ -357,6 +357,11 @@ export const approveRequestWithReferralInstruction = async (
     referral_data_account
   );
 
+  const creatorReferrer = referralAccount.creatorReferrer.toString() === PublicKey.default.toString() ? [] : [
+    { pubkey: referralAccount.creatorReferrer, isWritable: true, isSigner: false },
+    { pubkey: referralAccount.creatorMember, isWritable: true, isSigner: false }
+  ];
+
   const remainingAccounts = [
     { pubkey: buddylinkProgramId, isWritable: false, isSigner: false },
     { pubkey: mint, isWritable: false, isSigner: false },
@@ -369,6 +374,7 @@ export const approveRequestWithReferralInstruction = async (
         isWritable: true,
         isSigner: false,
       })),
+    ...creatorReferrer
   ];
 
   return await program.methods
@@ -613,6 +619,7 @@ export const setShareMultipleSubmittersInstruction = async (
 export const createReferralDataAccountInstruction = async (
   creator: PublicKey,
   feature_data_account: PublicKey,
+  referrer: PublicKey,
   program: Program<MonoProgram>
 ): Promise<TransactionInstruction> => {
   let [referral_data_account] = await findReferralDataAccount(
@@ -627,6 +634,7 @@ export const createReferralDataAccountInstruction = async (
       creator: creator,
       featureDataAccount: feature_data_account,
       referralDataAccount: referral_data_account,
+      referrer: referrer,
       rent: SYSVAR_RENT_PUBKEY,
       systemProgram: SystemProgram.programId,
     })
