@@ -7,7 +7,7 @@ import { decimalToNumber } from "@/src/utils";
 import { ContributorInfo } from "@/components";
 import { useState } from "react";
 import Image from "next/image";
-import { BOUNTY_USER_RELATIONSHIP, Bounty, BountyPreview } from "@/types/";
+import { BOUNTY_USER_RELATIONSHIP, BountyPreview } from "@/types/";
 dayjs.extend(relativeTime);
 
 export const LancerBounty = ({
