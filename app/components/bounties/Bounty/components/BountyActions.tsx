@@ -25,7 +25,7 @@ import {
   SubmitRequest,
 } from ".";
 
-const BountyActions = () => {
+export const BountyActions = () => {
   const { currentBounty } = useBounty();
   const { currentTutorialState } = useTutorial();
   const { currentWallet } = useUserWallet();
@@ -92,5 +92,3 @@ const BountyActions = () => {
     </div>
   );
 };
-
-export default BountyActions;

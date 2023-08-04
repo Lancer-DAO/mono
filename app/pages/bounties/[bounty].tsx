@@ -17,7 +17,7 @@ export default function Home() {
     <>
       <Head>
         <title>Lancer | Bounty</title>
-        <meta name="description" content="Lancer Github Extension" />
+        <meta name="description" content="Lancer Bounty" />
       </Head>
       <main>
         {ready && (

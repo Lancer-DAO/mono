@@ -20,12 +20,10 @@ const AccountHeaderOptions = dynamic(
 );
 const AddReferrerModal = dynamic(() => import("./molecules/AddReferrerModal"));
 const ApiKeyModal = dynamic(() => import("./molecules/ApiKeyModal"));
-const BountyNFTCard = dynamic(() => import("./molecules/BountyNFTCard"));
 const CoinflowFund = dynamic(() => import("./molecules/CoinflowFund"));
 const MultiSelectDropdown = dynamic(
   () => import("./molecules/MultiSelectDropdown")
 );
-const ProfileNFTCard = dynamic(() => import("./molecules/ProfileNFTCard"));
 const RangeSlider = dynamic(() => import("./molecules/RangeSlider"));
 const TutorialsModal = dynamic(() => import("./molecules/TutorialsModal"));
 const WalletInfo = dynamic(() => import("./molecules/WalletInfo"));
@@ -58,10 +56,8 @@ export {
   AccountHeaderOptions,
   AddReferrerModal,
   ApiKeyModal,
-  BountyNFTCard,
   CoinflowFund,
   MultiSelectDropdown,
-  ProfileNFTCard,
   RangeSlider,
   TutorialsModal,
   WalletInfo,

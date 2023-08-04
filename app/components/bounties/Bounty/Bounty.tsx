@@ -6,10 +6,8 @@ import { marked } from "marked";
 import dayjs from "dayjs";
 import { PublicKey } from "@solana/web3.js";
 import { Clock } from "react-feather";
-import { BountyState } from "@/types/";
-import BountyActions from "../Bounty/components/BountyActions";
 import { ContributorInfo, Logo } from "@/components";
-import { SubmitterSection } from "./components";
+import { SubmitterSection, BountyActions } from "./components";
 import { useBounty } from "@/src/providers/bountyProvider";
 import { useUserWallet } from "@/src/providers";
 
