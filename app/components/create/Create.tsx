@@ -1,11 +1,11 @@
 import React, { useState } from "react";
-import { CreateBountyForm, DefaultLayout, FundBountyForm } from "@/components";
+import { CreateBountyForm, FundBountyForm } from "@/components";
 import { PublicKey } from "@solana/web3.js";
 import { FORM_SECTION } from "@/types/forms";
 import { useUserWallet } from "@/src/providers";
 
 export const Create = () => {
-  const { provider, program } = useUserWallet();
+  const { provider } = useUserWallet();
   const [formSection, setFormSection] = useState<FORM_SECTION>("CREATE");
   const [isAccountCreated, setIsAccountCreated] = useState(false);
   const createAccountPoll = (publicKey: PublicKey) => {
@@ -15,7 +15,6 @@ export const Create = () => {
   };
   return (
     <div>
-      <DefaultLayout>
         <div className="create-issue-wrapper">
           <div
             id="w-node-_8ffcb42d-e16e-0c3e-7b25-93b4dbf873ae-0ae9cdc2"
@@ -52,7 +51,6 @@ export const Create = () => {
             <FundBountyForm isAccountCreated={isAccountCreated} />
           )}
         </div>
-      </DefaultLayout>
     </div>
   );
 };

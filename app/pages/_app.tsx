@@ -6,13 +6,31 @@ import "@/src/styles/webflow.scss";
 
 import { api } from "@/src/utils/api";
 import { AllProviders } from "@/src/providers";
-import { useEffect } from "react";
+import { useEffect, ReactNode, ReactElement } from "react";
 import { useRouter } from "next/router";
+import { NextPage } from "next";
+import { DefaultLayout } from "../components";
+import { DefaultSeo } from "next-seo";
+
+// import your default seo configuration
+import SEO from "../next-seo.config";
 
 const COOKIE_REF = "referrer";
 
-const App = ({ Component, pageProps }: AppProps) => {
+export type NextPageWithLayout<P = {}, IP = P> = NextPage<P, IP> & {
+  getLayout?: (page: ReactElement) => ReactNode;
+};
+
+type AppPropsWithLayout = AppProps & {
+  Component: NextPageWithLayout;
+};
+
+const App = ({ Component, pageProps }: AppPropsWithLayout) => {
   const router = useRouter();
+
+  const getLayout =
+    Component.getLayout ?? ((page) => <DefaultLayout>{page}</DefaultLayout>);
+
   useEffect(() => {
     const { r } = router.query;
     if (r) {
@@ -25,7 +43,8 @@ const App = ({ Component, pageProps }: AppProps) => {
 
   return (
     <AllProviders>
-      <Component {...pageProps} />
+      <DefaultSeo {...SEO} />
+      {getLayout(<Component {...pageProps} />)}
     </AllProviders>
   );
 };
