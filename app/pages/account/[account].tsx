@@ -1,4 +1,3 @@
-import Head from "next/head";
 import { withPageAuthRequired } from "@auth0/nextjs-auth0";
 import { useUserWallet } from "@/src/providers";
 import {
@@ -16,7 +15,6 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { api } from "@/src/utils/api";
 import { BountyNFT, ProfileNFT } from "@/types/";
-export const getServerSideProps = withPageAuthRequired();
 
 import { createUnderdogClient } from "@underdog-protocol/js";
 import dayjs from "dayjs";
@@ -25,26 +23,18 @@ import {
   BOUNTY_ACTIONS_TUTORIAL_II_INITIAL_STATE,
   PROFILE_TUTORIAL_INITIAL_STATE,
 } from "@/src/constants/tutorials";
+
+import { NextSeo } from "next-seo";
+
 import { useTutorial } from "@/src/providers/tutorialProvider";
 import { User } from "@/types/Bounties";
 dayjs.extend(relativeTime);
 
 const underdogClient = createUnderdogClient({});
-export default function Home() {
-  return (
-    <>
-      <Head>
-        <title>Lancer | Account</title>
-        <meta name="description" content="Lancer Account" />
-      </Head>
-      <main>
-        <Account />
-      </main>
-    </>
-  );
-}
 
-const Account: React.FC = () => {
+export const getServerSideProps = withPageAuthRequired();
+
+const AccountDetailPage: React.FC = () => {
   const router = useRouter();
 
   const { currentUser, currentWallet } = useUserWallet();
@@ -232,28 +222,11 @@ const Account: React.FC = () => {
   };
 
   return (
-    <DefaultLayout>
+    <>
+      <NextSeo title="Lancer | Account" description="Lancer Account" />
       {account && (
         <>
           <div className="w-full flex flex-col md:flex-row items-center md:items-start gap-10 md:gap-5 justify-center">
-            {/* <ApiKeyModal showModal={showModal} setShowModal={setShowModal} /> */}
-            {/* {currentUser?.githubLogin && (
-                <div>GitHub User: {currentUser.githubLogin}</div>
-              )}
-                <a href="/api/auth/logout">Logout</a> */}
-            {/* {wallets &&
-                wallets.map((wallet) => (
-                  <WalletInfo wallet={wallet} key={wallet.publicKey.toString()} />
-                ))} */}
-            {/* {!IS_MAINNET && (
-                  <a
-                    href="https://staging.coinflow.cash/faucet"
-                    target={"_blank"}
-                    rel="noreferrer"
-                  >
-                    USDC Faucet
-                  </a>
-                )} */}
             {!IS_CUSTODIAL && !currentWallet && !profileNFT && (
               <div>Please Connect a Wallet</div>
             )}
@@ -291,6 +264,8 @@ const Account: React.FC = () => {
           </div>
         </>
       )}
-    </DefaultLayout>
+    </>
   );
 };
+
+export default AccountDetailPage;

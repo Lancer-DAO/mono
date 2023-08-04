@@ -9,7 +9,7 @@ const DefaultLayout: React.FC<{ children: ReactNode }> = ({ children }) => {
       <Header />
 
       {!!currentUser && <JoyrideWrapper />}
-      <div className="page-content">{children}</div>
+      <main className="page-content">{children}</main>
     </div>
   );
 };

@@ -8,6 +8,15 @@ const nextConfig = {
   env: {
     AUTH0_BASE_URL: process.env.VERCEL_URL || "http://localhost:3000",
   },
+  async redirects() {
+    return [
+      {
+        source: "/",
+        destination: "/account",
+        permanent: true,
+      },
+    ];
+  },
   webpack: (config) => {
     config.watchOptions = {
       poll: 1000,
