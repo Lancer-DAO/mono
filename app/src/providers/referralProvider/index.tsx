@@ -268,11 +268,10 @@ const ReferralProvider: FunctionComponent<IReferralProps> = ({ children }) => {
 
       if (!member) return [];
 
-      const remainingAccounts =
-        await client.initialize.validateReferrerAccounts(
-          mint,
-          member.account.pda
-        );
+      const remainingAccounts = await client.accounts.validateReferrerAccounts(
+        mint,
+        member.account.pda
+      );
 
       if (
         remainingAccounts.memberPDA.toString() === PublicKey.default.toString()
@@ -303,6 +302,11 @@ const ReferralProvider: FunctionComponent<IReferralProps> = ({ children }) => {
         },
         {
           pubkey: remainingAccounts.memberPDA,
+          isWritable: false,
+          isSigner: false,
+        },
+        {
+          pubkey: remainingAccounts.referrerMember,
           isWritable: false,
           isSigner: false,
         },

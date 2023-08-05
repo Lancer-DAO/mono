@@ -105,22 +105,15 @@ export const SubmitterSection: React.FC<SubmitterSectionProps> = ({
                   isRunning: false,
                 });
               }
-              // const signature = await addSubmitterFFA(
-              //   submitterWallet,
-              //   currentBounty.escrow,
-              //   currentWallet,
-              //   await getSubmitterReferrer(
-              //     submitterWallet,
-              //     new PublicKey(currentBounty.escrow.mint.publicKey)
-              //   ),
-              //   remainingAccounts,
-              //   program,
-              //   provider
-              // );
-              const signature = await addSubmitterFFAOld(
+              const signature = await addSubmitterFFA(
                 submitterWallet,
                 currentBounty.escrow,
                 currentWallet,
+                await getSubmitterReferrer(
+                  submitterWallet,
+                  new PublicKey(currentBounty.escrow.mint.publicKey)
+                ),
+                remainingAccounts,
                 program,
                 provider
               );
