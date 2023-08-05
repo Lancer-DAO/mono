@@ -4,7 +4,8 @@ import { AnchorProvider, Program } from "@project-serum/anchor";
 import { MonoProgram } from "@/escrow/sdk/types/mono_program";
 import { cancelFeatureInstruction } from "@/escrow/sdk/instructions";
 import { USDC_MINT } from "@/src/constants";
-import { Escrow, EscrowContract, LancerWallet } from "@/src/types";
+import { LancerWallet } from "@/types/";
+import { Escrow } from "@/types/Bounties";
 
 export const cancelFFA = async (
   acc: Escrow,

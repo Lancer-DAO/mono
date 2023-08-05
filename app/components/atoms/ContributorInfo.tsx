@@ -13,7 +13,7 @@ const ContributorInfo: React.FC<{ user: User; disableLink?: boolean }> = ({
         className="flex items-center hover:cursor-pointer  hover:text-blue-400"
         onClick={() => {
           if (disableLink) return;
-          router.push(`/account?id=${user.id}`);
+          router.push(`/account/${user.id}`);
         }}
       >
         <img

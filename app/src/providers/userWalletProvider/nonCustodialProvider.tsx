@@ -8,7 +8,7 @@ import {
 } from "react";
 import { AnchorProvider, Program } from "@project-serum/anchor";
 import { MonoProgram } from "@/escrow/sdk/types/mono_program";
-import { Issue, CurrentUser, LancerWallet, Bounty } from "@/src/types";
+import { LancerWallet } from "@/types/";
 import {
   IUserWalletContext,
   ISSUE_LOAD_STATE,
@@ -17,15 +17,13 @@ import {
 import { api } from "@/src/utils/api";
 import { useConnection, useWallet } from "@solana/wallet-adapter-react";
 import { PublicKey, Transaction } from "@solana/web3.js";
-import { useRouter } from "next/router";
 import { useUser } from "@auth0/nextjs-auth0/client";
 export * from "./types";
 import MonoProgramJSON from "@/escrow/sdk/idl/mono_program.json";
-import { APIKeyInfo } from "@/components/molecules/ApiKeyModal";
 import { MONO_ADDRESS } from "@/src/constants";
-import { Tutorial } from "@/src/types/tutorials";
 import { PROFILE_TUTORIAL_INITIAL_STATE } from "@/src/constants/tutorials";
 import { useTutorial } from "../tutorialProvider";
+import { User } from "@/types/";
 
 export const NonCustodialWalletContext = createContext<IUserWalletContext>({
   currentUser: null,
@@ -61,7 +59,7 @@ const UserWalletProvider: FunctionComponent<IUserWalletState> = ({
   } = useWallet();
   const { connection } = useConnection();
   const { currentTutorialState, setCurrentTutorialState } = useTutorial();
-  const [currentUser, setCurrentUser] = useState<CurrentUser | null>(null);
+  const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [currentWallet, setCurrentWallet] = useState<LancerWallet>();
   const [provider, setProvider] = useState<AnchorProvider>();
   const [program, setProgram] = useState<Program<MonoProgram>>();

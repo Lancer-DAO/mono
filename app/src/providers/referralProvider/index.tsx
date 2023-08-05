@@ -257,7 +257,6 @@ const ReferralProvider: FunctionComponent<IReferralProps> = ({ children }) => {
 
       const buddyProfile = await client.buddy.getProfile(wallet);
       if (!buddyProfile) return [];
-      debugger;
       const treasuryPDA = client.pda.getTreasuryPDA(
         [buddyProfile.account.pda],
         [10_000],

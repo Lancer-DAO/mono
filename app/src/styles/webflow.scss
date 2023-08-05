@@ -5678,18 +5678,6 @@ figcaption {
   border-color: #153cf5;
 }
 
-.spacer {
-  height: 26px;
-}
-
-.spacer.faq {
-  height: 20px;
-}
-
-.spacer.header-mobile {
-  display: none;
-}
-
 .form-caption {
   margin-top: 8px;
   margin-bottom: 0px;
@@ -13424,9 +13412,9 @@ textarea.w-select {
 }
 .tag-item {
   border-style: solid;
-  border-width: 3px;
-  font-size: 14px;
-  border-radius: 8px;
+  border-width: 2px;
+  font-size: 12px;
+  border-radius: 6px;
   box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.2);
   text-align: center;
   padding-left: 8px;
@@ -13442,39 +13430,6 @@ textarea.w-select {
   &:nth-child(3n + 2) {
     border-color: red;
   }
-}
-
-.bounty-card-funder {
-  display: flex;
-  align-items: flex-start;
-  justify-content: flex-start;
-  column-gap: 8px;
-}
-
-.no-padding-margin {
-  margin: 0px;
-  padding: 0px;
-}
-
-.bounty-funder-text {
-  div,
-  h3 {
-    line-height: 18px;
-  }
-  h3 {
-    font-size: 18px;
-  }
-  div {
-    font-size: 16px;
-  }
-}
-
-.bounty-footer {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-end;
-  height: 36px;
-  width: 100%;
 }
 
 .bounty-funding {
@@ -13501,10 +13456,6 @@ textarea.w-select {
   div {
     line-height: 38px;
   }
-}
-
-.bounty-card-content {
-  width: 100%;
 }
 
 .bounty-markdown-full {
