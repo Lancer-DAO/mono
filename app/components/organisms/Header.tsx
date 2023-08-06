@@ -26,7 +26,7 @@ export const Header = () => {
   const [showTutorialModal, setShowTutorialModal] = useState(false);
   return (
     <div className="flex sticky py-[20px] bg-white-100 top-0 z-20">
-      <div className="flex items-center mx-auto w-[70%]">
+      <div className="flex items-center mx-auto w-[70%] border border-red-500">
         <Link
           href="/"
           className="relative float-left text-blue-500 transition-colors 
