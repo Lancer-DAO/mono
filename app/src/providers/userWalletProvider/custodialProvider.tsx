@@ -167,10 +167,10 @@ export const CustodialWalletProvider: FunctionComponent<IWeb3AuthState> = ({
           const userInfo = await getCurrUser();
           setCurrentUser(userInfo);
         } catch (e) {
-          // if (e.data.httpStatus === 401) {
-          //   debugger;
-          //   router.push("/api/auth/login");
-          // }
+          if (e.data.httpStatus === 401) {
+            debugger;
+            router.push("/api/auth/login");
+          }
         }
       };
       getUser();
