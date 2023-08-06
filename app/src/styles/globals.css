@@ -1,3 +1,35 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@font-face {
+  font-family: charter;
+  font-style: normal;
+  src: url("../../public/fonts/Charter_Regular.ttf") format("truetype");
+  font-display: swap;
+}
+
+@font-face {
+  font-family: charter-bold;
+  font-style: normal;
+  src: url("../../public/fonts/Charter_Bold.ttf") format("truetype");
+  font-display: swap;
+}
+
+@font-face {
+  font-family: charter-italic;
+  font-style: italic;
+  src: url("../../public/fonts/Charter_Italic.ttf") format("truetype");
+  font-display: swap;
+}
+
+@font-face {
+  font-family: charter-bold-italic;
+  font-style: italic;
+  src: url("../../public/fonts/Charter_Bold_Italic.ttf") format("truetype");
+  font-display: swap;
+}
+
+* {
+  @apply text-textPrimary bg-bgLancer font-base;
+}

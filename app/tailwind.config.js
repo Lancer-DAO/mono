@@ -31,6 +31,12 @@ module.exports = {
         industryOther: "#C5C5C5",
         industryOtherBorder: "#DADADA",
       },
+      fontFamily: {
+        base: ["charter", "Helvetica", "Arial", "sans-serif"],
+        bold: ["charter-bold", "Helvetica", "Arial", "sans-serif"],
+        italic: ["charter-italic", "Helvetica", "Arial", "sans-serif"],
+        boldItalic: ["charter-bold-italic", "Helvetica", "Arial", "sans-serif"],
+      },
     },
   },
   plugins: [],
