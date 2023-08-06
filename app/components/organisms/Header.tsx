@@ -57,7 +57,7 @@ export const Header = () => {
               }}
             >
               <WalletMultiButton
-                className="flex h-[48px] px-8 py-[6px] items-center justify-center 
+                className="flex h-[48px] px-8 py-[6px] items-center justify-center
                 border-solid !bg-primaryBtn !border-primaryBtnBorder !border
                 !text-textGreen !rounded-md !whitespace-nowrap"
                 startIcon={undefined}
