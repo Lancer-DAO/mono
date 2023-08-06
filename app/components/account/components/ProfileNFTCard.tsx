@@ -10,6 +10,7 @@ import { Treasury } from "@ladderlabs/buddy-sdk";
 import { api } from "@/src/utils/api";
 import * as Prisma from "@prisma/client";
 import { IS_CUSTODIAL } from "@/src/constants";
+import { useUserWallet } from "@/src/providers";
 
 dayjs.extend(relativeTime);
 
@@ -29,6 +30,7 @@ export const ProfileNFTCard = ({
   const [isCopied, setIsCopied] = useState(false);
   const { referralId, initialized, createReferralMember, claimables, claim } =
     useReferral();
+  const { currentUser } = useUserWallet();
 
   const { mutateAsync: getMintsAPI } = api.mints.getMints.useMutation();
   const [mints, setMints] = useState<Prisma.Mint[]>([]);
@@ -80,8 +82,10 @@ export const ProfileNFTCard = ({
       const mints = await getMintsAPI();
       setMints(mints);
     };
-    getMints();
-  }, []);
+    if (!!currentUser) {
+      getMints();
+    }
+  }, [currentUser]);
 
   return (
     <div className="w-full md:w-[40%] px-5 pb-20">
