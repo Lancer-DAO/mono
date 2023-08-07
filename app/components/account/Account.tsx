@@ -8,7 +8,7 @@ import {
   PROFILE_PROJECT_PARAMS,
 } from "@/src/constants";
 import { api } from "@/utils";
-import { BountyNFT, ProfileNFT, User } from "@/types/";
+import { BountyNFT, IAsyncResult, ProfileNFT, User } from "@/types/";
 import { createUnderdogClient } from "@underdog-protocol/js";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
@@ -29,12 +29,14 @@ export const Account: FC = () => {
   const { currentUser, currentWallet } = useUserWallet();
   const { currentTutorialState, setCurrentTutorialState } = useTutorial();
   const [profileNFT, setProfileNFT] = useState<ProfileNFT>();
-  const [bountyNFTs, setBountyNFTs] = useState<BountyNFT[]>([]);
+  const [bountyNFTs, setBountyNFTs] = useState<IAsyncResult<BountyNFT[]>>({
+    isLoading: true,
+  });
   const { mutateAsync: getUser } = api.users.getUser.useMutation();
-  const [account, setAccount] = useState<User>();
-  const [bountiesLoading, setBountiesLoading] = useState(false);
-  const [profileLoading, setProfileLoading] = useState(false);
-  const [profileCreating, setProfileCreating] = useState(false);
+  const [account, setAccount] = useState<IAsyncResult<User>>({
+    isLoading: true,
+    loadingPrompt: "Loading Profile",
+  });
 
   const { mutateAsync: registerProfileNFT } =
     api.users.registerProfileNFT.useMutation();
@@ -43,10 +45,13 @@ export const Account: FC = () => {
     const maybeMintNft = async () => {
       if (!!currentUser && !!currentWallet && router.query.id === undefined) {
         if (!currentUser.profileWalletId) {
-          setProfileCreating(true);
-          await mintProfileNFT();
-          fetchNfts();
-          setProfileCreating(false);
+          setAccount({ isLoading: true, loadingPrompt: "Creating Profile" });
+          try {
+            await mintProfileNFT();
+            fetchNfts();
+          } catch (e) {
+            setAccount({ error: e });
+          }
         }
       }
     };
@@ -54,9 +59,8 @@ export const Account: FC = () => {
   }, [currentUser, router.isReady, currentWallet]);
 
   const fetchProfileNFT = async () => {
-    setProfileLoading(true);
-    const profileNFTHolder = account.wallets.find(
-      (wallet) => wallet.id === account.profileWalletId
+    const profileNFTHolder = account?.result.wallets.find(
+      (wallet) => wallet.id === account.result.profileWalletId
     );
     const nfts = await underdogClient.getNfts({
       params: PROFILE_PROJECT_PARAMS,
@@ -85,14 +89,13 @@ export const Account: FC = () => {
           : undefined,
       };
       setProfileNFT(profileNFT);
+      setAccount({ ...account, isLoading: false, loadingPrompt: undefined });
     }
-    setProfileLoading(false);
   };
 
   const fetchBountyNFTs = async () => {
-    setBountiesLoading(true);
-    const profileNFTHolder = account.wallets.find(
-      (wallet) => wallet.id === account.profileWalletId
+    const profileNFTHolder = account?.result.wallets.find(
+      (wallet) => wallet.id === account?.result.profileWalletId
     );
     const nfts = await underdogClient.getNfts({
       params: BOUNTY_PROJECT_PARAMS,
@@ -118,8 +121,7 @@ export const Account: FC = () => {
       };
     });
     bountyNFTs.reverse();
-    setBountyNFTs(bountyNFTs);
-    setBountiesLoading(false);
+    setBountyNFTs({ isLoading: false, result: bountyNFTs });
   };
 
   const mintProfileNFT = async () => {
@@ -157,11 +159,14 @@ export const Account: FC = () => {
         },
       });
     }
-
     const updatedUser = await registerProfileNFT({
       walletPublicKey: currentWallet.publicKey.toString(),
     });
-    setAccount(updatedUser);
+    setAccount({
+      isLoading: false,
+      result: updatedUser,
+      loadingPrompt: undefined,
+    });
   };
 
   const fetchNfts = async () => {
@@ -198,35 +203,43 @@ export const Account: FC = () => {
         const account = await getUser({
           id: parseInt(router.query.id as string),
         });
-        setAccount(account);
+        setAccount({ ...account, result: account });
       };
       fetchAccount();
     } else {
-      setAccount(currentUser);
+      setAccount({ ...account, result: currentUser });
     }
   }, [currentUser, router.isReady]);
 
   useEffect(() => {
-    if (account && account.profileWalletId) {
+    if (
+      account &&
+      account?.result?.profileWalletId &&
+      !bountyNFTs.result &&
+      !account.error
+    ) {
       fetchNfts();
     }
-  }, [account]);
+  }, [account?.result, bountyNFTs]);
 
   return (
     <>
-      {account && (
+      {account?.isLoading && <LoadingBar title={account.loadingPrompt} />}
+      {account?.error && (
+        <div className="color-red">{account.error.message}</div>
+      )}
+
+      {account?.result && (
         <div className="w-full flex flex-col md:flex-row items-center md:items-start gap-10 md:gap-5 justify-center">
           {!IS_CUSTODIAL && !currentWallet && !profileNFT && (
             <div>Please Connect a Wallet</div>
           )}
-          {profileLoading && <LoadingBar title="Loading Profile" />}
-          {profileCreating && <LoadingBar title="Creating Profile" />}
           {profileNFT && (
             <>
               <ProfileNFTCard
                 profileNFT={profileNFT}
-                picture={account.picture}
-                githubId={account.githubId}
+                picture={account?.result.picture}
+                githubId={account?.result.githubId}
               />
 
               <div
@@ -236,12 +249,12 @@ export const Account: FC = () => {
                 <p className="text-4xl flex items-center justify-center pb-3">
                   Completed Bounties
                 </p>
-                {bountiesLoading ? (
+                {bountyNFTs.isLoading ? (
                   <div className="flex justify-center items-center">
                     <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-gray-900"></div>
                   </div>
-                ) : bountyNFTs.length > 0 ? (
-                  bountyNFTs.map((bountyNFT) => (
+                ) : bountyNFTs?.result?.length > 0 ? (
+                  bountyNFTs?.result?.map((bountyNFT) => (
                     <BountyNFTCard bountyNFT={bountyNFT} />
                   ))
                 ) : (

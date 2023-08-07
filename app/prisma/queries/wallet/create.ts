@@ -11,6 +11,13 @@ export const getOrCreate = async (
       publicKey,
     },
   });
+  if (wallet && user.id !== wallet.userid) {
+    const error = {
+      code: 403,
+      message: "Wallet is registered to another user",
+    };
+    throw error;
+  }
   if (!wallet) {
     try {
       wallet = await prisma.wallet.create({
