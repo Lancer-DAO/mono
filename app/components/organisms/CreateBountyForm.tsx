@@ -163,8 +163,9 @@ const Form: React.FC<{
 
   return (
     <div className="w-full flex flex-col gap-4 text-2xl mt-6">
-      <div className="flex items-center">
-        <label className="text-textGreen/50 pr-4">Category</label>
+      <div className="relative flex items-center">
+        <label className="text-textGreen/70 pr-4 pl-3">Category</label>
+        <div className="absolute top-1/2 -translate-y-1/2 -left-10">1</div>
         <MultiSelectDropdown
           options={categoryOptions}
           selected={categoryOptions.filter(
@@ -178,18 +179,22 @@ const Form: React.FC<{
           }}
         />
       </div>
-      <div className="flex items-center">
-        <label className="text-textGreen/50 pr-4">Price</label>
-        <div className="flex items-center">
+      <div className="relative flex items-center">
+        <label className="text-textGreen/70 pr-4 pl-3">Price</label>
+        <div className="absolute top-1/2 -translate-y-1/2 -left-10">2</div>
+        <div className="flex items-center gap-3">
           <Toggle
             toggleConfig={toggleConfig}
             setToggleConfig={setToggleConfig}
           />
           <input
             type="number"
-            className="input w-input"
+            className="placeholder:text-textGreen/70 border bg-neutralBtn 
+            border-neutralBtnBorder w-full h-[50px] rounded-lg px-3
+            disabled:opacity-50 disabled:cursor-not-allowed"
             name="issuePrice"
-            placeholder="1200"
+            placeholder="$2500"
+            disabled={toggleConfig.selected === "option2"}
             value={formData.issuePrice}
             onChange={handleChange}
             // onBlur={() => {
@@ -246,13 +251,14 @@ const Form: React.FC<{
           />
         </div>
       </div>
-      <div>
-        <label className="text-textGreen/50 pr-4">Title</label>
+      <div className="relative">
+        <div className="absolute top-1/2 -translate-y-1/2 -left-10">3</div>
         <input
           type="text"
-          className="input w-input"
+          className="placeholder:text-textGreen/70 border bg-neutralBtn 
+          border-neutralBtnBorder w-full h-[50px] rounded-lg px-3"
           name="issueTitle"
-          placeholder="Ex. Add New Feature "
+          placeholder="Title"
           id="issue-title-input"
           value={formData.issueTitle}
           onChange={handleChange}
@@ -310,94 +316,30 @@ const Form: React.FC<{
         />
       </div>
       <div>
-        <div className="description-label">
-          <label className="text-textGreen/50 pr-4">Description</label>
-          <button
-            className="button-primary hug no-box-shadow"
-            onClick={(e) => {
-              e.preventDefault();
-              togglePreview();
-            }}
-          >
-            {isPreview ? "Edit" : "Preview"}
-          </button>
-        </div>
-        {isPreview ? (
-          <div
-            className="markdown-preview"
-            dangerouslySetInnerHTML={previewMarkup()}
-          />
-        ) : (
-          <textarea
-            id="issue-description-input"
+        <div className="relative">
+          <div className="absolute top-1/2 -translate-y-1/2 -left-10">4</div>
+          <input
+            type="text"
+            className="placeholder:text-textGreen/70 border bg-neutralBtn
+            border-neutralBtnBorder w-full h-[50px] rounded-lg px-3"
             name="issueDescription"
+            placeholder="Description"
+            id="issue-title-input"
             value={formData.issueDescription}
-            onChange={handleDescriptionChange}
-            placeholder="Provide a step by step breakdown of what is needed to complete the task. Include criteria that will determine success. **Markdown Supported** "
-            className="textarea w-input"
-            onBlur={() => {
-              if (
-                formData.issueDescription !== "" &&
-                !!currentTutorialState &&
-                currentTutorialState.isActive
-              ) {
-                if (
-                  currentTutorialState?.title ===
-                    CREATE_BOUNTY_TUTORIAL_INITIAL_STATE.title &&
-                  currentTutorialState.currentStep === 4
-                ) {
-                  setCurrentTutorialState({
-                    ...currentTutorialState,
-                    currentStep: 5,
-                  });
-                }
-              }
-            }}
-            onMouseLeave={() => {
-              if (
-                formData.issueDescription !== "" &&
-                !!currentTutorialState &&
-                currentTutorialState.isActive
-              ) {
-                if (
-                  currentTutorialState?.title ===
-                    CREATE_BOUNTY_TUTORIAL_INITIAL_STATE.title &&
-                  currentTutorialState.currentStep === 4
-                ) {
-                  setCurrentTutorialState({
-                    ...currentTutorialState,
-                    currentStep: 5,
-                    isRunning: true,
-                  });
-                }
-              }
-            }}
-            onFocus={() => {
-              if (!!currentTutorialState && currentTutorialState.isActive) {
-                if (
-                  currentTutorialState?.title ===
-                    CREATE_BOUNTY_TUTORIAL_INITIAL_STATE.title &&
-                  currentTutorialState.currentStep === 4
-                ) {
-                  setCurrentTutorialState({
-                    ...currentTutorialState,
-                    isRunning: false,
-                  });
-                }
-              }
-            }}
+            onChange={handleChange}
           />
-        )}
+        </div>
       </div>
-      <div>
-        <label className="text-textGreen/50 pr-4">Tags</label>
+      <div className="relative">
+        <div className="absolute top-1/2 -translate-y-1/2 -left-10">5</div>
         <input
           type="text"
-          className="input w-input"
+          className="placeholder:text-textGreen/70 border bg-neutralBtn 
+          border-neutralBtnBorder w-full h-[50px] rounded-lg px-3"
           name="requirements"
           value={formData.requirements}
           onChange={handleRequirementsChange}
-          placeholder="list seperated by commas"
+          placeholder="Tags (comma separated)"
           id="issue-requirements-input"
           onBlur={() => {
             if (

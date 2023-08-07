@@ -14,9 +14,9 @@ export const Create = () => {
     });
   };
   return (
-    <div className="w-full flex flex-col md:flex-row md:justify-evenly">
+    <div className="w-full flex flex-col md:flex-row md:justify-evenly mt-10">
       {/* quest info entry section */}
-      <div className="w-full md:max-w-[50%]">
+      <div className="md:w-[515px]">
         <h1>Post a Quest</h1>
         {formSection === "CREATE" && (
           <CreateBountyForm
@@ -27,6 +27,9 @@ export const Create = () => {
         {formSection === "FUND" && (
           <FundBountyForm isAccountCreated={isAccountCreated} />
         )}
+      </div>
+      <div className="md:w-[515px] border border-red-500">
+        Quest preview here
       </div>
       {/* TODO: add preview section */}
     </div>

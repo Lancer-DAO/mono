@@ -10,6 +10,7 @@ interface Props {
 interface Option {
   label: string;
   value: string;
+  icon?: string;
 }
 
 const Dropdown: React.FC<Props> = ({ options, selected, onChange }) => {
@@ -44,7 +45,7 @@ const Dropdown: React.FC<Props> = ({ options, selected, onChange }) => {
       return (
         <label
           key={option.value}
-          className="w-full flex items-center py-2 px-4 text-xl cursor-pointer"
+          className="bg-neutralBtn w-full flex items-center py-2 px-4 text-xl cursor-pointer"
         >
           <input
             type="checkbox"
@@ -60,12 +61,10 @@ const Dropdown: React.FC<Props> = ({ options, selected, onChange }) => {
   };
 
   return (
-    <div
-      className="relative w-[220px] h-[50px] bg-neutralBtn border border-neutralBtnBorder rounded-lg"
-      ref={menuRef}
-    >
+    <div className="relative w-[220px] h-[50px]" ref={menuRef}>
       <div
-        className="h-full flex justify-between items-center cursor-pointer px-4"
+        className="h-full flex justify-between bg-neutralBtn border border-neutralBtnBorder 
+        items-center cursor-pointer px-4 rounded-lg"
         onClick={toggleOpen}
       >
         <div className="text-xl font-bold overflow-hidden whitespace-nowrap overflow-ellipsis">
