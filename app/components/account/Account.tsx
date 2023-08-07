@@ -1,6 +1,5 @@
 import { useEffect, useState, FC } from "react";
 import { useRouter } from "next/router";
-import { withPageAuthRequired } from "@auth0/nextjs-auth0";
 import { DefaultLayout, LoadingBar } from "@/components";
 import { BountyNFTCard, ProfileNFTCard } from "./components";
 import {
@@ -19,8 +18,6 @@ import {
 } from "@/src/constants/tutorials";
 import { useUserWallet } from "@/src/providers";
 import { useTutorial } from "@/src/providers/tutorialProvider";
-
-export const getServerSideProps = withPageAuthRequired();
 
 dayjs.extend(relativeTime);
 
@@ -48,6 +45,7 @@ export const Account: FC = () => {
         if (!currentUser.profileWalletId) {
           setProfileCreating(true);
           await mintProfileNFT();
+          fetchNfts();
           setProfileCreating(false);
         }
       }
@@ -166,6 +164,34 @@ export const Account: FC = () => {
     setAccount(updatedUser);
   };
 
+  const fetchNfts = async () => {
+    await fetchProfileNFT();
+
+    await fetchBountyNFTs();
+    if (
+      currentTutorialState?.title ===
+        BOUNTY_ACTIONS_TUTORIAL_II_INITIAL_STATE.title &&
+      currentTutorialState.currentStep === 8
+    ) {
+      setCurrentTutorialState({
+        ...currentTutorialState,
+        isRunning: true,
+      });
+    } else if (
+      currentTutorialState?.title === PROFILE_TUTORIAL_INITIAL_STATE.title &&
+      currentTutorialState.currentStep === 2
+    ) {
+      setTimeout(() => {
+        setCurrentTutorialState({
+          ...currentTutorialState,
+          isRunning: true,
+          currentStep: 3,
+          spotlightClicks: false,
+        });
+      }, 100);
+    }
+  };
+
   useEffect(() => {
     if (router.query.id !== undefined) {
       const fetchAccount = async () => {
@@ -181,33 +207,6 @@ export const Account: FC = () => {
   }, [currentUser, router.isReady]);
 
   useEffect(() => {
-    const fetchNfts = async () => {
-      await fetchProfileNFT();
-
-      await fetchBountyNFTs();
-      if (
-        currentTutorialState?.title ===
-          BOUNTY_ACTIONS_TUTORIAL_II_INITIAL_STATE.title &&
-        currentTutorialState.currentStep === 8
-      ) {
-        setCurrentTutorialState({
-          ...currentTutorialState,
-          isRunning: true,
-        });
-      } else if (
-        currentTutorialState?.title === PROFILE_TUTORIAL_INITIAL_STATE.title &&
-        currentTutorialState.currentStep === 2
-      ) {
-        setTimeout(() => {
-          setCurrentTutorialState({
-            ...currentTutorialState,
-            isRunning: true,
-            currentStep: 3,
-            spotlightClicks: false,
-          });
-        }, 100);
-      }
-    };
     if (account && account.profileWalletId) {
       fetchNfts();
     }

@@ -168,7 +168,7 @@ export const CustodialWalletProvider: FunctionComponent<IWeb3AuthState> = ({
           setCurrentUser(userInfo);
         } catch (e) {
           if (e.data.httpStatus === 401) {
-            debugger;
+            console.error(e);
             router.push("/api/auth/login");
           }
         }
