@@ -25,9 +25,9 @@ const Form: React.FC<{
   const { currentTutorialState, setCurrentTutorialState } = useTutorial();
   const { mutateAsync } = api.bounties.createBounty.useMutation();
   const { mutateAsync: getMintsAPI } = api.mints.getMints.useMutation();
+
   const [creationType, setCreationType] = useState<"new" | "existing">("new");
   const [mint, setMint] = useState<Prisma.Mint>();
-
   const [formData, setFormData] = useState({
     category: "",
     organizationName: "",
@@ -61,6 +61,7 @@ const Form: React.FC<{
     {
       label: "Engineering",
       value: "Engineering",
+      logo: "/assets/images/lancer-logo.png",
     },
   ];
 
@@ -315,20 +316,18 @@ const Form: React.FC<{
           }}
         />
       </div>
-      <div>
-        <div className="relative">
-          <div className="absolute top-1/2 -translate-y-1/2 -left-10">4</div>
-          <input
-            type="text"
-            className="placeholder:text-textGreen/70 border bg-neutralBtn
+      <div className="relative">
+        <div className="absolute top-1/2 -translate-y-1/2 -left-10">4</div>
+        <input
+          type="text"
+          className="placeholder:text-textGreen/70 border bg-neutralBtn
             border-neutralBtnBorder w-full h-[50px] rounded-lg px-3"
-            name="issueDescription"
-            placeholder="Description"
-            id="issue-title-input"
-            value={formData.issueDescription}
-            onChange={handleChange}
-          />
-        </div>
+          name="issueDescription"
+          placeholder="Description"
+          id="issue-title-input"
+          value={formData.issueDescription}
+          onChange={handleChange}
+        />
       </div>
       <div className="relative">
         <div className="absolute top-1/2 -translate-y-1/2 -left-10">5</div>

@@ -1,4 +1,5 @@
 import { useOutsideAlerter } from "@/src/hooks";
+import Image from "next/image";
 import { useRef, useState } from "react";
 
 interface Props {
@@ -54,7 +55,15 @@ const Dropdown: React.FC<Props> = ({ options, selected, onChange }) => {
             onChange={() => handleCheckboxChange(option)}
             className="mr-[10px]"
           />
-          {option.label}
+          <div className="flex items-center gap-2">
+            <Image
+              src={option.icon}
+              width={20}
+              height={20}
+              alt={option.label}
+            />
+            {option.label}
+          </div>
         </label>
       );
     });
