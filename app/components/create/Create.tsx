@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { CreateBountyForm, FundBountyForm } from "@/components";
+import { CreateBountyForm, FundBountyForm, MarketingIcon } from "@/components";
 import { PublicKey } from "@solana/web3.js";
 import { FORM_SECTION } from "@/types/forms";
 import { useUserWallet } from "@/src/providers";
@@ -30,6 +30,7 @@ export const Create = () => {
       </div>
       <div className="md:w-[515px] border border-red-500">
         Quest preview here
+        <MarketingIcon />
       </div>
       {/* TODO: add preview section */}
     </div>

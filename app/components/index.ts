@@ -9,6 +9,7 @@ const USDC = dynamic(() => import("./@icons/USDC"));
 const Button = dynamic(() => import("./atoms/Button"));
 const CoinflowOfframp = dynamic(() => import("./atoms/CoinflowOfframp"));
 const ContributorInfo = dynamic(() => import("./atoms/ContributorInfo"));
+const MarketingIcon = dynamic(() => import("./@icons/MarketingIcon"));
 const LoadingBar = dynamic(() => import("./atoms/LoadingBar"));
 const ProgressBar = dynamic(() => import("./atoms/progressBar"));
 const PubKey = dynamic(() => import("./atoms/PubKey"));
@@ -39,6 +40,7 @@ const DefaultLayout = dynamic(() => import("./templates/DefaultLayout"));
 
 export {
   // @icons
+  MarketingIcon,
   Logo,
   PhantomLogo,
   USDC,

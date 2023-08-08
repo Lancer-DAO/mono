@@ -61,7 +61,6 @@ const Form: React.FC<{
     {
       label: "Engineering",
       value: "Engineering",
-      logo: "/assets/images/lancer-logo.png",
     },
   ];
 

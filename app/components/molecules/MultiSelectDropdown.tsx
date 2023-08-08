@@ -1,6 +1,7 @@
 import { useOutsideAlerter } from "@/src/hooks";
 import Image from "next/image";
 import { useRef, useState } from "react";
+import { MarketingIcon } from "@/components";
 
 interface Props {
   options: Option[];
@@ -56,12 +57,7 @@ const Dropdown: React.FC<Props> = ({ options, selected, onChange }) => {
             className="mr-[10px]"
           />
           <div className="flex items-center gap-2">
-            <Image
-              src={option.icon}
-              width={20}
-              height={20}
-              alt={option.label}
-            />
+            <MarketingIcon height={20} width={20} />
             {option.label}
           </div>
         </label>
