@@ -1,9 +1,9 @@
-import { prisma } from "@/server/db";
 import { protectedProcedure } from "../../trpc";
 import { z } from "zod";
 import * as queries from "@/prisma/queries";
+import { UnwrapPromise } from "@/types";
 
-export const registerProfileNFT = protectedProcedure
+export const verifyWallet = protectedProcedure
   .input(
     z.object({
       walletPublicKey: z.string(),
@@ -19,9 +19,7 @@ export const registerProfileNFT = protectedProcedure
       true
     );
 
-    await queries.user.updateProfileNFT(id, wallet.id);
-
     const updatedUser = await queries.user.getByEmail(email);
 
-    return updatedUser;
+    return { updatedUser };
   });

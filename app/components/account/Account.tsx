@@ -33,6 +33,7 @@ export const Account: FC = () => {
     isLoading: true,
   });
   const { mutateAsync: getUser } = api.users.getUser.useMutation();
+  const { mutateAsync: verifyWallet } = api.users.verifyWallet.useMutation();
   const [account, setAccount] = useState<IAsyncResult<User>>({
     isLoading: true,
     loadingPrompt: "Loading Profile",
@@ -56,18 +57,57 @@ export const Account: FC = () => {
       }
     };
     maybeMintNft();
-  }, [currentUser, router.isReady, currentWallet]);
+  }, [currentUser, router.isReady, currentWallet?.publicKey]);
+
+  useEffect(() => {
+    const getUserAsync = async () => {
+      if (router.query.id !== undefined) {
+        const fetchAccount = async () => {
+          const account = await getUser({
+            id: parseInt(router.query.id as string),
+          });
+          setAccount({ ...account, result: account });
+        };
+        fetchAccount();
+      } else {
+        try {
+          setAccount({ isLoading: true, loadingPrompt: "Loading Profile" });
+          setBountyNFTs({ isLoading: true });
+          setProfileNFT(null);
+
+          await verifyWallet({
+            walletPublicKey: currentWallet?.publicKey.toString(),
+          });
+
+          setAccount({
+            isLoading: true,
+            loadingPrompt: "Loading Profile",
+            result: currentUser,
+            error: null,
+          });
+        } catch (e) {
+          setAccount({ error: e });
+        }
+      }
+    };
+    if (!!currentUser) {
+      getUserAsync();
+    }
+  }, [currentUser, router.isReady, currentWallet?.publicKey]);
+
+  useEffect(() => {
+    if (account && account?.result?.profileWalletId && !account.error) {
+      fetchNfts();
+    }
+  }, [account?.result]);
 
   const fetchProfileNFT = async () => {
-    const profileNFTHolder = account?.result.wallets.find(
-      (wallet) => wallet.id === account.result.profileWalletId
-    );
     const nfts = await underdogClient.getNfts({
       params: PROFILE_PROJECT_PARAMS,
       query: {
         page: 1,
         limit: 1,
-        ownerAddress: profileNFTHolder?.publicKey,
+        ownerAddress: currentWallet.publicKey.toString(),
       },
     });
     if (nfts.totalResults > 0) {
@@ -94,15 +134,12 @@ export const Account: FC = () => {
   };
 
   const fetchBountyNFTs = async () => {
-    const profileNFTHolder = account?.result.wallets.find(
-      (wallet) => wallet.id === account?.result.profileWalletId
-    );
     const nfts = await underdogClient.getNfts({
       params: BOUNTY_PROJECT_PARAMS,
       query: {
         page: 1,
-        limit: 10,
-        ownerAddress: profileNFTHolder?.publicKey,
+        limit: 100,
+        ownerAddress: currentWallet.publicKey.toString(),
       },
     });
     const bountyNFTs: BountyNFT[] = nfts.results.map((nft) => {
@@ -196,31 +233,6 @@ export const Account: FC = () => {
       }, 100);
     }
   };
-
-  useEffect(() => {
-    if (router.query.id !== undefined) {
-      const fetchAccount = async () => {
-        const account = await getUser({
-          id: parseInt(router.query.id as string),
-        });
-        setAccount({ ...account, result: account });
-      };
-      fetchAccount();
-    } else {
-      setAccount({ ...account, result: currentUser });
-    }
-  }, [currentUser, router.isReady]);
-
-  useEffect(() => {
-    if (
-      account &&
-      account?.result?.profileWalletId &&
-      !bountyNFTs.result &&
-      !account.error
-    ) {
-      fetchNfts();
-    }
-  }, [account?.result, bountyNFTs]);
 
   if (!IS_CUSTODIAL && !currentWallet && !profileNFT)
     return <div>Please Connect a Wallet</div>;

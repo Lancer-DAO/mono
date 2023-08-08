@@ -106,7 +106,7 @@ const UserWalletProvider: FunctionComponent<IUserWalletState> = ({
         return;
       }
     }
-  }, [connected]);
+  }, [connected, publicKey]);
 
   useEffect(() => {
     if (user) {
