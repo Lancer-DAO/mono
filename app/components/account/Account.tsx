@@ -90,7 +90,7 @@ export const Account: FC = () => {
         }
       }
     };
-    if (!!currentUser) {
+    if (!!currentUser && currentWallet?.publicKey) {
       getUserAsync();
     }
   }, [currentUser, router.isReady, currentWallet?.publicKey]);
