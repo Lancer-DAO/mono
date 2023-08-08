@@ -1,24 +1,32 @@
-import { useEffect, useState } from "react";
+import { FC, useEffect, useState, Dispatch, SetStateAction } from "react";
 import { marked } from "marked";
 import { createFFA } from "@/escrow/adapters";
 import { useUserWallet } from "@/src/providers/userWalletProvider";
-import classnames from "classnames";
-import { Button, MultiSelectDropdown } from "@/components";
+import { MultiSelectDropdown } from "@/components";
 import { api } from "@/src/utils/api";
 import { PublicKey } from "@solana/web3.js";
 import { CREATE_BOUNTY_TUTORIAL_INITIAL_STATE } from "@/src/constants/tutorials";
-import { IS_MAINNET } from "@/src/constants";
+import { IS_MAINNET, smallClickAnimation } from "@/src/constants";
 import * as Prisma from "@prisma/client";
-import Image from "next/image";
 import { FORM_SECTION } from "@/types/forms";
 import { useBounty } from "@/src/providers/bountyProvider";
 import { useTutorial } from "@/src/providers/tutorialProvider";
 import Toggle, { ToggleConfig } from "../molecules/Toggle";
+import { motion } from "framer-motion";
 
-const Form: React.FC<{
-  setFormSection: (section: FORM_SECTION) => void;
+interface Props {
+  setFormSection: Dispatch<SetStateAction<FORM_SECTION>>;
   createAccountPoll: (publicKey: PublicKey) => void;
-}> = ({ setFormSection, createAccountPoll }) => {
+  formData: any;
+  setFormData: Dispatch<SetStateAction<any>>;
+}
+
+const Form: FC<Props> = ({
+  setFormSection,
+  createAccountPoll,
+  formData,
+  setFormData,
+}) => {
   const { currentUser, currentWallet, program, provider } = useUserWallet();
 
   const { setCurrentBounty } = useBounty();
@@ -28,17 +36,6 @@ const Form: React.FC<{
 
   const [creationType, setCreationType] = useState<"new" | "existing">("new");
   const [mint, setMint] = useState<Prisma.Mint>();
-  const [formData, setFormData] = useState({
-    category: "",
-    organizationName: "",
-    repositoryName: "",
-    issueTitle: "",
-    issuePrice: "",
-    issueDescription: "",
-    requirements: [],
-    estimatedTime: "",
-    isPrivate: true,
-  });
   const [isOpenMints, setIsOpenMints] = useState(false);
   const [isOpenIssue, setIsOpenIssue] = useState(false);
   const [mints, setMints] = useState<Prisma.Mint[]>([]);
@@ -142,7 +139,7 @@ const Form: React.FC<{
   };
 
   const handleRequirementsChange = (event) => {
-    const requirements = event.target.value.split(",");
+    const requirements: string[] = event.target.value.split(",");
     setFormData({
       ...formData,
       requirements,
@@ -162,344 +159,249 @@ const Form: React.FC<{
   };
 
   return (
-    <div className="w-full flex flex-col gap-4 text-2xl mt-6">
-      <div className="relative flex items-center">
-        <label className="text-textGreen/70 pr-4 pl-3">Category</label>
-        <div className="absolute top-1/2 -translate-y-1/2 -left-10">1</div>
-        <MultiSelectDropdown
-          options={categoryOptions}
-          selected={categoryOptions.filter(
-            (option) => option.value === formData.category ?? undefined
-          )}
-          onChange={(options) => {
-            setFormData({
-              ...formData,
-              category: options[0]?.value ?? "",
-            });
-          }}
-        />
-      </div>
-      <div className="relative flex items-center">
-        <label className="text-textGreen/70 pr-4 pl-3">Price</label>
-        <div className="absolute top-1/2 -translate-y-1/2 -left-10">2</div>
-        <div className="flex items-center gap-3">
-          <Toggle
-            toggleConfig={toggleConfig}
-            setToggleConfig={setToggleConfig}
+    <div>
+      <h1>Post a Quest</h1>
+      <div className="w-full flex flex-col gap-4 text-2xl mt-6">
+        <div className="relative flex items-center">
+          <label className="text-textGreen/70 pr-4 pl-3">Category</label>
+          <div className="absolute top-1/2 -translate-y-1/2 -left-10">1</div>
+          <MultiSelectDropdown
+            options={categoryOptions}
+            selected={categoryOptions.filter(
+              (option) => option.value === formData.category ?? undefined
+            )}
+            onChange={(options) => {
+              setFormData({
+                ...formData,
+                category: options[0]?.value ?? "",
+              });
+            }}
           />
-          <input
-            type="number"
-            className="placeholder:text-textGreen/70 border bg-neutralBtn 
+        </div>
+        <div className="relative flex items-center">
+          <label className="text-textGreen/70 pr-4 pl-3">Price</label>
+          <div className="absolute top-1/2 -translate-y-1/2 -left-10">2</div>
+          <div className="flex items-center gap-3">
+            <Toggle
+              toggleConfig={toggleConfig}
+              setToggleConfig={setToggleConfig}
+            />
+            <input
+              type="number"
+              className="placeholder:text-textGreen/70 border bg-neutralBtn 
             border-neutralBtnBorder w-full h-[50px] rounded-lg px-3
             disabled:opacity-50 disabled:cursor-not-allowed"
-            name="issuePrice"
-            placeholder="$2500"
-            disabled={toggleConfig.selected === "option2"}
-            value={formData.issuePrice}
+              name="issuePrice"
+              placeholder="$2500"
+              disabled={toggleConfig.selected === "option2"}
+              value={formData.issuePrice}
+              onChange={handleChange}
+              // onBlur={() => {
+              //   if (
+              //     formData.issueTitle !== "" &&
+              //     !!currentTutorialState &&
+              //     currentTutorialState.isActive
+              //   ) {
+              //     if (
+              //       currentTutorialState?.title ===
+              //         CREATE_BOUNTY_TUTORIAL_INITIAL_STATE.title &&
+              //       currentTutorialState.currentStep === 1
+              //     ) {
+              //       setCurrentTutorialState({
+              //         ...currentTutorialState,
+              //         currentStep: 2,
+              //       });
+              //     }
+              //   }
+              // }}
+              // onMouseLeave={() => {
+              //   if (
+              //     formData.issueTitle !== "" &&
+              //     !!currentTutorialState &&
+              //     currentTutorialState.isActive
+              //   ) {
+              //     if (
+              //       currentTutorialState?.title ===
+              //         CREATE_BOUNTY_TUTORIAL_INITIAL_STATE.title &&
+              //       currentTutorialState.currentStep === 1
+              //     ) {
+              //       setCurrentTutorialState({
+              //         ...currentTutorialState,
+              //         currentStep: 2,
+              //         isRunning: true,
+              //       });
+              //     }
+              //   }
+              // }}
+              // onFocus={() => {
+              //   if (!!currentTutorialState && currentTutorialState.isActive) {
+              //     if (
+              //       currentTutorialState?.title ===
+              //         CREATE_BOUNTY_TUTORIAL_INITIAL_STATE.title &&
+              //       currentTutorialState.currentStep === 1
+              //     ) {
+              //       setCurrentTutorialState({
+              //         ...currentTutorialState,
+              //         isRunning: false,
+              //       });
+              //     }
+              //   }
+              // }}
+            />
+          </div>
+        </div>
+        <div className="relative">
+          <div className="absolute top-1/2 -translate-y-1/2 -left-10">3</div>
+          <input
+            type="text"
+            className="placeholder:text-textGreen/70 border bg-neutralBtn 
+          border-neutralBtnBorder w-full h-[50px] rounded-lg px-3"
+            name="issueTitle"
+            placeholder="Title"
+            id="issue-title-input"
+            value={formData.issueTitle}
             onChange={handleChange}
-            // onBlur={() => {
-            //   if (
-            //     formData.issueTitle !== "" &&
-            //     !!currentTutorialState &&
-            //     currentTutorialState.isActive
-            //   ) {
-            //     if (
-            //       currentTutorialState?.title ===
-            //         CREATE_BOUNTY_TUTORIAL_INITIAL_STATE.title &&
-            //       currentTutorialState.currentStep === 1
-            //     ) {
-            //       setCurrentTutorialState({
-            //         ...currentTutorialState,
-            //         currentStep: 2,
-            //       });
-            //     }
-            //   }
-            // }}
-            // onMouseLeave={() => {
-            //   if (
-            //     formData.issueTitle !== "" &&
-            //     !!currentTutorialState &&
-            //     currentTutorialState.isActive
-            //   ) {
-            //     if (
-            //       currentTutorialState?.title ===
-            //         CREATE_BOUNTY_TUTORIAL_INITIAL_STATE.title &&
-            //       currentTutorialState.currentStep === 1
-            //     ) {
-            //       setCurrentTutorialState({
-            //         ...currentTutorialState,
-            //         currentStep: 2,
-            //         isRunning: true,
-            //       });
-            //     }
-            //   }
-            // }}
-            // onFocus={() => {
-            //   if (!!currentTutorialState && currentTutorialState.isActive) {
-            //     if (
-            //       currentTutorialState?.title ===
-            //         CREATE_BOUNTY_TUTORIAL_INITIAL_STATE.title &&
-            //       currentTutorialState.currentStep === 1
-            //     ) {
-            //       setCurrentTutorialState({
-            //         ...currentTutorialState,
-            //         isRunning: false,
-            //       });
-            //     }
-            //   }
-            // }}
+            onBlur={() => {
+              if (
+                formData.issueTitle !== "" &&
+                !!currentTutorialState &&
+                currentTutorialState.isActive
+              ) {
+                if (
+                  currentTutorialState?.title ===
+                    CREATE_BOUNTY_TUTORIAL_INITIAL_STATE.title &&
+                  currentTutorialState.currentStep === 1
+                ) {
+                  setCurrentTutorialState({
+                    ...currentTutorialState,
+                    currentStep: 2,
+                  });
+                }
+              }
+            }}
+            onMouseLeave={() => {
+              if (
+                formData.issueTitle !== "" &&
+                !!currentTutorialState &&
+                currentTutorialState.isActive
+              ) {
+                if (
+                  currentTutorialState?.title ===
+                    CREATE_BOUNTY_TUTORIAL_INITIAL_STATE.title &&
+                  currentTutorialState.currentStep === 1
+                ) {
+                  setCurrentTutorialState({
+                    ...currentTutorialState,
+                    currentStep: 2,
+                    isRunning: true,
+                  });
+                }
+              }
+            }}
+            onFocus={() => {
+              if (!!currentTutorialState && currentTutorialState.isActive) {
+                if (
+                  currentTutorialState?.title ===
+                    CREATE_BOUNTY_TUTORIAL_INITIAL_STATE.title &&
+                  currentTutorialState.currentStep === 1
+                ) {
+                  setCurrentTutorialState({
+                    ...currentTutorialState,
+                    isRunning: false,
+                  });
+                }
+              }
+            }}
           />
         </div>
-      </div>
-      <div className="relative">
-        <div className="absolute top-1/2 -translate-y-1/2 -left-10">3</div>
-        <input
-          type="text"
-          className="placeholder:text-textGreen/70 border bg-neutralBtn 
-          border-neutralBtnBorder w-full h-[50px] rounded-lg px-3"
-          name="issueTitle"
-          placeholder="Title"
-          id="issue-title-input"
-          value={formData.issueTitle}
-          onChange={handleChange}
-          onBlur={() => {
-            if (
-              formData.issueTitle !== "" &&
-              !!currentTutorialState &&
-              currentTutorialState.isActive
-            ) {
-              if (
-                currentTutorialState?.title ===
-                  CREATE_BOUNTY_TUTORIAL_INITIAL_STATE.title &&
-                currentTutorialState.currentStep === 1
-              ) {
-                setCurrentTutorialState({
-                  ...currentTutorialState,
-                  currentStep: 2,
-                });
-              }
-            }
-          }}
-          onMouseLeave={() => {
-            if (
-              formData.issueTitle !== "" &&
-              !!currentTutorialState &&
-              currentTutorialState.isActive
-            ) {
-              if (
-                currentTutorialState?.title ===
-                  CREATE_BOUNTY_TUTORIAL_INITIAL_STATE.title &&
-                currentTutorialState.currentStep === 1
-              ) {
-                setCurrentTutorialState({
-                  ...currentTutorialState,
-                  currentStep: 2,
-                  isRunning: true,
-                });
-              }
-            }
-          }}
-          onFocus={() => {
-            if (!!currentTutorialState && currentTutorialState.isActive) {
-              if (
-                currentTutorialState?.title ===
-                  CREATE_BOUNTY_TUTORIAL_INITIAL_STATE.title &&
-                currentTutorialState.currentStep === 1
-              ) {
-                setCurrentTutorialState({
-                  ...currentTutorialState,
-                  isRunning: false,
-                });
-              }
-            }
-          }}
-        />
-      </div>
-      <div className="relative">
-        <div className="absolute top-1/2 -translate-y-1/2 -left-10">4</div>
-        <input
-          type="text"
-          className="placeholder:text-textGreen/70 border bg-neutralBtn
+        <div className="relative">
+          <div className="absolute top-1/2 -translate-y-1/2 -left-10">4</div>
+          <input
+            type="text"
+            className="placeholder:text-textGreen/70 border bg-neutralBtn
             border-neutralBtnBorder w-full h-[50px] rounded-lg px-3"
-          name="issueDescription"
-          placeholder="Description"
-          id="issue-title-input"
-          value={formData.issueDescription}
-          onChange={handleChange}
-        />
-      </div>
-      <div className="relative">
-        <div className="absolute top-1/2 -translate-y-1/2 -left-10">5</div>
-        <input
-          type="text"
-          className="placeholder:text-textGreen/70 border bg-neutralBtn 
-          border-neutralBtnBorder w-full h-[50px] rounded-lg px-3"
-          name="requirements"
-          value={formData.requirements}
-          onChange={handleRequirementsChange}
-          placeholder="Tags (comma separated)"
-          id="issue-requirements-input"
-          onBlur={() => {
-            if (
-              formData.requirements.length !== 0 &&
-              !!currentTutorialState &&
-              currentTutorialState.isActive
-            ) {
-              if (
-                currentTutorialState?.title ===
-                  CREATE_BOUNTY_TUTORIAL_INITIAL_STATE.title &&
-                currentTutorialState.currentStep === 3
-              ) {
-                setCurrentTutorialState({
-                  ...currentTutorialState,
-                  currentStep: 4,
-                });
-              }
-            }
-          }}
-          onMouseLeave={() => {
-            if (
-              formData.requirements.length !== 0 &&
-              !!currentTutorialState &&
-              currentTutorialState.isActive
-            ) {
-              if (
-                currentTutorialState?.title ===
-                  CREATE_BOUNTY_TUTORIAL_INITIAL_STATE.title &&
-                currentTutorialState.currentStep === 3
-              ) {
-                setCurrentTutorialState({
-                  ...currentTutorialState,
-                  currentStep: 4,
-                  isRunning: true,
-                });
-              }
-            }
-          }}
-          onFocus={() => {
-            if (!!currentTutorialState && currentTutorialState.isActive) {
-              if (
-                currentTutorialState?.title ===
-                  CREATE_BOUNTY_TUTORIAL_INITIAL_STATE.title &&
-                currentTutorialState.currentStep === 3
-              ) {
-                setCurrentTutorialState({
-                  ...currentTutorialState,
-                  isRunning: false,
-                });
-              }
-            }
-          }}
-        />
-      </div>
-      {/* <label className="w-checkbox checkbox-field-2">
-        <div
-          className={classnames(
-            "w-checkbox-input w-checkbox-input--inputType-custom checkbox",
-            {
-              checked: formData.isPrivate,
-            }
-          )}
-          onClick={handleCheckboxChange}
-        />
-
-        <label className="check-label">Is this a private Bounty?</label>
-        <p className="check-paragraph">
-          If so, only users with the link will be able to see it.
-        </p>
-      </label>
-      <label>
-        Funding Type<span className="color-red">*</span>
-      </label>
-      {mints && (
-        <div
-          data-delay="0"
-          data-hover="false"
-          id="w-node-b1521c3c-4fa1-4011-ae36-88dcb6e746fb-0ae9cdc2"
-          className="w-dropdown"
-          onClick={toggleOpenRepo}
-        >
-          <main
-            className="dropdown-toggle-2 w-dropdown-toggle"
-            id="repo-dropdown-select"
-          >
-            {
-              <>
-                <div className="w-icon-dropdown-toggle"></div>
-                <div>
-                  {mint ? (
-                    <div className="flex">
-                      <Image
-                        className="rounded-[50%] mr-[10px]"
-                        src={mint.logo}
-                        alt={mint.name}
-                        width={36}
-                        height={36}
-                      />
-                      <div>{mint.name}</div>
-                    </div>
-                  ) : (
-                    <div>
-                      Select Mint <span className="color-red">* </span>
-                    </div>
-                  )}
-                </div>
-              </>
-            }
-          </main>
-          {isOpenMints && mints && (
-            <div
-              className="w-dropdown-list"
-              onMouseLeave={() => setIsOpenMints(false)}
-            >
-              {mints.map((mint) => (
-                <div
-                  onClick={() => handleChangeMint(mint)}
-                  key={mint.name}
-                  className="w-dropdown-link flex"
-                >
-                  <div className="flex">
-                    <Image
-                      className="rounded-[50%] mr-[10px]"
-                      src={mint.logo}
-                      alt={mint.name}
-                      width={36}
-                      height={36}
-                    />
-                    <div>{mint.name}</div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
+            name="issueDescription"
+            placeholder="Description"
+            id="issue-title-input"
+            value={formData.issueDescription}
+            onChange={handleChange}
+          />
         </div>
-      )}
-
-      <div className="required-helper">
-        <span className="color-red">* </span> Required
+        <div className="relative">
+          <div className="absolute top-1/2 -translate-y-1/2 -left-10">5</div>
+          <input
+            type="text"
+            className="placeholder:text-textGreen/70 border bg-neutralBtn 
+          border-neutralBtnBorder w-full h-[50px] rounded-lg px-3"
+            name="requirements"
+            value={formData.requirements}
+            onChange={handleRequirementsChange}
+            placeholder="Tags (comma separated)"
+            id="issue-requirements-input"
+            onBlur={() => {
+              if (
+                formData.requirements.length !== 0 &&
+                !!currentTutorialState &&
+                currentTutorialState.isActive
+              ) {
+                if (
+                  currentTutorialState?.title ===
+                    CREATE_BOUNTY_TUTORIAL_INITIAL_STATE.title &&
+                  currentTutorialState.currentStep === 3
+                ) {
+                  setCurrentTutorialState({
+                    ...currentTutorialState,
+                    currentStep: 4,
+                  });
+                }
+              }
+            }}
+            onMouseLeave={() => {
+              if (
+                formData.requirements.length !== 0 &&
+                !!currentTutorialState &&
+                currentTutorialState.isActive
+              ) {
+                if (
+                  currentTutorialState?.title ===
+                    CREATE_BOUNTY_TUTORIAL_INITIAL_STATE.title &&
+                  currentTutorialState.currentStep === 3
+                ) {
+                  setCurrentTutorialState({
+                    ...currentTutorialState,
+                    currentStep: 4,
+                    isRunning: true,
+                  });
+                }
+              }
+            }}
+            onFocus={() => {
+              if (!!currentTutorialState && currentTutorialState.isActive) {
+                if (
+                  currentTutorialState?.title ===
+                    CREATE_BOUNTY_TUTORIAL_INITIAL_STATE.title &&
+                  currentTutorialState.currentStep === 3
+                ) {
+                  setCurrentTutorialState({
+                    ...currentTutorialState,
+                    isRunning: false,
+                  });
+                }
+              }
+            }}
+          />
+        </div>
+        <div className="w-full flex items-center justify-end">
+          <motion.button
+            {...smallClickAnimation}
+            onClick={() => setFormSection("MEDIA")}
+            className="bg-primaryBtn border border-primaryBtnBorder text-textGreen 
+            w-[100px] h-[50px] rounded-lg text-base"
+          >
+            NEXT
+          </motion.button>
+        </div>
       </div>
-      <Button
-        disabled={
-          failedToCreateIssue ||
-          !formData.estimatedTime ||
-          !formData.requirements
-          // ||
-          // !currentWallet
-        }
-        disabledText={
-          failedToCreateIssue
-            ? "Failed to Create Issue"
-            : "Please fill all required fields"
-        }
-        onClick={createBounty}
-        id="create-bounty-button"
-      >
-        {failedToCreateIssue
-          ? "Failed to Create Issue"
-          : !!currentWallet
-          ? "Submit"
-          : "Please connect your wallet"}
-      </Button> */}
     </div>
   );
 };
