@@ -222,6 +222,8 @@ export const Account: FC = () => {
     }
   }, [account?.result, bountyNFTs]);
 
+  if (!IS_CUSTODIAL && !currentWallet && !profileNFT)
+    return <div>Please Connect a Wallet</div>;
   return (
     <>
       {account?.isLoading && <LoadingBar title={account.loadingPrompt} />}
@@ -231,9 +233,6 @@ export const Account: FC = () => {
 
       {account?.result && (
         <div className="w-full flex flex-col md:flex-row items-center md:items-start gap-10 md:gap-5 justify-center">
-          {!IS_CUSTODIAL && !currentWallet && !profileNFT && (
-            <div>Please Connect a Wallet</div>
-          )}
           {profileNFT && (
             <>
               <ProfileNFTCard
