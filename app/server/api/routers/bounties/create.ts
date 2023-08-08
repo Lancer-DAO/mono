@@ -71,6 +71,8 @@ export const createBounty = protectedProcedure
         user,
         wallet
       );
-      return queries.bounty.get(bounty.id, user.id);
+      const bountyInfo = await queries.bounty.get(bounty.id, user.id);
+      console.log(JSON.stringify(bountyInfo));
+      return bountyInfo;
     }
   );
