@@ -138,7 +138,21 @@ const PreviewForm: FC<Props> = ({
           {/* 1. preview card (addarg working on this) */}
           <PreviewCardBase title="Quest">Preview Card</PreviewCardBase>
           {/* 2. quest links card */}
-          <PreviewCardBase title="Links">Preview Card</PreviewCardBase>
+          <PreviewCardBase title="Links">
+            <div className="w-full flex flex-col items-center justify-start gap-2 px-4">
+              {formData.links.map((link: string, index: number) => (
+                <div
+                  key={index}
+                  className="w-full h-12 px-3 border-neutralBtnBorder bg-neutralBtn text-xl py-2 rounded-lg overflow-hidden ellipsis"
+                >
+                  {link}
+                </div>
+              ))}
+              <div className="w-full h-24 px-3 border-neutralBtnBorder bg-neutralBtn text-xl py-2 rounded-lg overflow-hidden ellipsis">
+                {formData.comment}
+              </div>
+            </div>
+          </PreviewCardBase>
           {/* 3. quest photos card */}
           <PreviewCardBase title="Photos">Preview Card</PreviewCardBase>
         </div>
