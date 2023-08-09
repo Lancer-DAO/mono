@@ -7,6 +7,7 @@ export interface FormData {
   issueDescription: string;
   requirements: string[];
   links: string[];
+  media: string[];
   comment?: string;
   organizationName?: string;
   repositoryName?: string;

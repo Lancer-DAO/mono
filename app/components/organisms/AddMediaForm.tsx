@@ -2,6 +2,7 @@ import { FC, Dispatch, SetStateAction } from "react";
 import { smallClickAnimation } from "@/src/constants";
 import { FORM_SECTION, FormData } from "@/types/forms";
 import { motion } from "framer-motion";
+import { ImageUpload, PreviewCardBase } from "..";
 
 interface Props {
   setFormSection: Dispatch<SetStateAction<FORM_SECTION>>;
@@ -52,7 +53,7 @@ const AddMediaForm: FC<Props> = ({ setFormSection, formData, setFormData }) => {
       <div className="w-full flex flex-col gap-4 mt-6">
         <div>
           <div className="relative w-full flex flex-col gap-2">
-            <div className="absolute top-3 -left-10">6</div>
+            <div className="absolute top-3 -left-10 text-2xl">6</div>
             {formData.links.map((link: string, index: number) => (
               <div className="flex items-center gap-1">
                 <input
@@ -87,12 +88,22 @@ const AddMediaForm: FC<Props> = ({ setFormSection, formData, setFormData }) => {
           </motion.button>
         </div>
         <div className="relative">
-          <div className="absolute top-1/2 -translate-y-1/2 -left-10">7</div>
+          <div className="absolute top-1/2 -translate-y-1/2 -left-10 text-2xl">
+            7
+          </div>
+          {/* TODO: drag and drop / upload media - proof on concept not working */}
+          {/* <PreviewCardBase align="start">Add Media</PreviewCardBase> */}
+          {/* <ImageUpload /> */}
+        </div>
+        <div className="relative">
+          <div className="absolute top-1/2 -translate-y-1/2 -left-10 text-2xl">
+            8
+          </div>
           <input
             type="text"
             className="placeholder:text-textGreen/70 border bg-neutralBtn
             border-neutralBtnBorder w-full h-[150px] rounded-lg px-3"
-            name="comments"
+            name="comment"
             placeholder="Additional comments"
             id="additional-comments"
             value={formData.comment}

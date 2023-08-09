@@ -1,18 +1,13 @@
 import { FC, useEffect, useState, Dispatch, SetStateAction } from "react";
-import { marked } from "marked";
-import { createFFA } from "@/escrow/adapters";
-import { useUserWallet } from "@/src/providers/userWalletProvider";
 import { MultiSelectDropdown } from "@/components";
 import { api } from "@/src/utils/api";
-import { PublicKey } from "@solana/web3.js";
 import { CREATE_BOUNTY_TUTORIAL_INITIAL_STATE } from "@/src/constants/tutorials";
-import { IS_MAINNET, smallClickAnimation } from "@/src/constants";
-import * as Prisma from "@prisma/client";
+import { smallClickAnimation } from "@/src/constants";
 import { FORM_SECTION } from "@/types/forms";
-import { useBounty } from "@/src/providers/bountyProvider";
 import { useTutorial } from "@/src/providers/tutorialProvider";
 import Toggle, { ToggleConfig } from "../molecules/Toggle";
 import { motion } from "framer-motion";
+import { toast } from "react-hot-toast";
 
 interface Props {
   setFormSection: Dispatch<SetStateAction<FORM_SECTION>>;
@@ -22,16 +17,12 @@ interface Props {
 
 const Form: FC<Props> = ({ setFormSection, formData, setFormData }) => {
   const { currentTutorialState, setCurrentTutorialState } = useTutorial();
-  const { mutateAsync: getMintsAPI } = api.mints.getMints.useMutation();
 
-  const [mint, setMint] = useState<Prisma.Mint>();
-  const [isOpenMints, setIsOpenMints] = useState(false);
-  const [mints, setMints] = useState<Prisma.Mint[]>([]);
-  const [failedToGetRepos, setFailedToGetRepos] = useState(false);
-  const [failedToCreateIssue, setFailedToCreateIssue] = useState(false);
-
-  const [isPreview, setIsPreview] = useState(false);
-  const [isSubmittingIssue, setIsSubmittingIssue] = useState(false);
+  // const [mint, setMint] = useState<Prisma.Mint>();
+  // const [isOpenMints, setIsOpenMints] = useState(false);
+  // const [mints, setMints] = useState<Prisma.Mint[]>([]);
+  // const [failedToGetRepos, setFailedToGetRepos] = useState(false);
+  // const [failedToCreateIssue, setFailedToCreateIssue] = useState(false);
   const [toggleConfig, setToggleConfig] = useState<ToggleConfig>({
     option1: {
       title: "Fixed",
@@ -49,13 +40,13 @@ const Form: FC<Props> = ({ setFormSection, formData, setFormData }) => {
     },
   ];
 
-  useEffect(() => {
-    const getMints = async () => {
-      const mints = await getMintsAPI();
-      setMints(mints);
-    };
-    getMints();
-  }, []);
+  // useEffect(() => {
+  //   const getMints = async () => {
+  //     const mints = await getMintsAPI();
+  //     setMints(mints);
+  //   };
+  //   getMints();
+  // }, []);
 
   const handleChange = (event) => {
     setFormData({
@@ -64,10 +55,10 @@ const Form: FC<Props> = ({ setFormSection, formData, setFormData }) => {
     });
   };
 
-  const handleChangeMint = (mint: Prisma.Mint) => {
-    const newMint = mints.find((_mint) => _mint.name === mint.name);
-    setMint(newMint);
-  };
+  // const handleChangeMint = (mint: Prisma.Mint) => {
+  //   const newMint = mints.find((_mint) => _mint.name === mint.name);
+  //   setMint(newMint);
+  // };
 
   const handleRequirementsChange = (event) => {
     const requirements: string[] = event.target.value.split(",");
@@ -75,6 +66,20 @@ const Form: FC<Props> = ({ setFormSection, formData, setFormData }) => {
       ...formData,
       requirements,
     });
+  };
+
+  const handleNextSection = () => {
+    // if (
+    //   formData.issueTitle === "" ||
+    //   formData.issueDescription === "" ||
+    //   formData.requirements.length === 0 ||
+    //   formData.issuePrice === "" ||
+    //   formData.category === ""
+    // ) {
+    //   toast.error("Please fill out all fields");
+    // } else {
+    setFormSection("MEDIA");
+    // }
   };
 
   return (
@@ -313,7 +318,7 @@ const Form: FC<Props> = ({ setFormSection, formData, setFormData }) => {
         <div className="w-full flex items-center justify-end">
           <motion.button
             {...smallClickAnimation}
-            onClick={() => setFormSection("MEDIA")}
+            onClick={() => handleNextSection()}
             className="bg-primaryBtn border border-primaryBtnBorder text-textGreen 
             w-[100px] h-[50px] rounded-lg text-base"
           >

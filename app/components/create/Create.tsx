@@ -4,6 +4,7 @@ import {
   CreateBountyForm,
   FundBountyForm,
   MarketingIcon,
+  PreviewCardBase,
 } from "@/components";
 import { PublicKey } from "@solana/web3.js";
 import { FORM_SECTION, FormData } from "@/types/forms";
@@ -21,6 +22,7 @@ export const Create = () => {
     issueDescription: "",
     requirements: [""],
     links: [""],
+    media: [""],
     comment: "",
     organizationName: "",
     repositoryName: "",
@@ -35,7 +37,7 @@ export const Create = () => {
   };
 
   return (
-    <div className="w-full max-w-[1400px] mx-auto flex flex-col md:flex-row md:justify-evenly mt-10">
+    <div className="w-full max-w-[1200px] mx-auto flex flex-col md:flex-row md:justify-evenly mt-10">
       {/* quest info entry section */}
       <div
         className={`${formSection === "PREVIEW" ? "w-full" : "md:w-[515px]"}`}
@@ -68,9 +70,8 @@ export const Create = () => {
       </div>
       {/* TODO: add preview section */}
       {formSection !== "PREVIEW" && (
-        <div className="md:w-[515px] border border-red-500">
-          Quest preview here
-          <MarketingIcon />
+        <div className="md:w-[515px]">
+          <PreviewCardBase>Preview Card</PreviewCardBase>
         </div>
       )}
     </div>

@@ -22,6 +22,7 @@ const AccountHeaderOptions = dynamic(
 const AddReferrerModal = dynamic(() => import("./molecules/AddReferrerModal"));
 const ApiKeyModal = dynamic(() => import("./molecules/ApiKeyModal"));
 const CoinflowFund = dynamic(() => import("./molecules/CoinflowFund"));
+const ImageUpload = dynamic(() => import("./molecules/ImageUpload"));
 const MultiSelectDropdown = dynamic(
   () => import("./molecules/MultiSelectDropdown")
 );
@@ -62,6 +63,7 @@ export {
   AddReferrerModal,
   ApiKeyModal,
   CoinflowFund,
+  ImageUpload,
   MultiSelectDropdown,
   RangeSlider,
   Toggle,
