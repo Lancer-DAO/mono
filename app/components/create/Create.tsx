@@ -1,9 +1,8 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   AddMediaForm,
   CreateBountyForm,
   FundBountyForm,
-  MarketingIcon,
   PreviewCardBase,
 } from "@/components";
 import { PublicKey } from "@solana/web3.js";
@@ -20,7 +19,7 @@ export const Create = () => {
     issuePrice: "",
     issueTitle: "",
     issueDescription: "",
-    requirements: [""],
+    tags: [""],
     links: [""],
     media: [""],
     comment: "",
@@ -36,6 +35,17 @@ export const Create = () => {
     });
   };
 
+  const handleChange = (event) => {
+    setFormData({
+      ...formData,
+      [event.target.name]: event.target.value,
+    });
+  };
+
+  // useEffect(() => {
+  //   console.log("formData", formData);
+  // }, [formData]);
+
   return (
     <div className="w-full max-w-[1200px] mx-auto flex flex-col md:flex-row md:justify-evenly mt-10">
       {/* quest info entry section */}
@@ -47,6 +57,7 @@ export const Create = () => {
             setFormSection={setFormSection}
             formData={formData}
             setFormData={setFormData}
+            handleChange={handleChange}
           />
         )}
         {formSection === "MEDIA" && (
@@ -54,12 +65,14 @@ export const Create = () => {
             setFormSection={setFormSection}
             formData={formData}
             setFormData={setFormData}
+            handleChange={handleChange}
           />
         )}
         {formSection === "PREVIEW" && (
           <PreviewForm
             setFormSection={setFormSection}
             formData={formData}
+            setFormData={setFormData}
             createAccountPoll={createAccountPoll}
           />
         )}
@@ -70,7 +83,7 @@ export const Create = () => {
       </div>
       {/* TODO: add preview section */}
       {formSection !== "PREVIEW" && (
-        <div className="md:w-[515px]">
+        <div className="md:w-[515px] pt-10">
           <PreviewCardBase>Preview Card</PreviewCardBase>
         </div>
       )}

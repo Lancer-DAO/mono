@@ -1,4 +1,4 @@
-import { FC, useState, Dispatch, SetStateAction } from "react";
+import { FC, useState, Dispatch, SetStateAction, useEffect } from "react";
 import { useUserWallet } from "@/src/providers/userWalletProvider";
 import {
   CREATE_BOUNTY_TUTORIAL_INITIAL_STATE,
@@ -15,16 +15,19 @@ import { ToggleConfig } from "../molecules/Toggle";
 import { PublicKey } from "@solana/web3.js";
 import { createFFA } from "@/escrow/adapters";
 import { api } from "@/utils";
+import { Bounty } from "@/types";
 
 interface Props {
   setFormSection: Dispatch<SetStateAction<FORM_SECTION>>;
   formData: FormData;
+  setFormData: Dispatch<SetStateAction<FormData>>;
   createAccountPoll: (publicKey: PublicKey) => void;
 }
 
 const PreviewForm: FC<Props> = ({
   setFormSection,
   formData,
+  setFormData,
   createAccountPoll,
 }) => {
   const { currentUser, currentWallet, program, provider } = useUserWallet();
@@ -68,14 +71,19 @@ const PreviewForm: FC<Props> = ({
       mintKey
     );
     createAccountPoll(escrowKey);
-    const bounty = await mutateAsync({
+    const bounty: Bounty = await mutateAsync({
       email: currentUser.email,
+      // category: formData.category,
+      // no price here?
+      title: formData.issueTitle,
       description: formData.issueDescription,
+      tags: formData.tags,
+      // links: formData.links,
+      // media: formData.media,
+      // comment: formData.comment,
       estimatedTime: parseFloat(formData.estimatedTime),
       isPrivate: formData.isPrivate,
       // isPrivateRepo: formData.isPrivate || repo ? repo.private : false,
-      title: formData.issueTitle,
-      tags: formData.requirements,
       publicKey: currentWallet.publicKey.toString(),
       escrowKey: escrowKey.toString(),
       transactionSignature: signature,
@@ -85,10 +93,23 @@ const PreviewForm: FC<Props> = ({
       network: IS_MAINNET ? "mainnet" : "devnet",
     });
 
-    setFormSection("FUND");
-
+    setFormSection("SUCCESS");
     setCurrentBounty(bounty);
   };
+
+  useEffect(() => {
+    if (toggleConfig.selected === "option2") {
+      setFormData({
+        ...formData,
+        isPrivate: true,
+      });
+    } else {
+      setFormData({
+        ...formData,
+        isPrivate: false,
+      });
+    }
+  }, [toggleConfig.selected]);
 
   return (
     <div>

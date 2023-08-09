@@ -5,7 +5,7 @@ export interface FormData {
   issuePrice: string;
   issueTitle: string;
   issueDescription: string;
-  requirements: string[];
+  tags: string[];
   links: string[];
   media: string[];
   comment?: string;

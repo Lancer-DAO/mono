@@ -2,22 +2,21 @@ import { FC, Dispatch, SetStateAction } from "react";
 import { smallClickAnimation } from "@/src/constants";
 import { FORM_SECTION, FormData } from "@/types/forms";
 import { motion } from "framer-motion";
-import { ImageUpload, PreviewCardBase } from "..";
+import { ImageUpload, PreviewCardBase } from "@/components";
 
 interface Props {
   setFormSection: Dispatch<SetStateAction<FORM_SECTION>>;
   formData: FormData;
   setFormData: Dispatch<SetStateAction<FormData>>;
+  handleChange: (event) => void;
 }
 
-const AddMediaForm: FC<Props> = ({ setFormSection, formData, setFormData }) => {
-  const handleChange = (event) => {
-    setFormData({
-      ...formData,
-      [event.target.name]: event.target.value,
-    });
-  };
-
+const AddMediaForm: FC<Props> = ({
+  setFormSection,
+  formData,
+  setFormData,
+  handleChange,
+}) => {
   const addLink = () => {
     setFormData({
       ...formData,
@@ -96,13 +95,10 @@ const AddMediaForm: FC<Props> = ({ setFormSection, formData, setFormData }) => {
           {/* <ImageUpload /> */}
         </div>
         <div className="relative">
-          <div className="absolute top-1/2 -translate-y-1/2 -left-10 text-2xl">
-            8
-          </div>
-          <input
-            type="text"
-            className="placeholder:text-textGreen/70 border bg-neutralBtn
-            border-neutralBtnBorder w-full h-[150px] rounded-lg px-3"
+          <div className="absolute top-3 -left-10 text-2xl">8</div>
+          <textarea
+            className="placeholder:text-textGreen/70 border bg-neutralBtn 
+            border-neutralBtnBorder w-full h-[150px] rounded-lg px-3 py-2 resize-y"
             name="comment"
             placeholder="Additional comments"
             id="additional-comments"

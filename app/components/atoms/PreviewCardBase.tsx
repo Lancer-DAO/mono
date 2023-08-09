@@ -14,7 +14,12 @@ const PreviewCardBase: FC<Props> = ({
   align = "center",
 }) => {
   return (
-    <div className="flex flex-col gap-3">
+    <div
+      className="flex flex-col gap-3"
+      style={{
+        alignItems: `${align === "center" ? "center" : `align-${align}`}`,
+      }}
+    >
       {title && <h1 className="text-2xl font-bold text-center">{title}</h1>}
       <div
         className="border-[3px] border-neutralBtnBorder rounded-xl
@@ -22,7 +27,6 @@ const PreviewCardBase: FC<Props> = ({
         style={{
           width: width,
           height: width,
-          alignItems: `${align === "center" ? "center" : `align-${align}`}`,
         }}
       >
         {children}

@@ -13,9 +13,15 @@ interface Props {
   setFormSection: Dispatch<SetStateAction<FORM_SECTION>>;
   formData: any;
   setFormData: Dispatch<SetStateAction<any>>;
+  handleChange: (event) => void;
 }
 
-const Form: FC<Props> = ({ setFormSection, formData, setFormData }) => {
+const Form: FC<Props> = ({
+  setFormSection,
+  formData,
+  setFormData,
+  handleChange,
+}) => {
   const { currentTutorialState, setCurrentTutorialState } = useTutorial();
 
   // const [mint, setMint] = useState<Prisma.Mint>();
@@ -48,23 +54,16 @@ const Form: FC<Props> = ({ setFormSection, formData, setFormData }) => {
   //   getMints();
   // }, []);
 
-  const handleChange = (event) => {
-    setFormData({
-      ...formData,
-      [event.target.name]: event.target.value,
-    });
-  };
-
   // const handleChangeMint = (mint: Prisma.Mint) => {
   //   const newMint = mints.find((_mint) => _mint.name === mint.name);
   //   setMint(newMint);
   // };
 
   const handleRequirementsChange = (event) => {
-    const requirements: string[] = event.target.value.split(",");
+    const tags: string[] = event.target.value.split(",");
     setFormData({
       ...formData,
-      requirements,
+      tags,
     });
   };
 
@@ -72,7 +71,7 @@ const Form: FC<Props> = ({ setFormSection, formData, setFormData }) => {
     // if (
     //   formData.issueTitle === "" ||
     //   formData.issueDescription === "" ||
-    //   formData.requirements.length === 0 ||
+    //   formData.tags.length === 0 ||
     //   formData.issuePrice === "" ||
     //   formData.category === ""
     // ) {
@@ -81,6 +80,15 @@ const Form: FC<Props> = ({ setFormSection, formData, setFormData }) => {
     setFormSection("MEDIA");
     // }
   };
+
+  useEffect(() => {
+    if (toggleConfig.selected === "option2") {
+      setFormData({
+        ...formData,
+        issuePrice: "Requesting Quote",
+      });
+    }
+  }, [toggleConfig.selected]);
 
   return (
     <div>
@@ -257,14 +265,14 @@ const Form: FC<Props> = ({ setFormSection, formData, setFormData }) => {
             type="text"
             className="placeholder:text-textGreen/70 border bg-neutralBtn 
             border-neutralBtnBorder w-full h-[50px] rounded-lg px-3"
-            name="requirements"
-            value={formData.requirements}
+            name="tags"
+            value={formData.tags}
             onChange={handleRequirementsChange}
             placeholder="Tags (comma separated)"
             id="issue-requirements-input"
             onBlur={() => {
               if (
-                formData.requirements.length !== 0 &&
+                formData.tags.length !== 0 &&
                 !!currentTutorialState &&
                 currentTutorialState.isActive
               ) {
@@ -282,7 +290,7 @@ const Form: FC<Props> = ({ setFormSection, formData, setFormData }) => {
             }}
             onMouseLeave={() => {
               if (
-                formData.requirements.length !== 0 &&
+                formData.tags.length !== 0 &&
                 !!currentTutorialState &&
                 currentTutorialState.isActive
               ) {
