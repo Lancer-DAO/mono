@@ -7,29 +7,37 @@ export const createBounty = protectedProcedure
   .input(
     z.object({
       email: z.string(),
+      category: z.string(),
+      title: z.string(),
       description: z.string(),
+      tags: z.array(z.string()),
+      links: z.array(z.string()),
+      media: z.array(z.string()),
+      comment: z.string(),
       estimatedTime: z.number(),
       isPrivate: z.boolean(),
-      title: z.string(),
-      tags: z.array(z.string()),
       publicKey: z.string(),
       escrowKey: z.string(),
       transactionSignature: z.string(),
       timestamp: z.string(),
       chainName: z.string(),
-      network: z.string(),
       mint: z.number(),
+      network: z.string(),
     })
   )
   .mutation(
     async ({
       input: {
         email,
+        category,
+        title,
         description,
+        tags,
+        links,
+        media,
+        comment,
         estimatedTime,
         isPrivate,
-        title,
-        tags,
         publicKey,
         escrowKey,
         transactionSignature,
@@ -66,8 +74,12 @@ export const createBounty = protectedProcedure
         estimatedTime,
         isPrivate,
         title,
+        category,
         escrow,
         _tags,
+        links,
+        media,
+        comment,
         user,
         wallet
       );

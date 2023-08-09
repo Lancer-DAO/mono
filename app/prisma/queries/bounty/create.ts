@@ -7,8 +7,12 @@ export const create = async (
   estimatedTime: number,
   isPrivate: boolean,
   title: string,
+  category: string,
   escrow: Prisma.Escrow,
   tags: Prisma.Tag[],
+  links: string[],
+  media: string[],
+  comment: string,
   user: Prisma.User,
   wallet: Prisma.Wallet
 ): Promise<Prisma.Bounty> => {
@@ -20,6 +24,7 @@ export const create = async (
       isPrivate,
       state: "new",
       title,
+      category,
       escrow: {
         connect: {
           id: escrow.id,
@@ -32,6 +37,9 @@ export const create = async (
           };
         }),
       },
+      links,
+      media,
+      comment,
       users: {
         create: {
           userid: user.id,
