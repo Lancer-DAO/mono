@@ -16,28 +16,16 @@ import { motion } from "framer-motion";
 
 interface Props {
   setFormSection: Dispatch<SetStateAction<FORM_SECTION>>;
-  createAccountPoll: (publicKey: PublicKey) => void;
   formData: any;
   setFormData: Dispatch<SetStateAction<any>>;
 }
 
-const Form: FC<Props> = ({
-  setFormSection,
-  createAccountPoll,
-  formData,
-  setFormData,
-}) => {
-  const { currentUser, currentWallet, program, provider } = useUserWallet();
-
-  const { setCurrentBounty } = useBounty();
+const Form: FC<Props> = ({ setFormSection, formData, setFormData }) => {
   const { currentTutorialState, setCurrentTutorialState } = useTutorial();
-  const { mutateAsync } = api.bounties.createBounty.useMutation();
   const { mutateAsync: getMintsAPI } = api.mints.getMints.useMutation();
 
-  const [creationType, setCreationType] = useState<"new" | "existing">("new");
   const [mint, setMint] = useState<Prisma.Mint>();
   const [isOpenMints, setIsOpenMints] = useState(false);
-  const [isOpenIssue, setIsOpenIssue] = useState(false);
   const [mints, setMints] = useState<Prisma.Mint[]>([]);
   const [failedToGetRepos, setFailedToGetRepos] = useState(false);
   const [failedToCreateIssue, setFailedToCreateIssue] = useState(false);
@@ -61,12 +49,6 @@ const Form: FC<Props> = ({
     },
   ];
 
-  const toggleOpenRepo = () => {
-    setIsOpenMints(!isOpenMints);
-  };
-  // const toggleOpenIssue = () => setIsOpenIssue(!isOpenIssue);
-  const togglePreview = () => setIsPreview(!isPreview);
-
   useEffect(() => {
     const getMints = async () => {
       const mints = await getMintsAPI();
@@ -74,50 +56,6 @@ const Form: FC<Props> = ({
     };
     getMints();
   }, []);
-
-  const createBounty = async () => {
-    setIsSubmittingIssue(true);
-    if (
-      currentTutorialState?.title ===
-        CREATE_BOUNTY_TUTORIAL_INITIAL_STATE.title &&
-      currentTutorialState.currentStep === 5
-    ) {
-      setCurrentTutorialState({
-        ...currentTutorialState,
-        isRunning: false,
-      });
-    }
-
-    const mintKey = new PublicKey(mint.publicKey);
-
-    const { timestamp, signature, escrowKey } = await createFFA(
-      currentWallet,
-      program,
-      provider,
-      mintKey
-    );
-    createAccountPoll(escrowKey);
-    const bounty = await mutateAsync({
-      email: currentUser.email,
-      description: formData.issueDescription,
-      estimatedTime: parseFloat(formData.estimatedTime),
-      isPrivate: formData.isPrivate,
-      // isPrivateRepo: formData.isPrivate || repo ? repo.private : false,
-      title: formData.issueTitle,
-      tags: formData.requirements,
-      publicKey: currentWallet.publicKey.toString(),
-      escrowKey: escrowKey.toString(),
-      transactionSignature: signature,
-      timestamp: timestamp,
-      chainName: "Solana",
-      mint: mint.id,
-      network: IS_MAINNET ? "mainnet" : "devnet",
-    });
-
-    setFormSection("FUND");
-
-    setCurrentBounty(bounty);
-  };
 
   const handleChange = (event) => {
     setFormData({
@@ -131,31 +69,12 @@ const Form: FC<Props> = ({
     setMint(newMint);
   };
 
-  const handleCheckboxChange = (event) => {
-    setFormData({
-      ...formData,
-      isPrivate: !formData.isPrivate,
-    });
-  };
-
   const handleRequirementsChange = (event) => {
     const requirements: string[] = event.target.value.split(",");
     setFormData({
       ...formData,
       requirements,
     });
-  };
-
-  const handleDescriptionChange = (event) => {
-    setFormData({
-      ...formData,
-      issueDescription: event.target.value,
-    });
-  };
-
-  const previewMarkup = () => {
-    const markdown = marked.parse(formData.issueDescription, { breaks: true });
-    return { __html: markdown };
   };
 
   return (
@@ -189,8 +108,8 @@ const Form: FC<Props> = ({
             <input
               type="number"
               className="placeholder:text-textGreen/70 border bg-neutralBtn 
-            border-neutralBtnBorder w-full h-[50px] rounded-lg px-3
-            disabled:opacity-50 disabled:cursor-not-allowed"
+              border-neutralBtnBorder w-full h-[50px] rounded-lg px-3
+              disabled:opacity-50 disabled:cursor-not-allowed"
               name="issuePrice"
               placeholder="$2500"
               disabled={toggleConfig.selected === "option2"}
@@ -255,7 +174,7 @@ const Form: FC<Props> = ({
           <input
             type="text"
             className="placeholder:text-textGreen/70 border bg-neutralBtn 
-          border-neutralBtnBorder w-full h-[50px] rounded-lg px-3"
+            border-neutralBtnBorder w-full h-[50px] rounded-lg px-3"
             name="issueTitle"
             placeholder="Title"
             id="issue-title-input"
@@ -332,7 +251,7 @@ const Form: FC<Props> = ({
           <input
             type="text"
             className="placeholder:text-textGreen/70 border bg-neutralBtn 
-          border-neutralBtnBorder w-full h-[50px] rounded-lg px-3"
+            border-neutralBtnBorder w-full h-[50px] rounded-lg px-3"
             name="requirements"
             value={formData.requirements}
             onChange={handleRequirementsChange}

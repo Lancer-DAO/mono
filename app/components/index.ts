@@ -11,6 +11,7 @@ const CoinflowOfframp = dynamic(() => import("./atoms/CoinflowOfframp"));
 const ContributorInfo = dynamic(() => import("./atoms/ContributorInfo"));
 const MarketingIcon = dynamic(() => import("./@icons/MarketingIcon"));
 const LoadingBar = dynamic(() => import("./atoms/LoadingBar"));
+const PreviewCardBase = dynamic(() => import("./atoms/PreviewCardBase"));
 const ProgressBar = dynamic(() => import("./atoms/progressBar"));
 const PubKey = dynamic(() => import("./atoms/PubKey"));
 
@@ -30,10 +31,12 @@ const TutorialsModal = dynamic(() => import("./molecules/TutorialsModal"));
 const WalletInfo = dynamic(() => import("./molecules/WalletInfo"));
 
 // organisms
+const AddMediaForm = dynamic(() => import("./organisms/AddMediaForm"));
 const CreateBountyForm = dynamic(() => import("./organisms/CreateBountyForm"));
 const FundBountyForm = dynamic(() => import("./organisms/FundBountyForm"));
 const Header = dynamic(() => import("./organisms/Header"));
 const JoyrideWrapper = dynamic(() => import("./organisms/JoyrideWrapper"));
+const PreviewForm = dynamic(() => import("./organisms/PreviewForm"));
 
 // templates
 const DefaultLayout = dynamic(() => import("./templates/DefaultLayout"));
@@ -50,6 +53,7 @@ export {
   CoinflowOfframp,
   ContributorInfo,
   LoadingBar,
+  PreviewCardBase,
   ProgressBar,
   PubKey,
 
@@ -65,10 +69,12 @@ export {
   WalletInfo,
 
   // organisms
+  AddMediaForm,
   CreateBountyForm,
   FundBountyForm,
   Header,
   JoyrideWrapper,
+  PreviewForm,
 
   // templates
   DefaultLayout,

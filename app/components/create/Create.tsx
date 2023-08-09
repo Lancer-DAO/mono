@@ -1,8 +1,14 @@
 import React, { useState } from "react";
-import { CreateBountyForm, FundBountyForm, MarketingIcon } from "@/components";
+import {
+  AddMediaForm,
+  CreateBountyForm,
+  FundBountyForm,
+  MarketingIcon,
+} from "@/components";
 import { PublicKey } from "@solana/web3.js";
 import { FORM_SECTION, FormData } from "@/types/forms";
 import { useUserWallet } from "@/src/providers";
+import PreviewForm from "../organisms/PreviewForm";
 
 export const Create = () => {
   const { provider } = useUserWallet();
@@ -10,12 +16,14 @@ export const Create = () => {
   const [isAccountCreated, setIsAccountCreated] = useState(false);
   const [formData, setFormData] = useState<FormData>({
     category: "",
+    issuePrice: "",
+    issueTitle: "",
+    issueDescription: "",
+    requirements: [""],
+    links: [""],
+    comment: "",
     organizationName: "",
     repositoryName: "",
-    issueTitle: "",
-    issuePrice: "",
-    issueDescription: "",
-    requirements: [],
     estimatedTime: "",
     isPrivate: true,
   });
@@ -27,29 +35,44 @@ export const Create = () => {
   };
 
   return (
-    <div className="w-full flex flex-col md:flex-row md:justify-evenly mt-10">
+    <div className="w-full max-w-[1400px] mx-auto flex flex-col md:flex-row md:justify-evenly mt-10">
       {/* quest info entry section */}
-      <div className="md:w-[515px]">
+      <div
+        className={`${formSection === "PREVIEW" ? "w-full" : "md:w-[515px]"}`}
+      >
         {formSection === "CREATE" && (
           <CreateBountyForm
             setFormSection={setFormSection}
-            createAccountPoll={createAccountPoll}
             formData={formData}
             setFormData={setFormData}
           />
         )}
-        {formSection === "MEDIA" && <div>Attach Media</div>}
-        {formSection === "PREVIEW" && <div>Preview</div>}
+        {formSection === "MEDIA" && (
+          <AddMediaForm
+            setFormSection={setFormSection}
+            formData={formData}
+            setFormData={setFormData}
+          />
+        )}
+        {formSection === "PREVIEW" && (
+          <PreviewForm
+            setFormSection={setFormSection}
+            formData={formData}
+            createAccountPoll={createAccountPoll}
+          />
+        )}
         {formSection === "SUCCESS" && <div>Success</div>}
         {formSection === "FUND" && (
           <FundBountyForm isAccountCreated={isAccountCreated} />
         )}
       </div>
       {/* TODO: add preview section */}
-      <div className="md:w-[515px] border border-red-500">
-        Quest preview here
-        <MarketingIcon />
-      </div>
+      {formSection !== "PREVIEW" && (
+        <div className="md:w-[515px] border border-red-500">
+          Quest preview here
+          <MarketingIcon />
+        </div>
+      )}
     </div>
   );
 };
