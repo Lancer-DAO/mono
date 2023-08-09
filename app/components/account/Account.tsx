@@ -43,23 +43,6 @@ export const Account: FC = () => {
     api.users.registerProfileNFT.useMutation();
 
   useEffect(() => {
-    const maybeMintNft = async () => {
-      if (!!currentUser && !!currentWallet && router.query.id === undefined) {
-        if (!currentUser.profileWalletId) {
-          setAccount({ isLoading: true, loadingPrompt: "Creating Profile" });
-          try {
-            await mintProfileNFT();
-            fetchNfts();
-          } catch (e) {
-            setAccount({ error: e });
-          }
-        }
-      }
-    };
-    maybeMintNft();
-  }, [currentUser, router.isReady, currentWallet?.publicKey]);
-
-  useEffect(() => {
     const getUserAsync = async () => {
       if (router.query.id !== undefined) {
         const fetchAccount = async () => {
@@ -71,17 +54,24 @@ export const Account: FC = () => {
         fetchAccount();
       } else {
         try {
-          setAccount({ isLoading: true, loadingPrompt: "Loading Profile" });
+          let loadingPrompt = "Loading Profile";
+          setAccount({ isLoading: true, loadingPrompt });
           setBountyNFTs({ isLoading: true });
           setProfileNFT(null);
 
-          await verifyWallet({
+          const verifiedWallet = await verifyWallet({
             walletPublicKey: currentWallet?.publicKey.toString(),
           });
 
+          if (!verifiedWallet.hasProfileNFT) {
+            loadingPrompt = "Creating Profile";
+            setAccount({ isLoading: true, loadingPrompt });
+            await mintProfileNFT();
+          }
+
           setAccount({
             isLoading: true,
-            loadingPrompt: "Loading Profile",
+            loadingPrompt,
             result: currentUser,
             error: null,
           });
@@ -90,13 +80,42 @@ export const Account: FC = () => {
         }
       }
     };
-    if (!!currentUser && currentWallet?.publicKey) {
+    if (!!currentUser && !!currentWallet?.publicKey) {
       getUserAsync();
     }
   }, [currentUser, router.isReady, currentWallet?.publicKey]);
 
   useEffect(() => {
-    if (account && account?.result?.profileWalletId && !account.error) {
+    if (account.result) {
+      const fetchNfts = async () => {
+        await fetchProfileNFT();
+
+        await fetchBountyNFTs();
+
+        if (
+          currentTutorialState?.title ===
+            BOUNTY_ACTIONS_TUTORIAL_II_INITIAL_STATE.title &&
+          currentTutorialState.currentStep === 8
+        ) {
+          setCurrentTutorialState({
+            ...currentTutorialState,
+            isRunning: true,
+          });
+        } else if (
+          currentTutorialState?.title ===
+            PROFILE_TUTORIAL_INITIAL_STATE.title &&
+          currentTutorialState.currentStep === 2
+        ) {
+          setTimeout(() => {
+            setCurrentTutorialState({
+              ...currentTutorialState,
+              isRunning: true,
+              currentStep: 3,
+              spotlightClicks: false,
+            });
+          }, 100);
+        }
+      };
       fetchNfts();
     }
   }, [account?.result]);
@@ -129,8 +148,8 @@ export const Account: FC = () => {
           : undefined,
       };
       setProfileNFT(profileNFT);
-      setAccount({ ...account, isLoading: false, loadingPrompt: undefined });
     }
+    setAccount({ ...account, isLoading: false, loadingPrompt: undefined });
   };
 
   const fetchBountyNFTs = async () => {
@@ -179,6 +198,7 @@ export const Account: FC = () => {
         ownerAddress: currentWallet.publicKey.toString(),
       },
     });
+
     if (nfts.totalResults === 0) {
       const result = await underdogClient.createNft({
         params: PROFILE_PROJECT_PARAMS,
@@ -196,53 +216,22 @@ export const Account: FC = () => {
         },
       });
     }
-    const updatedUser = await registerProfileNFT({
+    await registerProfileNFT({
       walletPublicKey: currentWallet.publicKey.toString(),
     });
-    setAccount({
-      isLoading: false,
-      result: updatedUser,
-      loadingPrompt: undefined,
-    });
-  };
-
-  const fetchNfts = async () => {
-    await fetchProfileNFT();
-
-    await fetchBountyNFTs();
-    if (
-      currentTutorialState?.title ===
-        BOUNTY_ACTIONS_TUTORIAL_II_INITIAL_STATE.title &&
-      currentTutorialState.currentStep === 8
-    ) {
-      setCurrentTutorialState({
-        ...currentTutorialState,
-        isRunning: true,
-      });
-    } else if (
-      currentTutorialState?.title === PROFILE_TUTORIAL_INITIAL_STATE.title &&
-      currentTutorialState.currentStep === 2
-    ) {
-      setTimeout(() => {
-        setCurrentTutorialState({
-          ...currentTutorialState,
-          isRunning: true,
-          currentStep: 3,
-          spotlightClicks: false,
-        });
-      }, 100);
-    }
   };
 
   if (!IS_CUSTODIAL && !currentWallet && !profileNFT)
     return <div>Please Connect a Wallet</div>;
+
+  if (account.error) {
+    return <div className="color-red">{account.error.message}</div>;
+  }
+  if (account.isLoading) {
+    return <LoadingBar title={account.loadingPrompt} />;
+  }
   return (
     <>
-      {account?.isLoading && <LoadingBar title={account.loadingPrompt} />}
-      {account?.error && (
-        <div className="color-red">{account.error.message}</div>
-      )}
-
       {account?.result && (
         <div className="w-full flex flex-col md:flex-row items-center md:items-start gap-10 md:gap-5 justify-center">
           {profileNFT && (

@@ -13,13 +13,7 @@ export const verifyWallet = protectedProcedure
     const { email, id } = ctx.user;
     const user = await queries.user.getByEmail(email);
 
-    const wallet = await queries.wallet.getOrCreate(
-      user,
-      walletPublicKey,
-      true
-    );
+    const wallet = await queries.wallet.getOrCreate(user, walletPublicKey);
 
-    const updatedUser = await queries.user.getByEmail(email);
-
-    return { updatedUser };
+    return wallet;
   });

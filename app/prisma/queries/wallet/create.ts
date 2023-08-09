@@ -1,16 +1,20 @@
 import { prisma } from "@/server/db";
+import { UnwrapPromise } from "@/types";
 import * as Prisma from "@prisma/client";
 
-export const getOrCreate = async (
-  user: Prisma.User,
-  publicKey: string,
-  isDefault?: boolean
-): Promise<Prisma.Wallet> => {
-  let wallet = await prisma.wallet.findUnique({
+const walletQuery = async (publicKey: string) =>
+  prisma.wallet.findUnique({
     where: {
       publicKey,
     },
   });
+
+export const getOrCreate = async (
+  user: Prisma.User,
+  publicKey: string,
+  hasProfileNFT?: boolean
+): Promise<Prisma.Wallet> => {
+  let wallet = await walletQuery(publicKey);
   if (wallet && user.id !== wallet.userid) {
     const error = {
       code: 403,
@@ -20,16 +24,19 @@ export const getOrCreate = async (
   }
   if (!wallet) {
     try {
-      wallet = await prisma.wallet.create({
+      await prisma.wallet.create({
         data: {
           publicKey,
           userid: user.id,
-          isDefault,
+          hasProfileNFT,
         },
       });
+      wallet = await walletQuery(publicKey);
     } catch (e) {
       console.log("e", e);
     }
   }
   return wallet;
 };
+
+export type WalletType = UnwrapPromise<ReturnType<typeof walletQuery>>;
