@@ -24,6 +24,10 @@ export const login = protectedProcedure.mutation(async ({ ctx }) => {
       await queries.user.updatePicture(user.id, picture);
       user = await queries.user.getByEmail(email);
     }
+    if (!user.name) {
+      await queries.user.updateName(user.id, nickname);
+      user = await queries.user.getByEmail(email);
+    }
     return user;
   }
 });
