@@ -123,22 +123,7 @@ export const ProfileNFTCard = ({
           </div>
         </div>
 
-        {/* <div>
-          <div className="divider"></div>
-          <h4>Badges</h4>
-          {profileNFT.badges?.length > 0 ? (
-            <div className="tag-list">
-              {profileNFT.badges.map((badge) => (
-                <div className="tag-item" key={badge}>
-                  {badge}
-                </div>
-              ))}
-            </div>
-          ) : (
-            <div>No badges yet!</div>
-          )}
-        </div>
-
+        {/* 
         <div>
           <div className="divider"></div>
 

@@ -18,6 +18,7 @@ import {
 } from "@/src/constants/tutorials";
 import { useUserWallet } from "@/src/providers";
 import { useTutorial } from "@/src/providers/tutorialProvider";
+import BadgesCard from "./components/BadgesCard";
 
 dayjs.extend(relativeTime);
 
@@ -232,17 +233,18 @@ export const Account: FC = () => {
   }
   return (
     <>
+      {/* {profileNFT && ( */}
       {account?.result && (
-        <div className="w-full flex flex-col md:flex-row items-center md:items-start gap-10 md:gap-5 justify-center">
-          {profileNFT && (
-            <>
-              <ProfileNFTCard
-                profileNFT={profileNFT}
-                picture={account?.result.picture}
-                githubId={account?.result.githubId}
-              />
-
-              <div
+        <div className="w-full flex items-start gap-5 px-5 md:px-32">
+          {/* left column */}
+          <div className="flex flex-col gap-5 w-full md:max-w-[482px]">
+            <ProfileNFTCard
+              profileNFT={profileNFT}
+              picture={account?.result.picture}
+              githubId={account?.result.githubId}
+            />
+            <BadgesCard profileNFT={profileNFT} />
+            {/* <div
                 className="flex flex-col gap-3 w-full md:w-[60%] px-5 pb-20"
                 id="bounties-list"
               >
@@ -260,9 +262,9 @@ export const Account: FC = () => {
                 ) : (
                   <div className="w-full text-center">No bounties yet!</div>
                 )}
-              </div>
-            </>
-          )}
+              </div> */}
+          </div>
+          <div className="flex flex-col gap-10 w-full">right column here</div>
         </div>
       )}
     </>
