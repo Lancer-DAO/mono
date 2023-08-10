@@ -1,6 +1,9 @@
 import { FC, useState } from "react";
 import { BountyNFT, IAsyncResult } from "@/types/";
 import Image from "next/image";
+import NextArrow from "@/components/@icons/NextArrow";
+import { motion } from "framer-motion";
+import { midClickAnimation } from "@/src/constants";
 
 interface Props {
   bountyNFTs: IAsyncResult<BountyNFT[]>;
@@ -8,7 +11,7 @@ interface Props {
 
 export const QuestsCard: FC<Props> = ({ bountyNFTs }) => {
   return (
-    <div className="w-full md:w-[658px] max-h-[356px] rounded-xl bg-bgLancerSecondary/[8%] overflow-hidden p-6">
+    <div className="relative w-full md:w-[658px] max-h-[356px] rounded-xl bg-bgLancerSecondary/[8%] overflow-hidden p-6">
       <p className="font-bold text-2xl text-textGreen">Previous Quests</p>
       <div className="flex items-center justify-between gap-2">
         {bountyNFTs.isLoading ? (
@@ -28,7 +31,11 @@ export const QuestsCard: FC<Props> = ({ bountyNFTs }) => {
         ) : (
           <div className="w-full text-center">No bounties yet!</div>
         )}
-        {`>`}
+        <div className="absolute right-3 top-1/2 transform -translate-y-1/2 p-3">
+          <motion.button {...midClickAnimation}>
+            <NextArrow />
+          </motion.button>
+        </div>
       </div>
     </div>
   );

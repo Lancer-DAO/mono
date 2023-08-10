@@ -111,7 +111,7 @@ export const ProfileNFTCard = ({
             <p>username</p>
             <p>industry</p>
             <p>location</p>
-            <p>exp</p>
+            <p>xp</p>
           </div>
           {/* Data column */}
           <div className="flex flex-col gap-4 text-lg font-bold">
