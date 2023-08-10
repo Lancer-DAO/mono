@@ -2,6 +2,7 @@ import { prisma } from "@/server/db";
 import { protectedProcedure } from "../../trpc";
 import { z } from "zod";
 import * as queries from "@/prisma/queries";
+import { HostedHooksClient } from "../../webhooks";
 
 export const createBounty = protectedProcedure
   .input(
@@ -72,7 +73,8 @@ export const createBounty = protectedProcedure
         wallet
       );
       const bountyInfo = await queries.bounty.get(bounty.id, user.id);
-      console.log(JSON.stringify(bountyInfo));
+
+      HostedHooksClient.sendWebhook(bountyInfo, "bounty.created", timestamp);
       return bountyInfo;
     }
   );

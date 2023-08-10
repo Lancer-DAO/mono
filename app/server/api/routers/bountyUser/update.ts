@@ -2,6 +2,7 @@ import { protectedProcedure } from "../../trpc";
 import { z } from "zod";
 import * as queries from "@/prisma/queries";
 import { BountyState } from "@/types/";
+import { HostedHooksClient } from "../../webhooks";
 
 export const update = protectedProcedure
   .input(
@@ -66,6 +67,8 @@ export const update = protectedProcedure
         );
       }
       const updatedBounty = await queries.bounty.get(bountyId, currentUserId);
-      return { updatedBounty };
+      HostedHooksClient.sendWebhook(updatedBounty, "bounty.updated");
+
+      return updatedBounty;
     }
   );

@@ -2,6 +2,7 @@ import { protectedProcedure } from "../../trpc";
 import { z } from "zod";
 import { BountyState } from "@/types/";
 import * as queries from "@/prisma/queries";
+import { HostedHooksClient } from "../../webhooks";
 
 export const fundBounty = protectedProcedure
   .input(
@@ -18,6 +19,9 @@ export const fundBounty = protectedProcedure
     );
 
     const escrow = await queries.escrow.updateAmount(escrowId, amount);
+
+    const returnValue = { bounty, escrow };
+    HostedHooksClient.sendWebhook(returnValue, "bounty.funded");
 
     return { bounty, escrow };
   });
