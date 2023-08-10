@@ -51,7 +51,7 @@ export const SubmitRequest = () => {
       [BOUNTY_USER_RELATIONSHIP.CurrentSubmitter]
     );
 
-    const { updatedBounty } = await mutateAsync({
+    const updatedBounty = await mutateAsync({
       bountyId: currentBounty.id,
       currentUserId: currentUser.id,
       userId: currentUser.id,
