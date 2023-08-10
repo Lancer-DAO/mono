@@ -130,7 +130,7 @@ export const SubmitterSection: React.FC<SubmitterSectionProps> = ({
                 currentUserId: currentUser.id,
                 relations: newRelations,
                 state: BountyState.IN_PROGRESS,
-                publicKey: currentWallet.publicKey.toString(),
+                publicKey: submitterWallet.toString(),
                 escrowId: currentBounty.escrowid,
                 signature,
                 label: "add-approved-submitter",
