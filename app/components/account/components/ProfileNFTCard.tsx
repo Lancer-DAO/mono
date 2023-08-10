@@ -88,7 +88,7 @@ export const ProfileNFTCard = ({
   }, [currentUser]);
 
   return (
-    <div className="w-full md:w-[40%] px-5 pb-20">
+    <div className="w-full md:w-[460px] rounded-xl bg-bgLancerSecondary/[8%] overflow-hidden p-6">
       <div className="flex flex-col gap-3">
         {(picture || githubId) && (
           <Image
@@ -97,19 +97,33 @@ export const ProfileNFTCard = ({
                 ? picture
                 : "/assets/images/Lancer-Green-No-Background-p-800.png"
             }
-            width={200}
-            height={200}
+            width={58}
+            height={58}
             alt={profileNFT.name.split("for ")[1]}
-            className="profile-picture"
+            className="rounded-full overflow-hidden"
           />
         )}
 
-        <div className="flex items-center justify-between">
-          <h4 className="text-xl">{profileNFT.name.split("for ")[1]}</h4>
-          <div>{profileNFT.reputation} Pts</div>
+        <div className="flex items-start gap-16 pb-6">
+          {/* Labels column */}
+          <div className="flex flex-col gap-4 text-lg">
+            <p>name</p>
+            <p>username</p>
+            <p>industry</p>
+            <p>location</p>
+            <p>exp</p>
+          </div>
+          {/* Data column */}
+          <div className="flex flex-col gap-4 text-lg font-bold">
+            <p>{currentUser?.name}</p>
+            <p>{currentUser?.name}</p>
+            <p>[industry]</p>
+            <p>[location]</p>
+            <p>{profileNFT.reputation} pts</p>
+          </div>
         </div>
 
-        <div>
+        {/* <div>
           <div className="divider"></div>
           <h4>Badges</h4>
           {profileNFT.badges?.length > 0 ? (
@@ -206,7 +220,8 @@ export const ProfileNFTCard = ({
       <AddReferrerModal
         setShowModal={setShowReferrerModal}
         showModal={showReferrerModal}
-      />
+      /> */}
+      </div>
     </div>
   );
 };
