@@ -73,14 +73,14 @@ const PreviewForm: FC<Props> = ({
     createAccountPoll(escrowKey);
     const bounty: Bounty = await mutateAsync({
       email: currentUser.email,
-      category: formData.category,
-      // no price here?
+      industryId: formData.industryId,
+      disciplineId: formData.displineId,
+      price: parseFloat(formData.issuePrice),
       title: formData.issueTitle,
       description: formData.issueDescription,
       tags: formData.tags,
       links: formData.links,
       media: formData.media,
-      comment: formData.comment,
       estimatedTime: parseFloat(formData.estimatedTime),
       isPrivate: formData.isPrivate,
       // isPrivateRepo: formData.isPrivate || repo ? repo.private : false,

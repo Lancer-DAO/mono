@@ -18,10 +18,13 @@ model Bounty {
   createdAt     String   @db.VarChar(24)
   description   String   @db.VarChar(10000)
   estimatedTime Decimal? @db.Decimal(10, 2)
+  price         Decimal? @db.Decimal(16, 9)
   isPrivate     Boolean
   state         String   @db.VarChar(24)
   title         String   @db.VarChar(256)
   type          String?  @db.VarChar(24)
+  links String  @db.VarChar(1024) @default("")
+  media String  @db.VarChar(1024) @default("")
 
   // Relations
   certificates BountyCertificate[]
@@ -40,6 +43,7 @@ model Bounty {
   repositoryid Int?
   tags         Tag[]
   users        BountyUser[]
+  industries   Industry[]
 }
 
 model Certificate {
@@ -77,6 +81,18 @@ model Comment {
 
   // Relations
   bounty BountyComment[]
+}
+
+model Discipline {
+  id Int @id @default(autoincrement())
+
+  name String @unique @db.VarChar(256)
+  color String @db.VarChar(32)
+  description String @db.VarChar(4096)
+  industryid Int
+
+  industry Industry @relation(fields: [industryid], references: [id])
+  tags Tag[]
 }
 
 model Endorsement {
@@ -129,6 +145,20 @@ model Guild {
   repositories Repository[]
   certificates CertificateGuild[]
   users        GuildUser[]
+}
+
+model Industry {
+  id Int @id @default(autoincrement())
+
+  name String @unique @db.VarChar(256)
+  icon String @db.VarChar(256)
+  color String @db.VarChar(32)
+  description String @db.VarChar(4096)
+
+  bounties Bounty[]
+  users User[]
+  disciplines Discipline[]
+  tags Tag[]
 }
 
 model Issue {
@@ -280,6 +310,8 @@ model Tag {
   certificates Certificate[]
   milestones   Milestone[]
   users        User[]
+  disciplines  Discipline[]
+  industries   Industry[]
 }
 
 model Transaction {
@@ -333,6 +365,7 @@ model User {
   endorsers    Endorsement[]      @relation("endorser")
   referrers    ReferrerReferree[] @relation("referree")
   referrees    ReferrerReferree[] @relation("referrer")
+  industries   Industry[]
 }
 
 model Wallet {

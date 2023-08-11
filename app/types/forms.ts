@@ -1,7 +1,6 @@
 export type FORM_SECTION = "CREATE" | "MEDIA" | "PREVIEW" | "SUCCESS" | "FUND";
 
 export interface FormData {
-  category: string;
   issuePrice: string;
   issueTitle: string;
   issueDescription: string;
@@ -13,4 +12,6 @@ export interface FormData {
   repositoryName?: string;
   estimatedTime?: string;
   isPrivate: boolean;
+  industryId?: number;
+  displineId?: number;
 }

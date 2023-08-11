@@ -15,7 +15,6 @@ export const Create = () => {
   const [formSection, setFormSection] = useState<FORM_SECTION>("CREATE");
   const [isAccountCreated, setIsAccountCreated] = useState(false);
   const [formData, setFormData] = useState<FormData>({
-    category: "",
     issuePrice: "",
     issueTitle: "",
     issueDescription: "",
