@@ -87,8 +87,8 @@ const PreviewForm: FC<Props> = ({
     createAccountPoll(escrowKey);
     const bounty: Bounty = await mutateAsync({
       email: currentUser.email,
-      industryId: formData.industryId,
-      disciplineId: formData.displineId,
+      industryIds: formData.industryIds,
+      disciplineIds: formData.displineIds,
       price: parseFloat(formData.issuePrice),
       title: formData.issueTitle,
       description: formData.issueDescription,
