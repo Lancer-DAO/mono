@@ -23,8 +23,8 @@ model Bounty {
   state         String   @db.VarChar(24)
   title         String   @db.VarChar(256)
   type          String?  @db.VarChar(24)
-  links String  @db.VarChar(1024) @default("")
-  media String  @db.VarChar(1024) @default("")
+  links         String   @default("") @db.VarChar(1024)
+  media         String   @default("") @db.VarChar(1024)
 
   // Relations
   certificates BountyCertificate[]
@@ -88,15 +88,15 @@ model Discipline {
   id Int @id @default(autoincrement())
 
   // Fields
-  name String @unique @db.VarChar(256)
-  color String @db.VarChar(32)
+  name        String @unique @db.VarChar(256)
+  color       String @db.VarChar(32)
   description String @db.VarChar(4096)
-  industryid Int
+  industryid  Int
 
   // Relations
   industry Industry @relation(fields: [industryid], references: [id])
   bounties Bounty[]
-  tags Tag[]
+  tags     Tag[]
 }
 
 model Endorsement {
@@ -155,16 +155,16 @@ model Industry {
   id Int @id @default(autoincrement())
 
   // Fields
-  name String @unique @db.VarChar(256)
-  icon String @db.VarChar(256)
-  color String @db.VarChar(32)
+  name        String @unique @db.VarChar(256)
+  icon        String @db.VarChar(256)
+  color       String @db.VarChar(32)
   description String @db.VarChar(4096)
 
   // Relations
-  bounties Bounty[]
-  users User[]
+  bounties    Bounty[]
+  users       User[]
   disciplines Discipline[]
-  tags Tag[]
+  tags        Tag[]
 }
 
 model Issue {
