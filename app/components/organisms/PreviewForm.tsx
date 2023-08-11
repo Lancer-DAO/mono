@@ -10,18 +10,19 @@ import { FORM_SECTION, FormData } from "@/types/forms";
 import { useBounty } from "@/src/providers/bountyProvider";
 import { useTutorial } from "@/src/providers/tutorialProvider";
 import { motion } from "framer-motion";
-import { PreviewCardBase, Toggle } from "@/components";
+import { PreviewCardBase, MintsDropdown, Toggle } from "@/components";
 import { ToggleConfig } from "../molecules/Toggle";
 import { PublicKey } from "@solana/web3.js";
 import { createFFA } from "@/escrow/adapters";
 import { api } from "@/utils";
-import { Bounty } from "@/types";
+import { Bounty, Option } from "@/types";
 
 interface Props {
   setFormSection: Dispatch<SetStateAction<FORM_SECTION>>;
   formData: FormData;
   setFormData: Dispatch<SetStateAction<FormData>>;
   createAccountPoll: (publicKey: PublicKey) => void;
+  mints: Prisma.Mint[];
 }
 
 const PreviewForm: FC<Props> = ({
@@ -29,15 +30,17 @@ const PreviewForm: FC<Props> = ({
   formData,
   setFormData,
   createAccountPoll,
+  mints,
 }) => {
   const { currentUser, currentWallet, program, provider } = useUserWallet();
   const { currentTutorialState, setCurrentTutorialState } = useTutorial();
   const { setCurrentBounty } = useBounty();
+  const { mutateAsync } = api.bounties.createBounty.useMutation();
 
   const [creationType, setCreationType] = useState<"new" | "existing">("new");
   const [mint, setMint] = useState<Prisma.Mint>();
   const [isSubmittingIssue, setIsSubmittingIssue] = useState(false);
-  const { mutateAsync } = api.bounties.createBounty.useMutation();
+  const [isOpenMints, setIsOpenMints] = useState(false);
 
   const [toggleConfig, setToggleConfig] = useState<ToggleConfig>({
     option1: {
@@ -48,6 +51,17 @@ const PreviewForm: FC<Props> = ({
     },
     selected: "option1",
   });
+
+  const mintOptions: Option[] = mints.map((mint) => ({
+    label: mint.name,
+    value: mint.name,
+    icon: mint.logo,
+  }));
+
+  const handleChangeMint = (mint: Prisma.Mint) => {
+    const newMint = mints.find((_mint) => _mint.name === mint.name);
+    setMint(newMint);
+  };
 
   const createBounty = async () => {
     setIsSubmittingIssue(true);
@@ -114,7 +128,7 @@ const PreviewForm: FC<Props> = ({
   return (
     <div>
       <h1>Preview</h1>
-      <div className="w-full flex flex-col gap-4 mt-6">
+      <div className="w-full flex flex-col gap-4 my-6">
         <div className="flex items-center gap-8">
           <Toggle
             toggleConfig={toggleConfig}
@@ -143,6 +157,13 @@ const PreviewForm: FC<Props> = ({
           <PreviewCardBase title="Photos">Preview Card</PreviewCardBase>
         </div>
 
+        <label>Funding Type</label>
+        <MintsDropdown
+          options={mints}
+          selected={mint}
+          onChange={handleChangeMint}
+        />
+
         <div className="w-full px-10 mt-4 flex items-center justify-between">
           <motion.button
             {...smallClickAnimation}
@@ -154,7 +175,7 @@ const PreviewForm: FC<Props> = ({
           </motion.button>
           <motion.button
             {...smallClickAnimation}
-            // onClick={() => createBounty()}
+            onClick={() => createBounty()}
             className="bg-primaryBtn border border-primaryBtnBorder text-textGreen 
             w-[100px] h-[50px] rounded-lg text-base"
           >
