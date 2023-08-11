@@ -7,3 +7,9 @@ interface IAsyncResultBase {
 export interface IAsyncResult<T> extends IAsyncResultBase {
   result?: T;
 }
+
+export interface Option {
+  label: string;
+  value: string;
+  icon?: string;
+}

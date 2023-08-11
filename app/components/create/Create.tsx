@@ -9,13 +9,16 @@ import { PublicKey } from "@solana/web3.js";
 import { FORM_SECTION, FormData } from "@/types/forms";
 import { useUserWallet } from "@/src/providers";
 import PreviewForm from "../organisms/PreviewForm";
+import { api } from "@/src/utils";
+import * as Prisma from "@prisma/client";
 
 export const Create = () => {
   const { provider } = useUserWallet();
+  const { mutateAsync: getMintsAPI } = api.mints.getMints.useMutation();
   const [formSection, setFormSection] = useState<FORM_SECTION>("CREATE");
   const [isAccountCreated, setIsAccountCreated] = useState(false);
+  const [mints, setMints] = useState<Prisma.Mint[]>([]);
   const [formData, setFormData] = useState<FormData>({
-    category: "",
     issuePrice: "",
     issueTitle: "",
     issueDescription: "",
@@ -41,6 +44,14 @@ export const Create = () => {
       [event.target.name]: event.target.value,
     });
   };
+
+  useEffect(() => {
+    const getMints = async () => {
+      const mints = await getMintsAPI();
+      setMints(mints);
+    };
+    getMints();
+  }, []);
 
   // useEffect(() => {
   //   console.log("formData", formData);
@@ -74,6 +85,7 @@ export const Create = () => {
             formData={formData}
             setFormData={setFormData}
             createAccountPoll={createAccountPoll}
+            mints={mints}
           />
         )}
         {formSection === "SUCCESS" && <div>Success</div>}

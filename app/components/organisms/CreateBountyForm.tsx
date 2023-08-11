@@ -23,10 +23,6 @@ const Form: FC<Props> = ({
   handleChange,
 }) => {
   const { currentTutorialState, setCurrentTutorialState } = useTutorial();
-
-  // const [mint, setMint] = useState<Prisma.Mint>();
-  // const [isOpenMints, setIsOpenMints] = useState(false);
-  // const [mints, setMints] = useState<Prisma.Mint[]>([]);
   // const [failedToGetRepos, setFailedToGetRepos] = useState(false);
   // const [failedToCreateIssue, setFailedToCreateIssue] = useState(false);
   const [toggleConfig, setToggleConfig] = useState<ToggleConfig>({
@@ -45,19 +41,6 @@ const Form: FC<Props> = ({
       value: "Engineering",
     },
   ];
-
-  // useEffect(() => {
-  //   const getMints = async () => {
-  //     const mints = await getMintsAPI();
-  //     setMints(mints);
-  //   };
-  //   getMints();
-  // }, []);
-
-  // const handleChangeMint = (mint: Prisma.Mint) => {
-  //   const newMint = mints.find((_mint) => _mint.name === mint.name);
-  //   setMint(newMint);
-  // };
 
   const handleRequirementsChange = (event) => {
     const tags: string[] = event.target.value.split(",");
