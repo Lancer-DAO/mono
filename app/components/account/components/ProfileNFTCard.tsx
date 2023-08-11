@@ -108,17 +108,26 @@ export const ProfileNFTCard = ({
           {/* Labels column */}
           <div className="flex flex-col gap-4 text-lg">
             <p>name</p>
-            <p>username</p>
+            {/* <p>username</p> */}
             <p>industry</p>
-            <p>location</p>
+            {/* <p>location</p> */}
             <p>exp</p>
           </div>
           {/* Data column */}
           <div className="flex flex-col gap-4 text-lg font-bold">
             <p>{currentUser?.name}</p>
-            <p>{currentUser?.name}</p>
-            <p>[industry]</p>
-            <p>[location]</p>
+            {/* <p>{currentUser?.name}</p> */}
+            {/* hard coded */}
+            <div className="flex items-center gap-2">
+              <Image
+                src="/assets/icons/eng.png"
+                width={25}
+                height={25}
+                alt="eng"
+              />
+              <p className="font-bold">Engineering</p>
+            </div>
+            {/* <p>[location]</p> */}
             <p>{profileNFT.reputation} pts</p>
           </div>
         </div>
