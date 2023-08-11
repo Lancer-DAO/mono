@@ -14,7 +14,12 @@ export const SubmitRequest = () => {
   const { currentBounty, setCurrentBounty } = useBounty();
   const { currentTutorialState, setCurrentTutorialState } = useTutorial();
   const { mutateAsync } = api.bountyUsers.update.useMutation();
-
+  if (currentBounty.isCurrentSubmitter)
+    return (
+      <Button disabled id="request-denied">
+        Submission Awaiting Review
+      </Button>
+    );
   if (
     !(
       (currentBounty.isApprovedSubmitter && !currentBounty.currentSubmitter) ||
