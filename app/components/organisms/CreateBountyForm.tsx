@@ -233,19 +233,6 @@ const Form: FC<Props> = ({
           <div className="absolute top-1/2 -translate-y-1/2 -left-10">4</div>
           <input
             type="text"
-            className="placeholder:text-textGreen/70 border bg-neutralBtn
-            border-neutralBtnBorder w-full h-[50px] rounded-lg px-3"
-            name="issueDescription"
-            placeholder="Description"
-            id="issue-title-input"
-            value={formData.issueDescription}
-            onChange={handleChange}
-          />
-        </div>
-        <div className="relative">
-          <div className="absolute top-1/2 -translate-y-1/2 -left-10">5</div>
-          <input
-            type="text"
             className="placeholder:text-textGreen/70 border bg-neutralBtn 
             border-neutralBtnBorder w-full h-[50px] rounded-lg px-3"
             name="tags"
@@ -304,6 +291,18 @@ const Form: FC<Props> = ({
                 }
               }
             }}
+          />
+        </div>
+        <div className="relative">
+          <div className="absolute top-2 -left-10">5</div>
+          <textarea
+            className="placeholder:text-textGreen/70 border bg-neutralBtn min-h-[50px] 
+            border-neutralBtnBorder w-full h-[150px] rounded-lg px-3 py-2 resize-y"
+            name="issueDescription"
+            placeholder="Description"
+            id="issue-title-input"
+            value={formData.issueDescription}
+            onChange={handleChange}
           />
         </div>
         <div className="w-full flex items-center justify-end">

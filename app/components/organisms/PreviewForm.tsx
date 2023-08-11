@@ -154,7 +154,7 @@ const PreviewForm: FC<Props> = ({
           {/* 2. quest links card */}
           <PreviewCardBase title="Links">Preview Card</PreviewCardBase>
           {/* 3. quest photos card */}
-          <PreviewCardBase title="Photos">Preview Card</PreviewCardBase>
+          <PreviewCardBase title="References">Preview Card</PreviewCardBase>
         </div>
 
         <label>Funding Type</label>
