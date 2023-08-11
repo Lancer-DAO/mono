@@ -1,4 +1,7 @@
-import { useState } from "react";
+import { useOutsideAlerter } from "@/src/hooks";
+import Image from "next/image";
+import { useRef, useState } from "react";
+import { MarketingIcon } from "@/components";
 
 interface Props {
   options: Option[];
@@ -9,10 +12,16 @@ interface Props {
 interface Option {
   label: string;
   value: string;
+  icon?: string;
 }
 
 const Dropdown: React.FC<Props> = ({ options, selected, onChange }) => {
   const [isOpen, setIsOpen] = useState(false);
+
+  const menuRef = useRef(null);
+  useOutsideAlerter(menuRef, () => {
+    setIsOpen(false);
+  });
 
   const toggleOpen = () => setIsOpen(!isOpen);
 
@@ -38,7 +47,7 @@ const Dropdown: React.FC<Props> = ({ options, selected, onChange }) => {
       return (
         <label
           key={option.value}
-          className="flex items-center px-[10px] py-[5px] text-[14px] text-gray-700 cursor-pointer hover:bg-gray-200"
+          className="bg-neutralBtn w-full flex items-center py-2 px-4 text-xl cursor-pointer"
         >
           <input
             type="checkbox"
@@ -47,35 +56,35 @@ const Dropdown: React.FC<Props> = ({ options, selected, onChange }) => {
             onChange={() => handleCheckboxChange(option)}
             className="mr-[10px]"
           />
-          {option.label}
+          <div className="flex items-center gap-2">
+            <MarketingIcon height={20} width={20} />
+            {option.label}
+          </div>
         </label>
       );
     });
   };
 
   return (
-    <div className="relative inline-block mr-[10px] w-[200px]">
+    <div className="relative w-[220px] h-[50px]" ref={menuRef}>
       <div
-        className="flex justify-between items-center p-[10px] bg-white-100 rounded-[5px] cursor-pointer shadow-[0 6px 12px 0 rgba(21, 60, 245, 0.05), 0 2px 6px 0 rgba(5, 21, 46, 0.02), 0 -2px 6px 0 rgba(36, 52, 128, 0.03)] transition-shadow duration-[400ms] ease-in-out"
+        className="h-full flex justify-between bg-neutralBtn border border-neutralBtnBorder 
+        items-center cursor-pointer px-4 rounded-lg"
         onClick={toggleOpen}
       >
-        <div className="text-[14px] text-gray-700 overflow-hidden whitespace-nowrap overflow-ellipsis">
+        <div className="text-xl font-bold overflow-hidden whitespace-nowrap overflow-ellipsis">
           {selected.length === 0
             ? "Select"
             : selected.map((item) => item.label).join(", ")}
         </div>
-        <div
-          className={`text-[14px] text-gray-700 ${
-            isOpen ? "transform rotate-180" : ""
-          }`}
-        >
+        <div className={`text-xl ${isOpen ? "transform rotate-180" : ""}`}>
           ▾
         </div>
       </div>
       {isOpen && (
         <div
-          className="absolute top-full left-0 z-10 flex flex-col max-h-[200px] overflow-y-auto bg-white-100 border border-gray-500 rounded-[5px] shadow-md w-full"
-          onMouseLeave={() => setIsOpen(false)}
+          className="absolute top-full left-0 z-10 flex flex-col max-h-[200px] overflow-y-auto 
+          bg-neutralBtn border border-neutralBtnBorder rounded-lg shadow-md w-full"
         >
           {renderOptions()}
         </div>

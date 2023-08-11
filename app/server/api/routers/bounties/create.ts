@@ -1,4 +1,3 @@
-import { prisma } from "@/server/db";
 import { protectedProcedure } from "../../trpc";
 import { z } from "zod";
 import * as queries from "@/prisma/queries";
@@ -7,29 +6,39 @@ export const createBounty = protectedProcedure
   .input(
     z.object({
       email: z.string(),
+      industryIds: z.array(z.number()),
+      disciplineIds: z.array(z.number()),
+      title: z.string(),
       description: z.string(),
+      price: z.number(),
+      tags: z.array(z.string()),
+      links: z.array(z.string()),
+      media: z.array(z.string()),
       estimatedTime: z.number(),
       isPrivate: z.boolean(),
-      title: z.string(),
-      tags: z.array(z.string()),
       publicKey: z.string(),
       escrowKey: z.string(),
       transactionSignature: z.string(),
       timestamp: z.string(),
       chainName: z.string(),
-      network: z.string(),
       mint: z.number(),
+      network: z.string(),
     })
   )
   .mutation(
     async ({
       input: {
         email,
+        industryIds,
+        disciplineIds,
+        title,
         description,
+        price,
+        tags,
+        links,
+        media,
         estimatedTime,
         isPrivate,
-        title,
-        tags,
         publicKey,
         escrowKey,
         transactionSignature,
@@ -60,16 +69,27 @@ export const createBounty = protectedProcedure
       const _tags = await Promise.all(
         tags.map((tag) => queries.tag.getOrCreate(tag))
       );
+      const industries = await Promise.all(
+        industryIds.map((id) => queries.industry.get(id))
+      );
+      const disciplines = await Promise.all(
+        disciplineIds.map((id) => queries.discipline.get(id))
+      );
       const bounty = await queries.bounty.create(
         timestamp,
         description,
+        price,
         estimatedTime,
         isPrivate,
         title,
         escrow,
         _tags,
+        links,
+        media,
         user,
-        wallet
+        wallet,
+        industries,
+        disciplines
       );
       return queries.bounty.get(bounty.id, user.id);
     }

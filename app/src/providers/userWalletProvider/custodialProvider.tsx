@@ -167,10 +167,10 @@ export const CustodialWalletProvider: FunctionComponent<IWeb3AuthState> = ({
           const userInfo = await getCurrUser();
           setCurrentUser(userInfo);
         } catch (e) {
-          // if (e.data.httpStatus === 401) {
-          //   debugger;
-          //   router.push("/api/auth/login");
-          // }
+          if (e.data.httpStatus === 401) {
+            console.error(e);
+            router.push("/api/auth/login");
+          }
         }
       };
       getUser();
@@ -295,11 +295,10 @@ export const CustodialWalletProvider: FunctionComponent<IWeb3AuthState> = ({
       return;
     }
     await web3Auth.logout();
-    // window.open("https://auth.lancer.so" + "/v2/logout?federated");
 
     setProvider(null);
     window.sessionStorage.clear();
-    window.location.href = "/";
+    window.location.href = "/api/auth/logout";
   };
 
   const getUserInfo = async () => {

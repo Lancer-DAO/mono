@@ -19,6 +19,8 @@ module.exports = {
         primaryBtnBorder: "#C5FFBA",
         secondaryBtn: "#FFD4D4",
         secondaryBtnBorder: "#FFBABA",
+        neutralBtn: "#FEFEFE",
+        neutralBtnBorder: "#E4E4E4",
         textPrimary: "#464646",
         textGreen: "#638463",
         textRed: "#846363",

@@ -33,3 +33,7 @@
 * {
   @apply text-textPrimary bg-bgLancer font-base;
 }
+
+h1 {
+  @apply text-4xl font-bold;
+}

@@ -24,6 +24,7 @@ import { MONO_ADDRESS } from "@/src/constants";
 import { PROFILE_TUTORIAL_INITIAL_STATE } from "@/src/constants/tutorials";
 import { useTutorial } from "../tutorialProvider";
 import { User } from "@/types/";
+import { useRouter } from "next/router";
 
 export const NonCustodialWalletContext = createContext<IUserWalletContext>({
   currentUser: null,
@@ -47,6 +48,7 @@ const UserWalletProvider: FunctionComponent<IUserWalletState> = ({
   children,
 }: IUserWalletProps) => {
   const { mutateAsync: getCurrUser } = api.users.login.useMutation();
+  const router = useRouter();
   const { user } = useUser();
   const {
     wallet,
@@ -104,7 +106,7 @@ const UserWalletProvider: FunctionComponent<IUserWalletState> = ({
         return;
       }
     }
-  }, [connected]);
+  }, [connected, publicKey]);
 
   useEffect(() => {
     if (user) {
@@ -114,6 +116,7 @@ const UserWalletProvider: FunctionComponent<IUserWalletState> = ({
           setCurrentUser(userInfo);
         } catch (e) {
           console.error(e);
+          router.push("/api/auth/login");
         }
       };
       getUser();

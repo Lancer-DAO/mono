@@ -4,20 +4,40 @@ import * as Prisma from "@prisma/client";
 export const create = async (
   createdAt: string,
   description: string,
+  price: number,
   estimatedTime: number,
   isPrivate: boolean,
   title: string,
   escrow: Prisma.Escrow,
   tags: Prisma.Tag[],
+  links: string[],
+  media: string[],
   user: Prisma.User,
-  wallet: Prisma.Wallet
+  wallet: Prisma.Wallet,
+  industries: Prisma.Industry[],
+  disciplines: Prisma.Discipline[]
 ): Promise<Prisma.Bounty> => {
   const bounty = await prisma.bounty.create({
     data: {
       createdAt,
       description,
+      price,
       estimatedTime,
       isPrivate,
+      industries: {
+        connect: industries.map((industry) => {
+          return {
+            id: industry.id,
+          };
+        }),
+      },
+      disciplines: {
+        connect: disciplines.map((discipline) => {
+          return {
+            id: discipline.id,
+          };
+        }),
+      },
       state: "new",
       title,
       escrow: {
@@ -32,6 +52,8 @@ export const create = async (
           };
         }),
       },
+      links: links.join(),
+      media: media.join(),
       users: {
         create: {
           userid: user.id,
