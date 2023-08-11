@@ -1,5 +1,6 @@
 import type { AppProps } from "next/app";
 import "@/src/styles/globals.css";
+import "@/src/styles/Bounty.scss";
 import { api } from "@/src/utils/api";
 import { AllProviders } from "@/src/providers";
 import { useEffect, ReactNode, ReactElement } from "react";
