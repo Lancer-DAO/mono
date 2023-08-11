@@ -31,7 +31,11 @@
 }
 
 * {
-  @apply text-textPrimary bg-bgLancer font-base;
+  @apply font-base;
+}
+
+html {
+  @apply text-textPrimary bg-bgLancer;
 }
 
 h1 {
