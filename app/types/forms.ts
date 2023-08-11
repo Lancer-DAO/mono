@@ -12,6 +12,6 @@ export interface FormData {
   repositoryName?: string;
   estimatedTime?: string;
   isPrivate: boolean;
-  industryId?: number;
-  displineId?: number;
+  industryIds?: number[];
+  displineIds?: number[];
 }

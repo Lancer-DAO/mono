@@ -6,8 +6,8 @@ export const createBounty = protectedProcedure
   .input(
     z.object({
       email: z.string(),
-      industryId: z.number(),
-      disciplineId: z.number(),
+      industryIds: z.array(z.number()),
+      disciplineIds: z.array(z.number()),
       title: z.string(),
       description: z.string(),
       price: z.number(),
@@ -29,8 +29,8 @@ export const createBounty = protectedProcedure
     async ({
       input: {
         email,
-        industryId,
-        disciplineId,
+        industryIds,
+        disciplineIds,
         title,
         description,
         price,
@@ -69,8 +69,12 @@ export const createBounty = protectedProcedure
       const _tags = await Promise.all(
         tags.map((tag) => queries.tag.getOrCreate(tag))
       );
-      const industry = await queries.industry.get(industryId);
-      const discipline = await queries.discipline.get(disciplineId);
+      const industries = await Promise.all(
+        industryIds.map((id) => queries.industry.get(id))
+      );
+      const disciplines = await Promise.all(
+        disciplineIds.map((id) => queries.discipline.get(id))
+      );
       const bounty = await queries.bounty.create(
         timestamp,
         description,
@@ -84,8 +88,8 @@ export const createBounty = protectedProcedure
         media,
         user,
         wallet,
-        industry,
-        discipline
+        industries,
+        disciplines
       );
       return queries.bounty.get(bounty.id, user.id);
     }
