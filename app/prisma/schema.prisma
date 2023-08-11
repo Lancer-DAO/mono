@@ -44,6 +44,7 @@ model Bounty {
   tags         Tag[]
   users        BountyUser[]
   industries   Industry[]
+  disciplines  Discipline[]
 }
 
 model Certificate {
@@ -86,12 +87,15 @@ model Comment {
 model Discipline {
   id Int @id @default(autoincrement())
 
+  // Fields
   name String @unique @db.VarChar(256)
   color String @db.VarChar(32)
   description String @db.VarChar(4096)
   industryid Int
 
+  // Relations
   industry Industry @relation(fields: [industryid], references: [id])
+  bounties Bounty[]
   tags Tag[]
 }
 
@@ -150,11 +154,13 @@ model Guild {
 model Industry {
   id Int @id @default(autoincrement())
 
+  // Fields
   name String @unique @db.VarChar(256)
   icon String @db.VarChar(256)
   color String @db.VarChar(32)
   description String @db.VarChar(4096)
 
+  // Relations
   bounties Bounty[]
   users User[]
   disciplines Discipline[]
