@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import Image from "next/image";
-import { ProfileNFT } from "@/types/";
+import { IAsyncResult, ProfileNFT } from "@/types/";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import { Button, CoinflowOfframp, AddReferrerModal } from "@/components";
@@ -9,8 +9,17 @@ import { Copy } from "react-feather";
 import { Treasury } from "@ladderlabs/buddy-sdk";
 import { api } from "@/src/utils/api";
 import * as Prisma from "@prisma/client";
-import { IS_CUSTODIAL } from "@/src/constants";
+import { IS_CUSTODIAL, USDC_MINT } from "@/src/constants";
 import { useUserWallet } from "@/src/providers";
+import { Keypair, PublicKey, Transaction } from "@solana/web3.js";
+import {
+  createTransferInstruction,
+  createAssociatedTokenAccountInstruction,
+  getAssociatedTokenAddressSync,
+  getAccount,
+  TokenAccountNotFoundError,
+} from "@solana/spl-token";
+import { useConnection } from "@solana/wallet-adapter-react";
 
 dayjs.extend(relativeTime);
 
@@ -28,13 +37,115 @@ export const ProfileNFTCard = ({
   const [showCoinflow, setShowCoinflow] = useState(false);
   const [showReferrerModal, setShowReferrerModal] = useState(false);
   const [isCopied, setIsCopied] = useState(false);
+  const [balance, setBalance] = useState<IAsyncResult<number>>({
+    isLoading: true,
+    loadingPrompt: "Loading Balance",
+  });
   const { referralId, initialized, createReferralMember, claimables, claim } =
     useReferral();
-  const { currentUser } = useUserWallet();
-
+  const { connection } = useConnection();
+  const [amount, setAmount] = useState(0);
+  const { currentUser, currentWallet } = useUserWallet();
+  const [sendToPublicKey, setSentToPublicKey] = useState("");
   const { mutateAsync: getMintsAPI } = api.mints.getMints.useMutation();
   const [mints, setMints] = useState<Prisma.Mint[]>([]);
 
+  useEffect(() => {
+    const getBalanceAsync = async () => {
+      try {
+        const usdcAccountAddress = getAssociatedTokenAddressSync(
+          new PublicKey(USDC_MINT),
+          currentWallet.publicKey
+        );
+        const usdcAccount = await getAccount(connection, usdcAccountAddress);
+        console.log(usdcAccount);
+        const balance = parseFloat(usdcAccount.amount.toString()) / 10.0 ** 6;
+        setBalance({ result: balance, isLoading: false });
+      } catch (err) {
+        if (err instanceof TokenAccountNotFoundError) {
+          setBalance({ error: err, result: 0 });
+        } else {
+          console.error(err);
+        }
+      }
+    };
+    if (currentWallet.publicKey) {
+      getBalanceAsync();
+      console.log(Keypair.generate().publicKey.toString());
+    }
+  }, [currentWallet?.publicKey]);
+  const handleMessageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSentToPublicKey(event.target.value);
+  };
+  const handleAmountChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setAmount(Number(event.target.value));
+  };
+  const handleSendClick = async () => {
+    const sendUSDC = async (sourceTokenAccount, destTokenAccount) => {
+      const { blockhash, lastValidBlockHeight } =
+        await connection.getLatestBlockhash();
+      const txInfo = {
+        /** The transaction fee payer */
+        feePayer: currentWallet.publicKey,
+        /** A recent blockhash */
+        blockhash: blockhash,
+        /** the last block chain can advance to before tx is exportd expired */
+        lastValidBlockHeight: lastValidBlockHeight,
+        skipPreflight: true,
+      };
+      const tx = new Transaction(txInfo).add(
+        createTransferInstruction(
+          sourceTokenAccount,
+          destTokenAccount,
+          currentWallet.publicKey,
+          amount
+        )
+      );
+      const signature2 = await currentWallet.signAndSendTransaction(tx);
+      console.log(signature2);
+      setSentToPublicKey("");
+    };
+    if (sendToPublicKey.trim() !== "") {
+      const destPK = new PublicKey(sendToPublicKey);
+      let destTokenAccount: PublicKey;
+      destTokenAccount = getAssociatedTokenAddressSync(
+        new PublicKey(USDC_MINT),
+        destPK
+      );
+      const sourceTokenAccount = getAssociatedTokenAddressSync(
+        new PublicKey(USDC_MINT),
+        currentWallet.publicKey
+      );
+      try {
+        const tokenAccount = await getAccount(connection, destTokenAccount);
+        sendUSDC(sourceTokenAccount, destTokenAccount);
+      } catch (e) {
+        const ix = await createAssociatedTokenAccountInstruction(
+          currentWallet.publicKey,
+          destTokenAccount,
+          destPK,
+          new PublicKey(USDC_MINT)
+        );
+        const { blockhash, lastValidBlockHeight } =
+          await connection.getLatestBlockhash();
+        const txInfo = {
+          /** The transaction fee payer */
+          feePayer: currentWallet.publicKey,
+          /** A recent blockhash */
+          blockhash: blockhash,
+          /** the last block chain can advance to before tx is exportd expired */
+          lastValidBlockHeight: lastValidBlockHeight,
+          skipPreflight: true,
+        };
+        const tx = new Transaction(txInfo).add(ix);
+        const signature = await currentWallet.signAndSendTransaction(tx);
+        console.log(signature);
+        setTimeout(async () => {
+          sendUSDC(sourceTokenAccount, destTokenAccount);
+        }, 2000);
+      }
+    }
+  };
   const handleCreateLink = useCallback(async () => {
     await createReferralMember();
 
@@ -200,6 +311,34 @@ export const ProfileNFTCard = ({
           </div>
 
           {showCoinflow && <CoinflowOfframp />}
+          {IS_CUSTODIAL && (
+            <>
+              <h2>Send USD to Address</h2>
+              {!balance.isLoading && <div>{`Balance: ${balance.result}`}</div>}
+              {amount !== 0 && (
+                <div>{`Actual Amount: ${amount / 10.0 ** 6}`}</div>
+              )}
+              <div className="">
+                <input
+                  type="text"
+                  className="input w-input"
+                  value={sendToPublicKey}
+                  onChange={handleMessageChange}
+                  placeholder="Paste Public Key"
+                />
+                <input
+                  type="number"
+                  className="input w-input"
+                  value={amount}
+                  onChange={handleAmountChange}
+                  placeholder="Amount"
+                />
+                <Button onClick={handleSendClick} extraClasses="mt-6">
+                  Send
+                </Button>
+              </div>
+            </>
+          )}
         </div>
       </div>
 
