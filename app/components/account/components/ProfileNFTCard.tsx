@@ -343,7 +343,7 @@ export const ProfileNFTCard = ({
                   disabled={signature !== ""}
                   extraClasses="mt-6"
                 >
-                  {`Sen${signature === "" ? "t" : "d"}: $${amount / 10.0 ** 6}`}
+                  {`Sen${signature === "" ? "d" : "t"}: $${amount / 10.0 ** 6}`}
                 </Button>
 
                 {!!signature && (
