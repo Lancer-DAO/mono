@@ -159,6 +159,7 @@ export const ProfileNFTCard = ({
         <div>
           <div className="divider"></div>
 
+          // TODO: Move this to its own component @scammo
           <h4>Refer your friends</h4>
           {referralId && initialized ? (
             <div className="relative w-full">
