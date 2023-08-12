@@ -3,7 +3,12 @@ import Image from "next/image";
 import { IAsyncResult, ProfileNFT } from "@/types/";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
-import { Button, CoinflowOfframp, AddReferrerModal } from "@/components";
+import {
+  Button,
+  CoinflowOfframp,
+  AddReferrerModal,
+  LinkButton,
+} from "@/components";
 import { useReferral } from "@/src/providers/referralProvider";
 import { Copy } from "react-feather";
 import { Treasury } from "@ladderlabs/buddy-sdk";
@@ -37,6 +42,7 @@ export const ProfileNFTCard = ({
   const [showCoinflow, setShowCoinflow] = useState(false);
   const [showReferrerModal, setShowReferrerModal] = useState(false);
   const [isCopied, setIsCopied] = useState(false);
+  const [signature, setSignature] = useState("");
   const [balance, setBalance] = useState<IAsyncResult<number>>({
     isLoading: true,
     loadingPrompt: "Loading Balance",
@@ -71,7 +77,6 @@ export const ProfileNFTCard = ({
     };
     if (currentWallet.publicKey) {
       getBalanceAsync();
-      console.log(Keypair.generate().publicKey.toString());
     }
   }, [currentWallet?.publicKey]);
   const handleMessageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -102,7 +107,7 @@ export const ProfileNFTCard = ({
         )
       );
       const signature2 = await currentWallet.signAndSendTransaction(tx);
-      console.log(signature2);
+      setSignature(signature2);
       setSentToPublicKey("");
     };
     if (sendToPublicKey.trim() !== "") {
@@ -333,9 +338,26 @@ export const ProfileNFTCard = ({
                   onChange={handleAmountChange}
                   placeholder="Amount"
                 />
-                <Button onClick={handleSendClick} extraClasses="mt-6">
-                  Send
-                </Button>
+                <div className="flex">
+                  <Button
+                    onClick={handleSendClick}
+                    disabled={signature !== ""}
+                    disabledText="Sent"
+                    extraClasses="mt-6"
+                  >
+                    Send
+                  </Button>
+
+                  {!!signature && (
+                    <LinkButton
+                      href={`https://solscan.io/tx/${signature}`}
+                      onClick={handleSendClick}
+                      extraClasses="mt-6 ml-4"
+                    >
+                      View Transaction
+                    </LinkButton>
+                  )}
+                </div>
               </div>
             </>
           )}
