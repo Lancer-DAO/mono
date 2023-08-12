@@ -338,26 +338,24 @@ export const ProfileNFTCard = ({
                   onChange={handleAmountChange}
                   placeholder="Amount"
                 />
-                <div className="flex">
-                  <Button
-                    onClick={handleSendClick}
-                    disabled={signature !== ""}
-                    disabledText="Sent"
-                    extraClasses="mt-6"
-                  >
-                    Send
-                  </Button>
+                <Button
+                  onClick={handleSendClick}
+                  disabled={signature !== ""}
+                  extraClasses="mt-6"
+                >
+                  {`Sen${signature === "" ? "t" : "d"}: $${amount / 10.0 ** 6}`}
+                </Button>
 
-                  {!!signature && (
-                    <LinkButton
-                      href={`https://solscan.io/tx/${signature}`}
-                      onClick={handleSendClick}
-                      extraClasses="mt-6 ml-4"
-                    >
-                      View Transaction
-                    </LinkButton>
-                  )}
-                </div>
+                {!!signature && (
+                  <LinkButton
+                    href={`https://solscan.io/tx/${signature}`}
+                    onClick={handleSendClick}
+                    wrapperClasses="mt-6"
+                    target="_blank"
+                  >
+                    View Transaction
+                  </LinkButton>
+                )}
               </div>
             </>
           )}
