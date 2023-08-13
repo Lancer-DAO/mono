@@ -108,7 +108,9 @@ const BountyCard: FC<BountyCardProps> = ({ bounty, formData }) => {
           <p className="text-2xl font-bold">
             {bounty ? bounty.title : formData.issueTitle}
           </p>
-          <p>{bounty ? bounty.description : formData.issueDescription}</p>
+          <div className="w-full max-h-[60px] multi-line-ellipsis overflow-hidden">
+            <p>{bounty ? bounty.description : formData.issueDescription}</p>
+          </div>
         </div>
         <div className="relative w-full pr-10 flex flex-wrap items-center gap-1 mt-auto">
           {bounty &&
