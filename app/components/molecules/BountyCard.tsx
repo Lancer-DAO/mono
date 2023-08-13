@@ -38,6 +38,9 @@ const BountyCard: FC<BountyCardProps> = ({ bounty, formData }) => {
 
   return (
     <div className="relative w-[291px] h-[292px]">
+      <div className="absolute left-1/2 -translate-x-[53%] top-[6px] w-7">
+        <Image src="/assets/icons/eng.png" width={28} height={28} alt="eng" />
+      </div>
       <svg
         width="291"
         height="62"
