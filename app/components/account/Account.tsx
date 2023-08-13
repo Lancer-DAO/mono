@@ -1,7 +1,7 @@
 import { useEffect, useState, FC } from "react";
 import { useRouter } from "next/router";
-import { DefaultLayout, LoadingBar } from "@/components";
-import { BountyNFTCard, ProfileNFTCard } from "./components";
+import { BountyCard, LoadingBar } from "@/components";
+import { ProfileNFTCard } from "./components";
 import {
   BOUNTY_PROJECT_PARAMS,
   IS_CUSTODIAL,
@@ -244,27 +244,28 @@ export const Account: FC = () => {
               githubId={account?.result.githubId}
             />
             <BadgesCard profileNFT={profileNFT} />
-            {/* <div
-                className="flex flex-col gap-3 w-full md:w-[60%] px-5 pb-20"
-                id="bounties-list"
-              >
-                <p className="text-4xl flex items-center justify-center pb-3">
-                  Completed Bounties
-                </p>
-                {bountyNFTs.isLoading ? (
-                  <div className="flex justify-center items-center">
-                    <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-gray-900"></div>
-                  </div>
-                ) : bountyNFTs?.result?.length > 0 ? (
-                  bountyNFTs?.result?.map((bountyNFT) => (
-                    <BountyNFTCard bountyNFT={bountyNFT} />
-                  ))
-                ) : (
-                  <div className="w-full text-center">No bounties yet!</div>
-                )}
-              </div> */}
           </div>
-          <div className="flex flex-col gap-10 w-full">right column here</div>
+          <div className="flex flex-col gap-10 w-full">
+            <div
+              className="flex flex-col gap-3 w-full md:w-[60%] px-5 pb-20"
+              id="bounties-list"
+            >
+              <p className="text-4xl flex items-center justify-center pb-3">
+                Completed Bounties
+              </p>
+              {/* {bountyNFTs.isLoading ? (
+                <div className="flex justify-center items-center">
+                  <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-gray-900"></div>
+                </div>
+              ) : bountyNFTs?.result?.length > 0 ? (
+                bountyNFTs?.result?.map((bountyNFT) => (
+                  <BountyNFTCard bountyNFT={bountyNFT} />
+                ))
+              ) : (
+                <div className="w-full text-center">No bounties yet!</div>
+              )} */}
+            </div>
+          </div>
         </div>
       )}
     </>
