@@ -15,7 +15,6 @@ export interface BountyCardProps extends SVGAttributes<SVGSVGElement> {
 }
 
 const BountyCard: FC<BountyCardProps> = ({ bounty, formData }) => {
-  const [tagOverflow, setTagOverflow] = useState(false);
   const { currentUser } = useUserWallet();
 
   const creator = bounty?.users.find((user) =>
@@ -23,6 +22,14 @@ const BountyCard: FC<BountyCardProps> = ({ bounty, formData }) => {
   );
 
   // const bountyAmount = decimalToNumber(bounty?.escrow.amount).toFixed(2);
+
+  const displayedTags = bounty
+    ? bounty.tags.slice(0, 4)
+    : formData.tags.slice(0, 4);
+
+  const tagOverflow = bounty
+    ? bounty.tags.length > 4
+    : formData.tags.length > 4;
 
   useEffect(() => {
     console.log("bounty: ", bounty);
@@ -73,14 +80,15 @@ const BountyCard: FC<BountyCardProps> = ({ bounty, formData }) => {
           {creator && <ContributorInfo user={creator.user} />}
 
           {formData && (
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-3">
               <Image
-                src={currentUser.picture}
+                src={currentUser?.picture}
                 width={25}
                 height={25}
                 alt="user picture"
+                className="rounded-full overflow-hidden"
               />
-              <p className="ml-[10px] text-xs font-bold">{currentUser.name}</p>
+              <p className="text-xs font-bold">{currentUser?.name}</p>
             </div>
           )}
           {/* testing */}
@@ -93,27 +101,32 @@ const BountyCard: FC<BountyCardProps> = ({ bounty, formData }) => {
           </div>
         </div>
         <div className="mt-8">
-          <p className="text-2xl font-bold">{bounty.title}</p>
-          <p>{bounty.description}</p>
+          <p className="text-2xl font-bold">
+            {bounty ? bounty.title : formData.issueTitle}
+          </p>
+          <p>{bounty ? bounty.description : formData.issueDescription}</p>
         </div>
         <div className="relative w-full pr-10 flex flex-wrap items-center gap-1 mt-auto">
-          {bounty.tags.map((tag, index) => {
-            if (index > 2) {
-              setTagOverflow(true);
-              return;
-            }
-            return (
-              <>
-                <div
-                  className="border border-neutralBtnBorder rounded-full 
+          {bounty &&
+            displayedTags.map((tag) => (
+              <div
+                className="border border-neutralBtnBorder rounded-full 
                 px-3 py-1 flex items-center justify-center"
-                  key={tag.name}
-                >
-                  {tag.name}
-                </div>
-              </>
-            );
-          })}
+                key={tag.name}
+              >
+                {tag.name}
+              </div>
+            ))}
+          {formData &&
+            displayedTags.map((tag) => (
+              <div
+                className="border border-neutralBtnBorder rounded-full 
+                px-3 py-1 flex items-center justify-center"
+                key={tag}
+              >
+                {tag}
+              </div>
+            ))}
           {tagOverflow && <p className="text-xs">+ more</p>}
         </div>
       </div>
