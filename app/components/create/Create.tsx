@@ -94,7 +94,7 @@ export const Create = () => {
           <FundBountyForm isAccountCreated={isAccountCreated} />
         )}
       </div>
-      {/* TODO: add preview section */}
+      {/* preview section */}
       {formSection !== "PREVIEW" && (
         <div className="md:w-[515px] pt-10">
           <PreviewCardBase>

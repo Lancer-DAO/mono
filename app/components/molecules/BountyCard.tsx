@@ -98,7 +98,7 @@ const BountyCard: FC<BountyCardProps> = ({ bounty, formData }) => {
           {/* creator profile */}
           {creator && <ContributorInfo user={creator.user} />}
 
-          {formData && (
+          {formData && currentUser && (
             <div className="flex items-center gap-3">
               <Image
                 src={currentUser?.picture}

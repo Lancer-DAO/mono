@@ -23,8 +23,6 @@ const Form: FC<Props> = ({
   handleChange,
 }) => {
   const { currentTutorialState, setCurrentTutorialState } = useTutorial();
-  // const [failedToGetRepos, setFailedToGetRepos] = useState(false);
-  // const [failedToCreateIssue, setFailedToCreateIssue] = useState(false);
   const [toggleConfig, setToggleConfig] = useState<ToggleConfig>({
     option1: {
       title: "Fixed",
@@ -97,10 +95,11 @@ const Form: FC<Props> = ({
           <label className="text-textGreen/70 pr-4 pl-3">Price</label>
           <div className="absolute top-1/2 -translate-y-1/2 -left-10">2</div>
           <div className="flex items-center gap-3">
-            <Toggle
+            {/* commenting out until functionality is added */}
+            {/* <Toggle
               toggleConfig={toggleConfig}
               setToggleConfig={setToggleConfig}
-            />
+            /> */}
             <input
               type="number"
               className="placeholder:text-textGreen/70 border bg-neutralBtn 
