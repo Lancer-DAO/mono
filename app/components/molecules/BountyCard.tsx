@@ -21,8 +21,6 @@ const BountyCard: FC<BountyCardProps> = ({ bounty, formData }) => {
     user.relations.includes(BOUNTY_USER_RELATIONSHIP.Creator)
   );
 
-  // const bountyAmount = decimalToNumber(bounty?.escrow.amount).toFixed(2);
-
   const displayedTags = bounty
     ? bounty.tags.slice(0, 4)
     : formData.tags.slice(0, 4);
@@ -70,7 +68,7 @@ const BountyCard: FC<BountyCardProps> = ({ bounty, formData }) => {
       </svg>
       <div className="absolute top-1 left-1">
         <PriceTag
-          price={bounty ? bounty?.escrow.amount : formData.issuePrice}
+          price={bounty ? bounty?.escrow.amount : Number(formData.issuePrice)}
         />
       </div>
 
