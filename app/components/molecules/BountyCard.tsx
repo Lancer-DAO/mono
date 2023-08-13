@@ -21,6 +21,21 @@ const BountyCard: FC<BountyCardProps> = ({ bounty, formData }) => {
     user.relations.includes(BOUNTY_USER_RELATIONSHIP.Creator)
   );
 
+  const getFormattedDate = () => {
+    var date: Date;
+    if (bounty) {
+      const createdAtMS = Number(bounty?.createdAt);
+      date = new Date(createdAtMS);
+    } else {
+      date = new Date();
+    }
+    const year = date.getFullYear().toString().slice(-2); // get the last two digits of the year
+    const month = String(date.getMonth() + 1).padStart(2, "0"); // add 1 because getMonth() is 0-based
+    const day = String(date.getDate()).padStart(2, "0");
+
+    return `${month}.${day}.${year}`;
+  };
+
   const displayedTags = bounty
     ? bounty.tags.slice(0, 4)
     : formData.tags.slice(0, 4);
@@ -29,10 +44,10 @@ const BountyCard: FC<BountyCardProps> = ({ bounty, formData }) => {
     ? bounty.tags.length > 4
     : formData.tags.length > 4;
 
-  useEffect(() => {
-    console.log("bounty: ", bounty);
-    console.log("formData: ", formData);
-  }, [bounty, formData]);
+  // useEffect(() => {
+  //   console.log("bounty: ", bounty);
+  //   console.log("formData: ", formData);
+  // }, [bounty, formData]);
 
   // TODO: based on industry of bounty, change the color of the card
 
@@ -69,10 +84,13 @@ const BountyCard: FC<BountyCardProps> = ({ bounty, formData }) => {
           stroke-width="2.14467"
         />
       </svg>
-      <div className="absolute top-1 left-1">
-        <PriceTag
-          price={bounty ? bounty?.escrow.amount : Number(formData.issuePrice)}
-        />
+      <div className="w-full absolute top-1">
+        <div className="w-full flex items-center justify-between px-1">
+          <PriceTag
+            price={bounty ? bounty?.escrow.amount : Number(formData.issuePrice)}
+          />
+          <p className="text-xs font-bold mr-2">{getFormattedDate()}</p>
+        </div>
       </div>
 
       <div className="absolute top-0 left-0 w-full h-full flex flex-col p-4">
@@ -101,8 +119,6 @@ const BountyCard: FC<BountyCardProps> = ({ bounty, formData }) => {
             <StarIcon />
           </div>
         </div>
-
-        {/* TODO: add status icon */}
 
         <div className="mt-8">
           <p className="text-2xl font-bold">
