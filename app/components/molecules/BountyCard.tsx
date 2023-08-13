@@ -101,6 +101,9 @@ const BountyCard: FC<BountyCardProps> = ({ bounty, formData }) => {
             <StarIcon />
           </div>
         </div>
+
+        {/* TODO: add status icon */}
+
         <div className="mt-8">
           <p className="text-2xl font-bold">
             {bounty ? bounty.title : formData.issueTitle}
