@@ -1,3 +1,33 @@
+.checkbox {
+  width: 24px;
+  height: 24px;
+  margin-top: 5px;
+  border-color: #ced3d9;
+  border-radius: 6px;
+  -webkit-transition: border-color 400ms ease, background-color 400ms ease;
+  transition: border-color 400ms ease, background-color 400ms ease;
+}
+
+.checkbox:hover {
+  border-color: #153cf5;
+}
+
+.checkbox.checked {
+  border-color: #14bb88;
+  background-color: #14bb88;
+  &::before {
+    display: inline-block;
+    width: 15px;
+    height: 15px;
+    margin-left: 4px;
+    content: url("/assets/images/check-arrow.svg");
+  }
+  &.disabled {
+    border-color: grey;
+    background-color: grey;
+  }
+}
+
 .issue-card {
   display: flex;
   flex-direction: column;
@@ -223,12 +253,6 @@
 .dropdown__option input[type="checkbox"]:checked + span {
   text-decoration: line-through;
   color: #ccc;
-}
-
-.filter-section {
-  display: flex;
-  flex-direction: column;
-  row-gap: 10px;
 }
 
 .range-slider {

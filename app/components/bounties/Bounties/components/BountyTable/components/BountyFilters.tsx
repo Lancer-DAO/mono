@@ -28,30 +28,24 @@ export const BountyFilters = ({
   return (
     <form
       onSubmit={(event) => event.preventDefault()}
-      className="flex flex-col items-start gap-5 px-5"
+      className="flex flex-col items-start gap-5 pl-10 pr-5 mt-16"
     >
-      <div className="flex flex-col gap-5">
-        <label className="w-checkbox checkbox-field-2 label-only ">
-          <div
-            className={classnames(
-              "w-checkbox-input w-checkbox-input--inputType-custom checkbox ",
-              {
-                checked: filters.isMyBounties,
-              }
-            )}
-            onClick={() => {
-              setFilters({
-                ...filters,
-                isMyBounties: !filters.isMyBounties,
-              });
-              setBounties({ result: [] });
-            }}
-          />
-
-          <label className="check-label label-only">Only My Bounties</label>
-        </label>
+      <div className="flex items-center gap-5">
+        <input
+          type="checkbox"
+          className="w-8 h-8 accent-primaryBtn border border-primaryBtnBorder
+          rounded-xl focus:ring-industryGreenBorder focus:border-green-500 cursor-pointer"
+          onClick={() => {
+            setBounties({ result: [] });
+            setFilters({
+              ...filters,
+              isMyBounties: !filters.isMyBounties,
+            });
+          }}
+        />
+        <label className="font-bold">Only My Bounties</label>
       </div>
-      <div className="filter-section" id="filter-payout-mints">
+      <div className="flex flex-col gap-5">
         <label>Payout Mints</label>
         <MultiSelectDropdown
           options={mints.map((mint) => {
@@ -74,7 +68,7 @@ export const BountyFilters = ({
           }}
         />
       </div>
-      <div className="filter-section" id="filter-creators">
+      <div className="flex flex-col gap-5">
         <label>Creators</label>
         <MultiSelectDropdown
           options={orgs.map((org) => {
@@ -97,7 +91,7 @@ export const BountyFilters = ({
           }}
         />
       </div>
-      <div className="filter-section" id="filter-requirements">
+      <div className="flex flex-col gap-5">
         <label>Requirements</label>
         <MultiSelectDropdown
           options={tags.map((tag) => {
@@ -120,7 +114,7 @@ export const BountyFilters = ({
           }}
         />
       </div>
-      <div className="filter-section" id="filter-states">
+      <div className="flex flex-col gap-5">
         <label>States</label>
         <MultiSelectDropdown
           options={BOUNTY_STATES.map((state) => {
@@ -149,7 +143,7 @@ export const BountyFilters = ({
           }}
         />
       </div>
-      <div className="filter-section" id="filter-time">
+      {/* <div className="flex flex-col gap-5" id="filter-time">
         <label htmlFor="estimatedTime">Estimated Time (hours)</label>
         <div className="range-bounds">
           <div>{timeBounds[0]}</div>
@@ -163,7 +157,7 @@ export const BountyFilters = ({
             }}
           />
         )}
-      </div>
+      </div> */}
     </form>
   );
 };
