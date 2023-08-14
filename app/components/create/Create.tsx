@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import {
   AddMediaForm,
+  BountyCard,
   CreateBountyForm,
   FundBountyForm,
   PreviewCardBase,
@@ -76,7 +77,6 @@ export const Create = () => {
             setFormSection={setFormSection}
             formData={formData}
             setFormData={setFormData}
-            handleChange={handleChange}
           />
         )}
         {formSection === "PREVIEW" && (
@@ -93,10 +93,12 @@ export const Create = () => {
           <FundBountyForm isAccountCreated={isAccountCreated} />
         )}
       </div>
-      {/* TODO: add preview section */}
+      {/* preview section */}
       {formSection !== "PREVIEW" && (
         <div className="md:w-[515px] pt-10">
-          <PreviewCardBase>Preview Card</PreviewCardBase>
+          <PreviewCardBase>
+            <BountyCard formData={formData} />
+          </PreviewCardBase>
         </div>
       )}
     </div>

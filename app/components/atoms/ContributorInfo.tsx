@@ -1,4 +1,5 @@
 import { User } from "@prisma/client";
+import Image from "next/image";
 import { useRouter } from "next/router";
 
 const ContributorInfo: React.FC<{ user: User; disableLink?: boolean }> = ({
@@ -16,8 +17,7 @@ const ContributorInfo: React.FC<{ user: User; disableLink?: boolean }> = ({
           router.push(`/account/${user.id}`);
         }}
       >
-        <img
-          className="h-[20px] w-[20px] rounded-full shadow-md shadow-black-300"
+        <Image
           src={
             user.picture
               ? user.picture
@@ -25,8 +25,12 @@ const ContributorInfo: React.FC<{ user: User; disableLink?: boolean }> = ({
                   user.githubId.split("|")[1]
                 }?s=60&v=4`
           }
+          width={25}
+          height={25}
+          alt={user.name ? user.name : user.githubLogin}
+          className="h-[25px] w-[25px] rounded-full shadow-md shadow-black-300"
         />
-        <div className="ml-[10px]">
+        <div className="ml-[10px] text-xs font-bold">
           {user.name ? user.name : user.githubLogin}
         </div>
       </div>

@@ -2,10 +2,10 @@ import { useState, useEffect } from "react";
 import { TABLE_BOUNTY_STATES, TABLE_MY_BOUNTY_STATES } from "@/src/constants";
 import { getUniqueItems } from "@/src/utils";
 import { useUserWallet } from "@/src/providers";
-import { LoadingBar } from "@/components";
+import { LoadingBar, BountyCard } from "@/components";
 import { api } from "@/src/utils/api";
 import { useRouter } from "next/router";
-import { BountyFilters, LancerBounty } from "./components";
+import { BountyFilters } from "./components";
 import { IAsyncResult } from "@/types/common";
 import { BountyPreview } from "@/types";
 export const BOUNTY_USER_RELATIONSHIP = [
@@ -184,13 +184,7 @@ const BountyList: React.FC<{}> = () => {
         )}
         {filteredBounties?.length > 0 &&
           filteredBounties?.map((bounty, index) => {
-            return (
-              <LancerBounty
-                bounty={bounty}
-                key={index}
-                id={`bounty-item-${index}`}
-              />
-            );
+            return <BountyCard bounty={bounty} key={index} />;
           })}
       </div>
     </div>

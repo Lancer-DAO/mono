@@ -108,37 +108,31 @@ export const ProfileNFTCard = ({
           {/* Labels column */}
           <div className="flex flex-col gap-4 text-lg">
             <p>name</p>
-            <p>username</p>
+            {/* <p>username</p> */}
             <p>industry</p>
-            <p>location</p>
+            {/* <p>location</p> */}
             <p>exp</p>
           </div>
           {/* Data column */}
           <div className="flex flex-col gap-4 text-lg font-bold">
             <p>{currentUser?.name}</p>
-            <p>{currentUser?.name}</p>
-            <p>[industry]</p>
-            <p>[location]</p>
+            {/* <p>{currentUser?.name}</p> */}
+            {/* hard coded */}
+            <div className="flex items-center gap-2">
+              <Image
+                src="/assets/icons/eng.png"
+                width={25}
+                height={25}
+                alt="eng"
+              />
+              <p className="font-bold">Engineering</p>
+            </div>
+            {/* <p>[location]</p> */}
             <p>{profileNFT.reputation} pts</p>
           </div>
         </div>
 
-        {/* <div>
-          <div className="divider"></div>
-          <h4>Badges</h4>
-          {profileNFT.badges?.length > 0 ? (
-            <div className="tag-list">
-              {profileNFT.badges.map((badge) => (
-                <div className="tag-item" key={badge}>
-                  {badge}
-                </div>
-              ))}
-            </div>
-          ) : (
-            <div>No badges yet!</div>
-          )}
-        </div>
-
+        {/* 
         <div>
           <div className="divider"></div>
 
@@ -165,6 +159,7 @@ export const ProfileNFTCard = ({
         <div>
           <div className="divider"></div>
 
+          // TODO: Move this to its own component @scammo
           <h4>Refer your friends</h4>
           {referralId && initialized ? (
             <div className="relative w-full">

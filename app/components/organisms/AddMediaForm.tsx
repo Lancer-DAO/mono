@@ -8,15 +8,9 @@ interface Props {
   setFormSection: Dispatch<SetStateAction<FORM_SECTION>>;
   formData: FormData;
   setFormData: Dispatch<SetStateAction<FormData>>;
-  handleChange: (event) => void;
 }
 
-const AddMediaForm: FC<Props> = ({
-  setFormSection,
-  formData,
-  setFormData,
-  handleChange,
-}) => {
+const AddMediaForm: FC<Props> = ({ setFormSection, formData, setFormData }) => {
   const addLink = () => {
     setFormData({
       ...formData,
@@ -54,7 +48,7 @@ const AddMediaForm: FC<Props> = ({
           <div className="relative w-full flex flex-col gap-2">
             <div className="absolute top-3 -left-10 text-2xl">6</div>
             {formData.links.map((link: string, index: number) => (
-              <div className="flex items-center gap-1">
+              <div className="flex items-center gap-1" key={index}>
                 <input
                   type="text"
                   className="placeholder:text-textGreen/70 border bg-neutralBtn 
@@ -91,20 +85,10 @@ const AddMediaForm: FC<Props> = ({
             7
           </div>
           {/* TODO: drag and drop / upload media - proof on concept not working */}
-          {/* <PreviewCardBase align="start">Add Media</PreviewCardBase> */}
+          <PreviewCardBase width="200px" align="start">
+            Add References
+          </PreviewCardBase>
           {/* <ImageUpload /> */}
-        </div>
-        <div className="relative">
-          <div className="absolute top-3 -left-10 text-2xl">8</div>
-          <textarea
-            className="placeholder:text-textGreen/70 border bg-neutralBtn 
-            border-neutralBtnBorder w-full h-[150px] rounded-lg px-3 py-2 resize-y"
-            name="comment"
-            placeholder="Additional comments"
-            id="additional-comments"
-            value={formData.comment}
-            onChange={handleChange}
-          />
         </div>
         <div className="w-full flex items-center justify-between">
           <motion.button

@@ -23,8 +23,6 @@ const Form: FC<Props> = ({
   handleChange,
 }) => {
   const { currentTutorialState, setCurrentTutorialState } = useTutorial();
-  // const [failedToGetRepos, setFailedToGetRepos] = useState(false);
-  // const [failedToCreateIssue, setFailedToCreateIssue] = useState(false);
   const [toggleConfig, setToggleConfig] = useState<ToggleConfig>({
     option1: {
       title: "Fixed",
@@ -97,10 +95,11 @@ const Form: FC<Props> = ({
           <label className="text-textGreen/70 pr-4 pl-3">Price</label>
           <div className="absolute top-1/2 -translate-y-1/2 -left-10">2</div>
           <div className="flex items-center gap-3">
-            <Toggle
+            {/* commenting out until functionality is added */}
+            {/* <Toggle
               toggleConfig={toggleConfig}
               setToggleConfig={setToggleConfig}
-            />
+            /> */}
             <input
               type="number"
               className="placeholder:text-textGreen/70 border bg-neutralBtn 
@@ -233,19 +232,6 @@ const Form: FC<Props> = ({
           <div className="absolute top-1/2 -translate-y-1/2 -left-10">4</div>
           <input
             type="text"
-            className="placeholder:text-textGreen/70 border bg-neutralBtn
-            border-neutralBtnBorder w-full h-[50px] rounded-lg px-3"
-            name="issueDescription"
-            placeholder="Description"
-            id="issue-title-input"
-            value={formData.issueDescription}
-            onChange={handleChange}
-          />
-        </div>
-        <div className="relative">
-          <div className="absolute top-1/2 -translate-y-1/2 -left-10">5</div>
-          <input
-            type="text"
             className="placeholder:text-textGreen/70 border bg-neutralBtn 
             border-neutralBtnBorder w-full h-[50px] rounded-lg px-3"
             name="tags"
@@ -304,6 +290,18 @@ const Form: FC<Props> = ({
                 }
               }
             }}
+          />
+        </div>
+        <div className="relative">
+          <div className="absolute top-2 -left-10">5</div>
+          <textarea
+            className="placeholder:text-textGreen/70 border bg-neutralBtn min-h-[50px] 
+            border-neutralBtnBorder w-full h-[150px] rounded-lg px-3 py-2 resize-y"
+            name="issueDescription"
+            placeholder="Description"
+            id="issue-title-input"
+            value={formData.issueDescription}
+            onChange={handleChange}
           />
         </div>
         <div className="w-full flex items-center justify-end">
