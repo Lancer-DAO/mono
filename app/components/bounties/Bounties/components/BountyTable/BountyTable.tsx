@@ -11,7 +11,7 @@ import { api } from "@/src/utils/api";
 import { useRouter } from "next/router";
 import { BountyFilters } from "./components";
 import { IAsyncResult } from "@/types/common";
-import { BountyPreview } from "@/types";
+import { BountyPreview, Filters } from "@/types";
 import Image from "next/image";
 import { motion } from "framer-motion";
 export const BOUNTY_USER_RELATIONSHIP = [
@@ -22,16 +22,6 @@ export const BOUNTY_USER_RELATIONSHIP = [
   "None",
 ];
 
-export type Filters = {
-  mints: string[];
-  orgs: string[];
-  tags: string[];
-  states: string[];
-  estimatedTimeBounds: [number, number];
-  relationships: string[];
-  isMyBounties: boolean;
-};
-
 const BountyList: React.FC<{}> = () => {
   const { currentUser } = useUserWallet();
   const router = useRouter();
@@ -40,7 +30,7 @@ const BountyList: React.FC<{}> = () => {
   const [tags, setTags] = useState<string[]>([]);
   const [mints, setMints] = useState<string[]>([]);
   const [orgs, setOrgs] = useState<string[]>([]);
-  const [bounds, setTimeBounds] = useState<[number, number]>([0, 10]);
+  const [bounds, setPriceBounds] = useState<[number, number]>([100, 10000]);
   const [bounties, setBounties] = useState<IAsyncResult<BountyPreview[]>>();
   const [filteredBounties, setFilteredBounties] = useState<BountyPreview[]>();
   const [showFilters, setShowFilters] = useState<boolean>(false);
@@ -48,7 +38,7 @@ const BountyList: React.FC<{}> = () => {
     mints: mints,
     tags: tags,
     orgs: orgs,
-    estimatedTimeBounds: bounds,
+    estimatedPriceBounds: bounds,
     states: TABLE_BOUNTY_STATES,
     relationships: BOUNTY_USER_RELATIONSHIP,
     isMyBounties: false,
@@ -99,8 +89,8 @@ const BountyList: React.FC<{}> = () => {
       }
       const bountyEstimate = parseFloat(bounty.estimatedTime.toString());
       if (
-        bountyEstimate < filters.estimatedTimeBounds[0] ||
-        bountyEstimate > filters.estimatedTimeBounds[1]
+        bountyEstimate < filters.estimatedPriceBounds[0] ||
+        bountyEstimate > filters.estimatedPriceBounds[1]
       ) {
         return false;
       }
@@ -138,21 +128,21 @@ const BountyList: React.FC<{}> = () => {
       setTags(uniqueTags);
       setOrgs(uniqueOrgs);
       setMints(uniqueMints);
-      const allTimes = bounties?.result.map((bounty) =>
-        parseFloat(bounty.estimatedTime.toString())
+      const allPrices = bounties?.result.map((bounty) =>
+        bounty.price ? parseFloat(bounty.price.toString()) : 0
       );
-      const maxTime = Math.max(...allTimes) || 10;
-      const minTime = Math.min(...allTimes) || 0;
-      const timeBounds: [number, number] = [
-        minTime,
-        maxTime === minTime ? maxTime + 1 : maxTime,
+      const maxPrice = Math.max(...allPrices) || 10;
+      const minPrice = Math.min(...allPrices) || 0;
+      const priceBounds: [number, number] = [
+        minPrice,
+        maxPrice === minPrice ? maxPrice + 1 : maxPrice,
       ];
-      setTimeBounds(timeBounds);
+      setPriceBounds(priceBounds);
       setFilters({
         mints: uniqueMints,
         tags: allTags,
         orgs: uniqueOrgs,
-        estimatedTimeBounds: timeBounds,
+        estimatedPriceBounds: priceBounds,
         states: filters.isMyBounties
           ? TABLE_MY_BOUNTY_STATES
           : TABLE_BOUNTY_STATES,
@@ -168,7 +158,7 @@ const BountyList: React.FC<{}> = () => {
         <BountyFilters
           mints={mints}
           tags={tags}
-          timeBounds={bounds}
+          priceBounds={bounds}
           orgs={orgs}
           filters={filters}
           setFilters={setFilters}

@@ -3,14 +3,14 @@ import RangeSlider from "@/components/molecules/RangeSlider";
 import { BOUNTY_STATES } from "@/src/constants";
 import classnames from "classnames";
 import { capitalize } from "lodash";
-import { Filters } from "../BountyTable";
+import { Filters } from "@/types";
 import { IAsyncResult } from "@/types/common";
 
 interface BountyFiltersProps {
   mints: string[];
   tags: string[];
   orgs: string[];
-  timeBounds: [number, number];
+  priceBounds: [number, number];
   filters: Filters;
   setFilters: (filters: Filters) => void;
   setBounties: (bounties: IAsyncResult<any[]>) => void;
@@ -20,7 +20,7 @@ export const BountyFilters = ({
   mints,
   tags,
   orgs,
-  timeBounds,
+  priceBounds,
   filters,
   setFilters,
   setBounties,
@@ -44,6 +44,21 @@ export const BountyFilters = ({
           }}
         />
         <label className="font-bold">Only My Bounties</label>
+      </div>
+      <div className="w-full flex flex-col gap-3">
+        <div className="flex items-center gap-2">
+          <p className="font-bold">Price Range:</p>
+          <p className="text-sm">{`$${filters.estimatedPriceBounds[0]} - $${filters.estimatedPriceBounds[1]}`}</p>
+        </div>
+
+        {priceBounds[0] !== 0 && (
+          <RangeSlider
+            bounds={priceBounds}
+            setBounds={(bounds) => {
+              setFilters({ ...filters, estimatedPriceBounds: bounds });
+            }}
+          />
+        )}
       </div>
       <div className="flex flex-col gap-3">
         <label>Payout Mints</label>
@@ -143,21 +158,6 @@ export const BountyFilters = ({
           }}
         />
       </div>
-      {/* <div className="flex flex-col gap-5" id="filter-time">
-        <label htmlFor="estimatedTime">Estimated Time (hours)</label>
-        <div className="range-bounds">
-          <div>{timeBounds[0]}</div>
-          <div>{timeBounds[1]}</div>
-        </div>
-        {timeBounds[0] !== 0 && (
-          <RangeSlider
-            bounds={timeBounds}
-            setBounds={(bounds) => {
-              setFilters({ ...filters, estimatedTimeBounds: bounds });
-            }}
-          />
-        )}
-      </div> */}
     </form>
   );
 };
