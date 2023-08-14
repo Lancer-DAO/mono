@@ -1,21 +1,11 @@
 import { FC } from "react";
 import { USDC } from "@/components";
 import { Decimal } from "@prisma/client/runtime";
+import { formatPrice } from "@/utils";
 
 interface Props {
   price: Decimal | number;
 }
-
-const formatPrice = (price: Decimal | number) => {
-  if (price.toString().length > 5) {
-    return `${new Intl.NumberFormat("en-US", {
-      notation: "compact",
-      compactDisplay: "short",
-    }).format(Number(price))}`;
-  } else {
-    return price.toLocaleString();
-  }
-};
 
 const PriceTag: FC<Props> = ({ price }) => {
   return (
