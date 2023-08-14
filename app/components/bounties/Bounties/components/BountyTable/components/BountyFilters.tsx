@@ -5,6 +5,7 @@ import classnames from "classnames";
 import { capitalize } from "lodash";
 import { Filters } from "@/types";
 import { IAsyncResult } from "@/types/common";
+import { motion } from "framer-motion";
 
 interface BountyFiltersProps {
   mints: string[];
@@ -26,9 +27,12 @@ export const BountyFilters = ({
   setBounties,
 }: BountyFiltersProps) => {
   return (
-    <form
-      onSubmit={(event) => event.preventDefault()}
+    <motion.form
       className="flex flex-col items-start gap-6 pl-10 pr-5 mt-16"
+      initial={{ opacity: 0, x: -200 }}
+      animate={{ opacity: 1, x: 0 }}
+      exit={{ opacity: 0, x: -200 }}
+      onSubmit={(event) => event.preventDefault()}
     >
       <div className="flex items-center gap-3">
         <input
@@ -158,6 +162,6 @@ export const BountyFilters = ({
           }}
         />
       </div>
-    </form>
+    </motion.form>
   );
 };

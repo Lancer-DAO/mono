@@ -13,7 +13,7 @@ import { BountyFilters } from "./components";
 import { IAsyncResult } from "@/types/common";
 import { BountyPreview, Filters } from "@/types";
 import Image from "next/image";
-import { motion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 export const BOUNTY_USER_RELATIONSHIP = [
   "Creator",
   "Requested Submitter",
@@ -153,74 +153,76 @@ const BountyList: React.FC<{}> = () => {
   }, [bounties?.result]);
 
   return (
-    <div className="w-full flex items-start mt-5 gap-10">
-      {showFilters && (
-        <BountyFilters
-          mints={mints}
-          tags={tags}
-          priceBounds={bounds}
-          orgs={orgs}
-          filters={filters}
-          setFilters={setFilters}
-          setBounties={setBounties}
-        />
-      )}
-
-      <div className="w-full flex flex-col gap-5 px-10">
-        <div className="flex items-center gap-2">
-          <Image
-            src="/assets/icons/IndustryTrio.png"
-            width={50}
-            height={50}
-            alt="industry trio icon"
+    <AnimatePresence>
+      <div className="w-full flex items-start mt-5 gap-10">
+        {showFilters && (
+          <BountyFilters
+            mints={mints}
+            tags={tags}
+            priceBounds={bounds}
+            orgs={orgs}
+            filters={filters}
+            setFilters={setFilters}
+            setBounties={setBounties}
           />
-          <h1>Quests.</h1>
-        </div>
-        {/* filter button */}
-        <motion.button
-          className="w-[85px] h-[40px] flex items-center justify-center border-2
-          bg-primaryBtn border-primaryBtnBorder rounded-xl font-bold text-xs"
-          {...smallClickAnimation}
-          onClick={() => setShowFilters(!showFilters)}
-        >
-          <div className="flex items-center gap-1">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="18px"
-              viewBox="0 0 512 512"
-              className="fill-textPrimary"
-            >
-              <path d="M3.9 54.9C10.5 40.9 24.5 32 40 32H472c15.5 0 29.5 8.9 36.1 22.9s4.6 30.5-5.2 42.5L320 320.9V448c0 12.1-6.8 23.2-17.7 28.6s-23.8 4.3-33.5-3l-64-48c-8.1-6-12.8-15.5-12.8-25.6V320.9L9 97.3C-.7 85.4-2.8 68.8 3.9 54.9z" />
-            </svg>
-            <p className="text-xs">Filters</p>
-          </div>
-        </motion.button>
-
-        {bounties?.isLoading && (
-          <div className="w-full flex flex-col items-center">
-            <LoadingBar title="Loading Bounties" />
-          </div>
         )}
 
-        <div
-          className={`w-full grid ${
-            showFilters
-              ? "lg:grid-cols-4 2xl:grid-cols-6"
-              : "lg:grid-cols-3 2xl:grid-cols-5"
-          } grid-cols-1 sm:grid-cols-2 gap-5`}
-        >
-          {!bounties?.isLoading && filteredBounties?.length === 0 && (
-            <p className="w-full text-center col-span-4">
-              No matching bounties available!
-            </p>
+        <div className="w-full flex flex-col gap-5 px-10">
+          <div className="flex items-center gap-2">
+            <Image
+              src="/assets/icons/IndustryTrio.png"
+              width={50}
+              height={50}
+              alt="industry trio icon"
+            />
+            <h1>Quests.</h1>
+          </div>
+          {/* filter button */}
+          <motion.button
+            className="w-[85px] h-[40px] flex items-center justify-center border-2
+          bg-primaryBtn border-primaryBtnBorder rounded-xl font-bold text-xs"
+            {...smallClickAnimation}
+            onClick={() => setShowFilters(!showFilters)}
+          >
+            <div className="flex items-center gap-1">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="18px"
+                viewBox="0 0 512 512"
+                className="fill-textPrimary"
+              >
+                <path d="M3.9 54.9C10.5 40.9 24.5 32 40 32H472c15.5 0 29.5 8.9 36.1 22.9s4.6 30.5-5.2 42.5L320 320.9V448c0 12.1-6.8 23.2-17.7 28.6s-23.8 4.3-33.5-3l-64-48c-8.1-6-12.8-15.5-12.8-25.6V320.9L9 97.3C-.7 85.4-2.8 68.8 3.9 54.9z" />
+              </svg>
+              <p className="text-xs">Filters</p>
+            </div>
+          </motion.button>
+
+          {bounties?.isLoading && (
+            <div className="w-full flex flex-col items-center">
+              <LoadingBar title="Loading Bounties" />
+            </div>
           )}
-          {filteredBounties?.length > 0 &&
-            filteredBounties?.map((bounty, index) => {
-              return <BountyCard bounty={bounty} key={index} />;
-            })}
+
+          <div
+            className={`w-full grid ${
+              showFilters
+                ? "lg:grid-cols-4 2xl:grid-cols-6"
+                : "lg:grid-cols-3 2xl:grid-cols-5"
+            } grid-cols-1 sm:grid-cols-2 gap-5`}
+          >
+            {!bounties?.isLoading && filteredBounties?.length === 0 && (
+              <p className="w-full text-center col-span-4">
+                No matching bounties available!
+              </p>
+            )}
+            {filteredBounties?.length > 0 &&
+              filteredBounties?.map((bounty, index) => {
+                return <BountyCard bounty={bounty} key={index} />;
+              })}
+          </div>
         </div>
       </div>
-    </div>
+    </AnimatePresence>
   );
 };
 
