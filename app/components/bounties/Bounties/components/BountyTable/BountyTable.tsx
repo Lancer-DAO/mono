@@ -61,7 +61,7 @@ const BountyList: React.FC<{}> = () => {
       }
     };
     getBs();
-  }, [router, currentUser?.id, filters.isMyBounties]);
+  }, [router.isReady, currentUser?.id, filters.isMyBounties]);
 
   useEffect(() => {
     const filteredBounties = bounties?.result?.filter((bounty) => {
@@ -205,14 +205,19 @@ const BountyList: React.FC<{}> = () => {
 
           <div
             className={`w-full grid ${
-              showFilters
+              !showFilters
                 ? "lg:grid-cols-4 2xl:grid-cols-6"
                 : "lg:grid-cols-3 2xl:grid-cols-5"
             } grid-cols-1 sm:grid-cols-2 gap-5`}
           >
             {!bounties?.isLoading && filteredBounties?.length === 0 && (
-              <p className="w-full text-center col-span-4">
+              <p className="w-full text-center col-span-full">
                 No matching bounties available!
+              </p>
+            )}
+            {bounties?.error && (
+              <p className="w-full text-center col-span-full">
+                Error fetching bounties
               </p>
             )}
             {filteredBounties?.length > 0 &&
