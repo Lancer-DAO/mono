@@ -28,9 +28,9 @@ export const BountyFilters = ({
   return (
     <form
       onSubmit={(event) => event.preventDefault()}
-      className="flex flex-col items-start gap-5 pl-10 pr-5 mt-16"
+      className="flex flex-col items-start gap-6 pl-10 pr-5 mt-16"
     >
-      <div className="flex items-center gap-5">
+      <div className="flex items-center gap-3">
         <input
           type="checkbox"
           className="w-8 h-8 accent-primaryBtn border border-primaryBtnBorder
@@ -45,7 +45,7 @@ export const BountyFilters = ({
         />
         <label className="font-bold">Only My Bounties</label>
       </div>
-      <div className="flex flex-col gap-5">
+      <div className="flex flex-col gap-3">
         <label>Payout Mints</label>
         <MultiSelectDropdown
           options={mints.map((mint) => {
@@ -68,7 +68,7 @@ export const BountyFilters = ({
           }}
         />
       </div>
-      <div className="flex flex-col gap-5">
+      <div className="flex flex-col gap-3">
         <label>Creators</label>
         <MultiSelectDropdown
           options={orgs.map((org) => {
@@ -91,7 +91,7 @@ export const BountyFilters = ({
           }}
         />
       </div>
-      <div className="flex flex-col gap-5">
+      <div className="flex flex-col gap-3">
         <label>Requirements</label>
         <MultiSelectDropdown
           options={tags.map((tag) => {
@@ -114,8 +114,8 @@ export const BountyFilters = ({
           }}
         />
       </div>
-      <div className="flex flex-col gap-5">
-        <label>States</label>
+      <div className="flex flex-col gap-3">
+        <label className="font-bold">Status</label>
         <MultiSelectDropdown
           options={BOUNTY_STATES.map((state) => {
             return {

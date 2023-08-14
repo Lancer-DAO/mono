@@ -15,7 +15,11 @@ interface Option {
   icon?: string;
 }
 
-const Dropdown: React.FC<Props> = ({ options, selected, onChange }) => {
+const MultiSelectDropdown: React.FC<Props> = ({
+  options,
+  selected,
+  onChange,
+}) => {
   const [isOpen, setIsOpen] = useState(false);
 
   const menuRef = useRef(null);
@@ -56,8 +60,8 @@ const Dropdown: React.FC<Props> = ({ options, selected, onChange }) => {
             onChange={() => handleCheckboxChange(option)}
             className="mr-[10px]"
           />
-          <div className="flex items-center gap-2">
-            <MarketingIcon height={20} width={20} />
+          <div className="flex items-center gap-2 text-sm">
+            {option.icon && <MarketingIcon height={20} width={20} />}
             {option.label}
           </div>
         </label>
@@ -72,7 +76,7 @@ const Dropdown: React.FC<Props> = ({ options, selected, onChange }) => {
         items-center cursor-pointer px-4 rounded-lg"
         onClick={toggleOpen}
       >
-        <div className="text-xl font-bold overflow-hidden whitespace-nowrap overflow-ellipsis">
+        <div className="text-base font-bold overflow-hidden whitespace-nowrap overflow-ellipsis">
           {selected.length === 0
             ? "Select"
             : selected.map((item) => item.label).join(", ")}
@@ -93,4 +97,4 @@ const Dropdown: React.FC<Props> = ({ options, selected, onChange }) => {
   );
 };
 
-export default Dropdown;
+export default MultiSelectDropdown;
