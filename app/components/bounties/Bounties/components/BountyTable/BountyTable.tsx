@@ -8,6 +8,7 @@ import { useRouter } from "next/router";
 import { BountyFilters } from "./components";
 import { IAsyncResult } from "@/types/common";
 import { BountyPreview } from "@/types";
+import Image from "next/image";
 export const BOUNTY_USER_RELATIONSHIP = [
   "Creator",
   "Requested Submitter",
@@ -156,10 +157,7 @@ const BountyList: React.FC<{}> = () => {
   }, [bounties?.result]);
 
   return (
-    <div className="bounty-table" id="bounties-table">
-      <div className="empty-cell" />
-      <h1 className="page-header">{`Bounties`}</h1>
-
+    <div className="w-full flex items-start mt-5 gap-10">
       <BountyFilters
         mints={mints}
         tags={tags}
@@ -170,22 +168,36 @@ const BountyList: React.FC<{}> = () => {
         setBounties={setBounties}
       />
 
-      {bounties?.isLoading && (
-        <div className="w-full flex flex-col items-center">
-          <LoadingBar title="Loading Bounties" />
+      <div className="w-full flex flex-col gap-10">
+        <div className="flex items-center gap-2">
+          <Image
+            src="/assets/icons/IndustryTrio.png"
+            width={50}
+            height={50}
+            alt="industry trio icon"
+          />
+          <h1>Quests.</h1>
         </div>
-      )}
-
-      <div className="issue-list" id="bounties-list">
-        {!bounties?.isLoading && filteredBounties?.length === 0 && (
-          <p className="w-full text-center col-span-2">
-            No matching bounties available!
-          </p>
+        {bounties?.isLoading && (
+          <div className="w-full flex flex-col items-center">
+            <LoadingBar title="Loading Bounties" />
+          </div>
         )}
-        {filteredBounties?.length > 0 &&
-          filteredBounties?.map((bounty, index) => {
-            return <BountyCard bounty={bounty} key={index} />;
-          })}
+
+        <div
+          className="w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 2xl:grid-cols-6 gap-5"
+          id="bounties-list"
+        >
+          {!bounties?.isLoading && filteredBounties?.length === 0 && (
+            <p className="w-full text-center col-span-4">
+              No matching bounties available!
+            </p>
+          )}
+          {filteredBounties?.length > 0 &&
+            filteredBounties?.map((bounty, index) => {
+              return <BountyCard bounty={bounty} key={index} />;
+            })}
+        </div>
       </div>
     </div>
   );

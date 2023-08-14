@@ -28,10 +28,9 @@ export const BountyFilters = ({
   return (
     <form
       onSubmit={(event) => event.preventDefault()}
-      className="bounty-filters"
-      id="bounty-filters"
+      className="flex flex-col items-start gap-5 px-5"
     >
-      <div className="filter-section" id="filter-my-bounties">
+      <div className="flex flex-col gap-5">
         <label className="w-checkbox checkbox-field-2 label-only ">
           <div
             className={classnames(
