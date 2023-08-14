@@ -6,18 +6,20 @@ interface Props {
   price: Decimal | number;
 }
 
-const formatPrice = (price: Decimal | number) => {
-  if (price.toString().length > 5) {
-    return `${new Intl.NumberFormat("en-US", {
-      notation: "compact",
-      compactDisplay: "short",
-    }).format(Number(price))}`;
-  } else {
-    return price.toLocaleString();
-  }
-};
-
 const PriceTag: FC<Props> = ({ price }) => {
+  const formatPrice = (price: Decimal | number) => {
+    if (price?.toString().length > 5) {
+      return `${new Intl.NumberFormat("en-US", {
+        notation: "compact",
+        compactDisplay: "short",
+      }).format(Number(price))}`;
+    } else {
+      return price?.toLocaleString();
+    }
+  };
+
+  if (!price) return <div className="h-[28px]" />;
+
   return (
     <div className="bg-white rounded-full border border-textPrimary h-[28px] flex items-center gap-2 px-0.5">
       <USDC height="22px" width="22px" />
