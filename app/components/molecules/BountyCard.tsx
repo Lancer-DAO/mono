@@ -1,6 +1,6 @@
 import { FC, SVGAttributes } from "react";
 import Image from "next/image";
-import { BOUNTY_USER_RELATIONSHIP, BountyPreview, FormData } from "@/types/";
+import { BountyPreview, FormData } from "@/types/";
 import {
   BountyCardFrame,
   ContributorInfo,
@@ -17,10 +17,6 @@ export interface BountyCardProps extends SVGAttributes<SVGSVGElement> {
 
 const BountyCard: FC<BountyCardProps> = ({ bounty, formData }) => {
   const { currentUser } = useUserWallet();
-
-  const creator = bounty?.users.find((user) =>
-    user.relations.includes(BOUNTY_USER_RELATIONSHIP.Creator)
-  );
 
   const displayedTags = bounty
     ? bounty.tags.slice(0, 4)
@@ -55,7 +51,7 @@ const BountyCard: FC<BountyCardProps> = ({ bounty, formData }) => {
       <div className="absolute top-0 left-0 w-full h-full flex flex-col p-4">
         <div className="w-full flex items-center justify-between mt-8">
           {/* creator profile */}
-          {creator && <ContributorInfo user={creator.user} />}
+          {bounty?.creator && <ContributorInfo user={bounty?.creator?.user} />}
 
           {formData && currentUser && (
             <div className="flex items-center gap-3">
