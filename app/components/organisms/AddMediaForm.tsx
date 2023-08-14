@@ -8,15 +8,9 @@ interface Props {
   setFormSection: Dispatch<SetStateAction<FORM_SECTION>>;
   formData: FormData;
   setFormData: Dispatch<SetStateAction<FormData>>;
-  handleChange: (event) => void;
 }
 
-const AddMediaForm: FC<Props> = ({
-  setFormSection,
-  formData,
-  setFormData,
-  handleChange,
-}) => {
+const AddMediaForm: FC<Props> = ({ setFormSection, formData, setFormData }) => {
   const addLink = () => {
     setFormData({
       ...formData,
@@ -54,7 +48,7 @@ const AddMediaForm: FC<Props> = ({
           <div className="relative w-full flex flex-col gap-2">
             <div className="absolute top-3 -left-10 text-2xl">6</div>
             {formData.links.map((link: string, index: number) => (
-              <div className="flex items-center gap-1">
+              <div className="flex items-center gap-1" key={index}>
                 <input
                   type="text"
                   className="placeholder:text-textGreen/70 border bg-neutralBtn 
