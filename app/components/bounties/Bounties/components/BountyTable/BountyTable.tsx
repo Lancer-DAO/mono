@@ -154,7 +154,7 @@ const BountyList: React.FC<{}> = () => {
 
   return (
     <AnimatePresence>
-      <div className="w-full flex items-start mt-5 gap-10">
+      <div className="w-full flex items-start mt-5 gap-10 pb-10">
         {showFilters && (
           <BountyFilters
             mints={mints}
@@ -203,13 +203,7 @@ const BountyList: React.FC<{}> = () => {
             </div>
           )}
 
-          <div
-            className={`w-full grid ${
-              !showFilters
-                ? "lg:grid-cols-4 2xl:grid-cols-6"
-                : "lg:grid-cols-3 2xl:grid-cols-5"
-            } grid-cols-1 sm:grid-cols-2 gap-5`}
-          >
+          <div className={`w-full flex flex-wrap gap-5`}>
             {!bounties?.isLoading && filteredBounties?.length === 0 && (
               <p className="w-full text-center col-span-full">
                 No matching bounties available!

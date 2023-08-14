@@ -8,6 +8,9 @@ import {
 import { ContributorInfo, PriceTag, StarIcon } from "@/components";
 import { useUserWallet } from "@/src/providers";
 import Image from "next/image";
+import { motion } from "framer-motion";
+import { fastEnterAnimation, midClickAnimation } from "@/src/constants";
+import { useRouter } from "next/router";
 
 export interface BountyCardProps extends SVGAttributes<SVGSVGElement> {
   bounty?: BountyPreview;
@@ -16,6 +19,12 @@ export interface BountyCardProps extends SVGAttributes<SVGSVGElement> {
 
 const BountyCard: FC<BountyCardProps> = ({ bounty, formData }) => {
   const { currentUser } = useUserWallet();
+
+  const router = useRouter();
+
+  const bountyCardAnimation = bounty
+    ? { ...fastEnterAnimation, ...midClickAnimation }
+    : null;
 
   const creator = bounty?.users.find((user) =>
     user.relations.includes(BOUNTY_USER_RELATIONSHIP.Creator)
@@ -52,7 +61,13 @@ const BountyCard: FC<BountyCardProps> = ({ bounty, formData }) => {
   // TODO: based on industry of bounty, change the color of the card
 
   return (
-    <div className="relative w-[291px] h-[292px]">
+    <motion.div
+      className={`relative w-[291px] h-[292px] ${
+        bounty ? "cursor-pointer" : ""
+      }`}
+      {...bountyCardAnimation}
+      onClick={() => router.push(`/bounties/${bounty?.id}`)}
+    >
       <div className="absolute left-1/2 -translate-x-[53%] top-[6px] w-7">
         <Image src="/assets/icons/eng.png" width={28} height={28} alt="eng" />
       </div>
@@ -120,8 +135,8 @@ const BountyCard: FC<BountyCardProps> = ({ bounty, formData }) => {
           </div>
         </div>
 
-        <div className="mt-8">
-          <p className="text-2xl font-bold">
+        <div className="mt-2">
+          <p className="text-2xl font-bold multi-line-ellipsis">
             {bounty ? bounty.title : formData.issueTitle}
           </p>
           <div className="w-full max-h-[60px] multi-line-ellipsis overflow-hidden">
@@ -152,7 +167,7 @@ const BountyCard: FC<BountyCardProps> = ({ bounty, formData }) => {
           {tagOverflow && <p className="text-xs">+ more</p>}
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 };
 
