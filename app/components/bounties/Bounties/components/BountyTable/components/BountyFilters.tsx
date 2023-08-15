@@ -104,7 +104,7 @@ export const BountyFilters = ({
           );
         })}
       </div>
-      <div className="flex flex-col gap-3">
+      {/* <div className="flex flex-col gap-3">
         <p className="font-bold">Creators</p>
         <MultiSelectDropdown
           options={orgs.map((org) => {
@@ -126,7 +126,7 @@ export const BountyFilters = ({
             });
           }}
         />
-      </div>
+      </div> */}
       {/* <div className="flex flex-col gap-3">
         <p className="font-bold">Tags</p>
         <MultiSelectDropdown
