@@ -1,8 +1,10 @@
-import { FC, Dispatch, SetStateAction } from "react";
-import { smallClickAnimation } from "@/src/constants";
-import { FORM_SECTION, FormData } from "@/types/forms";
-import { motion } from "framer-motion";
 import { ImageUpload, PreviewCardBase } from "@/components";
+import { smallClickAnimation } from "@/src/constants";
+import { UploadButton, UploadDropzone } from "@/src/utils/uploadthing";
+import { FORM_SECTION, FormData } from "@/types/forms";
+import "@uploadthing/react/styles.css";
+import { motion } from "framer-motion";
+import { Dispatch, FC, SetStateAction, useState } from "react";
 
 interface Props {
   setFormSection: Dispatch<SetStateAction<FORM_SECTION>>;
@@ -17,6 +19,8 @@ const AddMediaForm: FC<Props> = ({
   setFormData,
   handleChange,
 }) => {
+  const [isImageUploaded, setIsImageUploaded] = useState(false);
+
   const addLink = () => {
     setFormData({
       ...formData,
@@ -41,6 +45,12 @@ const AddMediaForm: FC<Props> = ({
       links: updatedLinks,
     });
   };
+
+  const handleImageUpload = (url) => {
+    setModalOpen(true);
+    setIsImageUploaded(true);
+    
+  }
 
   // useEffect(() => {
   //   console.log("formData", formData);
@@ -91,9 +101,103 @@ const AddMediaForm: FC<Props> = ({
             7
           </div>
           {/* TODO: drag and drop / upload media - proof on concept not working */}
-          <PreviewCardBase width="200px" align="start">
+          {/* <PreviewCardBase width="200px" align="start">
             Add References
-          </PreviewCardBase>
+          </PreviewCardBase> */}
+          <div className="grid grid-cols-2 gap-4">
+            {isImageUploaded ? (
+              formData.media.map((media, index) => (
+                <div key={index}>
+                  <img src={media.imageUrl} className="max-w-full" />
+                </div>
+              ))
+            ) : (
+              <>
+                <UploadDropzone
+                  endpoint="imageUploader"
+                  onClientUploadComplete={(res) => {
+                    // Do something with the response
+                    setFormData({
+                      ...formData,
+                      media: [...formData.media, res.at(0).url]
+                    })
+                    setIsImageUploaded(true);
+                    console.log("Files: ", res);
+                    console.log(formData);
+                    alert("Upload Completed");
+                  }}
+                  onUploadError={(error: Error) => {
+                    console.log(error);
+                    alert(`ERROR! ${error.message}`);
+                  }}
+                />
+                <UploadDropzone
+                  endpoint="imageUploader"
+                  onClientUploadComplete={(res) => {
+                    // Do something with the response
+                    setFormData({
+                      ...formData,
+                      media: [...formData.media, res.at(0).url]
+                    })
+                    setIsImageUploaded(true);
+                    console.log("Files: ", res);
+                    alert("Upload Completed");
+                  }}
+                  onUploadError={(error: Error) => {
+                    alert(`ERROR! ${error.message}`);
+                  }}
+                />
+                <UploadDropzone
+                  endpoint="imageUploader"
+                  onClientUploadComplete={(res) => {
+                    // Do something with the response
+                    setFormData({
+                      ...formData,
+                      media: [...formData.media, res.at(0).url]
+                    })
+                    setIsImageUploaded(true);
+                    console.log("Files: ", res);
+                    alert("Upload Completed");
+                  }}
+                  onUploadError={(error: Error) => {
+                    alert(`ERROR! ${error.message}`);
+                  }}
+                />
+                <UploadDropzone
+                  endpoint="imageUploader"
+                  onClientUploadComplete={(res) => {
+                    // Do something with the response
+                    setFormData({
+                      ...formData,
+                      media: [...formData.media, res.at(0).url]
+                    })
+                    setIsImageUploaded(true);
+                    console.log("Files: ", res);
+                    alert("Upload Completed");
+                  }}
+                  onUploadError={(error: Error) => {
+                    alert(`ERROR! ${error.message}`);
+                  }}
+                />
+              </>
+            )}
+            {formData.media.length < 4 && (
+              <UploadDropzone
+                endpoint="imageUploader"
+                onClientUploadComplete={(res) => {
+                  // Do something with the response
+                  setFormData({
+                    ...formData,
+                    media: [...formData.media, res.at(0).url],
+                  });
+                  setIsImageUploaded(true); // Set imageUploaded to true
+                }}
+                onUploadError={(error: Error) => {
+                  alert(`ERROR! ${error.message}`);
+                }}
+              />
+            )}
+          </div>
           {/* <ImageUpload /> */}
         </div>
         <div className="w-full flex items-center justify-between">

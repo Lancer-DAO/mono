@@ -1,16 +1,22 @@
-import React, { useEffect, useState } from "react";
 import {
   AddMediaForm,
   CreateBountyForm,
   FundBountyForm,
   PreviewCardBase,
 } from "@/components";
-import { PublicKey } from "@solana/web3.js";
-import { FORM_SECTION, FormData } from "@/types/forms";
 import { useUserWallet } from "@/src/providers";
-import PreviewForm from "../organisms/PreviewForm";
 import { api } from "@/src/utils";
+import { FORM_SECTION, FormData } from "@/types/forms";
 import * as Prisma from "@prisma/client";
+import { PublicKey } from "@solana/web3.js";
+import React, { useEffect, useState } from "react";
+import PreviewForm from "../organisms/PreviewForm";
+
+interface Media {
+  imageUrl: string;
+  title: string;
+  description: string;
+}
 
 export const Create = () => {
   const { provider } = useUserWallet();
@@ -24,7 +30,7 @@ export const Create = () => {
     issueDescription: "",
     tags: [""],
     links: [""],
-    media: [""],
+    media: [],
     comment: "",
     organizationName: "",
     repositoryName: "",
