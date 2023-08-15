@@ -36,21 +36,23 @@ export const BountyFilters = ({
       exit={{ opacity: 0, x: -200 }}
       onSubmit={(event) => event.preventDefault()}
     >
-      <div className="flex items-center gap-3">
+      <div
+        className="flex items-center gap-3 cursor-pointer"
+        onClick={() => {
+          setBounties({ result: [] });
+          setFilters({
+            ...filters,
+            isMyBounties: !filters.isMyBounties,
+          });
+        }}
+      >
         <input
           type="checkbox"
-          className="w-7 h-7 accent-primaryBtn border border-primaryBtnBorder
-          rounded-xl focus:ring-industryGreenBorder focus:border-green-500 cursor-pointer"
+          className="w-6 h-6 accent-primaryBtn border border-primaryBtnBorder
+          rounded-xl focus:ring-industryGreenBorder focus:border-green-500"
           checked={filters.isMyBounties}
-          onClick={() => {
-            setBounties({ result: [] });
-            setFilters({
-              ...filters,
-              isMyBounties: !filters.isMyBounties,
-            });
-          }}
         />
-        <label className="font-bold">Only My Bounties</label>
+        <p className="font-bold">Only My Bounties</p>
       </div>
       <div className="w-full flex flex-col gap-3">
         <div className="flex items-center gap-2">
@@ -89,7 +91,7 @@ export const BountyFilters = ({
               }}
             >
               <input
-                type="checkbox"
+                type="radio"
                 id={mint.id.toString()}
                 name={mint.name}
                 checked={filters.mints.includes(mint)}

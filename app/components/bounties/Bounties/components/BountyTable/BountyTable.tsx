@@ -51,6 +51,18 @@ const BountyList: React.FC<{}> = () => {
     isMyBounties: true,
   });
 
+  const getUniqueMints = (bounties: BountyPreview[]): Mint[] => {
+    const uniqueMints: Record<string, Mint> = bounties.reduce((acc, bounty) => {
+      const mint = bounty.escrow.mint;
+      if (!acc[mint.publicKey]) {
+        acc[mint.publicKey] = mint;
+      }
+      return acc;
+    }, {});
+
+    return Object.values(uniqueMints);
+  };
+
   useEffect(() => {
     const getBs = async () => {
       if (router.isReady && currentUser?.id) {
@@ -141,12 +153,11 @@ const BountyList: React.FC<{}> = () => {
       const uniqueOrgs = getUniqueItems(
         bounties?.result.map((bounty) => bounty.repository?.organization) ?? []
       );
-      const uniqueMints = getUniqueItems(
-        bounties?.result.map((bounty) => bounty.escrow.mint) ?? []
-      );
+
+      const uniqueMintList = getUniqueMints(bounties?.result);
       setTags(uniqueTags);
       setOrgs(uniqueOrgs);
-      setMints(uniqueMints);
+      setMints(uniqueMintList);
       const allPrices = bounties?.result.map((bounty) =>
         bounty.price ? parseFloat(bounty.price.toString()) : 0
       );
@@ -158,7 +169,7 @@ const BountyList: React.FC<{}> = () => {
       ];
       setPriceBounds(priceBounds);
       setFilters({
-        mints: uniqueMints,
+        mints: uniqueMintList,
         tags: allTags,
         industries: industries.result,
         orgs: uniqueOrgs,
