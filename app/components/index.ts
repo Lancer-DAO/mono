@@ -7,6 +7,7 @@ const StarIcon = dynamic(() => import("./@icons/StarIcon"));
 const USDC = dynamic(() => import("./@icons/USDC"));
 
 // atoms
+const BountyCardFrame = dynamic(() => import("./atoms/BountyCardFrame"));
 const Button = dynamic(() => import("./atoms/Button"));
 const CoinflowOfframp = dynamic(() => import("./atoms/CoinflowOfframp"));
 const ContributorInfo = dynamic(() => import("./atoms/ContributorInfo"));
@@ -55,6 +56,7 @@ export {
   USDC,
 
   // atoms
+  BountyCardFrame,
   Button,
   CoinflowOfframp,
   ContributorInfo,

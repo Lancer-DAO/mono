@@ -1,4 +1,3 @@
-import { api } from "@/src/utils/api";
 import { BountyPreviewType, BountyUserType } from "@/prisma/queries/bounty";
 import { BountyType } from "@/prisma/queries/bounty";
 import { UserType, UserSearchType } from "@/prisma/queries/user";

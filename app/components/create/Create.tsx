@@ -77,7 +77,6 @@ export const Create = () => {
             setFormSection={setFormSection}
             formData={formData}
             setFormData={setFormData}
-            handleChange={handleChange}
           />
         )}
         {formSection === "PREVIEW" && (

@@ -1,6 +1,7 @@
 import { FC } from "react";
 import { USDC } from "@/components";
 import { Decimal } from "@prisma/client/runtime";
+import { formatPrice } from "@/utils";
 
 interface Props {
   price: Decimal | number;
