@@ -6,8 +6,9 @@ export const largeClickAnimation = {
   whileTap: { scale: 1 },
 };
 export const midClickAnimation = {
-  whileHover: { scale: 1.06 },
+  whileHover: { scale: 1.04 },
   whileTap: { scale: 1 },
+  transition: { duration: 0.2, ease: "easeInOut" },
 };
 export const smallClickAnimation = {
   whileHover: { scale: 1.02 },
