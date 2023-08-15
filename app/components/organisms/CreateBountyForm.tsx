@@ -3,7 +3,7 @@ import { MultiSelectDropdown } from "@/components";
 import { api } from "@/src/utils/api";
 import { CREATE_BOUNTY_TUTORIAL_INITIAL_STATE } from "@/src/constants/tutorials";
 import { smallClickAnimation } from "@/src/constants";
-import { FORM_SECTION } from "@/types/forms";
+import { FORM_SECTION, FormData } from "@/types/forms";
 import { useTutorial } from "@/src/providers/tutorialProvider";
 import Toggle, { ToggleConfig } from "../molecules/Toggle";
 import { motion } from "framer-motion";
@@ -12,7 +12,8 @@ import { IAsyncResult, Industry, Option } from "@/types";
 
 interface Props {
   setFormSection: Dispatch<SetStateAction<FORM_SECTION>>;
-  formData: any;
+  formData: FormData;
+  industries: IAsyncResult<Industry[]>;
   setFormData: Dispatch<SetStateAction<any>>;
   handleChange: (event) => void;
 }
@@ -20,6 +21,7 @@ interface Props {
 const Form: FC<Props> = ({
   setFormSection,
   formData,
+  industries,
   setFormData,
   handleChange,
 }) => {
@@ -33,19 +35,14 @@ const Form: FC<Props> = ({
   //   },
   //   selected: "option1",
   // });
-  const { mutateAsync: getAllIndustries } =
-    api.industries.getAllIndustries.useMutation();
-  const [industries, setIndustries] = useState<IAsyncResult<Industry[]>>({
-    isLoading: true,
-  });
 
   const categoryOptions: Option[] = industries.result?.map((industry) => ({
-    value: industry.id.toString(),
+    value: industry.id,
     label: industry.name,
     icon: industry.icon,
   }));
 
-  const handleRequirementsChange = (event) => {
+  const handleTagsChange = (event) => {
     const tags: string[] = event.target.value.split(",");
     setFormData({
       ...formData,
@@ -77,20 +74,6 @@ const Form: FC<Props> = ({
   //   }
   // }, [toggleConfig.selected]);
 
-  useEffect(() => {
-    const fetchCurrentIndustries = async () => {
-      try {
-        const industries = await getAllIndustries();
-        setIndustries({ result: industries, isLoading: false });
-      } catch (e) {
-        console.log("error getting industries: ", e);
-        setIndustries({ error: e, isLoading: false });
-      }
-    };
-    fetchCurrentIndustries();
-    console.log("testing", formData, categoryOptions);
-  }, []);
-
   return (
     <div>
       <h1>Post a Quest</h1>
@@ -101,12 +84,12 @@ const Form: FC<Props> = ({
           <MultiSelectDropdown
             options={categoryOptions}
             selected={categoryOptions?.filter((option) =>
-              formData.category?.includes(option.value)
+              formData.industryIds?.includes(option.value as number)
             )}
             onChange={(options) => {
               setFormData({
                 ...formData,
-                category: options?.map((o) => o.value),
+                industryIds: options?.map((o) => o.value) as number[],
               });
             }}
           />
@@ -256,7 +239,7 @@ const Form: FC<Props> = ({
             border-neutralBtnBorder w-full h-[50px] rounded-lg px-3"
             name="tags"
             value={formData.tags}
-            onChange={handleRequirementsChange}
+            onChange={handleTagsChange}
             placeholder="Tags (comma separated)"
             id="issue-requirements-input"
             onBlur={() => {
