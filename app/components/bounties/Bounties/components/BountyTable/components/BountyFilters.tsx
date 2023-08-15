@@ -5,9 +5,10 @@ import { capitalize } from "lodash";
 import { Filters, Industry, IAsyncResult } from "@/types";
 import { motion } from "framer-motion";
 import IndustrySelection from "./IndustrySelection";
+import { Mint } from "@prisma/client";
 
 interface BountyFiltersProps {
-  mints: string[];
+  mints: Mint[];
   industries: IAsyncResult<Industry[]>;
   tags: string[];
   orgs: string[];
@@ -29,7 +30,7 @@ export const BountyFilters = ({
 }: BountyFiltersProps) => {
   return (
     <motion.form
-      className="flex flex-col items-start gap-6 pl-10 mt-16"
+      className="flex flex-col items-start gap-6 pl-10 mt-16 sticky top-24"
       initial={{ opacity: 0, x: -200 }}
       animate={{ opacity: 1, x: 0 }}
       exit={{ opacity: 0, x: -200 }}
@@ -73,26 +74,33 @@ export const BountyFilters = ({
       />
       <div className="flex flex-col gap-3">
         <p className="font-bold">Payout Mints</p>
-        <MultiSelectDropdown
-          options={mints.map((mint) => {
-            return {
-              value: mint,
-              label: mint,
-            };
-          })}
-          selected={filters.mints.map((mint) => {
-            return {
-              value: mint,
-              label: mint,
-            };
-          })}
-          onChange={(options) => {
-            setFilters({
-              ...filters,
-              mints: options.map((option) => option.value),
-            });
-          }}
-        />
+        {mints.map((mint: Mint) => {
+          return (
+            <div
+              key={mint.id}
+              className="flex items-center gap-2 cursor-pointer"
+              onClick={() => {
+                setFilters({
+                  ...filters,
+                  mints: filters.mints.includes(mint)
+                    ? filters.mints.filter((name) => name !== mint)
+                    : [...filters.mints, mint],
+                });
+              }}
+            >
+              <input
+                type="checkbox"
+                id={mint.id.toString()}
+                name={mint.name}
+                checked={filters.mints.includes(mint)}
+              />
+              <div className="flex items-center gap-1">
+                <Image src={mint.logo} width={20} height={20} alt={mint.name} />
+                <p>{mint.name}</p>
+              </div>
+            </div>
+          );
+        })}
       </div>
       <div className="flex flex-col gap-3">
         <p className="font-bold">Creators</p>

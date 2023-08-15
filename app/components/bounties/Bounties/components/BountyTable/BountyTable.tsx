@@ -14,6 +14,7 @@ import { IAsyncResult } from "@/types/common";
 import { BountyPreview, Filters, Industry } from "@/types";
 import Image from "next/image";
 import { AnimatePresence, motion } from "framer-motion";
+import { Mint } from "@prisma/client";
 export const BOUNTY_USER_RELATIONSHIP = [
   "Creator",
   "Requested Submitter",
@@ -30,7 +31,7 @@ const BountyList: React.FC<{}> = () => {
   const { mutateAsync: getAllIndustries } =
     api.industries.getAllIndustries.useMutation();
   const [tags, setTags] = useState<string[]>([]);
-  const [mints, setMints] = useState<string[]>([]);
+  const [mints, setMints] = useState<Mint[]>([]);
   const [orgs, setOrgs] = useState<string[]>([]);
   const [bounds, setPriceBounds] = useState<[number, number]>([100, 10000]);
   const [bounties, setBounties] = useState<IAsyncResult<BountyPreview[]>>();
@@ -86,7 +87,7 @@ const BountyList: React.FC<{}> = () => {
       if (!bounty.escrow.publicKey || !bounty.escrow.mint) {
         return false;
       }
-      if (!filters.mints.includes(bounty.escrow.mint.ticker)) {
+      if (!filters.mints.includes(bounty.escrow.mint)) {
         return false;
       }
 
@@ -141,7 +142,7 @@ const BountyList: React.FC<{}> = () => {
         bounties?.result.map((bounty) => bounty.repository?.organization) ?? []
       );
       const uniqueMints = getUniqueItems(
-        bounties?.result.map((bounty) => bounty.escrow.mint.ticker) ?? []
+        bounties?.result.map((bounty) => bounty.escrow.mint) ?? []
       );
       setTags(uniqueTags);
       setOrgs(uniqueOrgs);
