@@ -253,7 +253,13 @@ const BountyList: React.FC<{}> = () => {
             )}
             {filteredBounties?.length > 0 &&
               filteredBounties?.map((bounty, index) => {
-                return <BountyCard bounty={bounty} key={index} />;
+                return (
+                  <BountyCard
+                    bounty={bounty}
+                    allIndustries={industries?.result}
+                    key={index}
+                  />
+                );
               })}
           </div>
         </div>

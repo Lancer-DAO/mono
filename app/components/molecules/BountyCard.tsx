@@ -1,9 +1,9 @@
-import { FC, SVGAttributes } from "react";
+import { FC, SVGAttributes, use, useEffect, useState } from "react";
 import Image from "next/image";
 import { motion } from "framer-motion";
 import { fastEnterAnimation, midClickAnimation } from "@/src/constants";
 import { useRouter } from "next/router";
-import { BountyPreview, FormData } from "@/types/";
+import { BountyPreview, FormData, Industry } from "@/types/";
 import {
   BountyCardFrame,
   ContributorInfo,
@@ -16,10 +16,16 @@ import { getFormattedDate } from "@/utils";
 export interface BountyCardProps extends SVGAttributes<SVGSVGElement> {
   bounty?: BountyPreview;
   formData?: FormData;
+  allIndustries: Industry[];
 }
 
-const BountyCard: FC<BountyCardProps> = ({ bounty, formData }) => {
+const BountyCard: FC<BountyCardProps> = ({
+  bounty,
+  formData,
+  allIndustries,
+}) => {
   const { currentUser } = useUserWallet();
+  const [bountyIndustries, setBountyIndustries] = useState<Industry[]>([]);
 
   const router = useRouter();
 
@@ -35,12 +41,26 @@ const BountyCard: FC<BountyCardProps> = ({ bounty, formData }) => {
     ? bounty.tags.length > 4
     : formData.tags.length > 4;
 
+  useEffect(() => {
+    const getCardIndustries = () => {
+      if (formData && formData.industryIds.length > 0) {
+        const matchedIndustries = allIndustries?.filter((industry) =>
+          formData.industryIds.includes(industry.id)
+        );
+        setBountyIndustries(matchedIndustries);
+      } else {
+        setBountyIndustries([allIndustries?.[0]]);
+      }
+    };
+    getCardIndustries();
+  }, [formData?.industryIds, allIndustries]);
+
   // useEffect(() => {
   //   console.log("bounty: ", bounty);
   //   console.log("formData: ", formData);
   // }, [bounty, formData]);
 
-  // TODO: based on industry of bounty, change the color of the card
+  if (!bounty && !formData) return null;
 
   return (
     <motion.div
@@ -51,9 +71,14 @@ const BountyCard: FC<BountyCardProps> = ({ bounty, formData }) => {
       onClick={() => router.push(`/bounties/${bounty?.id}`)}
     >
       <div className="absolute left-1/2 -translate-x-[53%] top-[6px] w-7">
-        <Image src="/assets/icons/eng.png" width={28} height={28} alt="eng" />
+        <Image
+          src={bountyIndustries[0]?.icon}
+          width={28}
+          height={28}
+          alt={bountyIndustries[0]?.name}
+        />
       </div>
-      <BountyCardFrame color="#C8F4C4" />
+      <BountyCardFrame color={bountyIndustries[0]?.color} />
       <div className="w-full absolute top-1">
         <div className="w-full flex items-center justify-between px-1">
           <PriceTag

@@ -105,6 +105,7 @@ export const Create = () => {
           <PreviewForm
             setFormSection={setFormSection}
             formData={formData}
+            industries={industries?.result}
             setFormData={setFormData}
             createAccountPoll={createAccountPoll}
             mints={mints}
@@ -119,7 +120,10 @@ export const Create = () => {
       {formSection !== "PREVIEW" && (
         <div className="md:w-[515px] pt-10">
           <PreviewCardBase>
-            <BountyCard formData={formData} />
+            <BountyCard
+              formData={formData}
+              allIndustries={industries?.result}
+            />
           </PreviewCardBase>
         </div>
       )}
