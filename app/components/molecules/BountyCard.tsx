@@ -59,7 +59,12 @@ const BountyCard: FC<BountyCardProps> = ({ bounty, formData }) => {
           <PriceTag
             price={bounty ? bounty?.escrow.amount : Number(formData.issuePrice)}
           />
-          <p className="text-xs font-bold mr-2">{getFormattedDate(bounty)}</p>
+          <p className="text-xs font-bold mr-2">
+            <span className="text-textPrimary text-[11px] font-base">
+              created
+            </span>{" "}
+            {getFormattedDate(bounty)}
+          </p>
         </div>
       </div>
 
