@@ -1,14 +1,14 @@
-import MultiSelectDropdown from "@/components/molecules/MultiSelectDropdown";
-import RangeSlider from "@/components/molecules/RangeSlider";
-import { BOUNTY_STATES } from "@/src/constants";
-import classnames from "classnames";
+import { RangeSlider, MultiSelectDropdown } from "@/components";
+import Image from "next/image";
+import { BOUNTY_STATES } from "@/constants";
 import { capitalize } from "lodash";
-import { Filters } from "@/types";
-import { IAsyncResult } from "@/types/common";
+import { Filters, Industry, IAsyncResult } from "@/types";
 import { motion } from "framer-motion";
+import IndustrySelection from "./IndustrySelection";
 
 interface BountyFiltersProps {
   mints: string[];
+  industries: IAsyncResult<Industry[]>;
   tags: string[];
   orgs: string[];
   priceBounds: [number, number];
@@ -19,6 +19,7 @@ interface BountyFiltersProps {
 
 export const BountyFilters = ({
   mints,
+  industries,
   tags,
   orgs,
   priceBounds,
@@ -28,7 +29,7 @@ export const BountyFilters = ({
 }: BountyFiltersProps) => {
   return (
     <motion.form
-      className="flex flex-col items-start gap-6 pl-10 pr-5 mt-16"
+      className="flex flex-col items-start gap-6 pl-10 mt-16"
       initial={{ opacity: 0, x: -200 }}
       animate={{ opacity: 1, x: 0 }}
       exit={{ opacity: 0, x: -200 }}
@@ -37,8 +38,9 @@ export const BountyFilters = ({
       <div className="flex items-center gap-3">
         <input
           type="checkbox"
-          className="w-8 h-8 accent-primaryBtn border border-primaryBtnBorder
+          className="w-7 h-7 accent-primaryBtn border border-primaryBtnBorder
           rounded-xl focus:ring-industryGreenBorder focus:border-green-500 cursor-pointer"
+          checked={filters.isMyBounties}
           onClick={() => {
             setBounties({ result: [] });
             setFilters({
@@ -64,8 +66,13 @@ export const BountyFilters = ({
           />
         )}
       </div>
+      <IndustrySelection
+        industries={industries}
+        filters={filters}
+        setFilters={setFilters}
+      />
       <div className="flex flex-col gap-3">
-        <label>Payout Mints</label>
+        <p className="font-bold">Payout Mints</p>
         <MultiSelectDropdown
           options={mints.map((mint) => {
             return {
@@ -88,7 +95,7 @@ export const BountyFilters = ({
         />
       </div>
       <div className="flex flex-col gap-3">
-        <label>Creators</label>
+        <p className="font-bold">Creators</p>
         <MultiSelectDropdown
           options={orgs.map((org) => {
             return {
@@ -110,8 +117,8 @@ export const BountyFilters = ({
           }}
         />
       </div>
-      <div className="flex flex-col gap-3">
-        <label>Requirements</label>
+      {/* <div className="flex flex-col gap-3">
+        <p className="font-bold">Tags</p>
         <MultiSelectDropdown
           options={tags.map((tag) => {
             return {
@@ -132,9 +139,9 @@ export const BountyFilters = ({
             });
           }}
         />
-      </div>
+      </div> */}
       <div className="flex flex-col gap-3">
-        <label className="font-bold">Status</label>
+        <p className="font-bold">Status</p>
         <MultiSelectDropdown
           options={BOUNTY_STATES.map((state) => {
             return {

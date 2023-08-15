@@ -6,12 +6,12 @@ import {
 } from "@/src/constants";
 import { getUniqueItems } from "@/src/utils";
 import { useUserWallet } from "@/src/providers";
-import { LoadingBar, BountyCard, Button } from "@/components";
+import { LoadingBar, BountyCard } from "@/components";
 import { api } from "@/src/utils/api";
 import { useRouter } from "next/router";
 import { BountyFilters } from "./components";
 import { IAsyncResult } from "@/types/common";
-import { BountyPreview, Filters } from "@/types";
+import { BountyPreview, Filters, Industry } from "@/types";
 import Image from "next/image";
 import { AnimatePresence, motion } from "framer-motion";
 export const BOUNTY_USER_RELATIONSHIP = [
@@ -27,21 +27,27 @@ const BountyList: React.FC<{}> = () => {
   const router = useRouter();
   const { mutateAsync: getBounties } =
     api.bounties.getAllBounties.useMutation();
+  const { mutateAsync: getAllIndustries } =
+    api.industries.getAllIndustries.useMutation();
   const [tags, setTags] = useState<string[]>([]);
   const [mints, setMints] = useState<string[]>([]);
   const [orgs, setOrgs] = useState<string[]>([]);
   const [bounds, setPriceBounds] = useState<[number, number]>([100, 10000]);
   const [bounties, setBounties] = useState<IAsyncResult<BountyPreview[]>>();
+  const [industries, setIndustries] = useState<IAsyncResult<Industry[]>>({
+    isLoading: true,
+  });
   const [filteredBounties, setFilteredBounties] = useState<BountyPreview[]>();
-  const [showFilters, setShowFilters] = useState<boolean>(false);
+  const [showFilters, setShowFilters] = useState<boolean>(true);
   const [filters, setFilters] = useState<Filters>({
     mints: mints,
+    industries: industries.result,
     tags: tags,
     orgs: orgs,
     estimatedPriceBounds: bounds,
     states: TABLE_BOUNTY_STATES,
     relationships: BOUNTY_USER_RELATIONSHIP,
-    isMyBounties: false,
+    isMyBounties: true,
   });
 
   useEffect(() => {
@@ -60,7 +66,19 @@ const BountyList: React.FC<{}> = () => {
         }
       }
     };
+
+    const fetchCurrentIndustries = async () => {
+      try {
+        const industries = await getAllIndustries();
+        setIndustries({ result: industries, isLoading: false });
+      } catch (e) {
+        console.log("error getting industries: ", e);
+        setIndustries({ error: e, isLoading: false });
+      }
+    };
+
     getBs();
+    fetchCurrentIndustries();
   }, [router.isReady, currentUser?.id, filters.isMyBounties]);
 
   useEffect(() => {
@@ -141,6 +159,7 @@ const BountyList: React.FC<{}> = () => {
       setFilters({
         mints: uniqueMints,
         tags: allTags,
+        industries: industries.result,
         orgs: uniqueOrgs,
         estimatedPriceBounds: priceBounds,
         states: filters.isMyBounties
@@ -154,10 +173,11 @@ const BountyList: React.FC<{}> = () => {
 
   return (
     <AnimatePresence>
-      <div className="w-full flex items-start mt-5 gap-10 pb-10">
+      <div className="w-full flex items-start mt-5 gap-5 pb-10">
         {showFilters && (
           <BountyFilters
             mints={mints}
+            industries={industries}
             tags={tags}
             priceBounds={bounds}
             orgs={orgs}
@@ -167,7 +187,7 @@ const BountyList: React.FC<{}> = () => {
           />
         )}
 
-        <div className="w-full flex flex-col gap-5 px-10">
+        <div className="w-full flex flex-col gap-5 px-20">
           <div className="flex items-center gap-2">
             <Image
               src="/assets/icons/IndustryTrio.png"
