@@ -28,6 +28,7 @@ const BOUNTY_MANY_INCLUDE = {
   issue: true,
   tags: true,
   pullRequests: true,
+  // industries: true,
 };
 
 const bountyQuery = async (id: number) => {

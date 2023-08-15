@@ -103,6 +103,11 @@ const BountyList: React.FC<{}> = () => {
         return false;
       }
 
+      // TODO: add filter logic for industry
+      // if (!filters.industries.includes(bounty.industry)) {
+      //   return false;
+      // }
+
       if (!filters.orgs.includes(bounty.repository?.organization)) {
         return false;
       }
