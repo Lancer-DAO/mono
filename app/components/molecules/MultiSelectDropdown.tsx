@@ -1,18 +1,12 @@
 import { useOutsideAlerter } from "@/src/hooks";
 import Image from "next/image";
 import { useRef, useState } from "react";
-import { MarketingIcon } from "@/components";
+import { Option } from "@/types";
 
 interface Props {
   options: Option[];
   selected: Option[];
   onChange: (selected: Option[]) => void;
-}
-
-interface Option {
-  label: string;
-  value: string;
-  icon?: string;
 }
 
 const MultiSelectDropdown: React.FC<Props> = ({
@@ -61,7 +55,14 @@ const MultiSelectDropdown: React.FC<Props> = ({
             className="mr-[10px]"
           />
           <div className="flex items-center gap-2 text-sm">
-            {option.icon && <MarketingIcon height={20} width={20} />}
+            {option.icon && (
+              <Image
+                src={option?.icon}
+                height={20}
+                width={20}
+                alt={option?.label}
+              />
+            )}
             {option.label}
           </div>
         </label>
@@ -77,9 +78,9 @@ const MultiSelectDropdown: React.FC<Props> = ({
         onClick={toggleOpen}
       >
         <div className="text-base font-bold overflow-hidden whitespace-nowrap overflow-ellipsis">
-          {selected.length === 0
+          {selected?.length === 0
             ? "Select"
-            : selected.map((item) => item.label).join(", ")}
+            : selected?.map((item) => item.label).join(", ")}
         </div>
         <div className={`text-xl ${isOpen ? "transform rotate-180" : ""}`}>
           ▾

@@ -8,8 +8,8 @@ export interface IAsyncResult<T> extends IAsyncResultBase {
   result?: T;
 }
 
-export interface Option {
+export type Option = {
   label: string;
   value: string;
   icon?: string;
-}
+};

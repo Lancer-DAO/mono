@@ -8,6 +8,7 @@ import { useTutorial } from "@/src/providers/tutorialProvider";
 import Toggle, { ToggleConfig } from "../molecules/Toggle";
 import { motion } from "framer-motion";
 import { toast } from "react-hot-toast";
+import { IAsyncResult, Industry, Option } from "@/types";
 
 interface Props {
   setFormSection: Dispatch<SetStateAction<FORM_SECTION>>;
@@ -23,22 +24,26 @@ const Form: FC<Props> = ({
   handleChange,
 }) => {
   const { currentTutorialState, setCurrentTutorialState } = useTutorial();
-  const [toggleConfig, setToggleConfig] = useState<ToggleConfig>({
-    option1: {
-      title: "Fixed",
-    },
-    option2: {
-      title: "Request",
-    },
-    selected: "option1",
+  // const [toggleConfig, setToggleConfig] = useState<ToggleConfig>({
+  //   option1: {
+  //     title: "Fixed",
+  //   },
+  //   option2: {
+  //     title: "Request",
+  //   },
+  //   selected: "option1",
+  // });
+  const { mutateAsync: getAllIndustries } =
+    api.industries.getAllIndustries.useMutation();
+  const [industries, setIndustries] = useState<IAsyncResult<Industry[]>>({
+    isLoading: true,
   });
 
-  const categoryOptions = [
-    {
-      label: "Engineering",
-      value: "Engineering",
-    },
-  ];
+  const categoryOptions: Option[] = industries.result?.map((industry) => ({
+    value: industry.id.toString(),
+    label: industry.name,
+    icon: industry.icon,
+  }));
 
   const handleRequirementsChange = (event) => {
     const tags: string[] = event.target.value.split(",");
@@ -62,14 +67,29 @@ const Form: FC<Props> = ({
     // }
   };
 
+  // TODO: save for later
+  // useEffect(() => {
+  //   if (toggleConfig.selected === "option2") {
+  //     setFormData({
+  //       ...formData,
+  //       issuePrice: "Requesting Quote",
+  //     });
+  //   }
+  // }, [toggleConfig.selected]);
+
   useEffect(() => {
-    if (toggleConfig.selected === "option2") {
-      setFormData({
-        ...formData,
-        issuePrice: "Requesting Quote",
-      });
-    }
-  }, [toggleConfig.selected]);
+    const fetchCurrentIndustries = async () => {
+      try {
+        const industries = await getAllIndustries();
+        setIndustries({ result: industries, isLoading: false });
+      } catch (e) {
+        console.log("error getting industries: ", e);
+        setIndustries({ error: e, isLoading: false });
+      }
+    };
+    fetchCurrentIndustries();
+    console.log("testing", formData, categoryOptions);
+  }, []);
 
   return (
     <div>
@@ -80,13 +100,13 @@ const Form: FC<Props> = ({
           <div className="absolute top-1/2 -translate-y-1/2 -left-10">1</div>
           <MultiSelectDropdown
             options={categoryOptions}
-            selected={categoryOptions.filter(
-              (option) => option.value === formData.category ?? undefined
+            selected={categoryOptions?.filter((option) =>
+              formData.category?.includes(option.value)
             )}
             onChange={(options) => {
               setFormData({
                 ...formData,
-                category: options[0]?.value ?? "",
+                category: options?.map((o) => o.value),
               });
             }}
           />
@@ -107,7 +127,7 @@ const Form: FC<Props> = ({
               disabled:opacity-50 disabled:cursor-not-allowed"
               name="issuePrice"
               placeholder="$2500"
-              disabled={toggleConfig.selected === "option2"}
+              // disabled={toggleConfig.selected === "option2"}
               value={formData.issuePrice}
               onChange={handleChange}
               // onBlur={() => {
