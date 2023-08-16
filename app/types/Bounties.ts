@@ -4,7 +4,17 @@ import { UserType, UserSearchType } from "@/prisma/queries/user";
 import { WalletType } from "@/prisma/queries/wallet";
 import { DisciplineType } from "@/prisma/queries/discipline";
 import { IndustryType } from "@/prisma/queries/industry";
-import { Mint } from "@prisma/client";
+
+export type Filters = {
+  mints: string[];
+  orgs: string[];
+  industries: string[];
+  tags: string[];
+  states: string[];
+  estimatedPriceBounds: [number, number];
+  relationships: string[];
+  isMyBounties: boolean;
+};
 
 export enum BOUNTY_USER_RELATIONSHIP {
   Creator = "creator",
@@ -66,14 +76,3 @@ export type UnwrapPromise<T> = T extends Promise<infer U> ? U : T;
 export type UnwrapArray<T> = T extends Array<infer U> ? U : T;
 export type UserSearchIndividual = UnwrapArray<UserSearch>;
 export type Escrow = Bounty["escrow"];
-
-export type Filters = {
-  mints: Mint[];
-  orgs: string[];
-  industries: Industry[];
-  tags: string[];
-  states: string[];
-  estimatedPriceBounds: [number, number];
-  relationships: string[];
-  isMyBounties: boolean;
-};

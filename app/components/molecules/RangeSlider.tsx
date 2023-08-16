@@ -2,7 +2,7 @@ import Image from "next/image";
 import { FC, useState } from "react";
 import { Range, getTrackBackground } from "react-range";
 
-const STEP = 100;
+const STEP = 5;
 
 interface LabeledTwoThumbsProps {
   bounds: [number, number];

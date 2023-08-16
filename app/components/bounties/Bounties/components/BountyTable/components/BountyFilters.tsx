@@ -9,7 +9,9 @@ import { Mint } from "@prisma/client";
 
 interface BountyFiltersProps {
   mints: Mint[];
-  industries: IAsyncResult<Industry[]>;
+  mintsFilter: string[];
+  industries: Industry[];
+  industriesFilter: string[];
   tags: string[];
   orgs: string[];
   priceBounds: [number, number];
@@ -20,7 +22,9 @@ interface BountyFiltersProps {
 
 export const BountyFilters = ({
   mints,
+  mintsFilter,
   industries,
+  industriesFilter,
   tags,
   orgs,
   priceBounds,
@@ -76,29 +80,34 @@ export const BountyFilters = ({
       />
       <div className="flex flex-col gap-3">
         <p className="font-bold">Payout Mints</p>
-        {mints.map((mint: Mint) => {
+        {mints?.map((mint: Mint) => {
           return (
             <div
-              key={mint.id}
+              key={mint?.id}
               className="flex items-center gap-2 cursor-pointer"
               onClick={() => {
                 setFilters({
                   ...filters,
-                  mints: filters.mints.includes(mint)
-                    ? filters.mints.filter((name) => name !== mint)
-                    : [...filters.mints, mint],
+                  mints: filters.mints.includes(mint?.name)
+                    ? filters.mints.filter((name) => name !== mint?.name)
+                    : [...filters.mints, mint?.name],
                 });
               }}
             >
               <input
                 type="radio"
-                id={mint.id.toString()}
-                name={mint.name}
-                checked={filters.mints.includes(mint)}
+                id={mint?.id.toString()}
+                name={mint?.name}
+                checked={filters.mints.includes(mint?.name)}
               />
               <div className="flex items-center gap-1">
-                <Image src={mint.logo} width={20} height={20} alt={mint.name} />
-                <p>{mint.name}</p>
+                <Image
+                  src={mint?.logo}
+                  width={20}
+                  height={20}
+                  alt={mint?.name}
+                />
+                <p>{mint?.name}</p>
               </div>
             </div>
           );
@@ -174,7 +183,7 @@ export const BountyFilters = ({
           onChange={(options) => {
             setFilters({
               ...filters,
-              states: options.map((option) => option.value),
+              states: options.map((option) => option.value) as string[],
             });
           }}
         />

@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import Image from "next/image";
 import {
   TABLE_BOUNTY_STATES,
   TABLE_MY_BOUNTY_STATES,
@@ -12,7 +13,6 @@ import { useRouter } from "next/router";
 import { BountyFilters } from "./components";
 import { IAsyncResult } from "@/types/common";
 import { BountyPreview, Filters, Industry } from "@/types";
-import Image from "next/image";
 import { AnimatePresence, motion } from "framer-motion";
 import { Mint } from "@prisma/client";
 export const BOUNTY_USER_RELATIONSHIP = [
@@ -30,19 +30,25 @@ const BountyList: React.FC<{}> = () => {
     api.bounties.getAllBounties.useMutation();
   const { mutateAsync: getAllIndustries } =
     api.industries.getAllIndustries.useMutation();
+  const { mutateAsync: getMintsAPI } = api.mints.getMints.useMutation();
+
   const [tags, setTags] = useState<string[]>([]);
-  const [mints, setMints] = useState<Mint[]>([]);
+  const [mints, setMints] = useState<IAsyncResult<Mint[]>>({
+    isLoading: true,
+  });
+  const [mintsFilter, setMintsFilter] = useState<string[]>([]);
   const [orgs, setOrgs] = useState<string[]>([]);
-  const [bounds, setPriceBounds] = useState<[number, number]>([100, 10000]);
+  const [bounds, setPriceBounds] = useState<[number, number]>([5, 10000]);
   const [bounties, setBounties] = useState<IAsyncResult<BountyPreview[]>>();
   const [industries, setIndustries] = useState<IAsyncResult<Industry[]>>({
     isLoading: true,
   });
+  const [industriesFilter, setIndustriesFilter] = useState<string[]>([]);
   const [filteredBounties, setFilteredBounties] = useState<BountyPreview[]>();
   const [showFilters, setShowFilters] = useState<boolean>(true);
   const [filters, setFilters] = useState<Filters>({
-    mints: mints,
-    industries: industries.result,
+    mints: mintsFilter,
+    industries: industriesFilter,
     tags: tags,
     orgs: orgs,
     estimatedPriceBounds: bounds,
@@ -50,18 +56,6 @@ const BountyList: React.FC<{}> = () => {
     relationships: BOUNTY_USER_RELATIONSHIP,
     isMyBounties: true,
   });
-
-  const getUniqueMints = (bounties: BountyPreview[]): Mint[] => {
-    const uniqueMints: Record<string, Mint> = bounties.reduce((acc, bounty) => {
-      const mint = bounty.escrow.mint;
-      if (!acc[mint.publicKey]) {
-        acc[mint.publicKey] = mint;
-      }
-      return acc;
-    }, {});
-
-    return Object.values(uniqueMints);
-  };
 
   useEffect(() => {
     const getBs = async () => {
@@ -73,10 +67,14 @@ const BountyList: React.FC<{}> = () => {
             onlyMyBounties: filters.isMyBounties,
           });
           setBounties({ result: bounties, isLoading: false });
+          // console.log("bounties!!: ", bounties);
         } catch (e) {
           console.log("error getting bounties: ", e);
           setBounties({ error: e, isLoading: false });
         }
+      } else {
+        setBounties({ isLoading: false });
+        console.log("router not ready or no user");
       }
     };
 
@@ -90,8 +88,19 @@ const BountyList: React.FC<{}> = () => {
       }
     };
 
+    const fetchCurrentMints = async () => {
+      try {
+        const fetchedMints = await getMintsAPI();
+        setMints({ result: fetchedMints, isLoading: false });
+      } catch (e) {
+        console.log("error getting mints: ", e);
+        setMints({ error: e, isLoading: false });
+      }
+    };
+
     getBs();
     fetchCurrentIndustries();
+    fetchCurrentMints();
   }, [router.isReady, currentUser?.id, filters.isMyBounties]);
 
   useEffect(() => {
@@ -99,12 +108,12 @@ const BountyList: React.FC<{}> = () => {
       if (!bounty.escrow.publicKey || !bounty.escrow.mint) {
         return false;
       }
-      if (!filters.mints.includes(bounty.escrow.mint)) {
-        return false;
-      }
+      // if (!filters.mints.includes(bounty.escrow.mint.ticker)) {
+      //   return false;
+      // }
 
       // TODO: add filter logic for industry
-      // if (!filters.industries.includes(bounty.industry)) {
+      // if (!filters.industries.includes(industries)) {
       //   return false;
       // }
 
@@ -141,7 +150,7 @@ const BountyList: React.FC<{}> = () => {
     // - all tags for bounties
     // - all orgs posting bounties
     // - all payout mints
-    // - upper and lower bounds of estimated time completion
+    // - upper and lower bounds of price
 
     if (!bounties?.result) return;
     if (bounties && bounties?.result?.length !== 0) {
@@ -155,14 +164,27 @@ const BountyList: React.FC<{}> = () => {
           []
         );
       const uniqueTags = getUniqueItems(allTags);
+      const allIndustries = bounties?.result
+        ?.map((bounty) => bounty.industries.map((industry) => industry.name))
+        ?.reduce(
+          (accumulator, currentValue) => [
+            ...accumulator,
+            ...(currentValue ? currentValue : []),
+          ],
+          []
+        );
+      const uniqueIndustries = getUniqueItems(allIndustries);
+      setIndustriesFilter(uniqueIndustries);
       const uniqueOrgs = getUniqueItems(
         bounties?.result.map((bounty) => bounty.repository?.organization) ?? []
       );
 
-      const uniqueMintList = getUniqueMints(bounties?.result);
+      const uniqueMints = getUniqueItems(
+        bounties?.result.map((bounty) => bounty.escrow.mint) ?? []
+      );
       setTags(uniqueTags);
       setOrgs(uniqueOrgs);
-      setMints(uniqueMintList);
+      setMintsFilter(uniqueMints);
       const allPrices = bounties?.result.map((bounty) =>
         bounty.price ? parseFloat(bounty.price.toString()) : 0
       );
@@ -173,10 +195,16 @@ const BountyList: React.FC<{}> = () => {
         maxPrice === minPrice ? maxPrice + 1 : maxPrice,
       ];
       setPriceBounds(priceBounds);
+      // console.log("bounty table filter unique data:", {
+      //   uniqueMints,
+      //   uniqueTags,
+      //   uniqueOrgs,
+      //   priceBounds,
+      // });
       setFilters({
-        mints: uniqueMintList,
+        mints: uniqueMints,
         tags: allTags,
-        industries: industries.result,
+        industries: industriesFilter,
         orgs: uniqueOrgs,
         estimatedPriceBounds: priceBounds,
         states: filters.isMyBounties
@@ -186,15 +214,17 @@ const BountyList: React.FC<{}> = () => {
         isMyBounties: filters.isMyBounties,
       });
     }
-  }, [bounties?.result]);
+  }, [bounties]);
 
   return (
     <AnimatePresence>
       <div className="w-full flex items-start mt-5 gap-5 pb-10">
         {showFilters && (
           <BountyFilters
-            mints={mints}
-            industries={industries}
+            mints={mints.result}
+            mintsFilter={mintsFilter}
+            industriesFilter={industriesFilter}
+            industries={industries?.result}
             tags={tags}
             priceBounds={bounds}
             orgs={orgs}
