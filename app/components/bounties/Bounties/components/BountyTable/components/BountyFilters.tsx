@@ -9,9 +9,7 @@ import { Mint } from "@prisma/client";
 
 interface BountyFiltersProps {
   mints: Mint[];
-  mintsFilter: string[];
   industries: Industry[];
-  industriesFilter: string[];
   tags: string[];
   orgs: string[];
   priceBounds: [number, number];
@@ -22,9 +20,7 @@ interface BountyFiltersProps {
 
 export const BountyFilters = ({
   mints,
-  mintsFilter,
   industries,
-  industriesFilter,
   tags,
   orgs,
   priceBounds,

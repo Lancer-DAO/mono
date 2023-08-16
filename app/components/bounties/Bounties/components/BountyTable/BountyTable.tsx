@@ -108,15 +108,19 @@ const BountyList: React.FC<{}> = () => {
       if (!bounty.escrow.publicKey || !bounty.escrow.mint) {
         return false;
       }
-      // if (!filters.mints.includes(bounty.escrow.mint.ticker)) {
-      //   return false;
-      // }
-
-      // TODO: add filter logic for industry
-      // if (!filters.industries.includes(industries)) {
-      //   return false;
-      // }
-
+      // many to one relationship
+      if (!filters.mints.includes(bounty.escrow.mint.ticker)) {
+        return false;
+      }
+      // check if any of the bounty's industries is
+      // included in the filters.industries list
+      if (
+        !bounty.industries.some((industry) =>
+          filters.industries.includes(industry.name)
+        )
+      ) {
+        return false;
+      }
       if (!filters.orgs.includes(bounty.repository?.organization)) {
         return false;
       }
@@ -222,8 +226,6 @@ const BountyList: React.FC<{}> = () => {
         {showFilters && (
           <BountyFilters
             mints={mints.result}
-            mintsFilter={mintsFilter}
-            industriesFilter={industriesFilter}
             industries={industries?.result}
             tags={tags}
             priceBounds={bounds}
