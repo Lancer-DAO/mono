@@ -35,7 +35,20 @@ export const ReferCard = () => {
   return (
     <div className="flex gap-4">
       <div className="w-full md:w-[460px] rounded-xl bg-bgLancerSecondary/[8%] overflow-hidden p-6">
-        <p className="font-bold text-2xl text-textGreen mb-6">Refer & Earn</p>
+        <div className="flex justify-between">
+          <p className="font-bold text-2xl text-textGreen mb-6">Refer & Earn</p>
+          {
+          // referralId && initialized
+          true ? (
+            <div className="flex self-start">
+              <p className="text-green-700 mr-2">2 invites left</p>
+              <div className="mr-1 w-3 h-3 bg-transparent rounded-full border border-red-400 border-solid bg-red-300 self-center"></div>
+              <div className="mr-1 w-3 h-3 rounded-full border border-green-400 border-solid bg-green-300 self-center"></div>
+              <div className="mr-1 w-3 h-3 bg-transparent rounded-full border border-green-400 border-solid bg-green-300 self-center"></div>
+            </div>
+
+          ) : <></>}
+        </div>
         {
         // referralId && initialized 
         true
