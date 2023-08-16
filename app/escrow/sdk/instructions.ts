@@ -357,6 +357,12 @@ export const approveRequestWithReferralInstruction = async (
     referral_data_account
   );
 
+  console.log(
+    "creator referrer, completer refferrer",
+    referralAccount.creatorReferrer.toString(),
+    referralAccount.approvedReferrers[0].toString()
+  );
+
   const creatorReferrer =
     referralAccount.creatorReferrer.toString() === PublicKey.default.toString()
       ? []
