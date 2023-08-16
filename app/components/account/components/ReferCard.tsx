@@ -52,26 +52,20 @@ export const ReferCard = () => {
       <div className="w-full md:w-[460px] rounded-xl bg-bgLancerSecondary/[8%] overflow-hidden p-6">
         <div className="flex justify-between">
           <p className="font-bold text-2xl text-textGreen mb-6">Refer & Earn</p>
-          {
-          referralId && initialized
-          // true 
-          ? (
+          {referralId && initialized ? (
             <div className="flex self-start">
               <p className="text-green-700 mr-2">{invites} {invites === 1 ? 'invite' : 'invites'} left</p>
             {renderCircles(invites)}
             </div>
           ) : <></>}
         </div>
-        {
-        referralId && initialized 
-        // true
-        ? ( 
+        {referralId && initialized ? ( 
           <div>
             <div>
               <p className="uppercase pb-1 px-1 text-green-700 font-medium">Share to earn 1% of each referral</p>
               <div className="flex justify-between items-center px-4 py-4 bg-white border border-primaryBtnBorder uppercase rounded-md gap-2">
                 <Logo height="24" width="24" />
-                <p className="text-green-500 text-sm">{SITE_URL}{referralId}</p>
+                <p className="text-green-500 text-sm whitespace-nowrap overflow-hidden">{SITE_URL}{referralId}</p>
                 <div className="relative">
                   <Copy className="cursor-pointer" onClick={() => handleCopyClick(`${SITE_URL}${referralId}`)} />
                   <div className="absolute text-sm right-0">{isCopied ? "Copied!" : ""}</div>
@@ -101,8 +95,6 @@ export const ReferCard = () => {
           </div>
         ) : (
           <div>
-
-            {/* <p className="uppercase">You do not have a link currently</p> */}
             <p className="uppercase pb-1 px-1 text-green-700 font-medium">Share to earn 1% of each referral</p>
             <div className="flex items-center px-4 py-4 bg-white border border-primaryBtnBorder uppercase rounded-md gap-2">
               <Button className="text-green-500 text-sm" onClick={handleCreateLink}>Generate Referral Link</Button>
