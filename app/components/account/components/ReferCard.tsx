@@ -53,8 +53,9 @@ export const ReferCard = () => {
         <div className="flex justify-between">
           <p className="font-bold text-2xl text-textGreen mb-6">Refer & Earn</p>
           {
-          // referralId && initialized
-          true ? (
+          referralId && initialized
+          // true 
+          ? (
             <div className="flex self-start">
               <p className="text-green-700 mr-2">{invites} {invites === 1 ? 'invite' : 'invites'} left</p>
             {renderCircles(invites)}
@@ -62,8 +63,8 @@ export const ReferCard = () => {
           ) : <></>}
         </div>
         {
-        // referralId && initialized 
-        true
+        referralId && initialized 
+        // true
         ? ( 
           <div>
             <div>
