@@ -116,7 +116,7 @@ const UserWalletProvider: FunctionComponent<IUserWalletState> = ({
           setCurrentUser(userInfo);
         } catch (e) {
           console.error(e);
-          router.push("/api/auth/login");
+          // router.push("/api/auth/login");
         }
       };
       getUser();
