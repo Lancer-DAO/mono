@@ -101,7 +101,7 @@ const AddMediaForm: FC<Props> = ({ setFormSection, formData, setFormData }) => {
           </motion.button>
           <motion.button
             {...smallClickAnimation}
-            onClick={() => setFormSection("PREVIEW")}
+            onClick={() => setFormSection("FUND")}
             className="bg-primaryBtn border border-primaryBtnBorder text-textGreen 
             w-[100px] h-[50px] rounded-lg text-base"
           >
@@ -114,3 +114,15 @@ const AddMediaForm: FC<Props> = ({ setFormSection, formData, setFormData }) => {
 };
 
 export default AddMediaForm;
+
+// {/* <div className="relative flex items-center">
+//   <label className="text-textGreen/70 pr-4 pl-3">Price</label>
+//   <div className="absolute top-1/2 -translate-y-1/2 -left-10">2</div>
+//   <div className="flex items-center gap-3">
+//     {/* commenting out until functionality is added */}
+//     <Toggle
+//               toggleConfig={toggleConfig}
+//               setToggleConfig={setToggleConfig}
+//             />
+//   </div>
+// </div>; */}

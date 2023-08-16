@@ -59,17 +59,6 @@ const PreviewForm: FC<Props> = ({
     selected: "option1",
   });
 
-  const mintOptions: Option[] = mints.map((mint) => ({
-    label: mint.name,
-    value: mint.name,
-    icon: mint.logo,
-  }));
-
-  const handleChangeMint = (mint: Prisma.Mint) => {
-    const newMint = mints.find((_mint) => _mint.name === mint.name);
-    setMint(newMint);
-  };
-
   const createBounty = async () => {
     setIsSubmittingIssue(true);
     if (
@@ -165,13 +154,6 @@ const PreviewForm: FC<Props> = ({
           {/* 3. quest photos card */}
           <PreviewCardBase title="References">Preview Card</PreviewCardBase>
         </div>
-
-        <label>Funding Type</label>
-        <MintsDropdown
-          options={mints}
-          selected={mint}
-          onChange={handleChangeMint}
-        />
 
         <div className="w-full px-10 mt-4 flex items-center justify-between">
           <motion.button

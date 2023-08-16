@@ -32,7 +32,7 @@ const MintsDropdown: React.FC<Props> = ({ options, selected, onChange }) => {
         onClick={() => handleOptionClick(option)}
       >
         <div className="flex items-center gap-2">
-          {!!option.logo && (
+          {option && !!option.logo && (
             <Image src={option.logo} width={20} height={20} alt={option.name} />
           )}
           {option.name}
@@ -42,28 +42,45 @@ const MintsDropdown: React.FC<Props> = ({ options, selected, onChange }) => {
   };
 
   return (
-    <div className="relative w-[220px] h-[50px]" ref={menuRef}>
-      <div
-        className="h-full flex justify-between bg-neutralBtn border border-neutralBtnBorder 
-        items-center cursor-pointer px-4 rounded-lg"
-        onClick={toggleOpen}
-      >
-        <div className="text-xl font-bold overflow-hidden whitespace-nowrap overflow-ellipsis">
-          {selected ? selected.name : "Select"}
-        </div>
-        <div className={`text-xl ${isOpen ? "transform rotate-180" : ""}`}>
-          ▾
-        </div>
-      </div>
-      {isOpen && (
+    <>
+      <p className="w-full leading-3 -mb-2">Token</p>
+      <div className="relative w-full h-[50px]" ref={menuRef}>
         <div
-          className="absolute top-full left-0 z-10 flex flex-col max-h-[200px] overflow-y-auto 
-          bg-neutralBtn border border-neutralBtnBorder rounded-lg shadow-md w-full"
+          className="h-full flex justify-center bg-neutralBtn border border-neutralBtnBorder 
+          items-center cursor-pointer px-4 rounded-lg"
+          onClick={toggleOpen}
         >
-          {renderOptions()}
+          <div className="flex items-center gap-2">
+            {selected && (
+              <Image
+                src={selected?.logo}
+                width={20}
+                height={20}
+                alt={selected?.name}
+              />
+            )}
+            <div className="text-center overflow-hidden whitespace-nowrap overflow-ellipsis">
+              {selected ? selected.ticker : "Select"}
+            </div>
+          </div>
+          <div
+            className={`absolute right-2 text-xl ${
+              isOpen ? "transform rotate-180" : ""
+            }`}
+          >
+            ▾
+          </div>
         </div>
-      )}
-    </div>
+        {isOpen && (
+          <div
+            className="absolute top-full left-0 z-10 flex flex-col max-h-[200px] overflow-y-auto 
+          bg-neutralBtn border border-neutralBtnBorder rounded-lg shadow-md w-full"
+          >
+            {renderOptions()}
+          </div>
+        )}
+      </div>
+    </>
   );
 };
 

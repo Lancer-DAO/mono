@@ -94,81 +94,8 @@ const Form: FC<Props> = ({
             }}
           />
         </div>
-        <div className="relative flex items-center">
-          <label className="text-textGreen/70 pr-4 pl-3">Price</label>
-          <div className="absolute top-1/2 -translate-y-1/2 -left-10">2</div>
-          <div className="flex items-center gap-3">
-            {/* commenting out until functionality is added */}
-            {/* <Toggle
-              toggleConfig={toggleConfig}
-              setToggleConfig={setToggleConfig}
-            /> */}
-            <input
-              type="number"
-              className="placeholder:text-textGreen/70 border bg-neutralBtn 
-              border-neutralBtnBorder w-full h-[50px] rounded-lg px-3
-              disabled:opacity-50 disabled:cursor-not-allowed"
-              name="issuePrice"
-              placeholder="$2500"
-              // disabled={toggleConfig.selected === "option2"}
-              value={formData.issuePrice}
-              onChange={handleChange}
-              // onBlur={() => {
-              //   if (
-              //     formData.issueTitle !== "" &&
-              //     !!currentTutorialState &&
-              //     currentTutorialState.isActive
-              //   ) {
-              //     if (
-              //       currentTutorialState?.title ===
-              //         CREATE_BOUNTY_TUTORIAL_INITIAL_STATE.title &&
-              //       currentTutorialState.currentStep === 1
-              //     ) {
-              //       setCurrentTutorialState({
-              //         ...currentTutorialState,
-              //         currentStep: 2,
-              //       });
-              //     }
-              //   }
-              // }}
-              // onMouseLeave={() => {
-              //   if (
-              //     formData.issueTitle !== "" &&
-              //     !!currentTutorialState &&
-              //     currentTutorialState.isActive
-              //   ) {
-              //     if (
-              //       currentTutorialState?.title ===
-              //         CREATE_BOUNTY_TUTORIAL_INITIAL_STATE.title &&
-              //       currentTutorialState.currentStep === 1
-              //     ) {
-              //       setCurrentTutorialState({
-              //         ...currentTutorialState,
-              //         currentStep: 2,
-              //         isRunning: true,
-              //       });
-              //     }
-              //   }
-              // }}
-              // onFocus={() => {
-              //   if (!!currentTutorialState && currentTutorialState.isActive) {
-              //     if (
-              //       currentTutorialState?.title ===
-              //         CREATE_BOUNTY_TUTORIAL_INITIAL_STATE.title &&
-              //       currentTutorialState.currentStep === 1
-              //     ) {
-              //       setCurrentTutorialState({
-              //         ...currentTutorialState,
-              //         isRunning: false,
-              //       });
-              //     }
-              //   }
-              // }}
-            />
-          </div>
-        </div>
         <div className="relative">
-          <div className="absolute top-1/2 -translate-y-1/2 -left-10">3</div>
+          <div className="absolute top-1/2 -translate-y-1/2 -left-10">2</div>
           <input
             type="text"
             className="placeholder:text-textGreen/70 border bg-neutralBtn 
@@ -232,7 +159,7 @@ const Form: FC<Props> = ({
           />
         </div>
         <div className="relative">
-          <div className="absolute top-1/2 -translate-y-1/2 -left-10">4</div>
+          <div className="absolute top-1/2 -translate-y-1/2 -left-10">3</div>
           <input
             type="text"
             className="placeholder:text-textGreen/70 border bg-neutralBtn 
@@ -296,7 +223,7 @@ const Form: FC<Props> = ({
           />
         </div>
         <div className="relative">
-          <div className="absolute top-2 -left-10">5</div>
+          <div className="absolute top-2 -left-10">4</div>
           <textarea
             className="placeholder:text-textGreen/70 border bg-neutralBtn min-h-[50px] 
             border-neutralBtnBorder w-full h-[150px] rounded-lg px-3 py-2 resize-y"

@@ -83,7 +83,11 @@ export const Create = () => {
     <div className="w-full max-w-[1200px] mx-auto flex flex-col md:flex-row md:justify-evenly mt-10">
       {/* quest info entry section */}
       <div
-        className={`${formSection === "PREVIEW" ? "w-full" : "md:w-[515px]"}`}
+        className={`${
+          formSection === "PREVIEW" || formSection === "FUND"
+            ? "w-full"
+            : "md:w-[515px]"
+        }`}
       >
         {formSection === "CREATE" && (
           <CreateBountyForm
@@ -101,6 +105,15 @@ export const Create = () => {
             setFormData={setFormData}
           />
         )}
+        {formSection === "FUND" && (
+          <FundBountyForm
+            isAccountCreated={isAccountCreated}
+            formData={formData}
+            setFormData={setFormData}
+            setFormSection={setFormSection}
+            mints={mints}
+          />
+        )}
         {formSection === "PREVIEW" && (
           <PreviewForm
             setFormSection={setFormSection}
@@ -112,12 +125,9 @@ export const Create = () => {
           />
         )}
         {formSection === "SUCCESS" && <div>Success</div>}
-        {formSection === "FUND" && (
-          <FundBountyForm isAccountCreated={isAccountCreated} />
-        )}
       </div>
       {/* preview section */}
-      {formSection !== "PREVIEW" && (
+      {formSection !== "PREVIEW" && formSection !== "FUND" && (
         <div className="md:w-[515px] pt-10">
           <PreviewCardBase>
             <BountyCard
