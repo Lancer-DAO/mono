@@ -10,7 +10,12 @@ import { FORM_SECTION, FormData } from "@/types/forms";
 import { useBounty } from "@/src/providers/bountyProvider";
 import { useTutorial } from "@/src/providers/tutorialProvider";
 import { motion } from "framer-motion";
-import { PreviewCardBase, MintsDropdown, Toggle } from "@/components";
+import {
+  PreviewCardBase,
+  MintsDropdown,
+  Toggle,
+  BountyCard,
+} from "@/components";
 import { ToggleConfig } from "../molecules/Toggle";
 import { PublicKey } from "@solana/web3.js";
 import { createFFA } from "@/escrow/adapters";
@@ -149,8 +154,10 @@ const PreviewForm: FC<Props> = ({
 
         <div className="w-full flex items-center justify-between">
           {/* three cards in view */}
-          {/* 1. preview card (addarg working on this) */}
-          <PreviewCardBase title="Quest">Preview Card</PreviewCardBase>
+          {/* 1. preview card */}
+          <PreviewCardBase title="Quest">
+            <BountyCard formData={formData} />
+          </PreviewCardBase>
           {/* 2. quest links card */}
           <PreviewCardBase title="Links">Preview Card</PreviewCardBase>
           {/* 3. quest photos card */}
