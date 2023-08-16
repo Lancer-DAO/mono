@@ -45,7 +45,7 @@ const Form: React.FC<{
 
   const [isPreview, setIsPreview] = useState(false);
   const [isSubmittingIssue, setIsSubmittingIssue] = useState(false);
-  const { getSubmitterReferrer } = useReferral();
+  const { getSubmitterReferrer, getRemainingAccounts } = useReferral();
 
   const toggleOpenRepo = () => {
     setIsOpenMints(!isOpenMints);
@@ -75,12 +75,14 @@ const Form: React.FC<{
     }
 
     const mintKey = new PublicKey(mint.publicKey);
+    const remainingAccounts = await getRemainingAccounts(currentWallet.publicKey, mintKey);
 
     const { timestamp, signature, escrowKey } = await createFFA(
       currentWallet,
       program,
       provider,
       await getSubmitterReferrer(currentWallet.publicKey, mintKey),
+      remainingAccounts,
       mintKey
     );
     createAccountPoll(escrowKey);

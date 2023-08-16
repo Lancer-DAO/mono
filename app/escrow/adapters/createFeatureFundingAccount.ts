@@ -1,4 +1,4 @@
-import { PublicKey, Transaction } from "@solana/web3.js";
+import { AccountMeta, PublicKey, Transaction } from "@solana/web3.js";
 import { AnchorProvider, Program } from "@project-serum/anchor";
 import { MonoProgram } from "@/escrow/sdk/types/mono_program";
 import {
@@ -14,6 +14,7 @@ export const createFFA = async (
   program: Program<MonoProgram>,
   provider: AnchorProvider,
   referrer: PublicKey,
+  remainingAccounts: AccountMeta[],
   mint?: PublicKey
 ) => {
   const timestamp = Date.now().toString();
@@ -33,6 +34,7 @@ export const createFFA = async (
     new PublicKey(wallet.publicKey),
     feature_account,
     referrer,
+    remainingAccounts,
     program
   );
   const { blockhash, lastValidBlockHeight } =
