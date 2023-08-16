@@ -34,12 +34,12 @@ const BountyCard: FC<BountyCardProps> = ({
     : null;
 
   const displayedTags = bounty
-    ? bounty.tags.slice(0, 4)
-    : formData.tags.slice(0, 4);
+    ? bounty.tags.map((tag) => tag.name)
+    : formData.tags.map((tag) => tag);
 
   const tagOverflow = bounty
-    ? bounty.tags.length > 4
-    : formData.tags.length > 4;
+    ? bounty.tags.length > 3
+    : formData.tags.length > 3;
 
   useEffect(() => {
     const getCardIndustries = () => {
@@ -129,26 +129,15 @@ const BountyCard: FC<BountyCardProps> = ({
           </div>
         </div>
         <div className="relative w-full pr-10 flex flex-wrap items-center gap-1 mt-auto">
-          {bounty &&
-            displayedTags.map((tag) => (
-              <div
-                className="border border-neutralBtnBorder rounded-full 
+          {displayedTags.map((tag) => (
+            <div
+              className="border border-neutralBtnBorder rounded-full 
                 px-3 py-1 flex items-center justify-center"
-                key={tag.name}
-              >
-                {tag.name}
-              </div>
-            ))}
-          {formData &&
-            displayedTags.map((tag) => (
-              <div
-                className="border border-neutralBtnBorder rounded-full 
-                px-3 py-1 flex items-center justify-center"
-                key={tag.name}
-              >
-                {tag.name}
-              </div>
-            ))}
+              key={tag}
+            >
+              {tag}
+            </div>
+          ))}
           {tagOverflow && <p className="text-xs">+ more</p>}
         </div>
       </div>
