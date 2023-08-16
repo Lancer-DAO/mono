@@ -1,24 +1,25 @@
-import { useEffect, useState, FC } from "react";
-import { useRouter } from "next/router";
-import { BountyCard, LoadingBar } from "@/components";
-import { ProfileNFTCard } from "./components";
+import { DefaultLayout, BountyCard, LoadingBar } from "@/components";
 import {
   BOUNTY_PROJECT_PARAMS,
   IS_CUSTODIAL,
   PROFILE_PROJECT_PARAMS,
 } from "@/src/constants";
-import { api } from "@/utils";
-import { BountyNFT, IAsyncResult, ProfileNFT, User } from "@/types/";
-import { createUnderdogClient } from "@underdog-protocol/js";
-import dayjs from "dayjs";
-import relativeTime from "dayjs/plugin/relativeTime";
 import {
   BOUNTY_ACTIONS_TUTORIAL_II_INITIAL_STATE,
   PROFILE_TUTORIAL_INITIAL_STATE,
 } from "@/src/constants/tutorials";
 import { useUserWallet } from "@/src/providers";
 import { useTutorial } from "@/src/providers/tutorialProvider";
+import { BountyNFT, IAsyncResult, ProfileNFT, User } from "@/types/";
+import { api } from "@/utils";
+import { createUnderdogClient } from "@underdog-protocol/js";
+import dayjs from "dayjs";
+import relativeTime from "dayjs/plugin/relativeTime";
+import { useRouter } from "next/router";
+import { FC, useEffect, useState } from "react";
+import { BountyNFTCard, ProfileNFTCard } from "./components";
 import BadgesCard from "./components/BadgesCard";
+import { ReferCard } from "./components/ReferCard";
 
 dayjs.extend(relativeTime);
 
@@ -246,12 +247,7 @@ export const Account: FC = () => {
             <BadgesCard profileNFT={profileNFT} />
           </div>
           <div className="flex flex-col gap-10 w-full">
-            <div
-              className="flex flex-col gap-3 w-full md:w-[60%] px-5 pb-20"
-              id="bounties-list"
-            >
-              right column here
-            </div>
+            <ReferCard />
           </div>
         </div>
       )}
