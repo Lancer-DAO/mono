@@ -1,9 +1,7 @@
-import { USDC_MINT } from "@/src/constants";
 import { getFundFFATX } from "@/escrow/adapters";
-import axios from "axios";
 import { useEffect, useState } from "react";
 import { useUserWallet } from "@/src/providers/userWalletProvider";
-import { BountyState, LancerWallet } from "@/src/types";
+import { LancerWallet } from "@/types/";
 import { Connection, Transaction } from "@solana/web3.js";
 import { api } from "@/src/utils/api";
 import { useRouter } from "next/router";

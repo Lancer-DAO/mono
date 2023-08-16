@@ -7,6 +7,7 @@ import { getUser } from "./get";
 import { search } from "./search";
 import { addReferrer } from "./addReferrer";
 import { maybeInitAccount } from "./maybeInitAccount";
+import { verifyWallet } from "./verifyWallet";
 
 export const users = createTRPCRouter({
   login,
@@ -16,4 +17,5 @@ export const users = createTRPCRouter({
   search,
   addReferrer,
   maybeInitAccount,
+  verifyWallet,
 });

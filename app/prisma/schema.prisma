@@ -16,7 +16,7 @@ model Bounty {
 
   // Fields
   createdAt     String   @db.VarChar(24)
-  description   String   @db.VarChar(2000)
+  description   String   @db.VarChar(10000)
   estimatedTime Decimal? @db.Decimal(10, 2)
   isPrivate     Boolean
   state         String   @db.VarChar(24)

@@ -2,9 +2,9 @@ import { useEffect, useState } from "react";
 
 import { FC, useRef } from "react";
 import { useOutsideAlerter, useDebounce } from "@/hooks";
-import { User } from "@/src/types";
 import { api } from "@/src/utils/api";
 import { Button, ContributorInfo } from "@/components";
+import { User, UserSearch, UserSearchIndividual } from "@/types/Bounties";
 
 interface Props {
   showModal: boolean;
@@ -16,9 +16,9 @@ const AddReferrerModal: FC<Props> = ({ showModal, setShowModal }) => {
   const { mutateAsync: search } = api.users.search.useMutation();
   const { mutateAsync: addReferrerAPI } = api.users.addReferrer.useMutation();
   const [query, setQuery] = useState("");
-  const [searchedUsers, setSearchedUsers] = useState<User[]>([]);
+  const [searchedUsers, setSearchedUsers] = useState<UserSearch>([]);
   const debouncedQuery = useDebounce(query, 500);
-  const [referrer, setReferrer] = useState<User>();
+  const [referrer, setReferrer] = useState<UserSearchIndividual>();
   useOutsideAlerter(wrapperRef, () => {
     setShowModal(false);
     setReferrer(undefined);

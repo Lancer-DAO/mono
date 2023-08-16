@@ -1,12 +1,9 @@
 import { useEffect, useState } from "react";
-
-import { BountyState, LancerWallet } from "@/src/types";
 import { useUserWallet } from "@/src/providers/userWalletProvider";
 import classnames from "classnames";
-import { PublicKey, Transaction } from "@solana/web3.js";
+import { PublicKey } from "@solana/web3.js";
 import { useRouter } from "next/router";
 import { api } from "@/src/utils/api";
-import { currentUser } from "@/server/api/routers/users/currentUser";
 import classNames from "classnames";
 import { fundFFA } from "@/escrow/adapters";
 import {
@@ -16,7 +13,6 @@ import {
   USDC_DECIMALS,
   USDC_MINT,
 } from "@/src/constants";
-import { useConnection, useWallet } from "@solana/wallet-adapter-react";
 import { CoinflowFund } from "@/components";
 import { CREATE_BOUNTY_TUTORIAL_INITIAL_STATE } from "@/src/constants/tutorials";
 import { useBounty } from "@/src/providers/bountyProvider";

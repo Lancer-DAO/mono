@@ -1,22 +1,22 @@
-import { ProfileNFT, User } from "@/src/types";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import Image from "next/image";
+import { ProfileNFT } from "@/types/";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
-import { useCallback, useEffect, useMemo, useState } from "react";
-import { Button, CoinflowOfframp } from "@/components";
-import AddReferrerModal from "./AddReferrerModal";
+import { Button, CoinflowOfframp, AddReferrerModal } from "@/components";
 import { useReferral } from "@/src/providers/referralProvider";
 import { Copy } from "react-feather";
 import { Treasury } from "@ladderlabs/buddy-sdk";
 import { api } from "@/src/utils/api";
 import * as Prisma from "@prisma/client";
+import { IS_CUSTODIAL } from "@/src/constants";
 import { useUserWallet } from "@/src/providers";
 
 dayjs.extend(relativeTime);
 
-// TODO: change to config file
-const SITE_URL = "https://app.lancer.so/account?r=";
+const SITE_URL = `https://${IS_CUSTODIAL ? "app" : "pro"}.lancer.so/account?r=`;
 
-const ProfileNFTCard = ({
+export const ProfileNFTCard = ({
   profileNFT,
   picture,
   githubId,
@@ -30,18 +30,11 @@ const ProfileNFTCard = ({
   const [isCopied, setIsCopied] = useState(false);
   const { referralId, initialized, createReferralMember, claimables, claim } =
     useReferral();
-  const { currentWallet } = useUserWallet();
+  const { currentUser } = useUserWallet();
 
   const { mutateAsync: getMintsAPI } = api.mints.getMints.useMutation();
   const [mints, setMints] = useState<Prisma.Mint[]>([]);
 
-  useEffect(() => {
-    const getMints = async () => {
-      const mints = await getMintsAPI();
-      setMints(mints);
-    };
-    getMints();
-  }, []);
   const handleCreateLink = useCallback(async () => {
     await createReferralMember();
 
@@ -70,8 +63,6 @@ const ProfileNFTCard = ({
       });
   }, [claimables, mints]);
 
-  const referralLink = `${SITE_URL}${referralId}`;
-
   const copyToClipboard = async (text: string) => {
     try {
       await navigator.clipboard.writeText(text);
@@ -86,19 +77,29 @@ const ProfileNFTCard = ({
     setTimeout(() => setIsCopied(false), 2000); // Reset the isCopied state after 2 seconds
   };
 
+  useEffect(() => {
+    const getMints = async () => {
+      const mints = await getMintsAPI();
+      setMints(mints);
+    };
+    if (!!currentUser) {
+      getMints();
+    }
+  }, [currentUser]);
+
   return (
     <div className="w-full md:w-[40%] px-5 pb-20">
       <div className="flex flex-col gap-3">
-        {/* <img src={profileNFT.image} className="profile-picture" /> */}
         {(picture || githubId) && (
-          <img
+          <Image
             src={
               picture
                 ? picture
-                : `https://avatars.githubusercontent.com/u/${
-                    githubId.split("|")[1]
-                  }?s=60&v=4`
+                : "/assets/images/Lancer-Green-No-Background-p-800.png"
             }
+            width={200}
+            height={200}
+            alt={profileNFT.name.split("for ")[1]}
             className="profile-picture"
           />
         )}
@@ -209,5 +210,3 @@ const ProfileNFTCard = ({
     </div>
   );
 };
-
-export default ProfileNFTCard;

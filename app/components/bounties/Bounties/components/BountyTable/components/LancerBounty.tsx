@@ -1,26 +1,22 @@
 import { Clock, EyeOff } from "react-feather";
 import { marked } from "marked";
-import { Bounty, BOUNTY_USER_RELATIONSHIP, Contributor } from "@/src/types";
-import { useLocation } from "react-router-dom";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import { decimalToNumber } from "@/src/utils";
 import { ContributorInfo } from "@/components";
 import { useState } from "react";
 import Image from "next/image";
+import { BOUNTY_USER_RELATIONSHIP, BountyPreview } from "@/types/";
 dayjs.extend(relativeTime);
 
-const LancerBounty = ({
+export const LancerBounty = ({
   bounty,
   id,
 }: {
-  bounty: Bounty & { users: Contributor[] };
+  bounty: BountyPreview;
   id?: string;
 }) => {
-  const search = useLocation().search;
   const [isPrivateHovered, setIsPrivateHovered] = useState(false);
-  const params = new URLSearchParams(search);
-  const jwt = params.get("token");
   const previewMarkup = () => {
     if (!bounty.description) return { __html: "<div/>" };
 
@@ -37,15 +33,15 @@ const LancerBounty = ({
       id={id}
       data-w-id="cff91d78-63a9-e923-e5c8-4e09d47abde6"
       role="listitem"
-      className="companies-card"
+      className="companies-card h-[450px]"
     >
       <a
         href={`/bounties/${bounty.id}`}
         className="company-card-link-wrapper w-inline-block"
       >
-        <div className="bounty-card-content">
-          <div className="flex items-center">
-            <h2 className="heading no-padding-margin">{bounty.title}</h2>
+        <div className="flex flex-col items-center w-full justify-between h-full">
+          <div className="flex items-center h-fit">
+            <h2 className="w-full text-left">{bounty.title}</h2>
             {bounty.isPrivate && (
               <div
                 className="ml-auto relative"
@@ -66,51 +62,54 @@ const LancerBounty = ({
               </div>
             )}
           </div>
-          <div className="container-3">
+          <div className="w-full h-[150px] overflow-hidden">
             <div
               className="bounty-markdown-preview"
               dangerouslySetInnerHTML={previewMarkup()}
             />
           </div>
           <div className="spacer-filled" />
-          <div className="bounty-footer">
-            <div className="bounty-card-funder">
-              <div className="contributor-picture">
-                <Clock size={"36px"} color="#14bb88" />
+          <div className="w-full flex items-center justify-between max-w-1/2 mx-auto">
+            <div className="w-full flex items-start gap-3">
+              <div className="rounded-full shadow-lg w-7 h-7">
+                <Clock size={"28px"} color="#14bb88" />
               </div>
 
-              <div className="bounty-funder-text">
-                <h3 className="no-padding-margin">
+              <div>
+                <h3 className="p-0 m-0 text-lg whitespace-nowrap">
                   {bounty.estimatedTime.toString()} HRS
                 </h3>
-                <div>
-                  Created:{" "}
+                <div className="text-xs">
+                  Created:
+                  <br />
                   {dayjs.unix(parseInt(bounty.createdAt) / 1000).fromNow()}
                 </div>
               </div>
             </div>
-            <div className="tag-list">
-              {bounty.tags.map((tag) => (
-                <div className="tag-item" key={tag.name}>
-                  {tag.name}
-                </div>
-              ))}
+            <div className="w-full flex items-center justify-end gap-1 px-1">
+              {bounty.tags.map((tag, index) => {
+                if (index > 1) return;
+                return (
+                  <div className="tag-item" key={tag.name}>
+                    {tag.name}
+                  </div>
+                );
+              })}
             </div>
           </div>
-          <div className="spacer" />
 
-          <div className="bounty-footer">
-            <div className="bounty-card-funder">
+          <div className="w-full flex items-center justify-between mt-6">
+            <div className="text-sm">
               {creator && <ContributorInfo user={creator.user} />}
             </div>
-            <div className="bounty-funding">
-              <h3 className="no-padding-margin">{bountyAmount}</h3>
+            <div className="flex items-center gap-2">
+              <h3 className="p-0 m-0 text-lg">{bountyAmount}</h3>
               <Image
                 className="rounded-[50%]"
                 src={bounty.escrow.mint.logo}
                 alt={bounty.escrow.mint.name}
-                width={36}
-                height={36}
+                width={25}
+                height={25}
               />
             </div>
           </div>

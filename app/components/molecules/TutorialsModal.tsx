@@ -1,8 +1,5 @@
-import { IS_MAINNET, USDC_MINT } from "@/src/constants";
-import { getSolscanTX } from "@/src/utils";
-import { useEffect, useState } from "react";
-import { useUserWallet } from "@/src/providers/userWalletProvider";
-import classnames from "classnames";
+import { useState, FC, useRef } from "react";
+import { useRouter } from "next/router";
 import {
   ExternalLink,
   RefreshCcw,
@@ -12,11 +9,7 @@ import {
   X,
 } from "react-feather";
 import { Button } from "@/components";
-
-import { FC, useRef } from "react";
 import { useOutsideAlerter } from "../../src/hooks/useOutsideAlerter";
-import { LinkButton } from "..";
-import { useRouter } from "next/router";
 import {
   ALL_TUTORIALS,
   APPLY_BOUNTY_STEP,
@@ -34,11 +27,12 @@ import {
   SUBMIT_REQUEST_NEEDS_PULL_REQUEST_STEPS,
   VOTE_TO_CANCEL_STEP,
 } from "@/src/constants/tutorials";
-import { Tutorial } from "@/src/types/tutorials";
+import { Tutorial } from "@/types//tutorials";
 import { Step } from "react-joyride";
-import { Bounty, BountyState } from "@/src/types";
+import { BountyState } from "@/types/";
 import { useTutorial } from "@/src/providers/tutorialProvider";
 import { useBounty } from "@/src/providers/bountyProvider";
+import { Bounty } from "@/types/Bounties";
 
 const getCurrentBountyTutorialInitialState = (
   currentBounty: Bounty

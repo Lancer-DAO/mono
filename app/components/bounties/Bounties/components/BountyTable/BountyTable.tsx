@@ -1,13 +1,13 @@
-import { TABLE_BOUNTY_STATES } from "@/src/constants";
+import { useState, useEffect } from "react";
+import { TABLE_BOUNTY_STATES, TABLE_MY_BOUNTY_STATES } from "@/src/constants";
 import { getUniqueItems } from "@/src/utils";
-import { useState } from "react";
 import { useUserWallet } from "@/src/providers";
-import { useEffect } from "react";
 import { LoadingBar } from "@/components";
 import { api } from "@/src/utils/api";
 import { useRouter } from "next/router";
-import BountyFilters from "./components/BountyFilters";
-import LancerBounty from "./components/LancerBounty";
+import { BountyFilters, LancerBounty } from "./components";
+import { IAsyncResult } from "@/types/common";
+import { BountyPreview } from "@/types";
 export const BOUNTY_USER_RELATIONSHIP = [
   "Creator",
   "Requested Submitter",
@@ -35,8 +35,8 @@ const BountyList: React.FC<{}> = () => {
   const [mints, setMints] = useState<string[]>([]);
   const [orgs, setOrgs] = useState<string[]>([]);
   const [bounds, setTimeBounds] = useState<[number, number]>([0, 10]);
-  const [bounties, setBounties] = useState<any[]>([]);
-
+  const [bounties, setBounties] = useState<IAsyncResult<BountyPreview[]>>();
+  const [filteredBounties, setFilteredBounties] = useState<BountyPreview[]>();
   const [filters, setFilters] = useState<Filters>({
     mints: mints,
     tags: tags,
@@ -50,15 +50,58 @@ const BountyList: React.FC<{}> = () => {
   useEffect(() => {
     const getBs = async () => {
       if (router.isReady && currentUser?.id) {
-        const bounties = await getBounties({
-          currentUserId: currentUser.id,
-          onlyMyBounties: filters.isMyBounties,
-        });
-        setBounties(bounties);
+        setBounties({ isLoading: true });
+        try {
+          const bounties = await getBounties({
+            currentUserId: currentUser.id,
+            onlyMyBounties: filters.isMyBounties,
+          });
+          setBounties({ result: bounties, isLoading: false });
+        } catch (e) {
+          console.log("error getting bounties: ", e);
+          setBounties({ error: e, isLoading: false });
+        }
       }
     };
     getBs();
   }, [router, currentUser?.id, filters.isMyBounties]);
+
+  useEffect(() => {
+    const filteredBounties = bounties?.result?.filter((bounty) => {
+      if (!bounty.escrow.publicKey || !bounty.escrow.mint) {
+        return false;
+      }
+      if (!filters.mints.includes(bounty.escrow.mint.ticker)) {
+        return false;
+      }
+
+      if (!filters.orgs.includes(bounty.repository?.organization)) {
+        return false;
+      }
+
+      const bountyTags = bounty.tags || [];
+      const commonTags = bountyTags.filter((tag) =>
+        filters.tags.includes(tag.name)
+      );
+      if (commonTags.length === 0 && tags.length !== 0) {
+        return false;
+      }
+
+      if (!filters.states.includes(bounty.state)) {
+        return false;
+      }
+      const bountyEstimate = parseFloat(bounty.estimatedTime.toString());
+      if (
+        bountyEstimate < filters.estimatedTimeBounds[0] ||
+        bountyEstimate > filters.estimatedTimeBounds[1]
+      ) {
+        return false;
+      }
+
+      return true;
+    });
+    setFilteredBounties(filteredBounties);
+  }, [filters]);
 
   useEffect(() => {
     // Get the meta-info off all bounties that are used for filters. Specifically
@@ -66,10 +109,12 @@ const BountyList: React.FC<{}> = () => {
     // - all orgs posting bounties
     // - all payout mints
     // - upper and lower bounds of estimated time completion
-    if (bounties && bounties.length !== 0) {
-      const allTags = bounties
-        .map((bounty) => bounty.tags.map((tag) => tag.name))
-        .reduce(
+
+    if (!bounties?.result) return;
+    if (bounties && bounties?.result?.length !== 0) {
+      const allTags = bounties?.result
+        ?.map((bounty) => bounty.tags.map((tag) => tag.name))
+        ?.reduce(
           (accumulator, currentValue) => [
             ...accumulator,
             ...(currentValue ? currentValue : []),
@@ -78,15 +123,15 @@ const BountyList: React.FC<{}> = () => {
         );
       const uniqueTags = getUniqueItems(allTags);
       const uniqueOrgs = getUniqueItems(
-        bounties.map((bounty) => bounty.repository?.organization)
+        bounties?.result.map((bounty) => bounty.repository?.organization) ?? []
       );
       const uniqueMints = getUniqueItems(
-        bounties.map((bounty) => bounty.escrow.mint.ticker)
+        bounties?.result.map((bounty) => bounty.escrow.mint.ticker) ?? []
       );
       setTags(uniqueTags);
       setOrgs(uniqueOrgs);
       setMints(uniqueMints);
-      const allTimes = bounties.map((bounty) =>
+      const allTimes = bounties?.result.map((bounty) =>
         parseFloat(bounty.estimatedTime.toString())
       );
       const maxTime = Math.max(...allTimes) || 10;
@@ -101,48 +146,15 @@ const BountyList: React.FC<{}> = () => {
         tags: allTags,
         orgs: uniqueOrgs,
         estimatedTimeBounds: timeBounds,
-        states: TABLE_BOUNTY_STATES,
+        states: filters.isMyBounties
+          ? TABLE_MY_BOUNTY_STATES
+          : TABLE_BOUNTY_STATES,
         relationships: BOUNTY_USER_RELATIONSHIP,
         isMyBounties: filters.isMyBounties,
       });
     }
-  }, [bounties]);
+  }, [bounties?.result]);
 
-  if (bounties.length === 0) return <LoadingBar title="Loading Bounties" />;
-
-  const filteredBountys = bounties.filter((bounty) => {
-    if (!bounty.escrow.publicKey || !bounty.escrow.mint) {
-      return false;
-    }
-    if (!filters.mints.includes(bounty.escrow.mint.ticker)) {
-      return false;
-    }
-
-    if (!filters.orgs.includes(bounty.repository?.organization)) {
-      return false;
-    }
-
-    const bountyTags = bounty.tags || [];
-    const commonTags = bountyTags.filter((tag) =>
-      filters.tags.includes(tag.name)
-    );
-    if (commonTags.length === 0 && tags.length !== 0) {
-      return false;
-    }
-
-    if (!filters.states.includes(bounty.state)) {
-      return false;
-    }
-    const bountyEstimate = parseFloat(bounty.estimatedTime.toString());
-    if (
-      bountyEstimate < filters.estimatedTimeBounds[0] ||
-      bountyEstimate > filters.estimatedTimeBounds[1]
-    ) {
-      return false;
-    }
-
-    return true;
-  });
   return (
     <div className="bounty-table" id="bounties-table">
       <div className="empty-cell" />
@@ -157,14 +169,29 @@ const BountyList: React.FC<{}> = () => {
         setFilters={setFilters}
         setBounties={setBounties}
       />
+
+      {bounties?.isLoading && (
+        <div className="w-full flex flex-col items-center">
+          <LoadingBar title="Loading Bounties" />
+        </div>
+      )}
+
       <div className="issue-list" id="bounties-list">
-        {filteredBountys.map((bounty, index) => (
-          <LancerBounty
-            bounty={bounty}
-            key={index}
-            id={`bounty-item-${index}`}
-          />
-        ))}
+        {!bounties?.isLoading && filteredBounties?.length === 0 && (
+          <p className="w-full text-center col-span-2">
+            No matching bounties available!
+          </p>
+        )}
+        {filteredBounties?.length > 0 &&
+          filteredBounties?.map((bounty, index) => {
+            return (
+              <LancerBounty
+                bounty={bounty}
+                key={index}
+                id={`bounty-item-${index}`}
+              />
+            );
+          })}
       </div>
     </div>
   );

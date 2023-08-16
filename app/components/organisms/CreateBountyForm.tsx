@@ -42,11 +42,10 @@ const Form: React.FC<{
   const [mints, setMints] = useState<Prisma.Mint[]>([]);
   const [failedToGetRepos, setFailedToGetRepos] = useState(false);
   const [failedToCreateIssue, setFailedToCreateIssue] = useState(false);
-  const [octokit, setOctokit] = useState(null);
 
   const [isPreview, setIsPreview] = useState(false);
   const [isSubmittingIssue, setIsSubmittingIssue] = useState(false);
-  const { getSubmitterReferrer } = useReferral();
+  const { getSubmitterReferrer, getRemainingAccounts } = useReferral();
 
   const toggleOpenRepo = () => {
     setIsOpenMints(!isOpenMints);
@@ -66,7 +65,7 @@ const Form: React.FC<{
     setIsSubmittingIssue(true);
     if (
       currentTutorialState?.title ===
-      CREATE_BOUNTY_TUTORIAL_INITIAL_STATE.title &&
+        CREATE_BOUNTY_TUTORIAL_INITIAL_STATE.title &&
       currentTutorialState.currentStep === 5
     ) {
       setCurrentTutorialState({
@@ -76,12 +75,17 @@ const Form: React.FC<{
     }
 
     const mintKey = new PublicKey(mint.publicKey);
+    const remainingAccounts = await getRemainingAccounts(
+      currentWallet.publicKey,
+      mintKey
+    );
 
     const { timestamp, signature, escrowKey } = await createFFA(
       currentWallet,
       program,
       provider,
       await getSubmitterReferrer(currentWallet.publicKey, mintKey),
+      remainingAccounts,
       mintKey
     );
     createAccountPoll(escrowKey);
@@ -179,7 +183,7 @@ const Form: React.FC<{
                     ) {
                       if (
                         currentTutorialState?.title ===
-                        CREATE_BOUNTY_TUTORIAL_INITIAL_STATE.title &&
+                          CREATE_BOUNTY_TUTORIAL_INITIAL_STATE.title &&
                         currentTutorialState.currentStep === 1
                       ) {
                         setCurrentTutorialState({
@@ -197,7 +201,7 @@ const Form: React.FC<{
                     ) {
                       if (
                         currentTutorialState?.title ===
-                        CREATE_BOUNTY_TUTORIAL_INITIAL_STATE.title &&
+                          CREATE_BOUNTY_TUTORIAL_INITIAL_STATE.title &&
                         currentTutorialState.currentStep === 1
                       ) {
                         setCurrentTutorialState({
@@ -215,7 +219,7 @@ const Form: React.FC<{
                     ) {
                       if (
                         currentTutorialState?.title ===
-                        CREATE_BOUNTY_TUTORIAL_INITIAL_STATE.title &&
+                          CREATE_BOUNTY_TUTORIAL_INITIAL_STATE.title &&
                         currentTutorialState.currentStep === 1
                       ) {
                         setCurrentTutorialState({
@@ -247,7 +251,7 @@ const Form: React.FC<{
                     ) {
                       if (
                         currentTutorialState?.title ===
-                        CREATE_BOUNTY_TUTORIAL_INITIAL_STATE.title &&
+                          CREATE_BOUNTY_TUTORIAL_INITIAL_STATE.title &&
                         currentTutorialState.currentStep === 3
                       ) {
                         setCurrentTutorialState({
@@ -265,7 +269,7 @@ const Form: React.FC<{
                     ) {
                       if (
                         currentTutorialState?.title ===
-                        CREATE_BOUNTY_TUTORIAL_INITIAL_STATE.title &&
+                          CREATE_BOUNTY_TUTORIAL_INITIAL_STATE.title &&
                         currentTutorialState.currentStep === 2
                       ) {
                         setCurrentTutorialState({
@@ -283,7 +287,7 @@ const Form: React.FC<{
                     ) {
                       if (
                         currentTutorialState?.title ===
-                        CREATE_BOUNTY_TUTORIAL_INITIAL_STATE.title &&
+                          CREATE_BOUNTY_TUTORIAL_INITIAL_STATE.title &&
                         currentTutorialState.currentStep === 2
                       ) {
                         setCurrentTutorialState({
@@ -315,7 +319,7 @@ const Form: React.FC<{
                     ) {
                       if (
                         currentTutorialState?.title ===
-                        CREATE_BOUNTY_TUTORIAL_INITIAL_STATE.title &&
+                          CREATE_BOUNTY_TUTORIAL_INITIAL_STATE.title &&
                         currentTutorialState.currentStep === 3
                       ) {
                         setCurrentTutorialState({
@@ -333,7 +337,7 @@ const Form: React.FC<{
                     ) {
                       if (
                         currentTutorialState?.title ===
-                        CREATE_BOUNTY_TUTORIAL_INITIAL_STATE.title &&
+                          CREATE_BOUNTY_TUTORIAL_INITIAL_STATE.title &&
                         currentTutorialState.currentStep === 3
                       ) {
                         setCurrentTutorialState({
@@ -351,7 +355,7 @@ const Form: React.FC<{
                     ) {
                       if (
                         currentTutorialState?.title ===
-                        CREATE_BOUNTY_TUTORIAL_INITIAL_STATE.title &&
+                          CREATE_BOUNTY_TUTORIAL_INITIAL_STATE.title &&
                         currentTutorialState.currentStep === 3
                       ) {
                         setCurrentTutorialState({
@@ -402,7 +406,7 @@ const Form: React.FC<{
                       ) {
                         if (
                           currentTutorialState?.title ===
-                          CREATE_BOUNTY_TUTORIAL_INITIAL_STATE.title &&
+                            CREATE_BOUNTY_TUTORIAL_INITIAL_STATE.title &&
                           currentTutorialState.currentStep === 4
                         ) {
                           setCurrentTutorialState({
@@ -420,7 +424,7 @@ const Form: React.FC<{
                       ) {
                         if (
                           currentTutorialState?.title ===
-                          CREATE_BOUNTY_TUTORIAL_INITIAL_STATE.title &&
+                            CREATE_BOUNTY_TUTORIAL_INITIAL_STATE.title &&
                           currentTutorialState.currentStep === 4
                         ) {
                           setCurrentTutorialState({
@@ -438,7 +442,7 @@ const Form: React.FC<{
                       ) {
                         if (
                           currentTutorialState?.title ===
-                          CREATE_BOUNTY_TUTORIAL_INITIAL_STATE.title &&
+                            CREATE_BOUNTY_TUTORIAL_INITIAL_STATE.title &&
                           currentTutorialState.currentStep === 4
                         ) {
                           setCurrentTutorialState({
@@ -556,8 +560,8 @@ const Form: React.FC<{
                 {failedToCreateIssue
                   ? "Failed to Create Issue"
                   : !!currentWallet
-                    ? "Submit"
-                    : "Please connect your wallet"}
+                  ? "Submit"
+                  : "Please connect your wallet"}
               </Button>
             </>
           </div>
