@@ -217,7 +217,7 @@ const Form: FC<Props> = ({
                 onClick={() => onClick()}
                 disabled={!mint || !formData.issuePrice}
                 className="bg-primaryBtn border border-primaryBtnBorder text-textGreen 
-                w-full h-[50px] rounded-lg text-base"
+                w-full h-[50px] rounded-lg text-base disabled:cursor-not-allowed disabled:opacity-50"
               >
                 Send funds to escrow
               </motion.button>
