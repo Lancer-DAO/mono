@@ -20,7 +20,7 @@ import { ToggleConfig } from "../molecules/Toggle";
 import { PublicKey } from "@solana/web3.js";
 import { createFFA } from "@/escrow/adapters";
 import { api } from "@/utils";
-import { Bounty, Industry, Option } from "@/types";
+import { Bounty, Industry } from "@/types";
 
 interface Props {
   setFormSection: Dispatch<SetStateAction<FORM_SECTION>>;
@@ -170,7 +170,7 @@ const PreviewForm: FC<Props> = ({
             className="bg-primaryBtn border border-primaryBtnBorder text-textGreen 
             w-[100px] h-[50px] rounded-lg text-base"
           >
-            SUBMIT
+            FUND
           </motion.button>
         </div>
       </div>

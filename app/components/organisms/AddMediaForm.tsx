@@ -101,11 +101,11 @@ const AddMediaForm: FC<Props> = ({ setFormSection, formData, setFormData }) => {
           </motion.button>
           <motion.button
             {...smallClickAnimation}
-            onClick={() => setFormSection("FUND")}
+            onClick={() => setFormSection("PREVIEW")}
             className="bg-primaryBtn border border-primaryBtnBorder text-textGreen 
-            w-[100px] h-[50px] rounded-lg text-base"
+            w-[120px] h-[50px] rounded-lg text-base"
           >
-            NEXT
+            PREVIEW
           </motion.button>
         </div>
       </div>

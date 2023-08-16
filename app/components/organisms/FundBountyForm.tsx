@@ -64,7 +64,7 @@ const Form: FC<Props> = ({
         isRunning: false,
       });
     }
-    // if we are the creator, then skip requesting and add self as approved
+
     await fundFFA(
       parseFloat(formData?.issuePrice),
       currentBounty?.escrow,
