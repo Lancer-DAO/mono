@@ -10,6 +10,7 @@ const SITE_URL = `https://${IS_CUSTODIAL ? "app" : "pro"}.lancer.so/account?r=`;
 export const ReferCard = () => {
   const [showCoinflow, setShowCoinflow] = useState(false);
   const [isCopied, setIsCopied] = useState(false);
+  const [invites, setInvites] = useState(1);
   const { referralId, initialized, createReferralMember, claimables, claim } = useReferral();
 
   const handleCreateLink = useCallback(async () => {
@@ -32,6 +33,20 @@ export const ReferCard = () => {
     setTimeout(() => setIsCopied(false), 2000); // Reset the isCopied state after 2 seconds
   }
 
+  const renderCircles = (invitesLeft) => {
+    const circles = [];
+    for (let i = 0; i < 3; i++) {
+      const circleColor = i < invitesLeft ? 'green' : 'red';
+      circles.push(
+        <div
+          key={i}
+          className={`mr-1 w-3 h-3 bg-transparent rounded-full border border-${circleColor}-400 border-solid bg-${circleColor}-300 self-center`}
+        ></div>
+      );
+    }
+    return circles;
+  };
+
   return (
     <div className="flex gap-4">
       <div className="w-full md:w-[460px] rounded-xl bg-bgLancerSecondary/[8%] overflow-hidden p-6">
@@ -41,12 +56,9 @@ export const ReferCard = () => {
           // referralId && initialized
           true ? (
             <div className="flex self-start">
-              <p className="text-green-700 mr-2">2 invites left</p>
-              <div className="mr-1 w-3 h-3 bg-transparent rounded-full border border-red-400 border-solid bg-red-300 self-center"></div>
-              <div className="mr-1 w-3 h-3 rounded-full border border-green-400 border-solid bg-green-300 self-center"></div>
-              <div className="mr-1 w-3 h-3 bg-transparent rounded-full border border-green-400 border-solid bg-green-300 self-center"></div>
+              <p className="text-green-700 mr-2">{invites} {invites === 1 ? 'invite' : 'invites'} left</p>
+            {renderCircles(invites)}
             </div>
-
           ) : <></>}
         </div>
         {
