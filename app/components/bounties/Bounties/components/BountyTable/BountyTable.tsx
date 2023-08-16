@@ -44,7 +44,7 @@ const BountyList: React.FC<{}> = () => {
     estimatedTimeBounds: bounds,
     states: TABLE_BOUNTY_STATES,
     relationships: BOUNTY_USER_RELATIONSHIP,
-    isMyBounties: false,
+    isMyBounties: true,
   });
 
   useEffect(() => {
