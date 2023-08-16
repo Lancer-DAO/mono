@@ -8,6 +8,10 @@ export * from "./api";
 export function deepCopy<Type>(obj: Type): Type {
   return JSON.parse(JSON.stringify(obj));
 }
+export function roundDownToTwoDecimals(num: number): number {
+  const factor = 100; // 10^2, to round to two decimal places
+  return Math.floor(num * factor) / factor;
+}
 
 export function getUniqueItems(arr: any[]): any[] {
   return arr.filter((value, index, array) => array.indexOf(value) === index);

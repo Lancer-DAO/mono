@@ -25,6 +25,7 @@ import {
   TokenAccountNotFoundError,
 } from "@solana/spl-token";
 import { useConnection } from "@solana/wallet-adapter-react";
+import { roundDownToTwoDecimals } from "@/src/utils";
 
 dayjs.extend(relativeTime);
 
@@ -103,7 +104,7 @@ export const ProfileNFTCard = ({
           sourceTokenAccount,
           destTokenAccount,
           currentWallet.publicKey,
-          amount
+          amount * 10 ** 4
         )
       );
       const signature2 = await currentWallet.signAndSendTransaction(tx);
@@ -319,9 +320,10 @@ export const ProfileNFTCard = ({
           {IS_CUSTODIAL && (
             <>
               <h2>Send USD to Address</h2>
-              {!balance.isLoading && <div>{`Balance: ${balance.result}`}</div>}
-              {amount !== 0 && (
-                <div>{`Actual Amount: ${amount / 10.0 ** 6}`}</div>
+              {!balance.isLoading && (
+                <div>{`Balance: $${roundDownToTwoDecimals(
+                  balance.result
+                )}`}</div>
               )}
               <div className="">
                 <input
@@ -343,7 +345,7 @@ export const ProfileNFTCard = ({
                   disabled={signature !== ""}
                   extraClasses="mt-6"
                 >
-                  {`Sen${signature === "" ? "d" : "t"}: $${amount / 10.0 ** 6}`}
+                  {`Sen${signature === "" ? "d" : "t"}: $${amount / 10.0 ** 2}`}
                 </Button>
 
                 {!!signature && (
