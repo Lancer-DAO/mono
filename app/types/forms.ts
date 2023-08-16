@@ -4,6 +4,8 @@ export interface FormData {
   issuePrice: string;
   issueTitle: string;
   issueDescription: string;
+  industryIds?: number[];
+  displineIds?: number[];
   tags: string[];
   links: string[];
   media: string[];
@@ -12,6 +14,4 @@ export interface FormData {
   repositoryName?: string;
   estimatedTime?: string;
   isPrivate: boolean;
-  industryIds?: number[];
-  displineIds?: number[];
 }

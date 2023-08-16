@@ -3,15 +3,17 @@ import { MultiSelectDropdown } from "@/components";
 import { api } from "@/src/utils/api";
 import { CREATE_BOUNTY_TUTORIAL_INITIAL_STATE } from "@/src/constants/tutorials";
 import { smallClickAnimation } from "@/src/constants";
-import { FORM_SECTION } from "@/types/forms";
+import { FORM_SECTION, FormData } from "@/types/forms";
 import { useTutorial } from "@/src/providers/tutorialProvider";
 import Toggle, { ToggleConfig } from "../molecules/Toggle";
 import { motion } from "framer-motion";
 import { toast } from "react-hot-toast";
+import { IAsyncResult, Industry, Option } from "@/types";
 
 interface Props {
   setFormSection: Dispatch<SetStateAction<FORM_SECTION>>;
-  formData: any;
+  formData: FormData;
+  industries: IAsyncResult<Industry[]>;
   setFormData: Dispatch<SetStateAction<any>>;
   handleChange: (event) => void;
 }
@@ -19,28 +21,28 @@ interface Props {
 const Form: FC<Props> = ({
   setFormSection,
   formData,
+  industries,
   setFormData,
   handleChange,
 }) => {
   const { currentTutorialState, setCurrentTutorialState } = useTutorial();
-  const [toggleConfig, setToggleConfig] = useState<ToggleConfig>({
-    option1: {
-      title: "Fixed",
-    },
-    option2: {
-      title: "Request",
-    },
-    selected: "option1",
-  });
+  // const [toggleConfig, setToggleConfig] = useState<ToggleConfig>({
+  //   option1: {
+  //     title: "Fixed",
+  //   },
+  //   option2: {
+  //     title: "Request",
+  //   },
+  //   selected: "option1",
+  // });
 
-  const categoryOptions = [
-    {
-      label: "Engineering",
-      value: "Engineering",
-    },
-  ];
+  const categoryOptions: Option[] = industries.result?.map((industry) => ({
+    value: industry.id,
+    label: industry.name,
+    icon: industry.icon,
+  }));
 
-  const handleRequirementsChange = (event) => {
+  const handleTagsChange = (event) => {
     const tags: string[] = event.target.value.split(",");
     setFormData({
       ...formData,
@@ -62,14 +64,15 @@ const Form: FC<Props> = ({
     // }
   };
 
-  useEffect(() => {
-    if (toggleConfig.selected === "option2") {
-      setFormData({
-        ...formData,
-        issuePrice: "Requesting Quote",
-      });
-    }
-  }, [toggleConfig.selected]);
+  // TODO: save for later
+  // useEffect(() => {
+  //   if (toggleConfig.selected === "option2") {
+  //     setFormData({
+  //       ...formData,
+  //       issuePrice: "Requesting Quote",
+  //     });
+  //   }
+  // }, [toggleConfig.selected]);
 
   return (
     <div>
@@ -80,13 +83,13 @@ const Form: FC<Props> = ({
           <div className="absolute top-1/2 -translate-y-1/2 -left-10">1</div>
           <MultiSelectDropdown
             options={categoryOptions}
-            selected={categoryOptions.filter(
-              (option) => option.value === formData.category ?? undefined
+            selected={categoryOptions?.filter((option) =>
+              formData.industryIds?.includes(option.value as number)
             )}
             onChange={(options) => {
               setFormData({
                 ...formData,
-                category: options[0]?.value ?? "",
+                industryIds: options?.map((o) => o.value) as number[],
               });
             }}
           />
@@ -107,7 +110,7 @@ const Form: FC<Props> = ({
               disabled:opacity-50 disabled:cursor-not-allowed"
               name="issuePrice"
               placeholder="$2500"
-              disabled={toggleConfig.selected === "option2"}
+              // disabled={toggleConfig.selected === "option2"}
               value={formData.issuePrice}
               onChange={handleChange}
               // onBlur={() => {
@@ -236,7 +239,7 @@ const Form: FC<Props> = ({
             border-neutralBtnBorder w-full h-[50px] rounded-lg px-3"
             name="tags"
             value={formData.tags}
-            onChange={handleRequirementsChange}
+            onChange={handleTagsChange}
             placeholder="Tags (comma separated)"
             id="issue-requirements-input"
             onBlur={() => {

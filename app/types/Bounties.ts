@@ -5,6 +5,17 @@ import { WalletType } from "@/prisma/queries/wallet";
 import { DisciplineType } from "@/prisma/queries/discipline";
 import { IndustryType } from "@/prisma/queries/industry";
 
+export type Filters = {
+  mints: string[];
+  orgs: string[];
+  industries: string[];
+  tags: string[];
+  states: string[];
+  estimatedPriceBounds: [number, number];
+  relationships: string[];
+  isMyBounties: boolean;
+};
+
 export enum BOUNTY_USER_RELATIONSHIP {
   Creator = "creator",
   RequestedSubmitter = "requested_submitter",

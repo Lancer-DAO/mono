@@ -12,10 +12,16 @@ import { useUserWallet } from "@/src/providers";
 import PreviewForm from "../organisms/PreviewForm";
 import { api } from "@/src/utils";
 import * as Prisma from "@prisma/client";
+import { IAsyncResult, Industry } from "@/types";
 
 export const Create = () => {
   const { provider } = useUserWallet();
   const { mutateAsync: getMintsAPI } = api.mints.getMints.useMutation();
+  const { mutateAsync: getAllIndustries } =
+    api.industries.getAllIndustries.useMutation();
+  const [industries, setIndustries] = useState<IAsyncResult<Industry[]>>({
+    isLoading: true,
+  });
   const [formSection, setFormSection] = useState<FORM_SECTION>("CREATE");
   const [isAccountCreated, setIsAccountCreated] = useState(false);
   const [mints, setMints] = useState<Prisma.Mint[]>([]);
@@ -23,6 +29,8 @@ export const Create = () => {
     issuePrice: "",
     issueTitle: "",
     issueDescription: "",
+    industryIds: [],
+    displineIds: [],
     tags: [""],
     links: [""],
     media: [""],
@@ -54,9 +62,22 @@ export const Create = () => {
     getMints();
   }, []);
 
-  // useEffect(() => {
-  //   console.log("formData", formData);
-  // }, [formData]);
+  useEffect(() => {
+    const fetchCurrentIndustries = async () => {
+      try {
+        const industries = await getAllIndustries();
+        setIndustries({ result: industries, isLoading: false });
+      } catch (e) {
+        console.log("error getting industries: ", e);
+        setIndustries({ error: e, isLoading: false });
+      }
+    };
+    fetchCurrentIndustries();
+  }, []);
+
+  useEffect(() => {
+    console.log("formData", formData);
+  }, [formData]);
 
   return (
     <div className="w-full max-w-[1200px] mx-auto flex flex-col md:flex-row md:justify-evenly mt-10">
@@ -68,6 +89,7 @@ export const Create = () => {
           <CreateBountyForm
             setFormSection={setFormSection}
             formData={formData}
+            industries={industries}
             setFormData={setFormData}
             handleChange={handleChange}
           />
@@ -83,6 +105,7 @@ export const Create = () => {
           <PreviewForm
             setFormSection={setFormSection}
             formData={formData}
+            industries={industries?.result}
             setFormData={setFormData}
             createAccountPoll={createAccountPoll}
             mints={mints}
@@ -97,7 +120,10 @@ export const Create = () => {
       {formSection !== "PREVIEW" && (
         <div className="md:w-[515px] pt-10">
           <PreviewCardBase>
-            <BountyCard formData={formData} />
+            <BountyCard
+              formData={formData}
+              allIndustries={industries?.result}
+            />
           </PreviewCardBase>
         </div>
       )}

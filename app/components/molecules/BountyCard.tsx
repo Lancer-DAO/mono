@@ -1,6 +1,9 @@
-import { FC, SVGAttributes } from "react";
+import { FC, SVGAttributes, use, useEffect, useState } from "react";
 import Image from "next/image";
-import { BountyPreview, FormData } from "@/types/";
+import { motion } from "framer-motion";
+import { fastEnterAnimation, midClickAnimation } from "@/src/constants";
+import { useRouter } from "next/router";
+import { BountyPreview, FormData, Industry } from "@/types/";
 import {
   BountyCardFrame,
   ContributorInfo,
@@ -13,10 +16,22 @@ import { getFormattedDate } from "@/utils";
 export interface BountyCardProps extends SVGAttributes<SVGSVGElement> {
   bounty?: BountyPreview;
   formData?: FormData;
+  allIndustries: Industry[];
 }
 
-const BountyCard: FC<BountyCardProps> = ({ bounty, formData }) => {
+const BountyCard: FC<BountyCardProps> = ({
+  bounty,
+  formData,
+  allIndustries,
+}) => {
   const { currentUser } = useUserWallet();
+  const [bountyIndustries, setBountyIndustries] = useState<Industry[]>([]);
+
+  const router = useRouter();
+
+  const bountyCardAnimation = bounty
+    ? { ...fastEnterAnimation, ...midClickAnimation }
+    : null;
 
   const displayedTags = bounty
     ? bounty.tags.slice(0, 4)
@@ -26,25 +41,55 @@ const BountyCard: FC<BountyCardProps> = ({ bounty, formData }) => {
     ? bounty.tags.length > 4
     : formData.tags.length > 4;
 
+  useEffect(() => {
+    const getCardIndustries = () => {
+      if (formData && formData.industryIds.length > 0) {
+        const matchedIndustries = allIndustries?.filter((industry) =>
+          formData.industryIds.includes(industry.id)
+        );
+        setBountyIndustries(matchedIndustries);
+      } else {
+        setBountyIndustries([allIndustries?.[0]]);
+      }
+    };
+    getCardIndustries();
+  }, [formData?.industryIds, allIndustries]);
+
   // useEffect(() => {
   //   console.log("bounty: ", bounty);
   //   console.log("formData: ", formData);
   // }, [bounty, formData]);
 
-  // TODO: based on industry of bounty, change the color of the card
+  if (!bounty && !formData) return null;
 
   return (
-    <div className="relative w-[291px] h-[292px]">
+    <motion.div
+      className={`relative w-[291px] h-[292px] ${
+        bounty ? "cursor-pointer" : ""
+      }`}
+      {...bountyCardAnimation}
+      onClick={() => router.push(`/bounties/${bounty?.id}`)}
+    >
       <div className="absolute left-1/2 -translate-x-[53%] top-[6px] w-7">
-        <Image src="/assets/icons/eng.png" width={28} height={28} alt="eng" />
+        <Image
+          src={bountyIndustries[0]?.icon}
+          width={28}
+          height={28}
+          alt={bountyIndustries[0]?.name}
+        />
       </div>
-      <BountyCardFrame color="#C8F4C4" />
+      <BountyCardFrame color={bountyIndustries[0]?.color} />
       <div className="w-full absolute top-1">
         <div className="w-full flex items-center justify-between px-1">
           <PriceTag
             price={bounty ? bounty?.escrow.amount : Number(formData.issuePrice)}
           />
-          <p className="text-xs font-bold mr-2">{getFormattedDate(bounty)}</p>
+          <p className="text-xs font-bold mr-2">
+            <span className="text-textPrimary text-[11px] font-base">
+              created
+            </span>{" "}
+            {getFormattedDate(bounty)}
+          </p>
         </div>
       </div>
 
@@ -75,8 +120,8 @@ const BountyCard: FC<BountyCardProps> = ({ bounty, formData }) => {
           </div>
         </div>
 
-        <div className="mt-8">
-          <p className="text-2xl font-bold">
+        <div className="mt-2">
+          <p className="text-2xl font-bold multi-line-ellipsis">
             {bounty ? bounty.title : formData.issueTitle}
           </p>
           <div className="w-full max-h-[60px] multi-line-ellipsis overflow-hidden">
@@ -99,15 +144,15 @@ const BountyCard: FC<BountyCardProps> = ({ bounty, formData }) => {
               <div
                 className="border border-neutralBtnBorder rounded-full 
                 px-3 py-1 flex items-center justify-center"
-                key={tag}
+                key={tag.name}
               >
-                {tag}
+                {tag.name}
               </div>
             ))}
           {tagOverflow && <p className="text-xs">+ more</p>}
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 };
 

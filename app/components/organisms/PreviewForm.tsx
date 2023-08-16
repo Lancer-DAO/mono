@@ -20,11 +20,12 @@ import { ToggleConfig } from "../molecules/Toggle";
 import { PublicKey } from "@solana/web3.js";
 import { createFFA } from "@/escrow/adapters";
 import { api } from "@/utils";
-import { Bounty, Option } from "@/types";
+import { Bounty, Industry, Option } from "@/types";
 
 interface Props {
   setFormSection: Dispatch<SetStateAction<FORM_SECTION>>;
   formData: FormData;
+  industries: Industry[];
   setFormData: Dispatch<SetStateAction<FormData>>;
   createAccountPoll: (publicKey: PublicKey) => void;
   mints: Prisma.Mint[];
@@ -33,6 +34,7 @@ interface Props {
 const PreviewForm: FC<Props> = ({
   setFormSection,
   formData,
+  industries,
   setFormData,
   createAccountPoll,
   mints,
@@ -156,7 +158,7 @@ const PreviewForm: FC<Props> = ({
           {/* three cards in view */}
           {/* 1. preview card */}
           <PreviewCardBase title="Quest">
-            <BountyCard formData={formData} />
+            <BountyCard formData={formData} allIndustries={industries} />
           </PreviewCardBase>
           {/* 2. quest links card */}
           <PreviewCardBase title="Links">Preview Card</PreviewCardBase>
