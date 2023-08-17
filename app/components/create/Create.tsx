@@ -1,15 +1,16 @@
 import React, { useEffect, useState } from "react";
 import {
-  AddMediaForm,
-  BountyCard,
   CreateBountyForm,
+  AddMediaForm,
+  PreviewForm,
   FundBountyForm,
+  SuccessForm,
+  BountyCard,
   PreviewCardBase,
 } from "@/components";
 import { PublicKey } from "@solana/web3.js";
 import { FORM_SECTION, FormData } from "@/types/forms";
 import { useUserWallet } from "@/src/providers";
-import PreviewForm from "../organisms/PreviewForm";
 import { api } from "@/src/utils";
 import * as Prisma from "@prisma/client";
 import { IAsyncResult, Industry } from "@/types";
@@ -83,7 +84,11 @@ export const Create = () => {
     <div className="w-full max-w-[1200px] mx-auto flex flex-col md:flex-row md:justify-evenly mt-10">
       {/* quest info entry section */}
       <div
-        className={`${formSection === "PREVIEW" ? "w-full" : "md:w-[515px]"}`}
+        className={`${
+          formSection === "PREVIEW" || formSection === "FUND"
+            ? "w-full"
+            : "md:w-[515px]"
+        }`}
       >
         {formSection === "CREATE" && (
           <CreateBountyForm
@@ -101,6 +106,15 @@ export const Create = () => {
             setFormData={setFormData}
           />
         )}
+        {formSection === "FUND" && (
+          <FundBountyForm
+            isAccountCreated={isAccountCreated}
+            formData={formData}
+            setFormData={setFormData}
+            setFormSection={setFormSection}
+            mints={mints}
+          />
+        )}
         {formSection === "PREVIEW" && (
           <PreviewForm
             setFormSection={setFormSection}
@@ -111,13 +125,10 @@ export const Create = () => {
             mints={mints}
           />
         )}
-        {formSection === "SUCCESS" && <div>Success</div>}
-        {formSection === "FUND" && (
-          <FundBountyForm isAccountCreated={isAccountCreated} />
-        )}
+        {formSection === "SUCCESS" && <SuccessForm />}
       </div>
       {/* preview section */}
-      {formSection !== "PREVIEW" && (
+      {formSection !== "PREVIEW" && formSection !== "FUND" && (
         <div className="md:w-[515px] pt-10">
           <PreviewCardBase>
             <BountyCard

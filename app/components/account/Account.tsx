@@ -17,7 +17,7 @@ import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import { useRouter } from "next/router";
 import { FC, useEffect, useState } from "react";
-import { BountyNFTCard, ProfileNFTCard } from "./components";
+import { ProfileNFTCard } from "./components";
 import BadgesCard from "./components/BadgesCard";
 import { ReferCard } from "./components/ReferCard";
 
