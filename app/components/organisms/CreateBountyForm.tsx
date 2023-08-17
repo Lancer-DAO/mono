@@ -42,14 +42,6 @@ const Form: FC<Props> = ({
     icon: industry.icon,
   }));
 
-  const handleTagsChange = (event) => {
-    const tags: string[] = event.target.value.split(",");
-    setFormData({
-      ...formData,
-      tags,
-    });
-  };
-
   const handleNextSection = () => {
     // if (
     //   formData.issueTitle === "" ||
@@ -77,9 +69,11 @@ const Form: FC<Props> = ({
   return (
     <div>
       <h1>Post a Quest</h1>
-      <div className="w-full flex flex-col gap-4 text-2xl mt-6">
+      <div className="w-full flex flex-col gap-4 mt-6">
         <div className="relative flex items-center">
-          <label className="text-textGreen/70 pr-4 pl-3">Category</label>
+          <label className="text-textGreen/70 pr-4 text-xl pl-3">
+            Category
+          </label>
           <div className="absolute top-1/2 -translate-y-1/2 -left-10">1</div>
           <MultiSelectDropdown
             options={categoryOptions}
@@ -159,71 +153,7 @@ const Form: FC<Props> = ({
           />
         </div>
         <div className="relative">
-          <div className="absolute top-1/2 -translate-y-1/2 -left-10">3</div>
-          <input
-            type="text"
-            className="placeholder:text-textGreen/70 border bg-neutralBtn 
-            border-neutralBtnBorder w-full h-[50px] rounded-lg px-3"
-            name="tags"
-            value={formData.tags}
-            onChange={handleTagsChange}
-            placeholder="Tags (comma separated)"
-            id="issue-requirements-input"
-            onBlur={() => {
-              if (
-                formData.tags.length !== 0 &&
-                !!currentTutorialState &&
-                currentTutorialState.isActive
-              ) {
-                if (
-                  currentTutorialState?.title ===
-                    CREATE_BOUNTY_TUTORIAL_INITIAL_STATE.title &&
-                  currentTutorialState.currentStep === 3
-                ) {
-                  setCurrentTutorialState({
-                    ...currentTutorialState,
-                    currentStep: 4,
-                  });
-                }
-              }
-            }}
-            onMouseLeave={() => {
-              if (
-                formData.tags.length !== 0 &&
-                !!currentTutorialState &&
-                currentTutorialState.isActive
-              ) {
-                if (
-                  currentTutorialState?.title ===
-                    CREATE_BOUNTY_TUTORIAL_INITIAL_STATE.title &&
-                  currentTutorialState.currentStep === 3
-                ) {
-                  setCurrentTutorialState({
-                    ...currentTutorialState,
-                    currentStep: 4,
-                    isRunning: true,
-                  });
-                }
-              }
-            }}
-            onFocus={() => {
-              if (!!currentTutorialState && currentTutorialState.isActive) {
-                if (
-                  currentTutorialState?.title ===
-                    CREATE_BOUNTY_TUTORIAL_INITIAL_STATE.title &&
-                  currentTutorialState.currentStep === 3
-                ) {
-                  setCurrentTutorialState({
-                    ...currentTutorialState,
-                    isRunning: false,
-                  });
-                }
-              }
-            }}
-          />
-        </div>
-        <div className="relative">
-          <div className="absolute top-2 -left-10">4</div>
+          <div className="absolute top-2 -left-10">3</div>
           <textarea
             className="placeholder:text-textGreen/70 border bg-neutralBtn min-h-[50px] 
             border-neutralBtnBorder w-full h-[150px] rounded-lg px-3 py-2 resize-y"

@@ -60,7 +60,7 @@ const MultiSelectDropdown: React.FC<Props> = ({
                 src={option?.icon}
                 height={20}
                 width={20}
-                alt={option?.label}
+                alt={option?.label ?? "icon"}
               />
             )}
             {option.label}

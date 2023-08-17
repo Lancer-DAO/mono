@@ -33,7 +33,12 @@ const MintsDropdown: React.FC<Props> = ({ options, selected, onChange }) => {
       >
         <div className="flex items-center gap-2">
           {option && !!option.logo && (
-            <Image src={option.logo} width={20} height={20} alt={option.name} />
+            <Image
+              src={option.logo}
+              width={20}
+              height={20}
+              alt={option.name ?? "mint logo"}
+            />
           )}
           {option.name}
         </div>

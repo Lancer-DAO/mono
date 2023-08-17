@@ -41,7 +41,7 @@ const IndustrySelection: FC<Props> = ({ industries, filters, setFilters }) => {
                     src={industry.icon}
                     width={20}
                     height={20}
-                    alt={industry.name}
+                    alt={industry.name ?? "industry icon"}
                   />
                   <p>{industry.name}</p>
                 </div>

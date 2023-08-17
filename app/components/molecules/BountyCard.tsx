@@ -17,12 +17,14 @@ export interface BountyCardProps extends SVGAttributes<SVGSVGElement> {
   bounty?: BountyPreview;
   formData?: FormData;
   allIndustries: Industry[];
+  linked?: boolean;
 }
 
 const BountyCard: FC<BountyCardProps> = ({
   bounty,
   formData,
   allIndustries,
+  linked = true,
 }) => {
   const { currentUser } = useUserWallet();
   const [bountyIndustries, setBountyIndustries] = useState<Industry[]>([]);
@@ -65,17 +67,17 @@ const BountyCard: FC<BountyCardProps> = ({
   return (
     <motion.div
       className={`relative w-[291px] h-[292px] ${
-        bounty ? "cursor-pointer" : ""
+        linked ? "cursor-pointer" : ""
       }`}
       {...bountyCardAnimation}
-      onClick={() => router.push(`/bounties/${bounty?.id}`)}
+      onClick={() => linked && router.push(`/bounties/${bounty?.id}`)}
     >
       <div className="absolute left-1/2 -translate-x-[53%] top-[6px] w-7">
         <Image
           src={bountyIndustries[0]?.icon}
           width={28}
           height={28}
-          alt={bountyIndustries[0]?.name}
+          alt={bountyIndustries[0]?.name ?? "industry icon"}
         />
       </div>
       <BountyCardFrame color={bountyIndustries[0]?.color} />
