@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import {
   CreateBountyForm,
-  AddMediaForm,
+  AdditionalInfoForm,
   PreviewForm,
   FundBountyForm,
   SuccessForm,
@@ -12,8 +12,8 @@ import { PublicKey } from "@solana/web3.js";
 import { FORM_SECTION, FormData } from "@/types/forms";
 import { useUserWallet } from "@/src/providers";
 import { api } from "@/src/utils";
-import * as Prisma from "@prisma/client";
 import { IAsyncResult, Industry } from "@/types";
+import { Mint } from "@prisma/client";
 
 export const Create = () => {
   const { provider } = useUserWallet();
@@ -25,7 +25,8 @@ export const Create = () => {
   });
   const [formSection, setFormSection] = useState<FORM_SECTION>("CREATE");
   const [isAccountCreated, setIsAccountCreated] = useState(false);
-  const [mints, setMints] = useState<Prisma.Mint[]>([]);
+  const [mint, setMint] = useState<Mint>();
+  const [mints, setMints] = useState<Mint[]>([]);
   const [formData, setFormData] = useState<FormData>({
     issuePrice: "",
     issueTitle: "",
@@ -38,7 +39,7 @@ export const Create = () => {
     comment: "",
     organizationName: "",
     repositoryName: "",
-    estimatedTime: "",
+    estimatedTime: "1",
     isPrivate: true,
   });
 
@@ -100,18 +101,13 @@ export const Create = () => {
           />
         )}
         {formSection === "MEDIA" && (
-          <AddMediaForm
+          <AdditionalInfoForm
             setFormSection={setFormSection}
             formData={formData}
             setFormData={setFormData}
-          />
-        )}
-        {formSection === "FUND" && (
-          <FundBountyForm
-            isAccountCreated={isAccountCreated}
-            formData={formData}
-            setFormData={setFormData}
-            setFormSection={setFormSection}
+            handleChange={handleChange}
+            mint={mint}
+            setMint={setMint}
             mints={mints}
           />
         )}
@@ -122,7 +118,16 @@ export const Create = () => {
             industries={industries?.result}
             setFormData={setFormData}
             createAccountPoll={createAccountPoll}
-            mints={mints}
+            mint={mint}
+          />
+        )}
+        {formSection === "FUND" && (
+          <FundBountyForm
+            isAccountCreated={isAccountCreated}
+            formData={formData}
+            setFormData={setFormData}
+            setFormSection={setFormSection}
+            mint={mint}
           />
         )}
         {formSection === "SUCCESS" && <SuccessForm />}
@@ -134,6 +139,7 @@ export const Create = () => {
             <BountyCard
               formData={formData}
               allIndustries={industries?.result}
+              linked={formSection === "SUCCESS"}
             />
           </PreviewCardBase>
         </div>

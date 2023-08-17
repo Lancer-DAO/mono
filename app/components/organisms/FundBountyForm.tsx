@@ -19,13 +19,14 @@ import { useBounty } from "@/src/providers/bountyProvider";
 import { useTutorial } from "@/src/providers/tutorialProvider";
 import { FORM_SECTION, FormData, Option } from "@/types";
 import { Mint } from "@prisma/client";
+import toast from "react-hot-toast";
 
 interface Props {
   isAccountCreated: boolean;
   formData: FormData;
   setFormData: Dispatch<SetStateAction<FormData>>;
   setFormSection: Dispatch<SetStateAction<FORM_SECTION>>;
-  mints: Mint[];
+  mint: Mint;
 }
 
 const Form: FC<Props> = ({
@@ -33,7 +34,7 @@ const Form: FC<Props> = ({
   formData,
   setFormData,
   setFormSection,
-  mints,
+  mint,
 }) => {
   const { currentWallet, currentUser, program, provider } = useUserWallet();
   const { currentBounty } = useBounty();
@@ -44,7 +45,6 @@ const Form: FC<Props> = ({
   const [fundingType, setFundingType] = useState<"wallet" | "card">(
     IS_CUSTODIAL ? "card" : "wallet"
   );
-  const [mint, setMint] = useState<Mint>();
 
   const handleChange = (event) => {
     setFormData({
@@ -54,6 +54,7 @@ const Form: FC<Props> = ({
   };
 
   const onClick = async () => {
+    const toastId = toast.loading("Funding bounty...");
     if (
       currentTutorialState?.title ===
         CREATE_BOUNTY_TUTORIAL_INITIAL_STATE.title &&
@@ -64,22 +65,27 @@ const Form: FC<Props> = ({
         isRunning: false,
       });
     }
-
-    await fundFFA(
-      parseFloat(formData?.issuePrice),
-      currentBounty?.escrow,
-      currentWallet,
-      program,
-      provider,
-      currentBounty?.escrow.mint.decimals,
-      new PublicKey(currentBounty?.escrow.mint.publicKey)
-    );
-    await fundB({
-      bountyId: currentBounty?.id,
-      escrowId: currentBounty?.escrow.id,
-      amount: parseFloat(formData.issuePrice),
-    });
-    setFormSection("SUCCESS");
+    try {
+      await fundFFA(
+        parseFloat(formData?.issuePrice),
+        currentBounty?.escrow,
+        currentWallet,
+        program,
+        provider,
+        currentBounty?.escrow.mint.decimals,
+        new PublicKey(currentBounty?.escrow.mint.publicKey)
+      );
+      await fundB({
+        bountyId: currentBounty?.id,
+        escrowId: currentBounty?.escrow.id,
+        amount: parseFloat(formData.issuePrice),
+      });
+      toast.success("Bounty funded!", { id: toastId });
+      setFormSection("SUCCESS");
+    } catch (e) {
+      console.log("error funding bounty: ", e);
+      toast.error("Error funding bounty", { id: toastId });
+    }
   };
 
   const handlePrice = () => {
@@ -92,11 +98,6 @@ const Form: FC<Props> = ({
     } else {
       return (1.05 * parseFloat(formData.issuePrice)).toFixed(2);
     }
-  };
-
-  const handleChangeMint = (mint: Mint) => {
-    const newMint = mints.find((_mint) => _mint.name === mint.name);
-    setMint(newMint);
   };
 
   useEffect(() => {
@@ -162,33 +163,29 @@ const Form: FC<Props> = ({
             </div>
           )}
           {fundingType === "card" && (
-            <>
-              <div>
-                <label>Funding Amount</label>
-                <div>
-                  <input
-                    type="number"
-                    className="input w-input"
-                    name="fundingAmount"
-                    placeholder="1000 (USD)"
-                    id="Issue"
-                    value={formData.issuePrice}
-                    onChange={handleChange}
-                  />
-                </div>
+            <div className="w-full">
+              <div className="w-full pb-5">
+                <p className="w-full mb-2">Price</p>
+                <input
+                  type="number"
+                  className="placeholder:text-textGreen/70 border bg-neutralBtn
+                  border-neutralBtnBorder w-full h-[50px] rounded-lg px-3
+                  disabled:opacity-50 disabled:cursor-not-allowed text-center"
+                  name="fundingAmount"
+                  placeholder={`2500`}
+                  disabled={!mint}
+                  // disabled={toggleConfig.selected === "option2"}
+                  value={formData?.issuePrice}
+                  onChange={handleChange}
+                />
               </div>
               {formData.issuePrice && (
                 <CoinflowFund amount={parseInt(formData.issuePrice) || 0} />
               )}
-            </>
+            </div>
           )}
           {fundingType === "wallet" && (
             <div className="w-full flex flex-col items-center gap-5">
-              <MintsDropdown
-                options={mints}
-                selected={mint}
-                onChange={handleChangeMint}
-              />
               <div className="w-full">
                 <p className="w-full mb-2">Price</p>
                 <input
@@ -196,7 +193,7 @@ const Form: FC<Props> = ({
                   className="placeholder:text-textGreen/70 border bg-neutralBtn
                   border-neutralBtnBorder w-full h-[50px] rounded-lg px-3
                   disabled:opacity-50 disabled:cursor-not-allowed text-center"
-                  name="issuePrice"
+                  name="fundingAmount"
                   placeholder={`2500`}
                   disabled={!mint}
                   // disabled={toggleConfig.selected === "option2"}

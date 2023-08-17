@@ -10,17 +10,13 @@ import { FORM_SECTION, FormData } from "@/types/forms";
 import { useBounty } from "@/src/providers/bountyProvider";
 import { useTutorial } from "@/src/providers/tutorialProvider";
 import { motion } from "framer-motion";
-import {
-  PreviewCardBase,
-  MintsDropdown,
-  Toggle,
-  BountyCard,
-} from "@/components";
+import { PreviewCardBase, Toggle, BountyCard } from "@/components";
 import { ToggleConfig } from "../molecules/Toggle";
 import { PublicKey } from "@solana/web3.js";
 import { createFFA } from "@/escrow/adapters";
 import { api } from "@/utils";
 import { Bounty, Industry } from "@/types";
+import { Mint } from "@prisma/client";
 
 interface Props {
   setFormSection: Dispatch<SetStateAction<FORM_SECTION>>;
@@ -28,7 +24,7 @@ interface Props {
   industries: Industry[];
   setFormData: Dispatch<SetStateAction<FormData>>;
   createAccountPoll: (publicKey: PublicKey) => void;
-  mints: Prisma.Mint[];
+  mint: Mint;
 }
 
 const PreviewForm: FC<Props> = ({
@@ -37,7 +33,7 @@ const PreviewForm: FC<Props> = ({
   industries,
   setFormData,
   createAccountPoll,
-  mints,
+  mint,
 }) => {
   const { currentUser, currentWallet, program, provider } = useUserWallet();
   const { currentTutorialState, setCurrentTutorialState } = useTutorial();
@@ -45,9 +41,7 @@ const PreviewForm: FC<Props> = ({
   const { mutateAsync } = api.bounties.createBounty.useMutation();
 
   const [creationType, setCreationType] = useState<"new" | "existing">("new");
-  const [mint, setMint] = useState<Prisma.Mint>();
   const [isSubmittingIssue, setIsSubmittingIssue] = useState(false);
-  const [isOpenMints, setIsOpenMints] = useState(false);
 
   const [toggleConfig, setToggleConfig] = useState<ToggleConfig>({
     option1: {
@@ -72,7 +66,7 @@ const PreviewForm: FC<Props> = ({
       });
     }
 
-    const mintKey = new PublicKey(mint.publicKey);
+    const mintKey = new PublicKey(mint?.publicKey);
 
     const { timestamp, signature, escrowKey } = await createFFA(
       currentWallet,
@@ -103,7 +97,7 @@ const PreviewForm: FC<Props> = ({
       network: IS_MAINNET ? "mainnet" : "devnet",
     });
 
-    setFormSection("SUCCESS");
+    setFormSection("FUND");
     setCurrentBounty(bounty);
   };
 
