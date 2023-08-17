@@ -41,7 +41,7 @@ export const VoteToCancel = () => {
       [],
       [BOUNTY_USER_RELATIONSHIP.VotingCancel]
     );
-    const { updatedBounty } = await mutateAsync({
+    const updatedBounty = await mutateAsync({
       bountyId: currentBounty.id,
       currentUserId: currentUser.id,
       userId: currentUser.id,

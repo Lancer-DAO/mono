@@ -120,7 +120,7 @@ export const Account: FC = () => {
       };
       fetchNfts();
     }
-  }, [account?.result]);
+  }, [!!account?.result]);
 
   const fetchProfileNFT = async () => {
     const nfts = await underdogClient.getNfts({

@@ -28,7 +28,7 @@ export const CancelEscrow: FC = () => {
       [],
       [BOUNTY_USER_RELATIONSHIP.Canceler]
     );
-    const { updatedBounty } = await mutateAsync({
+    const updatedBounty = await mutateAsync({
       bountyId: currentBounty.id,
       currentUserId: currentUser.id,
       userId: currentUser.id,
