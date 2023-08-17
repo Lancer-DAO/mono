@@ -79,7 +79,7 @@ const Form: FC<Props> = ({
       escrowId: currentBounty?.escrow.id,
       amount: parseFloat(formData.issuePrice),
     });
-    setFormSection("PREVIEW");
+    setFormSection("SUCCESS");
   };
 
   const handlePrice = () => {

@@ -1,15 +1,16 @@
 import React, { useEffect, useState } from "react";
 import {
-  AddMediaForm,
-  BountyCard,
   CreateBountyForm,
+  AddMediaForm,
+  PreviewForm,
   FundBountyForm,
+  SuccessForm,
+  BountyCard,
   PreviewCardBase,
 } from "@/components";
 import { PublicKey } from "@solana/web3.js";
 import { FORM_SECTION, FormData } from "@/types/forms";
 import { useUserWallet } from "@/src/providers";
-import PreviewForm from "../organisms/PreviewForm";
 import { api } from "@/src/utils";
 import * as Prisma from "@prisma/client";
 import { IAsyncResult, Industry } from "@/types";
@@ -124,7 +125,7 @@ export const Create = () => {
             mints={mints}
           />
         )}
-        {formSection === "SUCCESS" && <div>Success</div>}
+        {formSection === "SUCCESS" && <SuccessForm />}
       </div>
       {/* preview section */}
       {formSection !== "PREVIEW" && formSection !== "FUND" && (

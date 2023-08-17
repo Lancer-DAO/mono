@@ -1,88 +1,52 @@
-import { FC, useEffect, useState, Dispatch, SetStateAction } from "react";
-import { useUserWallet } from "@/src/providers/userWalletProvider";
-import { IS_MAINNET, smallClickAnimation } from "@/src/constants";
-import * as Prisma from "@prisma/client";
-import { FORM_SECTION, FormData } from "@/types/forms";
+import { FC } from "react";
+import Image from "next/image";
+import { CopyLinkField, TweetShareButton } from "@/components";
 import { useBounty } from "@/src/providers/bountyProvider";
-import { useTutorial } from "@/src/providers/tutorialProvider";
-import { motion } from "framer-motion";
-import { PreviewCardBase, Toggle } from "@/components";
-import { ToggleConfig } from "../molecules/Toggle";
+import { IS_CUSTODIAL } from "@/src/constants";
 
-interface Props {
-  setFormSection: Dispatch<SetStateAction<FORM_SECTION>>;
-  formData: FormData;
-  setFormData: Dispatch<SetStateAction<FormData>>;
-}
-
-const SuccessForm: FC<Props> = ({ setFormSection, formData, setFormData }) => {
-  const { currentUser, currentWallet, program, provider } = useUserWallet();
-  const { currentTutorialState, setCurrentTutorialState } = useTutorial();
-
-  const [creationType, setCreationType] = useState<"new" | "existing">("new");
-  const [mint, setMint] = useState<Prisma.Mint>();
-  const [isOpenMints, setIsOpenMints] = useState(false);
-  const [isOpenIssue, setIsOpenIssue] = useState(false);
-  const [mints, setMints] = useState<Prisma.Mint[]>([]);
-
-  const [toggleConfig, setToggleConfig] = useState<ToggleConfig>({
-    option1: {
-      title: "Public",
-    },
-    option2: {
-      title: "Private",
-    },
-    selected: "option1",
-  });
-
-  const handleChange = (event) => {
-    setFormData({
-      ...formData,
-      [event.target.name]: event.target.value,
-    });
-  };
-
-  const addLink = () => {
-    setFormData({
-      ...formData,
-      links: [...formData.links, ""],
-    });
-  };
-
-  const removeLink = (targetIndex: number) => {
-    const updatedLinks: string[] = [...formData.links];
-    console.log("updatedLinks, index", updatedLinks, targetIndex);
-    setFormData({
-      ...formData,
-      links: updatedLinks?.filter((_, index) => index !== targetIndex),
-    });
-  };
-
-  const updateLink = (index, value) => {
-    const updatedLinks = [...formData.links];
-    updatedLinks[index] = value;
-    setFormData({
-      ...formData,
-      links: updatedLinks,
-    });
-  };
-
-  const handleDescriptionChange = (event) => {
-    setFormData({
-      ...formData,
-      issueDescription: event.target.value,
-    });
-  };
-
-  // useEffect(() => {
-  //   console.log("formData", formData);
-  // }, [formData]);
-
+const SuccessForm: FC = () => {
+  const { currentBounty } = useBounty();
+  const SITE_URL = `https://${
+    IS_CUSTODIAL ? "app" : "pro"
+  }.lancer.so/bounties/`;
   return (
-    <div>
-      <h1>Success! Your Quest is live.</h1>
-      <div className="w-full flex items-center justify-between">
-        <PreviewCardBase title="Quest">Preview Card</PreviewCardBase>
+    <div className="w-full flex flex-col gap-10">
+      <h1>Congrats! Your Quest is live.</h1>
+      <div className="flex justify-between">
+        <div className="w-[500px] h-[350px] flex flex-col gap-5">
+          <p>
+            Sunt sunt ullamco anim aute cillum ex officia nostrud consequat sit.
+            Sit adipisicing fugiat quis adipisicing nulla laboris consequat.
+            Consectetur sit sit ex dolor est minim labore nulla veniam
+            cupidatat. Est ullamco sit laborum occaecat sit reprehenderit aliqua
+            deserunt ex veniam. Est laborum aute ullamco exercitation incididunt
+            aute.
+          </p>
+          <div className="flex items-center gap-5">
+            <h1 className="text-lg">Share to freelancers:</h1>
+            <CopyLinkField url={`${SITE_URL}${currentBounty?.id.toString()}`} />
+          </div>
+          <div className="flex items-center gap-5">
+            <h1 className="text-lg">Share to the world:</h1>
+            <div className="flex items-center gap-3">
+              <TweetShareButton
+                url={`${SITE_URL}${currentBounty?.id.toString()}`}
+              />
+              <Image
+                src="/assets/images/share/gmail.png"
+                width={40}
+                height={40}
+                alt="X / twitter"
+              />
+              <Image
+                src="/assets/images/share/linkedin.png"
+                width={40}
+                height={40}
+                alt="X / twitter"
+              />
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );
