@@ -39,7 +39,7 @@ const AdditionalInfoForm: FC<Props> = ({
 
   const removeLink = (targetIndex: number) => {
     const updatedLinks: string[] = [...formData.links];
-    console.log("updatedLinks, index", updatedLinks, targetIndex);
+    // console.log("updatedLinks, index", updatedLinks, targetIndex);
     setFormData({
       ...formData,
       links: updatedLinks?.filter((_, index) => index !== targetIndex),
@@ -56,7 +56,7 @@ const AdditionalInfoForm: FC<Props> = ({
   };
 
   const handleChangeMint = (mint: Mint) => {
-    console.log("mints vs mint", mints, mint);
+    // console.log("mints vs mint", mints, mint);
     const newMint = mints.find((_mint) => _mint.publicKey === mint.publicKey);
     setMint(newMint);
   };
@@ -68,10 +68,6 @@ const AdditionalInfoForm: FC<Props> = ({
       tags,
     });
   };
-
-  // useEffect(() => {
-  //   console.log("formData", formData);
-  // }, [formData]);
 
   return (
     <div>
