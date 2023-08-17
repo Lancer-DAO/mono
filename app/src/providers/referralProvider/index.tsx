@@ -52,6 +52,7 @@ const DEVNET_PROGRAM_ID = "9zE4EQ5tJbEeMYwtS2w8KrSHTtTW4UPqwfbBSEkUrNCA";
 const ReferralProvider: FunctionComponent<IReferralProps> = ({ children }) => {
   const { currentWallet } = useUserWallet();
   const { connection } = useConnection();
+  const { currentUser } = useUserWallet();
 
   const [initialized, setInitialized] = useState(false);
   const [client, setClient] = useState<Client | null>(null);
@@ -71,8 +72,10 @@ const ReferralProvider: FunctionComponent<IReferralProps> = ({ children }) => {
       const mints = await getMintsAPI();
       setMints(mints);
     };
-    getMints();
-  }, []);
+    if (!!currentUser) {
+      getMints();
+    }
+  }, [currentUser]);
 
   const handleFetches = useCallback(async () => {
     try {
@@ -232,6 +235,9 @@ const ReferralProvider: FunctionComponent<IReferralProps> = ({ children }) => {
           blockhash: blockhash,
           lastValidBlockHeight: lastValidBlockHeight,
         };
+        if (instructions.length === 0) {
+          return;
+        }
 
         const transaction = new Transaction(txInfo).add(...instructions);
         const signature = await sendTransaction(transaction, connection);
