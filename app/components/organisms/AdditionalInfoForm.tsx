@@ -19,7 +19,7 @@ interface Props {
   handleChange: (event) => void;
 }
 
-const AddMediaForm: FC<Props> = ({
+const AdditionalInfoForm: FC<Props> = ({
   setFormSection,
   formData,
   setFormData,
@@ -228,7 +228,7 @@ const AddMediaForm: FC<Props> = ({
   );
 };
 
-export default AddMediaForm;
+export default AdditionalInfoForm;
 
 // {/* <div className="relative flex items-center">
 //   <label className="text-textGreen/70 pr-4 pl-3">Price</label>

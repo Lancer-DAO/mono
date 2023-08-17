@@ -40,7 +40,9 @@ const TutorialsModal = dynamic(() => import("./molecules/TutorialsModal"));
 const WalletInfo = dynamic(() => import("./molecules/WalletInfo"));
 
 // organisms
-const AddMediaForm = dynamic(() => import("./organisms/AddMediaForm"));
+const AdditionalInfoForm = dynamic(
+  () => import("./organisms/AdditionalInfoForm")
+);
 const CreateBountyForm = dynamic(() => import("./organisms/CreateBountyForm"));
 const FundBountyForm = dynamic(() => import("./organisms/FundBountyForm"));
 const Header = dynamic(() => import("./organisms/Header"));
@@ -88,7 +90,7 @@ export {
   WalletInfo,
 
   // organisms
-  AddMediaForm,
+  AdditionalInfoForm,
   CreateBountyForm,
   FundBountyForm,
   Header,

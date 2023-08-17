@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import {
   CreateBountyForm,
-  AddMediaForm,
+  AdditionalInfoForm,
   PreviewForm,
   FundBountyForm,
   SuccessForm,
@@ -101,7 +101,7 @@ export const Create = () => {
           />
         )}
         {formSection === "MEDIA" && (
-          <AddMediaForm
+          <AdditionalInfoForm
             setFormSection={setFormSection}
             formData={formData}
             setFormData={setFormData}
