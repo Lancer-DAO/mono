@@ -125,23 +125,13 @@ const PreviewForm: FC<Props> = ({
     <div>
       <h1>Preview</h1>
       <div className="w-full flex flex-col gap-4 my-6">
-        <div className="flex items-center gap-8">
-          <Toggle
-            toggleConfig={toggleConfig}
-            setToggleConfig={setToggleConfig}
-          />
-          <div className="flex flex-col gap-2 max-w-[350px]">
-            <p>
-              When <span className="font-bold">public</span> your quest will be
-              discoverable.
-            </p>
-            <p>
-              When <span className="font-bold">private</span> your quest can
-              only be shared using your unique link.
-            </p>
-          </div>
-          {/* TODO: unfunded quest CTA */}
-        </div>
+        <p className="max-w-[500px]">
+          This is your chance to review your Quest in its entirety. By clicking
+          "Continue", you are intializing this Quest and will move on to funding
+          it. Any changes you'd like to make can be done by clicking the "Back"
+          buttons. You're one step away from putting your Quest out into the
+          world!
+        </p>
 
         <div className="w-full flex items-center justify-between">
           {/* three cards in view */}
@@ -155,7 +145,24 @@ const PreviewForm: FC<Props> = ({
           <PreviewCardBase title="References">Preview Card</PreviewCardBase>
         </div>
 
-        <div className="w-full px-10 mt-4 flex items-center justify-between">
+        <div className="flex flex-col gap-8 w-fit py-3">
+          <Toggle
+            toggleConfig={toggleConfig}
+            setToggleConfig={setToggleConfig}
+          />
+          <div className="flex flex-col gap-2 max-w-[350px] pb-3">
+            <p>
+              When <span className="font-bold">public</span> your quest will be
+              discoverable on our marketplace.
+            </p>
+            <p>
+              When <span className="font-bold">private</span> your quest can
+              only be shared using your unique link.
+            </p>
+          </div>
+        </div>
+
+        <div className="w-full px-10 my-4 flex items-center justify-between">
           <motion.button
             {...smallClickAnimation}
             onClick={() => setFormSection("MEDIA")}
@@ -168,9 +175,9 @@ const PreviewForm: FC<Props> = ({
             {...smallClickAnimation}
             onClick={() => createBounty()}
             className="bg-primaryBtn border border-primaryBtnBorder text-textGreen 
-            w-[100px] h-[50px] rounded-lg text-base"
+            w-[150px] h-[50px] rounded-lg text-base"
           >
-            FUND
+            CONTINUE
           </motion.button>
         </div>
       </div>
