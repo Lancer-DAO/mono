@@ -22,11 +22,11 @@ const SuccessForm: FC = () => {
             deserunt ex veniam. Est laborum aute ullamco exercitation incididunt
             aute.
           </p>
-          <div className="flex items-center gap-5">
+          <div className="flex flex-col gap-3">
             <h1 className="text-lg">Share to freelancers:</h1>
             <CopyLinkField url={`${SITE_URL}${currentBounty?.id.toString()}`} />
           </div>
-          <div className="flex items-center gap-5">
+          <div className="flex flex-col gap-3">
             <h1 className="text-lg">Share to the world:</h1>
             <div className="flex items-center gap-3">
               <TweetShareButton
