@@ -1,10 +1,11 @@
 export type FORM_SECTION = "CREATE" | "MEDIA" | "PREVIEW" | "SUCCESS" | "FUND";
 
 export interface FormData {
-  category: string;
   issuePrice: string;
   issueTitle: string;
   issueDescription: string;
+  industryIds?: number[];
+  displineIds?: number[];
   tags: string[];
   links: string[];
   media: string[];

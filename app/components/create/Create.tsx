@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import {
   AddMediaForm,
+  BountyCard,
   CreateBountyForm,
   FundBountyForm,
   PreviewCardBase,
@@ -9,16 +10,27 @@ import { PublicKey } from "@solana/web3.js";
 import { FORM_SECTION, FormData } from "@/types/forms";
 import { useUserWallet } from "@/src/providers";
 import PreviewForm from "../organisms/PreviewForm";
+import { api } from "@/src/utils";
+import * as Prisma from "@prisma/client";
+import { IAsyncResult, Industry } from "@/types";
 
 export const Create = () => {
   const { provider } = useUserWallet();
+  const { mutateAsync: getMintsAPI } = api.mints.getMints.useMutation();
+  const { mutateAsync: getAllIndustries } =
+    api.industries.getAllIndustries.useMutation();
+  const [industries, setIndustries] = useState<IAsyncResult<Industry[]>>({
+    isLoading: true,
+  });
   const [formSection, setFormSection] = useState<FORM_SECTION>("CREATE");
   const [isAccountCreated, setIsAccountCreated] = useState(false);
+  const [mints, setMints] = useState<Prisma.Mint[]>([]);
   const [formData, setFormData] = useState<FormData>({
-    category: "",
     issuePrice: "",
     issueTitle: "",
     issueDescription: "",
+    industryIds: [],
+    displineIds: [],
     tags: [""],
     links: [""],
     media: [""],
@@ -42,9 +54,30 @@ export const Create = () => {
     });
   };
 
-  // useEffect(() => {
-  //   console.log("formData", formData);
-  // }, [formData]);
+  useEffect(() => {
+    const getMints = async () => {
+      const mints = await getMintsAPI();
+      setMints(mints);
+    };
+    getMints();
+  }, []);
+
+  useEffect(() => {
+    const fetchCurrentIndustries = async () => {
+      try {
+        const industries = await getAllIndustries();
+        setIndustries({ result: industries, isLoading: false });
+      } catch (e) {
+        console.log("error getting industries: ", e);
+        setIndustries({ error: e, isLoading: false });
+      }
+    };
+    fetchCurrentIndustries();
+  }, []);
+
+  useEffect(() => {
+    console.log("formData", formData);
+  }, [formData]);
 
   return (
     <div className="w-full max-w-[1200px] mx-auto flex flex-col md:flex-row md:justify-evenly mt-10">
@@ -56,6 +89,7 @@ export const Create = () => {
           <CreateBountyForm
             setFormSection={setFormSection}
             formData={formData}
+            industries={industries}
             setFormData={setFormData}
             handleChange={handleChange}
           />
@@ -65,15 +99,16 @@ export const Create = () => {
             setFormSection={setFormSection}
             formData={formData}
             setFormData={setFormData}
-            handleChange={handleChange}
           />
         )}
         {formSection === "PREVIEW" && (
           <PreviewForm
             setFormSection={setFormSection}
             formData={formData}
+            industries={industries?.result}
             setFormData={setFormData}
             createAccountPoll={createAccountPoll}
+            mints={mints}
           />
         )}
         {formSection === "SUCCESS" && <div>Success</div>}
@@ -81,10 +116,15 @@ export const Create = () => {
           <FundBountyForm isAccountCreated={isAccountCreated} />
         )}
       </div>
-      {/* TODO: add preview section */}
+      {/* preview section */}
       {formSection !== "PREVIEW" && (
         <div className="md:w-[515px] pt-10">
-          <PreviewCardBase>Preview Card</PreviewCardBase>
+          <PreviewCardBase>
+            <BountyCard
+              formData={formData}
+              allIndustries={industries?.result}
+            />
+          </PreviewCardBase>
         </div>
       )}
     </div>

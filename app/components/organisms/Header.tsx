@@ -24,7 +24,7 @@ export const Header = () => {
   const { publicKey } = useWallet();
 
   return (
-    <div className="sticky py-4 top-0 z-20">
+    <div className="sticky py-4 top-0 z-20 bg-bgLancer">
       <div className="flex items-center gap-8 mx-auto w-[90%]">
         <Link href="/" className="flex items-center gap-0.5">
           <Logo width="auto" height="35px" />

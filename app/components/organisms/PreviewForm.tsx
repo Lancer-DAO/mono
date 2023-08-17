@@ -10,34 +10,44 @@ import { FORM_SECTION, FormData } from "@/types/forms";
 import { useBounty } from "@/src/providers/bountyProvider";
 import { useTutorial } from "@/src/providers/tutorialProvider";
 import { motion } from "framer-motion";
-import { PreviewCardBase, Toggle } from "@/components";
+import {
+  PreviewCardBase,
+  MintsDropdown,
+  Toggle,
+  BountyCard,
+} from "@/components";
 import { ToggleConfig } from "../molecules/Toggle";
 import { PublicKey } from "@solana/web3.js";
 import { createFFA } from "@/escrow/adapters";
 import { api } from "@/utils";
-import { Bounty } from "@/types";
+import { Bounty, Industry, Option } from "@/types";
 
 interface Props {
   setFormSection: Dispatch<SetStateAction<FORM_SECTION>>;
   formData: FormData;
+  industries: Industry[];
   setFormData: Dispatch<SetStateAction<FormData>>;
   createAccountPoll: (publicKey: PublicKey) => void;
+  mints: Prisma.Mint[];
 }
 
 const PreviewForm: FC<Props> = ({
   setFormSection,
   formData,
+  industries,
   setFormData,
   createAccountPoll,
+  mints,
 }) => {
   const { currentUser, currentWallet, program, provider } = useUserWallet();
   const { currentTutorialState, setCurrentTutorialState } = useTutorial();
   const { setCurrentBounty } = useBounty();
+  const { mutateAsync } = api.bounties.createBounty.useMutation();
 
   const [creationType, setCreationType] = useState<"new" | "existing">("new");
   const [mint, setMint] = useState<Prisma.Mint>();
   const [isSubmittingIssue, setIsSubmittingIssue] = useState(false);
-  const { mutateAsync } = api.bounties.createBounty.useMutation();
+  const [isOpenMints, setIsOpenMints] = useState(false);
 
   const [toggleConfig, setToggleConfig] = useState<ToggleConfig>({
     option1: {
@@ -48,6 +58,17 @@ const PreviewForm: FC<Props> = ({
     },
     selected: "option1",
   });
+
+  const mintOptions: Option[] = mints.map((mint) => ({
+    label: mint.name,
+    value: mint.name,
+    icon: mint.logo,
+  }));
+
+  const handleChangeMint = (mint: Prisma.Mint) => {
+    const newMint = mints.find((_mint) => _mint.name === mint.name);
+    setMint(newMint);
+  };
 
   const createBounty = async () => {
     setIsSubmittingIssue(true);
@@ -73,14 +94,14 @@ const PreviewForm: FC<Props> = ({
     createAccountPoll(escrowKey);
     const bounty: Bounty = await mutateAsync({
       email: currentUser.email,
-      category: formData.category,
-      // no price here?
+      industryIds: formData.industryIds,
+      disciplineIds: formData.displineIds,
+      price: parseFloat(formData.issuePrice),
       title: formData.issueTitle,
       description: formData.issueDescription,
       tags: formData.tags,
       links: formData.links,
       media: formData.media,
-      comment: formData.comment,
       estimatedTime: parseFloat(formData.estimatedTime),
       isPrivate: formData.isPrivate,
       // isPrivateRepo: formData.isPrivate || repo ? repo.private : false,
@@ -114,7 +135,7 @@ const PreviewForm: FC<Props> = ({
   return (
     <div>
       <h1>Preview</h1>
-      <div className="w-full flex flex-col gap-4 mt-6">
+      <div className="w-full flex flex-col gap-4 my-6">
         <div className="flex items-center gap-8">
           <Toggle
             toggleConfig={toggleConfig}
@@ -135,13 +156,22 @@ const PreviewForm: FC<Props> = ({
 
         <div className="w-full flex items-center justify-between">
           {/* three cards in view */}
-          {/* 1. preview card (addarg working on this) */}
-          <PreviewCardBase title="Quest">Preview Card</PreviewCardBase>
+          {/* 1. preview card */}
+          <PreviewCardBase title="Quest">
+            <BountyCard formData={formData} allIndustries={industries} />
+          </PreviewCardBase>
           {/* 2. quest links card */}
           <PreviewCardBase title="Links">Preview Card</PreviewCardBase>
           {/* 3. quest photos card */}
-          <PreviewCardBase title="Photos">Preview Card</PreviewCardBase>
+          <PreviewCardBase title="References">Preview Card</PreviewCardBase>
         </div>
+
+        <label>Funding Type</label>
+        <MintsDropdown
+          options={mints}
+          selected={mint}
+          onChange={handleChangeMint}
+        />
 
         <div className="w-full px-10 mt-4 flex items-center justify-between">
           <motion.button
@@ -154,7 +184,7 @@ const PreviewForm: FC<Props> = ({
           </motion.button>
           <motion.button
             {...smallClickAnimation}
-            // onClick={() => createBounty()}
+            onClick={() => createBounty()}
             className="bg-primaryBtn border border-primaryBtnBorder text-textGreen 
             w-[100px] h-[50px] rounded-lg text-base"
           >

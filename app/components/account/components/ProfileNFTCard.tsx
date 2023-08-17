@@ -1,16 +1,16 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
-import Image from "next/image";
-import { ProfileNFT } from "@/types/";
-import dayjs from "dayjs";
-import relativeTime from "dayjs/plugin/relativeTime";
-import { Button, CoinflowOfframp, AddReferrerModal } from "@/components";
-import { useReferral } from "@/src/providers/referralProvider";
-import { Copy } from "react-feather";
-import { Treasury } from "@ladderlabs/buddy-sdk";
-import { api } from "@/src/utils/api";
-import * as Prisma from "@prisma/client";
+import { AddReferrerModal, Button, CoinflowOfframp } from "@/components";
 import { IS_CUSTODIAL } from "@/src/constants";
 import { useUserWallet } from "@/src/providers";
+import { useReferral } from "@/src/providers/referralProvider";
+import { api } from "@/src/utils/api";
+import { ProfileNFT } from "@/types/";
+import { Treasury } from "@ladderlabs/buddy-sdk";
+import * as Prisma from "@prisma/client";
+import dayjs from "dayjs";
+import relativeTime from "dayjs/plugin/relativeTime";
+import Image from "next/image";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { Copy } from "react-feather";
 
 dayjs.extend(relativeTime);
 
@@ -108,17 +108,26 @@ export const ProfileNFTCard = ({
           {/* Labels column */}
           <div className="flex flex-col gap-4 text-lg">
             <p>name</p>
-            <p>username</p>
+            {/* <p>username</p> */}
             <p>industry</p>
-            <p>location</p>
-            <p>xp</p>
+            {/* <p>location</p> */}
+            <p>exp</p>
           </div>
           {/* Data column */}
           <div className="flex flex-col gap-4 text-lg font-bold">
             <p>{currentUser?.name}</p>
-            <p>{currentUser?.name}</p>
-            <p>[industry]</p>
-            <p>[location]</p>
+            {/* <p>{currentUser?.name}</p> */}
+            {/* hard coded */}
+            <div className="flex items-center gap-2">
+              <Image
+                src="/assets/icons/eng.png"
+                width={25}
+                height={25}
+                alt="eng"
+              />
+              <p className="font-bold">Engineering</p>
+            </div>
+            {/* <p>[location]</p> */}
             <p>{profileNFT.reputation} pts</p>
           </div>
         </div>
@@ -150,6 +159,7 @@ export const ProfileNFTCard = ({
         <div>
           <div className="divider"></div>
 
+          // TODO: Move this to its own component @scammo
           <h4>Refer your friends</h4>
           {referralId && initialized ? (
             <div className="relative w-full">
