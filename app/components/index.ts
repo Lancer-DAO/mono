@@ -1,6 +1,7 @@
 import dynamic from "next/dynamic";
 
 // @icons
+const Close = dynamic(() => import("./@icons/Close"));
 const Logo = dynamic(() => import("./@icons/Logo"));
 const PhantomLogo = dynamic(() => import("./@icons/PhantomLogo"));
 const StarIcon = dynamic(() => import("./@icons/StarIcon"));
@@ -43,12 +44,14 @@ const FundBountyForm = dynamic(() => import("./organisms/FundBountyForm"));
 const Header = dynamic(() => import("./organisms/Header"));
 const JoyrideWrapper = dynamic(() => import("./organisms/JoyrideWrapper"));
 const PreviewForm = dynamic(() => import("./organisms/PreviewForm"));
+const SuccessForm = dynamic(() => import("./organisms/SuccessForm"));
 
 // templates
 const DefaultLayout = dynamic(() => import("./templates/DefaultLayout"));
 
 export {
   // @icons
+  Close,
   MarketingIcon,
   Logo,
   PhantomLogo,
@@ -87,6 +90,7 @@ export {
   Header,
   JoyrideWrapper,
   PreviewForm,
+  SuccessForm,
 
   // templates
   DefaultLayout,
