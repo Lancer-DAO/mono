@@ -66,7 +66,6 @@ const PreviewForm: FC<Props> = ({
       });
     }
 
-    console.log("mint", mint);
     const mintKey = new PublicKey(mint?.publicKey);
 
     const { timestamp, signature, escrowKey } = await createFFA(
@@ -98,7 +97,7 @@ const PreviewForm: FC<Props> = ({
       network: IS_MAINNET ? "mainnet" : "devnet",
     });
 
-    setFormSection("SUCCESS");
+    setFormSection("FUND");
     setCurrentBounty(bounty);
   };
 
