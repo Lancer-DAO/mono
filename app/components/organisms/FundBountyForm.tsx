@@ -126,14 +126,6 @@ const Form: FC<Props> = ({
             developers. The more clear you are with your descriptions, the
             better Lancer is at finding the right developer to solve your issue.
           </p>
-          <motion.button
-            {...smallClickAnimation}
-            onClick={() => setFormSection("MEDIA")}
-            className="bg-secondaryBtn border border-secondaryBtnBorder text-textRed 
-            w-[100px] h-[50px] rounded-lg text-base"
-          >
-            BACK
-          </motion.button>
         </div>
         <div className="w-full max-w-[540px] px-10 flex flex-col items-center gap-10 bg-white pb-10">
           {!IS_CUSTODIAL && (
