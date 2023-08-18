@@ -1,4 +1,4 @@
-import { FC, SVGAttributes, use, useEffect, useState } from "react";
+import { FC, SVGAttributes, useEffect, useState } from "react";
 import Image from "next/image";
 import { motion } from "framer-motion";
 import { fastEnterAnimation, midClickAnimation } from "@/src/constants";
