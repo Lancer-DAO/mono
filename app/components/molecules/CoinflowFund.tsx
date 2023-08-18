@@ -24,7 +24,7 @@ const FundBounty: React.FC<{ amount: number }> = ({
       console.log("coinflow amount", amount);
       const transaction = await getFundFFATX(
         amount,
-        currentBounty.escrow,
+        currentBounty?.escrow,
         currentWallet,
         program,
         provider
@@ -36,11 +36,11 @@ const FundBounty: React.FC<{ amount: number }> = ({
 
   const onSuccess = () => {
     fundB({
-      bountyId: currentBounty.id,
-      escrowId: currentBounty.escrow.id,
+      bountyId: currentBounty?.id,
+      escrowId: currentBounty?.escrow.id,
       amount,
     });
-    router.push(`/bounties/${currentBounty.id}`);
+    router.push(`/bounties/${currentBounty?.id}`);
   };
   return (
     <div className="bounty-fund-with-card">

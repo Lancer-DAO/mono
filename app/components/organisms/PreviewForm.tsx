@@ -10,17 +10,13 @@ import { FORM_SECTION, FormData } from "@/types/forms";
 import { useBounty } from "@/src/providers/bountyProvider";
 import { useTutorial } from "@/src/providers/tutorialProvider";
 import { motion } from "framer-motion";
-import {
-  PreviewCardBase,
-  MintsDropdown,
-  Toggle,
-  BountyCard,
-} from "@/components";
+import { PreviewCardBase, Toggle, BountyCard } from "@/components";
 import { ToggleConfig } from "../molecules/Toggle";
 import { PublicKey } from "@solana/web3.js";
 import { createFFA } from "@/escrow/adapters";
 import { api } from "@/utils";
-import { Bounty, Industry, Option } from "@/types";
+import { Bounty, Industry } from "@/types";
+import { Mint } from "@prisma/client";
 
 interface Props {
   setFormSection: Dispatch<SetStateAction<FORM_SECTION>>;
@@ -28,7 +24,7 @@ interface Props {
   industries: Industry[];
   setFormData: Dispatch<SetStateAction<FormData>>;
   createAccountPoll: (publicKey: PublicKey) => void;
-  mints: Prisma.Mint[];
+  mint: Mint;
 }
 
 const PreviewForm: FC<Props> = ({
@@ -37,7 +33,7 @@ const PreviewForm: FC<Props> = ({
   industries,
   setFormData,
   createAccountPoll,
-  mints,
+  mint,
 }) => {
   const { currentUser, currentWallet, program, provider } = useUserWallet();
   const { currentTutorialState, setCurrentTutorialState } = useTutorial();
@@ -45,9 +41,7 @@ const PreviewForm: FC<Props> = ({
   const { mutateAsync } = api.bounties.createBounty.useMutation();
 
   const [creationType, setCreationType] = useState<"new" | "existing">("new");
-  const [mint, setMint] = useState<Prisma.Mint>();
   const [isSubmittingIssue, setIsSubmittingIssue] = useState(false);
-  const [isOpenMints, setIsOpenMints] = useState(false);
 
   const [toggleConfig, setToggleConfig] = useState<ToggleConfig>({
     option1: {
@@ -58,17 +52,6 @@ const PreviewForm: FC<Props> = ({
     },
     selected: "option1",
   });
-
-  const mintOptions: Option[] = mints.map((mint) => ({
-    label: mint.name,
-    value: mint.name,
-    icon: mint.logo,
-  }));
-
-  const handleChangeMint = (mint: Prisma.Mint) => {
-    const newMint = mints.find((_mint) => _mint.name === mint.name);
-    setMint(newMint);
-  };
 
   const createBounty = async () => {
     setIsSubmittingIssue(true);
@@ -83,7 +66,7 @@ const PreviewForm: FC<Props> = ({
       });
     }
 
-    const mintKey = new PublicKey(mint.publicKey);
+    const mintKey = new PublicKey(mint?.publicKey);
 
     const { timestamp, signature, escrowKey } = await createFFA(
       currentWallet,
@@ -114,7 +97,7 @@ const PreviewForm: FC<Props> = ({
       network: IS_MAINNET ? "mainnet" : "devnet",
     });
 
-    setFormSection("SUCCESS");
+    setFormSection("FUND");
     setCurrentBounty(bounty);
   };
 
@@ -136,23 +119,13 @@ const PreviewForm: FC<Props> = ({
     <div>
       <h1>Preview</h1>
       <div className="w-full flex flex-col gap-4 my-6">
-        <div className="flex items-center gap-8">
-          <Toggle
-            toggleConfig={toggleConfig}
-            setToggleConfig={setToggleConfig}
-          />
-          <div className="flex flex-col gap-2 max-w-[350px]">
-            <p>
-              When <span className="font-bold">public</span> your quest will be
-              discoverable.
-            </p>
-            <p>
-              When <span className="font-bold">private</span> your quest can
-              only be shared using your unique link.
-            </p>
-          </div>
-          {/* TODO: unfunded quest CTA */}
-        </div>
+        <p className="max-w-[500px]">
+          This is your chance to review your Quest in its entirety. By clicking
+          "Continue", you are intializing this Quest and will move on to funding
+          it. Any changes you'd like to make can be done by clicking the "Back"
+          buttons. You're one step away from putting your Quest out into the
+          world!
+        </p>
 
         <div className="w-full flex items-center justify-between">
           {/* three cards in view */}
@@ -166,14 +139,24 @@ const PreviewForm: FC<Props> = ({
           <PreviewCardBase title="References">Preview Card</PreviewCardBase>
         </div>
 
-        <label>Funding Type</label>
-        <MintsDropdown
-          options={mints}
-          selected={mint}
-          onChange={handleChangeMint}
-        />
+        <div className="flex flex-col gap-8 w-fit py-3">
+          <Toggle
+            toggleConfig={toggleConfig}
+            setToggleConfig={setToggleConfig}
+          />
+          <div className="flex flex-col gap-2 max-w-[350px] pb-3">
+            <p>
+              When <span className="font-bold">public</span> your quest will be
+              discoverable on our marketplace.
+            </p>
+            <p>
+              When <span className="font-bold">private</span> your quest can
+              only be shared using your unique link.
+            </p>
+          </div>
+        </div>
 
-        <div className="w-full px-10 mt-4 flex items-center justify-between">
+        <div className="w-full px-10 my-4 flex items-center justify-between">
           <motion.button
             {...smallClickAnimation}
             onClick={() => setFormSection("MEDIA")}
@@ -186,9 +169,9 @@ const PreviewForm: FC<Props> = ({
             {...smallClickAnimation}
             onClick={() => createBounty()}
             className="bg-primaryBtn border border-primaryBtnBorder text-textGreen 
-            w-[100px] h-[50px] rounded-lg text-base"
+            w-[150px] h-[50px] rounded-lg text-base"
           >
-            SUBMIT
+            CONTINUE
           </motion.button>
         </div>
       </div>

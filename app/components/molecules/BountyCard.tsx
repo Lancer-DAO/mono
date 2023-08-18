@@ -17,12 +17,14 @@ export interface BountyCardProps extends SVGAttributes<SVGSVGElement> {
   bounty?: BountyPreview;
   formData?: FormData;
   allIndustries: Industry[];
+  linked?: boolean;
 }
 
 const BountyCard: FC<BountyCardProps> = ({
   bounty,
   formData,
   allIndustries,
+  linked = true,
 }) => {
   const { currentUser } = useUserWallet();
   const [bountyIndustries, setBountyIndustries] = useState<Industry[]>([]);
@@ -34,12 +36,12 @@ const BountyCard: FC<BountyCardProps> = ({
     : null;
 
   const displayedTags = bounty
-    ? bounty.tags.slice(0, 4)
-    : formData.tags.slice(0, 4);
+    ? bounty.tags.map((tag) => tag.name)
+    : formData.tags.slice(0, 4).map((tag) => tag);
 
   const tagOverflow = bounty
-    ? bounty.tags.length > 4
-    : formData.tags.length > 4;
+    ? bounty.tags.length > 3
+    : formData.tags.length > 3;
 
   useEffect(() => {
     const getCardIndustries = () => {
@@ -65,17 +67,17 @@ const BountyCard: FC<BountyCardProps> = ({
   return (
     <motion.div
       className={`relative w-[291px] h-[292px] ${
-        bounty ? "cursor-pointer" : ""
+        linked ? "cursor-pointer" : ""
       }`}
       {...bountyCardAnimation}
-      onClick={() => router.push(`/bounties/${bounty?.id}`)}
+      onClick={() => linked && router.push(`/bounties/${bounty?.id}`)}
     >
       <div className="absolute left-1/2 -translate-x-[53%] top-[6px] w-7">
         <Image
           src={bountyIndustries[0]?.icon}
           width={28}
           height={28}
-          alt={bountyIndustries[0]?.name}
+          alt={bountyIndustries[0]?.name ?? "industry icon"}
         />
       </div>
       <BountyCardFrame color={bountyIndustries[0]?.color} />
@@ -129,26 +131,15 @@ const BountyCard: FC<BountyCardProps> = ({
           </div>
         </div>
         <div className="relative w-full pr-10 flex flex-wrap items-center gap-1 mt-auto">
-          {bounty &&
-            displayedTags.map((tag) => (
-              <div
-                className="border border-neutralBtnBorder rounded-full 
+          {displayedTags.map((tag) => (
+            <div
+              className="border border-neutralBtnBorder rounded-full 
                 px-3 py-1 flex items-center justify-center"
-                key={tag.name}
-              >
-                {tag.name}
-              </div>
-            ))}
-          {formData &&
-            displayedTags.map((tag) => (
-              <div
-                className="border border-neutralBtnBorder rounded-full 
-                px-3 py-1 flex items-center justify-center"
-                key={tag.name}
-              >
-                {tag.name}
-              </div>
-            ))}
+              key={tag}
+            >
+              {tag}
+            </div>
+          ))}
           {tagOverflow && <p className="text-xs">+ more</p>}
         </div>
       </div>

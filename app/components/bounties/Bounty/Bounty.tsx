@@ -157,7 +157,7 @@ export const Bounty = () => {
                 <Image
                   className="rounded-[50%]"
                   src={currentBounty.escrow.mint.logo}
-                  alt={currentBounty.escrow.mint.name}
+                  alt={currentBounty.escrow.mint.name ?? "mint icon"}
                   width={36}
                   height={36}
                 />

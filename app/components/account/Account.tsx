@@ -124,7 +124,7 @@ export const Account: FC<Props> = ({ self }) => {
       };
       fetchNfts();
     }
-  }, [account?.result]);
+  }, [!!account?.result]);
 
   const fetchProfileNFT = async () => {
     const nfts = await underdogClient.getNfts({

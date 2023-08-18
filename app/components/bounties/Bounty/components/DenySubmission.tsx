@@ -37,13 +37,13 @@ export const DenySubmission = () => {
       [BOUNTY_USER_RELATIONSHIP.DeniedSubmitter]
     );
 
-    const { updatedBounty } = await mutateAsync({
+    const updatedBounty = await mutateAsync({
       bountyId: currentBounty.id,
       currentUserId: currentUser.id,
       userId: currentBounty.currentSubmitter.userid,
       relations: newRelations,
       state: BountyState.ACCEPTING_APPLICATIONS,
-      publicKey: currentWallet.publicKey.toString(),
+      publicKey: currentBounty.currentSubmitter.publicKey,
       escrowId: currentBounty.escrowid,
       signature,
       label: "deny-submitter",

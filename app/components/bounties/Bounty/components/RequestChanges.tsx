@@ -36,13 +36,13 @@ export const RequestChanges = () => {
       [BOUNTY_USER_RELATIONSHIP.CurrentSubmitter],
       [BOUNTY_USER_RELATIONSHIP.ChangesRequestedSubmitter]
     );
-    const { updatedBounty } = await mutateAsync({
+    const updatedBounty = await mutateAsync({
       bountyId: currentBounty.id,
       currentUserId: currentUser.id,
       userId: currentBounty.currentSubmitter.userid,
       relations: newRelations,
       state: BountyState.IN_PROGRESS,
-      publicKey: currentWallet.publicKey.toString(),
+      publicKey: currentBounty.currentSubmitter.publicKey,
       escrowId: currentBounty.escrowid,
       signature,
       label: "request-changes",

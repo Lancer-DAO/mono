@@ -1,18 +1,19 @@
 import React, { useEffect, useState } from "react";
 import {
-  AddMediaForm,
-  BountyCard,
   CreateBountyForm,
+  AdditionalInfoForm,
+  PreviewForm,
   FundBountyForm,
+  SuccessForm,
+  BountyCard,
   PreviewCardBase,
 } from "@/components";
 import { PublicKey } from "@solana/web3.js";
 import { FORM_SECTION, FormData } from "@/types/forms";
 import { useUserWallet } from "@/src/providers";
-import PreviewForm from "../organisms/PreviewForm";
 import { api } from "@/src/utils";
-import * as Prisma from "@prisma/client";
 import { IAsyncResult, Industry } from "@/types";
+import { Mint } from "@prisma/client";
 
 export const Create = () => {
   const { provider } = useUserWallet();
@@ -24,7 +25,8 @@ export const Create = () => {
   });
   const [formSection, setFormSection] = useState<FORM_SECTION>("CREATE");
   const [isAccountCreated, setIsAccountCreated] = useState(false);
-  const [mints, setMints] = useState<Prisma.Mint[]>([]);
+  const [mint, setMint] = useState<Mint>();
+  const [mints, setMints] = useState<Mint[]>([]);
   const [formData, setFormData] = useState<FormData>({
     issuePrice: "",
     issueTitle: "",
@@ -37,7 +39,7 @@ export const Create = () => {
     comment: "",
     organizationName: "",
     repositoryName: "",
-    estimatedTime: "",
+    estimatedTime: "1",
     isPrivate: true,
   });
 
@@ -83,7 +85,11 @@ export const Create = () => {
     <div className="w-full max-w-[1200px] mx-auto flex flex-col md:flex-row md:justify-evenly mt-10">
       {/* quest info entry section */}
       <div
-        className={`${formSection === "PREVIEW" ? "w-full" : "md:w-[515px]"}`}
+        className={`${
+          formSection === "PREVIEW" || formSection === "FUND"
+            ? "w-full"
+            : "md:w-[515px]"
+        }`}
       >
         {formSection === "CREATE" && (
           <CreateBountyForm
@@ -95,10 +101,14 @@ export const Create = () => {
           />
         )}
         {formSection === "MEDIA" && (
-          <AddMediaForm
+          <AdditionalInfoForm
             setFormSection={setFormSection}
             formData={formData}
             setFormData={setFormData}
+            handleChange={handleChange}
+            mint={mint}
+            setMint={setMint}
+            mints={mints}
           />
         )}
         {formSection === "PREVIEW" && (
@@ -108,21 +118,28 @@ export const Create = () => {
             industries={industries?.result}
             setFormData={setFormData}
             createAccountPoll={createAccountPoll}
-            mints={mints}
+            mint={mint}
           />
         )}
-        {formSection === "SUCCESS" && <div>Success</div>}
         {formSection === "FUND" && (
-          <FundBountyForm isAccountCreated={isAccountCreated} />
+          <FundBountyForm
+            isAccountCreated={isAccountCreated}
+            formData={formData}
+            setFormData={setFormData}
+            setFormSection={setFormSection}
+            mint={mint}
+          />
         )}
+        {formSection === "SUCCESS" && <SuccessForm />}
       </div>
       {/* preview section */}
-      {formSection !== "PREVIEW" && (
+      {formSection !== "PREVIEW" && formSection !== "FUND" && (
         <div className="md:w-[515px] pt-10">
           <PreviewCardBase>
             <BountyCard
               formData={formData}
               allIndustries={industries?.result}
+              linked={formSection === "SUCCESS"}
             />
           </PreviewCardBase>
         </div>

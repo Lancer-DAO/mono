@@ -23,6 +23,7 @@ module.exports = {
         neutralBtn: "#FEFEFE",
         neutralBtnBorder: "#E4E4E4",
         textPrimary: "#464646",
+        textLancerGreen: "#56B78A",
         textGreen: "#638463",
         textRed: "#846363",
         industryRed: "#FF8484",
