@@ -48,6 +48,14 @@ const BountyCard: FC<BountyCardProps> = ({
 
   if (!bounty && !formData) return null;
 
+  const handlePriceIcon = () => {
+    if (bounty) {
+      return bounty?.escrow?.mint?.logo;
+    } else {
+      return formData.issuePriceIcon;
+    }
+  };
+
   return (
     <motion.div
       className={`relative w-[291px] h-[292px] ${
@@ -69,6 +77,7 @@ const BountyCard: FC<BountyCardProps> = ({
         <div className="w-full flex items-center justify-between px-1">
           <PriceTag
             price={bounty ? bounty?.escrow.amount : Number(formData.issuePrice)}
+            icon={handlePriceIcon()}
           />
           <p className="text-xs font-bold mr-2">
             <span className="text-textPrimary text-[11px] font-base">
