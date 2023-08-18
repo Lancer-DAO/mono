@@ -156,62 +156,6 @@ export const ProfileNFTCard = ({
           <div>{profileNFT.lastUpdated?.fromNow()}</div>
         </div>
 
-        <div>
-          <div className="divider"></div>
-
-          // TODO: Move this to its own component @scammo
-          <h4>Refer your friends</h4>
-          {referralId && initialized ? (
-            <div className="relative w-full">
-              <div className="flex items-center gap-2">
-                <span className="text-blue-300">
-                  {SITE_URL}
-                  {referralId}
-                </span>
-                <Copy
-                  className="cursor-pointer"
-                  onClick={() => handleCopyClick(`${SITE_URL}${referralId}`)}
-                />
-              </div>
-              <div className="absolute right-0 text-base">
-                {isCopied ? "Copied!" : ""}
-              </div>
-            </div>
-          ) : (
-            <div>
-              <Button className="mb-6" onClick={handleCreateLink}>
-                Generate link
-              </Button>
-            </div>
-          )}
-        </div>
-
-        <div>
-          {claimables &&
-          claimables.filter((claimable) => claimable.amount > 0).length > 0 ? (
-            <>
-              <div className="divider"></div>
-              <h4>Claim your rewards</h4>
-              {claimButtons}
-            </>
-          ) : null}
-        </div>
-        <div>
-          <div className="divider" />
-          <div className="my-[10px]">
-            <Button
-              onClick={() => {
-                setShowCoinflow(!showCoinflow);
-              }}
-            >
-              Cash Out
-            </Button>
-          </div>
-
-          {showCoinflow && <CoinflowOfframp />}
-        </div>
-      </div>
-
       <AddReferrerModal
         setShowModal={setShowReferrerModal}
         showModal={showReferrerModal}

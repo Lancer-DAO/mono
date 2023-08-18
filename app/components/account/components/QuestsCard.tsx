@@ -1,31 +1,61 @@
-import { FC, useState } from "react";
-import { BountyNFT, IAsyncResult } from "@/types/";
-import Image from "next/image";
 import NextArrow from "@/components/@icons/NextArrow";
-import { motion } from "framer-motion";
+import BountyCard from "@/components/molecules/BountyCard";
 import { midClickAnimation } from "@/src/constants";
+import { BountyNFT, BountyPreview, IAsyncResult } from "@/types/";
+import { api } from "@/utils";
+import { motion } from "framer-motion";
+import Image from "next/image";
+import { useRouter } from "next/router";
+import { FC, useEffect, useState } from "react";
 
 interface Props {
   bountyNFTs: IAsyncResult<BountyNFT[]>;
 }
 
+
 export const QuestsCard: FC<Props> = ({ bountyNFTs }) => {
+  const [bounties, setBounties] = useState<BountyPreview[]>([]);
+  const router = useRouter();
+  const { mutateAsync: getBounties } = api.bounties.getAllBounties.useMutation();
+  const { mutateAsync: getCurrentUser } = api.users.currentUser.useMutation();
+  
+  useEffect(() => {
+    const getBountiesAsync = async () => {
+      console.log(router.query.id);
+      if(router.query.id === undefined) {
+        const user = await getCurrentUser();
+        const bounties = await getBounties({
+          currentUserId: user.id,
+          onlyMyBounties: true,
+        });
+        setBounties(bounties.slice(0, 2));
+        console.log(bounties);
+      } else {
+        const bounties = await getBounties({
+          currentUserId: parseInt(router.query.id as string),
+          onlyMyBounties: false,
+        });
+        setBounties(bounties.slice(0, 2));
+      }
+    }
+    getBountiesAsync();
+  }, [])
+
+
   return (
     <div className="relative w-full md:w-[658px] max-h-[356px] rounded-xl bg-bgLancerSecondary/[8%] overflow-hidden p-6">
-      <p className="font-bold text-2xl text-textGreen">Previous Quests</p>
+      <p className="font-bold text-2xl text-textGreen mb-2">Previous Quests</p>
       <div className="flex items-center justify-between gap-2">
         {bountyNFTs.isLoading ? (
           <div className="flex justify-center items-center">
             <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-gray-900" />
           </div>
         ) : bountyNFTs?.result?.length > 0 ? (
-          <div className="flex items-center gap-2">
-            {bountyNFTs?.result?.map((bountyNFT, index) => {
-              if (index > 1) return;
-              return (
-                // TODO: insert quest card here
-                <p>{bountyNFT?.name}</p>
-              );
+          <div className="flex items-center gap-2 mb-2">
+            {bounties.map((bounty, index) => {
+              return ( 
+                <BountyCard key={index} bounty={bounty} allIndustries={[]} />
+              )
             })}
           </div>
         ) : (
