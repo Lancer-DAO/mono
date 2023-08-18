@@ -67,7 +67,7 @@ const Form: FC<Props> = ({
   // }, [toggleConfig.selected]);
 
   return (
-    <div>
+    <>
       <h1>Post a Quest</h1>
       <div className="w-full flex flex-col gap-4 mt-6">
         <div className="relative flex items-center">
@@ -175,7 +175,7 @@ const Form: FC<Props> = ({
           </motion.button>
         </div>
       </div>
-    </div>
+    </>
   );
 };
 

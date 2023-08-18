@@ -2,6 +2,7 @@ import dynamic from "next/dynamic";
 
 // @icons
 const Close = dynamic(() => import("./@icons/Close"));
+const ExternalLinkIcon = dynamic(() => import("./@icons/ExternalLinkIcon"));
 const Logo = dynamic(() => import("./@icons/Logo"));
 const MarketingIcon = dynamic(() => import("./@icons/MarketingIcon"));
 const NextArrow = dynamic(() => import("./@icons/NextArrow"));
@@ -57,6 +58,7 @@ const DefaultLayout = dynamic(() => import("./templates/DefaultLayout"));
 export {
   // @icons
   Close,
+  ExternalLinkIcon,
   MarketingIcon,
   Logo,
   MarketingIcon,

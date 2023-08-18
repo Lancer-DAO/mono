@@ -109,7 +109,7 @@ const BountyList: React.FC<{}> = () => {
         return false;
       }
       // many to one relationship
-      if (!filters.mints.includes(bounty.escrow.mint.ticker)) {
+      if (!filters.mints.includes(bounty.escrow.mint.publicKey)) {
         return false;
       }
       // check if any of the bounty's industries is
@@ -125,22 +125,13 @@ const BountyList: React.FC<{}> = () => {
         return false;
       }
 
-      const bountyTags = bounty.tags || [];
-      const commonTags = bountyTags.filter((tag) =>
-        filters.tags.includes(tag.name)
-      );
+      const bountyTags: string[] = bounty.tags.map((tag) => tag.name) || [];
+      const commonTags = bountyTags.filter((tag) => filters.tags.includes(tag));
       if (commonTags.length === 0 && tags.length !== 0) {
         return false;
       }
 
       if (!filters.states.includes(bounty.state)) {
-        return false;
-      }
-      const bountyEstimate = parseFloat(bounty.estimatedTime.toString());
-      if (
-        bountyEstimate < filters.estimatedPriceBounds[0] ||
-        bountyEstimate > filters.estimatedPriceBounds[1]
-      ) {
         return false;
       }
 
@@ -183,8 +174,10 @@ const BountyList: React.FC<{}> = () => {
         bounties?.result.map((bounty) => bounty.repository?.organization) ?? []
       );
 
-      const uniqueMints = getUniqueItems(
-        bounties?.result.map((bounty) => bounty.escrow.mint) ?? []
+      const uniqueMints: string[] = getUniqueItems(
+        bounties?.result
+          .map((bounty) => bounty.escrow.mint)
+          .map((mint) => mint.publicKey) ?? []
       );
       setTags(uniqueTags);
       setOrgs(uniqueOrgs);
@@ -199,12 +192,6 @@ const BountyList: React.FC<{}> = () => {
         maxPrice === minPrice ? maxPrice + 1 : maxPrice,
       ];
       setPriceBounds(priceBounds);
-      // console.log("bounty table filter unique data:", {
-      //   uniqueMints,
-      //   uniqueTags,
-      //   uniqueOrgs,
-      //   priceBounds,
-      // });
       setFilters({
         mints: uniqueMints,
         tags: allTags,
@@ -218,12 +205,13 @@ const BountyList: React.FC<{}> = () => {
         isMyBounties: filters.isMyBounties,
       });
     }
+    // console.log("bounties", bounties);
   }, [bounties]);
 
   return (
     <AnimatePresence>
       <div className="w-full flex items-start mt-5 gap-5 pb-10">
-        {showFilters && (
+        {showFilters && bounties?.result?.length > 0 && (
           <BountyFilters
             mints={mints.result}
             industries={industries?.result}
@@ -247,24 +235,26 @@ const BountyList: React.FC<{}> = () => {
             <h1>Quests.</h1>
           </div>
           {/* filter button */}
-          <motion.button
-            className="w-[85px] h-[40px] flex items-center justify-center border-2
-          bg-primaryBtn border-primaryBtnBorder rounded-xl font-bold text-xs"
-            {...smallClickAnimation}
-            onClick={() => setShowFilters(!showFilters)}
-          >
-            <div className="flex items-center gap-1">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="18px"
-                viewBox="0 0 512 512"
-                className="fill-textPrimary"
-              >
-                <path d="M3.9 54.9C10.5 40.9 24.5 32 40 32H472c15.5 0 29.5 8.9 36.1 22.9s4.6 30.5-5.2 42.5L320 320.9V448c0 12.1-6.8 23.2-17.7 28.6s-23.8 4.3-33.5-3l-64-48c-8.1-6-12.8-15.5-12.8-25.6V320.9L9 97.3C-.7 85.4-2.8 68.8 3.9 54.9z" />
-              </svg>
-              <p className="text-xs">Filters</p>
-            </div>
-          </motion.button>
+          {bounties?.result?.length > 0 && (
+            <motion.button
+              className="w-[85px] h-[40px] flex items-center justify-center border-2
+              bg-primaryBtn border-primaryBtnBorder rounded-xl font-bold text-xs"
+              {...smallClickAnimation}
+              onClick={() => setShowFilters(!showFilters)}
+            >
+              <div className="flex items-center gap-1">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="18px"
+                  viewBox="0 0 512 512"
+                  className="fill-textPrimary"
+                >
+                  <path d="M3.9 54.9C10.5 40.9 24.5 32 40 32H472c15.5 0 29.5 8.9 36.1 22.9s4.6 30.5-5.2 42.5L320 320.9V448c0 12.1-6.8 23.2-17.7 28.6s-23.8 4.3-33.5-3l-64-48c-8.1-6-12.8-15.5-12.8-25.6V320.9L9 97.3C-.7 85.4-2.8 68.8 3.9 54.9z" />
+                </svg>
+                <p className="text-xs">Filters</p>
+              </div>
+            </motion.button>
+          )}
 
           {bounties?.isLoading && (
             <div className="w-full flex flex-col items-center">

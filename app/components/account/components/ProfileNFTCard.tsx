@@ -15,6 +15,10 @@ import {
   AddReferrerModal,
   LinkButton,
 } from "@/components";
+import { useReferral } from "@/src/providers/referralProvider";
+import { Treasury } from "@ladderlabs/buddy-sdk";
+import { api } from "@/src/utils/api";
+import * as Prisma from "@prisma/client";
 import { IS_CUSTODIAL, USDC_MINT } from "@/src/constants";
 import { Keypair, PublicKey, Transaction } from "@solana/web3.js";
 import {
@@ -25,7 +29,6 @@ import {
   TokenAccountNotFoundError,
 } from "@solana/spl-token";
 import { useConnection } from "@solana/wallet-adapter-react";
-import { roundDownToTwoDecimals } from "@/src/utils";
 
 dayjs.extend(relativeTime);
 
