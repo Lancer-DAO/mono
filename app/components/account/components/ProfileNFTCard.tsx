@@ -7,18 +7,8 @@ import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import Image from "next/image";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { Copy } from "react-feather";
 import { IAsyncResult, ProfileNFT } from "@/types/";
-import {
-  Button,
-  CoinflowOfframp,
-  AddReferrerModal,
-  LinkButton,
-} from "@/components";
-import { useReferral } from "@/src/providers/referralProvider";
-import { Treasury } from "@ladderlabs/buddy-sdk";
-import { api } from "@/src/utils/api";
-import * as Prisma from "@prisma/client";
+import { Button } from "@/components";
 import { IS_CUSTODIAL, USDC_MINT } from "@/src/constants";
 import { Keypair, PublicKey, Transaction } from "@solana/web3.js";
 import {
