@@ -1,10 +1,11 @@
 import { ImageUpload, PreviewCardBase } from "@/components";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/atoms/Modal";
 import { smallClickAnimation } from "@/src/constants";
 import { UploadButton, UploadDropzone } from "@/src/utils/uploadthing";
-import { FORM_SECTION, FormData } from "@/types/forms";
+import { FORM_SECTION, FormData, Media } from "@/types/forms";
 import "@uploadthing/react/styles.css";
 import { motion } from "framer-motion";
-import { Dispatch, FC, SetStateAction, useState } from "react";
+import { Dispatch, FC, SetStateAction, useEffect, useState } from "react";
 
 interface Props {
   setFormSection: Dispatch<SetStateAction<FORM_SECTION>>;
@@ -13,12 +14,111 @@ interface Props {
   handleChange: (event) => void;
 }
 
+const ReferenceDialogue = ({ onReferenceAdded }) => {
+  const [reference, setReference] = useState({
+    imageUrl: "",
+    title: "",
+    description: "",
+  })
+
+  const handleImageUpload = (url) => {
+    setReference((prevReference) => ({
+      ...prevReference,
+      imageUrl: url,
+    }));
+  };
+
+  const handleTitleChange = (event) => {
+    setReference((prevReference) => ({
+      ...prevReference,
+      title: event.target.value,
+    }));
+  };
+
+  const handleDescriptionChange = (event) => {
+    setReference((prevReference) => ({
+      ...prevReference,
+      description: event.target.value,
+    }));
+  };
+
+  const handleSubmit = () => {
+    const newReference = {
+      imageUrl: reference.imageUrl,
+      title: reference.title,
+      description: reference.description,
+    };
+
+    onReferenceAdded(newReference); // Call the onReferenceAdded prop with the new reference
+    setReference({
+      imageUrl: "",
+      title: "",
+      description: "",
+    });
+  };
+
+  return (
+    <Dialog>
+      <DialogTrigger asChild>
+        <button className="border border-gray-300 rounded-md">Add a Reference</button>
+      </DialogTrigger>
+      <DialogContent className="sm:max-w-[425px]">
+        <DialogHeader>
+          <DialogTitle>Add a Reference</DialogTitle>
+          <DialogDescription>
+            Make changes to your reference here. Click save when you're done.
+          </DialogDescription>
+        </DialogHeader>
+        
+        <div className="grid gap-4 py-4">
+          <UploadDropzone 
+            endpoint="imageUploader"
+            onClientUploadComplete={(res) => {
+              handleImageUpload(res.at(0).url);
+            }}
+            onUploadError={(error: Error) => {
+            console.log(error);
+            alert(`ERROR! ${error.message}`);
+            }}
+          />
+          <div className="grid grid-cols-4 items-center gap-4">
+            <div  className="text-right">
+              Title
+            </div>
+            <input
+              id="title"
+              value={reference.title}
+              onChange={handleTitleChange} // Update reference title
+              className="col-span-3"
+            />
+          </div>
+          <div className="grid grid-cols-4 items-center gap-4">
+            <div className="text-right">
+              Description
+            </div>
+            <input
+              id="description"
+              value={reference.description}
+              onChange={handleDescriptionChange} // Update reference description
+              className="col-span-3"
+            />
+          </div>
+        </div>
+        <DialogFooter>
+          <button type="submit" onClick={handleSubmit}>Save changes</button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  )
+}
+
 const AddMediaForm: FC<Props> = ({
   setFormSection,
   formData,
   setFormData,
   handleChange,
 }) => {
+  const [showModal, setShowModal] = useState(true);
   const [isImageUploaded, setIsImageUploaded] = useState(false);
 
   const addLink = () => {
@@ -46,15 +146,16 @@ const AddMediaForm: FC<Props> = ({
     });
   };
 
-  const handleImageUpload = (url) => {
-    setModalOpen(true);
-    setIsImageUploaded(true);
-    
-  }
+  const handleReferenceAdded = (newReference) => {
+    setFormData({
+      ...formData,
+      media: [...formData.media, newReference],
+    });
+  };
 
-  // useEffect(() => {
-  //   console.log("formData", formData);
-  // }, [formData]);
+  useEffect(() => {
+    console.log("formData", formData);
+  }, [formData]);
 
   return (
     <div>
@@ -113,18 +214,72 @@ const AddMediaForm: FC<Props> = ({
               ))
             ) : (
               <>
+                <ReferenceDialogue onReferenceAdded={handleReferenceAdded} />
+                {/* <Dialog>
+                  <DialogTrigger asChild>
+                    <button className="border border-gray-300 rounded-md">Add a Reference</button>
+                  </DialogTrigger>
+                  <DialogContent className="sm:max-w-[425px]">
+                    <DialogHeader>
+                      <DialogTitle>Add a Reference</DialogTitle>
+                      <DialogDescription>
+                        Make changes to your reference here. Click save when you're done.
+                      </DialogDescription>
+                    </DialogHeader>
+                    
+                    <div className="grid gap-4 py-4">
+                      <UploadDropzone 
+                        endpoint="imageUploader"
+                        onClientUploadComplete={(res) => {
+                          console.log("files: ", res);
+                        }}
+                        onUploadError={(error: Error) => {
+                        console.log(error);
+                        alert(`ERROR! ${error.message}`);
+                        }}
+                      />
+                      <div className="grid grid-cols-4 items-center gap-4">
+                        <div  className="text-right">
+                          Title
+                        </div>
+                        <input id="name" value="Pedro Duarte" className="col-span-3" />
+                      </div>
+                      <div className="grid grid-cols-4 items-center gap-4">
+                        <div className="text-right">
+                          Description
+                        </div>
+                        <input id="username" value="@peduarte" className="col-span-3" />
+                      </div>
+                    </div>
+                    <DialogFooter>
+                      <button type="submit">Save changes</button>
+                    </DialogFooter>
+                  </DialogContent>
+                </Dialog> */}
                 <UploadDropzone
                   endpoint="imageUploader"
                   onClientUploadComplete={(res) => {
                     // Do something with the response
-                    setFormData({
-                      ...formData,
-                      media: [...formData.media, res.at(0).url]
-                    })
-                    setIsImageUploaded(true);
+                    // setFormData({
+                    //   ...formData,
+                    //   media: [...formData.media, res.at(0).url]
+                    // })
                     console.log("Files: ", res);
                     console.log(formData);
-                    alert("Upload Completed");
+                    // handleImageUpload(res.at(0).url)
+                    return (
+                      <div>
+                        {/* {showModal ?? (
+                          <div>
+                          <Modal setShowModal={setShowModal}>
+                            <h2>Modal Content</h2>
+                            <p>This is the content of the modal.</p>
+                          </Modal>
+                        </div>
+                        )} */}
+                      </div>
+                    )
+                    // alert("Upload Completed");
                   }}
                   onUploadError={(error: Error) => {
                     console.log(error);
@@ -135,10 +290,10 @@ const AddMediaForm: FC<Props> = ({
                   endpoint="imageUploader"
                   onClientUploadComplete={(res) => {
                     // Do something with the response
-                    setFormData({
-                      ...formData,
-                      media: [...formData.media, res.at(0).url]
-                    })
+                    // setFormData({
+                    //   ...formData,
+                    //   media: [...formData.media, res.at(0).url]
+                    // })
                     setIsImageUploaded(true);
                     console.log("Files: ", res);
                     alert("Upload Completed");
@@ -151,10 +306,10 @@ const AddMediaForm: FC<Props> = ({
                   endpoint="imageUploader"
                   onClientUploadComplete={(res) => {
                     // Do something with the response
-                    setFormData({
-                      ...formData,
-                      media: [...formData.media, res.at(0).url]
-                    })
+                    // setFormData({
+                    //   ...formData,
+                    //   media: [...formData.media, res.at(0).url]
+                    // })
                     setIsImageUploaded(true);
                     console.log("Files: ", res);
                     alert("Upload Completed");
@@ -167,10 +322,10 @@ const AddMediaForm: FC<Props> = ({
                   endpoint="imageUploader"
                   onClientUploadComplete={(res) => {
                     // Do something with the response
-                    setFormData({
-                      ...formData,
-                      media: [...formData.media, res.at(0).url]
-                    })
+                    // setFormData({
+                    //   ...formData,
+                    //   media: [...formData.media, res.at(0).url]
+                    // })
                     setIsImageUploaded(true);
                     console.log("Files: ", res);
                     alert("Upload Completed");
@@ -186,10 +341,10 @@ const AddMediaForm: FC<Props> = ({
                 endpoint="imageUploader"
                 onClientUploadComplete={(res) => {
                   // Do something with the response
-                  setFormData({
-                    ...formData,
-                    media: [...formData.media, res.at(0).url],
-                  });
+                  // setFormData({
+                  //   ...formData,
+                  //   media: [...formData.media, res.at(0).url],
+                  // });
                   setIsImageUploaded(true); // Set imageUploaded to true
                 }}
                 onUploadError={(error: Error) => {
