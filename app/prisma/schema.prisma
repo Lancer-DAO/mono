@@ -79,6 +79,16 @@ model Comment {
   bounty BountyComment[]
 }
 
+model Contribution {
+  id            Int    @id @default(autoincrement())
+  user_id       Int
+  total_commits Int
+  breakdown     Json
+  total_lines   Int
+  date          String @db.VarChar(24)
+  user          User   @relation(fields: [user_id], references: [id])
+}
+
 model Endorsement {
   id Int @id @default(autoincrement())
 
@@ -320,19 +330,20 @@ model User {
   createdAt            String   @default("") @db.VarChar(24)
 
   // Relations
-  wallets      Wallet[]
-  bounties     BountyUser[]
-  certificates CertificateUser[]
-  escrows      EscrowUser[]
-  milestones   MilestoneUser[]
-  projects     ProjectUser[]
-  guilds       GuildUser[]
-  tags         Tag[]
-  pullRequests PullRequest[]
-  endorsees    Endorsement[]      @relation("endorsee")
-  endorsers    Endorsement[]      @relation("endorser")
-  referrers    ReferrerReferree[] @relation("referree")
-  referrees    ReferrerReferree[] @relation("referrer")
+  wallets       Wallet[]
+  bounties      BountyUser[]
+  certificates  CertificateUser[]
+  escrows       EscrowUser[]
+  milestones    MilestoneUser[]
+  projects      ProjectUser[]
+  guilds        GuildUser[]
+  tags          Tag[]
+  pullRequests  PullRequest[]
+  endorsees     Endorsement[]      @relation("endorsee")
+  endorsers     Endorsement[]      @relation("endorser")
+  referrers     ReferrerReferree[] @relation("referree")
+  referrees     ReferrerReferree[] @relation("referrer")
+  contributions Contribution[]
 }
 
 model Wallet {
