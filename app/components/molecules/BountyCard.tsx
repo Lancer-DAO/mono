@@ -23,11 +23,9 @@ export interface BountyCardProps extends SVGAttributes<SVGSVGElement> {
 const BountyCard: FC<BountyCardProps> = ({
   bounty,
   formData,
-  allIndustries,
   linked = true,
 }) => {
   const { currentUser } = useUserWallet();
-  const [bountyIndustries, setBountyIndustries] = useState<Industry[]>([]);
 
   const router = useRouter();
 
@@ -42,20 +40,6 @@ const BountyCard: FC<BountyCardProps> = ({
   const tagOverflow = bounty
     ? bounty.tags.length > 3
     : formData.tags.length > 3;
-
-  useEffect(() => {
-    const getCardIndustries = () => {
-      if (formData && formData.industryIds.length > 0) {
-        const matchedIndustries = allIndustries?.filter((industry) =>
-          formData.industryIds.includes(industry.id)
-        );
-        setBountyIndustries(matchedIndustries);
-      } else {
-        setBountyIndustries([allIndustries?.[0]]);
-      }
-    };
-    getCardIndustries();
-  }, [formData?.industryIds, allIndustries]);
 
   // useEffect(() => {
   //   console.log("bounty: ", bounty);
@@ -74,13 +58,13 @@ const BountyCard: FC<BountyCardProps> = ({
     >
       <div className="absolute left-1/2 -translate-x-[53%] top-[6px] w-7">
         <Image
-          src={bountyIndustries[0]?.icon}
+          src={bounty?.industries[0]?.icon ?? bounty?.industries[0]?.icon}
           width={28}
           height={28}
-          alt={bountyIndustries[0]?.name ?? "industry icon"}
+          alt={bounty?.industries[0]?.name ?? "industry icon"}
         />
       </div>
-      <BountyCardFrame color={bountyIndustries[0]?.color} />
+      <BountyCardFrame color={bounty?.industries[0]?.color} />
       <div className="w-full absolute top-1">
         <div className="w-full flex items-center justify-between px-1">
           <PriceTag
@@ -113,13 +97,13 @@ const BountyCard: FC<BountyCardProps> = ({
             </div>
           )}
           {/* testing */}
-          <div className="flex items-center gap-[1px]">
+          {/* <div className="flex items-center gap-[1px]">
             <StarIcon fill="#29CE17" />
             <StarIcon />
             <StarIcon />
             <StarIcon />
             <StarIcon />
-          </div>
+          </div> */}
         </div>
 
         <div className="mt-2">
