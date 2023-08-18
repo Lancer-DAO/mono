@@ -59,7 +59,6 @@ export {
   // @icons
   Close,
   ExternalLinkIcon,
-  MarketingIcon,
   Logo,
   MarketingIcon,
   NextArrow,
