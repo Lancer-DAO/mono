@@ -3,14 +3,8 @@ import Image from "next/image";
 import { IAsyncResult, ProfileNFT } from "@/types/";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
-import {
-  Button,
-  CoinflowOfframp,
-  AddReferrerModal,
-  LinkButton,
-} from "@/components";
+import { Button } from "@/components";
 import { useReferral } from "@/src/providers/referralProvider";
-import { Copy } from "react-feather";
 import { Treasury } from "@ladderlabs/buddy-sdk";
 import { api } from "@/src/utils/api";
 import * as Prisma from "@prisma/client";
@@ -25,7 +19,6 @@ import {
   TokenAccountNotFoundError,
 } from "@solana/spl-token";
 import { useConnection } from "@solana/wallet-adapter-react";
-import { roundDownToTwoDecimals } from "@/src/utils";
 
 dayjs.extend(relativeTime);
 

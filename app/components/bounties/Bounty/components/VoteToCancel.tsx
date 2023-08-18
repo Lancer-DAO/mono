@@ -1,4 +1,3 @@
-import { Button } from "@/components";
 import { voteToCancelFFA } from "@/escrow/adapters";
 import { useUserWallet } from "@/src/providers";
 import { useBounty } from "@/src/providers/bountyProvider";
@@ -6,6 +5,7 @@ import { api } from "@/src/utils/api";
 import { PublicKey } from "@solana/web3.js";
 import { BOUNTY_USER_RELATIONSHIP, BountyState } from "@/types/";
 import { updateList } from "@/src/utils";
+import { BountyActionsButton } from ".";
 
 export const VoteToCancel = () => {
   const { currentUser, currentWallet, program, provider } = useUserWallet();
@@ -25,6 +25,11 @@ export const VoteToCancel = () => {
   }
 
   const onClick = async () => {
+    if (
+      !window.confirm("Are you sure you want to vote to cancel this Quest?")
+    ) {
+      return;
+    }
     let signature = "";
     if (currentBounty.isCreator || currentBounty.isCurrentSubmitter) {
       signature = await voteToCancelFFA(
@@ -56,8 +61,6 @@ export const VoteToCancel = () => {
   };
 
   return (
-    <Button onClick={onClick} disabled={!currentWallet.publicKey}>
-      Vote To Cancel
-    </Button>
+    <BountyActionsButton type="red" text="Vote To Cancel" onClick={onClick} />
   );
 };
