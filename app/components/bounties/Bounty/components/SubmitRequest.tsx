@@ -1,4 +1,3 @@
-import { Button } from "@/components";
 import { submitRequestFFA } from "@/escrow/adapters";
 import { BOUNTY_ACTIONS_TUTORIAL_II_INITIAL_STATE } from "@/src/constants/tutorials";
 import { useUserWallet } from "@/src/providers";
@@ -8,6 +7,7 @@ import { api } from "@/src/utils/api";
 import { PublicKey } from "@solana/web3.js";
 import { BOUNTY_USER_RELATIONSHIP, BountyState } from "@/types/";
 import { updateList } from "@/src/utils";
+import { BountyActionsButton } from ".";
 
 export const SubmitRequest = () => {
   const { currentUser, currentWallet, program, provider } = useUserWallet();
@@ -15,11 +15,7 @@ export const SubmitRequest = () => {
   const { currentTutorialState, setCurrentTutorialState } = useTutorial();
   const { mutateAsync } = api.bountyUsers.update.useMutation();
   if (currentBounty.isCurrentSubmitter)
-    return (
-      <Button disabled id="request-denied">
-        Submission Awaiting Review
-      </Button>
-    );
+    return <BountyActionsButton type="neutral" text="Submit" disabled={true} />;
   if (
     !(
       (currentBounty.isApprovedSubmitter && !currentBounty.currentSubmitter) ||
@@ -82,13 +78,5 @@ export const SubmitRequest = () => {
     }
   };
 
-  return (
-    <Button
-      disabled={!currentWallet}
-      onClick={onClick}
-      disabledText="Please Connect your Wallet"
-    >
-      Submit
-    </Button>
-  );
+  return <BountyActionsButton type="green" text="Submit" onClick={onClick} />;
 };

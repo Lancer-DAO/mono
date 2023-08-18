@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { FC, useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import Image from "next/image";
 import { api, decimalToNumber, getSolscanAddress } from "@/utils";
@@ -12,6 +12,21 @@ import { useBounty } from "@/src/providers/bountyProvider";
 import { useUserWallet } from "@/src/providers";
 import { motion } from "framer-motion";
 import { smallClickAnimation } from "@/src/constants";
+import { User } from "@prisma/client";
+
+interface BountyActionsUserProps {
+  title: string;
+  users: User[];
+}
+
+const BountActionsUser: FC<BountyActionsUserProps> = ({ title, users }) => (
+  <>
+    <label className="font-bold text-sm">{title}</label>
+    {users.map((user, index) => (
+      <ContributorInfo user={user} key={index} />
+    ))}
+  </>
+);
 
 export const Bounty = () => {
   const { currentBounty, setCurrentBounty } = useBounty();
@@ -66,8 +81,8 @@ export const Bounty = () => {
   }
 
   return (
-    <div className="w-full h-full">
-      <div className="w-full h-full flex justify-evenly">
+    <>
+      <div className="w-full h-full flex justify-evenly mt-10">
         {/* quest info */}
         <div className="flex flex-col gap-5 w-[380px]">
           {currentBounty?.state && (
@@ -76,29 +91,37 @@ export const Bounty = () => {
             </div>
           )}
           <h1>{currentBounty?.title}</h1>
-          <div className="flex gap-2 items-center">
-            <Image
-              src={currentBounty?.escrow?.mint?.logo}
-              width={25}
-              height={25}
-              alt="mint logo"
-            />
-            <p>{`${bountyAmount} in escrow`}</p>
-            <motion.a
-              {...smallClickAnimation}
-              href={getSolscanAddress(
-                new PublicKey(currentBounty?.escrow?.publicKey)
-              )}
-              target="_blank"
-              rel="noreferrer"
-            >
-              <ExternalLinkIcon />
-            </motion.a>
+          <div className="flex gap-5 items-center">
+            <div className="flex gap-2 items-center">
+              <p>
+                {`Created: ${dayjs
+                  .unix(parseInt(currentBounty.createdAt) / 1000)
+                  .format("MMM D, YYYY")}`}
+              </p>
+              <div className="h-[30px] w-[1px] bg-neutralBtnBorder mx-3" />
+              <Image
+                src={currentBounty?.escrow?.mint?.logo}
+                width={25}
+                height={25}
+                alt="mint logo"
+              />
+              <p>{`${bountyAmount} in escrow`}</p>
+              <motion.a
+                {...smallClickAnimation}
+                href={getSolscanAddress(
+                  new PublicKey(currentBounty?.escrow?.publicKey)
+                )}
+                target="_blank"
+                rel="noreferrer"
+              >
+                <ExternalLinkIcon />
+              </motion.a>
+            </div>
           </div>
           <div className="h-[1px] w-full bg-neutralBtnBorder" />
           <div>
             <p className="font-bold text-sm">Job description</p>
-            <p className="pt-1">{currentBounty?.description}</p>
+            <div dangerouslySetInnerHTML={previewMarkup()} className="pt-1" />
           </div>
           <div>
             <p className="font-bold text-sm">Required skills</p>
@@ -116,30 +139,29 @@ export const Bounty = () => {
           </div>
         </div>
         {/* bountyactions */}
-        <div className="bg-white w-[540px] rounded-md flex flex-col gap-10">
-          <div className="contributors-section" id="contributors-section">
+        <div className="bg-white w-[540px] h-fit rounded-md flex flex-col gap-10 p-10">
+          <div className="flex flex-col gap-5" id="contributors-section">
             {currentBounty?.creator && (
-              <div id="task-creator">
-                <label className="field-label-10">Creator</label>
-                <ContributorInfo user={currentBounty.creator.user} />
-              </div>
+              <BountActionsUser
+                title="Client"
+                users={[currentBounty.creator.user]}
+              />
             )}
             {currentBounty && currentBounty.deniedRequesters.length > 0 && (
-              <div id="task-denied-requested-submitters">
-                <label className="field-label-5">Denied Requesters</label>
-                {currentBounty.deniedRequesters.map((submitter) => (
-                  <ContributorInfo
-                    user={submitter.user}
-                    key={submitter.userid}
-                  />
-                ))}
-              </div>
+              <BountActionsUser
+                title="Denied Requesters"
+                users={currentBounty.deniedRequesters.map(
+                  (submitter) => submitter.user
+                )}
+              />
             )}
             {currentBounty &&
               currentBounty.requestedSubmitters.length > 0 &&
               currentBounty.isCreator && (
-                <div id="task-requested-submitters">
-                  <label className="field-label-5">Requested Applicants</label>
+                <>
+                  <label className="font-bold text-sm">
+                    Requested Applicants
+                  </label>
                   {currentBounty.requestedSubmitters.map((submitter, index) => (
                     <SubmitterSection
                       submitter={submitter}
@@ -148,14 +170,16 @@ export const Bounty = () => {
                       index={index}
                     />
                   ))}
-                </div>
+                </>
               )}
 
             {currentBounty &&
               currentBounty.approvedSubmitters.length > 0 &&
               currentBounty.isCreator && (
-                <div id="task-approved-submitters">
-                  <label className="field-label-5">Approved Applicants</label>
+                <>
+                  <label className="font-bold text-sm">
+                    Approved Applicants
+                  </label>
                   {currentBounty.approvedSubmitters.map((submitter, index) => (
                     <SubmitterSection
                       submitter={submitter}
@@ -164,76 +188,63 @@ export const Bounty = () => {
                       index={index}
                     />
                   ))}
-                </div>
+                </>
               )}
             {currentBounty &&
               currentBounty.currentSubmitter &&
               currentBounty.isCreator && (
-                <div id="task-current-submitter">
-                  <label className="field-label-10">Submissions</label>
-                  <ContributorInfo user={currentBounty.currentSubmitter.user} />
-                </div>
+                <BountActionsUser
+                  title="Submissions"
+                  users={[currentBounty.currentSubmitter.user]}
+                />
               )}
             {currentBounty.isCreator &&
               currentBounty.changesRequestedSubmitters.length > 0 && (
-                <div id="task-changes-requested-submitters">
-                  <label className="field-label-5">Changes Requested</label>
-                  {currentBounty.changesRequestedSubmitters.map((submitter) => (
-                    <ContributorInfo
-                      user={submitter.user}
-                      key={submitter.userid}
-                    />
-                  ))}
-                </div>
+                <BountActionsUser
+                  title="Changes Requested"
+                  users={currentBounty.changesRequestedSubmitters.map(
+                    (submitter) => submitter.user
+                  )}
+                />
               )}
             {currentBounty.isCreator &&
               currentBounty.deniedSubmitters.length > 0 && (
-                <div id="task-denied-submitters">
-                  <label className="field-label-5">Denied Submitters</label>
-                  {currentBounty.deniedSubmitters.map((submitter) => (
-                    <ContributorInfo
-                      user={submitter.user}
-                      key={submitter.userid}
-                    />
-                  ))}
-                </div>
+                <BountActionsUser
+                  title="Denied Submitters"
+                  users={currentBounty.deniedSubmitters.map(
+                    (submitter) => submitter.user
+                  )}
+                />
               )}
             {currentBounty.completer && (
-              <div id="task-completer">
-                <label className="field-label-10">Bounty Completer</label>
-                <ContributorInfo user={currentBounty.completer.user} />
-              </div>
+              <BountActionsUser
+                title="Completed By"
+                users={[currentBounty.completer.user]}
+              />
             )}
             {currentBounty.isCreator &&
               currentBounty.votingToCancel.length > 0 && (
-                <div id="task-voting-to-cancel">
-                  <label className="field-label-5">Voting To Cancel</label>
-                  {currentBounty.votingToCancel.map((submitter) => (
-                    <ContributorInfo
-                      user={submitter.user}
-                      key={submitter.userid}
-                    />
-                  ))}
-                </div>
+                <BountActionsUser
+                  title="Voting To Cancel"
+                  users={currentBounty.votingToCancel.map(
+                    (submitter) => submitter.user
+                  )}
+                />
               )}
             {currentBounty.isCreator &&
               currentBounty.needsToVote.length > 0 && (
-                <div id="task-votes-needed-to-cancel">
-                  <label className="field-label-5">
-                    Votes Needed to Cancel
-                  </label>
-                  {currentBounty.needsToVote.map((submitter) => (
-                    <ContributorInfo
-                      user={submitter.user}
-                      key={submitter.userid}
-                    />
-                  ))}
-                </div>
+                <BountActionsUser
+                  title="Votes Needed to Cancel"
+                  users={currentBounty.needsToVote.map(
+                    (submitter) => submitter.user
+                  )}
+                />
               )}
+            <BountyActions />
           </div>
         </div>
       </div>
-    </div>
+    </>
 
     // <section className="section-job-post wf-section">
     //   <div className="container-default">

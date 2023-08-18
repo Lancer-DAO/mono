@@ -1,4 +1,6 @@
+import { smallClickAnimation } from "@/src/constants";
 import { User } from "@prisma/client";
+import { motion } from "framer-motion";
 import Image from "next/image";
 import { useRouter } from "next/router";
 
@@ -10,8 +12,9 @@ const ContributorInfo: React.FC<{ user: User; disableLink?: boolean }> = ({
   return (
     user &&
     (!!user.githubId || user.picture) && (
-      <div
-        className="flex items-center hover:cursor-pointer  hover:text-blue-400"
+      <motion.button
+        {...smallClickAnimation}
+        className="flex items-center hover:cursor-pointer hover:text-blue-400"
         onClick={() => {
           if (disableLink) return;
           router.push(`/account/${user.id}`);
@@ -25,15 +28,15 @@ const ContributorInfo: React.FC<{ user: User; disableLink?: boolean }> = ({
                   user.githubId.split("|")[1]
                 }?s=60&v=4`
           }
-          width={25}
-          height={25}
+          width={40}
+          height={40}
           alt={user.name ? user.name : user.githubLogin}
-          className="h-[25px] w-[25px] rounded-full shadow-md shadow-black-300"
+          className="h-[25px] w-[25px] rounded-full"
         />
-        <div className="ml-[10px] text-xs font-bold">
+        <div className="ml-[10px]">
           {user.name ? user.name : user.githubLogin}
         </div>
-      </div>
+      </motion.button>
     )
   );
 };
