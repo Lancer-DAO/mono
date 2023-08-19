@@ -19,7 +19,7 @@ interface Props {
   handleChange: (event) => void;
 }
 
-const AdditionalInfoForm: FC<Props> = ({
+export const AdditionalInfoForm: FC<Props> = ({
   setFormSection,
   formData,
   setFormData,
@@ -227,8 +227,6 @@ const AdditionalInfoForm: FC<Props> = ({
     </div>
   );
 };
-
-export default AdditionalInfoForm;
 
 // {/* <div className="relative flex items-center">
 //   <label className="text-textGreen/70 pr-4 pl-3">Price</label>

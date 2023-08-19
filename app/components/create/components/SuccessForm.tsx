@@ -4,7 +4,7 @@ import { CopyLinkField, TweetShareButton } from "@/components";
 import { useBounty } from "@/src/providers/bountyProvider";
 import { IS_CUSTODIAL } from "@/src/constants";
 
-const SuccessForm: FC = () => {
+export const SuccessForm: FC = () => {
   const { currentBounty } = useBounty();
   const SITE_URL = `https://${
     IS_CUSTODIAL ? "app" : "pro"
@@ -51,5 +51,3 @@ const SuccessForm: FC = () => {
     </div>
   );
 };
-
-export default SuccessForm;

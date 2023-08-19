@@ -1,11 +1,9 @@
-import { FC, useEffect, useState, Dispatch, SetStateAction } from "react";
+import { FC, Dispatch, SetStateAction } from "react";
 import { MultiSelectDropdown } from "@/components";
-import { api } from "@/src/utils/api";
 import { CREATE_BOUNTY_TUTORIAL_INITIAL_STATE } from "@/src/constants/tutorials";
 import { smallClickAnimation } from "@/src/constants";
 import { FORM_SECTION, FormData } from "@/types/forms";
 import { useTutorial } from "@/src/providers/tutorialProvider";
-import Toggle, { ToggleConfig } from "../molecules/Toggle";
 import { motion } from "framer-motion";
 import { toast } from "react-hot-toast";
 import { IAsyncResult, Industry, Option } from "@/types";
@@ -18,7 +16,7 @@ interface Props {
   handleChange: (event) => void;
 }
 
-const Form: FC<Props> = ({
+export const CreateBountyForm: FC<Props> = ({
   setFormSection,
   formData,
   industries,
@@ -178,5 +176,3 @@ const Form: FC<Props> = ({
     </>
   );
 };
-
-export default Form;

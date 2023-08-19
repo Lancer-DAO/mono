@@ -41,15 +41,8 @@ const TutorialsModal = dynamic(() => import("./molecules/TutorialsModal"));
 const WalletInfo = dynamic(() => import("./molecules/WalletInfo"));
 
 // organisms
-const AdditionalInfoForm = dynamic(
-  () => import("./organisms/AdditionalInfoForm")
-);
-const CreateBountyForm = dynamic(() => import("./organisms/CreateBountyForm"));
-const FundBountyForm = dynamic(() => import("./organisms/FundBountyForm"));
 const Header = dynamic(() => import("./organisms/Header"));
 const JoyrideWrapper = dynamic(() => import("./organisms/JoyrideWrapper"));
-const PreviewForm = dynamic(() => import("./organisms/PreviewForm"));
-const SuccessForm = dynamic(() => import("./organisms/SuccessForm"));
 
 // templates
 const DefaultLayout = dynamic(() => import("./templates/DefaultLayout"));
@@ -92,13 +85,8 @@ export {
   WalletInfo,
 
   // organisms
-  AdditionalInfoForm,
-  CreateBountyForm,
-  FundBountyForm,
   Header,
   JoyrideWrapper,
-  PreviewForm,
-  SuccessForm,
 
   // templates
   DefaultLayout,

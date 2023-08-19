@@ -1,13 +1,12 @@
 import React, { useEffect, useState } from "react";
+import { BountyCard, PreviewCardBase } from "@/components";
 import {
   CreateBountyForm,
   AdditionalInfoForm,
   PreviewForm,
   FundBountyForm,
   SuccessForm,
-  BountyCard,
-  PreviewCardBase,
-} from "@/components";
+} from "./components";
 import { PublicKey } from "@solana/web3.js";
 import { FORM_SECTION, FormData } from "@/types/forms";
 import { useUserWallet } from "@/src/providers";

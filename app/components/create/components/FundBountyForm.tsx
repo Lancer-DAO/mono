@@ -29,7 +29,7 @@ interface Props {
   mint: Mint;
 }
 
-const Form: FC<Props> = ({
+export const FundBountyForm: FC<Props> = ({
   isAccountCreated,
   formData,
   setFormData,
@@ -217,5 +217,3 @@ const Form: FC<Props> = ({
     </div>
   );
 };
-
-export default Form;

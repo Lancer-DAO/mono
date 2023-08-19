@@ -5,13 +5,12 @@ import {
   IS_MAINNET,
   smallClickAnimation,
 } from "@/src/constants";
-import * as Prisma from "@prisma/client";
 import { FORM_SECTION, FormData } from "@/types/forms";
 import { useBounty } from "@/src/providers/bountyProvider";
 import { useTutorial } from "@/src/providers/tutorialProvider";
 import { motion } from "framer-motion";
 import { PreviewCardBase, Toggle, BountyCard } from "@/components";
-import { ToggleConfig } from "../molecules/Toggle";
+import { ToggleConfig } from "@/components/molecules/Toggle";
 import { PublicKey } from "@solana/web3.js";
 import { createFFA } from "@/escrow/adapters";
 import { api } from "@/utils";
@@ -27,7 +26,7 @@ interface Props {
   mint: Mint;
 }
 
-const PreviewForm: FC<Props> = ({
+export const PreviewForm: FC<Props> = ({
   setFormSection,
   formData,
   industries,
@@ -178,5 +177,3 @@ const PreviewForm: FC<Props> = ({
     </div>
   );
 };
-
-export default PreviewForm;
