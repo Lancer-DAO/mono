@@ -1,13 +1,13 @@
-import type { AppProps } from "next/app";
-import "@/src/styles/globals.css";
-import "@/src/styles/Bounty.scss";
-import { api } from "@/src/utils/api";
 import { AllProviders } from "@/src/providers";
-import { useEffect, ReactNode, ReactElement } from "react";
-import { useRouter } from "next/router";
+import "@/src/styles/Bounty.scss";
+import "@/src/styles/globals.css";
+import { api } from "@/src/utils/api";
 import { NextPage } from "next";
-import { DefaultLayout } from "../components";
 import { DefaultSeo } from "next-seo";
+import type { AppProps } from "next/app";
+import { useRouter } from "next/router";
+import { ReactElement, ReactNode, useEffect } from "react";
+import { DefaultLayout } from "../components";
 
 // import your default seo configuration
 import SEO from "../next-seo.config";

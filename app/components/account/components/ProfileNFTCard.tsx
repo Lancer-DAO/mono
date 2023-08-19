@@ -1,15 +1,15 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
-import Image from "next/image";
-import { IAsyncResult, ProfileNFT } from "@/types/";
+import { useUserWallet } from "@/src/providers";
+import { useReferral } from "@/src/providers/referralProvider";
+import { api } from "@/src/utils/api";
+import { Treasury } from "@ladderlabs/buddy-sdk";
+import * as Prisma from "@prisma/client";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
+import Image from "next/image";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { IAsyncResult, ProfileNFT } from "@/types/";
 import { Button } from "@/components";
-import { useReferral } from "@/src/providers/referralProvider";
-import { Treasury } from "@ladderlabs/buddy-sdk";
-import { api } from "@/src/utils/api";
-import * as Prisma from "@prisma/client";
 import { IS_CUSTODIAL, USDC_MINT } from "@/src/constants";
-import { useUserWallet } from "@/src/providers";
 import { Keypair, PublicKey, Transaction } from "@solana/web3.js";
 import {
   createTransferInstruction,
@@ -265,107 +265,6 @@ export const ProfileNFTCard = ({
           <h4>Last Updated</h4>
           <div>{profileNFT.lastUpdated?.fromNow()}</div>
         </div>
-
-        <div>
-          <div className="divider"></div>
-
-          // TODO: Move this to its own component @scammo
-          <h4>Refer your friends</h4>
-          {referralId && initialized ? (
-            <div className="relative w-full">
-              <div className="flex items-center gap-2">
-                <span className="text-blue-300">
-                  {SITE_URL}
-                  {referralId}
-                </span>
-                <Copy
-                  className="cursor-pointer"
-                  onClick={() => handleCopyClick(`${SITE_URL}${referralId}`)}
-                />
-              </div>
-              <div className="absolute right-0 text-base">
-                {isCopied ? "Copied!" : ""}
-              </div>
-            </div>
-          ) : (
-            <div>
-              <Button className="mb-6" onClick={handleCreateLink}>
-                Generate link
-              </Button>
-            </div>
-          )}
-        </div>
-
-        <div>
-          {claimables &&
-          claimables.filter((claimable) => claimable.amount > 0).length > 0 ? (
-            <>
-              <div className="divider"></div>
-              <h4>Claim your rewards</h4>
-              {claimButtons}
-            </>
-          ) : null}
-        </div>
-        <div>
-          <div className="divider" />
-          <div className="my-[10px]">
-            <Button
-              onClick={() => {
-                setShowCoinflow(!showCoinflow);
-              }}
-            >
-              Cash Out
-            </Button>
-          </div>
-
-          {showCoinflow && <CoinflowOfframp />}
-          {IS_CUSTODIAL && (
-            <>
-              <h2>Send USD to Address</h2>
-              {!balance.isLoading && (
-                <div>{`Balance: $${roundDownToTwoDecimals(
-                  balance.result
-                )}`}</div>
-              )}
-              <div className="">
-                <input
-                  type="text"
-                  className="input w-input"
-                  value={sendToPublicKey}
-                  onChange={handleMessageChange}
-                  placeholder="Paste Public Key"
-                />
-                <input
-                  type="number"
-                  className="input w-input"
-                  value={amount}
-                  onChange={handleAmountChange}
-                  placeholder="Amount"
-                />
-                <Button
-                  onClick={handleSendClick}
-                  disabled={signature !== ""}
-                  extraClasses="mt-6"
-                >
-                  {`Sen${signature === "" ? "d" : "t"}: $${amount / 10.0 ** 2}`}
-                </Button>
-
-                {!!signature && (
-                  <LinkButton
-                    href={`https://solscan.io/tx/${signature}`}
-                    onClick={handleSendClick}
-                    wrapperClasses="mt-6"
-                    target="_blank"
-                  >
-                    View Transaction
-                  </LinkButton>
-                )}
-              </div>
-            </>
-          )}
-        </div>
-      </div>
-
       <AddReferrerModal
         setShowModal={setShowReferrerModal}
         showModal={showReferrerModal}

@@ -4,6 +4,8 @@ import dynamic from "next/dynamic";
 const Close = dynamic(() => import("./@icons/Close"));
 const ExternalLinkIcon = dynamic(() => import("./@icons/ExternalLinkIcon"));
 const Logo = dynamic(() => import("./@icons/Logo"));
+const MarketingIcon = dynamic(() => import("./@icons/MarketingIcon"));
+const NextArrow = dynamic(() => import("./@icons/NextArrow"));
 const PhantomLogo = dynamic(() => import("./@icons/PhantomLogo"));
 const StarIcon = dynamic(() => import("./@icons/StarIcon"));
 const USDC = dynamic(() => import("./@icons/USDC"));
@@ -13,7 +15,6 @@ const BountyCardFrame = dynamic(() => import("./atoms/BountyCardFrame"));
 const Button = dynamic(() => import("./atoms/Button"));
 const CoinflowOfframp = dynamic(() => import("./atoms/CoinflowOfframp"));
 const ContributorInfo = dynamic(() => import("./atoms/ContributorInfo"));
-const MarketingIcon = dynamic(() => import("./@icons/MarketingIcon"));
 const LoadingBar = dynamic(() => import("./atoms/LoadingBar"));
 const PreviewCardBase = dynamic(() => import("./atoms/PreviewCardBase"));
 const PriceTag = dynamic(() => import("./atoms/PriceTag"));
@@ -58,8 +59,9 @@ export {
   // @icons
   Close,
   ExternalLinkIcon,
-  MarketingIcon,
   Logo,
+  MarketingIcon,
+  NextArrow,
   PhantomLogo,
   StarIcon,
   USDC,

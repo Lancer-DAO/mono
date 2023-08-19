@@ -1,10 +1,7 @@
 import { useState, useEffect } from "react";
 import Image from "next/image";
-import {
-  TABLE_BOUNTY_STATES,
-  TABLE_MY_BOUNTY_STATES,
-  smallClickAnimation,
-} from "@/src/constants";
+import { smallClickAnimation } from "@/src/constants";
+
 import { getUniqueItems } from "@/src/utils";
 import { useUserWallet } from "@/src/providers";
 import { LoadingBar, BountyCard } from "@/components";
@@ -12,7 +9,13 @@ import { api } from "@/src/utils/api";
 import { useRouter } from "next/router";
 import { BountyFilters } from "./components";
 import { IAsyncResult } from "@/types/common";
-import { BountyPreview, Filters, Industry } from "@/types";
+import {
+  BountyPreview,
+  Filters,
+  Industry,
+  TABLE_BOUNTY_STATES,
+  TABLE_MY_BOUNTY_STATES,
+} from "@/types";
 import { AnimatePresence, motion } from "framer-motion";
 import { Mint } from "@prisma/client";
 export const BOUNTY_USER_RELATIONSHIP = [
