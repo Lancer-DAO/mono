@@ -1,21 +1,22 @@
-import { FC, useState, Dispatch, SetStateAction, useEffect } from "react";
-import { useUserWallet } from "@/src/providers/userWalletProvider";
+import { PreviewCardBase, Toggle } from "@/components";
+import { createFFA } from "@/escrow/adapters";
 import {
   CREATE_BOUNTY_TUTORIAL_INITIAL_STATE,
   IS_MAINNET,
   smallClickAnimation,
 } from "@/src/constants";
-import * as Prisma from "@prisma/client";
-import { FORM_SECTION, FormData } from "@/types/forms";
 import { useBounty } from "@/src/providers/bountyProvider";
 import { useTutorial } from "@/src/providers/tutorialProvider";
-import { motion } from "framer-motion";
-import { PreviewCardBase, Toggle } from "@/components";
-import { ToggleConfig } from "../molecules/Toggle";
-import { PublicKey } from "@solana/web3.js";
-import { createFFA } from "@/escrow/adapters";
-import { api } from "@/utils";
+import { useUserWallet } from "@/src/providers/userWalletProvider";
 import { Bounty } from "@/types";
+import { FORM_SECTION, FormData } from "@/types/forms";
+import { api } from "@/utils";
+import * as Prisma from "@prisma/client";
+import { PublicKey } from "@solana/web3.js";
+import { motion } from "framer-motion";
+import Link from "next/link";
+import { Dispatch, FC, SetStateAction, useEffect, useState } from "react";
+import { ToggleConfig } from "../molecules/Toggle";
 
 interface Props {
   setFormSection: Dispatch<SetStateAction<FORM_SECTION>>;
@@ -139,16 +140,17 @@ const PreviewForm: FC<Props> = ({
           <PreviewCardBase title="Quest">Preview Card</PreviewCardBase>
           {/* 2. quest links card */}
           <PreviewCardBase title="Links">
-            <div className="w-full flex flex-col items-center justify-start gap-2 px-4">
+            <div className="w-full flex flex-col justify-start gap-2 px-6">
               {formData.links.map((link: string, index: number) => (
-                <div
+                <Link
+                  href={link}
                   key={index}
-                  className="w-full h-12 px-3 border-neutralBtnBorder bg-neutralBtn text-xl py-2 rounded-lg overflow-hidden ellipsis"
+                  className="w-full h-12 px-3 border border-neutralBtnBorder bg-neutralBtn text-green-700 text-xl py-2 rounded-md overflow-hidden ellipsis whitespace-nowrap text-ellipsis"
                 >
                   {link}
-                </div>
+                </Link>
               ))}
-              <div className="w-full h-24 px-3 border-neutralBtnBorder bg-neutralBtn text-xl py-2 rounded-lg overflow-hidden ellipsis">
+              <div className="w-full h-24 px-3 border border-neutralBtnBorder bg-neutralBtn py-2 text-lg rounded-md overflow-hidden ellipsis text-green-700">
                 {formData.comment}
               </div>
             </div>
