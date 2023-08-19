@@ -56,7 +56,7 @@ const Form: FC<Props> = ({
   };
 
   const onClick = async () => {
-    const toastId = toast.loading("Funding bounty...");
+    const toastId = toast.loading("Funding Quest...");
     setFundQuestState({
       isLoading: true,
       loadingPrompt: "Sending Funds to Escrow",
@@ -87,11 +87,11 @@ const Form: FC<Props> = ({
         escrowId: currentBounty?.escrow.id,
         amount: parseFloat(formData.issuePrice),
       });
-      toast.success("Bounty funded!", { id: toastId });
+      toast.success("Quest funded!", { id: toastId });
       setFormSection("SUCCESS");
     } catch (error) {
-      console.log("error funding bounty: ", error);
-      toast.error("Error funding bounty", { id: toastId });
+      console.log("error funding Quest: ", error);
+      toast.error("Error funding Quest", { id: toastId });
       setFundQuestState({ error });
     }
   };
