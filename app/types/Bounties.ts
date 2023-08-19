@@ -2,6 +2,7 @@ import { api } from "@/src/utils/api";
 import { BountyPreviewType, BountyUserType } from "@/prisma/queries/bounty";
 import { BountyType } from "@/prisma/queries/bounty";
 import { UserType, UserSearchType } from "@/prisma/queries/user";
+import { WalletType } from "@/prisma/queries/wallet";
 
 export enum BOUNTY_USER_RELATIONSHIP {
   Creator = "creator",
@@ -55,6 +56,7 @@ export type Bounty = BountyType;
 export type BountyPreview = BountyPreviewType;
 export type User = UserType;
 export type UserSearch = UserSearchType;
+export type Wallet = WalletType;
 
 export type UnwrapPromise<T> = T extends Promise<infer U> ? U : T;
 export type UnwrapArray<T> = T extends Array<infer U> ? U : T;

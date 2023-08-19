@@ -13,6 +13,7 @@ import Image from "next/image";
 import { FORM_SECTION } from "@/types/forms";
 import { useBounty } from "@/src/providers/bountyProvider";
 import { useTutorial } from "@/src/providers/tutorialProvider";
+import { useReferral } from "@/src/providers/referralProvider";
 
 const Form: React.FC<{
   setFormSection: (section: FORM_SECTION) => void;
@@ -44,6 +45,7 @@ const Form: React.FC<{
 
   const [isPreview, setIsPreview] = useState(false);
   const [isSubmittingIssue, setIsSubmittingIssue] = useState(false);
+  const { getSubmitterReferrer, getRemainingAccounts } = useReferral();
 
   const toggleOpenRepo = () => {
     setIsOpenMints(!isOpenMints);
@@ -73,11 +75,17 @@ const Form: React.FC<{
     }
 
     const mintKey = new PublicKey(mint.publicKey);
+    const remainingAccounts = await getRemainingAccounts(
+      currentWallet.publicKey,
+      mintKey
+    );
 
     const { timestamp, signature, escrowKey } = await createFFA(
       currentWallet,
       program,
       provider,
+      await getSubmitterReferrer(currentWallet.publicKey, mintKey),
+      remainingAccounts,
       mintKey
     );
     createAccountPoll(escrowKey);

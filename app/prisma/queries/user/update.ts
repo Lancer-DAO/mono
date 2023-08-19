@@ -52,3 +52,17 @@ export const updatePicture = async (
     },
   });
 };
+
+export const updateName = async (
+  id: number,
+  name: string
+): Promise<Prisma.User> => {
+  return await prisma.user.update({
+    where: {
+      id: id,
+    },
+    data: {
+      name,
+    },
+  });
+};

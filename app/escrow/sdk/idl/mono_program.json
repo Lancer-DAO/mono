@@ -123,7 +123,9 @@
           "name": "creator",
           "isMut": false,
           "isSigner": false,
-          "docs": ["Check: Web3 auth can't allow 2 signers"]
+          "docs": [
+            "Check: Web3 auth can't allow 2 signers"
+          ]
         },
         {
           "name": "fundsMint",
@@ -1368,6 +1370,11 @@
           }
         },
         {
+          "name": "referrer",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
           "name": "rent",
           "isMut": false,
           "isSigner": false
@@ -2243,13 +2250,19 @@
           {
             "name": "approvedSubmitters",
             "type": {
-              "array": ["publicKey", 5]
+              "array": [
+                "publicKey",
+                5
+              ]
             }
           },
           {
             "name": "approvedSubmittersShares",
             "type": {
-              "array": ["f32", 5]
+              "array": [
+                "f32",
+                5
+              ]
             }
           },
           {
@@ -2311,7 +2324,43 @@
           {
             "name": "approvedReferrers",
             "type": {
-              "array": ["publicKey", 5]
+              "array": [
+                "publicKey",
+                10
+              ]
+            }
+          },
+          {
+            "name": "noOfSubmitters",
+            "type": "u8"
+          },
+          {
+            "name": "creatorReferrer",
+            "type": "publicKey"
+          },
+          {
+            "name": "creatorMember",
+            "type": "publicKey"
+          }
+        ]
+      }
+    },
+    {
+      "name": "ReferralDataAccountOld",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "referralDataAccountBump",
+            "type": "u8"
+          },
+          {
+            "name": "approvedReferrers",
+            "type": {
+              "array": [
+                "publicKey",
+                5
+              ]
             }
           },
           {
@@ -2418,8 +2467,5 @@
       "name": "InsufficientFunds",
       "msg": "Insufficient funds"
     }
-  ],
-  "metadata": {
-    "address": "LAnCQFuCsqVgekkfYwZDoKjhZscnK1hbKuWQFNP9DXG"
-  }
+  ]
 }

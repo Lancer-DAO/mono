@@ -235,6 +235,9 @@ const ReferralProvider: FunctionComponent<IReferralProps> = ({ children }) => {
           blockhash: blockhash,
           lastValidBlockHeight: lastValidBlockHeight,
         };
+        if (instructions.length === 0) {
+          return;
+        }
 
         const transaction = new Transaction(txInfo).add(...instructions);
         const signature = await sendTransaction(transaction, connection);

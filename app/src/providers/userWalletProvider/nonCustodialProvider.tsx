@@ -64,7 +64,6 @@ const UserWalletProvider: FunctionComponent<IUserWalletState> = ({
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [currentWallet, setCurrentWallet] = useState<LancerWallet>();
   const [provider, setProvider] = useState<AnchorProvider>();
-  const [isLoggingIn, setIsLoggingIn] = useState<boolean>();
   const [program, setProgram] = useState<Program<MonoProgram>>();
 
   useEffect(() => {
@@ -107,7 +106,7 @@ const UserWalletProvider: FunctionComponent<IUserWalletState> = ({
         return;
       }
     }
-  }, [connected]);
+  }, [connected, publicKey]);
 
   useEffect(() => {
     if (user) {
@@ -122,7 +121,7 @@ const UserWalletProvider: FunctionComponent<IUserWalletState> = ({
       };
       getUser();
     }
-  }, [user, isLoggingIn]);
+  }, [user]);
 
   const contextProvider = {
     currentUser,

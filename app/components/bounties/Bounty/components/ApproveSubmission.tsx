@@ -43,7 +43,14 @@ export const ApproveSubmission = () => {
         isRunning: false,
       });
     }
+
     // If we are the creator, then skip requesting and add self as approved
+    console.log(
+      currentBounty.currentSubmitter.publicKey,
+      currentBounty.escrow.publicKey.toString(),
+      currentWallet.publicKey.toString(),
+      buddylinkProgramId.toString()
+    );
     const signature = await approveRequestFFA(
       new PublicKey(currentBounty.currentSubmitter.publicKey),
       currentBounty.escrow,
@@ -52,13 +59,14 @@ export const ApproveSubmission = () => {
       program,
       provider
     );
-    const { updatedBounty } = await mutateAsync({
+    const submitterKey = currentBounty.currentSubmitter.publicKey;
+    const updatedBounty = await mutateAsync({
       bountyId: currentBounty.id,
       currentUserId: currentUser.id,
       userId: currentBounty.currentSubmitter.userid,
       relations: [BOUNTY_USER_RELATIONSHIP.Completer],
       state: BountyState.COMPLETE,
-      publicKey: currentWallet.publicKey.toString(),
+      publicKey: submitterKey,
       escrowId: currentBounty.escrowid,
       signature,
       label: "complete-bounty",
@@ -66,7 +74,6 @@ export const ApproveSubmission = () => {
 
     setCurrentBounty(updatedBounty);
 
-    const submitterKey = currentBounty.currentSubmitter.publicKey;
     const creatorKey = currentBounty.creator.publicKey;
     let nfts = await underdogClient.getNfts({
       params: PROFILE_PROJECT_PARAMS,

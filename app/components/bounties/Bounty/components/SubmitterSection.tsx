@@ -51,13 +51,13 @@ export const SubmitterSection: React.FC<SubmitterSectionProps> = ({
               [BOUNTY_USER_RELATIONSHIP.ApprovedSubmitter],
               [BOUNTY_USER_RELATIONSHIP.DeniedRequester]
             );
-            const { updatedBounty } = await mutateAsync({
+            const updatedBounty = await mutateAsync({
               bountyId: currentBounty.id,
               userId: submitter.userid,
               currentUserId: currentUser.id,
               relations: newRelations,
 
-              publicKey: currentWallet.publicKey.toString(),
+              publicKey: submitter.publicKey.toString(),
               escrowId: currentBounty.escrowid,
               signature: "test",
               label: "remove-submitter",
@@ -78,12 +78,12 @@ export const SubmitterSection: React.FC<SubmitterSectionProps> = ({
                 [],
                 [BOUNTY_USER_RELATIONSHIP.DeniedRequester]
               );
-              const { updatedBounty } = await mutateAsync({
+              const updatedBounty = await mutateAsync({
                 bountyId: currentBounty.id,
                 currentUserId: currentUser.id,
                 userId: submitter.userid,
                 relations: newRelations,
-                publicKey: currentWallet.publicKey.toString(),
+                publicKey: submitter.publicKey,
                 escrowId: currentBounty.escrowid,
                 signature: "n/a",
                 label: "deny-submitter",
@@ -124,13 +124,13 @@ export const SubmitterSection: React.FC<SubmitterSectionProps> = ({
                 [BOUNTY_USER_RELATIONSHIP.RequestedSubmitter],
                 [BOUNTY_USER_RELATIONSHIP.ApprovedSubmitter]
               );
-              const { updatedBounty } = await mutateAsync({
+              const updatedBounty = await mutateAsync({
                 bountyId: currentBounty.id,
                 userId: submitter.userid,
                 currentUserId: currentUser.id,
                 relations: newRelations,
                 state: BountyState.IN_PROGRESS,
-                publicKey: currentWallet.publicKey.toString(),
+                publicKey: submitter.publicKey,
                 escrowId: currentBounty.escrowid,
                 signature,
                 label: "add-approved-submitter",
