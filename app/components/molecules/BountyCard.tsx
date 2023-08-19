@@ -1,9 +1,3 @@
-import { FC, SVGAttributes, useEffect, useState } from "react";
-import Image from "next/image";
-import { motion } from "framer-motion";
-import { fastEnterAnimation, midClickAnimation } from "@/src/constants";
-import { useRouter } from "next/router";
-import { BountyPreview, FormData, Industry } from "@/types/";
 import {
   BountyCardFrame,
   ContributorInfo,
@@ -11,7 +5,13 @@ import {
   StarIcon,
 } from "@/components";
 import { useUserWallet } from "@/providers";
+import { fastEnterAnimation, midClickAnimation } from "@/src/constants";
+import { BountyPreview, FormData, Industry } from "@/types/";
 import { getFormattedDate } from "@/utils";
+import { motion } from "framer-motion";
+import Image from "next/image";
+import { useRouter } from "next/router";
+import { FC, SVGAttributes, useEffect, useState } from "react";
 
 export interface BountyCardProps extends SVGAttributes<SVGSVGElement> {
   bounty?: BountyPreview;
