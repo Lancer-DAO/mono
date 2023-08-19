@@ -17,7 +17,7 @@ import { CoinflowFund } from "@/components";
 import { CREATE_BOUNTY_TUTORIAL_INITIAL_STATE } from "@/src/constants/tutorials";
 import { useBounty } from "@/src/providers/bountyProvider";
 import { useTutorial } from "@/src/providers/tutorialProvider";
-import { FORM_SECTION, FormData } from "@/types";
+import { FORM_SECTION, FormData, IAsyncResult } from "@/types";
 import { Mint } from "@prisma/client";
 import toast from "react-hot-toast";
 
@@ -40,7 +40,9 @@ export const FundBountyForm: FC<Props> = ({
   const { currentBounty } = useBounty();
   const { currentTutorialState, setCurrentTutorialState } = useTutorial();
   const { mutateAsync: fundB } = api.bounties.fundBounty.useMutation();
-
+  const [fundQuestState, setFundQuestState] = useState<IAsyncResult<string>>({
+    isLoading: false,
+  });
   const [fundingType, setFundingType] = useState<"wallet" | "card">(
     IS_CUSTODIAL ? "card" : "wallet"
   );
@@ -53,7 +55,12 @@ export const FundBountyForm: FC<Props> = ({
   };
 
   const onClick = async () => {
-    const toastId = toast.loading("Funding bounty...");
+    const toastId = toast.loading("Funding Quest...");
+    setFundQuestState({
+      isLoading: true,
+      loadingPrompt: "Sending Funds to Escrow",
+    });
+
     if (
       currentTutorialState?.title ===
         CREATE_BOUNTY_TUTORIAL_INITIAL_STATE.title &&
@@ -79,11 +86,12 @@ export const FundBountyForm: FC<Props> = ({
         escrowId: currentBounty?.escrow.id,
         amount: parseFloat(formData.issuePrice),
       });
-      toast.success("Bounty funded!", { id: toastId });
+      toast.success("Quest funded!", { id: toastId });
       setFormSection("SUCCESS");
-    } catch (e) {
-      console.log("error funding bounty: ", e);
-      toast.error("Error funding bounty", { id: toastId });
+    } catch (error) {
+      console.log("error funding Quest: ", error);
+      toast.error("Error funding Quest", { id: toastId });
+      setFundQuestState({ error });
     }
   };
 
@@ -196,11 +204,17 @@ export const FundBountyForm: FC<Props> = ({
               <motion.button
                 {...smallClickAnimation}
                 onClick={() => onClick()}
-                disabled={!mint || !formData.issuePrice}
-                className="bg-primaryBtn border border-primaryBtnBorder text-textGreen 
-                w-full h-[50px] rounded-lg text-base disabled:cursor-not-allowed disabled:opacity-50"
+                className={`border h-[50px] rounded-lg text-base w-full ${
+                  fundQuestState.error
+                    ? " bg-secondaryBtn border-secondaryBtnBorder text-textRed"
+                    : " bg-primaryBtn border-primaryBtnBorder text-textGreen"
+                } `}
               >
-                Send funds to escrow
+                {fundQuestState.error
+                  ? "Failed to Fund Escrow"
+                  : fundQuestState.isLoading
+                  ? fundQuestState.loadingPrompt
+                  : "Send Funds to Escrow"}
               </motion.button>
             </div>
           )}

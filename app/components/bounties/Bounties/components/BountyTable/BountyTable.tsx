@@ -39,7 +39,6 @@ const BountyList: React.FC<{}> = () => {
   const [mints, setMints] = useState<IAsyncResult<Mint[]>>({
     isLoading: true,
   });
-  const [mintsFilter, setMintsFilter] = useState<string[]>([]);
   const [orgs, setOrgs] = useState<string[]>([]);
   const [bounds, setPriceBounds] = useState<[number, number]>([5, 10000]);
   const [bounties, setBounties] = useState<IAsyncResult<BountyPreview[]>>();
@@ -50,7 +49,6 @@ const BountyList: React.FC<{}> = () => {
   const [filteredBounties, setFilteredBounties] = useState<BountyPreview[]>();
   const [showFilters, setShowFilters] = useState<boolean>(true);
   const [filters, setFilters] = useState<Filters>({
-    mints: mintsFilter,
     industries: industriesFilter,
     tags: tags,
     orgs: orgs,
@@ -111,10 +109,7 @@ const BountyList: React.FC<{}> = () => {
       if (!bounty.escrow.publicKey || !bounty.escrow.mint) {
         return false;
       }
-      // many to one relationship
-      if (!filters.mints.includes(bounty.escrow.mint.publicKey)) {
-        return false;
-      }
+      // many to on
       // check if any of the bounty's industries is
       // included in the filters.industries list
       if (
@@ -162,29 +157,15 @@ const BountyList: React.FC<{}> = () => {
           []
         );
       const uniqueTags = getUniqueItems(allTags);
-      const allIndustries = bounties?.result
-        ?.map((bounty) => bounty.industries.map((industry) => industry.name))
-        ?.reduce(
-          (accumulator, currentValue) => [
-            ...accumulator,
-            ...(currentValue ? currentValue : []),
-          ],
-          []
-        );
-      const uniqueIndustries = getUniqueItems(allIndustries);
-      setIndustriesFilter(uniqueIndustries);
+      const allIndustries = industries?.result.map((industry) => industry.name);
+
+      setIndustriesFilter(allIndustries);
       const uniqueOrgs = getUniqueItems(
         bounties?.result.map((bounty) => bounty.repository?.organization) ?? []
       );
 
-      const uniqueMints: string[] = getUniqueItems(
-        bounties?.result
-          .map((bounty) => bounty.escrow.mint)
-          .map((mint) => mint.publicKey) ?? []
-      );
       setTags(uniqueTags);
       setOrgs(uniqueOrgs);
-      setMintsFilter(uniqueMints);
       const allPrices = bounties?.result.map((bounty) =>
         bounty.price ? parseFloat(bounty.price.toString()) : 0
       );
@@ -196,7 +177,6 @@ const BountyList: React.FC<{}> = () => {
       ];
       setPriceBounds(priceBounds);
       setFilters({
-        mints: uniqueMints,
         tags: allTags,
         industries: industriesFilter,
         orgs: uniqueOrgs,
@@ -209,7 +189,7 @@ const BountyList: React.FC<{}> = () => {
       });
     }
     // console.log("bounties", bounties);
-  }, [bounties]);
+  }, [bounties, industries]);
 
   return (
     <AnimatePresence>
