@@ -24,34 +24,17 @@ export const CreateBountyForm: FC<Props> = ({
   handleChange,
 }) => {
   const { currentTutorialState, setCurrentTutorialState } = useTutorial();
-  // const [toggleConfig, setToggleConfig] = useState<ToggleConfig>({
-  //   option1: {
-  //     title: "Fixed",
-  //   },
-  //   option2: {
-  //     title: "Request",
-  //   },
-  //   selected: "option1",
-  // });
-
-  const categoryOptions: Option[] = industries.result?.map((industry) => ({
-    value: industry.id,
-    label: industry.name,
-    icon: industry.icon,
-  }));
 
   const handleNextSection = () => {
-    // if (
-    //   formData.issueTitle === "" ||
-    //   formData.issueDescription === "" ||
-    //   formData.tags.length === 0 ||
-    //   formData.issuePrice === "" ||
-    //   formData.category === ""
-    // ) {
-    //   toast.error("Please fill out all fields");
-    // } else {
-    setFormSection("MEDIA");
-    // }
+    if (
+      formData.issueTitle === "" ||
+      formData.issueDescription === "" ||
+      formData.industryId === null
+    ) {
+      toast.error("Please fill out all fields");
+    } else {
+      setFormSection("MEDIA");
+    }
   };
 
   // TODO: save for later

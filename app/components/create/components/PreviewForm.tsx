@@ -15,6 +15,7 @@ import { createFFA } from "@/escrow/adapters";
 import { api } from "@/utils";
 import { Bounty, Industry } from "@/types";
 import { Mint } from "@prisma/client";
+import toast from "react-hot-toast";
 
 interface Props {
   setFormSection: Dispatch<SetStateAction<FORM_SECTION>>;
@@ -42,6 +43,16 @@ export const PreviewForm: FC<Props> = ({
   const [isSubmittingIssue, setIsSubmittingIssue] = useState(false);
 
   const createBounty = async () => {
+    if (!currentWallet?.publicKey) {
+      toast.error("Please connect your wallet");
+      return;
+    }
+
+    if (formData.issuePrice === "") {
+      toast.error("Please set a price for your Quest");
+      return;
+    }
+
     setIsSubmittingIssue(true);
     if (
       currentTutorialState?.title ===
