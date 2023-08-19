@@ -159,7 +159,7 @@ export const CreateBountyForm: FC<Props> = ({
             onChange={handleChange}
           />
         </div>
-        <div className="w-full flex items-center justify-end">
+        <div className="w-full flex items-center justify-end pb-10">
           <motion.button
             {...smallClickAnimation}
             onClick={() => handleNextSection()}

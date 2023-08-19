@@ -39,7 +39,7 @@ export const Create = () => {
     organizationName: "",
     repositoryName: "",
     estimatedTime: "1",
-    isPrivate: true,
+    isPrivate: false,
   });
 
   const createAccountPoll = (publicKey: PublicKey) => {
@@ -59,6 +59,13 @@ export const Create = () => {
     const getMints = async () => {
       const mints = await getMintsAPI();
       setMints(mints);
+      // NOTE: hardcode mint to USDC for now
+      setMint(
+        mints.find(
+          (mint) =>
+            mint.publicKey === "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v"
+        )
+      );
     };
     getMints();
   }, []);
@@ -104,10 +111,6 @@ export const Create = () => {
             setFormSection={setFormSection}
             formData={formData}
             setFormData={setFormData}
-            handleChange={handleChange}
-            mint={mint}
-            setMint={setMint}
-            mints={mints}
           />
         )}
         {formSection === "PREVIEW" && (
@@ -115,7 +118,7 @@ export const Create = () => {
             setFormSection={setFormSection}
             formData={formData}
             industries={industries?.result}
-            setFormData={setFormData}
+            handleChange={handleChange}
             createAccountPoll={createAccountPoll}
             mint={mint}
           />

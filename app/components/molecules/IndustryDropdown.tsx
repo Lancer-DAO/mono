@@ -28,7 +28,7 @@ const IndustryDropdown: React.FC<Props> = ({ options, selected, onChange }) => {
     return options.map((option) => (
       <div
         key={option.name}
-        className="bg-neutralBtn w-full flex items-center py-2 px-4 text-xl cursor-pointer"
+        className="bg-neutralBtn w-full flex items-center py-2 px-4 font-bold cursor-pointer"
         onClick={() => handleOptionClick(option)}
       >
         <div className="flex items-center gap-2">
@@ -50,7 +50,7 @@ const IndustryDropdown: React.FC<Props> = ({ options, selected, onChange }) => {
     <div className="relative w-full h-[50px]" ref={menuRef}>
       <div
         className="h-full flex bg-neutralBtn border border-neutralBtnBorder 
-        items-center cursor-pointer px-4 rounded-lg"
+        items-center cursor-pointer px-4 rounded-lg font-bold"
         onClick={toggleOpen}
       >
         <div className="flex items-center gap-2">
@@ -63,7 +63,7 @@ const IndustryDropdown: React.FC<Props> = ({ options, selected, onChange }) => {
             />
           )}
           <div className="overflow-hidden whitespace-nowrap overflow-ellipsis">
-            {selected ? selected.name : "Industry"}
+            {selected ? selected.name : "Select an Industry"}
           </div>
         </div>
         <div
