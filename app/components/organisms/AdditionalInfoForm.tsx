@@ -59,6 +59,10 @@ const AdditionalInfoForm: FC<Props> = ({
     // console.log("mints vs mint", mints, mint);
     const newMint = mints.find((_mint) => _mint.publicKey === mint.publicKey);
     setMint(newMint);
+    setFormData({
+      ...formData,
+      issuePriceIcon: newMint?.logo,
+    });
   };
 
   const handleTagsChange = (event) => {

@@ -1,6 +1,6 @@
 import { RangeSlider, MultiSelectDropdown } from "@/components";
 import Image from "next/image";
-import { BOUNTY_STATES } from "@/constants";
+import { BOUNTY_STATES } from "@/types";
 import { capitalize } from "lodash";
 import { Filters, Industry, IAsyncResult } from "@/types";
 import { motion } from "framer-motion";

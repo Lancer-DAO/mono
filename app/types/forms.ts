@@ -2,6 +2,7 @@ export type FORM_SECTION = "CREATE" | "MEDIA" | "FUND" | "PREVIEW" | "SUCCESS";
 
 export interface FormData {
   issuePrice: string;
+  issuePriceIcon?: string;
   issueTitle: string;
   issueDescription: string;
   industryIds?: number[];

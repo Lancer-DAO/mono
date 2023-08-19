@@ -228,7 +228,11 @@ export const Account: FC<Props> = ({ self }) => {
   };
 
   if (!IS_CUSTODIAL && !currentWallet && !profileNFT)
-    return <div>Please Connect a Wallet</div>;
+    return (
+      <div className="w-full h-full flex items-center justify-center">
+        Please Connect a Wallet
+      </div>
+    );
 
   if (account.error) {
     return <div className="color-red">{account.error.message}</div>;
