@@ -10,7 +10,7 @@ export const getServerSideProps = withPageAuthRequired();
 const BountyDetailPage = () => {
   return (
     <>
-      <NextSeo title="Lancer | Bounty" description="Lancer Bounty" />
+      <NextSeo title="Lancer | Quest" description="Lancer Quest" />
       <Bounty />
     </>
   );

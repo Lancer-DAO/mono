@@ -6,9 +6,7 @@ import { IS_CUSTODIAL } from "@/src/constants";
 
 export const SuccessForm: FC = () => {
   const { currentBounty } = useBounty();
-  const SITE_URL = `https://${
-    IS_CUSTODIAL ? "app" : "pro"
-  }.lancer.so/bounties/`;
+  const SITE_URL = `https://${IS_CUSTODIAL ? "app" : "pro"}.lancer.so/quests/`;
   return (
     <div className="w-full flex flex-col gap-10">
       <h1>Congrats! Your Quest is live.</h1>

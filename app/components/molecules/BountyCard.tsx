@@ -63,7 +63,7 @@ const BountyCard: FC<BountyCardProps> = ({
         linked ? "cursor-pointer" : ""
       }`}
       {...bountyCardAnimation}
-      onClick={() => linked && router.push(`/bounties/${bounty?.id}`)}
+      onClick={() => linked && router.push(`/quests/${bounty?.id}`)}
     >
       <div className="absolute left-1/2 -translate-x-[53%] top-[6px] w-7">
         <Image

@@ -7,7 +7,7 @@ export const getServerSideProps = withPageAuthRequired();
 const BountiesPage: React.FC = () => {
   return (
     <>
-      <NextSeo title="Lancer | Bounties" description="Lancer Bounties" />
+      <NextSeo title="Lancer | Quests" description="Lancer Quests" />
       <Bounties />
     </>
   );
