@@ -12,7 +12,7 @@ export const fundBounty = protectedProcedure
       amount: z.number(),
     })
   )
-  .mutation(async ({ input: { bountyId, escrowId, amount } }) => {
+  .mutation(async ({ input: { bountyId, escrowId, amount }, ctx }) => {
     const bounty = await queries.bounty.updateState(
       bountyId,
       BountyState.ACCEPTING_APPLICATIONS
@@ -20,7 +20,7 @@ export const fundBounty = protectedProcedure
 
     const escrow = await queries.escrow.updateAmount(escrowId, amount);
 
-    const returnValue = { bounty, escrow };
+    const returnValue = await queries.bounty.get(bountyId, ctx.user.id);
     HostedHooksClient.sendWebhook(returnValue, "bounty.funded");
 
     return { bounty, escrow };
