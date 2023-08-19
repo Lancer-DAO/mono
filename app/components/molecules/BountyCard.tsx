@@ -9,6 +9,7 @@ import {
   ContributorInfo,
   PriceTag,
   StarIcon,
+  LockIcon,
 } from "@/components";
 import { useUserWallet } from "@/providers";
 import { getFormattedDate } from "@/utils";
@@ -159,6 +160,11 @@ const BountyCard: FC<BountyCardProps> = ({
           {tagOverflow && <p className="text-xs">+ more</p>}
         </div>
       </div>
+      {(formData?.isPrivate || bounty?.isPrivate) && (
+        <div className="absolute bottom-4 right-4 z-50">
+          <LockIcon fill="#464646" width={15} height={15} />
+        </div>
+      )}
     </motion.div>
   );
 };
