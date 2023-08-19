@@ -30,7 +30,7 @@ export const Create = () => {
     issuePrice: "",
     issueTitle: "",
     issueDescription: "",
-    industryIds: [],
+    industryId: null,
     displineIds: [],
     tags: [""],
     links: [""],

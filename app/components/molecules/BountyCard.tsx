@@ -27,6 +27,7 @@ const BountyCard: FC<BountyCardProps> = ({
   linked = true,
 }) => {
   const { currentUser } = useUserWallet();
+  const [selectedIndustry, setSelectedIndustry] = useState<Industry>();
 
   const router = useRouter();
 
@@ -41,6 +42,15 @@ const BountyCard: FC<BountyCardProps> = ({
   const tagOverflow = bounty
     ? bounty.tags.length > 3
     : formData.tags.length > 3;
+
+  useEffect(() => {
+    if (formData) {
+      const industry = allIndustries.find(
+        (industry) => industry.id === formData?.industryId
+      );
+      setSelectedIndustry(industry);
+    }
+  }, [formData?.industryId]);
 
   // useEffect(() => {
   //   console.log("bounty: ", bounty);
@@ -67,13 +77,23 @@ const BountyCard: FC<BountyCardProps> = ({
     >
       <div className="absolute left-1/2 -translate-x-[53%] top-[6px] w-7">
         <Image
-          src={bounty?.industries[0]?.icon ?? allIndustries?.[0]?.icon}
+          src={
+            bounty
+              ? bounty?.industries[0]?.icon
+              : selectedIndustry?.icon ?? allIndustries?.[0]?.icon
+          }
           width={28}
           height={28}
-          alt={bounty?.industries[0]?.name ?? "industry icon"}
+          alt={
+            bounty
+              ? bounty?.industries[0]?.name
+              : selectedIndustry?.name ?? "industry icon"
+          }
         />
       </div>
-      <BountyCardFrame color={bounty?.industries[0]?.color} />
+      <BountyCardFrame
+        color={bounty ? bounty?.industries[0]?.color : selectedIndustry?.color}
+      />
       <div className="w-full absolute top-1">
         <div className="w-full flex items-center justify-between px-1">
           <PriceTag
@@ -92,7 +112,9 @@ const BountyCard: FC<BountyCardProps> = ({
       <div className="absolute top-0 left-0 w-full h-full flex flex-col p-4">
         <div className="w-full flex items-center justify-between mt-8">
           {/* creator profile */}
-          {bounty?.creator && <ContributorInfo user={bounty?.creator?.user} />}
+          {bounty && bounty?.creator && (
+            <ContributorInfo user={bounty?.creator?.user} />
+          )}
 
           {formData && currentUser && (
             <div className="flex items-center gap-3">

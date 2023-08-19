@@ -76,7 +76,7 @@ export const PreviewForm: FC<Props> = ({
     createAccountPoll(escrowKey);
     const bounty: Bounty = await mutateAsync({
       email: currentUser.email,
-      industryIds: formData.industryIds,
+      industryIds: [formData.industryId],
       disciplineIds: formData.displineIds,
       price: parseFloat(formData.issuePrice),
       title: formData.issueTitle,
@@ -126,16 +126,18 @@ export const PreviewForm: FC<Props> = ({
           world!
         </p>
 
-        <div className="w-full flex items-center justify-between">
-          {/* three cards in view */}
+        <div className="w-full flex items-center gap-10">
+          {/* two cards in view */}
           {/* 1. preview card */}
           <PreviewCardBase title="Quest">
-            <BountyCard formData={formData} allIndustries={industries} />
+            <BountyCard
+              formData={formData}
+              linked={false}
+              allIndustries={industries}
+            />
           </PreviewCardBase>
           {/* 2. quest links card */}
           <PreviewCardBase title="Links">Preview Card</PreviewCardBase>
-          {/* 3. quest photos card */}
-          <PreviewCardBase title="References">Preview Card</PreviewCardBase>
         </div>
 
         <div className="flex flex-col gap-8 w-fit py-3">

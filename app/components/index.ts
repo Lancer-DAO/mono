@@ -31,6 +31,7 @@ const BountyCard = dynamic(() => import("./molecules/BountyCard"));
 const CoinflowFund = dynamic(() => import("./molecules/CoinflowFund"));
 const CopyLinkField = dynamic(() => import("./molecules/CopyLinkField"));
 const ImageUpload = dynamic(() => import("./molecules/ImageUpload"));
+const IndustryDropdown = dynamic(() => import("./molecules/IndustryDropdown"));
 const MultiSelectDropdown = dynamic(
   () => import("./molecules/MultiSelectDropdown")
 );
@@ -77,6 +78,7 @@ export {
   CoinflowFund,
   CopyLinkField,
   ImageUpload,
+  IndustryDropdown,
   MultiSelectDropdown,
   RangeSlider,
   MintsDropdown,

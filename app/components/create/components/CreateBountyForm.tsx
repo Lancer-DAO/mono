@@ -1,5 +1,5 @@
 import { FC, Dispatch, SetStateAction } from "react";
-import { MultiSelectDropdown } from "@/components";
+import { IndustryDropdown, MultiSelectDropdown } from "@/components";
 import { CREATE_BOUNTY_TUTORIAL_INITIAL_STATE } from "@/src/constants/tutorials";
 import { smallClickAnimation } from "@/src/constants";
 import { FORM_SECTION, FormData } from "@/types/forms";
@@ -69,19 +69,16 @@ export const CreateBountyForm: FC<Props> = ({
       <h1>Post a Quest</h1>
       <div className="w-full flex flex-col gap-4 mt-6">
         <div className="relative flex items-center">
-          <label className="text-textGreen/70 pr-4 text-xl pl-3">
-            Category
-          </label>
           <div className="absolute top-1/2 -translate-y-1/2 -left-10">1</div>
-          <MultiSelectDropdown
-            options={categoryOptions}
-            selected={categoryOptions?.filter((option) =>
-              formData.industryIds?.includes(option.value as number)
+          <IndustryDropdown
+            options={industries?.result}
+            selected={industries?.result?.find((industry) =>
+              formData.industryId === industry.id ? industry : null
             )}
-            onChange={(options) => {
+            onChange={(selected: Industry) => {
               setFormData({
                 ...formData,
-                industryIds: options?.map((o) => o.value) as number[],
+                industryId: selected.id,
               });
             }}
           />
