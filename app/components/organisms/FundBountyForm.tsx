@@ -17,7 +17,7 @@ import { CoinflowFund, MintsDropdown } from "@/components";
 import { CREATE_BOUNTY_TUTORIAL_INITIAL_STATE } from "@/src/constants/tutorials";
 import { useBounty } from "@/src/providers/bountyProvider";
 import { useTutorial } from "@/src/providers/tutorialProvider";
-import { FORM_SECTION, FormData, Option } from "@/types";
+import { FORM_SECTION, FormData, Option, IAsyncResult } from "@/types";
 import { Mint } from "@prisma/client";
 import toast from "react-hot-toast";
 
@@ -41,7 +41,9 @@ const Form: FC<Props> = ({
   const { currentTutorialState, setCurrentTutorialState } = useTutorial();
   const { mutateAsync: getBounty } = api.bounties.getBounty.useMutation();
   const { mutateAsync: fundB } = api.bounties.fundBounty.useMutation();
-
+  const [fundQuestState, setFundQuestState] = useState<IAsyncResult<string>>({
+    isLoading: false,
+  });
   const [fundingType, setFundingType] = useState<"wallet" | "card">(
     IS_CUSTODIAL ? "card" : "wallet"
   );
@@ -55,6 +57,11 @@ const Form: FC<Props> = ({
 
   const onClick = async () => {
     const toastId = toast.loading("Funding bounty...");
+    setFundQuestState({
+      isLoading: true,
+      loadingPrompt: "Sending Funds to Escrow",
+    });
+
     if (
       currentTutorialState?.title ===
         CREATE_BOUNTY_TUTORIAL_INITIAL_STATE.title &&
@@ -82,9 +89,10 @@ const Form: FC<Props> = ({
       });
       toast.success("Bounty funded!", { id: toastId });
       setFormSection("SUCCESS");
-    } catch (e) {
-      console.log("error funding bounty: ", e);
+    } catch (error) {
+      console.log("error funding bounty: ", error);
       toast.error("Error funding bounty", { id: toastId });
+      setFundQuestState({ error });
     }
   };
 
@@ -204,11 +212,17 @@ const Form: FC<Props> = ({
               <motion.button
                 {...smallClickAnimation}
                 onClick={() => onClick()}
-                disabled={!mint || !formData.issuePrice}
-                className="bg-primaryBtn border border-primaryBtnBorder text-textGreen 
-                w-full h-[50px] rounded-lg text-base disabled:cursor-not-allowed disabled:opacity-50"
+                className={`border h-[50px] rounded-lg text-base w-full ${
+                  fundQuestState.error
+                    ? " bg-secondaryBtn border-secondaryBtnBorder text-textRed"
+                    : " bg-primaryBtn border-primaryBtnBorder text-textGreen"
+                } `}
               >
-                Send funds to escrow
+                {fundQuestState.error
+                  ? "Failed to Fund Escrow"
+                  : fundQuestState.isLoading
+                  ? fundQuestState.loadingPrompt
+                  : "Send Funds to Escrow"}
               </motion.button>
             </div>
           )}
