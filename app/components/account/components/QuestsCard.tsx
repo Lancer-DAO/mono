@@ -1,7 +1,7 @@
 import NextArrow from "@/components/@icons/NextArrow";
 import BountyCard from "@/components/molecules/BountyCard";
 import { midClickAnimation } from "@/src/constants";
-import { BountyNFT, BountyPreview, IAsyncResult } from "@/types/";
+import { BountyNFT, BountyPreview, IAsyncResult, Industry } from "@/types/";
 import { api } from "@/utils";
 import { motion } from "framer-motion";
 import Image from "next/image";
@@ -15,13 +15,15 @@ interface Props {
 
 export const QuestsCard: FC<Props> = ({ bountyNFTs }) => {
   const [bounties, setBounties] = useState<BountyPreview[]>([]);
+  const [industries, setIndustries] = useState<IAsyncResult<Industry[]>>();
   const router = useRouter();
   const { mutateAsync: getBounties } = api.bounties.getAllBounties.useMutation();
   const { mutateAsync: getCurrentUser } = api.users.currentUser.useMutation();
+  const { mutateAsync: getAllIndustries } = api.industries.getAllIndustries.useMutation();
+  
   
   useEffect(() => {
     const getBountiesAsync = async () => {
-      console.log(router.query.id);
       if(router.query.id === undefined) {
         const user = await getCurrentUser();
         const bounties = await getBounties({
@@ -29,7 +31,6 @@ export const QuestsCard: FC<Props> = ({ bountyNFTs }) => {
           onlyMyBounties: true,
         });
         setBounties(bounties.slice(0, 2));
-        console.log(bounties);
       } else {
         const bounties = await getBounties({
           currentUserId: parseInt(router.query.id as string),
@@ -38,6 +39,18 @@ export const QuestsCard: FC<Props> = ({ bountyNFTs }) => {
         setBounties(bounties.slice(0, 2));
       }
     }
+    
+    const fetchCurrentIndustries = async () => {
+      try {
+        const industries = await getAllIndustries();
+        setIndustries({ result: industries, isLoading: false });
+      } catch (e) {
+        console.log("error getting industries: ", e);
+        setIndustries({ error: e, isLoading: false });
+      }
+    };
+
+    fetchCurrentIndustries();
     getBountiesAsync();
   }, [])
 
@@ -54,7 +67,7 @@ export const QuestsCard: FC<Props> = ({ bountyNFTs }) => {
           <div className="flex items-center gap-2 mb-2">
             {bounties.map((bounty, index) => {
               return ( 
-                <BountyCard key={index} bounty={bounty} allIndustries={[]} />
+                <BountyCard key={index} bounty={bounty} allIndustries={industries?.result} />
               )
             })}
           </div>
