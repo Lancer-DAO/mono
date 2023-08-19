@@ -6,7 +6,6 @@ import { DisciplineType } from "@/prisma/queries/discipline";
 import { IndustryType } from "@/prisma/queries/industry";
 
 export type Filters = {
-  mints: string[];
   orgs: string[];
   industries: string[];
   tags: string[];

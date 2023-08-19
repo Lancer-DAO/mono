@@ -65,7 +65,7 @@ export const ReferCard = () => {
           </Button>
         );
       });
-  }, [claimables, mints]);
+  }, [claimables, mints, currentWallet]);
 
   const handleCopyClick = (text: string) => {
     copyToClipboard(text);
