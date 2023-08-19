@@ -67,7 +67,7 @@ const BountyCard: FC<BountyCardProps> = ({
     >
       <div className="absolute left-1/2 -translate-x-[53%] top-[6px] w-7">
         <Image
-          src={bounty?.industries[0]?.icon ?? allIndustries[0]?.icon}
+          src={bounty?.industries[0]?.icon ?? allIndustries?.[0]?.icon}
           width={28}
           height={28}
           alt={bounty?.industries[0]?.name ?? "industry icon"}
