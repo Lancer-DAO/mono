@@ -46,8 +46,8 @@ const BountyCard: FC<BountyCardProps> = ({
 
   useEffect(() => {
     if (formData) {
-      const industry = allIndustries.find(
-        (industry) => industry.id === formData?.industryId
+      const industry = allIndustries?.find(
+        (industry) => industry?.id === formData?.industryId
       );
       setSelectedIndustry(industry);
     }
@@ -148,15 +148,17 @@ const BountyCard: FC<BountyCardProps> = ({
           </div>
         </div>
         <div className="relative w-full pr-10 flex flex-wrap items-center gap-1 mt-auto">
-          {displayedTags.map((tag) => (
-            <div
-              className="border border-neutralBtnBorder rounded-full 
+          {displayedTags.length > 0 &&
+            displayedTags[0] !== "" &&
+            displayedTags.map((tag) => (
+              <div
+                className="border border-neutralBtnBorder rounded-full 
                 px-3 py-1 flex items-center justify-center"
-              key={tag}
-            >
-              {tag}
-            </div>
-          ))}
+                key={tag}
+              >
+                {tag}
+              </div>
+            ))}
           {tagOverflow && <p className="text-xs">+ more</p>}
         </div>
       </div>
