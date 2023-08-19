@@ -40,7 +40,7 @@ const FundBounty: React.FC<{ amount: number }> = ({
       escrowId: currentBounty?.escrow.id,
       amount,
     });
-    router.push(`/bounties/${currentBounty?.id}`);
+    router.push(`/quests/${currentBounty?.id}`);
   };
   return (
     <div className="bounty-fund-with-card">

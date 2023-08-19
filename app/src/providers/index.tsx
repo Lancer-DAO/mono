@@ -48,7 +48,7 @@ export const AllProviders: React.FC<{ children: ReactNode }> = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [IS_MAINNET]
   );
-  console.log("IS_CUSTODIAL", IS_CUSTODIAL);
+  // console.log("IS_CUSTODIAL", IS_CUSTODIAL);
 
   return IS_CUSTODIAL ? (
     <ConnectionProvider endpoint={endpoint}>

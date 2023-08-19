@@ -4,11 +4,9 @@ import { CopyLinkField, TweetShareButton } from "@/components";
 import { useBounty } from "@/src/providers/bountyProvider";
 import { IS_CUSTODIAL } from "@/src/constants";
 
-const SuccessForm: FC = () => {
+export const SuccessForm: FC = () => {
   const { currentBounty } = useBounty();
-  const SITE_URL = `https://${
-    IS_CUSTODIAL ? "app" : "pro"
-  }.lancer.so/bounties/`;
+  const SITE_URL = `https://${IS_CUSTODIAL ? "app" : "pro"}.lancer.so/quests/`;
   return (
     <div className="w-full flex flex-col gap-10">
       <h1>Congrats! Your Quest is live.</h1>
@@ -51,5 +49,3 @@ const SuccessForm: FC = () => {
     </div>
   );
 };
-
-export default SuccessForm;

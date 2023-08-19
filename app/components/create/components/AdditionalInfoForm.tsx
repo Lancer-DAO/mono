@@ -1,40 +1,44 @@
-import { FC, Dispatch, SetStateAction, useState } from "react";
+import { FC, Dispatch, SetStateAction, useState, useEffect } from "react";
 import {
   CREATE_BOUNTY_TUTORIAL_INITIAL_STATE,
   smallClickAnimation,
 } from "@/src/constants";
 import { FORM_SECTION, FormData } from "@/types/forms";
 import { motion } from "framer-motion";
-import { ImageUpload, MintsDropdown, PreviewCardBase } from "@/components";
+import { Toggle } from "@/components";
 import { useTutorial } from "@/src/providers/tutorialProvider";
-import { Mint } from "@prisma/client";
+import { ToggleConfig } from "@/components/molecules/Toggle";
 
 interface Props {
   setFormSection: Dispatch<SetStateAction<FORM_SECTION>>;
   formData: FormData;
   setFormData: Dispatch<SetStateAction<FormData>>;
-  mint: Mint;
-  setMint: Dispatch<SetStateAction<Mint>>;
-  mints: Mint[];
-  handleChange: (event) => void;
 }
 
-const AdditionalInfoForm: FC<Props> = ({
+export const AdditionalInfoForm: FC<Props> = ({
   setFormSection,
   formData,
   setFormData,
-  mint,
-  setMint,
-  mints,
-  handleChange,
 }) => {
   const { currentTutorialState, setCurrentTutorialState } = useTutorial();
 
+  const [toggleConfig, setToggleConfig] = useState<ToggleConfig>({
+    option1: {
+      title: "Public",
+    },
+    option2: {
+      title: "Private",
+    },
+    selected: "option1",
+  });
+
   const addLink = () => {
-    setFormData({
-      ...formData,
-      links: [...formData.links, ""],
-    });
+    if (formData.links.length < 4) {
+      setFormData({
+        ...formData,
+        links: [...formData.links, ""],
+      });
+    }
   };
 
   const removeLink = (targetIndex: number) => {
@@ -55,15 +59,15 @@ const AdditionalInfoForm: FC<Props> = ({
     });
   };
 
-  const handleChangeMint = (mint: Mint) => {
-    // console.log("mints vs mint", mints, mint);
-    const newMint = mints.find((_mint) => _mint.publicKey === mint.publicKey);
-    setMint(newMint);
-    setFormData({
-      ...formData,
-      issuePriceIcon: newMint?.logo,
-    });
-  };
+  // const handleChangeMint = (mint: Mint) => {
+  //   // console.log("mints vs mint", mints, mint);
+  //   const newMint = mints.find((_mint) => _mint.publicKey === mint.publicKey);
+  //   setMint(newMint);
+  //   setFormData({
+  //     ...formData,
+  //     issuePriceIcon: newMint?.logo,
+  //   });
+  // };
 
   const handleTagsChange = (event) => {
     const tags: string[] = event.target.value.split(",");
@@ -72,6 +76,20 @@ const AdditionalInfoForm: FC<Props> = ({
       tags,
     });
   };
+
+  useEffect(() => {
+    if (toggleConfig.selected === "option2") {
+      setFormData({
+        ...formData,
+        isPrivate: true,
+      });
+    } else {
+      setFormData({
+        ...formData,
+        isPrivate: false,
+      });
+    }
+  }, [toggleConfig.selected]);
 
   return (
     <div>
@@ -105,13 +123,15 @@ const AdditionalInfoForm: FC<Props> = ({
               </div>
             ))}
           </div>
-          <motion.button
-            onClick={() => addLink()}
-            {...smallClickAnimation}
-            className="bg-neutralBtn border border-neutralBtnBorder text-textPrimary/50 text-xl h-8 w-14 rounded-lg mt-2"
-          >
-            +
-          </motion.button>
+          {formData.links.length < 4 && (
+            <motion.button
+              onClick={() => addLink()}
+              {...smallClickAnimation}
+              className="bg-neutralBtn border border-neutralBtnBorder text-textPrimary/50 text-xl h-8 w-14 rounded-lg mt-2"
+            >
+              +
+            </motion.button>
+          )}
         </div>
         <div className="relative">
           <div className="absolute top-1/2 -translate-y-1/2 -left-10">5</div>
@@ -178,32 +198,23 @@ const AdditionalInfoForm: FC<Props> = ({
           />
         </div>
         <div className="relative">
-          <div className="absolute top-1/2 -translate-y-1/2 -left-10">6</div>
-          {/* TODO: drag and drop / upload media - proof on concept not working */}
-          <PreviewCardBase width="200px" align="start">
-            Add References
-          </PreviewCardBase>
-          {/* <ImageUpload /> */}
-        </div>
-        <MintsDropdown
-          options={mints}
-          selected={mint}
-          onChange={handleChangeMint}
-        />
-        <div className="w-full">
-          <p className="w-full mb-2">Price</p>
-          <input
-            type="number"
-            className="placeholder:text-textGreen/70 border bg-neutralBtn
-            border-neutralBtnBorder w-full h-[50px] rounded-lg px-3
-            disabled:opacity-50 disabled:cursor-not-allowed text-center"
-            name="issuePrice"
-            placeholder={`2500`}
-            disabled={!mint}
-            // disabled={toggleConfig.selected === "option2"}
-            value={formData?.issuePrice}
-            onChange={handleChange}
-          />
+          <div className="absolute top-6 -left-10">6</div>
+          <div className="flex flex-col gap-8 w-fit py-3">
+            <Toggle
+              toggleConfig={toggleConfig}
+              setToggleConfig={setToggleConfig}
+            />
+            <div className="flex flex-col gap-2 w-full">
+              <p>
+                When <span className="font-bold">public</span> your quest will
+                be discoverable on our marketplace.
+              </p>
+              <p>
+                When <span className="font-bold">private</span> your quest can
+                only be shared using your unique link.
+              </p>
+            </div>
+          </div>
         </div>
         <div className="w-full flex items-center justify-between my-5">
           <motion.button
@@ -227,8 +238,6 @@ const AdditionalInfoForm: FC<Props> = ({
     </div>
   );
 };
-
-export default AdditionalInfoForm;
 
 // {/* <div className="relative flex items-center">
 //   <label className="text-textGreen/70 pr-4 pl-3">Price</label>

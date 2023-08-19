@@ -9,6 +9,7 @@ import {
   ContributorInfo,
   PriceTag,
   StarIcon,
+  LockIcon,
 } from "@/components";
 import { useUserWallet } from "@/providers";
 import { getFormattedDate } from "@/utils";
@@ -27,6 +28,7 @@ const BountyCard: FC<BountyCardProps> = ({
   linked = true,
 }) => {
   const { currentUser } = useUserWallet();
+  const [selectedIndustry, setSelectedIndustry] = useState<Industry>();
 
   const router = useRouter();
 
@@ -41,6 +43,15 @@ const BountyCard: FC<BountyCardProps> = ({
   const tagOverflow = bounty
     ? bounty.tags.length > 3
     : formData.tags.length > 3;
+
+  useEffect(() => {
+    if (formData) {
+      const industry = allIndustries?.find(
+        (industry) => industry?.id === formData?.industryId
+      );
+      setSelectedIndustry(industry);
+    }
+  }, [formData?.industryId]);
 
   // useEffect(() => {
   //   console.log("bounty: ", bounty);
@@ -63,17 +74,27 @@ const BountyCard: FC<BountyCardProps> = ({
         linked ? "cursor-pointer" : ""
       }`}
       {...bountyCardAnimation}
-      onClick={() => linked && router.push(`/bounties/${bounty?.id}`)}
+      onClick={() => linked && router.push(`/quests/${bounty?.id}`)}
     >
       <div className="absolute left-1/2 -translate-x-[53%] top-[6px] w-7">
         <Image
-          src={bounty?.industries[0]?.icon ?? allIndustries?.[0]?.icon}
+          src={
+            bounty
+              ? bounty?.industries[0]?.icon
+              : selectedIndustry?.icon ?? allIndustries?.[0]?.icon
+          }
           width={28}
           height={28}
-          alt={bounty?.industries[0]?.name ?? "industry icon"}
+          alt={
+            bounty
+              ? bounty?.industries[0]?.name
+              : selectedIndustry?.name ?? "industry icon"
+          }
         />
       </div>
-      <BountyCardFrame color={bounty?.industries[0]?.color} />
+      <BountyCardFrame
+        color={bounty ? bounty?.industries[0]?.color : selectedIndustry?.color}
+      />
       <div className="w-full absolute top-1">
         <div className="w-full flex items-center justify-between px-1">
           <PriceTag
@@ -92,7 +113,9 @@ const BountyCard: FC<BountyCardProps> = ({
       <div className="absolute top-0 left-0 w-full h-full flex flex-col p-4">
         <div className="w-full flex items-center justify-between mt-8">
           {/* creator profile */}
-          {bounty?.creator && <ContributorInfo user={bounty?.creator?.user} />}
+          {bounty && bounty?.creator && (
+            <ContributorInfo user={bounty?.creator?.user} />
+          )}
 
           {formData && currentUser && (
             <div className="flex items-center gap-3">
@@ -125,18 +148,25 @@ const BountyCard: FC<BountyCardProps> = ({
           </div>
         </div>
         <div className="relative w-full pr-10 flex flex-wrap items-center gap-1 mt-auto">
-          {displayedTags.map((tag) => (
-            <div
-              className="border border-neutralBtnBorder rounded-full 
+          {displayedTags.length > 0 &&
+            displayedTags[0] !== "" &&
+            displayedTags.map((tag) => (
+              <div
+                className="border border-neutralBtnBorder rounded-full 
                 px-3 py-1 flex items-center justify-center"
-              key={tag}
-            >
-              {tag}
-            </div>
-          ))}
+                key={tag}
+              >
+                {tag}
+              </div>
+            ))}
           {tagOverflow && <p className="text-xs">+ more</p>}
         </div>
       </div>
+      {(formData?.isPrivate || bounty?.isPrivate) && (
+        <div className="absolute bottom-4 right-4 z-50">
+          <LockIcon fill="#464646" width={15} height={15} />
+        </div>
+      )}
     </motion.div>
   );
 };

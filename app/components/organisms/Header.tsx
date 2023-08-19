@@ -12,7 +12,7 @@ import { useWallet } from "@solana/wallet-adapter-react";
 
 const HEADER_LINKS = [
   { href: "/create", children: "New Quest", id: "create-bounty-link" },
-  { href: "/bounties", children: "Quests", id: "bounties-link" },
+  { href: "/quests", children: "Quests", id: "bounties-link" },
 ];
 
 export const Header = () => {

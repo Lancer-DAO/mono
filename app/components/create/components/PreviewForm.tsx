@@ -5,35 +5,34 @@ import {
   IS_MAINNET,
   smallClickAnimation,
 } from "@/src/constants";
-import * as Prisma from "@prisma/client";
 import { FORM_SECTION, FormData } from "@/types/forms";
 import { useBounty } from "@/src/providers/bountyProvider";
 import { useTutorial } from "@/src/providers/tutorialProvider";
 import { motion } from "framer-motion";
-import { PreviewCardBase, Toggle, BountyCard } from "@/components";
-import { ToggleConfig } from "../molecules/Toggle";
+import { PreviewCardBase, BountyCard, USDC } from "@/components";
 import { PublicKey } from "@solana/web3.js";
 import { createFFA } from "@/escrow/adapters";
 import { api } from "@/utils";
 import { Bounty, IAsyncResult, Industry } from "@/types";
 import { Mint } from "@prisma/client";
 import { useReferral } from "@/src/providers/referralProvider";
+import toast from "react-hot-toast";
 
 interface Props {
   setFormSection: Dispatch<SetStateAction<FORM_SECTION>>;
   formData: FormData;
   industries: Industry[];
-  setFormData: Dispatch<SetStateAction<FormData>>;
   createAccountPoll: (publicKey: PublicKey) => void;
+  handleChange: (event) => void;
   mint: Mint;
 }
 
-const PreviewForm: FC<Props> = ({
+export const PreviewForm: FC<Props> = ({
   setFormSection,
   formData,
   industries,
-  setFormData,
   createAccountPoll,
+  handleChange,
   mint,
 }) => {
   const { currentUser, currentWallet, program, provider } = useUserWallet();
@@ -45,17 +44,16 @@ const PreviewForm: FC<Props> = ({
     IAsyncResult<string>
   >({ isLoading: false });
 
-  const [toggleConfig, setToggleConfig] = useState<ToggleConfig>({
-    option1: {
-      title: "Public",
-    },
-    option2: {
-      title: "Private",
-    },
-    selected: "option1",
-  });
-
   const createBounty = async () => {
+    if (!currentWallet?.publicKey) {
+      toast.error("Please connect your wallet");
+      return;
+    }
+
+    if (formData.issuePrice === "") {
+      toast.error("Please set a price for your Quest");
+      return;
+    }
     setCreateQuestState({ isLoading: true, loadingPrompt: "Creating Quest" });
     try {
       if (
@@ -87,7 +85,7 @@ const PreviewForm: FC<Props> = ({
       createAccountPoll(escrowKey);
       const bounty: Bounty = await mutateAsync({
         email: currentUser.email,
-        industryIds: formData.industryIds,
+        industryIds: [formData.industryId],
         disciplineIds: formData.displineIds,
         price: parseFloat(formData.issuePrice),
         title: formData.issueTitle,
@@ -114,20 +112,6 @@ const PreviewForm: FC<Props> = ({
     }
   };
 
-  useEffect(() => {
-    if (toggleConfig.selected === "option2") {
-      setFormData({
-        ...formData,
-        isPrivate: true,
-      });
-    } else {
-      setFormData({
-        ...formData,
-        isPrivate: false,
-      });
-    }
-  }, [toggleConfig.selected]);
-
   return (
     <div>
       <h1>Preview</h1>
@@ -140,32 +124,38 @@ const PreviewForm: FC<Props> = ({
           world!
         </p>
 
-        <div className="w-full flex items-center justify-between">
-          {/* three cards in view */}
+        <div className="w-full flex items-center gap-10">
+          {/* two cards in view */}
           {/* 1. preview card */}
           <PreviewCardBase title="Quest">
-            <BountyCard formData={formData} allIndustries={industries} />
+            <BountyCard
+              formData={formData}
+              linked={false}
+              allIndustries={industries}
+            />
           </PreviewCardBase>
           {/* 2. quest links card */}
           <PreviewCardBase title="Links">Preview Card</PreviewCardBase>
-          {/* 3. quest photos card */}
-          <PreviewCardBase title="References">Preview Card</PreviewCardBase>
         </div>
 
-        <div className="flex flex-col gap-8 w-fit py-3">
-          <Toggle
-            toggleConfig={toggleConfig}
-            setToggleConfig={setToggleConfig}
-          />
-          <div className="flex flex-col gap-2 max-w-[350px] pb-3">
-            <p>
-              When <span className="font-bold">public</span> your quest will be
-              discoverable on our marketplace.
-            </p>
-            <p>
-              When <span className="font-bold">private</span> your quest can
-              only be shared using your unique link.
-            </p>
+        <div className="max-w-[500px]">
+          <p className="w-full my-2 font-bold">Set a Price for Your Quest</p>
+          <div className="relative">
+            <input
+              type="number"
+              className="placeholder:text-textGreen/70 border bg-neutralBtn
+              border-neutralBtnBorder w-full h-[50px] rounded-lg px-3
+              disabled:opacity-50 disabled:cursor-not-allowed text-center"
+              name="issuePrice"
+              placeholder={`$2500`}
+              disabled={!mint}
+              // disabled={toggleConfig.selected === "option2"}
+              value={formData?.issuePrice}
+              onChange={handleChange}
+            />
+            <div className="absolute left-4 top-1/2 -translate-y-1/2">
+              <USDC height="25px" width="25px" />
+            </div>
           </div>
         </div>
 
@@ -198,5 +188,3 @@ const PreviewForm: FC<Props> = ({
     </div>
   );
 };
-
-export default PreviewForm;

@@ -11,6 +11,7 @@ import { DefaultSeo } from "next-seo";
 
 // import your default seo configuration
 import SEO from "../next-seo.config";
+import { Toaster } from "react-hot-toast";
 
 const COOKIE_REF = "referrer";
 
@@ -41,6 +42,7 @@ const App = ({ Component, pageProps }: AppPropsWithLayout) => {
   return (
     <AllProviders>
       <DefaultSeo {...SEO} />
+      <Toaster />
       {getLayout(<Component {...pageProps} />)}
     </AllProviders>
   );

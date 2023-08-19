@@ -1,11 +1,9 @@
-import { FC, useEffect, useState, Dispatch, SetStateAction } from "react";
-import { MultiSelectDropdown } from "@/components";
-import { api } from "@/src/utils/api";
+import { FC, Dispatch, SetStateAction } from "react";
+import { IndustryDropdown, MultiSelectDropdown } from "@/components";
 import { CREATE_BOUNTY_TUTORIAL_INITIAL_STATE } from "@/src/constants/tutorials";
 import { smallClickAnimation } from "@/src/constants";
 import { FORM_SECTION, FormData } from "@/types/forms";
 import { useTutorial } from "@/src/providers/tutorialProvider";
-import Toggle, { ToggleConfig } from "../molecules/Toggle";
 import { motion } from "framer-motion";
 import { toast } from "react-hot-toast";
 import { IAsyncResult, Industry, Option } from "@/types";
@@ -18,7 +16,7 @@ interface Props {
   handleChange: (event) => void;
 }
 
-const Form: FC<Props> = ({
+export const CreateBountyForm: FC<Props> = ({
   setFormSection,
   formData,
   industries,
@@ -26,34 +24,17 @@ const Form: FC<Props> = ({
   handleChange,
 }) => {
   const { currentTutorialState, setCurrentTutorialState } = useTutorial();
-  // const [toggleConfig, setToggleConfig] = useState<ToggleConfig>({
-  //   option1: {
-  //     title: "Fixed",
-  //   },
-  //   option2: {
-  //     title: "Request",
-  //   },
-  //   selected: "option1",
-  // });
-
-  const categoryOptions: Option[] = industries.result?.map((industry) => ({
-    value: industry.id,
-    label: industry.name,
-    icon: industry.icon,
-  }));
 
   const handleNextSection = () => {
-    // if (
-    //   formData.issueTitle === "" ||
-    //   formData.issueDescription === "" ||
-    //   formData.tags.length === 0 ||
-    //   formData.issuePrice === "" ||
-    //   formData.category === ""
-    // ) {
-    //   toast.error("Please fill out all fields");
-    // } else {
-    setFormSection("MEDIA");
-    // }
+    if (
+      formData.issueTitle === "" ||
+      formData.issueDescription === "" ||
+      formData.industryId === null
+    ) {
+      toast.error("Please fill out all fields");
+    } else {
+      setFormSection("MEDIA");
+    }
   };
 
   // TODO: save for later
@@ -71,19 +52,16 @@ const Form: FC<Props> = ({
       <h1>Post a Quest</h1>
       <div className="w-full flex flex-col gap-4 mt-6">
         <div className="relative flex items-center">
-          <label className="text-textGreen/70 pr-4 text-xl pl-3">
-            Category
-          </label>
           <div className="absolute top-1/2 -translate-y-1/2 -left-10">1</div>
-          <MultiSelectDropdown
-            options={categoryOptions}
-            selected={categoryOptions?.filter((option) =>
-              formData.industryIds?.includes(option.value as number)
+          <IndustryDropdown
+            options={industries?.result}
+            selected={industries?.result?.find((industry) =>
+              formData.industryId === industry.id ? industry : null
             )}
-            onChange={(options) => {
+            onChange={(selected: Industry) => {
               setFormData({
                 ...formData,
-                industryIds: options?.map((o) => o.value) as number[],
+                industryId: selected.id,
               });
             }}
           />
@@ -164,7 +142,7 @@ const Form: FC<Props> = ({
             onChange={handleChange}
           />
         </div>
-        <div className="w-full flex items-center justify-end">
+        <div className="w-full flex items-center justify-end pb-10">
           <motion.button
             {...smallClickAnimation}
             onClick={() => handleNextSection()}
@@ -178,5 +156,3 @@ const Form: FC<Props> = ({
     </>
   );
 };
-
-export default Form;
