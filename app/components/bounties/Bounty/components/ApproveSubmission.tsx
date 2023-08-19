@@ -43,6 +43,7 @@ export const ApproveSubmission = () => {
         isRunning: false,
       });
     }
+
     // If we are the creator, then skip requesting and add self as approved
     console.log(
       currentBounty.currentSubmitter.publicKey,
@@ -59,7 +60,6 @@ export const ApproveSubmission = () => {
       provider
     );
     const submitterKey = currentBounty.currentSubmitter.publicKey;
-
     const updatedBounty = await mutateAsync({
       bountyId: currentBounty.id,
       currentUserId: currentUser.id,

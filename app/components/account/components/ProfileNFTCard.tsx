@@ -287,9 +287,7 @@ export const ProfileNFTCard = ({
             </div>
           ) : (
             <div>
-              <Button className="mb-6" onClick={handleCreateLink}>
-                Generate link
-              </Button>
+              <Button onClick={handleCreateLink}>Generate link</Button>
             </div>
           )}
         </div>
