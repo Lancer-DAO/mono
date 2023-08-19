@@ -17,6 +17,7 @@ import { createFFA } from "@/escrow/adapters";
 import { api } from "@/utils";
 import { Bounty, Industry } from "@/types";
 import { Mint } from "@prisma/client";
+import { useReferral } from "@/src/providers/referralProvider";
 
 interface Props {
   setFormSection: Dispatch<SetStateAction<FORM_SECTION>>;
@@ -39,6 +40,7 @@ const PreviewForm: FC<Props> = ({
   const { currentTutorialState, setCurrentTutorialState } = useTutorial();
   const { setCurrentBounty } = useBounty();
   const { mutateAsync } = api.bounties.createBounty.useMutation();
+  const { getRemainingAccounts, getSubmitterReferrer } = useReferral();
 
   const [creationType, setCreationType] = useState<"new" | "existing">("new");
   const [isSubmittingIssue, setIsSubmittingIssue] = useState(false);
@@ -68,10 +70,17 @@ const PreviewForm: FC<Props> = ({
 
     const mintKey = new PublicKey(mint?.publicKey);
 
+    const remainingAccounts = await getRemainingAccounts(
+      currentWallet.publicKey,
+      mintKey
+    );
+
     const { timestamp, signature, escrowKey } = await createFFA(
       currentWallet,
       program,
       provider,
+      await getSubmitterReferrer(currentWallet.publicKey, mintKey),
+      remainingAccounts,
       mintKey
     );
     createAccountPoll(escrowKey);
