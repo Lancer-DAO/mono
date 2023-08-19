@@ -51,7 +51,6 @@ const BountyList: React.FC<{}> = () => {
   const [filters, setFilters] = useState<Filters>({
     industries: industriesFilter,
     tags: tags,
-    orgs: orgs,
     estimatedPriceBounds: bounds,
     states: TABLE_BOUNTY_STATES,
     relationships: BOUNTY_USER_RELATIONSHIP,
@@ -119,9 +118,6 @@ const BountyList: React.FC<{}> = () => {
       ) {
         return false;
       }
-      if (!filters.orgs.includes(bounty.repository?.organization)) {
-        return false;
-      }
 
       const bountyTags: string[] = bounty.tags.map((tag) => tag.name) || [];
       const commonTags = bountyTags.filter((tag) => filters.tags.includes(tag));
@@ -145,7 +141,7 @@ const BountyList: React.FC<{}> = () => {
     // - all payout mints
     // - upper and lower bounds of price
 
-    if (!bounties?.result) return;
+    if (!bounties?.result || !industries?.result) return;
     if (bounties && bounties?.result?.length !== 0) {
       const allTags = bounties?.result
         ?.map((bounty) => bounty.tags.map((tag) => tag.name))
@@ -160,12 +156,8 @@ const BountyList: React.FC<{}> = () => {
       const allIndustries = industries?.result.map((industry) => industry.name);
 
       setIndustriesFilter(allIndustries);
-      const uniqueOrgs = getUniqueItems(
-        bounties?.result.map((bounty) => bounty.repository?.organization) ?? []
-      );
 
       setTags(uniqueTags);
-      setOrgs(uniqueOrgs);
       const allPrices = bounties?.result.map((bounty) =>
         bounty.price ? parseFloat(bounty.price.toString()) : 0
       );
@@ -178,8 +170,7 @@ const BountyList: React.FC<{}> = () => {
       setPriceBounds(priceBounds);
       setFilters({
         tags: allTags,
-        industries: industriesFilter,
-        orgs: uniqueOrgs,
+        industries: allIndustries,
         estimatedPriceBounds: priceBounds,
         states: filters.isMyBounties
           ? TABLE_MY_BOUNTY_STATES
