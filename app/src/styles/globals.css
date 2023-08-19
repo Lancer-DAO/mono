@@ -31,9 +31,20 @@
 }
 
 * {
-  @apply text-textPrimary bg-bgLancer font-base;
+  @apply font-base;
+}
+
+html {
+  @apply text-textPrimary bg-bgLancer;
 }
 
 h1 {
   @apply text-4xl font-bold;
+}
+
+.multi-line-ellipsis {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2; /* Number of lines to show */
+  overflow: hidden;
 }

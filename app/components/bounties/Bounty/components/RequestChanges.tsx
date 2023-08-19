@@ -6,6 +6,7 @@ import { api } from "@/src/utils/api";
 import { PublicKey } from "@solana/web3.js";
 import { BOUNTY_USER_RELATIONSHIP, BountyState } from "@/types/";
 import { updateList } from "@/src/utils";
+import { BountyActionsButton } from "./BountyActionsButton";
 
 export const RequestChanges = () => {
   const { currentUser, currentWallet, program, provider } = useUserWallet();
@@ -36,13 +37,13 @@ export const RequestChanges = () => {
       [BOUNTY_USER_RELATIONSHIP.CurrentSubmitter],
       [BOUNTY_USER_RELATIONSHIP.ChangesRequestedSubmitter]
     );
-    const { updatedBounty } = await mutateAsync({
+    const updatedBounty = await mutateAsync({
       bountyId: currentBounty.id,
       currentUserId: currentUser.id,
       userId: currentBounty.currentSubmitter.userid,
       relations: newRelations,
       state: BountyState.IN_PROGRESS,
-      publicKey: currentWallet.publicKey.toString(),
+      publicKey: currentBounty.currentSubmitter.publicKey,
       escrowId: currentBounty.escrowid,
       signature,
       label: "request-changes",
@@ -52,8 +53,10 @@ export const RequestChanges = () => {
   };
 
   return (
-    <Button onClick={onClick} disabled={!currentWallet.publicKey}>
-      Request Changes
-    </Button>
+    <BountyActionsButton
+      type="neutral"
+      text="Request Changes"
+      onClick={onClick}
+    />
   );
 };

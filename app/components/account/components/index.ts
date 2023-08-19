@@ -1,2 +1,3 @@
-export * from "./BountyNFTCard";
+export * from "./BadgesCard";
 export * from "./ProfileNFTCard";
+export * from "./QuestsCard";

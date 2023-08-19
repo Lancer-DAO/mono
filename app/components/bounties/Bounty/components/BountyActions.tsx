@@ -1,4 +1,3 @@
-import { Button } from "@/components";
 import { BountyState } from "@/types/";
 import {
   BONK_MINT,
@@ -12,9 +11,9 @@ import {
   BOUNTY_ACTIONS_TUTORIAL_II_INITIAL_STATE,
   BOUNTY_ACTIONS_TUTORIAL_I_INITIAL_STATE,
 } from "@/src/constants/tutorials";
-import { useUserWallet } from "@/src/providers";
 import { useBounty } from "@/src/providers/bountyProvider";
 import { useTutorial } from "@/src/providers/tutorialProvider";
+import { useWallet } from "@solana/wallet-adapter-react";
 import {
   CancelEscrow,
   RequestToSubmit,
@@ -23,64 +22,51 @@ import {
   VoteToCancel,
   RequestChanges,
   SubmitRequest,
+  BountyActionsButton,
 } from ".";
 
 export const BountyActions = () => {
   const { currentBounty } = useBounty();
   const { currentTutorialState } = useTutorial();
-  const { currentWallet } = useUserWallet();
+  const { publicKey } = useWallet();
 
-  if (!currentWallet) {
+  if (!publicKey) {
     return IS_CUSTODIAL ? (
       <></>
     ) : (
-      <div className="bounty-buttons" id="bounty-actions">
-        <Button disabled id="bounty-completed">
-          Please Connect a Wallet
-        </Button>
-      </div>
+      <BountyActionsButton
+        type="neutral"
+        text="Please Connect Wallet"
+        disabled
+      />
     );
   }
   if (currentBounty.state === BountyState.COMPLETE) {
     return (
-      <div className="bounty-buttons" id="bounty-actions">
-        <Button disabled id="bounty-completed">
-          Bounty Completed
-        </Button>
-      </div>
+      <BountyActionsButton type="green" text="Bounty Completed" disabled />
     );
   }
   if (currentBounty.state === BountyState.CANCELED) {
-    return (
-      <div className="bounty-buttons" id="bounty-actions">
-        <Button disabled id="bounty-canceled">
-          Bounty Canceled
-        </Button>
-      </div>
-    );
+    return <BountyActionsButton type="red" text="Bounty Canceled" disabled />;
   }
   if (!currentBounty.currentUserRelationsList) {
-    return (
-      <div className="bounty-buttons" id="bounty-actions">
-        <RequestToSubmit />
-      </div>
-    );
+    return <RequestToSubmit />;
   }
   if (currentBounty.isRequestedSubmitter)
     return (
-      <Button disabled id="request-pending">
-        Request Pending
-      </Button>
+      <BountyActionsButton type="green" text="Request Submitted" disabled />
     );
   if (currentBounty.isDeniedRequester)
     return (
-      <Button disabled id="request-denied">
-        Submission Request Denied
-      </Button>
+      <BountyActionsButton
+        type="red"
+        text="Submission Request Denied"
+        disabled
+      />
     );
 
   return (
-    <div className="bounty-buttons pt-4" id="bounty-actions">
+    <div className="flex flex-wrap gap-3 pt-4" id="bounty-actions">
       <>
         <SubmitRequest />
         <ApproveSubmission />

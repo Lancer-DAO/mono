@@ -1,4 +1,3 @@
-import { Button } from "@/components";
 import { BOUNTY_ACTIONS_TUTORIAL_I_INITIAL_STATE } from "@/src/constants/tutorials";
 import { useUserWallet } from "@/src/providers";
 import { useBounty } from "@/src/providers/bountyProvider";
@@ -8,6 +7,7 @@ import { api } from "@/src/utils/api";
 import { PublicKey } from "@solana/web3.js";
 import { BOUNTY_USER_RELATIONSHIP } from "@/types/";
 import { updateList } from "@/src/utils";
+import { BountyActionsButton } from ".";
 
 export const RequestToSubmit = () => {
   const { currentUser, currentWallet } = useUserWallet();
@@ -36,7 +36,7 @@ export const RequestToSubmit = () => {
       [],
       [BOUNTY_USER_RELATIONSHIP.RequestedSubmitter]
     );
-    const { updatedBounty } = await mutateAsync({
+    const updatedBounty = await mutateAsync({
       currentUserId: currentUser.id,
       bountyId: currentBounty.id,
       userId: currentUser.id,
@@ -64,8 +64,10 @@ export const RequestToSubmit = () => {
   };
 
   return (
-    <Button onClick={onClick} disabled={!currentWallet.publicKey}>
-      Apply
-    </Button>
+    <BountyActionsButton
+      type="green"
+      text="Request to Submit"
+      onClick={onClick}
+    />
   );
 };

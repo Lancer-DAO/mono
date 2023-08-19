@@ -7,6 +7,30 @@ import {
 import { UnwrapArray, UnwrapPromise } from "@/types/Bounties";
 import * as Prisma from "@prisma/client";
 
+const BOUNTY_MANY_INCLUDE = {
+  repository: true,
+  escrow: {
+    include: {
+      transactions: {
+        include: {
+          wallets: true,
+        },
+      },
+      mint: true,
+    },
+  },
+  users: {
+    include: {
+      user: true,
+      wallet: true,
+    },
+  },
+  issue: true,
+  tags: true,
+  pullRequests: true,
+  industries: true,
+};
+
 const bountyQuery = async (id: number) => {
   return prisma.bounty.findUnique({
     where: {
@@ -37,12 +61,42 @@ const bountyQuery = async (id: number) => {
   });
 };
 
+const bountyQueryMany = async (currentUserId?: number) => {
+  return !!currentUserId
+    ? await prisma.bounty.findMany({
+        where: {
+          users: {
+            some: {
+              userid: currentUserId,
+            },
+          },
+        },
+        orderBy: {
+          createdAt: "desc",
+        },
+        include: BOUNTY_MANY_INCLUDE,
+      })
+    : await prisma.bounty.findMany({
+        include: BOUNTY_MANY_INCLUDE,
+        orderBy: {
+          createdAt: "desc",
+        },
+      });
+};
+
 export type BountyType = UnwrapPromise<ReturnType<typeof get>>;
 export type BountyPreviewType = UnwrapArray<
   UnwrapPromise<ReturnType<typeof getMany>>
 >;
 export type BountyQueryType = UnwrapPromise<ReturnType<typeof bountyQuery>>;
+export type BountyPreviewQueryType = UnwrapPromise<
+  ReturnType<typeof bountyQueryMany>
+>;
 export type UserRelation = UnwrapArray<BountyQueryType["users"]>;
+export type UserRelationsRaw = (Prisma.BountyUser & {
+  user: Prisma.User;
+  wallet: Prisma.Wallet;
+})[];
 
 export const get = async (id: number, currentUserId: number) => {
   const bounty = await bountyQuery(id);
@@ -69,66 +123,16 @@ export const getMany = async (
   onlyMyBounties?: boolean
 ) => {
   if (onlyMyBounties) {
-    return prisma.bounty.findMany({
-      where: {
-        users: {
-          some: {
-            userid: currentUserId,
-          },
-        },
-      },
-      include: {
-        repository: true,
-        escrow: {
-          include: {
-            transactions: {
-              include: {
-                wallets: true,
-              },
-            },
-            mint: true,
-          },
-        },
-        users: {
-          include: {
-            user: true,
-          },
-        },
-        issue: true,
-        tags: true,
-        pullRequests: true,
-      },
-      orderBy: {
-        createdAt: "desc",
-      },
+    const rawBounties = await bountyQueryMany(currentUserId);
+    const mappedBounties = rawBounties.map((bounty) => {
+      const userRelations = bounty.users;
+      const creator = getBountyCreator(userRelations);
+      return { ...bounty, creator };
     });
+
+    return mappedBounties;
   } else {
-    const bounties = await prisma.bounty.findMany({
-      include: {
-        repository: true,
-        escrow: {
-          include: {
-            transactions: {
-              include: {
-                wallets: true,
-              },
-            },
-            mint: true,
-          },
-        },
-        users: {
-          include: {
-            user: true,
-          },
-        },
-        issue: true,
-        tags: true,
-        pullRequests: true,
-      },
-      orderBy: {
-        createdAt: "desc",
-      },
-    });
+    const bounties = await bountyQueryMany();
     const filteredByPrivate = bounties.filter((bounty) => {
       if (bounty.isPrivate) {
         const bountyUsers = bounty.users.map((user) => user.user.id);
@@ -140,7 +144,13 @@ export const getMany = async (
       return true;
     });
 
-    return filteredByPrivate;
+    const mappedBounties = filteredByPrivate.map((bounty) => {
+      const userRelations = bounty.users;
+      const creator = getBountyCreator(userRelations);
+      return { ...bounty, creator };
+    });
+
+    return mappedBounties;
   }
 };
 
@@ -156,11 +166,14 @@ export const convertBountyUserToUser = (user: UserRelation) => {
 
 export type BountyUserType = ReturnType<typeof convertBountyUserToUser>;
 
+const getBountyCreator = (rawUsers: UserRelationsRaw) => {
+  return rawUsers.find((user) =>
+    user.relations.includes(BOUNTY_USER_RELATIONSHIP.Creator)
+  );
+};
+
 const getBountyRelations = (
-  rawUsers: (Prisma.BountyUser & {
-    user: Prisma.User;
-    wallet: Prisma.Wallet;
-  })[]
+  rawUsers: UserRelationsRaw
 ): BountyUserRelations => {
   const allUsers = rawUsers.map((user) => {
     return convertBountyUserToUser(user);

@@ -7,11 +7,11 @@ import { useBounty } from "@/src/providers/bountyProvider";
 import { useTutorial } from "@/src/providers/tutorialProvider";
 import { decimalToNumber } from "@/src/utils";
 import { api } from "@/src/utils/api";
-import { Button } from "@/components";
 import { PublicKey } from "@solana/web3.js";
 import dayjs from "dayjs";
 import { BOUNTY_USER_RELATIONSHIP, BountyState } from "@/types/";
 import { createUnderdogClient } from "@underdog-protocol/js";
+import { BountyActionsButton } from ".";
 
 const underdogClient = createUnderdogClient({});
 
@@ -44,6 +44,12 @@ export const ApproveSubmission = () => {
       });
     }
     // If we are the creator, then skip requesting and add self as approved
+    // console.log(
+    //   currentBounty.currentSubmitter.publicKey,
+    //   currentBounty.escrow.publicKey.toString(),
+    //   currentWallet.publicKey.toString(),
+    //   buddylinkProgramId.toString()
+    // );
     const signature = await approveRequestFFA(
       new PublicKey(currentBounty.currentSubmitter.publicKey),
       currentBounty.escrow,
@@ -52,13 +58,15 @@ export const ApproveSubmission = () => {
       program,
       provider
     );
-    const { updatedBounty } = await mutateAsync({
+    const submitterKey = currentBounty.currentSubmitter.publicKey;
+
+    const updatedBounty = await mutateAsync({
       bountyId: currentBounty.id,
       currentUserId: currentUser.id,
       userId: currentBounty.currentSubmitter.userid,
       relations: [BOUNTY_USER_RELATIONSHIP.Completer],
       state: BountyState.COMPLETE,
-      publicKey: currentWallet.publicKey.toString(),
+      publicKey: submitterKey,
       escrowId: currentBounty.escrowid,
       signature,
       label: "complete-bounty",
@@ -66,7 +74,6 @@ export const ApproveSubmission = () => {
 
     setCurrentBounty(updatedBounty);
 
-    const submitterKey = currentBounty.currentSubmitter.publicKey;
     const creatorKey = currentBounty.creator.publicKey;
     let nfts = await underdogClient.getNfts({
       params: PROFILE_PROJECT_PARAMS,
@@ -162,8 +169,10 @@ export const ApproveSubmission = () => {
   };
 
   return (
-    <Button onClick={onClick} disabled={!currentWallet.publicKey}>
-      Approve
-    </Button>
+    <BountyActionsButton
+      type="green"
+      text="Approve Submission"
+      onClick={onClick}
+    />
   );
 };

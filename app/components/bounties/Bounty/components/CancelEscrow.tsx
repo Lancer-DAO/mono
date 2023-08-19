@@ -4,8 +4,8 @@ import { useUserWallet } from "@/src/providers";
 import { useBounty } from "@/src/providers/bountyProvider";
 import { BOUNTY_USER_RELATIONSHIP, BountyState } from "@/types/";
 import { api } from "@/src/utils/api";
-import { Button } from "@/components";
 import { updateList } from "@/src/utils";
+import { BountyActionsButton } from ".";
 
 export const CancelEscrow: FC = () => {
   const { currentUser, currentWallet, program, provider } = useUserWallet();
@@ -28,7 +28,7 @@ export const CancelEscrow: FC = () => {
       [],
       [BOUNTY_USER_RELATIONSHIP.Canceler]
     );
-    const { updatedBounty } = await mutateAsync({
+    const updatedBounty = await mutateAsync({
       bountyId: currentBounty.id,
       currentUserId: currentUser.id,
       userId: currentUser.id,
@@ -44,8 +44,6 @@ export const CancelEscrow: FC = () => {
   };
 
   return (
-    <Button onClick={onClick} disabled={!currentWallet.publicKey}>
-      Cancel
-    </Button>
+    <BountyActionsButton type="red" text="Cancel Bounty" onClick={onClick} />
   );
 };
