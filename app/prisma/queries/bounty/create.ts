@@ -4,7 +4,6 @@ import * as Prisma from "@prisma/client";
 export const create = async (
   createdAt: string,
   description: string,
-  price: number,
   estimatedTime: number,
   isPrivate: boolean,
   title: string,
@@ -15,7 +14,8 @@ export const create = async (
   user: Prisma.User,
   wallet: Prisma.Wallet,
   industries: Prisma.Industry[],
-  disciplines: Prisma.Discipline[]
+  disciplines: Prisma.Discipline[],
+  price?: number
 ): Promise<Prisma.Bounty> => {
   const bounty = await prisma.bounty.create({
     data: {

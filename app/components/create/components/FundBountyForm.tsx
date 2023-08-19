@@ -13,7 +13,7 @@ import {
   USDC_MINT,
   smallClickAnimation,
 } from "@/src/constants";
-import { CoinflowFund } from "@/components";
+import { CoinflowFund, USDC } from "@/components";
 import { CREATE_BOUNTY_TUTORIAL_INITIAL_STATE } from "@/src/constants/tutorials";
 import { useBounty } from "@/src/providers/bountyProvider";
 import { useTutorial } from "@/src/providers/tutorialProvider";
@@ -107,6 +107,18 @@ export const FundBountyForm: FC<Props> = ({
     }
   };
 
+  const handleFee = () => {
+    if (!formData.issuePrice) return;
+    if (formData.issuePrice.length > 5) {
+      return new Intl.NumberFormat("en-US", {
+        notation: "compact",
+        compactDisplay: "short",
+      }).format(0.05 * parseFloat(formData.issuePrice));
+    } else {
+      return (0.05 * parseFloat(formData.issuePrice)).toFixed(2);
+    }
+  };
+
   useEffect(() => {
     if (
       currentTutorialState?.title ===
@@ -171,7 +183,7 @@ export const FundBountyForm: FC<Props> = ({
                   border-neutralBtnBorder w-full h-[50px] rounded-lg px-3
                   disabled:opacity-50 disabled:cursor-not-allowed text-center"
                   name="fundingAmount"
-                  placeholder={`2500`}
+                  placeholder={`$2500`}
                   disabled={!mint}
                   // disabled={toggleConfig.selected === "option2"}
                   value={formData?.issuePrice}
@@ -185,6 +197,28 @@ export const FundBountyForm: FC<Props> = ({
           )}
           {fundingType === "wallet" && (
             <div className="w-full flex flex-col items-center gap-5">
+              <div className="w-full">
+                <p className="w-full my-2 font-bold">
+                  Set a Price for Your Quest
+                </p>
+                <div className="relative">
+                  <input
+                    type="number"
+                    className="placeholder:text-textGreen/70 border bg-neutralBtn
+              border-neutralBtnBorder w-full h-[50px] rounded-lg px-3
+              disabled:opacity-50 disabled:cursor-not-allowed text-center"
+                    name="issuePrice"
+                    placeholder={`$2500`}
+                    disabled={!mint}
+                    // disabled={toggleConfig.selected === "option2"}
+                    value={formData?.issuePrice}
+                    onChange={handleChange}
+                  />
+                  <div className="absolute left-4 top-1/2 -translate-y-1/2">
+                    <USDC height="25px" width="25px" />
+                  </div>
+                </div>
+              </div>
               {formData.issuePrice && (
                 <>
                   <p className="w-full">
@@ -193,7 +227,13 @@ export const FundBountyForm: FC<Props> = ({
                       {formData.issuePrice} {mint?.ticker}
                     </span>
                   </p>
-                  <p>
+                  <p className="w-full">
+                    Marketplace Fee:{" "}
+                    <span className="font-bold">
+                      {handleFee()} {mint?.ticker}
+                    </span>
+                  </p>
+                  <p className="w-full">
                     Total Cost:{" "}
                     <span className="font-bold">
                       {handlePrice()} {mint?.ticker}

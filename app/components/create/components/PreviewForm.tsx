@@ -50,10 +50,6 @@ export const PreviewForm: FC<Props> = ({
       return;
     }
 
-    if (formData.issuePrice === "") {
-      toast.error("Please set a price for your Quest");
-      return;
-    }
     setCreateQuestState({ isLoading: true, loadingPrompt: "Creating Quest" });
     try {
       if (
@@ -87,7 +83,6 @@ export const PreviewForm: FC<Props> = ({
         email: currentUser.email,
         industryIds: [formData.industryId],
         disciplineIds: formData.displineIds,
-        price: parseFloat(formData.issuePrice),
         title: formData.issueTitle,
         description: formData.issueDescription,
         tags: formData.tags,
@@ -136,27 +131,6 @@ export const PreviewForm: FC<Props> = ({
           </PreviewCardBase>
           {/* 2. quest links card */}
           <PreviewCardBase title="Links">Preview Card</PreviewCardBase>
-        </div>
-
-        <div className="max-w-[500px]">
-          <p className="w-full my-2 font-bold">Set a Price for Your Quest</p>
-          <div className="relative">
-            <input
-              type="number"
-              className="placeholder:text-textGreen/70 border bg-neutralBtn
-              border-neutralBtnBorder w-full h-[50px] rounded-lg px-3
-              disabled:opacity-50 disabled:cursor-not-allowed text-center"
-              name="issuePrice"
-              placeholder={`$2500`}
-              disabled={!mint}
-              // disabled={toggleConfig.selected === "option2"}
-              value={formData?.issuePrice}
-              onChange={handleChange}
-            />
-            <div className="absolute left-4 top-1/2 -translate-y-1/2">
-              <USDC height="25px" width="25px" />
-            </div>
-          </div>
         </div>
 
         <div className="w-full px-10 my-4 flex items-center justify-between">

@@ -10,7 +10,7 @@ export const createBounty = protectedProcedure
       disciplineIds: z.array(z.number()),
       title: z.string(),
       description: z.string(),
-      price: z.number(),
+      price: z.optional(z.number()),
       tags: z.array(z.string()),
       links: z.array(z.string()),
       media: z.array(z.string()),
@@ -78,7 +78,6 @@ export const createBounty = protectedProcedure
       const bounty = await queries.bounty.create(
         timestamp,
         description,
-        price,
         estimatedTime,
         isPrivate,
         title,
@@ -89,7 +88,8 @@ export const createBounty = protectedProcedure
         user,
         wallet,
         industries,
-        disciplines
+        disciplines,
+        price
       );
       return queries.bounty.get(bounty.id, user.id);
     }
