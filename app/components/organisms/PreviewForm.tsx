@@ -1,5 +1,6 @@
-import { PreviewCardBase, Toggle } from "@/components";
-import { createFFA } from "@/escrow/adapters";
+import { Dispatch, FC, SetStateAction, useEffect, useState } from "react";
+import Link from "next/link";
+import { motion } from "framer-motion";
 import {
   CREATE_BOUNTY_TUTORIAL_INITIAL_STATE,
   IS_MAINNET,
@@ -8,21 +9,14 @@ import {
 import { useBounty } from "@/src/providers/bountyProvider";
 import { useTutorial } from "@/src/providers/tutorialProvider";
 import { useUserWallet } from "@/src/providers/userWalletProvider";
-import { Bounty } from "@/types";
 import { FORM_SECTION, FormData } from "@/types/forms";
 import { api } from "@/utils";
-import * as Prisma from "@prisma/client";
 import { PublicKey } from "@solana/web3.js";
-import { motion } from "framer-motion";
-import Link from "next/link";
-import { Dispatch, FC, SetStateAction, useEffect, useState } from "react";
 import { ToggleConfig } from "../molecules/Toggle";
 import { PreviewCardBase, Toggle, BountyCard } from "@/components";
-import { PublicKey } from "@solana/web3.js";
-import { createFFA } from "@/escrow/adapters";
-import { api } from "@/utils";
 import { Bounty, Industry } from "@/types";
 import { Mint } from "@prisma/client";
+import { createFFA } from "@/escrow/adapters/createFeatureFundingAccount";
 
 interface Props {
   setFormSection: Dispatch<SetStateAction<FORM_SECTION>>;
@@ -83,7 +77,7 @@ const PreviewForm: FC<Props> = ({
     createAccountPoll(escrowKey);
     const bounty: Bounty = await mutateAsync({
       email: currentUser.email,
-      industryIds: formData.industryIds,
+      industryIds: [formData.industryId],
       disciplineIds: formData.displineIds,
       price: parseFloat(formData.issuePrice),
       title: formData.issueTitle,
