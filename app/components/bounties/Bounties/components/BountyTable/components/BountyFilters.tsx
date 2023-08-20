@@ -53,7 +53,7 @@ export const BountyFilters = ({
         />
         <p className="font-bold">Only My Bounties</p>
       </div>
-      {!!filters?.estimatedPriceBounds && (
+      {/* {!!filters?.estimatedPriceBounds && (
         <div className="w-full flex flex-col gap-3">
           <div className="flex items-center gap-2">
             <p className="font-bold">Price Range:</p>
@@ -67,7 +67,7 @@ export const BountyFilters = ({
             }}
           />
         </div>
-      )}
+      )} */}
 
       <IndustrySelection
         industries={industries}
