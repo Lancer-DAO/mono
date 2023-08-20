@@ -39,7 +39,7 @@ const BountyList: React.FC<{}> = () => {
   const [mints, setMints] = useState<IAsyncResult<Mint[]>>({
     isLoading: true,
   });
-  const [orgs, setOrgs] = useState<string[]>([]);
+  // const [orgs, setOrgs] = useState<string[]>([]);
   const [bounds, setPriceBounds] = useState<[number, number]>([5, 10000]);
   const [bounties, setBounties] = useState<IAsyncResult<BountyPreview[]>>();
   const [industries, setIndustries] = useState<IAsyncResult<Industry[]>>({
@@ -120,7 +120,7 @@ const BountyList: React.FC<{}> = () => {
 
       const bountyTags: string[] = bounty.tags.map((tag) => tag.name) || [];
       const commonTags = bountyTags.filter((tag) => filters.tags.includes(tag));
-      if (commonTags.length === 0 && tags.length !== 0) {
+      if (commonTags?.length === 0 && tags?.length !== 0) {
         return false;
       }
 
@@ -186,7 +186,6 @@ const BountyList: React.FC<{}> = () => {
         isMyBounties: filters.isMyBounties,
       });
     }
-    // console.log("bounties", bounties);
   }, [bounties, industries]);
 
   return (
@@ -198,7 +197,7 @@ const BountyList: React.FC<{}> = () => {
             industries={industries?.result}
             tags={tags}
             priceBounds={bounds}
-            orgs={orgs}
+            // orgs={orgs}
             filters={filters}
             setFilters={setFilters}
             setBounties={setBounties}

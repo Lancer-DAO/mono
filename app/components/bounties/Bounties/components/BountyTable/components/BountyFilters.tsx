@@ -11,7 +11,7 @@ interface BountyFiltersProps {
   mints: Mint[];
   industries: Industry[];
   tags: string[];
-  orgs: string[];
+  // orgs: string[];
   priceBounds: [number, number];
   filters: Filters;
   setFilters: Dispatch<SetStateAction<Filters>>;
@@ -22,7 +22,7 @@ export const BountyFilters = ({
   mints,
   industries,
   tags,
-  orgs,
+  // orgs,
   priceBounds,
   filters,
   setFilters,
@@ -52,19 +52,22 @@ export const BountyFilters = ({
         />
         <p className="font-bold">Only My Bounties</p>
       </div>
-      <div className="w-full flex flex-col gap-3">
-        <div className="flex items-center gap-2">
-          <p className="font-bold">Price Range:</p>
-          <p className="text-sm">{`$${filters.estimatedPriceBounds[0]} - $${filters.estimatedPriceBounds[1]}`}</p>
-        </div>
+      {!!filters?.estimatedPriceBounds && (
+        <div className="w-full flex flex-col gap-3">
+          <div className="flex items-center gap-2">
+            <p className="font-bold">Price Range:</p>
+            <p className="text-sm">{`$${filters.estimatedPriceBounds?.[0]} - $${filters.estimatedPriceBounds?.[1]}`}</p>
+          </div>
 
-        <RangeSlider
-          bounds={priceBounds}
-          setBounds={(bounds) => {
-            setFilters({ ...filters, estimatedPriceBounds: bounds });
-          }}
-        />
-      </div>
+          <RangeSlider
+            bounds={priceBounds}
+            setBounds={(bounds) => {
+              setFilters({ ...filters, estimatedPriceBounds: bounds });
+            }}
+          />
+        </div>
+      )}
+
       <IndustrySelection
         industries={industries}
         filters={filters}
