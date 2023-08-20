@@ -34,6 +34,7 @@ export const BountyFilters = ({
       initial={{ opacity: 0, x: -200 }}
       animate={{ opacity: 1, x: 0 }}
       exit={{ opacity: 0, x: -200 }}
+      key={`filters`}
       onSubmit={(event) => event.preventDefault()}
     >
       <div className="flex items-center gap-3 cursor-pointer">
