@@ -123,21 +123,6 @@ export const PreviewForm: FC<Props> = ({
           buttons. You're one step away from putting your Quest out into the
           world!
         </p>
-
-        <div className="w-full flex items-center gap-10">
-          {/* two cards in view */}
-          {/* 1. preview card */}
-          <PreviewCardBase title="Quest">
-            <BountyCard
-              formData={formData}
-              linked={false}
-              allIndustries={industries}
-            />
-          </PreviewCardBase>
-          {/* 2. quest links card */}
-          <PreviewCardBase title="Links">Preview Card</PreviewCardBase>
-        </div>
-
         <div className="max-w-[500px]">
           <p className="w-full my-2 font-bold">Set a Price for Your Quest</p>
           <div className="relative">
@@ -157,6 +142,34 @@ export const PreviewForm: FC<Props> = ({
               <USDC height="25px" width="25px" />
             </div>
           </div>
+        </div>
+        <div className="w-full flex items-center gap-10">
+          {/* 1. preview card */}
+          <PreviewCardBase title="Quest">
+            <BountyCard
+              formData={formData}
+              linked={false}
+              allIndustries={industries}
+            />
+          </PreviewCardBase>
+          {/* 2. quest links card */}
+          <PreviewCardBase title="Links">
+            <div className="w-full flex flex-col justify-start gap-2 px-6">
+              {formData.links.map((link: string, index: number) => (
+                <motion.a
+                  href={link}
+                  {...smallClickAnimation}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  key={index}
+                  className="w-full h-12 px-3 border border-neutralBtnBorder bg-neutralBtn text-textGreen
+                  text-lg py-2 rounded-md overflow-hidden ellipsis whitespace-nowrap text-ellipsis"
+                >
+                  {link}
+                </motion.a>
+              ))}
+            </div>
+          </PreviewCardBase>
         </div>
 
         <div className="w-full px-10 my-4 flex items-center justify-between">
