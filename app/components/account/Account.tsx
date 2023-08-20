@@ -258,8 +258,8 @@ export const Account: FC<Props> = ({ self }) => {
             <BadgesCard profileNFT={profileNFT} />
           </div>
           {/* right column */}
-          <div className="flex flex-col gap-10 w-full">
-            <QuestsCard bountyNFTs={bountyNFTs} />
+          <div className="flex flex-col gap-5 w-full">
+            <QuestsCard />
             <ReferCard />
           </div>
         </div>

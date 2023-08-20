@@ -1,19 +1,16 @@
-import { Button, CoinflowOfframp } from "@/components";
-import Logo from "@/components/@icons/Logo";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { Button, CoinflowOfframp, CopyLinkField } from "@/components";
 import { IS_CUSTODIAL } from "@/src/constants";
 import { useUserWallet } from "@/src/providers";
 import { useReferral } from "@/src/providers/referralProvider";
 import { api } from "@/src/utils";
 import { Treasury } from "@ladderlabs/buddy-sdk";
 import * as Prisma from "@prisma/client";
-import { useCallback, useEffect, useMemo, useState } from "react";
-import { Copy } from "react-feather";
 
 const SITE_URL = `https://${IS_CUSTODIAL ? "app" : "pro"}.lancer.so/account?r=`;
 
 export const ReferCard = () => {
   const [showCoinflow, setShowCoinflow] = useState(false);
-  const [isCopied, setIsCopied] = useState(false);
   const [invites, setInvites] = useState(1);
   const { referralId, initialized, createReferralMember, claimables, claim } =
     useReferral();
@@ -35,15 +32,6 @@ export const ReferCard = () => {
 
     // TODO: success logic
   }, [initialized]);
-
-  const copyToClipboard = async (text: string) => {
-    try {
-      await navigator.clipboard.writeText(text);
-      setIsCopied(true);
-    } catch (err) {
-      console.error("Failed to copy text: ", err);
-    }
-  };
 
   const handleClaim = async (amount: number, treasury: Treasury) => {
     if (amount) await claim(treasury);
@@ -67,11 +55,6 @@ export const ReferCard = () => {
       });
   }, [claimables, mints, currentWallet]);
 
-  const handleCopyClick = (text: string) => {
-    copyToClipboard(text);
-    setTimeout(() => setIsCopied(false), 2000); // Reset the isCopied state after 2 seconds
-  };
-
   const renderCircles = (invitesLeft) => {
     const circles = [];
     for (let i = 0; i < 3; i++) {
@@ -87,11 +70,11 @@ export const ReferCard = () => {
   };
 
   return (
-    <div className="flex gap-4">
+    <div className="flex gap-5">
       <div className="w-full md:w-[460px] rounded-xl bg-bgLancerSecondary/[8%] overflow-hidden p-6">
         <div className="flex justify-between">
           <p className="font-bold text-2xl text-textGreen mb-6">Refer & Earn</p>
-          {/* remove forced false when we add referral limit */}
+          {/* TODO: remove forced false when we add referral limit */}
           {referralId && initialized && false ? (
             <div className="flex self-start">
               <p className="text-green-700 mr-2">
@@ -104,27 +87,12 @@ export const ReferCard = () => {
           )}
         </div>
         {referralId && initialized ? (
-          <div>
-            <div>
-              <p className="uppercase pb-1 px-1 text-green-700 font-medium">
+          <>
+            <div className="text-textGreen">
+              <p className="uppercase pb-1 px-1 font-medium">
                 Share to earn 1% of each referral
               </p>
-              <div className="flex justify-between items-center px-4 py-4 bg-white border border-primaryBtnBorder uppercase rounded-md gap-2">
-                <Logo height="24" width="24" />
-                <p className="text-green-500 text-sm whitespace-nowrap overflow-hidden">
-                  {SITE_URL}
-                  {referralId}
-                </p>
-                <div className="relative">
-                  <Copy
-                    className="cursor-pointer"
-                    onClick={() => handleCopyClick(`${SITE_URL}${referralId}`)}
-                  />
-                  <div className="absolute text-sm right-0">
-                    {isCopied ? "Copied!" : ""}
-                  </div>
-                </div>
-              </div>
+              <CopyLinkField url={`${SITE_URL}${referralId}`} />
             </div>
             <div className="">
               {claimables &&
@@ -156,15 +124,15 @@ export const ReferCard = () => {
                 </>
               )}
             </div>
-          </div>
+          </>
         ) : (
           <div>
-            <p className="uppercase pb-1 px-1 text-green-700 font-medium">
+            <p className="uppercase pb-1 px-1 text-textGreen font-medium">
               Share to earn 1% of each referral
             </p>
             <div className="flex items-center px-4 py-4 bg-white border border-primaryBtnBorder uppercase rounded-md gap-2">
               <Button
-                className="text-green-500 text-sm"
+                className="text-textGreen text-sm"
                 onClick={handleCreateLink}
               >
                 Generate Referral Link
@@ -173,8 +141,8 @@ export const ReferCard = () => {
           </div>
         )}
       </div>
-      <div className="w-full md:w-[345px] rounded-xl bg-bgLancerSecondary/[8%] overflow-hidden p-6 text-green-700 font-medium">
-        <p className="font-bold text-2xl text-textGreen mb-6">How it Works</p>
+      <div className="w-full md:w-[345px] rounded-xl bg-bgLancerSecondary/[8%] overflow-hidden p-6 text-textGreen font-medium">
+        <p className="font-bold text-2xl mb-6">How It Works</p>
         <div className="flex items-center">
           <p className="ml-3 mr-6 my-5">1</p>
           <div>Share your link with another talented freelancer</div>
