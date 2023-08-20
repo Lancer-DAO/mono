@@ -155,19 +155,25 @@ export const PreviewForm: FC<Props> = ({
           {/* 2. quest links card */}
           <PreviewCardBase title="Links">
             <div className="w-full flex flex-col justify-start gap-2 px-6">
-              {formData.links.map((link: string, index: number) => (
-                <motion.a
-                  href={link}
-                  {...smallClickAnimation}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  key={index}
-                  className="w-full h-12 px-3 border border-neutralBtnBorder bg-neutralBtn text-textGreen
-                  text-lg py-2 rounded-md overflow-hidden ellipsis whitespace-nowrap text-ellipsis"
-                >
-                  {link}
-                </motion.a>
-              ))}
+              {formData.links[0] !== "" ? (
+                formData.links.map((link: string, index: number) => (
+                  <motion.a
+                    href={link}
+                    {...smallClickAnimation}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    key={index}
+                    className="w-full h-12 px-3 border border-neutralBtnBorder bg-neutralBtn text-textGreen
+                    text-lg py-2 rounded-md overflow-hidden ellipsis whitespace-nowrap text-ellipsis"
+                  >
+                    {link}
+                  </motion.a>
+                ))
+              ) : (
+                <p className="text-textGreen text-lg text-center">
+                  No links added
+                </p>
+              )}
             </div>
           </PreviewCardBase>
         </div>
