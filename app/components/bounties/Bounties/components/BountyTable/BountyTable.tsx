@@ -108,7 +108,6 @@ const BountyList: React.FC<{}> = () => {
       if (!bounty.escrow.publicKey || !bounty.escrow.mint) {
         return false;
       }
-      // many to on
       // check if any of the bounty's industries is
       // included in the filters.industries list
       if (
@@ -126,6 +125,14 @@ const BountyList: React.FC<{}> = () => {
       }
 
       if (!filters.states.includes(bounty.state)) {
+        return false;
+      }
+
+      if (
+        bounty.price &&
+        (Number(bounty.price) < filters.estimatedPriceBounds[0] ||
+          Number(bounty.price) > filters.estimatedPriceBounds[1])
+      ) {
         return false;
       }
 

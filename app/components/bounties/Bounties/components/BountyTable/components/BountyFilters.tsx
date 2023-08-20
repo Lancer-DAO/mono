@@ -1,5 +1,5 @@
+import { Dispatch, SetStateAction, useEffect } from "react";
 import { RangeSlider, MultiSelectDropdown } from "@/components";
-import Image from "next/image";
 import { BOUNTY_STATES } from "@/types";
 import { capitalize } from "lodash";
 import { Filters, Industry, IAsyncResult } from "@/types";
@@ -14,7 +14,7 @@ interface BountyFiltersProps {
   orgs: string[];
   priceBounds: [number, number];
   filters: Filters;
-  setFilters: (filters: Filters) => void;
+  setFilters: Dispatch<SetStateAction<Filters>>;
   setBounties: (bounties: IAsyncResult<any[]>) => void;
 }
 
@@ -58,14 +58,12 @@ export const BountyFilters = ({
           <p className="text-sm">{`$${filters.estimatedPriceBounds[0]} - $${filters.estimatedPriceBounds[1]}`}</p>
         </div>
 
-        {priceBounds[0] !== 0 && (
-          <RangeSlider
-            bounds={priceBounds}
-            setBounds={(bounds) => {
-              setFilters({ ...filters, estimatedPriceBounds: bounds });
-            }}
-          />
-        )}
+        <RangeSlider
+          bounds={priceBounds}
+          setBounds={(bounds) => {
+            setFilters({ ...filters, estimatedPriceBounds: bounds });
+          }}
+        />
       </div>
       <IndustrySelection
         industries={industries}
