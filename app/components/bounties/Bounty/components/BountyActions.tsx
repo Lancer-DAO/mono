@@ -54,7 +54,11 @@ export const BountyActions = () => {
   }
   if (currentBounty.isRequestedSubmitter)
     return (
-      <BountyActionsButton type="green" text="Request Submitted" disabled />
+      <BountyActionsButton
+        type="neutral"
+        text="Application Submitted"
+        disabled
+      />
     );
   if (currentBounty.isDeniedRequester)
     return (

@@ -58,8 +58,8 @@ export const Header = () => {
             >
               <WalletMultiButton
                 className="flex h-[48px] px-8 py-[6px] items-center justify-center
-                border-solid !bg-primaryBtn !border-primaryBtnBorder !border
-                !text-textGreen !rounded-md !whitespace-nowrap"
+                !border-solid !bg-primaryBtn !border-primaryBtnBorder !border
+                !text-textGreen !rounded-md !whitespace-nowrap !font-base"
                 startIcon={undefined}
               >
                 {publicKey
@@ -71,7 +71,7 @@ export const Header = () => {
             </div>
           )}
           {publicKey && <AccountHeaderOptions />}
-          <button
+          {/* <button
             onClick={() => {
               setShowTutorialModal(true);
             }}
@@ -87,7 +87,7 @@ export const Header = () => {
               strokeWidth={1.25}
               color={isTutorialButtonHovered ? "#fff" : "#C5FFBA"}
             />
-          </button>
+          </button> */}
           {isRouterReady && (
             <TutorialsModal
               setShowModal={setShowTutorialModal}

@@ -8,14 +8,22 @@ import { PublicKey } from "@solana/web3.js";
 import { BOUNTY_USER_RELATIONSHIP, BountyState } from "@/types/";
 import { updateList } from "@/src/utils";
 import { BountyActionsButton } from ".";
+import { useState } from "react";
 
 export const SubmitRequest = () => {
   const { currentUser, currentWallet, program, provider } = useUserWallet();
   const { currentBounty, setCurrentBounty } = useBounty();
   const { currentTutorialState, setCurrentTutorialState } = useTutorial();
   const { mutateAsync } = api.bountyUsers.update.useMutation();
+  const [isLoading, setIsLoading] = useState(false);
   if (currentBounty.isCurrentSubmitter)
-    return <BountyActionsButton type="neutral" text="Submit" disabled={true} />;
+    return (
+      <BountyActionsButton
+        type="neutral"
+        text="Request Submitted"
+        disabled={true}
+      />
+    );
   if (
     !(
       (currentBounty.isApprovedSubmitter && !currentBounty.currentSubmitter) ||
@@ -25,6 +33,7 @@ export const SubmitRequest = () => {
     return null;
 
   const onClick = async () => {
+    setIsLoading(true);
     if (
       currentTutorialState?.title ===
         BOUNTY_ACTIONS_TUTORIAL_II_INITIAL_STATE.title &&
@@ -78,5 +87,11 @@ export const SubmitRequest = () => {
     }
   };
 
-  return <BountyActionsButton type="green" text="Submit" onClick={onClick} />;
+  return (
+    <BountyActionsButton
+      type="green"
+      text={isLoading ? "Loading ..." : "Submit"}
+      onClick={onClick}
+    />
+  );
 };

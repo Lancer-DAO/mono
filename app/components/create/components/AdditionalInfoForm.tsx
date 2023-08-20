@@ -29,7 +29,7 @@ export const AdditionalInfoForm: FC<Props> = ({
     option2: {
       title: "Private",
     },
-    selected: "option1",
+    selected: "option2",
   });
 
   const addLink = () => {

@@ -5,6 +5,7 @@ const Close = dynamic(() => import("./@icons/Close"));
 const ExternalLinkIcon = dynamic(() => import("./@icons/ExternalLinkIcon"));
 const LockIcon = dynamic(() => import("./@icons/LockIcon"));
 const Logo = dynamic(() => import("./@icons/Logo"));
+const NextArrow = dynamic(() => import("./@icons/NextArrow"));
 const PhantomLogo = dynamic(() => import("./@icons/PhantomLogo"));
 const StarIcon = dynamic(() => import("./@icons/StarIcon"));
 const USDC = dynamic(() => import("./@icons/USDC"));
@@ -54,6 +55,7 @@ export {
   ExternalLinkIcon,
   LockIcon,
   Logo,
+  NextArrow,
   PhantomLogo,
   StarIcon,
   USDC,

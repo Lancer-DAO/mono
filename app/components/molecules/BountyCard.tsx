@@ -1,9 +1,3 @@
-import { FC, SVGAttributes, use, useEffect, useState } from "react";
-import Image from "next/image";
-import { motion } from "framer-motion";
-import { fastEnterAnimation, midClickAnimation } from "@/src/constants";
-import { useRouter } from "next/router";
-import { BountyPreview, FormData, Industry } from "@/types/";
 import {
   BountyCardFrame,
   ContributorInfo,
@@ -12,7 +6,18 @@ import {
   LockIcon,
 } from "@/components";
 import { useUserWallet } from "@/providers";
+import {
+  IS_CUSTODIAL,
+  fastEnterAnimation,
+  midClickAnimation,
+} from "@/src/constants";
+import { useBounty } from "@/src/providers/bountyProvider";
+import { BountyPreview, FormData, Industry } from "@/types/";
 import { getFormattedDate } from "@/utils";
+import { motion } from "framer-motion";
+import Image from "next/image";
+import { useRouter } from "next/router";
+import { FC, SVGAttributes, useEffect, useState } from "react";
 
 export interface BountyCardProps extends SVGAttributes<SVGSVGElement> {
   bounty?: BountyPreview;
@@ -28,6 +33,7 @@ const BountyCard: FC<BountyCardProps> = ({
   linked = true,
 }) => {
   const { currentUser } = useUserWallet();
+  const { currentBounty } = useBounty();
   const [selectedIndustry, setSelectedIndustry] = useState<Industry>();
 
   const router = useRouter();
@@ -43,6 +49,14 @@ const BountyCard: FC<BountyCardProps> = ({
   const tagOverflow = bounty
     ? bounty.tags.length > 3
     : formData.tags.length > 3;
+
+  const handleClick = () => {
+    if (formData) {
+      router.push(`/quests/${currentBounty?.id?.toString()}`);
+    } else {
+      router.push(`/quests/${bounty?.id}`);
+    }
+  };
 
   useEffect(() => {
     if (formData) {
@@ -74,7 +88,7 @@ const BountyCard: FC<BountyCardProps> = ({
         linked ? "cursor-pointer" : ""
       }`}
       {...bountyCardAnimation}
-      onClick={() => linked && router.push(`/quests/${bounty?.id}`)}
+      onClick={handleClick}
     >
       <div className="absolute left-1/2 -translate-x-[53%] top-[6px] w-7">
         <Image

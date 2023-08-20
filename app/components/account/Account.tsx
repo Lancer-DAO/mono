@@ -1,4 +1,4 @@
-import { DefaultLayout, BountyCard, LoadingBar } from "@/components";
+import { BountyCard, DefaultLayout, LoadingBar } from "@/components";
 import {
   BOUNTY_PROJECT_PARAMS,
   IS_CUSTODIAL,
@@ -17,7 +17,7 @@ import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import { useRouter } from "next/router";
 import { FC, useEffect, useState } from "react";
-import { ProfileNFTCard } from "./components";
+import { ProfileNFTCard, QuestsCard } from "./components";
 import BadgesCard from "./components/BadgesCard";
 import { ReferCard } from "./components/ReferCard";
 
@@ -25,7 +25,11 @@ dayjs.extend(relativeTime);
 
 const underdogClient = createUnderdogClient({});
 
-export const Account: FC = () => {
+interface Props {
+  self: boolean;
+}
+
+export const Account: FC<Props> = ({ self }) => {
   const router = useRouter();
 
   const { currentUser, currentWallet } = useUserWallet();
@@ -237,10 +241,13 @@ export const Account: FC = () => {
     return <LoadingBar title={account.loadingPrompt} />;
   }
   return (
-    <>
+    <div className="w-full md:w-[90%] mx-auto px-4 md:px-0">
+      <h1 className="pb-2">{`${
+        self ? "Your Profile" : `@${account?.result?.name}`
+      }`}</h1>
       {/* {profileNFT && ( */}
       {account?.result && (
-        <div className="w-full flex items-start gap-5 px-5 md:px-32">
+        <div className="w-full flex items-start gap-5">
           {/* left column */}
           <div className="flex flex-col gap-5 w-full md:max-w-[482px]">
             <ProfileNFTCard
@@ -250,11 +257,13 @@ export const Account: FC = () => {
             />
             <BadgesCard profileNFT={profileNFT} />
           </div>
-          <div className="flex flex-col gap-10 w-full">
+          {/* right column */}
+          <div className="flex flex-col gap-5 w-full">
+            <QuestsCard />
             <ReferCard />
           </div>
         </div>
       )}
-    </>
+    </div>
   );
 };

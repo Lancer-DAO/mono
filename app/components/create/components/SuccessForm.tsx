@@ -30,18 +30,6 @@ export const SuccessForm: FC = () => {
               <TweetShareButton
                 url={`${SITE_URL}${currentBounty?.id.toString()}`}
               />
-              <Image
-                src="/assets/images/share/gmail.png"
-                width={40}
-                height={40}
-                alt="X / twitter"
-              />
-              <Image
-                src="/assets/images/share/linkedin.png"
-                width={40}
-                height={40}
-                alt="X / twitter"
-              />
             </div>
           </div>
         </div>

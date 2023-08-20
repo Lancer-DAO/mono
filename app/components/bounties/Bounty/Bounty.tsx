@@ -33,6 +33,7 @@ export const Bounty = () => {
   const { currentUser } = useUserWallet();
   const [pollId, setPollId] = useState(null);
   const [bountyAmount, setBountyAmount] = useState("");
+  const [links, setLinks] = useState<string[]>([]);
   const router = useRouter();
   const { mutateAsync: getBounty } = api.bounties.getBounty.useMutation();
 
@@ -53,7 +54,7 @@ export const Bounty = () => {
     if (router.isReady && currentUser?.id) {
       const getB = async () => {
         const bounty = await getBounty({
-          id: parseInt(router.query.bounty as string),
+          id: parseInt(router.query.quest as string),
           currentUserId: currentUser.id,
         });
         setCurrentBounty(bounty);
@@ -75,6 +76,13 @@ export const Bounty = () => {
       setPollId(setTimeout(() => setFuturePoll(), 5000));
     }
   }, []);
+
+  useEffect(() => {
+    if (currentBounty?.links) {
+      const links = currentBounty?.links?.split(",");
+      setLinks(links);
+    }
+  }, [currentBounty]);
 
   if (!currentUser || !currentBounty) {
     return <></>;
@@ -123,20 +131,40 @@ export const Bounty = () => {
             <p className="font-bold text-sm">Job description</p>
             <div dangerouslySetInnerHTML={previewMarkup()} className="pt-1" />
           </div>
-          <div>
-            <p className="font-bold text-sm">Required skills</p>
-            <div className="flex flex-wrap w-full gap-2 pt-2">
-              {currentBounty.tags.map((tag) => (
-                <div
-                  className="bg-white w-fit px-2 py-1 text-sm rounded-md"
-                  key={tag.name}
-                  // style={{ color: tag.color }}
-                >
-                  {tag.name}
-                </div>
-              ))}
+          {currentBounty.links.length > 0 && currentBounty.links[0] !== "" && (
+            <div>
+              <p className="font-bold text-sm">Links</p>
+              <div className="flex flex-col w-full gap-1">
+                {links?.map((link) => (
+                  <a
+                    href={link}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="underline text-blue-500"
+                  >
+                    {link}
+                  </a>
+                ))}
+              </div>
             </div>
-          </div>
+          )}
+          {currentBounty.tags.length > 0 &&
+            currentBounty.tags[0].name !== "" && (
+              <>
+                <p className="font-bold text-sm">Required skills</p>
+                <div className="flex flex-wrap w-full gap-2 pt-2">
+                  {currentBounty.tags.map((tag) => (
+                    <div
+                      className="bg-white w-fit px-2 py-1 text-sm rounded-md"
+                      key={tag.name}
+                      // style={{ color: tag.color }}
+                    >
+                      {tag.name}
+                    </div>
+                  ))}
+                </div>
+              </>
+            )}
         </div>
         {/* bountyactions */}
         <div className="bg-white w-[540px] h-fit rounded-md flex flex-col gap-10 p-10">

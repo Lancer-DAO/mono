@@ -8,6 +8,7 @@ import { PublicKey } from "@solana/web3.js";
 import { BOUNTY_USER_RELATIONSHIP } from "@/types/";
 import { updateList } from "@/src/utils";
 import { BountyActionsButton } from ".";
+import { useState } from "react";
 
 export const RequestToSubmit = () => {
   const { currentUser, currentWallet } = useUserWallet();
@@ -15,6 +16,8 @@ export const RequestToSubmit = () => {
   const { currentTutorialState, setCurrentTutorialState } = useTutorial();
   const { mutateAsync } = api.bountyUsers.update.useMutation();
   const { createReferralMember } = useReferral();
+
+  const [isLoading, setIsLoading] = useState(false);
 
   const onClick = async () => {
     // Request to submit. Does not interact on chain
@@ -28,7 +31,8 @@ export const RequestToSubmit = () => {
         isRunning: false,
       });
     }
-    const result = await createReferralMember(
+    setIsLoading(true);
+    await createReferralMember(
       new PublicKey(currentBounty.escrow.mint.publicKey)
     );
     const newRelations = updateList(
@@ -48,6 +52,7 @@ export const RequestToSubmit = () => {
     });
 
     setCurrentBounty(updatedBounty);
+    setIsLoading(false);
     if (
       currentTutorialState?.title ===
         BOUNTY_ACTIONS_TUTORIAL_I_INITIAL_STATE.title &&
@@ -66,7 +71,8 @@ export const RequestToSubmit = () => {
   return (
     <BountyActionsButton
       type="green"
-      text="Request to Submit"
+      disabled={isLoading}
+      text={isLoading ? "Loading..." : "Apply to Quest"}
       onClick={onClick}
     />
   );

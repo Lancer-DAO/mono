@@ -26,7 +26,7 @@ const CopyLinkField: FC<Props> = ({ url }) => {
   return (
     <div className="flex justify-between items-center px-4 py-4 bg-white border border-primaryBtnBorder uppercase rounded-md gap-2">
       <Logo height="24" width="24" />
-      <p className="text-green-500 text-sm whitespace-nowrap overflow-hidden">
+      <p className="text-textGreen text-sm whitespace-nowrap overflow-hidden">
         {url}
       </p>
       <div className="relative">
