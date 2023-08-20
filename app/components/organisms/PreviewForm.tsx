@@ -1,17 +1,23 @@
-import { FC, useState, Dispatch, SetStateAction, useEffect } from "react";
-import { useUserWallet } from "@/src/providers/userWalletProvider";
+import { PreviewCardBase, Toggle } from "@/components";
+import { createFFA } from "@/escrow/adapters";
 import {
   CREATE_BOUNTY_TUTORIAL_INITIAL_STATE,
   IS_MAINNET,
   smallClickAnimation,
 } from "@/src/constants";
-import * as Prisma from "@prisma/client";
-import { FORM_SECTION, FormData } from "@/types/forms";
 import { useBounty } from "@/src/providers/bountyProvider";
 import { useTutorial } from "@/src/providers/tutorialProvider";
+import { useUserWallet } from "@/src/providers/userWalletProvider";
+import { Bounty } from "@/types";
+import { FORM_SECTION, FormData } from "@/types/forms";
+import { api } from "@/utils";
+import * as Prisma from "@prisma/client";
+import { PublicKey } from "@solana/web3.js";
 import { motion } from "framer-motion";
-import { PreviewCardBase, Toggle, BountyCard } from "@/components";
+import Link from "next/link";
+import { Dispatch, FC, SetStateAction, useEffect, useState } from "react";
 import { ToggleConfig } from "../molecules/Toggle";
+import { PreviewCardBase, Toggle, BountyCard } from "@/components";
 import { PublicKey } from "@solana/web3.js";
 import { createFFA } from "@/escrow/adapters";
 import { api } from "@/utils";
@@ -156,7 +162,32 @@ const PreviewForm: FC<Props> = ({
           </div>
         </div>
 
-        <div className="w-full px-10 my-4 flex items-center justify-between">
+        <div className="w-full flex items-center justify-between">
+          {/* three cards in view */}
+          {/* 1. preview card (addarg working on this) */}
+          <PreviewCardBase title="Quest">Preview Card</PreviewCardBase>
+          {/* 2. quest links card */}
+          <PreviewCardBase title="Links">
+            <div className="w-full flex flex-col justify-start gap-2 px-6">
+              {formData.links.map((link: string, index: number) => (
+                <Link
+                  href={link}
+                  key={index}
+                  className="w-full h-12 px-3 border border-neutralBtnBorder bg-neutralBtn text-green-700 text-xl py-2 rounded-md overflow-hidden ellipsis whitespace-nowrap text-ellipsis"
+                >
+                  {link}
+                </Link>
+              ))}
+              <div className="w-full h-24 px-3 border border-neutralBtnBorder bg-neutralBtn py-2 text-lg rounded-md overflow-hidden ellipsis text-green-700">
+                {formData.comment}
+              </div>
+            </div>
+          </PreviewCardBase>
+          {/* 3. quest photos card */}
+          <PreviewCardBase title="Photos">Preview Card</PreviewCardBase>
+        </div>
+
+        <div className="w-full px-10 mt-4 flex items-center justify-between">
           <motion.button
             {...smallClickAnimation}
             onClick={() => setFormSection("MEDIA")}
