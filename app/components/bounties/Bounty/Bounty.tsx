@@ -53,7 +53,7 @@ export const Bounty = () => {
     if (router.isReady && currentUser?.id) {
       const getB = async () => {
         const bounty = await getBounty({
-          id: parseInt(router.query.bounty as string),
+          id: parseInt(router.query.quest as string),
           currentUserId: currentUser.id,
         });
         setCurrentBounty(bounty);
