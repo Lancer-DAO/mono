@@ -130,7 +130,28 @@ export const PreviewForm: FC<Props> = ({
             />
           </PreviewCardBase>
           {/* 2. quest links card */}
-          <PreviewCardBase title="Links">Preview Card</PreviewCardBase>
+          <PreviewCardBase title="Links">
+            <div className="flex flex-col gap-4 overflow-hidden">
+              {formData?.links?.map((link, index) => {
+                const formattedLink =
+                  link.startsWith("http://") || link.startsWith("https://")
+                    ? link
+                    : `http://${link}`;
+                return (
+                  <a
+                    key={index}
+                    href={formattedLink}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="truncate bg-white p-3 border border-neutralBtnBorder
+                  rounded-lg text-textGreen text-base"
+                  >
+                    {formattedLink}
+                  </a>
+                );
+              })}
+            </div>
+          </PreviewCardBase>
         </div>
 
         <div className="w-full px-10 my-4 flex items-center justify-between">
@@ -155,7 +176,7 @@ export const PreviewForm: FC<Props> = ({
               ? "Failed to Create Quest"
               : createQuestState.isLoading
               ? createQuestState.loadingPrompt
-              : "Continue"}
+              : "CONTINUE"}
           </motion.button>
         </div>
       </div>
