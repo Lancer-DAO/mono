@@ -35,9 +35,11 @@ export const Header = () => {
           <Logo width="auto" height="50px" />
         </Link>
         <div className="ml-[20px] flex gap-[10px] items-center w-full">
-          {HEADER_LINKS.map(({ href, children }) => {
+          {HEADER_LINKS.map(({ href, children }, index) => {
             return (
-              <LinkButton href={href} children={children} version="text" />
+              <LinkButton key={`${href}-${index}`} href={href} version="text">
+                {children}
+              </LinkButton>
             );
           })}
           {IS_CUSTODIAL ? (

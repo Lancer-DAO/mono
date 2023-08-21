@@ -284,16 +284,21 @@ const TutorialsModal: FC<Props> = ({ showModal, setShowModal }) => {
             )}
 
             <h3>Available on this Page</h3>
-            {availableTutorials.map((tutorial) => (
+            {availableTutorials.map((tutorial, index) => (
               <TutorialRow
+                key={`${tutorial.title}-${index}`}
                 tutorial={tutorial}
                 type="available"
                 setShowModal={setShowModal}
               />
             ))}
             <h3>Remaining Tutorials</h3>
-            {unavailableTutorials.map((tutorial) => (
-              <TutorialRow tutorial={tutorial} type="unavailable" />
+            {unavailableTutorials.map((tutorial, index) => (
+              <TutorialRow
+                key={`${tutorial.title}-${index}`}
+                tutorial={tutorial}
+                type="unavailable"
+              />
             ))}
           </div>
         </div>

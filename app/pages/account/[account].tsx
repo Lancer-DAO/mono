@@ -249,8 +249,11 @@ const AccountDetailPage: React.FC = () => {
                       <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-gray-900"></div>
                     </div>
                   ) : bountyNFTs.length > 0 ? (
-                    bountyNFTs.map((bountyNFT) => (
-                      <BountyNFTCard bountyNFT={bountyNFT} />
+                    bountyNFTs.map((bountyNFT, index) => (
+                      <BountyNFTCard
+                        key={`${bountyNFT.name}-${index}`}
+                        bountyNFT={bountyNFT}
+                      />
                     ))
                   ) : (
                     <div>No bounties yet!</div>
