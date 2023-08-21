@@ -3,8 +3,8 @@ import dynamic from "next/dynamic";
 // @icons
 const Close = dynamic(() => import("./@icons/Close"));
 const ExternalLinkIcon = dynamic(() => import("./@icons/ExternalLinkIcon"));
+const LockIcon = dynamic(() => import("./@icons/LockIcon"));
 const Logo = dynamic(() => import("./@icons/Logo"));
-const MarketingIcon = dynamic(() => import("./@icons/MarketingIcon"));
 const NextArrow = dynamic(() => import("./@icons/NextArrow"));
 const PhantomLogo = dynamic(() => import("./@icons/PhantomLogo"));
 const StarIcon = dynamic(() => import("./@icons/StarIcon"));
@@ -32,6 +32,7 @@ const BountyCard = dynamic(() => import("./molecules/BountyCard"));
 const CoinflowFund = dynamic(() => import("./molecules/CoinflowFund"));
 const CopyLinkField = dynamic(() => import("./molecules/CopyLinkField"));
 const ImageUpload = dynamic(() => import("./molecules/ImageUpload"));
+const IndustryDropdown = dynamic(() => import("./molecules/IndustryDropdown"));
 const MultiSelectDropdown = dynamic(
   () => import("./molecules/MultiSelectDropdown")
 );
@@ -42,15 +43,8 @@ const TutorialsModal = dynamic(() => import("./molecules/TutorialsModal"));
 const WalletInfo = dynamic(() => import("./molecules/WalletInfo"));
 
 // organisms
-const AdditionalInfoForm = dynamic(
-  () => import("./organisms/AdditionalInfoForm")
-);
-const CreateBountyForm = dynamic(() => import("./organisms/CreateBountyForm"));
-const FundBountyForm = dynamic(() => import("./organisms/FundBountyForm"));
 const Header = dynamic(() => import("./organisms/Header"));
 const JoyrideWrapper = dynamic(() => import("./organisms/JoyrideWrapper"));
-const PreviewForm = dynamic(() => import("./organisms/PreviewForm"));
-const SuccessForm = dynamic(() => import("./organisms/SuccessForm"));
 
 // templates
 const DefaultLayout = dynamic(() => import("./templates/DefaultLayout"));
@@ -59,8 +53,8 @@ export {
   // @icons
   Close,
   ExternalLinkIcon,
+  LockIcon,
   Logo,
-  MarketingIcon,
   NextArrow,
   PhantomLogo,
   StarIcon,
@@ -86,6 +80,7 @@ export {
   CoinflowFund,
   CopyLinkField,
   ImageUpload,
+  IndustryDropdown,
   MultiSelectDropdown,
   RangeSlider,
   MintsDropdown,
@@ -94,13 +89,8 @@ export {
   WalletInfo,
 
   // organisms
-  AdditionalInfoForm,
-  CreateBountyForm,
-  FundBountyForm,
   Header,
   JoyrideWrapper,
-  PreviewForm,
-  SuccessForm,
 
   // templates
   DefaultLayout,

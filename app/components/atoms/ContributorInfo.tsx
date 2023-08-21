@@ -33,7 +33,7 @@ const ContributorInfo: React.FC<{ user: User; disableLink?: boolean }> = ({
           alt={user.name ? user.name : user.githubLogin}
           className="h-[25px] w-[25px] rounded-full"
         />
-        <div className="ml-[10px]">
+        <div className="mx-[10px]">
           {user.name ? user.name : user.githubLogin}
         </div>
       </motion.button>

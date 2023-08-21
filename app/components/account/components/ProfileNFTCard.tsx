@@ -198,7 +198,7 @@ export const ProfileNFTCard = ({
   }, [currentUser]);
 
   return (
-    <div className="w-full md:w-[460px] rounded-xl bg-bgLancerSecondary/[8%] overflow-hidden p-6">
+    <div className="w-full md:w-[460px] rounded-xl bg-bgLancerSecondary/[8%] overflow-hidden p-6 text-textGreen">
       <div className="flex flex-col gap-3">
         {(picture || githubId) && (
           <Image
@@ -221,13 +221,13 @@ export const ProfileNFTCard = ({
             {/* <p>username</p> */}
             <p>industry</p>
             {/* <p>location</p> */}
-            <p>exp</p>
+            <p>xp</p>
           </div>
           {/* Data column */}
-          <div className="flex flex-col gap-4 text-lg font-bold">
+          <div className="flex flex-col gap-4 text-lg text-textPrimary">
             <p>{currentUser?.name}</p>
             {/* <p>{currentUser?.name}</p> */}
-            {/* hard coded */}
+            {/* TODO: hard coded */}
             <div className="flex items-center gap-2">
               <Image
                 src="/assets/icons/eng.png"
@@ -235,40 +235,12 @@ export const ProfileNFTCard = ({
                 height={25}
                 alt="eng"
               />
-              <p className="font-bold">Engineering</p>
+              <p>Engineering</p>
             </div>
             {/* <p>[location]</p> */}
             <p>{profileNFT.reputation} pts</p>
           </div>
         </div>
-
-        {/* 
-        <div>
-          <div className="divider"></div>
-
-          <h4>Certificates</h4>
-          {profileNFT.certifications?.length > 0 ? (
-            <div className="tag-list">
-              {profileNFT.certifications.map((badge) => (
-                <div className="tag-item" key={badge}>
-                  {badge}
-                </div>
-              ))}
-            </div>
-          ) : (
-            <div>No certificates yet!</div>
-          )}
-        </div>
-        <div>
-          <div className="divider"></div>
-
-          <h4>Last Updated</h4>
-          <div>{profileNFT.lastUpdated?.fromNow()}</div>
-        </div>
-      <AddReferrerModal
-        setShowModal={setShowReferrerModal}
-        showModal={showReferrerModal}
-      /> */}
       </div>
     </div>
   );

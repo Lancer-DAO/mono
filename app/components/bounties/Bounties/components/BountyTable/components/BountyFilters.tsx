@@ -1,5 +1,5 @@
+import { Dispatch, SetStateAction, useEffect } from "react";
 import { RangeSlider, MultiSelectDropdown } from "@/components";
-import Image from "next/image";
 import { BOUNTY_STATES } from "@/types";
 import { capitalize } from "lodash";
 import { Filters, Industry, IAsyncResult } from "@/types";
@@ -11,10 +11,10 @@ interface BountyFiltersProps {
   mints: Mint[];
   industries: Industry[];
   tags: string[];
-  orgs: string[];
+  // orgs: string[];
   priceBounds: [number, number];
   filters: Filters;
-  setFilters: (filters: Filters) => void;
+  setFilters: Dispatch<SetStateAction<Filters>>;
   setBounties: (bounties: IAsyncResult<any[]>) => void;
 }
 
@@ -22,7 +22,7 @@ export const BountyFilters = ({
   mints,
   industries,
   tags,
-  orgs,
+  // orgs,
   priceBounds,
   filters,
   setFilters,
@@ -34,81 +34,46 @@ export const BountyFilters = ({
       initial={{ opacity: 0, x: -200 }}
       animate={{ opacity: 1, x: 0 }}
       exit={{ opacity: 0, x: -200 }}
+      key={`filters`}
       onSubmit={(event) => event.preventDefault()}
     >
-      <div
-        className="flex items-center gap-3 cursor-pointer"
-        onClick={() => {
-          setBounties({ result: [] });
-          setFilters({
-            ...filters,
-            isMyBounties: !filters.isMyBounties,
-          });
-        }}
-      >
+      <div className="flex items-center gap-3 cursor-pointer">
         <input
           type="checkbox"
           className="w-6 h-6 accent-primaryBtn border border-primaryBtnBorder
           rounded-xl focus:ring-industryGreenBorder focus:border-green-500"
           checked={filters.isMyBounties}
+          onChange={() => {
+            setBounties({ result: [] });
+            setFilters({
+              ...filters,
+              isMyBounties: !filters.isMyBounties,
+            });
+          }}
         />
         <p className="font-bold">Only My Bounties</p>
       </div>
-      <div className="w-full flex flex-col gap-3">
-        <div className="flex items-center gap-2">
-          <p className="font-bold">Price Range:</p>
-          <p className="text-sm">{`$${filters.estimatedPriceBounds[0]} - $${filters.estimatedPriceBounds[1]}`}</p>
-        </div>
+      {/* {!!filters?.estimatedPriceBounds && (
+        <div className="w-full flex flex-col gap-3">
+          <div className="flex items-center gap-2">
+            <p className="font-bold">Price Range:</p>
+            <p className="text-sm">{`$${filters.estimatedPriceBounds?.[0]} - $${filters.estimatedPriceBounds?.[1]}`}</p>
+          </div>
 
-        {priceBounds[0] !== 0 && (
           <RangeSlider
             bounds={priceBounds}
             setBounds={(bounds) => {
               setFilters({ ...filters, estimatedPriceBounds: bounds });
             }}
           />
-        )}
-      </div>
+        </div>
+      )} */}
+
       <IndustrySelection
         industries={industries}
         filters={filters}
         setFilters={setFilters}
       />
-      <div className="flex flex-col gap-3">
-        <p className="font-bold">Payout Mints</p>
-        {mints?.map((mint: Mint) => {
-          return (
-            <div
-              key={mint?.id}
-              className="flex items-center gap-2 cursor-pointer"
-              onClick={() => {
-                setFilters({
-                  ...filters,
-                  mints: filters.mints.includes(mint?.name)
-                    ? filters.mints.filter((name) => name !== mint?.name)
-                    : [...filters.mints, mint?.name],
-                });
-              }}
-            >
-              <input
-                type="radio"
-                id={mint?.id.toString()}
-                name={mint?.name}
-                checked={filters.mints.includes(mint?.name)}
-              />
-              <div className="flex items-center gap-1">
-                <Image
-                  src={mint?.logo}
-                  width={20}
-                  height={20}
-                  alt={mint?.name}
-                />
-                <p>{mint?.name}</p>
-              </div>
-            </div>
-          );
-        })}
-      </div>
       {/* <div className="flex flex-col gap-3">
         <p className="font-bold">Creators</p>
         <MultiSelectDropdown

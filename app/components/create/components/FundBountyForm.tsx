@@ -13,11 +13,11 @@ import {
   USDC_MINT,
   smallClickAnimation,
 } from "@/src/constants";
-import { CoinflowFund, MintsDropdown } from "@/components";
+import { CoinflowFund, USDC } from "@/components";
 import { CREATE_BOUNTY_TUTORIAL_INITIAL_STATE } from "@/src/constants/tutorials";
 import { useBounty } from "@/src/providers/bountyProvider";
 import { useTutorial } from "@/src/providers/tutorialProvider";
-import { FORM_SECTION, FormData, Option } from "@/types";
+import { FORM_SECTION, FormData, IAsyncResult } from "@/types";
 import { Mint } from "@prisma/client";
 import toast from "react-hot-toast";
 
@@ -29,7 +29,7 @@ interface Props {
   mint: Mint;
 }
 
-const Form: FC<Props> = ({
+export const FundBountyForm: FC<Props> = ({
   isAccountCreated,
   formData,
   setFormData,
@@ -39,9 +39,10 @@ const Form: FC<Props> = ({
   const { currentWallet, currentUser, program, provider } = useUserWallet();
   const { currentBounty } = useBounty();
   const { currentTutorialState, setCurrentTutorialState } = useTutorial();
-  const { mutateAsync: getBounty } = api.bounties.getBounty.useMutation();
   const { mutateAsync: fundB } = api.bounties.fundBounty.useMutation();
-
+  const [fundQuestState, setFundQuestState] = useState<IAsyncResult<string>>({
+    isLoading: false,
+  });
   const [fundingType, setFundingType] = useState<"wallet" | "card">(
     IS_CUSTODIAL ? "card" : "wallet"
   );
@@ -54,7 +55,12 @@ const Form: FC<Props> = ({
   };
 
   const onClick = async () => {
-    const toastId = toast.loading("Funding bounty...");
+    const toastId = toast.loading("Funding Quest...");
+    setFundQuestState({
+      isLoading: true,
+      loadingPrompt: "Sending Funds to Escrow",
+    });
+
     if (
       currentTutorialState?.title ===
         CREATE_BOUNTY_TUTORIAL_INITIAL_STATE.title &&
@@ -80,11 +86,12 @@ const Form: FC<Props> = ({
         escrowId: currentBounty?.escrow.id,
         amount: parseFloat(formData.issuePrice),
       });
-      toast.success("Bounty funded!", { id: toastId });
+      toast.success("Quest funded!", { id: toastId });
       setFormSection("SUCCESS");
-    } catch (e) {
-      console.log("error funding bounty: ", e);
-      toast.error("Error funding bounty", { id: toastId });
+    } catch (error) {
+      console.log("error funding Quest: ", error);
+      toast.error("Error funding Quest", { id: toastId });
+      setFundQuestState({ error });
     }
   };
 
@@ -97,6 +104,18 @@ const Form: FC<Props> = ({
       }).format(1.05 * parseFloat(formData.issuePrice));
     } else {
       return (1.05 * parseFloat(formData.issuePrice)).toFixed(2);
+    }
+  };
+
+  const handleFee = () => {
+    if (!formData.issuePrice) return;
+    if (formData.issuePrice.length > 5) {
+      return new Intl.NumberFormat("en-US", {
+        notation: "compact",
+        compactDisplay: "short",
+      }).format(0.05 * parseFloat(formData.issuePrice));
+    } else {
+      return (0.05 * parseFloat(formData.issuePrice)).toFixed(2);
     }
   };
 
@@ -122,14 +141,14 @@ const Form: FC<Props> = ({
           <p>
             By funding an issue with Lancer, you are outsourcing a developer
             task in one of two ways. The first is internally to your team or a
-            free-lancer and the other is a public bounty to our network of
+            freelancer and the other is a public bounty to our network of
             developers. The more clear you are with your descriptions, the
             better Lancer is at finding the right developer to solve your issue.
           </p>
         </div>
         <div className="w-full max-w-[540px] px-10 flex flex-col items-center gap-10 bg-white pb-10">
           {!IS_CUSTODIAL && (
-            <div className="w-full h-10 flex items-center justify-evenly py-2">
+            <div className="w-full h-10 flex items-center justify-evenly mt-2">
               <motion.button
                 {...smallClickAnimation}
                 className={`w-full flex items-center justify-center ${
@@ -164,7 +183,7 @@ const Form: FC<Props> = ({
                   border-neutralBtnBorder w-full h-[50px] rounded-lg px-3
                   disabled:opacity-50 disabled:cursor-not-allowed text-center"
                   name="fundingAmount"
-                  placeholder={`2500`}
+                  placeholder={`$2500`}
                   disabled={!mint}
                   // disabled={toggleConfig.selected === "option2"}
                   value={formData?.issuePrice}
@@ -179,36 +198,63 @@ const Form: FC<Props> = ({
           {fundingType === "wallet" && (
             <div className="w-full flex flex-col items-center gap-5">
               <div className="w-full">
-                <p className="w-full mb-2">Price</p>
-                <input
-                  type="number"
-                  className="placeholder:text-textGreen/70 border bg-neutralBtn
-                  border-neutralBtnBorder w-full h-[50px] rounded-lg px-3
-                  disabled:opacity-50 disabled:cursor-not-allowed text-center"
-                  name="fundingAmount"
-                  placeholder={`2500`}
-                  disabled={!mint}
-                  // disabled={toggleConfig.selected === "option2"}
-                  value={formData?.issuePrice}
-                  onChange={handleChange}
-                />
+                <p className="w-full my-2 font-bold">
+                  Set a Price for Your Quest
+                </p>
+                <div className="relative">
+                  <input
+                    type="number"
+                    className="placeholder:text-textGreen/70 border bg-neutralBtn
+              border-neutralBtnBorder w-full h-[50px] rounded-lg px-3
+              disabled:opacity-50 disabled:cursor-not-allowed text-center"
+                    name="issuePrice"
+                    placeholder={`$2500`}
+                    disabled={!mint}
+                    // disabled={toggleConfig.selected === "option2"}
+                    value={formData?.issuePrice}
+                    onChange={handleChange}
+                  />
+                  <div className="absolute left-4 top-1/2 -translate-y-1/2">
+                    <USDC height="25px" width="25px" />
+                  </div>
+                </div>
               </div>
               {formData.issuePrice && (
-                <div className="w-full">
-                  Total Cost:{" "}
-                  <span className="font-bold">
-                    {handlePrice()} {mint?.ticker}
-                  </span>
-                </div>
+                <>
+                  <p className="w-full">
+                    Set Price:{" "}
+                    <span className="font-bold">
+                      {formData.issuePrice} {mint?.ticker}
+                    </span>
+                  </p>
+                  <p className="w-full">
+                    Marketplace Fee:{" "}
+                    <span className="font-bold">
+                      {handleFee()} {mint?.ticker}
+                    </span>
+                  </p>
+                  <p className="w-full">
+                    Total Cost:{" "}
+                    <span className="font-bold">
+                      {handlePrice()} {mint?.ticker}
+                    </span>
+                  </p>
+                </>
               )}
               <motion.button
                 {...smallClickAnimation}
                 onClick={() => onClick()}
-                disabled={!mint || !formData.issuePrice}
-                className="bg-primaryBtn border border-primaryBtnBorder text-textGreen 
-                w-full h-[50px] rounded-lg text-base disabled:cursor-not-allowed disabled:opacity-50"
+                className={`border h-[50px] rounded-lg text-base w-full ${
+                  fundQuestState.error
+                    ? " bg-secondaryBtn border-secondaryBtnBorder text-textRed"
+                    : " bg-primaryBtn border-primaryBtnBorder text-textGreen"
+                } `}
               >
-                Send funds to escrow
+                {fundQuestState.error
+                  ? "Failed to Fund Escrow"
+                  : fundQuestState.isLoading
+                  ? fundQuestState.loadingPrompt
+                  : "Send Funds to Escrow"}
               </motion.button>
             </div>
           )}
@@ -217,5 +263,3 @@ const Form: FC<Props> = ({
     </div>
   );
 };
-
-export default Form;

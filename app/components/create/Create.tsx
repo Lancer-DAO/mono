@@ -1,13 +1,12 @@
 import React, { useEffect, useState } from "react";
+import { BountyCard, PreviewCardBase } from "@/components";
 import {
   CreateBountyForm,
   AdditionalInfoForm,
   PreviewForm,
   FundBountyForm,
   SuccessForm,
-  BountyCard,
-  PreviewCardBase,
-} from "@/components";
+} from "./components";
 import { PublicKey } from "@solana/web3.js";
 import { FORM_SECTION, FormData } from "@/types/forms";
 import { useUserWallet } from "@/src/providers";
@@ -31,7 +30,7 @@ export const Create = () => {
     issuePrice: "",
     issueTitle: "",
     issueDescription: "",
-    industryIds: [],
+    industryId: null,
     displineIds: [],
     tags: [""],
     links: [""],
@@ -40,7 +39,7 @@ export const Create = () => {
     organizationName: "",
     repositoryName: "",
     estimatedTime: "1",
-    isPrivate: true,
+    isPrivate: false,
   });
 
   const createAccountPoll = (publicKey: PublicKey) => {
@@ -60,6 +59,13 @@ export const Create = () => {
     const getMints = async () => {
       const mints = await getMintsAPI();
       setMints(mints);
+      // NOTE: hardcode mint to USDC for now
+      setMint(
+        mints.find(
+          (mint) =>
+            mint.publicKey === "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v"
+        )
+      );
     };
     getMints();
   }, []);
@@ -105,10 +111,6 @@ export const Create = () => {
             setFormSection={setFormSection}
             formData={formData}
             setFormData={setFormData}
-            handleChange={handleChange}
-            mint={mint}
-            setMint={setMint}
-            mints={mints}
           />
         )}
         {formSection === "PREVIEW" && (
@@ -116,7 +118,7 @@ export const Create = () => {
             setFormSection={setFormSection}
             formData={formData}
             industries={industries?.result}
-            setFormData={setFormData}
+            handleChange={handleChange}
             createAccountPoll={createAccountPoll}
             mint={mint}
           />

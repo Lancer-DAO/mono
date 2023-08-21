@@ -12,7 +12,7 @@ import { useWallet } from "@solana/wallet-adapter-react";
 
 const HEADER_LINKS = [
   { href: "/create", children: "New Quest", id: "create-bounty-link" },
-  { href: "/bounties", children: "Quests", id: "bounties-link" },
+  { href: "/quests", children: "Quests", id: "bounties-link" },
 ];
 
 export const Header = () => {
@@ -71,7 +71,7 @@ export const Header = () => {
             </div>
           )}
           {publicKey && <AccountHeaderOptions />}
-          <button
+          {/* <button
             onClick={() => {
               setShowTutorialModal(true);
             }}
@@ -87,7 +87,7 @@ export const Header = () => {
               strokeWidth={1.25}
               color={isTutorialButtonHovered ? "#fff" : "#C5FFBA"}
             />
-          </button>
+          </button> */}
           {isRouterReady && (
             <TutorialsModal
               setShowModal={setShowTutorialModal}

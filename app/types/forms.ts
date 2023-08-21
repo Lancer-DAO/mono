@@ -5,7 +5,7 @@ export interface FormData {
   issuePriceIcon?: string;
   issueTitle: string;
   issueDescription: string;
-  industryIds?: number[];
+  industryId: number | null;
   displineIds?: number[];
   tags: string[];
   links: string[];
