@@ -128,13 +128,13 @@ const BountyList: React.FC<{}> = () => {
         return false;
       }
 
-      if (
-        bounty.price &&
-        (Number(bounty.price) < filters.estimatedPriceBounds[0] ||
-          Number(bounty.price) > filters.estimatedPriceBounds[1])
-      ) {
-        return false;
-      }
+      // if (
+      //   bounty.price &&
+      //   (Number(bounty.price) < filters.estimatedPriceBounds[0] ||
+      //     Number(bounty.price) > filters.estimatedPriceBounds[1])
+      // ) {
+      //   return false;
+      // }
 
       return true;
     });
