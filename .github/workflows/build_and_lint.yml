@@ -23,4 +23,4 @@ jobs:
         uses: ataylorme/eslint-annotate-action@1.2.0
         with:
           repo-token: ${{ secrets.GITHUB_TOKEN }}
-          report-json: ./app/reports/eslint-report.json
+          report-json: ./app/eslint-report.json
