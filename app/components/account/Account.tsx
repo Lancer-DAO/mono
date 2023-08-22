@@ -1,29 +1,35 @@
-import { useEffect, useState, FC } from "react";
-import { useRouter } from "next/router";
-import { DefaultLayout, LoadingBar } from "@/components";
-import { BountyNFTCard, ProfileNFTCard } from "./components";
+import { BountyCard, DefaultLayout, LoadingBar } from "@/components";
 import {
   BOUNTY_PROJECT_PARAMS,
   IS_CUSTODIAL,
   PROFILE_PROJECT_PARAMS,
 } from "@/src/constants";
-import { api } from "@/utils";
-import { BountyNFT, IAsyncResult, ProfileNFT, User } from "@/types/";
-import { createUnderdogClient } from "@underdog-protocol/js";
-import dayjs from "dayjs";
-import relativeTime from "dayjs/plugin/relativeTime";
 import {
   BOUNTY_ACTIONS_TUTORIAL_II_INITIAL_STATE,
   PROFILE_TUTORIAL_INITIAL_STATE,
 } from "@/src/constants/tutorials";
 import { useUserWallet } from "@/src/providers";
 import { useTutorial } from "@/src/providers/tutorialProvider";
+import { BountyNFT, IAsyncResult, ProfileNFT, User } from "@/types/";
+import { api } from "@/utils";
+import { createUnderdogClient } from "@underdog-protocol/js";
+import dayjs from "dayjs";
+import relativeTime from "dayjs/plugin/relativeTime";
+import { useRouter } from "next/router";
+import { FC, useEffect, useState } from "react";
+import { ProfileNFTCard, QuestsCard } from "./components";
+import BadgesCard from "./components/BadgesCard";
+import { ReferCard } from "./components/ReferCard";
 
 dayjs.extend(relativeTime);
 
 const underdogClient = createUnderdogClient({});
 
-export const Account: FC = () => {
+interface Props {
+  self: boolean;
+}
+
+export const Account: FC<Props> = ({ self }) => {
   const router = useRouter();
 
   const { currentUser, currentWallet } = useUserWallet();
@@ -222,7 +228,11 @@ export const Account: FC = () => {
   };
 
   if (!IS_CUSTODIAL && !currentWallet && !profileNFT)
-    return <div>Please Connect a Wallet</div>;
+    return (
+      <div className="w-full h-full flex items-center justify-center">
+        Please Connect a Wallet
+      </div>
+    );
 
   if (account.error) {
     return <div className="color-red">{account.error.message}</div>;
@@ -231,40 +241,29 @@ export const Account: FC = () => {
     return <LoadingBar title={account.loadingPrompt} />;
   }
   return (
-    <>
+    <div className="w-full md:w-[90%] mx-auto px-4 md:px-0 py-10">
+      <h1 className="pb-2">{`${
+        self ? "Your Profile" : `@${account?.result?.name}`
+      }`}</h1>
+      {/* {profileNFT && ( */}
       {account?.result && (
-        <div className="w-full flex flex-col md:flex-row items-center md:items-start gap-10 md:gap-5 justify-center">
-          {profileNFT && (
-            <>
-              <ProfileNFTCard
-                profileNFT={profileNFT}
-                picture={account?.result.picture}
-                githubId={account?.result.githubId}
-              />
-
-              <div
-                className="flex flex-col gap-3 w-full md:w-[60%] px-5 pb-20"
-                id="bounties-list"
-              >
-                <p className="text-4xl flex items-center justify-center pb-3">
-                  Completed Bounties
-                </p>
-                {bountyNFTs.isLoading ? (
-                  <div className="flex justify-center items-center">
-                    <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-gray-900"></div>
-                  </div>
-                ) : bountyNFTs?.result?.length > 0 ? (
-                  bountyNFTs?.result?.map((bountyNFT) => (
-                    <BountyNFTCard bountyNFT={bountyNFT} />
-                  ))
-                ) : (
-                  <div className="w-full text-center">No bounties yet!</div>
-                )}
-              </div>
-            </>
-          )}
+        <div className="w-full flex items-start gap-5">
+          {/* left column */}
+          <div className="flex flex-col gap-5 w-full md:max-w-[482px]">
+            <ProfileNFTCard
+              profileNFT={profileNFT}
+              picture={account?.result.picture}
+              githubId={account?.result.githubId}
+            />
+            <BadgesCard profileNFT={profileNFT} />
+          </div>
+          {/* right column */}
+          <div className="flex flex-col gap-5 w-full">
+            <QuestsCard />
+            <ReferCard />
+          </div>
         </div>
       )}
-    </>
+    </div>
   );
 };

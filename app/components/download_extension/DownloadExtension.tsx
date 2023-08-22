@@ -1,20 +1,18 @@
 import React from "react";
-import DefaultLayout from "../templates/DefaultLayout";
-import { LinkButton } from "@/components";
 import { DownloadZipFile } from "./components/DownloadZipFile";
 
 export const DownloadExtension = () => {
   return (
     <div className="flex items-between gap-[20px]">
       <DownloadZipFile />
-      <LinkButton
+      <a
         href={
           "https://webkul.com/blog/how-to-install-the-unpacked-extension-in-chrome/"
         }
         target="_blank"
       >
         Installation Guide
-      </LinkButton>
+      </a>
     </div>
   );
 };

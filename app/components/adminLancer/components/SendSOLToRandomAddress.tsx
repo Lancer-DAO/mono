@@ -11,7 +11,6 @@ import {
   withdrawTokensInstruction,
 } from "../../../escrow/sdk/instructions";
 import dynamic from "next/dynamic";
-import styles from "../../../styles/Home.module.css";
 
 const WalletDisconnectButtonDynamic = dynamic(
   async () =>
@@ -98,7 +97,7 @@ export const SendSOLToRandomAddress: FC = () => {
   return (
     connection && (
       <>
-        <div className={styles.walletButtons}>
+        <div>
           <WalletMultiButtonDynamic />
           <WalletDisconnectButtonDynamic />
         </div>
