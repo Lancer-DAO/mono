@@ -198,50 +198,52 @@ export const ProfileNFTCard = ({
   }, [currentUser]);
 
   return (
-    <div className="w-full md:w-[460px] rounded-xl bg-bgLancerSecondary/[8%] overflow-hidden p-6 text-textGreen">
-      <div className="flex flex-col gap-3">
-        {(picture || githubId) && (
-          <Image
-            src={
-              picture
-                ? picture
-                : "/assets/images/Lancer-Green-No-Background-p-800.png"
-            }
-            width={58}
-            height={58}
-            alt={profileNFT.name.split("for ")[1]}
-            className="rounded-full overflow-hidden"
-          />
-        )}
+    profileNFT && (
+      <div className="w-full md:w-[460px] rounded-xl bg-bgLancerSecondary/[8%] overflow-hidden p-6 text-textGreen">
+        <div className="flex flex-col gap-3">
+          {(picture || githubId) && (
+            <Image
+              src={
+                picture
+                  ? picture
+                  : "/assets/images/Lancer-Green-No-Background-p-800.png"
+              }
+              width={58}
+              height={58}
+              alt={profileNFT.name.split("for ")[1]}
+              className="rounded-full overflow-hidden"
+            />
+          )}
 
-        <div className="flex items-start gap-16 pb-6">
-          {/* Labels column */}
-          <div className="flex flex-col gap-4 text-lg">
-            <p>name</p>
-            {/* <p>username</p> */}
-            <p>industry</p>
-            {/* <p>location</p> */}
-            <p>xp</p>
-          </div>
-          {/* Data column */}
-          <div className="flex flex-col gap-4 text-lg text-textPrimary">
-            <p>{currentUser?.name}</p>
-            {/* <p>{currentUser?.name}</p> */}
-            {/* TODO: hard coded */}
-            <div className="flex items-center gap-2">
-              <Image
-                src="/assets/icons/eng.png"
-                width={25}
-                height={25}
-                alt="eng"
-              />
-              <p>Engineering</p>
+          <div className="flex items-start gap-16 pb-6">
+            {/* Labels column */}
+            <div className="flex flex-col gap-4 text-lg">
+              <p>name</p>
+              {/* <p>username</p> */}
+              <p>industry</p>
+              {/* <p>location</p> */}
+              <p>xp</p>
             </div>
-            {/* <p>[location]</p> */}
-            <p>{profileNFT.reputation} pts</p>
+            {/* Data column */}
+            <div className="flex flex-col gap-4 text-lg text-textPrimary">
+              <p>{currentUser?.name}</p>
+              {/* <p>{currentUser?.name}</p> */}
+              {/* TODO: hard coded */}
+              <div className="flex items-center gap-2">
+                <Image
+                  src="/assets/icons/eng.png"
+                  width={25}
+                  height={25}
+                  alt="eng"
+                />
+                <p>Engineering</p>
+              </div>
+              {/* <p>[location]</p> */}
+              <p>{profileNFT.reputation} pts</p>
+            </div>
           </div>
         </div>
       </div>
-    </div>
+    )
   );
 };

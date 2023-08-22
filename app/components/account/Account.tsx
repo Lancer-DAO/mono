@@ -139,7 +139,7 @@ export const Account: FC<Props> = ({ self }) => {
       const { name, attributes, image } = nfts.results[0];
       const profileNFT: ProfileNFT = {
         name: name,
-        reputation: attributes.reputation as number,
+        reputation: (attributes?.reputation as number) ?? 0,
         badges:
           attributes.badges !== ""
             ? (attributes.badges as string)?.split(",")
@@ -171,7 +171,7 @@ export const Account: FC<Props> = ({ self }) => {
       const { name, attributes, image } = nft;
       return {
         name: name,
-        reputation: attributes.reputation as number,
+        reputation: (attributes?.reputation as number) ?? 0,
         tags:
           attributes.tags !== "" ? (attributes.tags as string)?.split(",") : [],
         image: image,
