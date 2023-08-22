@@ -3,19 +3,23 @@ name: Build and Lint
 on:
   pull_request:
     paths:
-        - 'app/**'
+      - "app/**"
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-        - uses: actions/checkout@v3
-        - uses: actions/setup-node@v1
-          with:
-            node-version: 16
-        - name: 'Install Dependencies'
-          run: npm ci
-          working-directory: ./app
-        - name: 'Run linter'
-          run: npm run lint
-          working-directory: ./app
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v1
+        with:
+          node-version: 16
+      - name: "Install Dependencies"
+        run: npm ci
+        working-directory: ./app
+      - name: "Run linter"
+        run: npm run lint
+        working-directory: ./app
+      - name: ESLint Annotate from Report JSON
+        uses: ataylorme/eslint-annotate-action@1.2.0
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}

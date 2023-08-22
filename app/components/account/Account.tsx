@@ -254,8 +254,11 @@ export const Account: FC = () => {
                     <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-gray-900"></div>
                   </div>
                 ) : bountyNFTs?.result?.length > 0 ? (
-                  bountyNFTs?.result?.map((bountyNFT) => (
-                    <BountyNFTCard bountyNFT={bountyNFT} />
+                  bountyNFTs?.result?.map((bountyNFT, index) => (
+                    <BountyNFTCard
+                      key={`${bountyNFT.name}-${index}`}
+                      bountyNFT={bountyNFT}
+                    />
                   ))
                 ) : (
                   <div className="w-full text-center">No bounties yet!</div>
