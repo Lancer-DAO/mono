@@ -209,7 +209,7 @@ export const ProfileNFTCard = ({
             }
             width={58}
             height={58}
-            alt={profileNFT.name.split("for ")[1]}
+            alt={profileNFT?.name.split("for ")[1]}
             className="rounded-full overflow-hidden"
           />
         )}
@@ -238,7 +238,7 @@ export const ProfileNFTCard = ({
               <p>Engineering</p>
             </div>
             {/* <p>[location]</p> */}
-            <p>{profileNFT.reputation} pts</p>
+            <p>{profileNFT?.reputation} pts</p>
           </div>
         </div>
       </div>

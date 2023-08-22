@@ -66,9 +66,8 @@ const ReferralProvider: FunctionComponent<IReferralProps> = ({ children }) => {
   const sendTransaction = currentWallet?.sendTransaction;
 
   const handleFetches = useCallback(async () => {
-    console.log("hi");
     try {
-      console.log("handle fetches");
+      // console.log("handle fetches");
       const organization = await client.organization.getByName(
         ORGANIZATION_NAME
       );
@@ -427,7 +426,7 @@ const ReferralProvider: FunctionComponent<IReferralProps> = ({ children }) => {
   }, [publicKey, connection]);
 
   useEffect(() => {
-    console.log("client");
+    // console.log("client");
     if (client) {
       handleFetches();
     }

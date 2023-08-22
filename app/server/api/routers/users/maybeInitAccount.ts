@@ -77,7 +77,7 @@ export const maybeInitAccount = protectedProcedure
 
         await queries.wallet.updateHasBeenInitialized(walletInstance);
       }
-      console.log(balance);
+      // console.log(balance);
     } catch (e) {
       console.error(e);
     }

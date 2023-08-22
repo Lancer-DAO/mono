@@ -50,10 +50,10 @@ export const Account: FC<Props> = ({ self }) => {
 
   useEffect(() => {
     const getUserAsync = async () => {
-      if (router.query.id !== undefined) {
+      if (router.query.account !== undefined) {
         const fetchAccount = async () => {
           const account = await getUser({
-            id: parseInt(router.query.id as string),
+            id: parseInt(router.query.account as string),
           });
           setAccount({ ...account, result: account });
         };
@@ -88,6 +88,8 @@ export const Account: FC<Props> = ({ self }) => {
     };
     if (!!currentUser && !!currentWallet?.publicKey) {
       getUserAsync();
+    } else {
+      console.log("no user or wallet");
     }
   }, [currentUser, router.isReady, currentWallet?.publicKey]);
 

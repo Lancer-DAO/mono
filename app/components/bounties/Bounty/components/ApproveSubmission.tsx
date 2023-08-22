@@ -93,7 +93,8 @@ export const ApproveSubmission = () => {
           attributes: {
             lastUpdated: new Date().toISOString(),
             reputation:
-              (profileNFT.attributes.reputation as number) + reputationIncrease,
+              (profileNFT?.attributes.reputation as number) +
+              reputationIncrease,
           },
         },
       });
@@ -132,7 +133,8 @@ export const ApproveSubmission = () => {
           attributes: {
             lastUpdated: new Date().toISOString(),
             reputation:
-              (profileNFT.attributes.reputation as number) + reputationIncrease,
+              (profileNFT?.attributes.reputation as number) +
+              reputationIncrease,
           },
         },
       });
