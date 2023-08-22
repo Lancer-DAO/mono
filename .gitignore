@@ -5,6 +5,9 @@
 /.pnp
 .pnp.js
 
+# linting
+eslint_report.json
+
 # testing
 /coverage
 
