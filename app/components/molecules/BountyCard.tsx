@@ -16,7 +16,6 @@ import { BountyPreview, FormData, Industry } from "@/types/";
 import { getFormattedDate } from "@/utils";
 import { motion } from "framer-motion";
 import Image from "next/image";
-import { useRouter } from "next/router";
 import { FC, SVGAttributes, useEffect, useState } from "react";
 
 export interface BountyCardProps extends SVGAttributes<SVGSVGElement> {
@@ -36,9 +35,7 @@ const BountyCard: FC<BountyCardProps> = ({
   const { currentBounty } = useBounty();
   const [selectedIndustry, setSelectedIndustry] = useState<Industry>();
 
-  const router = useRouter();
-
-  const bountyCardAnimation = bounty
+  const bountyCardAnimation = linked
     ? { ...fastEnterAnimation, ...midClickAnimation }
     : null;
 
@@ -50,11 +47,12 @@ const BountyCard: FC<BountyCardProps> = ({
     ? bounty.tags.length > 3
     : formData.tags.length > 3;
 
-  const handleClick = () => {
+  const handleBountyLink = () => {
+    if (!linked) return null;
     if (formData) {
-      router.push(`/quests/${currentBounty?.id?.toString()}`);
+      return `/quests/${currentBounty?.id?.toString()}`;
     } else {
-      router.push(`/quests/${bounty?.id}`);
+      return `/quests/${bounty?.id}`;
     }
   };
 
@@ -83,12 +81,12 @@ const BountyCard: FC<BountyCardProps> = ({
   };
 
   return (
-    <motion.div
+    <motion.a
       className={`relative w-[291px] h-[292px] ${
         linked ? "cursor-pointer" : ""
       }`}
       {...bountyCardAnimation}
-      onClick={handleClick}
+      href={handleBountyLink()}
     >
       <div className="absolute left-1/2 -translate-x-[53%] top-[6px] w-7">
         <Image
@@ -181,7 +179,7 @@ const BountyCard: FC<BountyCardProps> = ({
           <LockIcon fill="#464646" width={15} height={15} />
         </div>
       )}
-    </motion.div>
+    </motion.a>
   );
 };
 

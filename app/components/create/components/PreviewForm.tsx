@@ -129,24 +129,33 @@ export const PreviewForm: FC<Props> = ({
           {/* 2. quest links card */}
           <PreviewCardBase title="Links">
             <div className="flex flex-col gap-4 overflow-hidden">
-              {formData?.links?.map((link, index) => {
-                const formattedLink =
-                  link.startsWith("http://") || link.startsWith("https://")
-                    ? link
-                    : `http://${link}`;
-                return (
-                  <a
-                    key={index}
-                    href={formattedLink}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="truncate bg-white p-3 border border-neutralBtnBorder
+              {formData?.links.length > 0 && formData?.links[0] !== "" ? (
+                formData?.links?.map((link, index) => {
+                  const formattedLink =
+                    link.startsWith("http://") || link.startsWith("https://")
+                      ? link
+                      : `http://${link}`;
+                  return (
+                    <a
+                      key={index}
+                      href={formattedLink}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="truncate bg-white p-3 border border-neutralBtnBorder
+                      rounded-lg text-textGreen text-base"
+                    >
+                      {formattedLink}
+                    </a>
+                  );
+                })
+              ) : (
+                <p
+                  className="bg-white p-3 border border-neutralBtnBorder
                   rounded-lg text-textGreen text-base"
-                  >
-                    {formattedLink}
-                  </a>
-                );
-              })}
+                >
+                  No links provided!
+                </p>
+              )}
             </div>
           </PreviewCardBase>
         </div>

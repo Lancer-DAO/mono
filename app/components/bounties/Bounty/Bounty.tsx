@@ -156,7 +156,7 @@ export const Bounty = () => {
           )}
           {currentBounty.tags.length > 0 &&
             currentBounty.tags[0].name !== "" && (
-              <>
+              <div>
                 <p className="font-bold text-sm">Required skills</p>
                 <div className="flex flex-wrap w-full gap-2 pt-2">
                   {currentBounty.tags.map((tag) => (
@@ -169,7 +169,7 @@ export const Bounty = () => {
                     </div>
                   ))}
                 </div>
-              </>
+              </div>
             )}
         </div>
         {/* bountyactions */}

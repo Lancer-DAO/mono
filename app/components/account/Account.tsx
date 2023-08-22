@@ -241,7 +241,7 @@ export const Account: FC<Props> = ({ self }) => {
     return <LoadingBar title={account.loadingPrompt} />;
   }
   return (
-    <div className="w-full md:w-[90%] mx-auto px-4 md:px-0">
+    <div className="w-full md:w-[90%] mx-auto px-4 md:px-0 py-10">
       <h1 className="pb-2">{`${
         self ? "Your Profile" : `@${account?.result?.name}`
       }`}</h1>
