@@ -19,22 +19,22 @@ const IndustrySelection: FC<Props> = ({ industries, filters, setFilters }) => {
               <div
                 key={industry.id}
                 className="flex items-center gap-2 cursor-pointer"
-                onClick={() => {
-                  setFilters({
-                    ...filters,
-                    industries: filters.industries?.includes(industry.name)
-                      ? filters.industries?.filter(
-                          (name) => name !== industry.name
-                        )
-                      : [...filters.industries, industry.name],
-                  });
-                }}
               >
                 <input
                   type="radio"
                   id={industry.name}
                   name={industry.name}
                   checked={filters.industries?.includes(industry.name)}
+                  onChange={() => {
+                    setFilters({
+                      ...filters,
+                      industries: filters.industries?.includes(industry.name)
+                        ? filters.industries?.filter(
+                            (name) => name !== industry.name
+                          )
+                        : [...filters.industries, industry.name],
+                    });
+                  }}
                 />
                 <div className="flex items-center gap-1">
                   <Image
