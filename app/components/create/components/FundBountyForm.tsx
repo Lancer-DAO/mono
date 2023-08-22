@@ -134,16 +134,15 @@ export const FundBountyForm: FC<Props> = ({
   }, []);
 
   return (
-    <div className="w-full">
+    <div className="w-full px-10">
       <div className="w-full flex items-start justify-center mt-10 gap-20">
         <div className="w-full flex flex-col gap-5 max-w-[400px]">
           <h1>Funding Details</h1>
           <p>
-            By funding an issue with Lancer, you are outsourcing a developer
-            task in one of two ways. The first is internally to your team or a
-            freelancer and the other is a public bounty to our network of
-            developers. The more clear you are with your descriptions, the
-            better Lancer is at finding the right developer to solve your issue.
+            You’re almost done! Last step is to deposit the total value of the
+            quest and fund your secure escrow account. You’ll be able to approve
+            or deny the sending of funds. By proceeding you are agreeing to
+            Lancer’s terms of service.
           </p>
         </div>
         <div className="w-full max-w-[540px] px-10 flex flex-col items-center gap-10 bg-white pb-10">

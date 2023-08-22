@@ -48,7 +48,7 @@ export const CreateBountyForm: FC<Props> = ({
   // }, [toggleConfig.selected]);
 
   return (
-    <>
+    <div className="px-10">
       <h1>Post a Quest</h1>
       <div className="w-full flex flex-col gap-4 mt-6">
         <div className="relative flex items-center">
@@ -153,6 +153,6 @@ export const CreateBountyForm: FC<Props> = ({
           </motion.button>
         </div>
       </div>
-    </>
+    </div>
   );
 };

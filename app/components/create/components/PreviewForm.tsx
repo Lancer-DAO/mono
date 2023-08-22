@@ -108,15 +108,12 @@ export const PreviewForm: FC<Props> = ({
   };
 
   return (
-    <div>
+    <div className="px-10">
       <h1>Preview</h1>
       <div className="w-full flex flex-col gap-4 my-6">
         <p className="max-w-[500px]">
-          This is your chance to review your Quest in its entirety. By clicking
-          "Continue", you are intializing this Quest and will move on to funding
-          it. Any changes you'd like to make can be done by clicking the "Back"
-          buttons. You're one step away from putting your Quest out into the
-          world!
+          This is your chance to make sure everything looks right. The more
+          fleshed out your quest is, the better your chances of finding a match!
         </p>
 
         <div className="w-full flex items-center gap-10">
