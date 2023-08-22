@@ -13,12 +13,12 @@ export const SuccessForm: FC = () => {
       <div className="flex justify-between">
         <div className="w-[500px] h-[350px] flex flex-col gap-5">
           <p>
-            Sunt sunt ullamco anim aute cillum ex officia nostrud consequat sit.
-            Sit adipisicing fugiat quis adipisicing nulla laboris consequat.
-            Consectetur sit sit ex dolor est minim labore nulla veniam
-            cupidatat. Est ullamco sit laborum occaecat sit reprehenderit aliqua
-            deserunt ex veniam. Est laborum aute ullamco exercitation incididunt
-            aute.
+            “A person should set his goals as early as he can and devote all his
+            energy and talent to getting there. With enough effort, he may
+            achieve it. Or he may find something that is even more rewarding.
+            But in the end, no matter that the outcome, he will know he has been
+            alive.”
+            <br />– Walt Disney
           </p>
           <div className="flex flex-col gap-3">
             <h1 className="text-lg">Share to freelancers:</h1>
