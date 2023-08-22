@@ -18,10 +18,9 @@ export const registerProfileNFT = protectedProcedure
       walletPublicKey,
       true
     );
+    if (!wallet.hasProfileNFT) {
+      await queries.wallet.updateHasProfileNFT(wallet);
+    }
 
-    await queries.user.updateProfileNFT(id, wallet.id);
-
-    const updatedUser = await queries.user.getByEmail(email);
-
-    return { ...updatedUser, currentWallet: updatedUser.wallets[0] };
+    return wallet;
   });

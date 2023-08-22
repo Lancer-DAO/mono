@@ -7,6 +7,7 @@ export interface LinkButtonProps extends React.ComponentProps<typeof Link> {
   target?: string;
   id?: string;
   extraClasses?: string;
+  wrapperClasses?: string;
   props?: any;
 }
 
@@ -39,18 +40,21 @@ const HeaderButton = ({
   target,
   id,
   extraClasses,
+  wrapperClasses,
   ...props
 }: LinkButtonProps) => {
   return (
-    <Link
-      href={href}
-      className={getButtonStyle(version) + " " + extraClasses}
-      id={id}
-      target={target}
-      {...props}
-    >
-      {children}
-    </Link>
+    <div className={wrapperClasses}>
+      <Link
+        href={href}
+        className={getButtonStyle(version) + " " + extraClasses}
+        id={id}
+        target={target}
+        {...props}
+      >
+        {children}
+      </Link>
+    </div>
   );
 };
 

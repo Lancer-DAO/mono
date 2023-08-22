@@ -46,7 +46,7 @@ export const Header = () => {
             <div className="ml-auto"></div>
           ) : (
             <div
-              className="ml-auto"
+              className="ml-auto pr-2"
               id="wallet-connect-button"
               onClick={() => {
                 if (
@@ -65,8 +65,8 @@ export const Header = () => {
             >
               <WalletMultiButtonDynamic
                 className="flex h-[48px] w-[200px] py-[6px] items-center justify-center 
-              border-solid hover:bg-turquoise-500 text-gray-800 hover:!text-white-100 
-              transition-colors duration-300 ease-in-out"
+                border-solid !bg-turquoise-500 text-gray-800 !text-white-100 
+                transition-colors duration-300 ease-in-out hover:opacity-90"
               />
             </div>
           )}

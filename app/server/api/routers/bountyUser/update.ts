@@ -1,11 +1,7 @@
-import { prisma } from "@/server/db";
 import { protectedProcedure } from "../../trpc";
 import { z } from "zod";
 import * as queries from "@/prisma/queries";
-import { Octokit } from "octokit";
-import axios from "axios";
-import dayjs from "dayjs";
-import { BountyState } from "@/src/types";
+import { BountyState } from "@/types/";
 
 export const update = protectedProcedure
   .input(
@@ -70,6 +66,6 @@ export const update = protectedProcedure
         );
       }
       const updatedBounty = await queries.bounty.get(bountyId, currentUserId);
-      return { updatedBounty };
+      return updatedBounty;
     }
   );

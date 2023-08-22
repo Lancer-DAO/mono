@@ -7,7 +7,7 @@ import {
   useReducer,
   useState,
 } from "react";
-import { Tutorial } from "@/src/types/tutorials";
+import { Tutorial } from "@/types//tutorials";
 
 export interface ITutorialContext {
   currentTutorialState: Tutorial;

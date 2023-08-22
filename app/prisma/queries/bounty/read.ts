@@ -3,11 +3,12 @@ import {
   BOUNTY_USER_RELATIONSHIP,
   BountyUserRelations,
   CurrentUserBountyInclusions,
-} from "@/src/types";
+} from "@/types/";
+import { UnwrapArray, UnwrapPromise } from "@/types/Bounties";
 import * as Prisma from "@prisma/client";
 
-export const get = async (id: number, currentUserId: number) => {
-  const bounty = await prisma.bounty.findUnique({
+const bountyQuery = async (id: number) => {
+  return prisma.bounty.findUnique({
     where: {
       id,
     },
@@ -34,6 +35,17 @@ export const get = async (id: number, currentUserId: number) => {
       pullRequests: true,
     },
   });
+};
+
+export type BountyType = UnwrapPromise<ReturnType<typeof get>>;
+export type BountyPreviewType = UnwrapArray<
+  UnwrapPromise<ReturnType<typeof getMany>>
+>;
+export type BountyQueryType = UnwrapPromise<ReturnType<typeof bountyQuery>>;
+export type UserRelation = UnwrapArray<BountyQueryType["users"]>;
+
+export const get = async (id: number, currentUserId: number) => {
+  const bounty = await bountyQuery(id);
   const relations = getBountyRelations(bounty.users);
   const currentUserRelationsList: BOUNTY_USER_RELATIONSHIP[] = bounty.users
     .find((user) => user.userid === currentUserId)
@@ -42,7 +54,7 @@ export const get = async (id: number, currentUserId: number) => {
 
   const currentUserRelations = currentUserRelationsList
     ? getCurrentUserRelations(currentUserRelationsList)
-    : [];
+    : {};
 
   return {
     ...bounty,
@@ -132,20 +144,26 @@ export const getMany = async (
   }
 };
 
+export const convertBountyUserToUser = (user: UserRelation) => {
+  return {
+    ...user,
+    relations: user.relations
+      .replace(/[\[\]]/g, "")
+      .split(",") as BOUNTY_USER_RELATIONSHIP[],
+    publicKey: user.wallet.publicKey,
+  };
+};
+
+export type BountyUserType = ReturnType<typeof convertBountyUserToUser>;
+
 const getBountyRelations = (
   rawUsers: (Prisma.BountyUser & {
     user: Prisma.User;
     wallet: Prisma.Wallet;
   })[]
-) => {
+): BountyUserRelations => {
   const allUsers = rawUsers.map((user) => {
-    return {
-      ...user,
-      relations: user.relations
-        .replace(/[\[\]]/g, "")
-        .split(",") as BOUNTY_USER_RELATIONSHIP[],
-      publicKey: user.wallet.publicKey,
-    };
+    return convertBountyUserToUser(user);
   });
   // console.log(allUsers);
   const newBounty: BountyUserRelations = {

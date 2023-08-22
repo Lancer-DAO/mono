@@ -52,6 +52,7 @@ const DEVNET_PROGRAM_ID = "9zE4EQ5tJbEeMYwtS2w8KrSHTtTW4UPqwfbBSEkUrNCA";
 const ReferralProvider: FunctionComponent<IReferralProps> = ({ children }) => {
   const { currentWallet } = useUserWallet();
   const { connection } = useConnection();
+  const { currentUser } = useUserWallet();
 
   const [initialized, setInitialized] = useState(false);
   const [client, setClient] = useState<Client | null>(null);
@@ -71,8 +72,10 @@ const ReferralProvider: FunctionComponent<IReferralProps> = ({ children }) => {
       const mints = await getMintsAPI();
       setMints(mints);
     };
-    getMints();
-  }, []);
+    if (!!currentUser) {
+      getMints();
+    }
+  }, [currentUser]);
 
   const handleFetches = useCallback(async () => {
     try {
@@ -232,6 +235,9 @@ const ReferralProvider: FunctionComponent<IReferralProps> = ({ children }) => {
           blockhash: blockhash,
           lastValidBlockHeight: lastValidBlockHeight,
         };
+        if (instructions.length === 0) {
+          return;
+        }
 
         const transaction = new Transaction(txInfo).add(...instructions);
         const signature = await sendTransaction(transaction, connection);
@@ -257,7 +263,6 @@ const ReferralProvider: FunctionComponent<IReferralProps> = ({ children }) => {
 
       const buddyProfile = await client.buddy.getProfile(wallet);
       if (!buddyProfile) return [];
-      debugger;
       const treasuryPDA = client.pda.getTreasuryPDA(
         [buddyProfile.account.pda],
         [10_000],
@@ -269,11 +274,10 @@ const ReferralProvider: FunctionComponent<IReferralProps> = ({ children }) => {
 
       if (!member) return [];
 
-      const remainingAccounts =
-        await client.initialize.validateReferrerAccounts(
-          mint,
-          member.account.pda
-        );
+      const remainingAccounts = await client.accounts.validateReferrerAccounts(
+        mint,
+        member.account.pda
+      );
 
       if (
         remainingAccounts.memberPDA.toString() === PublicKey.default.toString()
@@ -304,6 +308,11 @@ const ReferralProvider: FunctionComponent<IReferralProps> = ({ children }) => {
         },
         {
           pubkey: remainingAccounts.memberPDA,
+          isWritable: false,
+          isSigner: false,
+        },
+        {
+          pubkey: remainingAccounts.referrerMember,
           isWritable: false,
           isSigner: false,
         },

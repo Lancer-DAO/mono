@@ -1,14 +1,5 @@
 import { PublicKey } from "@solana/web3.js";
-import { getFeatureFundingAccount } from "@/escrow/adapters";
-import axios from "axios";
 import Base58 from "base-58";
-import {
-  EscrowContract,
-  Issue,
-  BOUNTY_USER_RELATIONSHIP,
-  Contributor,
-  User,
-} from "@/src/types";
 import { MonoProgram } from "@/escrow/sdk/types/mono_program";
 import { AnchorProvider, Program } from "@project-serum/anchor";
 

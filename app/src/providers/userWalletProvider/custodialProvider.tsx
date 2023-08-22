@@ -37,7 +37,7 @@ import {
   VersionedTransaction,
 } from "@solana/web3.js";
 import { useConnection } from "@solana/wallet-adapter-react";
-import { CurrentUser, LancerWallet } from "@/src/types";
+import { LancerWallet } from "@/types/";
 import { MonoProgram } from "@/escrow/sdk/types/mono_program";
 import MonoProgramJSON from "@/escrow/sdk/idl/mono_program.json";
 import { IS_MAINNET, MAINNET_RPC, MONO_ADDRESS } from "@/src/constants";
@@ -47,6 +47,7 @@ import { IUserWalletContext } from "./types";
 import { api } from "@/src/utils/api";
 import { useRouter } from "next/router";
 import { getCookie, setCookie } from "cookies-next";
+import { User } from "@/types/Bounties";
 const SOLANA_CHAIN_CONFIG = {
   solana: {
     chainNamespace: CHAIN_NAMESPACES.SOLANA,
@@ -100,7 +101,7 @@ export const CustodialWalletProvider: FunctionComponent<IWeb3AuthState> = ({
   const [walletAction, setWalletActions] = useState<WalletActions | null>(null);
   const [currentWallet, setCurrentWallet] = useState<LancerWallet | null>(null);
   const { connection } = useConnection();
-  const [currentUser, setCurrentUser] = useState<CurrentUser | null>(null);
+  const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [user, setUser] = useState<unknown | null>(null);
   const { mutateAsync: getCurrUser } = api.users.login.useMutation();
   const { mutateAsync: maybeInitAccount } =
@@ -166,10 +167,10 @@ export const CustodialWalletProvider: FunctionComponent<IWeb3AuthState> = ({
           const userInfo = await getCurrUser();
           setCurrentUser(userInfo);
         } catch (e) {
-          // if (e.data.httpStatus === 401) {
-          //   debugger;
-          //   router.push("/api/auth/login");
-          // }
+          if (e.data.httpStatus === 401) {
+            console.error(e);
+            router.push("/api/auth/login");
+          }
         }
       };
       getUser();
@@ -294,11 +295,10 @@ export const CustodialWalletProvider: FunctionComponent<IWeb3AuthState> = ({
       return;
     }
     await web3Auth.logout();
-    // window.open("https://auth.lancer.so" + "/v2/logout?federated");
 
     setProvider(null);
     window.sessionStorage.clear();
-    window.location.href = "/";
+    window.location.href = "/api/auth/logout";
   };
 
   const getUserInfo = async () => {

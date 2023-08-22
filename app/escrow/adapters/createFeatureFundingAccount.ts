@@ -1,4 +1,4 @@
-import { PublicKey, Transaction } from "@solana/web3.js";
+import { AccountMeta, PublicKey, Transaction } from "@solana/web3.js";
 import { AnchorProvider, Program } from "@project-serum/anchor";
 import { MonoProgram } from "@/escrow/sdk/types/mono_program";
 import {
@@ -7,12 +7,14 @@ import {
 } from "@/escrow/sdk/instructions";
 import { USDC_MINT } from "@/src/constants";
 import { findFeatureAccount } from "@/escrow/sdk/pda";
-import { LancerWallet } from "@/src/types";
+import { LancerWallet } from "@/types/";
 
 export const createFFA = async (
   wallet: LancerWallet,
   program: Program<MonoProgram>,
   provider: AnchorProvider,
+  referrer: PublicKey,
+  remainingAccounts: AccountMeta[],
   mint?: PublicKey
 ) => {
   const timestamp = Date.now().toString();
@@ -31,6 +33,8 @@ export const createFFA = async (
   const referralAccountIx = await createReferralDataAccountInstruction(
     new PublicKey(wallet.publicKey),
     feature_account,
+    referrer,
+    remainingAccounts,
     program
   );
   const { blockhash, lastValidBlockHeight } =
