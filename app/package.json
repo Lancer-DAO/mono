@@ -16,7 +16,8 @@
     "prisma:generate": "prisma generate",
     "postinstall": "prisma generate",
     "prisma:db:push": "prisma db push",
-    "lint": "next lint"
+    "lint": "next lint",
+    "lint:report": "next -- --output-file eslint_report.json --format json"
   },
   "dependencies": {
     "@auth0/nextjs-auth0": "2.6.0",
