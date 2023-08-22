@@ -38,39 +38,41 @@ export const Header = () => {
               </a>
             );
           })}
-          {!IS_CUSTODIAL && (
-            <div
-              className="ml-auto"
-              onClick={() => {
-                if (
-                  !!currentTutorialState &&
-                  currentTutorialState?.title ===
-                    PROFILE_TUTORIAL_INITIAL_STATE.title &&
-                  currentTutorialState.currentStep === 1
-                ) {
-                  setCurrentTutorialState({
-                    ...currentTutorialState,
-                    isRunning: false,
-                  });
-                  return;
-                }
-              }}
-            >
-              <WalletMultiButton
-                className="flex h-[48px] px-8 py-[6px] items-center justify-center
+          <div className="flex items-center gap-8 ml-auto">
+            {publicKey && <AccountHeaderOptions />}
+
+            {!IS_CUSTODIAL && (
+              <div
+                onClick={() => {
+                  if (
+                    !!currentTutorialState &&
+                    currentTutorialState?.title ===
+                      PROFILE_TUTORIAL_INITIAL_STATE.title &&
+                    currentTutorialState.currentStep === 1
+                  ) {
+                    setCurrentTutorialState({
+                      ...currentTutorialState,
+                      isRunning: false,
+                    });
+                    return;
+                  }
+                }}
+              >
+                <WalletMultiButton
+                  className="flex h-[48px] px-8 py-[6px] items-center justify-center
                 !border-solid !bg-primaryBtn !border-primaryBtnBorder !border
                 !text-textGreen !rounded-md !whitespace-nowrap !font-base"
-                startIcon={undefined}
-              >
-                {publicKey
-                  ? publicKey.toBase58().slice(0, 4) +
-                    " ... " +
-                    publicKey.toBase58().slice(-4)
-                  : "Connect"}
-              </WalletMultiButton>
-            </div>
-          )}
-          {publicKey && <AccountHeaderOptions />}
+                  startIcon={undefined}
+                >
+                  {publicKey
+                    ? publicKey.toBase58().slice(0, 4) +
+                      " ... " +
+                      publicKey.toBase58().slice(-4)
+                    : "Connect"}
+                </WalletMultiButton>
+              </div>
+            )}
+          </div>
           {/* <button
             onClick={() => {
               setShowTutorialModal(true);
