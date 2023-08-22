@@ -19,6 +19,9 @@ jobs:
       - name: "Run linter"
         run: npm run lint
         working-directory: ./app
+      - name: Save Code Linting Report JSON
+        run: npm run lint:report
+        continue-on-error: true
       - name: ESLint Annotate from Report JSON
         uses: ataylorme/eslint-annotate-action@1.2.0
         with:
