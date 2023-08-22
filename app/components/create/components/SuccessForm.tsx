@@ -8,8 +8,8 @@ export const SuccessForm: FC = () => {
   const { currentBounty } = useBounty();
   const SITE_URL = `https://${IS_CUSTODIAL ? "app" : "pro"}.lancer.so/quests/`;
   return (
-    <div className="w-full flex flex-col gap-10">
-      <h1>Congrats! Your Quest is live.</h1>
+    <div className="w-full flex flex-col gap-10 px-10">
+      <h1 className="whitespace-nowrap">Congrats! Your Quest is live.</h1>
       <div className="flex justify-between">
         <div className="w-[500px] h-[350px] flex flex-col gap-5">
           <p>

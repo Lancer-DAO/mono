@@ -135,16 +135,22 @@ export const Bounty = () => {
             <div>
               <p className="font-bold text-sm">Links</p>
               <div className="flex flex-col w-full gap-1">
-                {links?.map((link) => (
-                  <a
-                    href={link}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="underline text-blue-500"
-                  >
-                    {link}
-                  </a>
-                ))}
+                {links?.map((link) => {
+                  const formattedLink =
+                    link.startsWith("http://") || link.startsWith("https://")
+                      ? link
+                      : `http://${link}`;
+                  return (
+                    <a
+                      href={formattedLink}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="underline text-blue-500"
+                    >
+                      {formattedLink}
+                    </a>
+                  );
+                })}
               </div>
             </div>
           )}
