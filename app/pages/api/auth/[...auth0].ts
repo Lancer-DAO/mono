@@ -4,7 +4,6 @@ export default handleAuth({
   async login(req, res) {
     try {
       // Pass in custom params to your handler
-      console.log("hey");
       await handleLogin(req, res, {
         authorizationParams: { customParam: "foo" },
       });
@@ -16,7 +15,7 @@ export default handleAuth({
     }
   },
   async callback(req, res) {
-    console.log("hi from callback");
+    // console.log("hi from callback");
     handleCallback(req, res);
   },
 });

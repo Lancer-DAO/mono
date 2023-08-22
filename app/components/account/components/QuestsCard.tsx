@@ -19,7 +19,7 @@ export const QuestsCard: FC = () => {
   useEffect(() => {
     const getBountiesAsync = async () => {
       setBounties({ isLoading: true });
-      if (router.query.id === undefined) {
+      if (router.query.account === undefined) {
         try {
           const user = await getCurrentUser();
           const bounties = await getBounties({
@@ -37,7 +37,7 @@ export const QuestsCard: FC = () => {
       } else {
         try {
           const bounties = await getBounties({
-            currentUserId: parseInt(router.query.id as string),
+            currentUserId: parseInt(router.query.account as string),
             onlyMyBounties: false,
           });
           setBounties({
