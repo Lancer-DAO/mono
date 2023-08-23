@@ -21,8 +21,8 @@ export const getFundFFATX = async (
   // check balaance before funding feature
   let fund_feature_ix = await fundFeatureInstruction(
     amount,
-    acc.timestamp,
-    wallet.publicKey,
+    acc?.timestamp,
+    wallet?.publicKey,
     mint ? mint : new PublicKey(USDC_MINT),
     program
   );
