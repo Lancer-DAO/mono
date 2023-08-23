@@ -5,6 +5,7 @@ import { UploadButton, UploadDropzone } from "@/src/utils/uploadthing";
 import { FORM_SECTION, FormData, Media } from "@/types/forms";
 import "@uploadthing/react/styles.css";
 import { motion } from "framer-motion";
+import { Trash, X } from "lucide-react";
 import Image from "next/image";
 import { Dispatch, FC, SetStateAction, useEffect, useState } from "react";
 
@@ -58,6 +59,13 @@ const ReferenceDialogue = ({ onReferenceAdded }) => {
     });
   };
 
+  const handleImageDelete = () => {
+    setReference((prevReference) => ({
+      ...prevReference,
+      imageUrl: "",
+    }));
+  };
+
   return (
     <Dialog>
       <DialogTrigger asChild>
@@ -71,20 +79,31 @@ const ReferenceDialogue = ({ onReferenceAdded }) => {
           </DialogDescription>
         </DialogHeader>
         
-        <div className="grid gap-4 py-4">
-          <UploadDropzone 
-            endpoint="imageUploader"
-            onClientUploadComplete={(res) => {
-              handleImageUpload(res.at(0).url);
-            }}
-            onUploadError={(error: Error) => {
-            console.log(error);
-            alert(`ERROR! ${error.message}`);
-            }}
-          />
-          {reference.imageUrl && (
-            <Image src={reference.imageUrl} alt={reference.title} width={250} height={250} />
-          )}
+        <div className="flex flex-col gap-4 py-4">
+          <div className="flex justify-center">
+            {reference.imageUrl ? ( 
+              <div className="relative">
+                <Image src={reference.imageUrl} alt={reference.title} width={250} height={250} className="justify-self-center" /> 
+                <button
+                  className="absolute top-[-10px] right-[-10px] p-1 bg-red-500 text-white hover:bg-red-700 rounded-full"
+                  onClick={handleImageDelete}
+                >
+                  <X size={18} />
+                </button>
+              </div>
+            ) : ( 
+              <UploadDropzone 
+                endpoint="imageUploader"
+                onClientUploadComplete={(res) => {
+                  handleImageUpload(res.at(0).url);
+                }}
+                onUploadError={(error: Error) => {
+                console.log(error);
+                alert(`ERROR! ${error.message}`);
+                }}
+              /> 
+            )}
+          </div>
           <div className="grid grid-cols-4 items-center gap-4">
             <div  className="text-right">
               Title
@@ -92,8 +111,9 @@ const ReferenceDialogue = ({ onReferenceAdded }) => {
             <input
               id="title"
               value={reference.title}
-              onChange={handleTitleChange} // Update reference title
-              className="col-span-3"
+              onChange={handleTitleChange}
+              className="col-span-3 border border-gray-300 rounded-md"
+              required
             />
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
@@ -103,8 +123,9 @@ const ReferenceDialogue = ({ onReferenceAdded }) => {
             <input
               id="description"
               value={reference.description}
-              onChange={handleDescriptionChange} // Update reference description
-              className="col-span-3"
+              onChange={handleDescriptionChange}
+              className="col-span-3 border border-gray-300 rounded-md"
+              required
             />
           </div>
         </div>
@@ -122,7 +143,7 @@ const AddMediaForm: FC<Props> = ({
   setFormData,
   handleChange,
 }) => {
-  const [isImageUploaded, setIsImageUploaded] = useState(false);
+  const maxReferences = 4;
 
   const addLink = () => {
     setFormData({
@@ -155,6 +176,14 @@ const AddMediaForm: FC<Props> = ({
       media: [...formData.media, newReference],
     });
   };
+
+  const handleReferenceRemoved = (removeIndex) => {
+    const updatedMedia = formData.media.filter((_, index) => index !== removeIndex);
+    setFormData({
+      ...formData,
+      media: updatedMedia,
+    });
+  }
 
   useEffect(() => {
     console.log("formData", formData);
@@ -204,51 +233,31 @@ const AddMediaForm: FC<Props> = ({
           <div className="absolute top-1/2 -translate-y-1/2 -left-10 text-2xl">
             7
           </div>
-          {/* TODO: drag and drop / upload media - proof on concept not working */}
-          {/* <PreviewCardBase width="200px" align="start">
-            Add References
-          </PreviewCardBase> */}
           <div className="grid grid-cols-2 gap-4">
-            {isImageUploaded ? (
-              formData.media.map((media, index) => (
-                <div key={index}>
-                  <img src={media.imageUrl} className="max-w-full" />
-                </div>
-              ))
-            ) : (
-              <>
-                <ReferenceDialogue onReferenceAdded={handleReferenceAdded} />
-              </>
-            )}
-            {formData.media.length < 4 && (
-              <UploadDropzone
-                endpoint="imageUploader"
-                onClientUploadComplete={(res) => {
-                  // Do something with the response
-                  // setFormData({
-                  //   ...formData,
-                  //   media: [...formData.media, res.at(0).url],
-                  // });
-                  setIsImageUploaded(true); // Set imageUploaded to true
-                }}
-                onUploadError={(error: Error) => {
-                  alert(`ERROR! ${error.message}`);
-                }}
-              />
-            )}
-            {formData.media && (
-              <>
-                {formData.media.map((media, index) => (
-                  <div className="border-2 border-primaryBtnBorder rounded-xl p-2" key={index}>
+            {[...Array(maxReferences)].map((_, index) => {
+              if (index < formData.media.length) {
+                const media = formData.media[index];
+                return (
+                  <div className="relative border-2 border-primaryBtnBorder rounded-xl p-2" key={index}>
                     <Image src={media.imageUrl} alt={media.title} width={250} height={250} className="mb-2" />
                     <p className="font-bold text-lg">{media.title}</p>
                     <p className="text-sm">{media.description}</p>
+                    <button 
+                      className="absolute top-[-10px] right-[-10px] p-1 bg-red-500
+                      text-white hover:bg-red-700 rounded-full"
+                      onClick={() => handleReferenceRemoved(index)}
+                    >
+                      <X size={18} />
+                    </button>
                   </div>
-                ))}
-              </>
-            )}
+                );
+              } else {
+                return (
+                  <ReferenceDialogue onReferenceAdded={handleReferenceAdded} />
+                );
+              }
+            })}
           </div>
-          {/* <ImageUpload /> */}
         </div>
         <div className="w-full flex items-center justify-between">
           <motion.button
