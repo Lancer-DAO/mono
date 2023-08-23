@@ -5,7 +5,7 @@ import { UploadButton, UploadDropzone } from "@/src/utils/uploadthing";
 import { FORM_SECTION, FormData, Media } from "@/types/forms";
 import "@uploadthing/react/styles.css";
 import { motion } from "framer-motion";
-import { Trash, X } from "lucide-react";
+import { Plus, Trash, X } from "lucide-react";
 import Image from "next/image";
 import { Dispatch, FC, SetStateAction, useEffect, useState } from "react";
 
@@ -69,7 +69,9 @@ const ReferenceDialogue = ({ onReferenceAdded }) => {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <button className="border border-gray-300 rounded-md">Add a Reference</button>
+        <button className="flex justify-center items-center border border-gray-300 rounded-md h-44 hover:bg-gray-200">
+          <Plus size={48} />
+        </button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
