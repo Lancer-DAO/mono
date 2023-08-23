@@ -129,18 +129,24 @@ export const Account: FC<Props> = ({ self }) => {
   }, [!!account?.result]);
 
   const fetchProfileNFT = async () => {
+    const walletKey =
+      router.query.account !== undefined
+        ? account?.result.wallets.filter((wallet) => wallet.hasProfileNFT)[0]
+            ?.publicKey
+        : currentWallet.publicKey.toString();
     const nfts = await underdogClient.getNfts({
       params: PROFILE_PROJECT_PARAMS,
       query: {
         page: 1,
         limit: 1,
-        ownerAddress: currentWallet.publicKey.toString(),
+        ownerAddress: walletKey,
       },
     });
+
     if (nfts.totalResults > 0) {
-      const { name, attributes, image } = nfts.results[0];
+      const { attributes, image } = nfts.results[0];
       const profileNFT: ProfileNFT = {
-        name: name,
+        name: account?.result.name,
         reputation: attributes.reputation as number,
         badges:
           attributes.badges !== ""
@@ -262,7 +268,8 @@ export const Account: FC<Props> = ({ self }) => {
           {/* right column */}
           <div className="flex flex-col gap-5 w-full">
             <QuestsCard />
-            <ReferCard />
+
+            {account?.result.id === currentUser.id && <ReferCard />}
           </div>
         </div>
       )}

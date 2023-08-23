@@ -61,16 +61,20 @@ const bountyQuery = async (id: number) => {
   });
 };
 
-const bountyQueryMany = async (currentUserId?: number) => {
-  return !!currentUserId
+const bountyQueryMany = async (userId?: number, excludePrivate?: boolean) => {
+  let whereClause: any = {
+    users: {
+      some: {
+        userid: userId,
+      },
+    },
+  };
+  if (excludePrivate) {
+    whereClause = { ...whereClause, isPrivate: false };
+  }
+  return !!userId
     ? await prisma.bounty.findMany({
-        where: {
-          users: {
-            some: {
-              userid: currentUserId,
-            },
-          },
-        },
+        where: whereClause,
         orderBy: {
           createdAt: "desc",
         },
@@ -120,9 +124,19 @@ export const get = async (id: number, currentUserId: number) => {
 
 export const getMany = async (
   currentUserId: number,
-  onlyMyBounties?: boolean
+  onlyMyBounties?: boolean,
+  filteredUserId?: number
 ) => {
-  if (onlyMyBounties) {
+  if (!!filteredUserId) {
+    const rawBounties = await bountyQueryMany(filteredUserId, true);
+    const mappedBounties = rawBounties.map((bounty) => {
+      const userRelations = bounty.users;
+      const creator = getBountyCreator(userRelations);
+      return { ...bounty, creator };
+    });
+
+    return mappedBounties;
+  } else if (onlyMyBounties) {
     const rawBounties = await bountyQueryMany(currentUserId);
     const mappedBounties = rawBounties.map((bounty) => {
       const userRelations = bounty.users;
