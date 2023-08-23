@@ -1,4 +1,5 @@
 import { BountyCard } from "@/components";
+import { useUserWallet } from "@/src/providers";
 import { BountyPreview, IAsyncResult, Industry } from "@/types/";
 import { api } from "@/utils";
 import { useRouter } from "next/router";
@@ -15,6 +16,7 @@ export const QuestsCard: FC = () => {
   const { mutateAsync: getCurrentUser } = api.users.currentUser.useMutation();
   const { mutateAsync: getAllIndustries } =
     api.industries.getAllIndustries.useMutation();
+  const { currentUser } = useUserWallet();
 
   useEffect(() => {
     const getBountiesAsync = async () => {
@@ -37,8 +39,9 @@ export const QuestsCard: FC = () => {
       } else {
         try {
           const bounties = await getBounties({
-            currentUserId: parseInt(router.query.account as string),
+            currentUserId: currentUser.id,
             onlyMyBounties: false,
+            filteredUserId: parseInt(router.query.account as string),
           });
           setBounties({
             result: bounties.slice(0, 2),

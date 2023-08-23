@@ -225,7 +225,7 @@ export const ProfileNFTCard = ({
           </div>
           {/* Data column */}
           <div className="flex flex-col gap-4 text-lg text-textPrimary">
-            <p>{currentUser?.name}</p>
+            <p>{profileNFT?.name}</p>
             {/* <p>{currentUser?.name}</p> */}
             {/* TODO: hard coded */}
             <div className="flex items-center gap-2">

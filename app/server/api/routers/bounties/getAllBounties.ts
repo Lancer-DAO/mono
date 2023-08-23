@@ -7,8 +7,15 @@ export const getAllBounties = protectedProcedure
     z.object({
       currentUserId: z.number(),
       onlyMyBounties: z.boolean(),
+      filteredUserId: z.optional(z.number()),
     })
   )
-  .mutation(async ({ input: { currentUserId, onlyMyBounties } }) => {
-    return await queries.bounty.getMany(currentUserId, onlyMyBounties);
-  });
+  .mutation(
+    async ({ input: { currentUserId, onlyMyBounties, filteredUserId } }) => {
+      return await queries.bounty.getMany(
+        currentUserId,
+        onlyMyBounties,
+        filteredUserId
+      );
+    }
+  );
