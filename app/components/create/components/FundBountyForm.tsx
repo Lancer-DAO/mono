@@ -72,7 +72,7 @@ export const FundBountyForm: FC<Props> = ({
       });
     }
     try {
-      const signature = await fundFFA(
+      await fundFFA(
         parseFloat(formData?.issuePrice),
         currentBounty?.escrow,
         currentWallet,
@@ -81,7 +81,6 @@ export const FundBountyForm: FC<Props> = ({
         currentBounty?.escrow.mint.decimals,
         new PublicKey(currentBounty?.escrow.mint.publicKey)
       );
-      debugger;
       await fundB({
         bountyId: currentBounty?.id,
         escrowId: currentBounty?.escrow.id,
