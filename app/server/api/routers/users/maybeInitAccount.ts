@@ -67,13 +67,10 @@ export const maybeInitAccount = protectedProcedure
           blockhash: blockhash,
           /** the last block chain can advance to before tx is exportd expired */
           lastValidBlockHeight: lastValidBlockHeight,
-          skipPreflight: true,
         };
         const transaction = new Transaction(txInfo).add(tx);
-        console.log("maybeInitAccount3");
 
         await sendAndConfirmTransaction(connection, transaction, [wallet]);
-        console.log("maybeInitAccount4");
 
         await queries.wallet.updateHasBeenInitialized(walletInstance);
       }

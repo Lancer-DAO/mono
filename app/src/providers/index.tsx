@@ -70,7 +70,10 @@ export const AllProviders: React.FC<{ children: ReactNode }> = ({
     </ConnectionProvider>
   ) : (
     <UserProvider>
-      <ConnectionProvider endpoint={endpoint}>
+      <ConnectionProvider
+        endpoint={endpoint}
+        config={{ commitment: "confirmed" }}
+      >
         <WalletProvider wallets={walletProviders} autoConnect>
           <WalletModalProvider>
             <AppContextProvider>
