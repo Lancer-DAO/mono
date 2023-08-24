@@ -77,9 +77,7 @@ const UserWalletProvider: FunctionComponent<IUserWalletState> = ({
         signTransaction,
         connected,
         signAndSendTransaction: async (transaction: Transaction) => {
-          return await sendTransaction(transaction, connection, {
-            skipPreflight: true,
-          });
+          return await sendTransaction(transaction, connection, {});
         },
         providerName: "Phantom",
       };

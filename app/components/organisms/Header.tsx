@@ -12,7 +12,7 @@ import { useWallet } from "@solana/wallet-adapter-react";
 
 const HEADER_LINKS = [
   { href: "/create", children: "New Quest", id: "create-bounty-link" },
-  { href: "/bounties", children: "Quests", id: "bounties-link" },
+  { href: "/quests", children: "Quests", id: "bounties-link" },
 ];
 
 export const Header = () => {
@@ -24,7 +24,7 @@ export const Header = () => {
   const { publicKey } = useWallet();
 
   return (
-    <div className="sticky py-4 top-0 z-20">
+    <div className="sticky py-4 top-0 z-20 bg-bgLancer">
       <div className="flex items-center gap-8 mx-auto w-[90%]">
         <Link href="/" className="flex items-center gap-0.5">
           <Logo width="auto" height="35px" />
@@ -38,40 +38,42 @@ export const Header = () => {
               </a>
             );
           })}
-          {!IS_CUSTODIAL && (
-            <div
-              className="ml-auto"
-              onClick={() => {
-                if (
-                  !!currentTutorialState &&
-                  currentTutorialState?.title ===
-                    PROFILE_TUTORIAL_INITIAL_STATE.title &&
-                  currentTutorialState.currentStep === 1
-                ) {
-                  setCurrentTutorialState({
-                    ...currentTutorialState,
-                    isRunning: false,
-                  });
-                  return;
-                }
-              }}
-            >
-              <WalletMultiButton
-                className="flex h-[48px] px-8 py-[6px] items-center justify-center
-                border-solid !bg-primaryBtn !border-primaryBtnBorder !border
-                !text-textGreen !rounded-md !whitespace-nowrap"
-                startIcon={undefined}
+          <div className="flex items-center gap-8 ml-auto">
+            {publicKey && <AccountHeaderOptions />}
+
+            {!IS_CUSTODIAL && (
+              <div
+                onClick={() => {
+                  if (
+                    !!currentTutorialState &&
+                    currentTutorialState?.title ===
+                      PROFILE_TUTORIAL_INITIAL_STATE.title &&
+                    currentTutorialState.currentStep === 1
+                  ) {
+                    setCurrentTutorialState({
+                      ...currentTutorialState,
+                      isRunning: false,
+                    });
+                    return;
+                  }
+                }}
               >
-                {publicKey
-                  ? publicKey.toBase58().slice(0, 4) +
-                    " ... " +
-                    publicKey.toBase58().slice(-4)
-                  : "Connect"}
-              </WalletMultiButton>
-            </div>
-          )}
-          {publicKey && <AccountHeaderOptions />}
-          <button
+                <WalletMultiButton
+                  className="flex h-[48px] px-8 py-[6px] items-center justify-center
+                !border-solid !bg-primaryBtn !border-primaryBtnBorder !border
+                !text-textGreen !rounded-md !whitespace-nowrap !font-base"
+                  startIcon={undefined}
+                >
+                  {publicKey
+                    ? publicKey.toBase58().slice(0, 4) +
+                      " ... " +
+                      publicKey.toBase58().slice(-4)
+                    : "Connect"}
+                </WalletMultiButton>
+              </div>
+            )}
+          </div>
+          {/* <button
             onClick={() => {
               setShowTutorialModal(true);
             }}
@@ -87,7 +89,7 @@ export const Header = () => {
               strokeWidth={1.25}
               color={isTutorialButtonHovered ? "#fff" : "#C5FFBA"}
             />
-          </button>
+          </button> */}
           {isRouterReady && (
             <TutorialsModal
               setShowModal={setShowTutorialModal}

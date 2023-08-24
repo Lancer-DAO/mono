@@ -1,10 +1,18 @@
-import { api } from "@/src/utils/api";
 import { BountyPreviewType, BountyUserType } from "@/prisma/queries/bounty";
 import { BountyType } from "@/prisma/queries/bounty";
 import { UserType, UserSearchType } from "@/prisma/queries/user";
 import { WalletType } from "@/prisma/queries/wallet";
 import { DisciplineType } from "@/prisma/queries/discipline";
 import { IndustryType } from "@/prisma/queries/industry";
+
+export type Filters = {
+  industries: string[];
+  tags: string[];
+  states: string[];
+  estimatedPriceBounds: [number, number];
+  relationships: string[];
+  isMyBounties: boolean;
+};
 
 export enum BOUNTY_USER_RELATIONSHIP {
   Creator = "creator",
@@ -53,6 +61,10 @@ export enum BountyState {
   AWAITING_REVIEW = "awaiting_review",
   VOTING_TO_CANCEL = "voting_to_cancel",
 }
+
+export const BOUNTY_STATES = Object.values(BountyState);
+export const TABLE_BOUNTY_STATES = [BountyState.ACCEPTING_APPLICATIONS];
+export const TABLE_MY_BOUNTY_STATES = Object.values(BountyState).slice(3);
 
 export type Bounty = BountyType;
 export type BountyPreview = BountyPreviewType;

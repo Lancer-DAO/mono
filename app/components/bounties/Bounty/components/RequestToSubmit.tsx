@@ -1,4 +1,3 @@
-import { Button } from "@/components";
 import { BOUNTY_ACTIONS_TUTORIAL_I_INITIAL_STATE } from "@/src/constants/tutorials";
 import { useUserWallet } from "@/src/providers";
 import { useBounty } from "@/src/providers/bountyProvider";
@@ -8,6 +7,8 @@ import { api } from "@/src/utils/api";
 import { PublicKey } from "@solana/web3.js";
 import { BOUNTY_USER_RELATIONSHIP } from "@/types/";
 import { updateList } from "@/src/utils";
+import { BountyActionsButton } from ".";
+import { useState } from "react";
 
 export const RequestToSubmit = () => {
   const { currentUser, currentWallet } = useUserWallet();
@@ -15,6 +16,8 @@ export const RequestToSubmit = () => {
   const { currentTutorialState, setCurrentTutorialState } = useTutorial();
   const { mutateAsync } = api.bountyUsers.update.useMutation();
   const { createReferralMember } = useReferral();
+
+  const [isLoading, setIsLoading] = useState(false);
 
   const onClick = async () => {
     // Request to submit. Does not interact on chain
@@ -28,7 +31,8 @@ export const RequestToSubmit = () => {
         isRunning: false,
       });
     }
-    const result = await createReferralMember(
+    setIsLoading(true);
+    await createReferralMember(
       new PublicKey(currentBounty.escrow.mint.publicKey)
     );
     const newRelations = updateList(
@@ -36,7 +40,7 @@ export const RequestToSubmit = () => {
       [],
       [BOUNTY_USER_RELATIONSHIP.RequestedSubmitter]
     );
-    const { updatedBounty } = await mutateAsync({
+    const updatedBounty = await mutateAsync({
       currentUserId: currentUser.id,
       bountyId: currentBounty.id,
       userId: currentUser.id,
@@ -48,6 +52,7 @@ export const RequestToSubmit = () => {
     });
 
     setCurrentBounty(updatedBounty);
+    setIsLoading(false);
     if (
       currentTutorialState?.title ===
         BOUNTY_ACTIONS_TUTORIAL_I_INITIAL_STATE.title &&
@@ -64,8 +69,11 @@ export const RequestToSubmit = () => {
   };
 
   return (
-    <Button onClick={onClick} disabled={!currentWallet.publicKey}>
-      Apply
-    </Button>
+    <BountyActionsButton
+      type="green"
+      disabled={isLoading}
+      text={isLoading ? "Loading..." : "Apply to Quest"}
+      onClick={onClick}
+    />
   );
 };

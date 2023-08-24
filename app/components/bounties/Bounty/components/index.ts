@@ -1,5 +1,6 @@
 export * from "./ApproveSubmission";
 export * from "./BountyActions";
+export * from "./BountyActionsButton";
 export * from "./CancelEscrow";
 export * from "./DenySubmission";
 export * from "./RequestChanges";

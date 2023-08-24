@@ -1,4 +1,4 @@
-export type FORM_SECTION = "CREATE" | "MEDIA" | "PREVIEW" | "SUCCESS" | "FUND";
+export type FORM_SECTION = "CREATE" | "MEDIA" | "FUND" | "PREVIEW" | "SUCCESS";
 
 export interface Media {
   imageUrl: string;
@@ -8,8 +8,11 @@ export interface Media {
 
 export interface FormData {
   issuePrice: string;
+  issuePriceIcon?: string;
   issueTitle: string;
   issueDescription: string;
+  industryId: number | null;
+  displineIds?: number[];
   tags: string[];
   links: string[];
   media: Media[];
@@ -18,6 +21,4 @@ export interface FormData {
   repositoryName?: string;
   estimatedTime?: string;
   isPrivate: boolean;
-  industryIds?: number[];
-  displineIds?: number[];
 }
