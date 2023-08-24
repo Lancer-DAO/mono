@@ -46,7 +46,6 @@ export const createFFA = async (
     blockhash: blockhash,
     /** the last block chain can advance to before tx is exportd expired */
     lastValidBlockHeight: lastValidBlockHeight,
-    skipPreflight: true,
   };
   const signature = await wallet.signAndSendTransaction(
     new Transaction(txInfo).add(ix).add(referralAccountIx)

@@ -117,9 +117,7 @@ const ReferralProvider: FunctionComponent<IReferralProps> = ({ children }) => {
           ...(await treasury.claim())
         );
 
-        const signature = await sendTransaction(transaction, connection, {
-          skipPreflight: true,
-        });
+        const signature = await sendTransaction(transaction, connection, {});
         await connection.confirmTransaction(signature);
 
         await handleFetches();

@@ -90,7 +90,6 @@ export const ProfileNFTCard = ({
         blockhash: blockhash,
         /** the last block chain can advance to before tx is exportd expired */
         lastValidBlockHeight: lastValidBlockHeight,
-        skipPreflight: true,
       };
       const tx = new Transaction(txInfo).add(
         createTransferInstruction(
@@ -134,7 +133,6 @@ export const ProfileNFTCard = ({
           blockhash: blockhash,
           /** the last block chain can advance to before tx is exportd expired */
           lastValidBlockHeight: lastValidBlockHeight,
-          skipPreflight: true,
         };
         const tx = new Transaction(txInfo).add(ix);
         const signature = await currentWallet.signAndSendTransaction(tx);
