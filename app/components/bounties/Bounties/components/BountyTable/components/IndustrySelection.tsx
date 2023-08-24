@@ -21,7 +21,8 @@ const IndustrySelection: FC<Props> = ({ industries, filters, setFilters }) => {
                 className="flex items-center gap-2 cursor-pointer"
               >
                 <input
-                  type="radio"
+                  type="checkbox"
+                  className="cursor-pointer"
                   id={industry.name}
                   name={industry.name}
                   checked={filters.industries?.includes(industry.name)}
@@ -36,7 +37,10 @@ const IndustrySelection: FC<Props> = ({ industries, filters, setFilters }) => {
                     });
                   }}
                 />
-                <div className="flex items-center gap-1">
+                <label
+                  htmlFor={industry.name}
+                  className="flex items-center gap-1 cursor-pointer"
+                >
                   <Image
                     src={industry.icon}
                     width={20}
@@ -44,7 +48,7 @@ const IndustrySelection: FC<Props> = ({ industries, filters, setFilters }) => {
                     alt={industry.name ?? "industry icon"}
                   />
                   <p>{industry.name}</p>
-                </div>
+                </label>
               </div>
             );
           })}
