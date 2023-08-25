@@ -67,15 +67,15 @@ export const updateName = async (
   });
 };
 
-// export const updateHasFinishedOnboarding = async (
-//   id: number
-// ): Promise<Prisma.User> => {
-//   return await prisma.user.update({
-//     where: {
-//       id: id,
-//     },
-//     data: {
-//       hasFinishedOnboarding: true,
-//     },
-//   });
-// };
+export const updateHasFinishedOnboarding = async (
+  id: number
+): Promise<Prisma.User> => {
+  return await prisma.user.update({
+    where: {
+      id: id,
+    },
+    data: {
+      hasFinishedOnboarding: true,
+    },
+  });
+};

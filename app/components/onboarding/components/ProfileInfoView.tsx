@@ -3,14 +3,14 @@ import { OnboardStep } from "../Onboard";
 
 interface Props {
   setFormSection: Dispatch<SetStateAction<OnboardStep>>;
-  formData: any;
-  setFormData: Dispatch<SetStateAction<any>>;
+  profileData: any;
+  setProfileData: Dispatch<SetStateAction<any>>;
 }
 
 export const ProfileInfoView: FC<Props> = ({
   setFormSection,
-  formData,
-  setFormData,
+  profileData,
+  setProfileData,
 }) => {
   return <div>ProfileInfoView!!</div>;
 };
