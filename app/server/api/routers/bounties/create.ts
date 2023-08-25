@@ -1,6 +1,6 @@
-import { protectedProcedure } from "../../trpc";
-import { z } from "zod";
 import * as queries from "@/prisma/queries";
+import { z } from "zod";
+import { protectedProcedure } from "../../trpc";
 
 export const createBounty = protectedProcedure
   .input(
@@ -13,7 +13,11 @@ export const createBounty = protectedProcedure
       price: z.optional(z.number()),
       tags: z.array(z.string()),
       links: z.array(z.string()),
-      media: z.array(z.string()),
+      media: z.array(z.object({
+        imageUrl: z.string(),
+        title: z.string(),
+        description: z.string(),
+      })),
       estimatedTime: z.number(),
       isPrivate: z.boolean(),
       publicKey: z.string(),

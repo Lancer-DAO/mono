@@ -188,6 +188,17 @@ model Issue {
   @@unique([number, repositoryid])
 }
 
+model Media {
+  id Int @id @default(autoincrement())
+
+  // Fields
+  imageUrl    String? @db.VarChar(256)
+  title       String? @db.VarChar(128)
+  description String? @db.VarChar(512)
+
+  // Relations
+}
+
 model Milestone {
   id Int @id @default(autoincrement())
 
