@@ -245,10 +245,11 @@ export const AdditionalInfoForm: FC<Props> = ({
               if (index < formData.media.length) {
                 const media = formData.media[index];
                 return (
-                  <div className="relative border-2 border-primaryBtnBorder rounded-xl p-2" key={index}>
-                    <Image src={media.imageUrl} alt={media.title} width={250} height={250} className="mb-2" />
-                    <p className="font-bold text-lg">{media.title}</p>
-                    <p className="text-sm">{media.description}</p>
+                  <div className="relative border-2 border-primaryBtnBorder rounded-xl p-1" key={index}>
+                    <Image src={media.imageUrl} alt={media.title} width={250} height={250} className="mb-2 rounded-md" />
+                    <p className="font-bold text-lg mx-1">{media.title}</p>
+                    <p className="text-sm overflow-hidden text-ellipsis whitespace-nowrap mx-1">{media.description}</p>
+
                     <motion.button 
                       className="absolute top-[-10px] right-[-10px] p-1 bg-secondaryBtn border border-secondaryBtnBorder rounded-full"
                       {...smallClickAnimation}
