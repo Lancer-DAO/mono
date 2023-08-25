@@ -249,13 +249,13 @@ export const AdditionalInfoForm: FC<Props> = ({
                     <Image src={media.imageUrl} alt={media.title} width={250} height={250} className="mb-2" />
                     <p className="font-bold text-lg">{media.title}</p>
                     <p className="text-sm">{media.description}</p>
-                    <button 
-                      className="absolute top-[-10px] right-[-10px] p-1 bg-red-500
-                      text-white hover:bg-red-700 rounded-full"
+                    <motion.button 
+                      className="absolute top-[-10px] right-[-10px] p-1 bg-secondaryBtn border border-secondaryBtnBorder rounded-full"
+                      {...smallClickAnimation}
                       onClick={() => handleReferenceRemoved(index)}
                     >
-                      <X size={18} />
-                    </button>
+                      <X size={18} strokeWidth={1.25}  />
+                    </motion.button>
                   </div>
                 );
               } else {

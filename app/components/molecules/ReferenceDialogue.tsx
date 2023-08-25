@@ -1,8 +1,11 @@
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/atoms/Modal";
+import { smallClickAnimation } from "@/src/constants";
 import { UploadDropzone } from "@/src/utils/uploadthing";
+import { motion } from "framer-motion";
 import { Plus, X } from "lucide-react";
 import Image from "next/image";
 import { useState } from "react";
+import { toast } from "react-hot-toast";
 
 const ReferenceDialogue = ({ onReferenceAdded }) => {
   const [reference, setReference] = useState({
@@ -39,12 +42,19 @@ const ReferenceDialogue = ({ onReferenceAdded }) => {
       description: reference.description,
     };
 
-    onReferenceAdded(newReference); // Call the onReferenceAdded prop with the new reference
-    setReference({
-      imageUrl: "",
-      title: "",
-      description: "",
-    });
+    if(newReference.imageUrl === "") {
+      toast.error("Please upload an image");
+    } else if(newReference.title === "") {
+      toast.error("Please input a title");
+    } else {
+      onReferenceAdded(newReference);
+      setReference({
+        imageUrl: "",
+        title: "",
+        description: "",
+      });
+    }
+
   };
 
   const handleImageDelete = () => {
@@ -74,12 +84,13 @@ const ReferenceDialogue = ({ onReferenceAdded }) => {
             {reference.imageUrl ? ( 
               <div className="relative">
                 <Image src={reference.imageUrl} alt={reference.title} width={250} height={250} className="justify-self-center" /> 
-                <button
-                  className="absolute top-[-10px] right-[-10px] p-1 bg-red-500 text-white hover:bg-red-700 rounded-full"
+                <motion.button
+                  className="absolute top-[-10px] right-[-10px] p-1 bg-secondaryBtn border border-secondaryBtnBorder rounded-full"
+                  {...smallClickAnimation}
                   onClick={handleImageDelete}
                 >
-                  <X size={18} />
-                </button>
+                  <X size={18} strokeWidth={1.25} />
+                </motion.button>
               </div>
             ) : ( 
               <UploadDropzone 
