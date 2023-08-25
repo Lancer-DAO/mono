@@ -24,7 +24,6 @@ model Bounty {
   title         String   @db.VarChar(256)
   type          String?  @db.VarChar(24)
   links         String   @default("") @db.VarChar(1024)
-  media         String   @default("") @db.VarChar(1024)
 
   // Relations
   certificates BountyCertificate[]
@@ -45,6 +44,7 @@ model Bounty {
   users        BountyUser[]
   industries   Industry[]
   disciplines  Discipline[]
+  media        Media[]
 }
 
 model Certificate {
@@ -197,6 +197,8 @@ model Media {
   description String? @db.VarChar(512)
 
   // Relations
+  bounty Bounty[]
+  user   User[]
 }
 
 model Milestone {
@@ -384,6 +386,7 @@ model User {
   referrers    ReferrerReferree[] @relation("referree")
   referrees    ReferrerReferree[] @relation("referrer")
   industries   Industry[]
+  media        Media[]
 }
 
 model Wallet {

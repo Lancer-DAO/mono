@@ -1,10 +1,6 @@
-export type FORM_SECTION = "CREATE" | "MEDIA" | "FUND" | "PREVIEW" | "SUCCESS";
+import { Media } from "./Bounties";
 
-export interface Media {
-  imageUrl: string;
-  title: string;
-  description: string;
-}
+export type FORM_SECTION = "CREATE" | "MEDIA" | "FUND" | "PREVIEW" | "SUCCESS";
 
 export interface FormData {
   issuePrice: string;

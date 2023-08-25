@@ -4,6 +4,7 @@ import { UserType, UserSearchType } from "@/prisma/queries/user";
 import { WalletType } from "@/prisma/queries/wallet";
 import { DisciplineType } from "@/prisma/queries/discipline";
 import { IndustryType } from "@/prisma/queries/industry";
+import { MediaType } from "@/prisma/queries/media";
 
 export type Filters = {
   industries: string[];
@@ -73,6 +74,7 @@ export type UserSearch = UserSearchType;
 export type Wallet = WalletType;
 export type Discipline = DisciplineType;
 export type Industry = IndustryType;
+export type Media = MediaType;
 
 export type UnwrapPromise<T> = T extends Promise<infer U> ? U : T;
 export type UnwrapArray<T> = T extends Array<infer U> ? U : T;
