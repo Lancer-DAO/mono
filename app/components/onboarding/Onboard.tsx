@@ -1,6 +1,6 @@
 import { FC, useEffect, useState } from "react";
 import { ProfileInfoView, SkillsetView, WelcomeView } from "./components";
-import { IAsyncResult, User } from "@/types";
+import { IAsyncResult, ProfileFormData, User } from "@/types";
 import { useUserWallet } from "@/src/providers";
 import { useRouter } from "next/router";
 import { createUnderdogClient } from "@underdog-protocol/js";
@@ -20,13 +20,12 @@ const Onboard: FC = () => {
   const [formSection, setFormSection] = useState<OnboardStep>(
     OnboardStep.Welcome
   );
-  const [profileData, setProfileData] = useState({
-    firstName: "",
-    lastName: "",
+  const [profileData, setProfileData] = useState<ProfileFormData>({
+    industry: null,
+    displayName: "",
     email: "",
-    password: "",
-    confirmPassword: "",
-    skills: [],
+    company: "",
+    position: "",
     bio: "",
     linkedin: "",
     github: "",
@@ -120,6 +119,16 @@ const Onboard: FC = () => {
     };
   }, [currentUser, router.isReady, currentWallet?.publicKey]);
 
+  useEffect(() => {
+    if (account?.result) {
+      setProfileData({
+        ...profileData,
+        displayName: account?.result?.name,
+        email: account?.result?.email,
+      });
+    }
+  }, [account?.result]);
+
   return (
     <div className="w-full max-w-[1200px] mx-auto flex flex-col md:flex-row md:justify-evenly mt-10">
       {formSection === OnboardStep.Welcome && <WelcomeView account={account} />}
@@ -136,6 +145,7 @@ const Onboard: FC = () => {
           setFormSection={setFormSection}
           profileData={profileData}
           setProfileData={setProfileData}
+          account={account?.result}
         />
       )}
     </div>

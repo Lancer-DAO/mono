@@ -1,9 +1,10 @@
 import { Dispatch, FC, SetStateAction } from "react";
 import Image from "next/image";
 import { OnboardStep } from "../Onboard";
-import { IAsyncResult, User } from "@/types";
-import { Industry } from "@prisma/client";
+import { User } from "@/types";
 import { Skillset } from "./Skillset";
+import { motion } from "framer-motion";
+import { smallClickAnimation } from "@/src/constants";
 
 interface Props {
   setFormSection: Dispatch<SetStateAction<OnboardStep>>;
@@ -34,6 +35,14 @@ export const SkillsetView: FC<Props> = ({
         </p>
       </div>
       <Skillset profileData={profileData} setProfileData={setProfileData} />
+      <motion.button
+        {...smallClickAnimation}
+        onClick={() => setFormSection(OnboardStep.Info)}
+        className="bg-primaryBtn border border-primaryBtnBorder text-textGreen 
+        mt-10 w-[100px] h-[50px] rounded-lg text-base"
+      >
+        NEXT
+      </motion.button>
     </div>
   );
 };

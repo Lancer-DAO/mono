@@ -41,46 +41,106 @@ export const Skillset: FC<Props> = ({ profileData, setProfileData }) => {
     );
   }
   return (
-    <div className="relative flex flex-col gap-5 items-center justify-center mt-16">
+    <div className="flex flex-col items-center justify-center mt-16">
       {/* top item */}
-      <p className={`absolute -top-10 left-1/2 -translate-x-1/2 text-lg`}>
-        {/* {industries[0]?.name} */}
-        test0
-      </p>
-      <motion.button {...smallClickAnimation}>
-        <Image
-          src={industries[0]?.icon}
-          width={100}
-          height={100}
-          alt="industry icon"
-        />
-      </motion.button>
-      <div className="relative flex items-center justify-center w-full gap-5">
-        {/* right and left items */}
-        <p className={`absolute -left-10 top-1/2 -translate-y-1/2 text-lg`}>
-          {/* {industries[1]?.name} */}
-          test1
-        </p>
-        <p className={`absolute -right-10 top-1/2 -translate-y-1/2 text-lg`}>
-          {/* {industries[2]?.name} */}
-          test2
-        </p>
-        <motion.button {...smallClickAnimation}>
+      <div className="relative">
+        <motion.button
+          className={`border-4 rounded-full p-2`}
+          style={{
+            borderColor:
+              profileData?.industry === industries?.result?.[0]
+                ? industries?.result?.[0]?.color
+                : "transparent",
+          }}
+          {...smallClickAnimation}
+          onClick={() =>
+            setProfileData({
+              ...profileData,
+              industry: industries?.result?.[0],
+            })
+          }
+        >
           <Image
-            src={industries[1]?.icon}
+            src={industries?.result?.[0]?.icon}
             width={100}
             height={100}
             alt="industry icon"
           />
         </motion.button>
-        <motion.button {...smallClickAnimation}>
-          <Image
-            src={industries[2]?.icon}
-            width={100}
-            height={100}
-            alt="industry icon"
-          />
-        </motion.button>
+        <p
+          className={`absolute -top-10 left-1/2 -translate-x-1/2 text-lg font-bold ${
+            profileData?.industry !== industries?.result?.[0] && "opacity-30"
+          }`}
+        >
+          {industries?.result?.[0]?.name}
+        </p>
+      </div>
+      {/* right and left items */}
+      <div className="flex gap-1 -mt-3">
+        <div className="relative">
+          <motion.button
+            className={`border-4 rounded-full p-2`}
+            style={{
+              borderColor:
+                profileData?.industry === industries?.result?.[1]
+                  ? industries?.result?.[1]?.color
+                  : "transparent",
+            }}
+            {...smallClickAnimation}
+            onClick={() =>
+              setProfileData({
+                ...profileData,
+                industry: industries?.result?.[1],
+              })
+            }
+          >
+            <Image
+              src={industries?.result?.[1]?.icon}
+              width={100}
+              height={100}
+              alt="industry icon"
+            />
+          </motion.button>
+          <p
+            className={`absolute -left-20 top-1/2 -translate-y-1/2 text-lg font-bold ${
+              profileData?.industry !== industries?.result?.[1] && "opacity-30"
+            }`}
+          >
+            {industries?.result?.[1]?.name}
+          </p>
+        </div>
+        <div className="relative">
+          <motion.button
+            className={`border-4 rounded-full p-2`}
+            style={{
+              borderColor:
+                profileData?.industry === industries?.result?.[2]
+                  ? industries?.result?.[2]?.color
+                  : "transparent",
+            }}
+            {...smallClickAnimation}
+            onClick={() =>
+              setProfileData({
+                ...profileData,
+                industry: industries?.result?.[2],
+              })
+            }
+          >
+            <Image
+              src={industries?.result?.[2]?.icon}
+              width={100}
+              height={100}
+              alt="industry icon"
+            />
+          </motion.button>
+          <p
+            className={`absolute -right-[90px] top-1/2 -translate-y-1/2 text-lg font-bold ${
+              profileData?.industry !== industries?.result?.[2] && "opacity-30"
+            }`}
+          >
+            {industries?.result?.[2]?.name}
+          </p>
+        </div>
       </div>
     </div>
   );
