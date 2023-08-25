@@ -354,6 +354,7 @@ model User {
   isAdmin              Boolean?
   verified             Boolean?
   hasProfileNFT        Boolean?
+  // hasFinishedOnboarding Boolean? @default(false)
   githubId             String?  @db.VarChar(24)
   googleId             String?  @db.VarChar(64)
   githubLogin          String?  @db.VarChar(64)
