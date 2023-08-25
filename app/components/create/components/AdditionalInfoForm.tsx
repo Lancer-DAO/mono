@@ -1,13 +1,18 @@
-import { FC, Dispatch, SetStateAction, useState, useEffect } from "react";
+import { Toggle } from "@/components";
+import ReferenceDialogue from "@/components/molecules/ReferenceDialogue";
+import { ToggleConfig } from "@/components/molecules/Toggle";
 import {
   CREATE_BOUNTY_TUTORIAL_INITIAL_STATE,
   smallClickAnimation,
 } from "@/src/constants";
-import { FORM_SECTION, FormData } from "@/types/forms";
-import { motion } from "framer-motion";
-import { Toggle } from "@/components";
 import { useTutorial } from "@/src/providers/tutorialProvider";
-import { ToggleConfig } from "@/components/molecules/Toggle";
+import { FORM_SECTION, FormData } from "@/types/forms";
+import "@uploadthing/react/styles.css";
+
+import { motion } from "framer-motion";
+import { X } from "lucide-react";
+import Image from "next/image";
+import { Dispatch, FC, SetStateAction, useEffect, useState } from "react";
 
 interface Props {
   setFormSection: Dispatch<SetStateAction<FORM_SECTION>>;
@@ -20,8 +25,8 @@ export const AdditionalInfoForm: FC<Props> = ({
   formData,
   setFormData,
 }) => {
+  const maxReferences = 4;
   const { currentTutorialState, setCurrentTutorialState } = useTutorial();
-
   const [toggleConfig, setToggleConfig] = useState<ToggleConfig>({
     option1: {
       title: "Public",
@@ -58,6 +63,21 @@ export const AdditionalInfoForm: FC<Props> = ({
       links: updatedLinks,
     });
   };
+
+  const handleReferenceAdded = (newReference) => {
+    setFormData({
+      ...formData,
+      media: [...formData.media, newReference],
+    });
+  };
+
+  const handleReferenceRemoved = (removeIndex) => {
+    const updatedMedia = formData.media.filter((_, index) => index !== removeIndex);
+    setFormData({
+      ...formData,
+      media: updatedMedia,
+    });
+  }
 
   // const handleChangeMint = (mint: Mint) => {
   //   // console.log("mints vs mint", mints, mint);
@@ -214,6 +234,36 @@ export const AdditionalInfoForm: FC<Props> = ({
                 only be shared using your unique link.
               </p>
             </div>
+          </div>
+        </div>
+        <div className="relative">
+          <div className="absolute top-1/2 -translate-y-1/2 -left-10 text-2xl">
+            7
+          </div>
+          <div className="grid grid-cols-2 gap-4">
+            {[...Array(maxReferences)].map((_, index) => {
+              if (index < formData.media.length) {
+                const media = formData.media[index];
+                return (
+                  <div className="relative border-2 border-primaryBtnBorder rounded-xl p-2" key={index}>
+                    <Image src={media.imageUrl} alt={media.title} width={250} height={250} className="mb-2" />
+                    <p className="font-bold text-lg">{media.title}</p>
+                    <p className="text-sm">{media.description}</p>
+                    <button 
+                      className="absolute top-[-10px] right-[-10px] p-1 bg-red-500
+                      text-white hover:bg-red-700 rounded-full"
+                      onClick={() => handleReferenceRemoved(index)}
+                    >
+                      <X size={18} />
+                    </button>
+                  </div>
+                );
+              } else {
+                return (
+                  <ReferenceDialogue onReferenceAdded={handleReferenceAdded} />
+                );
+              }
+            })}
           </div>
         </div>
         <div className="w-full flex items-center justify-between my-5">

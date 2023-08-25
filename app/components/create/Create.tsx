@@ -94,7 +94,7 @@ export const Create = () => {
   }, [formData]);
 
   return (
-    <div className="w-full max-w-[1200px] mx-auto flex flex-col md:flex-row md:justify-evenly mt-10">
+    <div className="w-full max-w-[1200px] mx-auto flex md:justify-evenly mt-10">
       {/* quest info entry section */}
       <div
         className={`${
