@@ -172,24 +172,24 @@ export const ProfileInfoView: FC<Props> = ({
             />
           </div>
         </div>
-      </div>
-      <div className="w-full flex items-center justify-between my-5">
-        <motion.button
-          {...smallClickAnimation}
-          onClick={() => setFormSection(OnboardStep.Skillset)}
-          className="bg-secondaryBtn border border-secondaryBtnBorder text-textRed 
+        <div className="w-full flex items-center justify-between my-5">
+          <motion.button
+            {...smallClickAnimation}
+            onClick={() => setFormSection(OnboardStep.Skillset)}
+            className="bg-secondaryBtn border border-secondaryBtnBorder text-textRed 
             w-[100px] h-[50px] rounded-lg text-base"
-        >
-          BACK
-        </motion.button>
-        <motion.button
-          {...smallClickAnimation}
-          onClick={() => handleSubmitInfo()}
-          className="bg-primaryBtn border border-primaryBtnBorder text-textGreen 
+          >
+            BACK
+          </motion.button>
+          <motion.button
+            {...smallClickAnimation}
+            onClick={() => handleSubmitInfo()}
+            className="bg-primaryBtn border border-primaryBtnBorder text-textGreen 
             w-[120px] h-[50px] rounded-lg text-base"
-        >
-          CREATE
-        </motion.button>
+          >
+            CREATE
+          </motion.button>
+        </div>
       </div>
     </div>
   );
