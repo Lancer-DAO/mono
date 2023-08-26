@@ -1,0 +1,12 @@
+/home/bolt/Desktop/mono/app/escrow/target/debug/deps/libthiserror_impl-163c9694f543b0e4.so: /home/bolt/.cargo/registry/src/index.crates.io-6f17d22bba15001f/thiserror-impl-1.0.40/src/lib.rs /home/bolt/.cargo/registry/src/index.crates.io-6f17d22bba15001f/thiserror-impl-1.0.40/src/ast.rs /home/bolt/.cargo/registry/src/index.crates.io-6f17d22bba15001f/thiserror-impl-1.0.40/src/attr.rs /home/bolt/.cargo/registry/src/index.crates.io-6f17d22bba15001f/thiserror-impl-1.0.40/src/expand.rs /home/bolt/.cargo/registry/src/index.crates.io-6f17d22bba15001f/thiserror-impl-1.0.40/src/fmt.rs /home/bolt/.cargo/registry/src/index.crates.io-6f17d22bba15001f/thiserror-impl-1.0.40/src/generics.rs /home/bolt/.cargo/registry/src/index.crates.io-6f17d22bba15001f/thiserror-impl-1.0.40/src/prop.rs /home/bolt/.cargo/registry/src/index.crates.io-6f17d22bba15001f/thiserror-impl-1.0.40/src/valid.rs
+
+/home/bolt/Desktop/mono/app/escrow/target/debug/deps/thiserror_impl-163c9694f543b0e4.d: /home/bolt/.cargo/registry/src/index.crates.io-6f17d22bba15001f/thiserror-impl-1.0.40/src/lib.rs /home/bolt/.cargo/registry/src/index.crates.io-6f17d22bba15001f/thiserror-impl-1.0.40/src/ast.rs /home/bolt/.cargo/registry/src/index.crates.io-6f17d22bba15001f/thiserror-impl-1.0.40/src/attr.rs /home/bolt/.cargo/registry/src/index.crates.io-6f17d22bba15001f/thiserror-impl-1.0.40/src/expand.rs /home/bolt/.cargo/registry/src/index.crates.io-6f17d22bba15001f/thiserror-impl-1.0.40/src/fmt.rs /home/bolt/.cargo/registry/src/index.crates.io-6f17d22bba15001f/thiserror-impl-1.0.40/src/generics.rs /home/bolt/.cargo/registry/src/index.crates.io-6f17d22bba15001f/thiserror-impl-1.0.40/src/prop.rs /home/bolt/.cargo/registry/src/index.crates.io-6f17d22bba15001f/thiserror-impl-1.0.40/src/valid.rs
+
+/home/bolt/.cargo/registry/src/index.crates.io-6f17d22bba15001f/thiserror-impl-1.0.40/src/lib.rs:
+/home/bolt/.cargo/registry/src/index.crates.io-6f17d22bba15001f/thiserror-impl-1.0.40/src/ast.rs:
+/home/bolt/.cargo/registry/src/index.crates.io-6f17d22bba15001f/thiserror-impl-1.0.40/src/attr.rs:
+/home/bolt/.cargo/registry/src/index.crates.io-6f17d22bba15001f/thiserror-impl-1.0.40/src/expand.rs:
+/home/bolt/.cargo/registry/src/index.crates.io-6f17d22bba15001f/thiserror-impl-1.0.40/src/fmt.rs:
+/home/bolt/.cargo/registry/src/index.crates.io-6f17d22bba15001f/thiserror-impl-1.0.40/src/generics.rs:
+/home/bolt/.cargo/registry/src/index.crates.io-6f17d22bba15001f/thiserror-impl-1.0.40/src/prop.rs:
+/home/bolt/.cargo/registry/src/index.crates.io-6f17d22bba15001f/thiserror-impl-1.0.40/src/valid.rs:
