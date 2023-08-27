@@ -30,10 +30,6 @@ const Sidebar = () => {
 
   const [channel, setChannel] = useState<any | null>();
 
-  const state = useChannelListContext();
-
-  //   console.log("state", state);
-
   console.log("currentChannel", channel);
 
   const back = () => {
@@ -41,7 +37,7 @@ const Sidebar = () => {
   };
 
   return (
-    <div className="h-screen w-96 absolute top-0 right-0 bg-blue-50 z-50">
+    <div className="h-screen w-[30rem] absolute top-0 right-0 bg-blue-50 z-50">
       {currentUser && (
         <>
           {!channel ? (
@@ -51,15 +47,41 @@ const Sidebar = () => {
                 if (channel && channel.url) {
                   // compare to prevChannel, if same dont set
                   if (channel && channel.url) {
-                    setChannel(channel);
+                    // setChannel(channel);
                   }
                 }
+              }}
+              renderChannelPreview={({ channel }) => {
+                console.log("channel", channel);
+                return (
+                  <div
+                    className="w-full flex items-center cursor-pointer gap-x-2 h-20 px-3 border-b border-neutral-300"
+                    onClick={() => {
+                      setChannel(channel);
+                    }}
+                  >
+                    <img
+                      src={channel.creator.plainProfileUrl}
+                      alt=""
+                      className="w-10 h-10 rounded-full"
+                    />
+
+                    <div className="w-full">
+                      <div>{channel.name}</div>
+                      <div className="truncate">
+                        {channel.lastMessage ? channel.lastMessage.message : ""}
+                      </div>
+                    </div>
+                  </div>
+                );
               }}
             />
           ) : (
             <Channel
               channelUrl={channel.url}
-              renderChannelHeader={() => {
+              renderChannelHeader={(state) => {
+                console.log("state", state);
+
                 return (
                   <div className="w-full h-14 flex items-center px-5">
                     <button className="font-bold text-2xl" onClick={back}>
