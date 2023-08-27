@@ -10,8 +10,7 @@ export const ourFileRouter = {
       console.log("file url", file.url);
     }),
   pdfUploader: f({ pdf: { maxFileSize: "1MB", maxFileCount: 1 } })
-    .onUploadComplete(async ({ metadata, file }) => {
-      console.log("Upload complete for userId:", metadata);
+    .onUploadComplete(async ({ file }) => {
       console.log("file url", file.url)
     }),
 } satisfies FileRouter;
