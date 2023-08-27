@@ -19,6 +19,7 @@ import { useRouter } from "next/router";
 import { FC, useEffect, useState } from "react";
 import { ProfileNFTCard, QuestsCard } from "./components";
 import BadgesCard from "./components/BadgesCard";
+import LinksCard from "./components/LinksCard";
 import { ReferCard } from "./components/ReferCard";
 
 dayjs.extend(relativeTime);
@@ -264,11 +265,11 @@ export const Account: FC<Props> = ({ self }) => {
               githubId={account?.result.githubId}
             />
             <BadgesCard profileNFT={profileNFT} />
+            {/* <LinksCard /> */}
           </div>
           {/* right column */}
           <div className="flex flex-col gap-5 w-full">
             <QuestsCard />
-
             {account?.result.id === currentUser.id && <ReferCard />}
           </div>
         </div>

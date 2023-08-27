@@ -1,12 +1,12 @@
-import { FC, Dispatch, SetStateAction } from "react";
 import { IndustryDropdown, MultiSelectDropdown } from "@/components";
-import { CREATE_BOUNTY_TUTORIAL_INITIAL_STATE } from "@/src/constants/tutorials";
 import { smallClickAnimation } from "@/src/constants";
-import { FORM_SECTION, FormData } from "@/types/forms";
+import { CREATE_BOUNTY_TUTORIAL_INITIAL_STATE } from "@/src/constants/tutorials";
 import { useTutorial } from "@/src/providers/tutorialProvider";
-import { motion } from "framer-motion";
-import { toast } from "react-hot-toast";
 import { IAsyncResult, Industry, Option } from "@/types";
+import { FORM_SECTION, FormData } from "@/types/forms";
+import { motion } from "framer-motion";
+import { Dispatch, FC, SetStateAction } from "react";
+import { toast } from "react-hot-toast";
 
 interface Props {
   setFormSection: Dispatch<SetStateAction<FORM_SECTION>>;
