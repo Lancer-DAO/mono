@@ -13,7 +13,7 @@ import { Client, Member, Organization, Treasury } from "@ladderlabs/buddy-sdk";
 import { PublicKey, Transaction } from "@solana/web3.js";
 import { IReferralContext } from "./types";
 import { getAssociatedTokenAddressSync } from "@solana/spl-token";
-import { IS_MAINNET } from "@/src/constants";
+import { IS_MAINNET, USDC_MINT } from "@/src/constants";
 
 import { api } from "@/src/utils/api";
 import * as Prisma from "@prisma/client";
@@ -50,9 +50,8 @@ export interface Claimable {
 const DEVNET_PROGRAM_ID = "9zE4EQ5tJbEeMYwtS2w8KrSHTtTW4UPqwfbBSEkUrNCA";
 
 const ReferralProvider: FunctionComponent<IReferralProps> = ({ children }) => {
-  const { currentWallet } = useUserWallet();
+  const { currentWallet, currentUser } = useUserWallet();
   const { connection } = useConnection();
-  const { currentUser } = useUserWallet();
 
   const [initialized, setInitialized] = useState(false);
   const [client, setClient] = useState<Client | null>(null);
@@ -62,24 +61,13 @@ const ReferralProvider: FunctionComponent<IReferralProps> = ({ children }) => {
   const [claimables, setClaimables] = useState<Claimable[]>([]);
   const [cachedReferrer, setCachedReferrer] = useState("");
   const [programId, setProgramId] = useState<PublicKey>(PublicKey.default);
-  const { mutateAsync: getMintsAPI } = api.mints.getMints.useMutation();
   const { mutateAsync: addReferrer } = api.users.addReferrer.useMutation();
-  const [mints, setMints] = useState<Prisma.Mint[]>([]);
   const publicKey = currentWallet?.publicKey;
   const sendTransaction = currentWallet?.sendTransaction;
-  useEffect(() => {
-    const getMints = async () => {
-      const mints = await getMintsAPI();
-      setMints(mints);
-    };
-    if (!!currentUser) {
-      getMints();
-    }
-  }, [currentUser]);
 
   const handleFetches = useCallback(async () => {
     try {
-      console.log("handle fetches");
+      // console.log("handle fetches");
       const organization = await client.organization.getByName(
         ORGANIZATION_NAME
       );
@@ -98,17 +86,12 @@ const ReferralProvider: FunctionComponent<IReferralProps> = ({ children }) => {
 
       const member =
         (await client.member.getByTreasuryOwner(treasuryPDA))[0] || null;
-
       if (member) {
         setMember(member);
 
         const treasuries = (
           await client.treasury.getAllSimpleByBuddy(buddyProfile.account.pda)
-        ).filter((treasury) =>
-          mints.find(
-            (mint) => mint.publicKey === treasury.account.mint.toString()
-          )
-        );
+        ).filter((treasury) => USDC_MINT === treasury.account.mint.toString());
         setTreasuries(treasuries);
       }
     } catch (e) {
@@ -134,9 +117,7 @@ const ReferralProvider: FunctionComponent<IReferralProps> = ({ children }) => {
           ...(await treasury.claim())
         );
 
-        const signature = await sendTransaction(transaction, connection, {
-          skipPreflight: true,
-        });
+        const signature = await sendTransaction(transaction, connection, {});
         await connection.confirmTransaction(signature);
 
         await handleFetches();
@@ -416,10 +397,7 @@ const ReferralProvider: FunctionComponent<IReferralProps> = ({ children }) => {
     for (const treasury of treasuries) {
       const amount = await treasury.getClaimableBalance();
 
-      console.log(treasury.account.mint.toString());
-      const decimal = mints.find(
-        (mint) => mint.publicKey === treasury.account.mint.toString()
-      )?.decimals;
+      const decimal = 6;
 
       claimables.push({
         amount: amount / Math.pow(10, decimal),
@@ -428,7 +406,7 @@ const ReferralProvider: FunctionComponent<IReferralProps> = ({ children }) => {
     }
 
     setClaimables(claimables);
-  }, [treasuries]);
+  }, [treasuries, currentWallet]);
 
   useEffect(() => {
     // TODO UPDATE THIS TO CHECK IF THE DB HAS A REFERRER STORED
@@ -446,6 +424,7 @@ const ReferralProvider: FunctionComponent<IReferralProps> = ({ children }) => {
   }, [publicKey, connection]);
 
   useEffect(() => {
+    // console.log("client");
     if (client) {
       handleFetches();
     }

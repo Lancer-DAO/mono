@@ -1,78 +1,79 @@
 import Link from "next/link";
-import { LinkButton, AccountHeaderOptions, TutorialsModal } from "@/components";
-import { LinkButtonProps } from "@/components/atoms/LinkButton";
+import { AccountHeaderOptions, TutorialsModal } from "@/components";
 import Logo from "../@icons/Logo";
-import dynamic from "next/dynamic";
 import { HelpCircle } from "react-feather";
 import { useState } from "react";
 import { PROFILE_TUTORIAL_INITIAL_STATE } from "@/src/constants/tutorials";
 import { useTutorial } from "@/src/providers/tutorialProvider";
 import { useAppContext } from "@/src/providers/appContextProvider";
 import { IS_CUSTODIAL } from "@/src/constants";
-const HEADER_LINKS: LinkButtonProps[] = [
-  { href: "/create", children: "New Bounty", id: "create-bounty-link" },
-  { href: "/bounties", children: "Bounties", id: "bounties-link" },
+import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
+import { useWallet } from "@solana/wallet-adapter-react";
+
+const HEADER_LINKS = [
+  { href: "/create", children: "New Quest", id: "create-bounty-link" },
+  { href: "/quests", children: "Quests", id: "bounties-link" },
 ];
 
-const WalletMultiButtonDynamic = dynamic(
-  async () =>
-    (await import("@solana/wallet-adapter-react-ui")).WalletMultiButton,
-  { ssr: false }
-);
 export const Header = () => {
   const { currentTutorialState, setCurrentTutorialState } = useTutorial();
   const { isRouterReady } = useAppContext();
   const [isTutorialButtonHovered, setIsTutorialButtonHovered] = useState(false);
   const [showTutorialModal, setShowTutorialModal] = useState(false);
+
+  const { publicKey } = useWallet();
+
   return (
-    <div className="flex sticky py-[20px] bg-white-100 top-0 z-20">
-      <div className="flex items-center mx-auto w-[70%]">
-        <Link
-          href="/"
-          className="relative float-left text-blue-500 transition-colors 
-          duration-400 ease-in-out hover:text-blue-600 no-underline"
-        >
-          <Logo width="auto" height="50px" />
+    <div className="sticky py-4 top-0 z-20 bg-bgLancer">
+      <div className="flex items-center gap-8 mx-auto w-[90%]">
+        <Link href="/" className="flex items-center gap-0.5">
+          <Logo width="auto" height="35px" />
+          <p className="text-lg text-bgLancerSecondary">Lancer</p>
         </Link>
-        <div className="ml-[20px] flex gap-[10px] items-center w-full">
-          {HEADER_LINKS.map(({ href, children }, index) => {
+        <div className="flex gap-8 items-center w-full">
+          {HEADER_LINKS.map(({ href, children }) => {
             return (
-              <LinkButton key={`${href}-${index}`} href={href} version="text">
+              <a href={href} className="text-lg font-bold" key={href}>
                 {children}
-              </LinkButton>
+              </a>
             );
           })}
-          {IS_CUSTODIAL ? (
-            <div className="ml-auto"></div>
-          ) : (
-            <div
-              className="ml-auto pr-2"
-              id="wallet-connect-button"
-              onClick={() => {
-                if (
-                  !!currentTutorialState &&
-                  currentTutorialState?.title ===
-                    PROFILE_TUTORIAL_INITIAL_STATE.title &&
-                  currentTutorialState.currentStep === 1
-                ) {
-                  setCurrentTutorialState({
-                    ...currentTutorialState,
-                    isRunning: false,
-                  });
-                  return;
-                }
-              }}
-            >
-              <WalletMultiButtonDynamic
-                className="flex h-[48px] w-[200px] py-[6px] items-center justify-center 
-                border-solid !bg-turquoise-500 text-gray-800 !text-white-100 
-                transition-colors duration-300 ease-in-out hover:opacity-90"
-              />
-            </div>
-          )}
+          <div className="flex items-center gap-8 ml-auto">
+            {publicKey && <AccountHeaderOptions />}
 
-          <AccountHeaderOptions />
-          <button
+            {!IS_CUSTODIAL && (
+              <div
+                onClick={() => {
+                  if (
+                    !!currentTutorialState &&
+                    currentTutorialState?.title ===
+                      PROFILE_TUTORIAL_INITIAL_STATE.title &&
+                    currentTutorialState.currentStep === 1
+                  ) {
+                    setCurrentTutorialState({
+                      ...currentTutorialState,
+                      isRunning: false,
+                    });
+                    return;
+                  }
+                }}
+              >
+                <WalletMultiButton
+                  className="flex h-[48px] px-8 py-[6px] items-center justify-center
+                !border-solid !bg-primaryBtn !border-primaryBtnBorder !border
+                !text-textGreen !rounded-md !whitespace-nowrap !font-base"
+                  startIcon={undefined}
+                >
+                  {publicKey
+                    ? publicKey.toBase58().slice(0, 4) +
+                      " ... " +
+                      publicKey.toBase58().slice(-4)
+                    : "Connect"}
+                </WalletMultiButton>
+              </div>
+            )}
+          </div>
+          {/* <button
             onClick={() => {
               setShowTutorialModal(true);
             }}
@@ -80,15 +81,15 @@ export const Header = () => {
             onMouseLeave={() => setIsTutorialButtonHovered(false)}
             id="start-tutorial-link"
             className="flex rounded-full h-[48px] w-[48px] gap-[10px] py-[6px] 
-            items-center justify-center hover:bg-turquoise-500"
+            items-center justify-center"
           >
             <HelpCircle
               height={48}
               width={48}
               strokeWidth={1.25}
-              color={isTutorialButtonHovered ? "#fff" : "#14bb88"}
+              color={isTutorialButtonHovered ? "#fff" : "#C5FFBA"}
             />
-          </button>
+          </button> */}
           {isRouterReady && (
             <TutorialsModal
               setShowModal={setShowTutorialModal}

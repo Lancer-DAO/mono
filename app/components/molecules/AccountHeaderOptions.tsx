@@ -1,6 +1,6 @@
 import { useUserWallet } from "@/src/providers";
-import { LinkButton, ApiKeyModal, Button, PubKey } from "@/components";
-import { useEffect, useRef, useState } from "react";
+import { ApiKeyModal, Button, PubKey } from "@/components";
+import { useRef, useState } from "react";
 import { useOutsideAlerter } from "@/src/hooks/useOutsideAlerter";
 import Link from "next/link";
 import {

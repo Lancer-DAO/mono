@@ -191,14 +191,14 @@ const TutorialRow: FC<{
               version="text"
               onClick={() => {
                 if (tutorial.pages.includes("bounty")) {
-                  router.push(`/bounties`);
+                  router.push(`/quests`);
                 } else {
                   router.push(`/${tutorial.pages[0]}`);
                 }
               }}
               hoveredText={
                 tutorial.pages.includes("bounty")
-                  ? "You must select a bounty from the bounty list before accessing this tutorial"
+                  ? "You must select a quest from the list before accessing this tutorial"
                   : undefined
               }
             >

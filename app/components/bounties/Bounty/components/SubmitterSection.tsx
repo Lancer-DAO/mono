@@ -160,7 +160,7 @@ export const SubmitterSection: React.FC<SubmitterSectionProps> = ({
   };
 
   return (
-    <div className="submitter-section">
+    <div className="submitter-section flex">
       <ContributorInfo user={submitter.user} />
 
       {type === "approved" ? (
