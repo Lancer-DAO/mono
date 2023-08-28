@@ -52,10 +52,15 @@ export const Account: FC<Props> = ({ self }) => {
     const getUserAsync = async () => {
       if (router.query.account !== undefined) {
         const fetchAccount = async () => {
-          const account = await getUser({
-            id: parseInt(router.query.account as string),
-          });
-          setAccount({ ...account, result: account });
+          try {
+            const account = await getUser({
+              id: parseInt(router.query.account as string),
+            });
+            setAccount({ ...account, result: account });
+          } catch (e) {
+            console.log("Error fetching account: ", e);
+            setAccount({ error: e });
+          }
         };
         fetchAccount();
       } else {
@@ -76,20 +81,21 @@ export const Account: FC<Props> = ({ self }) => {
           }
 
           setAccount({
-            isLoading: true,
+            isLoading: false,
             loadingPrompt,
             result: currentUser,
             error: null,
           });
         } catch (e) {
           setAccount({ error: e });
+          console.log("Error fetching account: ", e);
         }
       }
     };
-    if (!!currentUser && !!currentWallet?.publicKey) {
+    if (!!currentUser) {
       getUserAsync();
     } else {
-      console.log("no user or wallet");
+      console.log("no user or wallet", currentUser, currentWallet);
     }
   }, [currentUser, router.isReady, currentWallet?.publicKey]);
 
@@ -214,7 +220,7 @@ export const Account: FC<Props> = ({ self }) => {
     });
 
     if (nfts.totalResults === 0) {
-      const result = await underdogClient.createNft({
+      await underdogClient.createNft({
         params: PROFILE_PROJECT_PARAMS,
         body: {
           name: `${currentUser.name}`,

@@ -7,9 +7,7 @@ import { createUnderdogClient } from "@underdog-protocol/js";
 import { PROFILE_PROJECT_PARAMS } from "@/src/constants";
 import dayjs from "dayjs";
 import { api } from "@/src/utils";
-import * as queries from "@/prisma/queries";
 import toast from "react-hot-toast";
-import { updateHasFinishedOnboarding } from "@/prisma/queries/user";
 
 const underdogClient = createUnderdogClient({});
 
@@ -42,6 +40,8 @@ const Onboard: FC = () => {
   const { currentUser, currentWallet } = useUserWallet();
   const { mutateAsync: registerProfileNFT } =
     api.users.registerProfileNFT.useMutation();
+  const { mutateAsync: registerOnboardingInfo } =
+    api.users.addOnboardingInformation.useMutation();
 
   const router = useRouter();
 
@@ -80,20 +80,18 @@ const Onboard: FC = () => {
   const handleUpdateProfile = async () => {
     const toastId = toast.loading("Finishing profile creation...");
     try {
-      await queries.user.onboardingUpdate(
-        currentUser.id,
-        // profileData.industry.id,
-        profileData.displayName,
-        profileData.email,
-        profileData.company,
-        profileData.position,
-        profileData.bio,
-        profileData.linkedin,
-        profileData.twitter,
-        profileData.github,
-        profileData.website
-      );
-      await updateHasFinishedOnboarding(currentUser.id);
+      await registerOnboardingInfo({
+        industryId: profileData.industry.id,
+        name: profileData.displayName,
+        company: profileData.company,
+        position: profileData.position,
+        bio: profileData.bio,
+        linkedin: profileData.linkedin,
+        twitter: profileData.twitter,
+        github: profileData.github,
+        website: profileData.website,
+      });
+      // await updateHasFinishedOnboarding(currentUser.id);
       toast.success("Profile created successfully!", { id: toastId });
     } catch (e) {
       console.log("error updating profile: ", e);
