@@ -38,8 +38,6 @@ const Onboard: FC = () => {
     loadingPrompt: "Welcome to Lancer",
   });
   const { currentUser, currentWallet } = useUserWallet();
-  const { mutateAsync: registerProfileNFT } =
-    api.users.registerProfileNFT.useMutation();
   const { mutateAsync: registerOnboardingInfo } =
     api.users.addOnboardingInformation.useMutation();
 
@@ -72,7 +70,7 @@ const Onboard: FC = () => {
         },
       });
     }
-    await registerProfileNFT({
+    api.users.registerProfileNFT.useQuery({
       walletPublicKey: currentWallet.publicKey.toString(),
     });
   };

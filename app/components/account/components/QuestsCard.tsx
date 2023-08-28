@@ -14,8 +14,6 @@ export const QuestsCard: FC = () => {
   const { mutateAsync: getBounties } =
     api.bounties.getAllBounties.useMutation();
   const { mutateAsync: getCurrentUser } = api.users.currentUser.useMutation();
-  const { mutateAsync: getAllIndustries } =
-    api.industries.getAllIndustries.useMutation();
   const { currentUser } = useUserWallet();
 
   useEffect(() => {
@@ -56,8 +54,9 @@ export const QuestsCard: FC = () => {
 
     const fetchCurrentIndustries = async () => {
       try {
-        const industries = await getAllIndustries();
-        setIndustries({ result: industries, isLoading: false });
+        const { data: allIndustries } =
+          api.industries.getAllIndustries.useQuery();
+        setIndustries({ result: allIndustries, isLoading: false });
       } catch (e) {
         console.log("error getting industries: ", e);
         setIndustries({ error: e, isLoading: false });

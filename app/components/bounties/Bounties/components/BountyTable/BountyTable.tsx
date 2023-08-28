@@ -31,8 +31,6 @@ const BountyList: React.FC<{}> = () => {
   const router = useRouter();
   const { mutateAsync: getBounties } =
     api.bounties.getAllBounties.useMutation();
-  const { mutateAsync: getAllIndustries } =
-    api.industries.getAllIndustries.useMutation();
   const { mutateAsync: getMintsAPI } = api.mints.getMints.useMutation();
 
   const [tags, setTags] = useState<string[]>([]);
@@ -80,8 +78,9 @@ const BountyList: React.FC<{}> = () => {
 
     const fetchCurrentIndustries = async () => {
       try {
-        const industries = await getAllIndustries();
-        setIndustries({ result: industries, isLoading: false });
+        const { data: allIndustries } =
+          api.industries.getAllIndustries.useQuery();
+        setIndustries({ result: allIndustries, isLoading: false });
       } catch (e) {
         console.log("error getting industries: ", e);
         setIndustries({ error: e, isLoading: false });

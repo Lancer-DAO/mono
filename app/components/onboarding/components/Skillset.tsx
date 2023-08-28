@@ -12,8 +12,6 @@ interface Props {
 }
 
 export const Skillset: FC<Props> = ({ profileData, setProfileData }) => {
-  const { mutateAsync: getAllIndustries } =
-    api.industries.getAllIndustries.useMutation();
   const [industries, setIndustries] = useState<IAsyncResult<Industry[]>>({
     isLoading: true,
     loadingPrompt: "Loading Industries",
@@ -22,8 +20,9 @@ export const Skillset: FC<Props> = ({ profileData, setProfileData }) => {
   useEffect(() => {
     const fetchCurrentIndustries = async () => {
       try {
-        const inds = await getAllIndustries();
-        setIndustries({ result: inds, isLoading: false });
+        const { data: allIndustries } =
+          api.industries.getAllIndustries.useQuery();
+        setIndustries({ result: allIndustries, isLoading: false });
       } catch (e) {
         console.log("error getting industries: ", e);
         setIndustries({ error: e, isLoading: false });

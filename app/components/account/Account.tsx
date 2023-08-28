@@ -45,9 +45,6 @@ export const Account: FC<Props> = ({ self }) => {
     loadingPrompt: "Loading Profile",
   });
 
-  const { mutateAsync: registerProfileNFT } =
-    api.users.registerProfileNFT.useMutation();
-
   useEffect(() => {
     const getUserAsync = async () => {
       if (router.query.account !== undefined) {
@@ -235,10 +232,11 @@ export const Account: FC<Props> = ({ self }) => {
           receiverAddress: currentWallet.publicKey.toString(),
         },
       });
+
+      api.users.registerProfileNFT.useQuery({
+        walletPublicKey: currentWallet.publicKey.toString(),
+      });
     }
-    await registerProfileNFT({
-      walletPublicKey: currentWallet.publicKey.toString(),
-    });
   };
 
   if (!IS_CUSTODIAL && !currentWallet && !profileNFT)

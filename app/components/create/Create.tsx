@@ -17,8 +17,6 @@ import { Mint } from "@prisma/client";
 export const Create = () => {
   const { provider } = useUserWallet();
   const { mutateAsync: getMintsAPI } = api.mints.getMints.useMutation();
-  const { mutateAsync: getAllIndustries } =
-    api.industries.getAllIndustries.useMutation();
   const [industries, setIndustries] = useState<IAsyncResult<Industry[]>>({
     isLoading: true,
   });
@@ -73,8 +71,9 @@ export const Create = () => {
   useEffect(() => {
     const fetchCurrentIndustries = async () => {
       try {
-        const industries = await getAllIndustries();
-        setIndustries({ result: industries, isLoading: false });
+        const { data: allIndustries } =
+          api.industries.getAllIndustries.useQuery();
+        setIndustries({ result: allIndustries, isLoading: false });
       } catch (e) {
         console.log("error getting industries: ", e);
         setIndustries({ error: e, isLoading: false });
