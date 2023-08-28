@@ -7,6 +7,9 @@ import { createUnderdogClient } from "@underdog-protocol/js";
 import { PROFILE_PROJECT_PARAMS } from "@/src/constants";
 import dayjs from "dayjs";
 import { api } from "@/src/utils";
+import * as queries from "@/prisma/queries";
+import toast from "react-hot-toast";
+import { updateHasFinishedOnboarding } from "@/prisma/queries/user";
 
 const underdogClient = createUnderdogClient({});
 
@@ -74,6 +77,30 @@ const Onboard: FC = () => {
     });
   };
 
+  const handleUpdateProfile = async () => {
+    const toastId = toast.loading("Finishing profile creation...");
+    try {
+      await queries.user.onboardingUpdate(
+        currentUser.id,
+        // profileData.industry.id,
+        profileData.displayName,
+        profileData.email,
+        profileData.company,
+        profileData.position,
+        profileData.bio,
+        profileData.linkedin,
+        profileData.twitter,
+        profileData.github,
+        profileData.website
+      );
+      await updateHasFinishedOnboarding(currentUser.id);
+      toast.success("Profile created successfully!", { id: toastId });
+    } catch (e) {
+      console.log("error updating profile: ", e);
+      toast.error("Error updating profile", { id: toastId });
+    }
+  };
+
   useEffect(() => {
     if (!currentUser?.name) return;
     let timeout: NodeJS.Timeout | null = null;
@@ -130,6 +157,10 @@ const Onboard: FC = () => {
     }
   }, [account?.result]);
 
+  useEffect(() => {
+    console.log("profile data: ", profileData);
+  }, [profileData]);
+
   return (
     <div className="w-full max-w-[1200px] mx-auto flex flex-col md:flex-row md:justify-evenly mt-10">
       {formSection === OnboardStep.Welcome && <WelcomeView account={account} />}
@@ -147,6 +178,7 @@ const Onboard: FC = () => {
           profileData={profileData}
           setProfileData={setProfileData}
           account={account?.result}
+          handleUpdateProfile={handleUpdateProfile}
         />
       )}
     </div>

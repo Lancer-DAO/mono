@@ -11,6 +11,7 @@ interface Props {
   profileData: any;
   setProfileData: Dispatch<SetStateAction<any>>;
   account: User;
+  handleUpdateProfile: () => void;
 }
 
 export const ProfileInfoView: FC<Props> = ({
@@ -18,6 +19,7 @@ export const ProfileInfoView: FC<Props> = ({
   profileData,
   setProfileData,
   account,
+  handleUpdateProfile,
 }) => {
   const inputRef = useRef(null);
   const mirrorRef = useRef(null);
@@ -30,7 +32,7 @@ export const ProfileInfoView: FC<Props> = ({
     if (profileData?.displayName === "") {
       toast.error("Please enter a valid display name");
     } else {
-      setFormSection(OnboardStep.Welcome);
+      handleUpdateProfile();
     }
   };
 
