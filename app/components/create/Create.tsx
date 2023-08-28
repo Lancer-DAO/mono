@@ -16,7 +16,6 @@ import { Mint } from "@prisma/client";
 
 export const Create = () => {
   const { provider } = useUserWallet();
-  const { mutateAsync: getMintsAPI } = api.mints.getMints.useMutation();
   const [industries, setIndustries] = useState<IAsyncResult<Industry[]>>({
     isLoading: true,
   });
@@ -55,8 +54,8 @@ export const Create = () => {
 
   useEffect(() => {
     const getMints = async () => {
-      const mints = await getMintsAPI();
-      setMints(mints);
+      const { data: allMints } = api.mints.getMints.useQuery();
+      setMints(allMints);
       // NOTE: hardcode mint to USDC for now
       setMint(
         mints.find(

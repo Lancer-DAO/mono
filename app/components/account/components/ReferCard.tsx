@@ -15,13 +15,12 @@ export const ReferCard = () => {
   const { referralId, initialized, createReferralMember, claimables, claim } =
     useReferral();
 
-  const { mutateAsync: getMintsAPI } = api.mints.getMints.useMutation();
   const { currentUser, currentWallet } = useUserWallet();
   const [mints, setMints] = useState<Prisma.Mint[]>([]);
   useEffect(() => {
     const getMints = async () => {
-      const mints = await getMintsAPI();
-      setMints(mints);
+      const { data: allMints } = api.mints.getMints.useQuery();
+      setMints(allMints);
     };
     if (!!currentUser) {
       getMints();

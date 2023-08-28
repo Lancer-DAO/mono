@@ -31,7 +31,6 @@ const BountyList: React.FC<{}> = () => {
   const router = useRouter();
   const { mutateAsync: getBounties } =
     api.bounties.getAllBounties.useMutation();
-  const { mutateAsync: getMintsAPI } = api.mints.getMints.useMutation();
 
   const [tags, setTags] = useState<string[]>([]);
   const [mints, setMints] = useState<IAsyncResult<Mint[]>>({
@@ -89,8 +88,8 @@ const BountyList: React.FC<{}> = () => {
 
     const fetchCurrentMints = async () => {
       try {
-        const fetchedMints = await getMintsAPI();
-        setMints({ result: fetchedMints, isLoading: false });
+        const { data: allMints } = api.mints.getMints.useQuery();
+        setMints({ result: allMints, isLoading: false });
       } catch (e) {
         console.log("error getting mints: ", e);
         setMints({ error: e, isLoading: false });

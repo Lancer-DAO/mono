@@ -47,7 +47,6 @@ export const ProfileNFTCard = ({
   const [amount, setAmount] = useState(0);
   const { currentUser, currentWallet } = useUserWallet();
   const [sendToPublicKey, setSentToPublicKey] = useState("");
-  const { mutateAsync: getMintsAPI } = api.mints.getMints.useMutation();
   const [mints, setMints] = useState<Prisma.Mint[]>([]);
 
   useEffect(() => {
@@ -187,8 +186,8 @@ export const ProfileNFTCard = ({
 
   useEffect(() => {
     const getMints = async () => {
-      const mints = await getMintsAPI();
-      setMints(mints);
+      const { data: allMints } = api.mints.getMints.useQuery();
+      setMints(allMints);
     };
     if (!!currentUser) {
       getMints();
