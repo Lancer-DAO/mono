@@ -33,8 +33,6 @@ export const addOnboardingInformation = protectedProcedure
       },
     }) => {
       const { email, id } = ctx.user;
-      // TODO: do we need to pass email and id or do we get from ctx?
-      const user = await queries.user.getByEmail(email);
 
       const industry = await prisma.industry.findFirstOrThrow({
         where: { id: industryId },

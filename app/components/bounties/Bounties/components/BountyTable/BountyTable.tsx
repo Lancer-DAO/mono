@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import Image from "next/image";
 import { smallClickAnimation } from "@/src/constants";
-
 import { getUniqueItems } from "@/src/utils";
 import { useUserWallet } from "@/src/providers";
 import { LoadingBar, BountyCard } from "@/components";
@@ -36,7 +35,6 @@ const BountyList: React.FC<{}> = () => {
   const [mints, setMints] = useState<IAsyncResult<Mint[]>>({
     isLoading: true,
   });
-  // const [orgs, setOrgs] = useState<string[]>([]);
   const [bounds, setPriceBounds] = useState<[number, number]>([5, 10000]);
   const [bounties, setBounties] = useState<IAsyncResult<BountyPreview[]>>();
   const [industries, setIndustries] = useState<IAsyncResult<Industry[]>>({

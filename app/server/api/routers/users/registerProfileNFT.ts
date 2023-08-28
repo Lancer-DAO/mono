@@ -10,7 +10,7 @@ export const registerProfileNFT = protectedProcedure
     })
   )
   .query(async ({ ctx, input: { walletPublicKey } }) => {
-    const { email, id } = ctx.user;
+    const { email } = ctx.user;
     const user = await queries.user.getByEmail(email);
 
     const wallet = await queries.wallet.getOrCreate(
