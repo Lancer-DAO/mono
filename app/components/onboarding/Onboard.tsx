@@ -75,6 +75,7 @@ const Onboard: FC = () => {
   };
 
   useEffect(() => {
+    if (!currentUser?.name) return;
     let timeout: NodeJS.Timeout | null = null;
 
     const getUserAsync = async () => {
@@ -101,14 +102,14 @@ const Onboard: FC = () => {
       }
     };
 
-    if (!!currentUser && !!currentWallet?.publicKey) {
+    if (!!currentWallet?.publicKey) {
       getUserAsync();
     } else {
       setAccount({
         isLoading: true,
         error: null,
         result: null,
-        loadingPrompt: "Please connect your wallet to continue.",
+        loadingPrompt: "Please connect your wallet to continue...",
       });
     }
 
