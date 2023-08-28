@@ -1,4 +1,3 @@
-import { prisma } from "@/server/db";
 import { protectedProcedure } from "../../trpc";
 import * as queries from "@/prisma/queries";
 
@@ -18,16 +17,20 @@ export const login = protectedProcedure.mutation(async ({ ctx }) => {
       return user;
     }
   } else {
-    let user = await queries.user.getByEmail(email);
-    // console.log("picture", user.picture);
-    if (!user.picture) {
-      await queries.user.updatePicture(user.id, picture);
-      user = await queries.user.getByEmail(email);
+    try {
+      let user = await queries.user.getByEmail(email);
+      // console.log("picture", user.picture);
+      if (!user.picture) {
+        await queries.user.updatePicture(user.id, picture);
+        user = await queries.user.getByEmail(email);
+      }
+      if (!user.name) {
+        await queries.user.updateName(user.id, nickname);
+        user = await queries.user.getByEmail(email);
+      }
+      return user;
+    } catch (e) {
+      console.error("❌", e);
     }
-    if (!user.name) {
-      await queries.user.updateName(user.id, nickname);
-      user = await queries.user.getByEmail(email);
-    }
-    return user;
   }
 });
