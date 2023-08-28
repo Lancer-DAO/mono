@@ -1,5 +1,4 @@
 import { prisma } from "@/server/db";
-import { Industry } from "@/types";
 import * as Prisma from "@prisma/client";
 
 export const updateReferrer = async (
@@ -70,7 +69,7 @@ export const updateName = async (
 
 export const onboardingUpdate = async (
   id: number,
-  industry: Industry,
+  industry: Prisma.Industry,
   name: string,
   email: string,
   company: string,
