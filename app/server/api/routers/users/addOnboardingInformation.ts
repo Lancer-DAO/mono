@@ -2,6 +2,7 @@ import { prisma } from "@/server/db";
 import { protectedProcedure } from "../../trpc";
 import { z } from "zod";
 import * as queries from "@/prisma/queries";
+import { updateHasFinishedOnboarding } from "@/prisma/queries/user";
 
 export const addOnboardingInformation = protectedProcedure
   .input(
@@ -38,7 +39,7 @@ export const addOnboardingInformation = protectedProcedure
         where: { id: industryId },
       });
 
-      return await queries.user.onboardingUpdate(
+      await queries.user.onboardingUpdate(
         id,
         industry,
         name,
@@ -51,5 +52,9 @@ export const addOnboardingInformation = protectedProcedure
         github,
         website
       );
+
+      await updateHasFinishedOnboarding(id);
+
+      return { success: true };
     }
   );

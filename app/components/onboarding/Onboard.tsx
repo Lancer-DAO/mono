@@ -40,6 +40,14 @@ const Onboard: FC = () => {
   const { currentUser, currentWallet } = useUserWallet();
   const { mutateAsync: registerOnboardingInfo } =
     api.users.addOnboardingInformation.useMutation();
+  api.users.registerProfileNFT.useQuery(
+    {
+      walletPublicKey: currentWallet.publicKey.toString(),
+    },
+    {
+      enabled: !!currentWallet?.publicKey,
+    }
+  );
 
   const router = useRouter();
 
@@ -54,7 +62,7 @@ const Onboard: FC = () => {
     });
 
     if (nfts.totalResults === 0) {
-      const result = await underdogClient.createNft({
+      await underdogClient.createNft({
         params: PROFILE_PROJECT_PARAMS,
         body: {
           name: `${currentUser.name}`,
@@ -70,9 +78,6 @@ const Onboard: FC = () => {
         },
       });
     }
-    api.users.registerProfileNFT.useQuery({
-      walletPublicKey: currentWallet.publicKey.toString(),
-    });
   };
 
   const handleUpdateProfile = async () => {
@@ -89,8 +94,8 @@ const Onboard: FC = () => {
         github: profileData.github,
         website: profileData.website,
       });
-      // await updateHasFinishedOnboarding(currentUser.id);
       toast.success("Profile created successfully!", { id: toastId });
+      router.push("/account");
     } catch (e) {
       console.log("error updating profile: ", e);
       toast.error("Error updating profile", { id: toastId });
