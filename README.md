@@ -21,6 +21,7 @@ https://www.figma.com/file/y5KwskdwqOLHZk7TfwNpdE/Lancer-x-Developer-DAO-x-Texag
 
 ## Lancer File Structure
 
+
 - app (the entire we app)
   - escrow (all rust code for smart contract and adapters)
     - adapters (code for help with creating instructions on the frontend)
