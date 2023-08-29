@@ -10,7 +10,7 @@ export const getAllBounties = protectedProcedure
       filteredUserId: z.optional(z.number()),
     })
   )
-  .mutation(
+  .query(
     async ({ input: { currentUserId, onlyMyBounties, filteredUserId } }) => {
       return await queries.bounty.getMany(
         currentUserId,

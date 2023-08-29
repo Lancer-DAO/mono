@@ -1,3 +1,4 @@
+import { Industry } from "@/types";
 export type FORM_SECTION = "CREATE" | "MEDIA" | "FUND" | "PREVIEW" | "SUCCESS";
 
 export interface FormData {
@@ -15,4 +16,17 @@ export interface FormData {
   repositoryName?: string;
   estimatedTime?: string;
   isPrivate: boolean;
+}
+
+export interface ProfileFormData {
+  industry: Industry | null;
+  displayName: string;
+  email: string;
+  company: string;
+  position: string;
+  bio: string;
+  linkedin: string;
+  github: string;
+  twitter: string;
+  website: string;
 }

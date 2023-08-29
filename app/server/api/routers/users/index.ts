@@ -1,5 +1,6 @@
 import { createTRPCRouter } from "../../trpc";
 
+import { addOnboardingInformation } from "./addOnboardingInformation";
 import { login } from "./login";
 import { currentUser } from "./currentUser";
 import { registerProfileNFT } from "./registerProfileNFT";
@@ -10,6 +11,7 @@ import { maybeInitAccount } from "./maybeInitAccount";
 import { verifyWallet } from "./verifyWallet";
 
 export const users = createTRPCRouter({
+  addOnboardingInformation,
   login,
   currentUser,
   registerProfileNFT,
