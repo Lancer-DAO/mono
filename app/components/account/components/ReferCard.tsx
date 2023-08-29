@@ -10,6 +10,7 @@ import * as Prisma from "@prisma/client";
 const SITE_URL = `https://${IS_CUSTODIAL ? "app" : "pro"}.lancer.so/account?r=`;
 
 export const ReferCard = () => {
+  // trigger build
   const [showCoinflow, setShowCoinflow] = useState(false);
   const [invites, setInvites] = useState(1);
   const { referralId, initialized, createReferralMember, claimables, claim } =
