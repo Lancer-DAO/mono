@@ -7,6 +7,7 @@ import { motion } from "framer-motion";
 import { smallClickAnimation } from "@/src/constants";
 
 interface Props {
+  formSection: OnboardStep;
   setFormSection: Dispatch<SetStateAction<OnboardStep>>;
   profileData: any;
   setProfileData: Dispatch<SetStateAction<any>>;
@@ -14,13 +15,18 @@ interface Props {
 }
 
 export const SkillsetView: FC<Props> = ({
+  formSection,
   setFormSection,
   profileData,
   setProfileData,
   account,
 }) => {
   return (
-    <div className="flex flex-col gap-5 items-center justify-center w-full h-full">
+    <div
+      className={`${
+        formSection === OnboardStep.Skillset ? "block" : "hidden"
+      } flex flex-col gap-5 items-center justify-center w-full h-full`}
+    >
       <Image
         src={account?.picture}
         width={70}

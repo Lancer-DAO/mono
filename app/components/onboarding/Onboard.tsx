@@ -4,10 +4,11 @@ import { IAsyncResult, ProfileFormData, User } from "@/types";
 import { useUserWallet } from "@/src/providers";
 import { useRouter } from "next/router";
 import { createUnderdogClient } from "@underdog-protocol/js";
-import { PROFILE_PROJECT_PARAMS } from "@/src/constants";
+import { PROFILE_PROJECT_PARAMS, enterAnimation } from "@/src/constants";
 import dayjs from "dayjs";
 import { api } from "@/src/utils";
 import toast from "react-hot-toast";
+import { AnimatePresence, motion } from "framer-motion";
 
 const underdogClient = createUnderdogClient({});
 
@@ -42,10 +43,10 @@ const Onboard: FC = () => {
     api.users.addOnboardingInformation.useMutation();
   api.users.registerProfileNFT.useQuery(
     {
-      walletPublicKey: currentWallet.publicKey.toString(),
+      walletPublicKey: currentWallet?.publicKey.toString(),
     },
     {
-      enabled: !!currentWallet?.publicKey,
+      enabled: !!currentWallet,
     }
   );
 
@@ -163,26 +164,31 @@ const Onboard: FC = () => {
   // }, [profileData]);
 
   return (
-    <div className="w-full max-w-[1200px] mx-auto flex flex-col md:flex-row md:justify-evenly mt-10">
-      {formSection === OnboardStep.Welcome && <WelcomeView account={account} />}
-      {formSection === OnboardStep.Skillset && (
+    <AnimatePresence mode="wait">
+      <motion.div
+        {...enterAnimation}
+        exit={{ opacity: 0 }}
+        key={`onboard-${formSection}`}
+        className="w-full max-w-[1200px] mx-auto flex flex-col md:flex-row md:justify-evenly mt-10"
+      >
+        <WelcomeView account={account} formSection={formSection} />
         <SkillsetView
+          formSection={formSection}
           setFormSection={setFormSection}
           profileData={profileData}
           setProfileData={setProfileData}
           account={account?.result}
         />
-      )}
-      {formSection === OnboardStep.Info && (
         <ProfileInfoView
+          formSection={formSection}
           setFormSection={setFormSection}
           profileData={profileData}
           setProfileData={setProfileData}
           account={account?.result}
           handleUpdateProfile={handleUpdateProfile}
         />
-      )}
-    </div>
+      </motion.div>
+    </AnimatePresence>
   );
 };
 

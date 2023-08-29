@@ -7,6 +7,7 @@ import { smallClickAnimation } from "@/src/constants";
 import { toast } from "react-hot-toast";
 
 interface Props {
+  formSection: OnboardStep;
   setFormSection: Dispatch<SetStateAction<OnboardStep>>;
   profileData: any;
   setProfileData: Dispatch<SetStateAction<any>>;
@@ -15,6 +16,7 @@ interface Props {
 }
 
 export const ProfileInfoView: FC<Props> = ({
+  formSection,
   setFormSection,
   profileData,
   setProfileData,
@@ -43,7 +45,11 @@ export const ProfileInfoView: FC<Props> = ({
   }, [profileData?.displayName]);
 
   return (
-    <div className="flex flex-col gap-5 items-center justify-center w-full h-full z-30">
+    <div
+      className={`${
+        formSection === OnboardStep.Info ? "block" : "hidden"
+      } flex flex-col gap-5 items-center justify-center w-full h-full z-30`}
+    >
       <Image
         src={account?.picture}
         width={70}
