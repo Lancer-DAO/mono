@@ -1,4 +1,10 @@
-import React, { FC, useEffect, useState } from "react";
+import React, {
+  Dispatch,
+  FC,
+  SetStateAction,
+  useEffect,
+  useState,
+} from "react";
 import { useRouter } from "next/router";
 import Image from "next/image";
 import { api, decimalToNumber, getSolscanAddress } from "@/utils";
@@ -6,7 +12,12 @@ import { marked } from "marked";
 import dayjs from "dayjs";
 import { PublicKey } from "@solana/web3.js";
 import { Clock } from "react-feather";
-import { ContributorInfo, ExternalLinkIcon, Logo } from "@/components";
+import {
+  ContributorInfo,
+  ExternalLinkIcon,
+  Logo,
+  SidePanel,
+} from "@/components";
 import { SubmitterSection, BountyActions } from "./components";
 import { useUserWallet } from "@/src/providers";
 import { motion } from "framer-motion";
@@ -17,15 +28,6 @@ interface BountyActionsUserProps {
   title: string;
   users: User[];
 }
-
-const BountActionsUser: FC<BountyActionsUserProps> = ({ title, users }) => (
-  <>
-    <label className="font-bold text-sm">{title}</label>
-    {users.map((user, index) => (
-      <ContributorInfo user={user} key={index} />
-    ))}
-  </>
-);
 
 export const Bounty = () => {
   const { currentUser } = useUserWallet();
@@ -55,6 +57,15 @@ export const Bounty = () => {
     const markdown = marked.parse(currentBounty.description, { breaks: true });
     return { __html: markdown };
   };
+
+  const BountActionsUser: FC<BountyActionsUserProps> = ({ title, users }) => (
+    <>
+      <label className="font-bold text-sm">{title}</label>
+      {users.map((user, index) => (
+        <ContributorInfo user={user} key={index} />
+      ))}
+    </>
+  );
 
   useEffect(() => {
     const setFuturePoll = () => {
