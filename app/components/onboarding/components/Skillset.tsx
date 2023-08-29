@@ -12,30 +12,13 @@ interface Props {
 }
 
 export const Skillset: FC<Props> = ({ profileData, setProfileData }) => {
-  const [industries, setIndustries] = useState<IAsyncResult<Industry[]>>({
-    isLoading: true,
-    loadingPrompt: "Loading Industries",
-  });
+  const { data: allIndustries, isLoading: industriesLoading } =
+    api.industries.getAllIndustries.useQuery();
 
-  useEffect(() => {
-    const fetchCurrentIndustries = async () => {
-      try {
-        const { data: allIndustries } =
-          api.industries.getAllIndustries.useQuery();
-        setIndustries({ result: allIndustries, isLoading: false });
-      } catch (e) {
-        console.log("error getting industries: ", e);
-        setIndustries({ error: e, isLoading: false });
-      }
-    };
-
-    fetchCurrentIndustries();
-  }, []);
-
-  if (industries.isLoading) {
+  if (industriesLoading) {
     return (
       <div className="flex flex-col gap-5 items-center justify-center w-full h-full">
-        <LoadingBar title={industries.loadingPrompt} />
+        <LoadingBar title="Loading Industries..." />
       </div>
     );
   }
@@ -47,20 +30,20 @@ export const Skillset: FC<Props> = ({ profileData, setProfileData }) => {
           className={`border-4 rounded-full p-2`}
           style={{
             borderColor:
-              profileData?.industry === industries?.result?.[0]
-                ? industries?.result?.[0]?.color
+              profileData?.industry === allIndustries?.[0]
+                ? allIndustries?.[0]?.color
                 : "transparent",
           }}
           {...smallClickAnimation}
           onClick={() =>
             setProfileData({
               ...profileData,
-              industry: industries?.result?.[0],
+              industry: allIndustries?.[0],
             })
           }
         >
           <Image
-            src={industries?.result?.[0]?.icon}
+            src={allIndustries?.[0]?.icon}
             width={100}
             height={100}
             alt="industry icon"
@@ -68,10 +51,10 @@ export const Skillset: FC<Props> = ({ profileData, setProfileData }) => {
         </motion.button>
         <p
           className={`absolute -top-10 left-1/2 -translate-x-1/2 text-lg font-bold ${
-            profileData?.industry !== industries?.result?.[0] && "opacity-30"
+            profileData?.industry !== allIndustries?.[0] && "opacity-30"
           }`}
         >
-          {industries?.result?.[0]?.name}
+          {allIndustries?.[0]?.name}
         </p>
       </div>
       {/* right and left items */}
@@ -81,20 +64,20 @@ export const Skillset: FC<Props> = ({ profileData, setProfileData }) => {
             className={`border-4 rounded-full p-2`}
             style={{
               borderColor:
-                profileData?.industry === industries?.result?.[1]
-                  ? industries?.result?.[1]?.color
+                profileData?.industry === allIndustries?.[1]
+                  ? allIndustries?.[1]?.color
                   : "transparent",
             }}
             {...smallClickAnimation}
             onClick={() =>
               setProfileData({
                 ...profileData,
-                industry: industries?.result?.[1],
+                industry: allIndustries?.[1],
               })
             }
           >
             <Image
-              src={industries?.result?.[1]?.icon}
+              src={allIndustries?.[1]?.icon}
               width={100}
               height={100}
               alt="industry icon"
@@ -102,10 +85,10 @@ export const Skillset: FC<Props> = ({ profileData, setProfileData }) => {
           </motion.button>
           <p
             className={`absolute -left-20 top-1/2 -translate-y-1/2 text-lg font-bold ${
-              profileData?.industry !== industries?.result?.[1] && "opacity-30"
+              profileData?.industry !== allIndustries?.[1] && "opacity-30"
             }`}
           >
-            {industries?.result?.[1]?.name}
+            {allIndustries?.[1]?.name}
           </p>
         </div>
         <div className="relative">
@@ -113,20 +96,20 @@ export const Skillset: FC<Props> = ({ profileData, setProfileData }) => {
             className={`border-4 rounded-full p-2`}
             style={{
               borderColor:
-                profileData?.industry === industries?.result?.[2]
-                  ? industries?.result?.[2]?.color
+                profileData?.industry === allIndustries?.[2]
+                  ? allIndustries?.[2]?.color
                   : "transparent",
             }}
             {...smallClickAnimation}
             onClick={() =>
               setProfileData({
                 ...profileData,
-                industry: industries?.result?.[2],
+                industry: allIndustries?.[2],
               })
             }
           >
             <Image
-              src={industries?.result?.[2]?.icon}
+              src={allIndustries?.[2]?.icon}
               width={100}
               height={100}
               alt="industry icon"
@@ -134,10 +117,10 @@ export const Skillset: FC<Props> = ({ profileData, setProfileData }) => {
           </motion.button>
           <p
             className={`absolute -right-[90px] top-1/2 -translate-y-1/2 text-lg font-bold ${
-              profileData?.industry !== industries?.result?.[2] && "opacity-30"
+              profileData?.industry !== allIndustries?.[2] && "opacity-30"
             }`}
           >
-            {industries?.result?.[2]?.name}
+            {allIndustries?.[2]?.name}
           </p>
         </div>
       </div>

@@ -8,7 +8,6 @@ import { PublicKey } from "@solana/web3.js";
 import { Clock } from "react-feather";
 import { ContributorInfo, ExternalLinkIcon, Logo } from "@/components";
 import { SubmitterSection, BountyActions } from "./components";
-import { useBounty } from "@/src/providers/bountyProvider";
 import { useUserWallet } from "@/src/providers";
 import { motion } from "framer-motion";
 import { smallClickAnimation } from "@/src/constants";
@@ -29,13 +28,20 @@ const BountActionsUser: FC<BountyActionsUserProps> = ({ title, users }) => (
 );
 
 export const Bounty = () => {
-  const { currentBounty, setCurrentBounty } = useBounty();
   const { currentUser } = useUserWallet();
-  const [pollId, setPollId] = useState(null);
-  const [bountyAmount, setBountyAmount] = useState("");
-  const [links, setLinks] = useState<string[]>([]);
   const router = useRouter();
-  const { mutateAsync: getBounty } = api.bounties.getBounty.useMutation();
+  const { data: currentBounty } = api.bounties.getBounty.useQuery(
+    {
+      id: parseInt(router.query.quest as string),
+      currentUserId: currentUser?.id,
+    },
+    {
+      enabled: !!currentUser,
+    }
+  );
+
+  const [pollId, setPollId] = useState(null);
+  const [links, setLinks] = useState<string[]>([]);
 
   const formatString = (str: string) => {
     return str
@@ -49,24 +55,6 @@ export const Bounty = () => {
     const markdown = marked.parse(currentBounty.description, { breaks: true });
     return { __html: markdown };
   };
-
-  useEffect(() => {
-    if (router.isReady && currentUser?.id) {
-      const getB = async () => {
-        const bounty = await getBounty({
-          id: parseInt(router.query.quest as string),
-          currentUserId: currentUser.id,
-        });
-        setCurrentBounty(bounty);
-        if (bounty?.escrow?.amount !== null) {
-          const amount = decimalToNumber(bounty.escrow.amount).toFixed(2);
-
-          setBountyAmount(amount);
-        }
-      };
-      getB();
-    }
-  }, [router.isReady, currentUser?.id]);
 
   useEffect(() => {
     const setFuturePoll = () => {
@@ -85,7 +73,7 @@ export const Bounty = () => {
   }, [currentBounty]);
 
   if (!currentUser || !currentBounty) {
-    return <></>;
+    return null;
   }
 
   return (
@@ -113,7 +101,9 @@ export const Bounty = () => {
                 height={25}
                 alt="mint logo"
               />
-              <p>{`${bountyAmount} in escrow`}</p>
+              <p>{`${decimalToNumber(currentBounty.escrow.amount).toFixed(
+                2
+              )} in escrow`}</p>
               <motion.a
                 {...smallClickAnimation}
                 href={getSolscanAddress(
@@ -146,6 +136,7 @@ export const Bounty = () => {
                       target="_blank"
                       rel="noreferrer"
                       className="underline text-blue-500"
+                      key={link}
                     >
                       {formattedLink}
                     </a>
@@ -279,160 +270,5 @@ export const Bounty = () => {
         </div>
       </div>
     </>
-
-    // <section className="section-job-post wf-section">
-    //   <div className="container-default">
-    //     <div className="w-layout-grid grid-job-post">
-    //       <div
-    //         id="task-container"
-    //         data-w-id="9d97a6aa-31d5-1276-53c2-e76c8908f874"
-    //         className="job-post-container mb-20"
-    //       >
-    //         <div
-    //           id="w-node-_9d97a6aa-31d5-1276-53c2-e76c8908f876-fde9cdb1"
-    //           className="job-post-primary-info"
-    //         >
-    //           <div className="contributor-picture-large">
-    //             <Logo width="100px" height="100px" />
-    //           </div>
-    //           <div className="bounty-page-title-section">
-    //             <div className="bounty-title-row-1">
-    //               {currentBounty.repository && (
-    //                 <a
-    //                   href={`https://github.com/${currentBounty.repository.organization}`}
-    //                   className="job-post-company-name"
-    //                   target="_blank"
-    //                   rel="noreferrer"
-    //                   id="task-organization-link"
-    //                 >
-    //                   {currentBounty.repository.organization}
-    //                 </a>
-    //               )}
-    //               <div
-    //                 className={`currentBounty-state ${currentBounty.state} text-start`}
-    //                 id="task-state"
-    //               >
-    //                 {currentBounty.state.split("_").join(" ")}
-    //               </div>
-    //             </div>
-    //             {currentBounty.repository ? (
-    //               <a
-    //                 className="job-post-title"
-    //                 href={`${currentBounty.repository.githubLink}/issues/${currentBounty.issue.number}`}
-    //                 target="_blank"
-    //                 rel="noreferrer"
-    //                 id="task-title"
-    //               >
-    //                 {currentBounty.title}
-    //               </a>
-    //             ) : (
-    //               <div className="job-post-title" id="task-title">
-    //                 {currentBounty.title}
-    //               </div>
-    //             )}
-
-    //             <div className="bounty-title-row-1">
-    //               <div className="job-post-date" id="task-posted-date">
-    //                 {`${dayjs
-    //                   .unix(parseInt(currentBounty.createdAt) / 1000)
-    //                   .format("MMMM D, YYYY h:mm A")}`}
-    //               </div>
-    //               {currentBounty.escrow.publicKey && (
-    //                 <a
-    //                   href={getSolscanAddress(
-    //                     new PublicKey(currentBounty.escrow.publicKey)
-    //                   )}
-    //                   className="job-post-company-name"
-    //                   target="_blank"
-    //                   rel="noreferrer"
-    //                   id="task-escrow-link"
-    //                 >
-    //                   Escrow Contract
-    //                 </a>
-    //               )}
-    //             </div>
-    //           </div>
-    //         </div>
-    //         <div></div>
-    //         <div className="job-post-middle">
-    //           <div className="job-post-info-container" id="task-estimated-time">
-    //             <Clock />
-    //             <div className="job-post-info-text icon-left">
-    //               {`${currentBounty.estimatedTime}`} HOURS
-    //             </div>
-    //           </div>
-    //           <div className="job-post-info-divider"></div>
-    //           <div className="job-post-info-container" id="task-requirements">
-    //             <div className="tag-list">
-    //               {currentBounty.tags.map((tag) => (
-    //                 <div
-    //                   className="tag-item"
-    //                   key={tag.name}
-    //                   style={{ color: tag.color }}
-    //                 >
-    //                   {tag.name}
-    //                 </div>
-    //               ))}
-    //             </div>
-    //           </div>
-    //           <div className="job-post-info-divider"></div>
-    //           <div className="job-post-info-container" id="task-funded-amount">
-    //             <div className="job-post-info-text icon-right">
-    //               {bountyAmount}
-    //             </div>
-    //             <Image
-    //               className="rounded-[50%]"
-    //               src={currentBounty.escrow.mint.logo}
-    //               alt={currentBounty.escrow.mint.name ?? "mint icon"}
-    //               width={36}
-    //               height={36}
-    //             />
-    //           </div>
-    //         </div>
-    //         <div className="job-post-bottom">
-    //           <div id="task-description">
-    //             <h2 className="job-post-subtitle">Job description</h2>
-    //             <div
-    //               className="bounty-markdown-full"
-    //               dangerouslySetInnerHTML={previewMarkup()}
-    //             />
-    //           </div>
-    //           {<BountyActions />}
-    //         </div>
-    //       </div>
-    //       <div
-    //         id="w-node-_272b1d4e-bae1-2928-a444-208d5db4485b-fde9cdb1"
-    //         className="w-form"
-    //       >
-    //         <div className="contributors-section" id="links-section">
-    //           {currentBounty.issue && (
-    //             <>
-    //               <h2>Links</h2>
-    //               <a
-    //                 href={`${currentBounty.repository.githubLink}/issues/${currentBounty.issue.number}`}
-    //                 target="_blank"
-    //                 rel="noreferrer"
-    //                 id="task-issue-link"
-    //               >
-    //                 GitHub Issue
-    //               </a>
-    //             </>
-    //           )}
-    //           {currentBounty.pullRequests.length > 0 && (
-    //             <a
-    //               href={`${currentBounty.repository.githubLink}/issues/${currentBounty.pullRequests[0].number}`}
-    //               target="_blank"
-    //               rel="noreferrer"
-    //               id="task-pull-request-link"
-    //             >
-    //               GitHub Pull Request
-    //             </a>
-    //           )}
-    //         </div>
-
-    //       </div>
-    //     </div>
-    //   </div>
-    // </section>
   );
 };

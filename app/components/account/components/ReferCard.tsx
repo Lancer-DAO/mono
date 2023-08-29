@@ -15,8 +15,8 @@ export const ReferCard = () => {
   const { referralId, initialized, createReferralMember, claimables, claim } =
     useReferral();
 
-  const { currentUser, currentWallet } = useUserWallet();
-  const [mints, setMints] = useState<Prisma.Mint[]>([]);
+  const { currentWallet } = useUserWallet();
+  const { data: allMints } = api.mints.getMints.useQuery();
 
   const handleCreateLink = useCallback(async () => {
     try {
@@ -35,7 +35,7 @@ export const ReferCard = () => {
       .filter((claimable) => claimable.amount !== 0)
       .map((claimable) => {
         const claimMintKey = claimable.treasury.account.mint.toString();
-        const claimMint = mints.filter(
+        const claimMint = allMints.filter(
           (mint) => mint.publicKey === claimMintKey
         )[0];
         return (
@@ -47,7 +47,7 @@ export const ReferCard = () => {
           </Button>
         );
       });
-  }, [claimables, mints, currentWallet]);
+  }, [claimables, allMints, currentWallet]);
 
   const renderCircles = (invitesLeft) => {
     const circles = [];
@@ -62,13 +62,6 @@ export const ReferCard = () => {
     }
     return circles;
   };
-
-  useEffect(() => {
-    if (!!currentUser) {
-      const { data: allMints } = api.mints.getMints.useQuery();
-      setMints(allMints);
-    }
-  }, [currentUser]);
 
   return (
     <div className="flex gap-5">

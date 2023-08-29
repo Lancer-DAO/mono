@@ -33,20 +33,20 @@ export const RequestToSubmit = () => {
     }
     setIsLoading(true);
     await createReferralMember(
-      new PublicKey(currentBounty.escrow.mint.publicKey)
+      new PublicKey(currentBounty?.escrow.mint.publicKey)
     );
     const newRelations = updateList(
-      currentBounty.currentUserRelationsList ?? [],
+      currentBounty?.currentUserRelationsList ?? [],
       [],
       [BOUNTY_USER_RELATIONSHIP.RequestedSubmitter]
     );
     const updatedBounty = await mutateAsync({
       currentUserId: currentUser.id,
-      bountyId: currentBounty.id,
+      bountyId: currentBounty?.id,
       userId: currentUser.id,
       relations: newRelations,
       publicKey: currentWallet.publicKey.toString(),
-      escrowId: currentBounty.escrowid,
+      escrowId: currentBounty?.escrowid,
       label: "request-to-submit",
       signature: "n/a",
     });

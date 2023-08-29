@@ -1,4 +1,5 @@
-import { BountyCard, DefaultLayout, LoadingBar } from "@/components";
+import { FC, useEffect, useState } from "react";
+import { useRouter } from "next/router";
 import {
   BOUNTY_PROJECT_PARAMS,
   IS_CUSTODIAL,
@@ -15,8 +16,7 @@ import { api } from "@/utils";
 import { createUnderdogClient } from "@underdog-protocol/js";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
-import { useRouter } from "next/router";
-import { FC, useEffect, useState } from "react";
+import { LoadingBar } from "@/components";
 import { ProfileNFTCard, QuestsCard } from "./components";
 import BadgesCard from "./components/BadgesCard";
 import { ReferCard } from "./components/ReferCard";
@@ -32,14 +32,26 @@ interface Props {
 export const Account: FC<Props> = ({ self }) => {
   const router = useRouter();
 
+  // api + context
   const { currentUser, currentWallet } = useUserWallet();
   const { currentTutorialState, setCurrentTutorialState } = useTutorial();
+  const { data: fetchedUser } = api.users.getUser.useQuery(
+    {
+      id: parseInt(router.query.account as string),
+    },
+    {
+      enabled: !!router.query.account,
+    }
+  );
+  const { mutateAsync: verifyWallet } = api.users.verifyWallet.useMutation();
+  api.users.registerProfileNFT.useQuery({
+    walletPublicKey: currentWallet?.publicKey.toString(),
+  });
+
   const [profileNFT, setProfileNFT] = useState<ProfileNFT>();
   const [bountyNFTs, setBountyNFTs] = useState<IAsyncResult<BountyNFT[]>>({
     isLoading: true,
   });
-  const { mutateAsync: getUser } = api.users.getUser.useMutation();
-  const { mutateAsync: verifyWallet } = api.users.verifyWallet.useMutation();
   const [account, setAccount] = useState<IAsyncResult<User>>({
     isLoading: true,
     loadingPrompt: "Loading Profile",
@@ -50,10 +62,7 @@ export const Account: FC<Props> = ({ self }) => {
       if (router.query.account !== undefined) {
         const fetchAccount = async () => {
           try {
-            const account = await getUser({
-              id: parseInt(router.query.account as string),
-            });
-            setAccount({ ...account, result: account });
+            setAccount({ ...account, result: fetchedUser });
           } catch (e) {
             console.log("Error fetching account: ", e);
             setAccount({ error: e });
@@ -232,10 +241,6 @@ export const Account: FC<Props> = ({ self }) => {
           receiverAddress: currentWallet.publicKey.toString(),
         },
       });
-
-      api.users.registerProfileNFT.useQuery({
-        walletPublicKey: currentWallet.publicKey.toString(),
-      });
     }
   };
 
@@ -257,8 +262,7 @@ export const Account: FC<Props> = ({ self }) => {
       <h1 className="pb-2">{`${
         self ? "Your Profile" : `@${account?.result?.name}`
       }`}</h1>
-      {/* {profileNFT && ( */}
-      {account?.result && (
+      {profileNFT && account?.result ? (
         <div className="w-full flex items-start gap-5">
           {/* left column */}
           <div className="flex flex-col gap-5 w-full md:max-w-[482px]">
@@ -275,6 +279,10 @@ export const Account: FC<Props> = ({ self }) => {
 
             {account?.result.id === currentUser.id && <ReferCard />}
           </div>
+        </div>
+      ) : (
+        <div className="w-full flex items-start gap-5">
+          <LoadingBar title="Loading Profile" />
         </div>
       )}
     </div>

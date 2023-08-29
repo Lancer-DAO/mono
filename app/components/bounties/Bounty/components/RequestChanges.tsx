@@ -15,9 +15,9 @@ export const RequestChanges = () => {
 
   if (
     !(
-      currentBounty.isCreator &&
-      currentBounty.currentSubmitter &&
-      !currentBounty.completer
+      currentBounty?.isCreator &&
+      currentBounty?.currentSubmitter &&
+      !currentBounty?.completer
     )
   )
     return null;
@@ -25,26 +25,26 @@ export const RequestChanges = () => {
   const onClick = async () => {
     // If we are the creator, then skip requesting and add self as approved
     const signature = await denyRequestFFA(
-      new PublicKey(currentBounty.currentSubmitter.publicKey),
+      new PublicKey(currentBounty?.currentSubmitter.publicKey),
 
-      currentBounty.escrow,
+      currentBounty?.escrow,
       currentWallet,
       program,
       provider
     );
     const newRelations = updateList(
-      currentBounty.currentUserRelationsList,
+      currentBounty?.currentUserRelationsList,
       [BOUNTY_USER_RELATIONSHIP.CurrentSubmitter],
       [BOUNTY_USER_RELATIONSHIP.ChangesRequestedSubmitter]
     );
     const updatedBounty = await mutateAsync({
-      bountyId: currentBounty.id,
+      bountyId: currentBounty?.id,
       currentUserId: currentUser.id,
-      userId: currentBounty.currentSubmitter.userid,
+      userId: currentBounty?.currentSubmitter.userid,
       relations: newRelations,
       state: BountyState.IN_PROGRESS,
-      publicKey: currentBounty.currentSubmitter.publicKey,
-      escrowId: currentBounty.escrowid,
+      publicKey: currentBounty?.currentSubmitter.publicKey,
+      escrowId: currentBounty?.escrowid,
       signature,
       label: "request-changes",
     });

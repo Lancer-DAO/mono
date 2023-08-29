@@ -5,18 +5,16 @@ import { getUniqueItems } from "@/src/utils";
 import { useUserWallet } from "@/src/providers";
 import { LoadingBar, BountyCard } from "@/components";
 import { api } from "@/src/utils/api";
-import { useRouter } from "next/router";
 import { BountyFilters } from "./components";
-import { IAsyncResult } from "@/types/common";
 import {
   BountyPreview,
   Filters,
-  Industry,
   TABLE_BOUNTY_STATES,
   TABLE_MY_BOUNTY_STATES,
 } from "@/types";
 import { AnimatePresence, motion } from "framer-motion";
-import { Mint } from "@prisma/client";
+import toast from "react-hot-toast";
+
 export const BOUNTY_USER_RELATIONSHIP = [
   "Creator",
   "Requested Submitter",
@@ -26,20 +24,9 @@ export const BOUNTY_USER_RELATIONSHIP = [
 ];
 
 const BountyList: React.FC<{}> = () => {
-  const { currentUser } = useUserWallet();
-  const router = useRouter();
-  const { mutateAsync: getBounties } =
-    api.bounties.getAllBounties.useMutation();
-
+  // state
   const [tags, setTags] = useState<string[]>([]);
-  const [mints, setMints] = useState<IAsyncResult<Mint[]>>({
-    isLoading: true,
-  });
   const [bounds, setPriceBounds] = useState<[number, number]>([5, 10000]);
-  const [bounties, setBounties] = useState<IAsyncResult<BountyPreview[]>>();
-  const [industries, setIndustries] = useState<IAsyncResult<Industry[]>>({
-    isLoading: true,
-  });
   const [industriesFilter, setIndustriesFilter] = useState<string[]>([]);
   const [filteredBounties, setFilteredBounties] = useState<BountyPreview[]>();
   const [showFilters, setShowFilters] = useState<boolean>(true);
@@ -52,55 +39,30 @@ const BountyList: React.FC<{}> = () => {
     isMyBounties: true,
   });
 
-  useEffect(() => {
-    const getBs = async () => {
-      if (router.isReady && currentUser?.id) {
-        setBounties({ isLoading: true });
-        try {
-          const bounties = await getBounties({
-            currentUserId: currentUser.id,
-            onlyMyBounties: filters.isMyBounties,
-          });
-          setBounties({ result: bounties, isLoading: false });
-          // console.log("bounties!!: ", bounties);
-        } catch (e) {
-          console.log("error getting bounties: ", e);
-          setBounties({ error: e, isLoading: false });
-        }
-      } else {
-        setBounties({ isLoading: false });
-        console.log("router not ready or no user");
-      }
-    };
-
-    const fetchCurrentIndustries = async () => {
-      try {
-        const { data: allIndustries } =
-          api.industries.getAllIndustries.useQuery();
-        setIndustries({ result: allIndustries, isLoading: false });
-      } catch (e) {
-        console.log("error getting industries: ", e);
-        setIndustries({ error: e, isLoading: false });
-      }
-    };
-
-    const fetchCurrentMints = async () => {
-      try {
-        const { data: allMints } = api.mints.getMints.useQuery();
-        setMints({ result: allMints, isLoading: false });
-      } catch (e) {
-        console.log("error getting mints: ", e);
-        setMints({ error: e, isLoading: false });
-      }
-    };
-
-    getBs();
-    fetchCurrentIndustries();
-    fetchCurrentMints();
-  }, [router.isReady, currentUser?.id, filters.isMyBounties]);
+  // api + context
+  const { currentUser } = useUserWallet();
+  const {
+    data: allBounties,
+    isLoading: bountiesLoading,
+    isError: bountiesError,
+  } = api.bounties.getAllBounties.useQuery(
+    {
+      currentUserId: currentUser?.id,
+      onlyMyBounties: filters.isMyBounties,
+    },
+    {
+      enabled: !!currentUser,
+    }
+  );
+  const {
+    data: allIndustries,
+    isLoading: industriesLoading,
+    isError: industriesError,
+  } = api.industries.getAllIndustries.useQuery();
+  const { data: allMints } = api.mints.getMints.useQuery();
 
   useEffect(() => {
-    const filteredBounties = bounties?.result?.filter((bounty) => {
+    const filteredBounties = allBounties?.filter((bounty) => {
       if (!bounty.escrow.publicKey || !bounty.escrow.mint) {
         return false;
       }
@@ -144,9 +106,17 @@ const BountyList: React.FC<{}> = () => {
     // - all payout mints
     // - upper and lower bounds of price
 
-    if (!bounties?.result || !industries?.result) return;
-    if (bounties && bounties?.result?.length !== 0) {
-      const allTags = bounties?.result
+    if (bountiesError) {
+      toast.error("Error fetching bounties");
+      return;
+    }
+    if (industriesError) {
+      toast.error("Error fetching industries");
+      return;
+    }
+    if (!allBounties || !allIndustries) return;
+    if (allBounties && allBounties?.length !== 0) {
+      const allTags = allBounties
         ?.map((bounty) => bounty.tags.map((tag) => tag.name))
         ?.reduce(
           (accumulator, currentValue) => [
@@ -156,12 +126,12 @@ const BountyList: React.FC<{}> = () => {
           []
         );
       const uniqueTags = getUniqueItems(allTags);
-      const allIndustries = industries?.result.map((industry) => industry.name);
+      const mappedInds = allIndustries.map((industry) => industry.name);
 
-      setIndustriesFilter(allIndustries);
+      setIndustriesFilter(mappedInds);
 
       setTags(uniqueTags);
-      const allPrices = bounties?.result.map((bounty) =>
+      const allPrices = allBounties.map((bounty) =>
         bounty.price ? parseFloat(bounty.price.toString()) : 0
       );
       const maxPrice = Math.max(...allPrices) || 10;
@@ -173,7 +143,7 @@ const BountyList: React.FC<{}> = () => {
       setPriceBounds(priceBounds);
       setFilters({
         tags: allTags,
-        industries: allIndustries,
+        industries: mappedInds,
         estimatedPriceBounds: priceBounds,
         states: filters.isMyBounties
           ? TABLE_MY_BOUNTY_STATES
@@ -182,21 +152,19 @@ const BountyList: React.FC<{}> = () => {
         isMyBounties: filters.isMyBounties,
       });
     }
-  }, [bounties, industries]);
+  }, [allBounties, allIndustries]);
 
   return (
     <div className="w-full flex items-start mt-5 gap-5 pb-10">
       <AnimatePresence>
-        {showFilters && bounties?.result?.length > 0 && (
+        {showFilters && allBounties?.length > 0 && (
           <BountyFilters
-            mints={mints.result}
-            industries={industries?.result}
+            mints={allMints}
+            industries={allIndustries}
             tags={tags}
             priceBounds={bounds}
-            // orgs={orgs}
             filters={filters}
             setFilters={setFilters}
-            setBounties={setBounties}
           />
         )}
       </AnimatePresence>
@@ -212,7 +180,7 @@ const BountyList: React.FC<{}> = () => {
           <h1>Quests.</h1>
         </div>
         {/* filter button */}
-        {bounties?.result?.length > 0 && (
+        {allBounties?.length > 0 && (
           <motion.button
             className="w-[85px] h-[40px] flex items-center justify-center border-2
               bg-primaryBtn border-primaryBtnBorder rounded-xl font-bold text-xs"
@@ -233,32 +201,26 @@ const BountyList: React.FC<{}> = () => {
           </motion.button>
         )}
 
-        {bounties?.isLoading && (
+        {bountiesLoading && (
           <div className="w-full flex flex-col items-center">
             <LoadingBar title="Loading Bounties" />
           </div>
         )}
 
         <div className={`w-full flex flex-wrap gap-5`}>
-          {!bounties?.isLoading && filteredBounties?.length === 0 && (
+          {!bountiesLoading && filteredBounties?.length === 0 && (
             <p className="w-full text-center col-span-full">
               No matching bounties available!
             </p>
           )}
-          {bounties?.error && (
+          {bountiesError && (
             <p className="w-full text-center col-span-full">
               Error fetching bounties
             </p>
           )}
           {filteredBounties?.length > 0 &&
             filteredBounties?.map((bounty, index) => {
-              return (
-                <BountyCard
-                  bounty={bounty}
-                  allIndustries={industries?.result}
-                  key={index}
-                />
-              );
+              return <BountyCard bounty={bounty} key={index} />;
             })}
         </div>
       </div>

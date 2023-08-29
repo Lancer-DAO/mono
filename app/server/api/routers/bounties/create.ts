@@ -58,7 +58,7 @@ export const createBounty = protectedProcedure
         user,
         mint
       );
-      const createTx = await queries.transaction.create(
+      await queries.transaction.create(
         timestamp,
         transactionSignature,
         "create-escrow",

@@ -153,9 +153,9 @@ const Onboard: FC = () => {
     }
   }, [account?.result]);
 
-  useEffect(() => {
-    console.log("profile data: ", profileData);
-  }, [profileData]);
+  // useEffect(() => {
+  //   console.log("profile data: ", profileData);
+  // }, [profileData]);
 
   return (
     <div className="w-full max-w-[1200px] mx-auto flex flex-col md:flex-row md:justify-evenly mt-10">

@@ -15,7 +15,6 @@ interface BountyFiltersProps {
   priceBounds: [number, number];
   filters: Filters;
   setFilters: Dispatch<SetStateAction<Filters>>;
-  setBounties: (bounties: IAsyncResult<any[]>) => void;
 }
 
 export const BountyFilters = ({
@@ -26,7 +25,6 @@ export const BountyFilters = ({
   priceBounds,
   filters,
   setFilters,
-  setBounties,
 }: BountyFiltersProps) => {
   return (
     <motion.form
@@ -44,7 +42,7 @@ export const BountyFilters = ({
           rounded-xl focus:ring-industryGreenBorder focus:border-green-500"
           checked={filters.isMyBounties}
           onChange={() => {
-            setBounties({ result: [] });
+            // setBounties({ result: [] });
             setFilters({
               ...filters,
               isMyBounties: !filters.isMyBounties,
