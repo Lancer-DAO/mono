@@ -155,6 +155,7 @@ export const Bounty = () => {
                       : `http://${link}`;
                   return (
                     <a
+                      key={link}
                       href={formattedLink}
                       target="_blank"
                       rel="noreferrer"
