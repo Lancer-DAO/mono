@@ -156,13 +156,14 @@ export const ProfileNFTCard = ({
   const claimButtons = useMemo(() => {
     return claimables
       .filter((claimable) => claimable.amount !== 0)
-      .map((claimable) => {
+      .map((claimable, index) => {
         const claimMintKey = claimable.treasury.account.mint.toString();
         const claimMint = mints.filter(
           (mint) => mint.publicKey === claimMintKey
         )[0];
         return (
           <Button
+            key={`${claimable.treasury.account}-${index}`}
             onClick={() => handleClaim(claimable.amount, claimable.treasury)}
           >
             Claim {claimable.amount} {claimMint?.ticker}

@@ -16,6 +16,8 @@
     "prisma:generate": "prisma generate",
     "postinstall": "prisma generate",
     "prisma:db:push": "prisma db push",
+    "lint": "next lint",
+    "lint:report": "next lint --output-file eslint-report.json --format json",
     "prisma:test": "nodemon ./prisma/scripts/test.ts"
   },
   "dependencies": {
