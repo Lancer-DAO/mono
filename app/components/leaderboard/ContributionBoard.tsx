@@ -1,48 +1,40 @@
 import { FC, useEffect, useState } from "react";
 import { ArrowDown, ArrowUp } from "react-feather";
 
+// These are all supported programming languages right now that are being parsed from GitHub
 const languages = ['All', 'TypeScript', 'JavaScript', 'CSS', 'HTML', 'Python', 'Ruby', 'Golang', 'Java', 'Rust', 'Solidity', 'Csharp', 'C', 'Cpp', 'JSON']
 
 const fetchDataForLanguage = async (language, formattedDate, formattedDate2) => {
-  const url = `https://lancer.up.railway.app/ranking/top_devs/language?language=${language.toLowerCase()}&start_date=${formattedDate}&till=7&limit=10`;
-  const res = await fetch(url);
-  const data = await res.json();
-
-  const url2 = `https://lancer.up.railway.app/ranking/top_devs/language?language=${language.toLowerCase()}&start_date=${formattedDate2}&till=7&limit=10`;
-  const res2 = await fetch(url2);
-  const oldData = await res2.json();
+  const makeUrl = (date) => `https://lancer.up.railway.app/ranking/top_devs/language?language=${language.toLowerCase()}&start_date=${date}&till=7&limit=10`;
+  
+  const [res, res2] = await Promise.all([fetch(makeUrl(formattedDate)), fetch(makeUrl(formattedDate2))]);
+  const [data, oldData] = await Promise.all([res.json(), res2.json()]);
 
   const result = Object.fromEntries(data.map(newEntry => {
     const oldEntry = oldData.find(o => o.github_name === newEntry.github_name);
-    const newRank = newEntry.rank;
-    const oldRank = oldEntry ? oldEntry.rank : Infinity;
-
+    const [oldRank, newRank] = [oldEntry?.rank || Infinity, newEntry.rank];
+    
     console.log(oldRank, newRank, newEntry.github_name);
 
-    if (newRank < oldRank) {
-      return [newEntry.github_name, "up"];
-    } else if (newRank > oldRank) {
-      return [newEntry.github_name, "down"];
-    } else {
-      return [newEntry.github_name, "no_change"];
-    }
+    if (newRank < oldRank) return [newEntry.github_name, "up"];
+    if (newRank > oldRank) return [newEntry.github_name, "down"];
+    return [newEntry.github_name, "no_change"];
   }));
   return { data, result };
 };
 
-export const Leaderboard: FC<any> = ({ self }) => {
+
+export const ContributionBoard: FC<any> = () => {
+
   const [topDevs, setTopDevs] = useState([]);
   const [selectedLanguage, setSelectedLanguage] = useState(null);
   const [change, setChange] = useState<any>({});
 
-  const handleLanguageClick = (language) => {
-    setSelectedLanguage(language);
-  };
-
   useEffect(() => {
     const fetchData = async () => {
-      const formattedDate = new Date(new Date().setDate(new Date().getDate() - 7)).toISOString().split('T')[0];
-      const formattedDate2 = new Date(new Date().setDate(new Date().getDate() - 8)).toISOString().split('T')[0];
+      const getDate = (offset) => new Date(new Date().setDate(new Date().getDate() - offset)).toISOString().split('T')[0];
+      const formattedDate = getDate(7);
+      const formattedDate2 = getDate(8);      
 
       if (selectedLanguage && selectedLanguage !== "All") {
         const { data, result } = await fetchDataForLanguage(selectedLanguage, formattedDate, formattedDate2);
@@ -66,7 +58,7 @@ export const Leaderboard: FC<any> = ({ self }) => {
           {languages.map((language) => (
             <li
               key={language}
-              onClick={() => handleLanguageClick(language)}
+              onClick={() => setSelectedLanguage(language)}
               className={`cursor-pointer ${selectedLanguage === language ? 'text-blue-600' : 'text-gray-800'
                 }`}
             >
@@ -92,7 +84,7 @@ export const Leaderboard: FC<any> = ({ self }) => {
             <p className="text-xl">{dev.lines_contributed}</p>
           </div>
         ))}
-        <a href="/leaderboard/commits">View commits Leaderboard</a>
+        <a className="text-[#51a45b] text-xl mt-[10px]" href="/leaderboard/commits">View Commit Leaderboard</a>
       </div>
     </div>
   )

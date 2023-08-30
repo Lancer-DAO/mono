@@ -1,6 +1,6 @@
 import Head from "next/head";
 import { withPageAuthRequired } from "@auth0/nextjs-auth0";
-import { LeaderboardCommits } from "@/components/leaderboard/LeaderboardCommits";
+import { LeaderboardCommits } from "@/components/leaderboard/CommitBoard";
 export const getServerSideProps = withPageAuthRequired();
 
 export default function Home() {

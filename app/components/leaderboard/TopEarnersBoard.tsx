@@ -1,8 +1,7 @@
 import { api } from "@/src/utils";
 import { FC, useEffect, useState } from "react";
-import { ArrowDown, ArrowUp } from "react-feather";
 
-export const TopEarners: FC<any> = ({ self }) => {
+export const TopEarnersBoard: FC<any> = () => {
     const [topDevs, setTopDevs] = useState<any[]>([]);
 
     const { mutateAsync: getTopEarners } =
@@ -21,7 +20,7 @@ export const TopEarners: FC<any> = ({ self }) => {
     return (
         <div className="flex align-center justify-center mt-10 gap-[10px]">
             <div className="bg-gray-100 w-[70%] flex flex-col px-[20px] py-[10px] align-center justify-center">
-                <h1>Devs making big monies</h1>
+                <h1 className="mb-[10px]">Top Earners</h1>
                 <div className="w-full flex justify-between w-[100%] border-b border-gray-300">
                     <p className="font-bold text-xl">Github Username</p>
                     <p className="font-bold text-xl">Total Earnt</p>
@@ -32,9 +31,10 @@ export const TopEarners: FC<any> = ({ self }) => {
                         <div className="flex gap-2 align-center">
                             <a target="_blank" href={`https://github.com/${dev.name}`}><p className="text-xl">{index + 1}. {dev.name}</p></a>
                         </div>
-                        <p className="text-xl">{dev.total_earned}</p>
+                        <p className="text-xl">${dev.total_earned}</p>
                     </div>
                 ))}
+                <a className="text-[#51a45b] text-xl mt-[10px]" href="/leaderboard/bounties">View Bounty Leaderboard</a>
             </div>
         </div>
     )

@@ -1,5 +1,5 @@
 import Head from "next/head";
-import { Leaderboard } from "@/components/leaderboard/Leaderboard";
+import { ContributionBoard } from "@/components/leaderboard/ContributionBoard";
 import { withPageAuthRequired } from "@auth0/nextjs-auth0";
 export const getServerSideProps = withPageAuthRequired();
 
@@ -7,11 +7,11 @@ export default function Home() {
   return (
     <>
       <Head>
-        <title>Lancer | Leaderboard</title>
-        <meta name="description" content="Lancer Leaderboard" />
+        <title>Lancer | Contribution Leaderboard</title>
+        <meta name="description" content="Lancer Contribution Leaderboard" />
       </Head>
       <main>
-        <Leaderboard self={true} />
+        <ContributionBoard />
       </main>
     </>
   );

@@ -1,5 +1,4 @@
 import { FC, useEffect, useState } from "react";
-import { ArrowDown, ArrowUp, ChevronDown, ChevronUp } from "react-feather";
 import Datepicker from "react-tailwindcss-datepicker";
 
 const languages = ['All', 'JavaScript', 'Python', 'Java', 'Cpp', 'Ruby'];
@@ -47,6 +46,8 @@ export const LeaderboardCommits: FC<any> = ({ self }) => {
 
                 <h3>Select Date Range</h3>
                 <Datepicker
+                minDate={new Date("2023-08-02")}
+                    maxDate={new Date()}
                     separator="to"
                     inputClassName="bg-gray-200 w-full h-10 text-xl mb-2" primaryColor="green" value={dateValue} onChange={handleValueChange} />
 
@@ -65,7 +66,7 @@ export const LeaderboardCommits: FC<any> = ({ self }) => {
                         <p className="text-xl">{dev.total_commits}</p>
                     </div>
                 ))}
-                <a href="/leaderboard">View lines of code Leaderboard</a>
+                <a className="text-[#51a45b] text-xl mt-[10px]" href="/leaderboard">View Contribution Leaderboard</a>
             </div>
         </div>
     )

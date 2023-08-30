@@ -1,7 +1,7 @@
 import Head from "next/head";
 import { withPageAuthRequired } from "@auth0/nextjs-auth0";
-import { LeaderboardCommits } from "@/components/leaderboard/LeaderboardCommits";
-import { TopBountyUsers } from "@/components/leaderboard/TopBountyUsers";
+import { LeaderboardCommits } from "@/components/leaderboard/CommitBoard";
+import { TopBountyUsersBoard } from "@/components/leaderboard/TopBountyUsersBoard";
 export const getServerSideProps = withPageAuthRequired();
 
 export default function Home() {
@@ -9,10 +9,10 @@ export default function Home() {
     <>
       <Head>
         <title>Lancer | Bounty User Leaderboard</title>
-        <meta name="description" content="Lancer Leaderboard" />
+        <meta name="description" content="Lancer Bounty Leaderboard" />
       </Head>
       <main>
-        <TopBountyUsers self={true} />
+        <TopBountyUsersBoard />
       </main>
     </>
   );
