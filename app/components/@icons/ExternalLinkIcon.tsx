@@ -2,7 +2,7 @@ import { FC, SVGAttributes } from "react";
 
 export interface ExternalLinkIconProps extends SVGAttributes<SVGSVGElement> {}
 
-const ExternalLinkIcon: FC<ExternalLinkIconProps> = ({
+export const ExternalLinkIcon: FC<ExternalLinkIconProps> = ({
   ...componentProps
 }: ExternalLinkIconProps) => (
   <svg
@@ -19,5 +19,3 @@ const ExternalLinkIcon: FC<ExternalLinkIconProps> = ({
     />
   </svg>
 );
-
-export default ExternalLinkIcon;

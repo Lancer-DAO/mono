@@ -1,8 +1,10 @@
-import { Header, JoyrideWrapper } from "@/components";
+import { Header, JoyrideWrapper } from "@/components/organisms";
 import { useUserWallet } from "@/src/providers";
 import { ReactNode } from "react";
 
-const DefaultLayout: React.FC<{ children: ReactNode }> = ({ children }) => {
+export const DefaultLayout: React.FC<{ children: ReactNode }> = ({
+  children,
+}) => {
   const { currentUser } = useUserWallet();
   return (
     <div className="relative">
@@ -13,5 +15,3 @@ const DefaultLayout: React.FC<{ children: ReactNode }> = ({ children }) => {
     </div>
   );
 };
-
-export default DefaultLayout;

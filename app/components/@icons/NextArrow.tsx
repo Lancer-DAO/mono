@@ -2,7 +2,7 @@ import { FC, SVGAttributes } from "react";
 
 export interface NextArrowProps extends SVGAttributes<SVGSVGElement> {}
 
-const NextArrow: FC<NextArrowProps> = ({
+export const NextArrow: FC<NextArrowProps> = ({
   ...componentProps
 }: NextArrowProps) => (
   <svg
@@ -16,5 +16,3 @@ const NextArrow: FC<NextArrowProps> = ({
     <path d="M1 1L17 17L1 33" stroke="#DADADA" stroke-width="2.5" />
   </svg>
 );
-
-export default NextArrow;

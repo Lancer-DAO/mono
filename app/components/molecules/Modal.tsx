@@ -7,13 +7,13 @@ import {
   useRef,
 } from "react";
 import { useOutsideAlerter } from "@/src/hooks";
-import { Close } from "@/components";
+import { Close } from "@/components/@icons";
 
 interface Props extends HTMLAttributes<HTMLDivElement> {
   children: ReactNode;
   setShowModal: Dispatch<SetStateAction<boolean>>;
 }
-const Modal: FC<Props> = (props: Props) => {
+export const Modal: FC<Props> = (props: Props) => {
   const { setShowModal, children, className, ...componentProps } = props;
 
   const wrapperRef = useRef(null);
@@ -51,5 +51,3 @@ const Modal: FC<Props> = (props: Props) => {
     </div>
   );
 };
-
-export default Modal;

@@ -1,4 +1,10 @@
-const PhantomLogo = ({ height, width }: { height: string; width: string }) => {
+export const PhantomLogo = ({
+  height,
+  width,
+}: {
+  height: string;
+  width: string;
+}) => {
   return (
     <svg
       width={width}
@@ -39,5 +45,3 @@ const PhantomLogo = ({ height, width }: { height: string; width: string }) => {
     </svg>
   );
 };
-
-export default PhantomLogo;

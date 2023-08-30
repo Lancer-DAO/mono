@@ -17,7 +17,7 @@ interface Props {
   setToggleConfig: Dispatch<SetStateAction<ToggleConfig>>;
 }
 
-const Toggle: FC<Props> = ({ toggleConfig, setToggleConfig }) => {
+export const Toggle: FC<Props> = ({ toggleConfig, setToggleConfig }) => {
   const handleClick = (tab: "option1" | "option2") => {
     let newToggleConfig = { ...toggleConfig };
     if (toggleConfig.selected !== tab) {
@@ -53,5 +53,3 @@ const Toggle: FC<Props> = ({ toggleConfig, setToggleConfig }) => {
     </div>
   );
 };
-
-export default Toggle;

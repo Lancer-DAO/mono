@@ -1,5 +1,6 @@
 import { useUserWallet } from "@/src/providers";
-import { ApiKeyModal, Button, PubKey } from "@/components";
+import { Button, PubKey } from "@/components/atoms";
+import { ApiKeyModal } from "@/components/molecules/ApiKeyModal";
 import { useRef, useState } from "react";
 import { useOutsideAlerter } from "@/src/hooks/useOutsideAlerter";
 import Link from "next/link";
@@ -11,7 +12,7 @@ import {
 import { useTutorial } from "@/src/providers/tutorialProvider";
 import { IS_CUSTODIAL } from "@/src/constants";
 
-const AccountHeaderOptions = () => {
+export const AccountHeaderOptions = () => {
   const { currentUser, logout, currentWallet } = useUserWallet();
   const { currentTutorialState, setCurrentTutorialState } = useTutorial();
 
@@ -152,5 +153,3 @@ const AccountHeaderOptions = () => {
     </div>
   );
 };
-
-export default AccountHeaderOptions;

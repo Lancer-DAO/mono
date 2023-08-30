@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { BountyCard, PreviewCardBase } from "@/components";
+import { PreviewCardBase } from "@/components/atoms";
+import { BountyCard } from "@/components/molecules";
 import {
   CreateBountyForm,
   AdditionalInfoForm,

@@ -3,7 +3,7 @@ import { useUserWallet } from "@/src/providers";
 import { useTutorial } from "@/src/providers/tutorialProvider";
 import Joyride, { CallBackProps, Step } from "react-joyride";
 
-const JoyrideWrapper = () => {
+export const JoyrideWrapper = () => {
   const { currentUser, currentWallet } = useUserWallet();
   const { currentTutorialState, setCurrentTutorialState } = useTutorial();
 
@@ -68,5 +68,3 @@ const JoyrideWrapper = () => {
     />
   );
 };
-
-export default JoyrideWrapper;

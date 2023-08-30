@@ -1,6 +1,6 @@
 import { FC } from "react";
-import Image from "next/image";
-import { CopyLinkField, TweetShareButton } from "@/components";
+import { TwitterShareButton } from "@/components/atoms";
+import { CopyLinkField } from "@/components/molecules";
 import { useBounty } from "@/src/providers/bountyProvider";
 import { IS_CUSTODIAL } from "@/src/constants";
 
@@ -27,7 +27,7 @@ export const SuccessForm: FC = () => {
           <div className="flex flex-col gap-3">
             <h1 className="text-lg">Share to the world:</h1>
             <div className="flex items-center gap-3">
-              <TweetShareButton
+              <TwitterShareButton
                 url={`${SITE_URL}${currentBounty?.id.toString()}`}
               />
             </div>

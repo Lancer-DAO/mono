@@ -13,7 +13,8 @@ import {
   USDC_MINT,
   smallClickAnimation,
 } from "@/src/constants";
-import { CoinflowFund, USDC } from "@/components";
+import { USDC } from "@/components/@icons";
+import { FundBounty } from "@/components/molecules";
 import { CREATE_BOUNTY_TUTORIAL_INITIAL_STATE } from "@/src/constants/tutorials";
 import { useBounty } from "@/src/providers/bountyProvider";
 import { useTutorial } from "@/src/providers/tutorialProvider";
@@ -190,7 +191,7 @@ export const FundBountyForm: FC<Props> = ({
                 />
               </div>
               {formData.issuePrice && (
-                <CoinflowFund amount={parseInt(formData.issuePrice) || 0} />
+                <FundBounty amount={parseInt(formData.issuePrice) || 0} />
               )}
             </div>
           )}

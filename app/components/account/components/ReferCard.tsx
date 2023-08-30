@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { Button, CoinflowOfframp, CopyLinkField } from "@/components";
+import { Button, CoinflowOfframp } from "@/components/atoms";
+import { CopyLinkField } from "@/components/molecules";
 import { IS_CUSTODIAL } from "@/src/constants";
 import { useUserWallet } from "@/src/providers";
 import { useReferral } from "@/src/providers/referralProvider";

@@ -9,7 +9,10 @@ interface LabeledTwoThumbsProps {
   setBounds: (bounds: [number, number]) => void;
 }
 
-const LabeledTwoThumbs: FC<LabeledTwoThumbsProps> = ({ bounds, setBounds }) => {
+export const RangeSlider: FC<LabeledTwoThumbsProps> = ({
+  bounds,
+  setBounds,
+}) => {
   const MIN = bounds[0];
   const MAX = bounds[1];
   const [values, setValues] = useState<[number, number]>([MIN, MAX]);
@@ -95,5 +98,3 @@ const LabeledTwoThumbs: FC<LabeledTwoThumbsProps> = ({ bounds, setBounds }) => {
     />
   );
 };
-
-export default LabeledTwoThumbs;

@@ -1,7 +1,7 @@
 import React, { useRef, useState } from "react";
 import useMergedRef from "@react-hook/merged-ref";
 
-function ImageUpload() {
+export function ImageUpload() {
   const [selectedImage, setSelectedImage] = useState(null);
   const [isDragActive, setIsDragActive] = useState(false);
   const inputRef = useRef(null);
@@ -74,5 +74,3 @@ function ImageUpload() {
     </div>
   );
 }
-
-export default ImageUpload;

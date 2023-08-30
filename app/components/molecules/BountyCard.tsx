@@ -1,16 +1,7 @@
-import {
-  BountyCardFrame,
-  ContributorInfo,
-  PriceTag,
-  StarIcon,
-  LockIcon,
-} from "@/components";
+import { LockIcon } from "@/components/@icons";
+import { BountyCardFrame, ContributorInfo, PriceTag } from "@/components/atoms";
 import { useUserWallet } from "@/providers";
-import {
-  IS_CUSTODIAL,
-  fastEnterAnimation,
-  midClickAnimation,
-} from "@/src/constants";
+import { fastEnterAnimation, midClickAnimation } from "@/src/constants";
 import { useBounty } from "@/src/providers/bountyProvider";
 import { BountyPreview, FormData, Industry } from "@/types/";
 import { getFormattedDate } from "@/utils";
@@ -25,7 +16,7 @@ export interface BountyCardProps extends SVGAttributes<SVGSVGElement> {
   linked?: boolean;
 }
 
-const BountyCard: FC<BountyCardProps> = ({
+export const BountyCard: FC<BountyCardProps> = ({
   bounty,
   formData,
   allIndustries,
@@ -182,5 +173,3 @@ const BountyCard: FC<BountyCardProps> = ({
     </motion.a>
   );
 };
-
-export default BountyCard;

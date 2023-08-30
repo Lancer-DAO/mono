@@ -4,10 +4,10 @@ import { motion } from "framer-motion";
 import Image from "next/image";
 import { useRouter } from "next/router";
 
-const ContributorInfo: React.FC<{ user: User; disableLink?: boolean }> = ({
-  user,
-  disableLink,
-}) => {
+export const ContributorInfo: React.FC<{
+  user: User;
+  disableLink?: boolean;
+}> = ({ user, disableLink }) => {
   const router = useRouter();
   return (
     user &&
@@ -40,5 +40,3 @@ const ContributorInfo: React.FC<{ user: User; disableLink?: boolean }> = ({
     )
   );
 };
-
-export default ContributorInfo;

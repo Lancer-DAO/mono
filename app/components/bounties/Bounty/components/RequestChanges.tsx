@@ -1,4 +1,3 @@
-import { Button } from "@/components";
 import { denyRequestFFA } from "@/escrow/adapters";
 import { useUserWallet } from "@/src/providers";
 import { useBounty } from "@/src/providers/bountyProvider";

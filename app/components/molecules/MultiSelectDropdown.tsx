@@ -9,7 +9,7 @@ interface Props {
   onChange: (selected: Option[]) => void;
 }
 
-const MultiSelectDropdown: React.FC<Props> = ({
+export const MultiSelectDropdown: React.FC<Props> = ({
   options,
   selected,
   onChange,
@@ -97,5 +97,3 @@ const MultiSelectDropdown: React.FC<Props> = ({
     </div>
   );
 };
-
-export default MultiSelectDropdown;

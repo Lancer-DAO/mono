@@ -1,5 +1,5 @@
 import { FC } from "react";
-import { USDC } from "@/components";
+import { USDC } from "@/components/@icons";
 import { Decimal } from "@prisma/client/runtime";
 import { formatPrice } from "@/utils";
 import Image from "next/image";
@@ -9,7 +9,7 @@ interface Props {
   icon: string;
 }
 
-const PriceTag: FC<Props> = ({ price, icon }) => {
+export const PriceTag: FC<Props> = ({ price, icon }) => {
   // empty cell is no price
   if (!price) return <div className="h-[28px]" />;
 
@@ -32,5 +32,3 @@ const PriceTag: FC<Props> = ({ price, icon }) => {
     </div>
   );
 };
-
-export default PriceTag;

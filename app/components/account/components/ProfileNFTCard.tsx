@@ -8,7 +8,7 @@ import relativeTime from "dayjs/plugin/relativeTime";
 import Image from "next/image";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { IAsyncResult, ProfileNFT } from "@/types/";
-import { Button } from "@/components";
+import { Button } from "@/components/atoms";
 import { IS_CUSTODIAL, USDC_MINT } from "@/src/constants";
 import { Keypair, PublicKey, Transaction } from "@solana/web3.js";
 import {

@@ -8,7 +8,7 @@ import {
   HelpCircle,
   X,
 } from "react-feather";
-import { Button } from "@/components";
+import { Button } from "@/components/atoms";
 import { useOutsideAlerter } from "../../src/hooks/useOutsideAlerter";
 import {
   ALL_TUTORIALS,
@@ -232,7 +232,7 @@ interface Props {
   setShowModal: (show: boolean) => void;
 }
 
-const TutorialsModal: FC<Props> = ({ showModal, setShowModal }) => {
+export const TutorialsModal: FC<Props> = ({ showModal, setShowModal }) => {
   const wrapperRef = useRef(null);
   const router = useRouter();
   const { currentTutorialState } = useTutorial();
@@ -300,5 +300,3 @@ const TutorialsModal: FC<Props> = ({ showModal, setShowModal }) => {
     </>
   );
 };
-
-export default TutorialsModal;

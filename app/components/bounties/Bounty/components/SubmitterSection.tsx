@@ -5,7 +5,7 @@ import {
   removeSubmitterFFA,
   addSubmitterFFAOld,
 } from "@/escrow/adapters";
-import { ContributorInfo } from "@/components";
+import { ContributorInfo } from "@/components/atoms";
 import { Check, X } from "react-feather";
 import { PublicKey } from "@solana/web3.js";
 import { api } from "@/src/utils/api";

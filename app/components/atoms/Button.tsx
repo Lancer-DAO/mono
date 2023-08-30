@@ -16,7 +16,7 @@ interface ButtonProps
   props?: any;
 }
 
-const Button = ({
+export const Button = ({
   children,
   onClick,
   disabled,
@@ -62,5 +62,3 @@ const Button = ({
     </div>
   );
 };
-
-export default Button;

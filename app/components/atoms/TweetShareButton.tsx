@@ -7,7 +7,7 @@ interface Props {
   url?: string;
 }
 
-const TwitterShareButton: FC<Props> = ({ url }) => {
+export const TwitterShareButton: FC<Props> = ({ url }) => {
   // The text you want to tweet out
   const tweetText = `I just created a Quest on @Lancerworks. Looking to hire a freelancer to help me with my project. Check it out here: ${url}`;
 
@@ -32,5 +32,3 @@ const TwitterShareButton: FC<Props> = ({ url }) => {
     </motion.a>
   );
 };
-
-export default TwitterShareButton;

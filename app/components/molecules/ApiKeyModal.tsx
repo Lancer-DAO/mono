@@ -24,7 +24,7 @@ const shortenGHToken = (token: string) => {
   return `${token.slice(0, 6)}...${token.slice(-4)}`;
 };
 
-const ApiKeyModal: FC<Props> = ({ showModal, setShowModal }) => {
+export const ApiKeyModal: FC<Props> = ({ showModal, setShowModal }) => {
   return <></>;
   // const wrapperRef = useRef(null);
   // const {
@@ -381,5 +381,3 @@ const ApiKeyModal: FC<Props> = ({ showModal, setShowModal }) => {
   //   </>
   // );
 };
-
-export default ApiKeyModal;

@@ -3,7 +3,7 @@ interface ProgressBarProps {
   value: number;
 }
 
-const ProgressBar = ({ title, value }: ProgressBarProps) => {
+export const ProgressBar = ({ title, value }: ProgressBarProps) => {
   return (
     <div className="progress-charts">
       {title && <h6 className="heading heading-h6">{title}</h6>}
@@ -22,5 +22,3 @@ const ProgressBar = ({ title, value }: ProgressBarProps) => {
     </div>
   );
 };
-
-export default ProgressBar;

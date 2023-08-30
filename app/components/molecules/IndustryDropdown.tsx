@@ -9,7 +9,11 @@ interface Props {
   onChange: (selected: Industry) => void;
 }
 
-const IndustryDropdown: React.FC<Props> = ({ options, selected, onChange }) => {
+export const IndustryDropdown: React.FC<Props> = ({
+  options,
+  selected,
+  onChange,
+}) => {
   const [isOpen, setIsOpen] = useState(false);
 
   const menuRef = useRef(null);
@@ -85,5 +89,3 @@ const IndustryDropdown: React.FC<Props> = ({ options, selected, onChange }) => {
     </div>
   );
 };
-
-export default IndustryDropdown;

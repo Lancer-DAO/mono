@@ -1,5 +1,5 @@
 import { FC, Dispatch, SetStateAction } from "react";
-import { IndustryDropdown, MultiSelectDropdown } from "@/components";
+import { IndustryDropdown } from "@/components/molecules";
 import { CREATE_BOUNTY_TUTORIAL_INITIAL_STATE } from "@/src/constants/tutorials";
 import { smallClickAnimation } from "@/src/constants";
 import { FORM_SECTION, FormData } from "@/types/forms";

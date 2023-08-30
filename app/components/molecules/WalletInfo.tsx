@@ -1,17 +1,6 @@
-import { IS_MAINNET, USDC_MINT } from "@/src/constants";
-import { getSolscanTX } from "@/src/utils";
-import { useEffect, useState } from "react";
-import { useUserWallet } from "@/src/providers/userWalletProvider";
-import {
-  getAccount,
-  getAssociatedTokenAddress,
-  getMint,
-} from "@solana/spl-token";
-import { PublicKey } from "@solana/web3.js";
-import { PubKey } from "@/components";
 import { LancerWallet } from "@/types/";
 
-const WalletInfo: React.FC<{ wallet: LancerWallet }> = ({ wallet }) => {
+export const WalletInfo: React.FC<{ wallet: LancerWallet }> = ({ wallet }) => {
   return <></>;
   // const { provider, setCurrentWallet, currentWallet } = useUserWallet();
   // const [currentUserSOLBalance, setUserSOLBalance] = useState("0.0");
@@ -98,5 +87,3 @@ const WalletInfo: React.FC<{ wallet: LancerWallet }> = ({ wallet }) => {
   //   )
   // );
 };
-
-export default WalletInfo;

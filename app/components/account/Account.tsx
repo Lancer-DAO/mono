@@ -1,4 +1,4 @@
-import { BountyCard, DefaultLayout, LoadingBar } from "@/components";
+import { LoadingBar } from "@/components/atoms";
 import {
   BOUNTY_PROJECT_PARAMS,
   IS_CUSTODIAL,

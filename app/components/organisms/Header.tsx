@@ -1,7 +1,6 @@
 import Link from "next/link";
-import { AccountHeaderOptions, TutorialsModal } from "@/components";
-import Logo from "../@icons/Logo";
-import { HelpCircle } from "react-feather";
+import { Logo } from "@/components/@icons";
+import { AccountHeaderOptions, TutorialsModal } from "@/components/molecules";
 import { useState } from "react";
 import { PROFILE_TUTORIAL_INITIAL_STATE } from "@/src/constants/tutorials";
 import { useTutorial } from "@/src/providers/tutorialProvider";
@@ -101,5 +100,3 @@ export const Header = () => {
     </div>
   );
 };
-
-export default Header;

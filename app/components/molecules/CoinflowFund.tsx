@@ -8,7 +8,7 @@ import { useRouter } from "next/router";
 import { CoinflowPurchase } from "@coinflowlabs/react";
 import { useBounty } from "@/src/providers/bountyProvider";
 
-const FundBounty: React.FC<{ amount: number }> = ({
+export const FundBounty: React.FC<{ amount: number }> = ({
   amount,
 }: {
   amount: number;
@@ -56,8 +56,6 @@ const FundBounty: React.FC<{ amount: number }> = ({
     </div>
   );
 };
-
-export default FundBounty;
 
 const Coinflow: React.FC<{
   transaction: Transaction;

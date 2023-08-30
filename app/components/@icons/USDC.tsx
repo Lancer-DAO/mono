@@ -1,4 +1,4 @@
-const USDC = ({ height, width }: { height: string; width: string }) => {
+export const USDC = ({ height, width }: { height: string; width: string }) => {
   return (
     <svg
       data-name="86977684-12db-4850-8f30-233a7c267d11"
@@ -22,5 +22,3 @@ const USDC = ({ height, width }: { height: string; width: string }) => {
     </svg>
   );
 };
-
-export default USDC;

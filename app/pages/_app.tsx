@@ -7,7 +7,7 @@ import { DefaultSeo } from "next-seo";
 import type { AppProps } from "next/app";
 import { useRouter } from "next/router";
 import { ReactElement, ReactNode, useEffect } from "react";
-import { DefaultLayout } from "../components";
+import { DefaultLayout } from "@/components/templates";
 
 // import your default seo configuration
 import SEO from "../next-seo.config";

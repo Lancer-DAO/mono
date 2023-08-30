@@ -1,4 +1,4 @@
-import { BountyCard } from "@/components";
+import { BountyCard } from "@/components/molecules";
 import { useUserWallet } from "@/src/providers";
 import { BountyPreview, IAsyncResult, Industry } from "@/types/";
 import { api } from "@/utils";

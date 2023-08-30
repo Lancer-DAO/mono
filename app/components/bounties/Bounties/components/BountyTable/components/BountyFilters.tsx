@@ -1,5 +1,5 @@
-import { Dispatch, SetStateAction, useEffect } from "react";
-import { RangeSlider, MultiSelectDropdown } from "@/components";
+import { Dispatch, SetStateAction } from "react";
+import { MultiSelectDropdown } from "@/components/molecules";
 import { BOUNTY_STATES } from "@/types";
 import { capitalize } from "lodash";
 import { Filters, Industry, IAsyncResult } from "@/types";

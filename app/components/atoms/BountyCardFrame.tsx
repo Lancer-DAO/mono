@@ -4,7 +4,7 @@ interface Props {
   color?: string;
 }
 
-const BountyCardFrame: FC<Props> = ({ color = "#C8F4C4" }) => {
+export const BountyCardFrame: FC<Props> = ({ color = "#C8F4C4" }) => {
   return (
     <>
       <svg
@@ -38,5 +38,3 @@ const BountyCardFrame: FC<Props> = ({ color = "#C8F4C4" }) => {
     </>
   );
 };
-
-export default BountyCardFrame;

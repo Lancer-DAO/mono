@@ -1,7 +1,7 @@
 import { useUserWallet } from "@/src/providers/userWalletProvider";
 import { CoinflowWithdraw } from "@coinflowlabs/react";
 
-const CoinflowOfframp: React.FC = () => {
+export const CoinflowOfframp: React.FC = () => {
   const { provider, currentWallet } = useUserWallet();
   return (
     !!provider &&
@@ -18,5 +18,3 @@ const CoinflowOfframp: React.FC = () => {
     )
   );
 };
-
-export default CoinflowOfframp;

@@ -9,7 +9,11 @@ interface Props {
   onChange: (selected: Prisma.Mint) => void;
 }
 
-const MintsDropdown: React.FC<Props> = ({ options, selected, onChange }) => {
+export const MintsDropdown: React.FC<Props> = ({
+  options,
+  selected,
+  onChange,
+}) => {
   const [isOpen, setIsOpen] = useState(false);
 
   const menuRef = useRef(null);
@@ -88,5 +92,3 @@ const MintsDropdown: React.FC<Props> = ({ options, selected, onChange }) => {
     </>
   );
 };
-
-export default MintsDropdown;

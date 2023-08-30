@@ -7,7 +7,7 @@ interface Props {
   children: React.ReactNode;
 }
 
-const PreviewCardBase: FC<Props> = ({
+export const PreviewCardBase: FC<Props> = ({
   title,
   children,
   width = "355px",
@@ -34,5 +34,3 @@ const PreviewCardBase: FC<Props> = ({
     </div>
   );
 };
-
-export default PreviewCardBase;

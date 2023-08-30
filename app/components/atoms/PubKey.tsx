@@ -2,7 +2,7 @@ import { PublicKey } from "@solana/web3.js";
 import React from "react";
 import { shortenPublicKey } from "@/utils";
 
-const PubKey: React.FC<{
+export const PubKey: React.FC<{
   pubKey: PublicKey;
   full?: boolean;
   noCopy?: boolean;
@@ -24,5 +24,3 @@ const PubKey: React.FC<{
     </div>
   );
 };
-
-export default PubKey;

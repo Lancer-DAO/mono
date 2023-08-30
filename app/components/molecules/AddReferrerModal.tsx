@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { FC, useRef } from "react";
 import { useOutsideAlerter, useDebounce } from "@/hooks";
 import { api } from "@/src/utils/api";
-import { Button, ContributorInfo } from "@/components";
+import { Button, ContributorInfo } from "@/components/atoms";
 import { User, UserSearch, UserSearchIndividual } from "@/types/Bounties";
 
 interface Props {
@@ -11,7 +11,7 @@ interface Props {
   setShowModal: (show: boolean) => void;
 }
 
-const AddReferrerModal: FC<Props> = ({ showModal, setShowModal }) => {
+export const AddReferrerModal: FC<Props> = ({ showModal, setShowModal }) => {
   const wrapperRef = useRef(null);
   const { mutateAsync: search } = api.users.search.useMutation();
   const { mutateAsync: addReferrerAPI } = api.users.addReferrer.useMutation();
@@ -122,5 +122,3 @@ const AddReferrerModal: FC<Props> = ({ showModal, setShowModal }) => {
     </>
   );
 };
-
-export default AddReferrerModal;

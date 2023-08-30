@@ -5,7 +5,7 @@ import {
 } from "@/src/constants";
 import { FORM_SECTION, FormData } from "@/types/forms";
 import { motion } from "framer-motion";
-import { Toggle } from "@/components";
+import { Toggle } from "@/components/molecules";
 import { useTutorial } from "@/src/providers/tutorialProvider";
 import { ToggleConfig } from "@/components/molecules/Toggle";
 

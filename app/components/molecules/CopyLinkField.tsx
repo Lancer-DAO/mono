@@ -1,12 +1,12 @@
 import { FC, useState } from "react";
-import { Logo } from "@/components";
+import { Logo } from "@/components/@icons";
 import { Copy } from "react-feather";
 
 interface Props {
   url: string;
 }
 
-const CopyLinkField: FC<Props> = ({ url }) => {
+export const CopyLinkField: FC<Props> = ({ url }) => {
   const [isCopied, setIsCopied] = useState(false);
 
   const copyToClipboard = async (text: string) => {
@@ -42,5 +42,3 @@ const CopyLinkField: FC<Props> = ({ url }) => {
     </div>
   );
 };
-
-export default CopyLinkField;
