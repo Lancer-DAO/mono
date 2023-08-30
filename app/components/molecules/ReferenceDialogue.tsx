@@ -102,6 +102,7 @@ const ReferenceDialogue = ({ onReferenceAdded }) => {
                 console.log(error);
                 alert(`ERROR! ${error.message}`);
                 }}
+                config={{ mode: 'auto' }}
               /> 
             )}
           </div>
