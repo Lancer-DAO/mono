@@ -1,4 +1,5 @@
-import { Industry } from "@/types";
+import { Industry, Media } from "@/types";
+
 export type FORM_SECTION = "CREATE" | "MEDIA" | "FUND" | "PREVIEW" | "SUCCESS";
 
 export interface FormData {
@@ -10,7 +11,7 @@ export interface FormData {
   displineIds?: number[];
   tags: string[];
   links: string[];
-  media: string[];
+  media: Media[];
   comment?: string;
   organizationName?: string;
   repositoryName?: string;
