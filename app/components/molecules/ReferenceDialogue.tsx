@@ -6,8 +6,11 @@ import { Plus, X } from "lucide-react";
 import Image from "next/image";
 import { useState } from "react";
 import { toast } from "react-hot-toast";
+import { api } from "@/src/utils";
 
 const ReferenceDialogue = ({ onReferenceAdded }) => {
+  const { mutateAsync: deleteMedia } = api.bounties.deleteMedia.useMutation();
+
   const [reference, setReference] = useState({
     imageUrl: "",
     title: "",
@@ -57,7 +60,8 @@ const ReferenceDialogue = ({ onReferenceAdded }) => {
 
   };
 
-  const handleImageDelete = () => {
+  const handleImageDelete = async () => {
+    await deleteMedia({ imageUrl: reference.imageUrl });
     setReference((prevReference) => ({
       ...prevReference,
       imageUrl: "",

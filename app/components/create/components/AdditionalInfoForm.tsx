@@ -13,6 +13,7 @@ import { motion } from "framer-motion";
 import { X } from "lucide-react";
 import Image from "next/image";
 import { Dispatch, FC, SetStateAction, useEffect, useState } from "react";
+import { api } from "@/src/utils";
 
 interface Props {
   setFormSection: Dispatch<SetStateAction<FORM_SECTION>>;
@@ -25,6 +26,7 @@ export const AdditionalInfoForm: FC<Props> = ({
   formData,
   setFormData,
 }) => {
+  const { mutateAsync: deleteMedia } = api.bounties.deleteMedia.useMutation();
   const maxReferences = 4;
   const { currentTutorialState, setCurrentTutorialState } = useTutorial();
   const [toggleConfig, setToggleConfig] = useState<ToggleConfig>({
@@ -48,7 +50,6 @@ export const AdditionalInfoForm: FC<Props> = ({
 
   const removeLink = (targetIndex: number) => {
     const updatedLinks: string[] = [...formData.links];
-    // console.log("updatedLinks, index", updatedLinks, targetIndex);
     setFormData({
       ...formData,
       links: updatedLinks?.filter((_, index) => index !== targetIndex),
@@ -71,7 +72,8 @@ export const AdditionalInfoForm: FC<Props> = ({
     });
   };
 
-  const handleReferenceRemoved = (removeIndex) => {
+  const handleReferenceRemoved = async (removeIndex) => {
+    await deleteMedia({ imageUrl: formData.media.at(removeIndex).imageUrl })
     const updatedMedia = formData.media.filter((_, index) => index !== removeIndex);
     setFormData({
       ...formData,

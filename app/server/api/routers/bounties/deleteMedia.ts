@@ -6,16 +6,16 @@ import { utapi } from "uploadthing/server"
 export const deleteMedia = protectedProcedure
   .input(
     z.object({
-      
+      imageUrl: z.string()
     })
   )
   .mutation(
-    async ({ input: { currentUserId, onlyMyBounties, filteredUserId } }) => {
-      return await queries.bounty.getMany(
-        currentUserId,
-        onlyMyBounties,
-        filteredUserId
-      );
+    async ({ input: { imageUrl } }) => {
+      const fileKey = imageUrl.split('/f/')[1];
+
+      await utapi.deleteFiles(decodeURI(fileKey));
+
+      return { success: "true" };
     }
   );
 
