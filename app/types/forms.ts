@@ -1,5 +1,5 @@
 import { Industry } from "@/types";
-export type FORM_SECTION = "CREATE" | "MEDIA" | "FUND" | "PREVIEW" | "SUCCESS";
+export type FORM_SECTION = "CREATE" | "MEDIA" | "PREVIEW" | "SUCCESS";
 
 export interface FormData {
   issuePrice: string;
