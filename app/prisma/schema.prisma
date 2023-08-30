@@ -24,7 +24,6 @@ model Bounty {
   title         String   @db.VarChar(256)
   type          String?  @db.VarChar(24)
   links         String   @default("") @db.VarChar(1024)
-  media         String   @default("") @db.VarChar(1024)
 
   // Relations
   certificates BountyCertificate[]
@@ -45,6 +44,7 @@ model Bounty {
   users        BountyUser[]
   industries   Industry[]
   disciplines  Discipline[]
+  media        Media[]
 }
 
 model Certificate {
@@ -186,6 +186,19 @@ model Issue {
   pullRequests PullRequest[]
 
   @@unique([number, repositoryid])
+}
+
+model Media {
+  id Int @id @default(autoincrement())
+
+  // Fields
+  imageUrl    String? @db.VarChar(256)
+  title       String? @db.VarChar(128)
+  description String? @db.VarChar(512)
+
+  // Relations
+  bounty Bounty[]
+  user   User[]
 }
 
 model Milestone {
@@ -343,6 +356,7 @@ model User {
   isAdmin              Boolean?
   verified             Boolean?
   hasProfileNFT        Boolean?
+  // hasFinishedOnboarding Boolean? @default(false)
   githubId             String?  @db.VarChar(24)
   googleId             String?  @db.VarChar(64)
   githubLogin          String?  @db.VarChar(64)
@@ -372,6 +386,7 @@ model User {
   referrers    ReferrerReferree[] @relation("referree")
   referrees    ReferrerReferree[] @relation("referrer")
   industries   Industry[]
+  media        Media[]
 }
 
 model Wallet {

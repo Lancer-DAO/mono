@@ -2,6 +2,9 @@
 const withFonts = require("next-fonts");
 const nextConfig = {
   reactStrictMode: true,
+  experimental: {
+    esmExternals: false,
+  },
   images: {
     unoptimized: true,
   },
