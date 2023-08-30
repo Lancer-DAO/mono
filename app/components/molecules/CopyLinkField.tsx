@@ -5,12 +5,9 @@ import { Copy } from "react-feather";
 
 interface Props {
   url: string;
-  logo?: boolean;
-  link?: boolean;
-
 }
 
-const CopyLinkField: FC<Props> = ({ url, logo = false, link = false }) => {
+const CopyLinkField: FC<Props> = ({ url }) => {
   const [isCopied, setIsCopied] = useState(false);
 
   const copyToClipboard = async (text: string) => {
@@ -29,15 +26,10 @@ const CopyLinkField: FC<Props> = ({ url, logo = false, link = false }) => {
 
   return (
     <div className="flex justify-between items-center px-4 py-4 bg-white border border-primaryBtnBorder uppercase rounded-md gap-2">
-      {logo ?? <Logo height="24" width="24" />}
-      {link ? (
-        <Link href={url} target="_blank" className="text-textGreen text-xs whitespace-nowrap overflow-hidden hover:underline">{url}</Link>
-      ) : (
+      <Logo height="24" width="24" />
       <p className="text-textGreen text-xs whitespace-nowrap overflow-hidden">
         {url}
       </p>
-
-      )}
       <div className="relative">
         <Copy className="cursor-pointer" onClick={() => handleCopyClick(url)} />
         <div
