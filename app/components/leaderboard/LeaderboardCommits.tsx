@@ -47,8 +47,8 @@ export const LeaderboardCommits: FC<any> = ({ self }) => {
 
                 <h3>Select Date Range</h3>
                 <Datepicker
-                separator="to"
-                 inputClassName="bg-gray-200 w-full h-10 text-xl mb-2" primaryColor="green" value={dateValue} onChange={handleValueChange} />
+                    separator="to"
+                    inputClassName="bg-gray-200 w-full h-10 text-xl mb-2" primaryColor="green" value={dateValue} onChange={handleValueChange} />
 
                 <div className="w-full flex justify-between w-[100%] border-b border-gray-300">
                     <p className="font-bold text-xl">Github Username</p>
@@ -58,13 +58,14 @@ export const LeaderboardCommits: FC<any> = ({ self }) => {
                     <div key={dev.index} className="flex items-center justify-between py-2 border-b border-gray-300 w-[100%]">
 
                         <div className="flex gap-2 align-center">
-                            <a target="_blank" href={`https://github.com/${dev.username}`}><p className="text-xl">{index + 1}. {dev.username}</p></a>
+                            <a target="_blank" href={`https://github.com/${dev.github_name}`}><p className="text-xl">{index + 1}. {dev.github_name}</p></a>
                             {/* {change[dev.name] == "up" ? <ArrowUp color="green"/>
                 : change[dev.name] == "down" ? <ArrowDown color="red" /> : <span>—</span>} */}
                         </div>
                         <p className="text-xl">{dev.total_commits}</p>
                     </div>
                 ))}
+                <a href="/leaderboard">View lines of code Leaderboard</a>
             </div>
         </div>
     )

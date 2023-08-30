@@ -68,9 +68,9 @@ cargo:rerun-if-env-changed=CRATE_CC_NO_DEFAULTS
 CRATE_CC_NO_DEFAULTS = None
 DEBUG = Some("true")
 CARGO_CFG_TARGET_FEATURE = Some("fxsr,sse,sse2")
+running: "cc" "-O0" "-ffunction-sections" "-fdata-sections" "-fPIC" "-gdwarf-4" "-fno-omit-frame-pointer" "-m64" "-Wall" "-Wextra" "-std=c11" "-o" "/home/bolt/Desktop/mono/app/escrow/target/debug/build/blake3-ab41c2a89825b034/out/c/blake3_sse41_x86-64_unix.o" "-c" "c/blake3_sse41_x86-64_unix.S"
 running: "cc" "-O0" "-ffunction-sections" "-fdata-sections" "-fPIC" "-gdwarf-4" "-fno-omit-frame-pointer" "-m64" "-Wall" "-Wextra" "-std=c11" "-o" "/home/bolt/Desktop/mono/app/escrow/target/debug/build/blake3-ab41c2a89825b034/out/c/blake3_sse2_x86-64_unix.o" "-c" "c/blake3_sse2_x86-64_unix.S"
 running: "cc" "-O0" "-ffunction-sections" "-fdata-sections" "-fPIC" "-gdwarf-4" "-fno-omit-frame-pointer" "-m64" "-Wall" "-Wextra" "-std=c11" "-o" "/home/bolt/Desktop/mono/app/escrow/target/debug/build/blake3-ab41c2a89825b034/out/c/blake3_avx2_x86-64_unix.o" "-c" "c/blake3_avx2_x86-64_unix.S"
-running: "cc" "-O0" "-ffunction-sections" "-fdata-sections" "-fPIC" "-gdwarf-4" "-fno-omit-frame-pointer" "-m64" "-Wall" "-Wextra" "-std=c11" "-o" "/home/bolt/Desktop/mono/app/escrow/target/debug/build/blake3-ab41c2a89825b034/out/c/blake3_sse41_x86-64_unix.o" "-c" "c/blake3_sse41_x86-64_unix.S"
 exit status: 0
 exit status: 0
 exit status: 0

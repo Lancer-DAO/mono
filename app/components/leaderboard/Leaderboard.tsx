@@ -1,7 +1,7 @@
 import { FC, useEffect, useState } from "react";
-import { ArrowDown, ArrowUp, ChevronDown, ChevronUp } from "react-feather";
+import { ArrowDown, ArrowUp } from "react-feather";
 
-const languages = ['All', 'JavaScript', 'Python', 'Java', 'Cpp', 'Ruby'];
+const languages = ['All', 'TypeScript', 'JavaScript', 'CSS', 'HTML', 'Python', 'Ruby', 'Golang', 'Java', 'Rust', 'Solidity', 'Csharp', 'C', 'Cpp', 'JSON']
 
 const fetchDataForLanguage = async (language, formattedDate, formattedDate2) => {
   const url = `https://lancer.up.railway.app/ranking/top_devs/language?language=${language.toLowerCase()}&start_date=${formattedDate}&till=7&limit=10`;
@@ -13,21 +13,20 @@ const fetchDataForLanguage = async (language, formattedDate, formattedDate2) => 
   const oldData = await res2.json();
 
   const result = Object.fromEntries(data.map(newEntry => {
-    const oldEntry = oldData.find(o => o.name === newEntry.name);
+    const oldEntry = oldData.find(o => o.github_name === newEntry.github_name);
     const newRank = newEntry.rank;
     const oldRank = oldEntry ? oldEntry.rank : Infinity;
 
-    console.log(oldRank, newRank, newEntry.name);
+    console.log(oldRank, newRank, newEntry.github_name);
 
     if (newRank < oldRank) {
-      return [newEntry.name, "up"];
+      return [newEntry.github_name, "up"];
     } else if (newRank > oldRank) {
-      return [newEntry.name, "down"];
+      return [newEntry.github_name, "down"];
     } else {
-      return [newEntry.name, "no_change"];
+      return [newEntry.github_name, "no_change"];
     }
   }));
-
   return { data, result };
 };
 
@@ -50,27 +49,8 @@ export const Leaderboard: FC<any> = ({ self }) => {
         setChange(result);
         setTopDevs(data);
       } else {
-        const res = await fetch(`https://lancer.up.railway.app/ranking/top_devs/all?start_date=${formattedDate}&till=7&limit=10`);
+        const res = await fetch(`https://lancer.up.railway.app/ranking/top_devs/all_languages?start_date=${formattedDate}&till=7&limit=10`);
         const dataJson = await res.json();
-
-        const res2 = await fetch(`https://lancer.up.railway.app/ranking/top_devs/all?start_date=${formattedDate2}&till=7&limit=10`);
-        const dataJson2 = await res2.json();
-
-        const result = Object.fromEntries(dataJson.map(newEntry => {
-          const oldEntry = dataJson2.find(o => o.name === newEntry.name);
-          const newRank = newEntry.rank;
-          const oldRank = oldEntry ? oldEntry.rank : Infinity;
-
-          console.log(oldRank, newRank, newEntry.name);
-          if (newRank < oldRank) {
-            return [newEntry.name, "up"];
-          } else if (newRank > oldRank) {
-            return [newEntry.name, "down"];
-          } else {
-            return [newEntry.name, "no_change"];
-          }
-        }));
-
         setTopDevs(dataJson);
       }
     };
@@ -105,13 +85,14 @@ export const Leaderboard: FC<any> = ({ self }) => {
           <div key={dev.index} className="flex items-center justify-between py-2 border-b border-gray-300 w-[100%]">
 
             <div className="flex gap-2 align-center">
-              <a target="_blank" href={`https://github.com/${dev.name}`}><p className="text-xl">{index + 1}. {dev.name}</p></a>
-              {change[dev.name] == "up" ? <ArrowUp color="green"/>
-                : change[dev.name] == "down" ? <ArrowDown color="red" /> : <span>—</span>}
+              <a target="_blank" href={`https://github.com/${dev.github_name}`}><p className="text-xl">{index + 1}. {dev.github_name}</p></a>
+              {change[dev.github_name] == "up" ? <ArrowUp color="green" />
+                : change[dev.github_name] == "down" ? <ArrowDown color="red" /> : <span>—</span>}
             </div>
-            <p className="text-xl">{dev.lines_added}</p>
+            <p className="text-xl">{dev.lines_contributed}</p>
           </div>
         ))}
+        <a href="/leaderboard/commits">View commits Leaderboard</a>
       </div>
     </div>
   )
