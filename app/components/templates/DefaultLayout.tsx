@@ -17,7 +17,7 @@ const DefaultLayout: React.FC<{ children: ReactNode }> = ({ children }) => {
         appId={"54A96D9A-1DEA-4962-9F4E-9899BAE7011D"}
         userId={String(currentUser?.id)}
       >
-        <Sidebar />
+        {/* <Sidebar /> */}
       </SendbirdProvider>
     </div>
   );

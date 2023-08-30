@@ -37,6 +37,7 @@ export const update = protectedProcedure
       let bounty;
       let transaction;
       let userBounty = await queries.bountyUser.get(userId, bountyId);
+
       if (!userBounty) {
         userBounty = await queries.bountyUser.create(
           bountyId,
@@ -65,6 +66,11 @@ export const update = protectedProcedure
           escrow
         );
       }
+
+      if (label === "add-approved-submitter") {
+        
+      }
+
       const updatedBounty = await queries.bounty.get(bountyId, currentUserId);
       return updatedBounty;
     }

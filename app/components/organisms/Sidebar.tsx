@@ -51,8 +51,27 @@ const Sidebar = () => {
                   }
                 }
               }}
+              className="w-full m-0"
               renderChannelPreview={({ channel }) => {
                 console.log("channel", channel);
+
+                // filter channel.members, if there are only 2 members, then it's a DM
+                // filter by current user and and return the other user
+
+                // members: { nickname: string, userId: string, plainProfileUrl: string }[]
+
+                const meta =
+                  channel.members.length === 2
+                    ? channel.members.filter(
+                        (member) => member.userId !== String(currentUser?.id)
+                      )[0]
+                    : null;
+
+                console.log("meta", meta);
+
+                // what can the type of meta be?
+                // { nickname: string, userId: string, plainProfileUrl: string }
+
                 return (
                   <div
                     className="w-full flex items-center cursor-pointer gap-x-2 h-20 px-3 border-b border-neutral-300"
@@ -61,13 +80,17 @@ const Sidebar = () => {
                     }}
                   >
                     <img
-                      src={channel.creator.plainProfileUrl}
+                      src={
+                        meta
+                          ? meta.plainProfileUrl
+                          : channel.creator.plainProfileUrl
+                      }
                       alt=""
                       className="w-10 h-10 rounded-full"
                     />
 
                     <div className="w-full">
-                      <div>{channel.name}</div>
+                      <div>{meta ? meta.nickname : channel.name}</div>
                       <div className="truncate">
                         {channel.lastMessage ? channel.lastMessage.message : ""}
                       </div>
