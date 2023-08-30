@@ -1,17 +1,23 @@
 import { useEffect, useState } from "react";
 import { BountyCard, PreviewCardBase } from "@/components";
+import { useUserWallet } from "@/src/providers";
+import { api } from "@/src/utils";
+import { FORM_SECTION, FormData } from "@/types/forms";
+import { Mint } from "@prisma/client";
+import { PublicKey } from "@solana/web3.js";
 import {
-  CreateBountyForm,
   AdditionalInfoForm,
+  CreateBountyForm,
+  // FundBountyForm,
   PreviewForm,
-  FundBountyForm,
   SuccessForm,
 } from "./components";
-import { PublicKey } from "@solana/web3.js";
-import { FORM_SECTION, FormData } from "@/types/forms";
-import { useUserWallet } from "@/src/providers";
-import { Mint } from "@prisma/client";
-import { api } from "@/src/utils";
+
+interface Media {
+  imageUrl: string;
+  title: string;
+  description: string;
+}
 
 export const Create = () => {
   const [formSection, setFormSection] = useState<FORM_SECTION>("CREATE");
@@ -25,7 +31,7 @@ export const Create = () => {
     displineIds: [],
     tags: [""],
     links: [""],
-    media: [""],
+    media: [],
     comment: "",
     organizationName: "",
     repositoryName: "",
@@ -63,7 +69,7 @@ export const Create = () => {
   // }, [formData]);
 
   return (
-    <div className="w-full max-w-[1200px] mx-auto flex flex-col md:flex-row md:justify-evenly mt-10">
+    <div className="w-full max-w-[1200px] mx-auto flex md:justify-evenly mt-10">
       {/* quest info entry section */}
       <div
         className={`${formSection === "PREVIEW" ? "w-full" : "md:w-[515px]"}`}

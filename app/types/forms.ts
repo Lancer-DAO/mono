@@ -1,5 +1,6 @@
-import { Industry } from "@/types";
-export type FORM_SECTION = "CREATE" | "MEDIA" | "PREVIEW" | "SUCCESS";
+import { Industry, Media } from "./Bounties";
+
+export type FORM_SECTION = "CREATE" | "MEDIA" | "FUND" | "PREVIEW" | "SUCCESS";
 
 export interface FormData {
   issuePrice: string;
@@ -10,7 +11,7 @@ export interface FormData {
   displineIds?: number[];
   tags: string[];
   links: string[];
-  media: string[];
+  media: Media[];
   comment?: string;
   organizationName?: string;
   repositoryName?: string;
