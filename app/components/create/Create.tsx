@@ -65,10 +65,6 @@ export const Create = () => {
     }
   }, [allMints]);
 
-  // useEffect(() => {
-  //   console.log("formData", formData);
-  // }, [formData]);
-
   return (
     <div className="w-full max-w-[1200px] mx-auto flex md:justify-evenly mt-10">
       {/* quest info entry section */}

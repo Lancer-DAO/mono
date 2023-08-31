@@ -7,7 +7,7 @@ import React, {
 } from "react";
 import { useRouter } from "next/router";
 import Image from "next/image";
-import { api, decimalToNumber, getSolscanAddress } from "@/utils";
+import { api, formatPrice, getSolscanAddress } from "@/utils";
 import { marked } from "marked";
 import dayjs from "dayjs";
 import { PublicKey } from "@solana/web3.js";
@@ -112,8 +112,8 @@ export const Bounty = () => {
                 height={25}
                 alt="mint logo"
               />
-              <p>{`${decimalToNumber(currentBounty.escrow.amount).toFixed(
-                2
+              <p>{`${formatPrice(
+                Number(currentBounty.escrow.amount)
               )} in escrow`}</p>
               <motion.a
                 {...smallClickAnimation}

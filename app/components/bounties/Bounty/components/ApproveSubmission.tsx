@@ -23,14 +23,7 @@ export const ApproveSubmission = () => {
   const { programId: buddylinkProgramId } = useReferral();
   const { mutateAsync } = api.bountyUsers.update.useMutation();
 
-  if (
-    !(
-      currentBounty?.isCreator &&
-      currentBounty?.currentSubmitter &&
-      !currentBounty?.completer
-    )
-  )
-    return null;
+  if (!currentBounty) return null;
 
   const onClick = async () => {
     if (
@@ -44,13 +37,6 @@ export const ApproveSubmission = () => {
       });
     }
 
-    // If we are the creator, then skip requesting and add self as approved
-    // console.log(
-    //   currentBounty?.currentSubmitter.publicKey,
-    //   currentBounty?.escrow.publicKey.toString(),
-    //   currentWallet.publicKey.toString(),
-    //   buddylinkProgramId.toString()
-    // );
     const signature = await approveRequestFFA(
       new PublicKey(currentBounty?.currentSubmitter.publicKey),
       currentBounty?.escrow,

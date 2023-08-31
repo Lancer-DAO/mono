@@ -34,6 +34,7 @@ const Onboard: FC = () => {
     twitter: "",
     website: "",
   });
+  const [nftCreated, setNftCreated] = useState(false);
   const [account, setAccount] = useState<IAsyncResult<User>>({
     isLoading: true,
     loadingPrompt: "Welcome to Lancer",
@@ -47,6 +48,14 @@ const Onboard: FC = () => {
     },
     {
       enabled: !!currentWallet,
+    }
+  );
+  api.users.verifyWallet.useQuery(
+    {
+      walletPublicKey: currentWallet?.publicKey.toString(),
+    },
+    {
+      enabled: !!currentWallet && !!nftCreated,
     }
   );
 
@@ -79,6 +88,7 @@ const Onboard: FC = () => {
         },
       });
     }
+    setNftCreated(true);
   };
 
   const handleUpdateProfile = async () => {
@@ -158,10 +168,6 @@ const Onboard: FC = () => {
       });
     }
   }, [account?.result]);
-
-  // useEffect(() => {
-  //   console.log("profile data: ", profileData);
-  // }, [profileData]);
 
   return (
     <AnimatePresence mode="wait">

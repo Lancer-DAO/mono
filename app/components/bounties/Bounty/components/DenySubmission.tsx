@@ -13,38 +13,36 @@ export const DenySubmission = () => {
   const { mutateAsync } = api.bountyUsers.update.useMutation();
 
   if (
-    !(
-      currentBounty?.isCreator &&
-      currentBounty?.currentSubmitter &&
-      !currentBounty?.completer
-    )
-  ) {
+    !currentBounty ||
+    (currentBounty.isCreator &&
+      currentBounty.currentSubmitter &&
+      !currentBounty.completer)
+  )
     return null;
-  }
 
   const onClick = async () => {
     const signature = await denyRequestFFA(
-      new PublicKey(currentBounty?.currentSubmitter.publicKey),
-      currentBounty?.escrow,
+      new PublicKey(currentBounty.currentSubmitter.publicKey),
+      currentBounty.escrow,
       currentWallet,
       program,
       provider
     );
 
     const newRelations = updateList(
-      currentBounty?.currentUserRelationsList,
+      currentBounty.currentUserRelationsList,
       [],
       [BOUNTY_USER_RELATIONSHIP.DeniedSubmitter]
     );
 
     const updatedBounty = await mutateAsync({
-      bountyId: currentBounty?.id,
+      bountyId: currentBounty.id,
       currentUserId: currentUser.id,
-      userId: currentBounty?.currentSubmitter.userid,
+      userId: currentBounty.currentSubmitter.userid,
       relations: newRelations,
       state: BountyState.ACCEPTING_APPLICATIONS,
-      publicKey: currentBounty?.currentSubmitter.publicKey,
-      escrowId: currentBounty?.escrowid,
+      publicKey: currentBounty.currentSubmitter.publicKey,
+      escrowId: currentBounty.escrowid,
       signature,
       label: "deny-submitter",
     });

@@ -36,7 +36,7 @@ const BountyList: React.FC<{}> = () => {
     estimatedPriceBounds: bounds,
     states: TABLE_BOUNTY_STATES,
     relationships: BOUNTY_USER_RELATIONSHIP,
-    isMyBounties: true,
+    isMyBounties: false,
   });
 
   // api + context

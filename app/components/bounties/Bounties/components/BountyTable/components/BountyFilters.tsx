@@ -42,7 +42,6 @@ export const BountyFilters = ({
           rounded-xl focus:ring-industryGreenBorder focus:border-green-500"
           checked={filters.isMyBounties}
           onChange={() => {
-            // setBounties({ result: [] });
             setFilters({
               ...filters,
               isMyBounties: !filters.isMyBounties,

@@ -17,16 +17,16 @@ export const VoteToCancel = () => {
   const [isAwaitingResponse, setIsAwaitingResponse] = useState(false);
 
   if (
+    !currentBounty ||
     !(
-      (currentBounty?.isCreator ||
-        currentBounty?.isCurrentSubmitter ||
-        currentBounty?.isDeniedSubmitter ||
-        currentBounty?.isChangesRequestedSubmitter) &&
-      !currentBounty?.isVotingCancel
+      (currentBounty.isCreator ||
+        currentBounty.isCurrentSubmitter ||
+        currentBounty.isDeniedSubmitter ||
+        currentBounty.isChangesRequestedSubmitter) &&
+      !currentBounty.isVotingCancel
     )
-  ) {
+  )
     return null;
-  }
 
   const confirmAction = (): Promise<void> => {
     setIsAwaitingResponse(true);
