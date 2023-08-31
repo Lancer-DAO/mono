@@ -48,15 +48,6 @@ export const Account: FC<Props> = ({ self }) => {
       enabled: self ? !!currentUser : !!router.query.account,
     }
   );
-  // const { mutateAsync: verifyWallet } = api.users.verifyWallet.useQuery();
-  // api.users.registerProfileNFT.useQuery(
-  //   {
-  //     walletPublicKey: currentWallet?.publicKey.toString(),
-  //   },
-  //   {
-  //     enabled: !!currentWallet,
-  //   }
-  // );
   const [profileNFT, setProfileNFT] = useState<ProfileNFT>();
 
   const fetchProfileNFT = async () => {
@@ -157,7 +148,6 @@ export const Account: FC<Props> = ({ self }) => {
               githubId={fetchedUser.githubId}
             />
             <BadgesCard profileNFT={profileNFT} />
-            {/* <LinksCard /> */}
           </div>
           {/* right column */}
           <div className="flex flex-col gap-5 w-full">
