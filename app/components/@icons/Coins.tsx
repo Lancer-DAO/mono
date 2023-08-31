@@ -1,10 +1,8 @@
 import { FC, SVGAttributes } from "react";
 
-export interface CoinsIconProps extends SVGAttributes<SVGSVGElement> {}
+export interface CoinsProps extends SVGAttributes<SVGSVGElement> {}
 
-const CoinsIcon: FC<CoinsIconProps> = ({
-  ...componentProps
-}: CoinsIconProps) => (
+const Coins: FC<CoinsProps> = ({ ...componentProps }: CoinsProps) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     height="20px"
@@ -16,4 +14,4 @@ const CoinsIcon: FC<CoinsIconProps> = ({
   </svg>
 );
 
-export default CoinsIcon;
+export default Coins;

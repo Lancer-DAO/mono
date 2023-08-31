@@ -10,9 +10,9 @@ export const SuccessForm: FC = () => {
   return (
     <div className="w-full flex flex-col gap-10 px-10">
       <h1 className="whitespace-nowrap">Congrats! Your Quest is live.</h1>
-      {!currentBounty?.escrow?.amount && <FundCTA />}
       <div className="flex justify-between">
-        <div className="w-[500px] h-[350px] flex flex-col gap-5">
+        <div className="w-[500px] flex flex-col gap-5">
+          <FundCTA />
           <p>
             “A person should set his goals as early as he can and devote all his
             energy and talent to getting there. With enough effort, he may

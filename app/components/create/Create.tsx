@@ -8,7 +8,6 @@ import { PublicKey } from "@solana/web3.js";
 import {
   AdditionalInfoForm,
   CreateBountyForm,
-  // FundBountyForm,
   PreviewForm,
   SuccessForm,
 } from "./components";
@@ -94,15 +93,6 @@ export const Create = () => {
             mint={mint}
           />
         )}
-        {/* {formSection === "FUND" && (
-          <FundBountyForm
-            isAccountCreated={isAccountCreated}
-            formData={formData}
-            setFormData={setFormData}
-            setFormSection={setFormSection}
-            mint={mint}
-          />
-        )} */}
         {formSection === "SUCCESS" && <SuccessForm />}
       </div>
       {/* preview section */}
