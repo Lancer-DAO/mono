@@ -10,11 +10,11 @@ export const create = async (
   escrow: Prisma.Escrow,
   tags: Prisma.Tag[],
   links: string[],
-  media: string[],
   user: Prisma.User,
   wallet: Prisma.Wallet,
   industries: Prisma.Industry[],
   disciplines: Prisma.Discipline[],
+  media: Prisma.Media[],
   price?: number
 ): Promise<Prisma.Bounty> => {
   const bounty = await prisma.bounty.create({
@@ -53,7 +53,14 @@ export const create = async (
         }),
       },
       links: links.join(),
-      media: media.join(),
+
+      media: {
+        connect: media.map((med) => {
+          return {
+            id: med.id,
+          };
+        }),
+      },
       users: {
         create: {
           userid: user.id,

@@ -13,7 +13,7 @@ import {
 } from "@/src/constants";
 import { useBounty } from "@/src/providers/bountyProvider";
 import { BountyPreview, FormData, Industry } from "@/types/";
-import { getFormattedDate } from "@/utils";
+import { api, getFormattedDate } from "@/utils";
 import { motion } from "framer-motion";
 import Image from "next/image";
 import { FC, SVGAttributes, useEffect, useState } from "react";
@@ -21,18 +21,17 @@ import { FC, SVGAttributes, useEffect, useState } from "react";
 export interface BountyCardProps extends SVGAttributes<SVGSVGElement> {
   bounty?: BountyPreview;
   formData?: FormData;
-  allIndustries: Industry[];
   linked?: boolean;
 }
 
 const BountyCard: FC<BountyCardProps> = ({
   bounty,
   formData,
-  allIndustries,
   linked = true,
 }) => {
   const { currentUser } = useUserWallet();
   const { currentBounty } = useBounty();
+  const { data: allIndustries } = api.industries.getAllIndustries.useQuery();
   const [selectedIndustry, setSelectedIndustry] = useState<Industry>();
 
   const bountyCardAnimation = linked

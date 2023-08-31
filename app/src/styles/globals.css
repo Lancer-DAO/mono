@@ -48,3 +48,11 @@ h1 {
   -webkit-line-clamp: 2; /* Number of lines to show */
   overflow: hidden;
 }
+
+.visibility-hidden {
+  visibility: hidden;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: -1;
+}
