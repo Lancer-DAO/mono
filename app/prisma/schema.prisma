@@ -365,6 +365,7 @@ model User {
   discord              String?  @db.VarChar(64)
   twitter              String?  @db.VarChar(64)
   instagram            String?  @db.VarChar(64)
+  resume               String?  @db.VarChar(256)
   email                String?  @unique @db.VarChar(128)
   profileWalletId      Int?     @unique
   refferralTreasuryKey String?  @unique @db.VarChar(128)

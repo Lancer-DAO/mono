@@ -67,6 +67,20 @@ export const updateName = async (
   });
 };
 
+export const updateResume = async (
+  id: number,
+  resume: string
+): Promise<Prisma.User> => {
+  return await prisma.user.update({
+    where: {
+      id: id,
+    },
+    data: {
+      resume,
+    },
+  });
+};
+
 // export const updateHasFinishedOnboarding = async (
 //   id: number
 // ): Promise<Prisma.User> => {
