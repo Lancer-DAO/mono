@@ -6,12 +6,7 @@ import { useUserWallet } from "@/src/providers";
 import { LoadingBar, BountyCard } from "@/components";
 import { api } from "@/src/utils/api";
 import { BountyFilters } from "./components";
-import {
-  BountyPreview,
-  Filters,
-  TABLE_BOUNTY_STATES,
-  TABLE_MY_BOUNTY_STATES,
-} from "@/types";
+import { BountyPreview, Filters, TABLE_BOUNTY_STATES } from "@/types";
 import { AnimatePresence, motion } from "framer-motion";
 import toast from "react-hot-toast";
 
@@ -145,9 +140,7 @@ const BountyList: React.FC<{}> = () => {
         tags: allTags,
         industries: mappedInds,
         estimatedPriceBounds: priceBounds,
-        states: filters.isMyBounties
-          ? TABLE_MY_BOUNTY_STATES
-          : TABLE_BOUNTY_STATES,
+        states: TABLE_BOUNTY_STATES,
         relationships: BOUNTY_USER_RELATIONSHIP,
         isMyBounties: filters.isMyBounties,
       });
