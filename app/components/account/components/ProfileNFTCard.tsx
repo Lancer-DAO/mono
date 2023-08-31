@@ -163,14 +163,12 @@ export const ProfileNFTCard = ({
       .filter((claimable) => claimable.amount !== 0)
       .map((claimable) => {
         const claimMintKey = claimable.treasury.account.mint.toString();
-        const claimMint = allMints.filter(
-          (mint) => mint.publicKey === claimMintKey
-        )[0];
+        const claimMint = new PublicKey(USDC_MINT);
         return (
           <Button
             onClick={() => handleClaim(claimable.amount, claimable.treasury)}
           >
-            Claim {claimable.amount} {claimMint?.ticker}
+            Claim {claimable.amount} {"USDC"}
           </Button>
         );
       });

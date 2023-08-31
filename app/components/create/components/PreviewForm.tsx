@@ -103,6 +103,11 @@ export const PreviewForm: FC<Props> = ({
       setCurrentBounty(bounty);
     } catch (error) {
       setCreateQuestState({ error });
+      if (error.message === "Wallet is registered to another user") {
+        toast.error(
+          "Wallet is registered to another user. Use another wallet to create this Quest."
+        );
+      }
     }
   };
 

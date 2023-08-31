@@ -1,4 +1,4 @@
-import { Industry, Media } from "./Bounties";
+import { Industry, Media } from "@/types";
 
 export type FORM_SECTION = "CREATE" | "MEDIA" | "FUND" | "PREVIEW" | "SUCCESS";
 
