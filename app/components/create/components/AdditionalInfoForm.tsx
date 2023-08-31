@@ -73,13 +73,15 @@ export const AdditionalInfoForm: FC<Props> = ({
   };
 
   const handleReferenceRemoved = async (removeIndex) => {
-    await deleteMedia({ imageUrl: formData.media.at(removeIndex).imageUrl })
-    const updatedMedia = formData.media.filter((_, index) => index !== removeIndex);
+    await deleteMedia({ imageUrl: formData.media.at(removeIndex).imageUrl });
+    const updatedMedia = formData.media.filter(
+      (_, index) => index !== removeIndex
+    );
     setFormData({
       ...formData,
       media: updatedMedia,
     });
-  }
+  };
 
   // const handleChangeMint = (mint: Mint) => {
   //   // console.log("mints vs mint", mints, mint);
@@ -135,6 +137,7 @@ export const AdditionalInfoForm: FC<Props> = ({
                 <motion.button
                   onClick={() => removeLink(index)}
                   {...smallClickAnimation}
+                  key={index}
                   className={`${
                     index === 0 && "invisible"
                   } bg-secondaryBtn border border-secondaryBtnBorder pb-1
@@ -247,23 +250,37 @@ export const AdditionalInfoForm: FC<Props> = ({
               if (index < formData.media.length) {
                 const media = formData.media[index];
                 return (
-                  <div className="relative border-2 border-primaryBtnBorder rounded-xl p-1" key={index}>
-                    <Image src={media.imageUrl} alt={media.title} width={250} height={250} className="mb-2 rounded-md" />
+                  <div
+                    className="relative border-2 border-primaryBtnBorder rounded-xl p-1"
+                    key={index}
+                  >
+                    <Image
+                      src={media.imageUrl}
+                      alt={media.title}
+                      width={250}
+                      height={250}
+                      className="mb-2 rounded-md"
+                    />
                     <p className="font-bold text-lg mx-1">{media.title}</p>
-                    <p className="text-sm overflow-hidden text-ellipsis whitespace-nowrap mx-1">{media.description}</p>
+                    <p className="text-sm overflow-hidden text-ellipsis whitespace-nowrap mx-1">
+                      {media.description}
+                    </p>
 
-                    <motion.button 
+                    <motion.button
                       className="absolute top-[-10px] right-[-10px] p-1 bg-secondaryBtn border border-secondaryBtnBorder rounded-full"
                       {...smallClickAnimation}
                       onClick={() => handleReferenceRemoved(index)}
                     >
-                      <X size={18} strokeWidth={1.25}  />
+                      <X size={18} strokeWidth={1.25} />
                     </motion.button>
                   </div>
                 );
               } else {
                 return (
-                  <ReferenceDialogue onReferenceAdded={handleReferenceAdded} />
+                  <ReferenceDialogue
+                    key={index}
+                    onReferenceAdded={handleReferenceAdded}
+                  />
                 );
               }
             })}

@@ -7,7 +7,7 @@ import React, {
 } from "react";
 import { useRouter } from "next/router";
 import Image from "next/image";
-import { api, decimalToNumber, getSolscanAddress } from "@/utils";
+import { api, formatPrice, getSolscanAddress } from "@/utils";
 import { marked } from "marked";
 import dayjs from "dayjs";
 import { PublicKey } from "@solana/web3.js";
@@ -23,6 +23,7 @@ import { useUserWallet } from "@/src/providers";
 import { motion } from "framer-motion";
 import { smallClickAnimation } from "@/src/constants";
 import { User } from "@prisma/client";
+import { useBounty } from "@/src/providers/bountyProvider";
 
 interface BountyActionsUserProps {
   title: string;
@@ -31,6 +32,7 @@ interface BountyActionsUserProps {
 
 export const Bounty = () => {
   const { currentUser } = useUserWallet();
+  const { setCurrentBounty } = useBounty();
   const router = useRouter();
   const { data: currentBounty } = api.bounties.getBounty.useQuery(
     {
@@ -39,6 +41,9 @@ export const Bounty = () => {
     },
     {
       enabled: !!currentUser,
+      onSuccess: (data) => {
+        setCurrentBounty(data);
+      },
     }
   );
 
@@ -112,8 +117,8 @@ export const Bounty = () => {
                 height={25}
                 alt="mint logo"
               />
-              <p>{`${decimalToNumber(currentBounty.escrow.amount).toFixed(
-                2
+              <p>{`${formatPrice(
+                Number(currentBounty.escrow.amount)
               )} in escrow`}</p>
               <motion.a
                 {...smallClickAnimation}
@@ -208,7 +213,6 @@ export const Bounty = () => {
                   ))}
                 </>
               )}
-
             {currentBounty &&
               currentBounty.approvedSubmitters.length > 0 &&
               currentBounty.isCreator && (
@@ -276,7 +280,7 @@ export const Bounty = () => {
                   )}
                 />
               )}
-            <BountyActions />
+            {!!currentBounty && <BountyActions />}
           </div>
         </div>
       </div>

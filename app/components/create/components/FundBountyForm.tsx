@@ -181,7 +181,7 @@ export const FundBountyForm: FC<Props> = ({
                   className="placeholder:text-textGreen/70 border bg-neutralBtn
                   border-neutralBtnBorder w-full h-[50px] rounded-lg px-3
                   disabled:opacity-50 disabled:cursor-not-allowed text-center"
-                  name="fundingAmount"
+                  name="issuePrice"
                   placeholder={`$2500`}
                   disabled={!mint}
                   // disabled={toggleConfig.selected === "option2"}
@@ -204,8 +204,8 @@ export const FundBountyForm: FC<Props> = ({
                   <input
                     type="number"
                     className="placeholder:text-textGreen/70 border bg-neutralBtn
-              border-neutralBtnBorder w-full h-[50px] rounded-lg px-3
-              disabled:opacity-50 disabled:cursor-not-allowed text-center"
+                    border-neutralBtnBorder w-full h-[50px] rounded-lg px-3
+                    disabled:opacity-50 disabled:cursor-not-allowed text-center"
                     name="issuePrice"
                     placeholder={`$2500`}
                     disabled={!mint}
