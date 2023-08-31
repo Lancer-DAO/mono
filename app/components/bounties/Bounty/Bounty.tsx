@@ -141,7 +141,7 @@ export const Bounty = () => {
             <div>
               <p className="font-bold text-sm">Links</p>
               <div className="flex flex-col w-full gap-1">
-                {links?.map((link) => {
+                {links?.map((link, index) => {
                   const formattedLink =
                     link.startsWith("http://") || link.startsWith("https://")
                       ? link
@@ -152,7 +152,7 @@ export const Bounty = () => {
                       target="_blank"
                       rel="noreferrer"
                       className="underline text-blue-500"
-                      key={link}
+                      key={`${link}-${index}`}
                     >
                       {formattedLink}
                     </a>
