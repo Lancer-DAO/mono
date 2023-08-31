@@ -1,8 +1,6 @@
-import { prisma } from "@/server/db";
 import { protectedProcedure } from "../../trpc";
 import { z } from "zod";
 import * as queries from "@/prisma/queries";
-import { updateHasFinishedOnboarding } from "@/prisma/queries/user";
 
 export const updateLinks = protectedProcedure
   .input(

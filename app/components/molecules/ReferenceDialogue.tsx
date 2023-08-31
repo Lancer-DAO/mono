@@ -103,8 +103,8 @@ const ReferenceDialogue = ({ onReferenceAdded }) => {
                   handleImageUpload(res.at(0).url);
                 }}
                 onUploadError={(error: Error) => {
-                console.log(error);
-                alert(`ERROR! ${error.message}`);
+                  console.log(error);
+                  alert(`ERROR! ${error.message}`);
                 }}
                 config={{ mode: 'auto' }}
               /> 

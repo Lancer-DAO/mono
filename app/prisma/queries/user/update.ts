@@ -133,6 +133,7 @@ export const updateLinks = async (
     },
   });
 };
+
 export const updateResume = async (
   id: number,
   resume: string,
