@@ -10,6 +10,7 @@ export const DownloadExtension = () => {
           "https://webkul.com/blog/how-to-install-the-unpacked-extension-in-chrome/"
         }
         target="_blank"
+        rel="noreferrer"
       >
         Installation Guide
       </a>

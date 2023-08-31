@@ -32,13 +32,14 @@ export const ReferCard = () => {
   const claimButtons = useMemo(() => {
     return claimables
       .filter((claimable) => claimable.amount !== 0)
-      .map((claimable) => {
+      .map((claimable, index) => {
         const claimMintKey = claimable.treasury.account.mint.toString();
         const claimMint = allMints?.filter(
           (mint) => mint.publicKey === claimMintKey
         )[0];
         return (
           <Button
+            key={`${claimable.treasury.account.mint.toString()}-${index}`}
             className="border bg-primaryBtn border-primaryBtnBorder text-lg rounded-md px-6 py-3 uppercase font-bold text-textGreen mt-4"
             onClick={() => handleClaim(claimable.amount, claimable.treasury)}
           >
