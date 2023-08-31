@@ -157,7 +157,7 @@ const BountyList: React.FC<{}> = () => {
   return (
     <div className="w-full flex items-start mt-5 gap-5 pb-10">
       <AnimatePresence>
-        {showFilters && allBounties?.length > 0 && (
+        {showFilters && !!allBounties && (
           <BountyFilters
             mints={allMints}
             industries={allIndustries}

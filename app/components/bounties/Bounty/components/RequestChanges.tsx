@@ -15,9 +15,11 @@ export const RequestChanges = () => {
 
   if (
     !currentBounty ||
-    (currentBounty.isCreator &&
+    !(
+      currentBounty.isCreator &&
       currentBounty.currentSubmitter &&
-      !currentBounty.completer)
+      !currentBounty.completer
+    )
   )
     return null;
 
@@ -32,7 +34,7 @@ export const RequestChanges = () => {
       provider
     );
     const newRelations = updateList(
-      currentBounty.currentUserRelationsList,
+      [],
       [BOUNTY_USER_RELATIONSHIP.CurrentSubmitter],
       [BOUNTY_USER_RELATIONSHIP.ChangesRequestedSubmitter]
     );

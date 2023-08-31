@@ -14,9 +14,11 @@ export const DenySubmission = () => {
 
   if (
     !currentBounty ||
-    (currentBounty.isCreator &&
+    !(
+      currentBounty.isCreator &&
       currentBounty.currentSubmitter &&
-      !currentBounty.completer)
+      !currentBounty.completer
+    )
   )
     return null;
 
@@ -30,7 +32,7 @@ export const DenySubmission = () => {
     );
 
     const newRelations = updateList(
-      currentBounty.currentUserRelationsList,
+      [],
       [],
       [BOUNTY_USER_RELATIONSHIP.DeniedSubmitter]
     );

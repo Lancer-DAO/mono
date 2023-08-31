@@ -14,7 +14,7 @@ export const CancelEscrow: FC = () => {
 
   if (
     !currentBounty ||
-    (currentBounty.isCreator && currentBounty.needsToVote.length === 0)
+    !(currentBounty.isCreator && currentBounty.needsToVote.length === 0)
   )
     return null;
 

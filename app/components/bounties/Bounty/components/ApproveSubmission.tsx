@@ -23,7 +23,11 @@ export const ApproveSubmission = () => {
   const { programId: buddylinkProgramId } = useReferral();
   const { mutateAsync } = api.bountyUsers.update.useMutation();
 
-  if (!currentBounty) return null;
+  if (
+    !currentBounty ||
+    !(currentBounty.isCreator && currentBounty.currentSubmitter)
+  )
+    return null;
 
   const onClick = async () => {
     if (

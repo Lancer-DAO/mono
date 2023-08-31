@@ -19,8 +19,10 @@ export const SubmitRequest = () => {
 
   if (
     !currentBounty ||
-    (currentBounty.isApprovedSubmitter && !currentBounty.currentSubmitter) ||
-    currentBounty.isChangesRequestedSubmitter
+    !(
+      (currentBounty.isApprovedSubmitter && !currentBounty.currentSubmitter) ||
+      currentBounty.isChangesRequestedSubmitter
+    )
   )
     return null;
 

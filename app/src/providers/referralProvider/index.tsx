@@ -96,6 +96,7 @@ const ReferralProvider: FunctionComponent<IReferralProps> = ({ children }) => {
       }
     } catch (e) {
       console.log(e);
+      throw new Error("Failed to create buddy account");
     } finally {
       setProgramId(client.getProgramId());
       setInitialized(true);
