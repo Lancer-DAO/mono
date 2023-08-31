@@ -23,6 +23,7 @@ export const Create = () => {
   const [isAccountCreated, setIsAccountCreated] = useState(false);
   const [mint, setMint] = useState<Mint>();
   const [formData, setFormData] = useState<FormData>({
+    requestQuote: false,
     issuePrice: "",
     issueTitle: "",
     issueDescription: "",
