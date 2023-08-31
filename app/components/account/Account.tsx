@@ -150,7 +150,6 @@ export const Account: FC<Props> = ({ self }) => {
               githubId={fetchedUser.githubId}
             />
             <BadgesCard profileNFT={profileNFT} />
-            {/* <LinksCard /> */}
           </div>
           {/* right column */}
           <div className="flex flex-col gap-5 w-full">
