@@ -48,7 +48,15 @@ export const Account: FC<Props> = ({ self }) => {
       enabled: self ? !!currentUser : !!router.query.account,
     }
   );
-
+  const { mutateAsync: verifyWallet } = api.users.verifyWallet.useMutation();
+  api.users.registerProfileNFT.useQuery(
+    {
+      walletPublicKey: currentWallet?.publicKey.toString(),
+    },
+    {
+      enabled: !!currentWallet,
+    }
+  );
   const [profileNFT, setProfileNFT] = useState<ProfileNFT>();
 
   const fetchProfileNFT = async () => {
