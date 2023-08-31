@@ -73,6 +73,7 @@ const ResumeCard = () => {
   const handleResumeDelete = async () => {
     await confirmAction();
     try {
+      await updateResume({ resume: "" });
       await deleteResume({ fileUrl: resumeUrl });
       setResumeUrl("");
     } catch (error) {
