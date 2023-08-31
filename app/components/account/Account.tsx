@@ -38,16 +38,21 @@ export const Account: FC<Props> = ({ self }) => {
   const { currentTutorialState, setCurrentTutorialState } = useTutorial();
   const { data: fetchedUser } = api.users.getUser.useQuery(
     {
-      id: parseInt(router.query.account as string),
+      id: self ? currentUser?.id : parseInt(router.query.account as string),
     },
     {
-      enabled: !!router.query.account,
+      enabled: self ? !!currentUser : !!router.query.account,
     }
   );
   const { mutateAsync: verifyWallet } = api.users.verifyWallet.useMutation();
-  api.users.registerProfileNFT.useQuery({
-    walletPublicKey: currentWallet?.publicKey.toString(),
-  });
+  api.users.registerProfileNFT.useQuery(
+    {
+      walletPublicKey: currentWallet?.publicKey.toString(),
+    },
+    {
+      enabled: !!currentWallet,
+    }
+  );
 
   const [profileNFT, setProfileNFT] = useState<ProfileNFT>();
   const [bountyNFTs, setBountyNFTs] = useState<IAsyncResult<BountyNFT[]>>({
