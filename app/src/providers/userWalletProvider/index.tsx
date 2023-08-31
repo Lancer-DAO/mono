@@ -5,7 +5,8 @@ import { NonCustodialWalletContext } from "./nonCustodialProvider";
 import { IUserWalletContext } from "./types";
 
 export function useUserWallet(): IUserWalletContext {
-  return IS_CUSTODIAL
-    ? useContext(CustodialWalletContext)
-    : useContext(NonCustodialWalletContext);
+  const context = IS_CUSTODIAL
+    ? CustodialWalletContext
+    : NonCustodialWalletContext;
+  return useContext(context);
 }

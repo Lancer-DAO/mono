@@ -1,4 +1,3 @@
-import { prisma } from "@/server/db";
 import { protectedProcedure } from "../../trpc";
 import * as queries from "@/prisma/queries";
 
@@ -20,11 +19,12 @@ export const login = protectedProcedure.mutation(async ({ ctx }) => {
   } else {
     try {
       let user = await queries.user.getByEmail(email);
-      if (!user.picture && picture) {
+      // console.log("picture", user.picture);
+      if (!user.picture) {
         await queries.user.updatePicture(user.id, picture);
         user = await queries.user.getByEmail(email);
       }
-      if (!user.name && nickname) {
+      if (!user.name) {
         await queries.user.updateName(user.id, nickname);
         user = await queries.user.getByEmail(email);
       }

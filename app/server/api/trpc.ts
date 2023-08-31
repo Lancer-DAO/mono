@@ -77,18 +77,18 @@ export const createTRPCContext = async (_opts: CreateNextContextOptions) => {
       return createInnerTRPCContext({
         user: { id: null, email, token, sub, nickname, picture },
       });
+    } else {
+      return createInnerTRPCContext({
+        user: {
+          id: user.id,
+          email,
+          token,
+          sub,
+          nickname,
+          picture,
+        },
+      });
     }
-
-    return createInnerTRPCContext({
-      user: {
-        id: user?.id,
-        email,
-        token,
-        sub,
-        nickname,
-        picture,
-      },
-    });
   } catch (e) {
     console.error(e);
     return createInnerTRPCContext({
