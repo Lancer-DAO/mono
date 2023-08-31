@@ -43,7 +43,6 @@ export const Account: FC<Props> = ({ self }) => {
       enabled: self ? !!currentUser : !!router.query.account,
     }
   );
-
   const [profileNFT, setProfileNFT] = useState<ProfileNFT>();
 
   const fetchProfileNFT = async () => {
