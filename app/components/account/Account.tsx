@@ -1,4 +1,5 @@
-import { BountyCard, DefaultLayout, LoadingBar } from "@/components";
+import { FC, useEffect, useState } from "react";
+import { useRouter } from "next/router";
 import {
   BOUNTY_PROJECT_PARAMS,
   IS_CUSTODIAL,
@@ -15,10 +16,10 @@ import { api } from "@/utils";
 import { createUnderdogClient } from "@underdog-protocol/js";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
-import { useRouter } from "next/router";
-import { FC, useEffect, useState } from "react";
+import { LoadingBar } from "@/components";
 import { ProfileNFTCard, QuestsCard } from "./components";
 import BadgesCard from "./components/BadgesCard";
+import LinksCard from "./components/LinksCard";
 import { ReferCard } from "./components/ReferCard";
 import ResumeCard from "./components/ResumeCard";
 
@@ -33,30 +34,41 @@ interface Props {
 export const Account: FC<Props> = ({ self }) => {
   const router = useRouter();
 
+  // api + context
   const { currentUser, currentWallet } = useUserWallet();
   const { currentTutorialState, setCurrentTutorialState } = useTutorial();
+  const { data: fetchedUser } = api.users.getUser.useQuery(
+    {
+      id: parseInt(router.query.account as string),
+    },
+    {
+      enabled: !!router.query.account,
+    }
+  );
+  const { mutateAsync: verifyWallet } = api.users.verifyWallet.useMutation();
+  api.users.registerProfileNFT.useQuery({
+    walletPublicKey: currentWallet?.publicKey.toString(),
+  });
+
   const [profileNFT, setProfileNFT] = useState<ProfileNFT>();
   const [bountyNFTs, setBountyNFTs] = useState<IAsyncResult<BountyNFT[]>>({
     isLoading: true,
   });
-  const { mutateAsync: getUser } = api.users.getUser.useMutation();
-  const { mutateAsync: verifyWallet } = api.users.verifyWallet.useMutation();
   const [account, setAccount] = useState<IAsyncResult<User>>({
     isLoading: true,
     loadingPrompt: "Loading Profile",
   });
 
-  const { mutateAsync: registerProfileNFT } =
-    api.users.registerProfileNFT.useMutation();
-
   useEffect(() => {
     const getUserAsync = async () => {
       if (router.query.account !== undefined) {
         const fetchAccount = async () => {
-          const account = await getUser({
-            id: parseInt(router.query.account as string),
-          });
-          setAccount({ ...account, result: account });
+          try {
+            setAccount({ ...account, result: fetchedUser });
+          } catch (e) {
+            console.log("Error fetching account: ", e);
+            setAccount({ error: e });
+          }
         };
         fetchAccount();
       } else {
@@ -77,20 +89,21 @@ export const Account: FC<Props> = ({ self }) => {
           }
 
           setAccount({
-            isLoading: true,
+            isLoading: false,
             loadingPrompt,
             result: currentUser,
             error: null,
           });
         } catch (e) {
           setAccount({ error: e });
+          console.log("Error fetching account: ", e);
         }
       }
     };
-    if (!!currentUser && !!currentWallet?.publicKey) {
+    if (!!currentUser) {
       getUserAsync();
     } else {
-      console.log("no user or wallet");
+      console.log("no user or wallet", currentUser, currentWallet);
     }
   }, [currentUser, router.isReady, currentWallet?.publicKey]);
 
@@ -215,7 +228,7 @@ export const Account: FC<Props> = ({ self }) => {
     });
 
     if (nfts.totalResults === 0) {
-      const result = await underdogClient.createNft({
+      await underdogClient.createNft({
         params: PROFILE_PROJECT_PARAMS,
         body: {
           name: `${currentUser.name}`,
@@ -231,9 +244,6 @@ export const Account: FC<Props> = ({ self }) => {
         },
       });
     }
-    await registerProfileNFT({
-      walletPublicKey: currentWallet.publicKey.toString(),
-    });
   };
 
   if (!IS_CUSTODIAL && !currentWallet && !profileNFT)
@@ -254,8 +264,7 @@ export const Account: FC<Props> = ({ self }) => {
       <h1 className="pb-2">{`${
         self ? "Your Profile" : `@${account?.result?.name}`
       }`}</h1>
-      {/* {profileNFT && ( */}
-      {account?.result && (
+      {profileNFT && account?.result ? (
         <div className="w-full flex items-start gap-5">
           {/* left column */}
           <div className="flex flex-col gap-5 w-full md:max-w-[482px]">
@@ -265,6 +274,7 @@ export const Account: FC<Props> = ({ self }) => {
               githubId={account?.result.githubId}
             />
             <BadgesCard profileNFT={profileNFT} />
+            {/* <LinksCard /> */}
           </div>
           {/* right column */}
           <div className="flex flex-col gap-5 w-full">
@@ -272,6 +282,10 @@ export const Account: FC<Props> = ({ self }) => {
             <QuestsCard />
             {account?.result.id === currentUser.id && <ReferCard />}
           </div>
+        </div>
+      ) : (
+        <div className="w-full flex items-start gap-5">
+          <LoadingBar title="Loading Profile" />
         </div>
       )}
     </div>

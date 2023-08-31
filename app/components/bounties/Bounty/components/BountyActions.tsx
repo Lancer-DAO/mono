@@ -1,3 +1,4 @@
+import React, { useEffect } from "react";
 import { BountyState } from "@/types/";
 import {
   BONK_MINT,
@@ -41,18 +42,18 @@ export const BountyActions = () => {
       />
     );
   }
-  if (currentBounty.state === BountyState.COMPLETE) {
+  if (currentBounty?.state === BountyState.COMPLETE) {
     return (
       <BountyActionsButton type="green" text="Bounty Completed" disabled />
     );
   }
-  if (currentBounty.state === BountyState.CANCELED) {
+  if (currentBounty?.state === BountyState.CANCELED) {
     return <BountyActionsButton type="red" text="Bounty Canceled" disabled />;
   }
-  if (!currentBounty.currentUserRelationsList) {
+  if (!currentBounty?.currentUserRelationsList) {
     return <RequestToSubmit />;
   }
-  if (currentBounty.isRequestedSubmitter)
+  if (currentBounty?.isRequestedSubmitter)
     return (
       <BountyActionsButton
         type="neutral"
@@ -60,7 +61,7 @@ export const BountyActions = () => {
         disabled
       />
     );
-  if (currentBounty.isDeniedRequester)
+  if (currentBounty?.isDeniedRequester)
     return (
       <BountyActionsButton
         type="red"
@@ -68,6 +69,14 @@ export const BountyActions = () => {
         disabled
       />
     );
+
+  useEffect(() => {
+    console.log("currentBounty?.isCreator", currentBounty?.isCreator);
+    console.log(
+      "currentBounty?.isCurrentSubmitter",
+      currentBounty?.isCurrentSubmitter
+    );
+  }, [currentBounty]);
 
   return (
     <div className="flex flex-wrap gap-3 pt-4" id="bounty-actions">

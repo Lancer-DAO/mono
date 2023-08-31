@@ -19,7 +19,6 @@ import {
   SidePanel,
 } from "@/components";
 import { SubmitterSection, BountyActions } from "./components";
-import { useBounty } from "@/src/providers/bountyProvider";
 import { useUserWallet } from "@/src/providers";
 import { motion } from "framer-motion";
 import { smallClickAnimation } from "@/src/constants";
@@ -31,15 +30,20 @@ interface BountyActionsUserProps {
 }
 
 export const Bounty = () => {
-  const { currentBounty, setCurrentBounty } = useBounty();
   const { currentUser } = useUserWallet();
-  const { mutateAsync: getBounty } = api.bounties.getBounty.useMutation();
+  const router = useRouter();
+  const { data: currentBounty } = api.bounties.getBounty.useQuery(
+    {
+      id: parseInt(router.query.quest as string),
+      currentUserId: currentUser?.id,
+    },
+    {
+      enabled: !!currentUser,
+    }
+  );
 
   const [pollId, setPollId] = useState(null);
-  const [bountyAmount, setBountyAmount] = useState("");
   const [links, setLinks] = useState<string[]>([]);
-
-  const router = useRouter();
 
   const formatString = (str: string) => {
     return str
@@ -64,24 +68,6 @@ export const Bounty = () => {
   );
 
   useEffect(() => {
-    if (router.isReady && currentUser?.id) {
-      const getB = async () => {
-        const bounty = await getBounty({
-          id: parseInt(router.query.quest as string),
-          currentUserId: currentUser.id,
-        });
-        setCurrentBounty(bounty);
-        if (bounty?.escrow?.amount !== null) {
-          const amount = decimalToNumber(bounty.escrow.amount).toFixed(2);
-
-          setBountyAmount(amount);
-        }
-      };
-      getB();
-    }
-  }, [router.isReady, currentUser?.id]);
-
-  useEffect(() => {
     const setFuturePoll = () => {
       setPollId(setTimeout(() => setFuturePoll(), 5000));
     };
@@ -98,7 +84,7 @@ export const Bounty = () => {
   }, [currentBounty]);
 
   if (!currentUser || !currentBounty) {
-    return <></>;
+    return null;
   }
 
   return (
@@ -126,7 +112,9 @@ export const Bounty = () => {
                 height={25}
                 alt="mint logo"
               />
-              <p>{`${bountyAmount} in escrow`}</p>
+              <p>{`${decimalToNumber(currentBounty.escrow.amount).toFixed(
+                2
+              )} in escrow`}</p>
               <motion.a
                 {...smallClickAnimation}
                 href={getSolscanAddress(
@@ -159,6 +147,7 @@ export const Bounty = () => {
                       target="_blank"
                       rel="noreferrer"
                       className="underline text-blue-500"
+                      key={link}
                     >
                       {formattedLink}
                     </a>

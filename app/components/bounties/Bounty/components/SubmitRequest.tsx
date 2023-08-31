@@ -16,7 +16,7 @@ export const SubmitRequest = () => {
   const { currentTutorialState, setCurrentTutorialState } = useTutorial();
   const { mutateAsync } = api.bountyUsers.update.useMutation();
   const [isLoading, setIsLoading] = useState(false);
-  if (currentBounty.isCurrentSubmitter)
+  if (currentBounty?.isCurrentSubmitter)
     return (
       <BountyActionsButton
         type="neutral"
@@ -26,8 +26,9 @@ export const SubmitRequest = () => {
     );
   if (
     !(
-      (currentBounty.isApprovedSubmitter && !currentBounty.currentSubmitter) ||
-      currentBounty.isChangesRequestedSubmitter
+      (currentBounty?.isApprovedSubmitter &&
+        !currentBounty?.currentSubmitter) ||
+      currentBounty?.isChangesRequestedSubmitter
     )
   )
     return null;
@@ -45,15 +46,15 @@ export const SubmitRequest = () => {
       });
     }
     const signature = await submitRequestFFA(
-      new PublicKey(currentBounty.creator.publicKey),
+      new PublicKey(currentBounty?.creator.publicKey),
       currentWallet.publicKey,
-      currentBounty.escrow,
+      currentBounty?.escrow,
       currentWallet,
       program,
       provider
     );
     const newRelations = updateList(
-      currentBounty.currentUserRelationsList,
+      currentBounty?.currentUserRelationsList,
       [
         BOUNTY_USER_RELATIONSHIP.ApprovedSubmitter,
         BOUNTY_USER_RELATIONSHIP.ChangesRequestedSubmitter,
@@ -62,13 +63,13 @@ export const SubmitRequest = () => {
     );
 
     const updatedBounty = await mutateAsync({
-      bountyId: currentBounty.id,
+      bountyId: currentBounty?.id,
       currentUserId: currentUser.id,
       userId: currentUser.id,
       relations: newRelations,
       state: BountyState.AWAITING_REVIEW,
       publicKey: currentWallet.publicKey.toString(),
-      escrowId: currentBounty.escrowid,
+      escrowId: currentBounty?.escrowid,
       signature,
       label: "submit-request",
     });

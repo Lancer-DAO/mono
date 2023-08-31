@@ -18,11 +18,11 @@ export const VoteToCancel = () => {
 
   if (
     !(
-      (currentBounty.isCreator ||
-        currentBounty.isCurrentSubmitter ||
-        currentBounty.isDeniedSubmitter ||
-        currentBounty.isChangesRequestedSubmitter) &&
-      !currentBounty.isVotingCancel
+      (currentBounty?.isCreator ||
+        currentBounty?.isCurrentSubmitter ||
+        currentBounty?.isDeniedSubmitter ||
+        currentBounty?.isChangesRequestedSubmitter) &&
+      !currentBounty?.isVotingCancel
     )
   ) {
     return null;
@@ -78,29 +78,29 @@ export const VoteToCancel = () => {
       await confirmAction();
 
       let signature = "";
-      if (currentBounty.isCreator || currentBounty.isCurrentSubmitter) {
+      if (currentBounty?.isCreator || currentBounty?.isCurrentSubmitter) {
         signature = await voteToCancelFFA(
-          new PublicKey(currentBounty.creator.publicKey),
+          new PublicKey(currentBounty?.creator.publicKey),
           new PublicKey(currentWallet.publicKey),
-          currentBounty.escrow,
+          currentBounty?.escrow,
           currentWallet,
           program,
           provider
         );
       }
       const newRelations = updateList(
-        currentBounty.currentUserRelationsList,
+        currentBounty?.currentUserRelationsList,
         [],
         [BOUNTY_USER_RELATIONSHIP.VotingCancel]
       );
       const updatedBounty = await mutateAsync({
-        bountyId: currentBounty.id,
+        bountyId: currentBounty?.id,
         currentUserId: currentUser.id,
         userId: currentUser.id,
         relations: newRelations,
         state: BountyState.VOTING_TO_CANCEL,
         publicKey: currentWallet.publicKey.toString(),
-        escrowId: currentBounty.escrowid,
+        escrowId: currentBounty?.escrowid,
         signature,
         label: "vote-to-cancel",
       });

@@ -1,11 +1,10 @@
+import { useEffect, useState } from "react";
 import { BountyCard, PreviewCardBase } from "@/components";
 import { useUserWallet } from "@/src/providers";
 import { api } from "@/src/utils";
-import { IAsyncResult, Industry } from "@/types";
 import { FORM_SECTION, FormData } from "@/types/forms";
 import { Mint } from "@prisma/client";
 import { PublicKey } from "@solana/web3.js";
-import React, { useEffect, useState } from "react";
 import {
   AdditionalInfoForm,
   CreateBountyForm,
@@ -21,17 +20,9 @@ interface Media {
 }
 
 export const Create = () => {
-  const { provider } = useUserWallet();
-  const { mutateAsync: getMintsAPI } = api.mints.getMints.useMutation();
-  const { mutateAsync: getAllIndustries } =
-    api.industries.getAllIndustries.useMutation();
-  const [industries, setIndustries] = useState<IAsyncResult<Industry[]>>({
-    isLoading: true,
-  });
   const [formSection, setFormSection] = useState<FORM_SECTION>("CREATE");
   const [isAccountCreated, setIsAccountCreated] = useState(false);
   const [mint, setMint] = useState<Mint>();
-  const [mints, setMints] = useState<Mint[]>([]);
   const [formData, setFormData] = useState<FormData>({
     issuePrice: "",
     issueTitle: "",
@@ -48,6 +39,9 @@ export const Create = () => {
     isPrivate: false,
   });
 
+  const { provider } = useUserWallet();
+  const { data: allMints } = api.mints.getMints.useQuery();
+
   const createAccountPoll = (publicKey: PublicKey) => {
     provider.connection.onAccountChange(publicKey, (callback) => {
       setIsAccountCreated(true);
@@ -61,37 +55,18 @@ export const Create = () => {
     });
   };
 
+  // hard code USDC for now
   useEffect(() => {
-    const getMints = async () => {
-      const mints = await getMintsAPI();
-      setMints(mints);
-      // NOTE: hardcode mint to USDC for now
-      setMint(
-        mints.find(
-          (mint) =>
-            mint.publicKey === "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v"
-        )
-      );
-    };
-    getMints();
-  }, []);
+    if (allMints) {
+      // console.log("allMints", allMints);
+      const mint = allMints.find((mint) => mint.ticker === "USDC");
+      setMint(mint);
+    }
+  }, [allMints]);
 
-  useEffect(() => {
-    const fetchCurrentIndustries = async () => {
-      try {
-        const industries = await getAllIndustries();
-        setIndustries({ result: industries, isLoading: false });
-      } catch (e) {
-        console.log("error getting industries: ", e);
-        setIndustries({ error: e, isLoading: false });
-      }
-    };
-    fetchCurrentIndustries();
-  }, []);
-
-  useEffect(() => {
-    console.log("formData", formData);
-  }, [formData]);
+  // useEffect(() => {
+  //   console.log("formData", formData);
+  // }, [formData]);
 
   return (
     <div className="w-full max-w-[1200px] mx-auto flex md:justify-evenly mt-10">
@@ -107,7 +82,6 @@ export const Create = () => {
           <CreateBountyForm
             setFormSection={setFormSection}
             formData={formData}
-            industries={industries}
             setFormData={setFormData}
             handleChange={handleChange}
           />
@@ -123,7 +97,6 @@ export const Create = () => {
           <PreviewForm
             setFormSection={setFormSection}
             formData={formData}
-            industries={industries?.result}
             handleChange={handleChange}
             createAccountPoll={createAccountPoll}
             mint={mint}
@@ -146,7 +119,6 @@ export const Create = () => {
           <PreviewCardBase>
             <BountyCard
               formData={formData}
-              allIndustries={industries?.result}
               linked={formSection === "SUCCESS"}
             />
           </PreviewCardBase>

@@ -67,9 +67,75 @@ export const updateName = async (
   });
 };
 
+export const onboardingUpdate = async (
+  id: number,
+  industry: Prisma.Industry,
+  name: string,
+  email: string,
+  company: string,
+  position: string,
+  bio: string,
+  linkedin: string,
+  twitter: string,
+  github: string,
+  website: string
+): Promise<Prisma.User> => {
+  return await prisma.user.update({
+    where: {
+      id: id,
+    },
+    data: {
+      industries: {
+        connect: {
+          id: industry.id,
+        },
+      },
+      name,
+      email,
+      company,
+      position,
+      bio,
+      linkedin,
+      twitter,
+      github,
+      website,
+    },
+  });
+};
+
+export const updateHasFinishedOnboarding = async (
+  id: number
+): Promise<Prisma.User> => {
+  return await prisma.user.update({
+    where: {
+      id: id,
+    },
+    data: {
+      hasFinishedOnboarding: true,
+    },
+  });
+};
+
+export const updateLinks = async (
+  id: number,
+  website: string,
+  github: string,
+  linkedin: string,
+): Promise<Prisma.User> => {
+  return await prisma.user.update({
+    where: {
+      id: id,
+    },
+    data: {
+      website,
+      github,
+      linkedin,
+    },
+  });
+};
 export const updateResume = async (
   id: number,
-  resume: string
+  resume: string,
 ): Promise<Prisma.User> => {
   return await prisma.user.update({
     where: {
@@ -80,16 +146,3 @@ export const updateResume = async (
     },
   });
 };
-
-// export const updateHasFinishedOnboarding = async (
-//   id: number
-// ): Promise<Prisma.User> => {
-//   return await prisma.user.update({
-//     where: {
-//       id: id,
-//     },
-//     data: {
-//       hasFinishedOnboarding: true,
-//     },
-//   });
-// };
