@@ -5,14 +5,11 @@ import { formatPrice } from "@/utils";
 import Image from "next/image";
 
 interface Props {
-  price: Decimal | number;
+  price: Decimal | undefined;
   icon: string;
 }
 
 const PriceTag: FC<Props> = ({ price, icon }) => {
-  // empty cell is no price
-  if (!price) return <div className="h-[28px]" />;
-
   return (
     <div className="bg-white rounded-full border border-textPrimary h-[28px] flex items-center gap-2 px-0.5">
       {icon !== undefined ? (
@@ -26,9 +23,13 @@ const PriceTag: FC<Props> = ({ price, icon }) => {
       ) : (
         <USDC height="22px" width="22px" />
       )}
-      <p className="pr-2 font-bold text-industryGreenBorder">{`$${formatPrice(
-        price
-      )}`}</p>
+      {!!price ? (
+        <p className="pr-2 font-bold text-industryGreenBorder">{`$${formatPrice(
+          price
+        )}`}</p>
+      ) : (
+        <p className="pr-2 text-sm font-bold">Unfunded</p>
+      )}
     </div>
   );
 };
