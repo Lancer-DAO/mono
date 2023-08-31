@@ -8,11 +8,57 @@ import { WalletModalProvider } from "@solana/wallet-adapter-react-ui";
 import { PhantomWalletAdapter } from "@solana/wallet-adapter-wallets";
 import type { AppProps } from "next/app";
 import { MAINNET_RPC } from "@/src/constants";
-
-import { withPageAuthRequired } from "@auth0/nextjs-auth0";
+import { createServerSideHelpers } from "@trpc/react-query/server";
+import {
+  getAccessToken,
+  getSession,
+  withPageAuthRequired,
+} from "@auth0/nextjs-auth0";
 import { AdminLancer } from "../components/adminLancer/AdminLancer";
-import { NextPage } from "next";
-export const getServerSideProps = withPageAuthRequired();
+import { GetServerSideProps, GetServerSidePropsContext, NextPage } from "next";
+import { prisma } from "@/server/db";
+
+export async function getServerSideProps(
+  context: GetServerSidePropsContext<{ id: string; req; res }>
+) {
+  withPageAuthRequired();
+  const { req, res } = context;
+  const metadata = await getSession(req, res);
+
+  const token = process.env.NEXT_PUBLIC_IS_CUSTODIAL
+    ? metadata.token
+    : (await getAccessToken(req, res))?.accessToken;
+  const { email } = metadata.user;
+
+  const user = await prisma.user.findUnique({
+    where: {
+      email,
+    },
+    select: {
+      id: true,
+      isAdmin: true,
+      hasFinishedOnboarding: true,
+    },
+  });
+
+  if (!user.hasFinishedOnboarding) {
+    return {
+      redirect: {
+        destination: "/welcome",
+        permanent: false,
+      },
+    };
+  }
+  if (!user.isAdmin) {
+    return {
+      redirect: {
+        destination: "/account",
+        permanent: false,
+      },
+    };
+  }
+  return { props: {} };
+}
 
 const App: NextPage<AppProps> = ({ Component, pageProps }) => {
   // Can be set to 'devnet', 'testnet', or 'mainnet-beta'
