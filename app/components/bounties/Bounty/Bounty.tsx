@@ -83,8 +83,8 @@ export const Bounty = () => {
 
   useEffect(() => {
     if (currentBounty?.links) {
-      const links = currentBounty?.links?.split(",");
-      setLinks(links);
+      const separatedLinks = currentBounty?.links?.split(",");
+      setLinks(separatedLinks);
     }
   }, [currentBounty]);
 
