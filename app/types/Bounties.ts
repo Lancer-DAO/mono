@@ -56,7 +56,6 @@ export enum BountyState {
   CANCELED = "canceled",
   COMPLETE = "complete",
   NEW = "new",
-  FUNDED = "funded",
   ACCEPTING_APPLICATIONS = "accepting_applications",
   IN_PROGRESS = "in_progress",
   AWAITING_REVIEW = "awaiting_review",
