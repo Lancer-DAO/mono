@@ -93,7 +93,6 @@ export const createBounty = protectedProcedure
         price
       );
       const bountyInfo = await queries.bounty.get(bounty.id, user.id);
-
       HostedHooksClient.sendWebhook(bountyInfo, "bounty.created", timestamp);
       return bountyInfo;
     }

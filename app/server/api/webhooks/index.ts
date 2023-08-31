@@ -27,10 +27,6 @@ export const HostedHooksClient = {
     timestamp: string = Date.now().toString()
   ) => {
     const webhookData = JSON.stringify(requestData);
-    console.log(
-      `sending to webhooks endpoint ${event_type} at time ${timestamp}: \n`,
-      webhookData
-    );
 
     const data = {
       data: webhookData,
@@ -41,9 +37,7 @@ export const HostedHooksClient = {
     };
     axios
       .post(url, data, { headers })
-      .then((response) => {
-        console.log("Response:", response.data);
-      })
+      .then((response) => {})
       .catch((error) => {
         console.error("Error:", error);
       });

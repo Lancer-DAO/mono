@@ -67,6 +67,7 @@ export const update = protectedProcedure
         );
       }
       const updatedBounty = await queries.bounty.get(bountyId, currentUserId);
+
       HostedHooksClient.sendWebhook(updatedBounty, "bounty.updated");
 
       return updatedBounty;
