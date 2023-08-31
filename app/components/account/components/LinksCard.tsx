@@ -24,8 +24,6 @@ const LinksCard = () => {
     linkedin: fetchedUser?.linkedin || "",
   });
 
-  console.log(links);
-
   const handleEditLinks = () => {
     setEditLinksMode(true);
   };
