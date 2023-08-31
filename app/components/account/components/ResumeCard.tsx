@@ -105,10 +105,7 @@ const ResumeCard = () => {
       ) : (
         <UploadButton
           appearance={{
-            button: {
-              backgroundColor: "#D4FFD7",
-              color: "#638463",
-            },
+            button: "bg-[#D4FFD7] text-[#638463] ut-uploading:cursor-not-allowed after:bg-secondaryBtn",
             allowedContent: {
               color: "#638463",
               textTransform: "uppercase",
