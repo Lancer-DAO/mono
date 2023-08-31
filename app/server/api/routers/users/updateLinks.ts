@@ -30,5 +30,5 @@ export const updateLinks = protectedProcedure
         linkedin
       )
 
-      return { success: true };
+      return { website, github, linkedin };
     });
