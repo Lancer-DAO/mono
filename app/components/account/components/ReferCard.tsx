@@ -35,7 +35,7 @@ export const ReferCard = () => {
       .filter((claimable) => claimable.amount !== 0)
       .map((claimable) => {
         const claimMintKey = claimable.treasury.account.mint.toString();
-        const claimMint = allMints.filter(
+        const claimMint = allMints?.filter(
           (mint) => mint.publicKey === claimMintKey
         )[0];
         return (

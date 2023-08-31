@@ -1,7 +1,6 @@
-import { FC, useEffect, useState } from "react";
+import { FC } from "react";
 import { motion } from "framer-motion";
 import Image from "next/image";
-import { IAsyncResult, Industry } from "@/types";
 import { smallClickAnimation } from "@/src/constants";
 import { LoadingBar } from "@/components";
 import { api } from "@/src/utils";
@@ -12,8 +11,11 @@ interface Props {
 }
 
 export const Skillset: FC<Props> = ({ profileData, setProfileData }) => {
-  const { data: allIndustries, isLoading: industriesLoading } =
-    api.industries.getAllIndustries.useQuery();
+  const {
+    data: allIndustries,
+    isLoading: industriesLoading,
+    isError: industriesError,
+  } = api.industries.getAllIndustries.useQuery();
 
   if (industriesLoading) {
     return (
@@ -22,6 +24,15 @@ export const Skillset: FC<Props> = ({ profileData, setProfileData }) => {
       </div>
     );
   }
+
+  if (industriesError) {
+    return (
+      <div className="flex flex-col gap-5 items-center justify-center w-full h-full">
+        Error loading Industries!
+      </div>
+    );
+  }
+
   return (
     <div className="flex flex-col items-center justify-center mt-16">
       {/* top item */}

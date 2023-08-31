@@ -12,30 +12,33 @@ export const CancelEscrow: FC = () => {
   const { currentBounty, setCurrentBounty } = useBounty();
   const { mutateAsync } = api.bountyUsers.update.useMutation();
 
-  if (!(currentBounty?.isCreator && currentBounty?.needsToVote.length === 0))
+  if (
+    !currentBounty ||
+    !(currentBounty.isCreator && currentBounty.needsToVote.length === 0)
+  )
     return null;
 
   const onClick = async () => {
     // If we are the creator, then skip requesting and add self as approved
     const signature = await cancelFFA(
-      currentBounty?.escrow,
+      currentBounty.escrow,
       currentWallet,
       program,
       provider
     );
     const newRelation = updateList(
-      currentBounty?.currentUserRelationsList,
+      currentBounty.currentUserRelationsList,
       [],
       [BOUNTY_USER_RELATIONSHIP.Canceler]
     );
     const updatedBounty = await mutateAsync({
-      bountyId: currentBounty?.id,
+      bountyId: currentBounty.id,
       currentUserId: currentUser.id,
       userId: currentUser.id,
       relations: newRelation,
       state: BountyState.CANCELED,
       publicKey: currentWallet.publicKey.toString(),
-      escrowId: currentBounty?.escrowid,
+      escrowId: currentBounty.escrowid,
       signature,
       label: "cancel-escrow",
     });
