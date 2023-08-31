@@ -1,10 +1,6 @@
 import { FC, useEffect, useState } from "react";
 import { useRouter } from "next/router";
-import {
-  BOUNTY_PROJECT_PARAMS,
-  IS_CUSTODIAL,
-  PROFILE_PROJECT_PARAMS,
-} from "@/src/constants";
+import { IS_CUSTODIAL, PROFILE_PROJECT_PARAMS } from "@/src/constants";
 import {
   BOUNTY_ACTIONS_TUTORIAL_II_INITIAL_STATE,
   PROFILE_TUTORIAL_INITIAL_STATE,
@@ -19,7 +15,6 @@ import relativeTime from "dayjs/plugin/relativeTime";
 import { LoadingBar } from "@/components";
 import { ProfileNFTCard, QuestsCard } from "./components";
 import BadgesCard from "./components/BadgesCard";
-import LinksCard from "./components/LinksCard";
 import { ReferCard } from "./components/ReferCard";
 
 dayjs.extend(relativeTime);
@@ -48,15 +43,7 @@ export const Account: FC<Props> = ({ self }) => {
       enabled: self ? !!currentUser : !!router.query.account,
     }
   );
-  // const { mutateAsync: verifyWallet } = api.users.verifyWallet.useQuery();
-  // api.users.registerProfileNFT.useQuery(
-  //   {
-  //     walletPublicKey: currentWallet?.publicKey.toString(),
-  //   },
-  //   {
-  //     enabled: !!currentWallet,
-  //   }
-  // );
+
   const [profileNFT, setProfileNFT] = useState<ProfileNFT>();
 
   const fetchProfileNFT = async () => {
@@ -157,7 +144,6 @@ export const Account: FC<Props> = ({ self }) => {
               githubId={fetchedUser.githubId}
             />
             <BadgesCard profileNFT={profileNFT} />
-            {/* <LinksCard /> */}
           </div>
           {/* right column */}
           <div className="flex flex-col gap-5 w-full">
