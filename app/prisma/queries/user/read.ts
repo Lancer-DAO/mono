@@ -13,7 +13,6 @@ const USER_INCLUDE = {
       referrer: true,
     },
   },
-  // hasFinishedOnboarding: true,
 };
 
 const userQuery = async (email: string) =>

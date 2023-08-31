@@ -33,6 +33,7 @@ export const ProfileNFTCard = ({
   picture: string;
   githubId: string;
 }) => {
+  // state
   const [showCoinflow, setShowCoinflow] = useState(false);
   const [showReferrerModal, setShowReferrerModal] = useState(false);
   const [isCopied, setIsCopied] = useState(false);
@@ -41,14 +42,15 @@ export const ProfileNFTCard = ({
     isLoading: true,
     loadingPrompt: "Loading Balance",
   });
+  const [amount, setAmount] = useState(0);
+  const [sendToPublicKey, setSentToPublicKey] = useState("");
+
+  // context + api
   const { referralId, initialized, createReferralMember, claimables, claim } =
     useReferral();
   const { connection } = useConnection();
-  const [amount, setAmount] = useState(0);
-  const { currentUser, currentWallet } = useUserWallet();
-  const [sendToPublicKey, setSentToPublicKey] = useState("");
-  const { mutateAsync: getMintsAPI } = api.mints.getMints.useMutation();
-  const [mints, setMints] = useState<Prisma.Mint[]>([]);
+  const { currentWallet } = useUserWallet();
+  const { data: allMints } = api.mints.getMints.useQuery();
 
   useEffect(() => {
     const getBalanceAsync = async () => {
@@ -73,12 +75,15 @@ export const ProfileNFTCard = ({
       getBalanceAsync();
     }
   }, [currentWallet?.publicKey]);
+
   const handleMessageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSentToPublicKey(event.target.value);
   };
+
   const handleAmountChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setAmount(Number(event.target.value));
   };
+
   const handleSendClick = async () => {
     const sendUSDC = async (sourceTokenAccount, destTokenAccount) => {
       const { blockhash, lastValidBlockHeight } =
@@ -158,18 +163,16 @@ export const ProfileNFTCard = ({
       .filter((claimable) => claimable.amount !== 0)
       .map((claimable) => {
         const claimMintKey = claimable.treasury.account.mint.toString();
-        const claimMint = mints.filter(
-          (mint) => mint.publicKey === claimMintKey
-        )[0];
+        const claimMint = new PublicKey(USDC_MINT);
         return (
           <Button
             onClick={() => handleClaim(claimable.amount, claimable.treasury)}
           >
-            Claim {claimable.amount} {claimMint?.ticker}
+            Claim {claimable.amount} {"USDC"}
           </Button>
         );
       });
-  }, [claimables, mints]);
+  }, [claimables, allMints]);
 
   const copyToClipboard = async (text: string) => {
     try {
@@ -184,16 +187,6 @@ export const ProfileNFTCard = ({
     copyToClipboard(text);
     setTimeout(() => setIsCopied(false), 2000); // Reset the isCopied state after 2 seconds
   };
-
-  useEffect(() => {
-    const getMints = async () => {
-      const mints = await getMintsAPI();
-      setMints(mints);
-    };
-    if (!!currentUser) {
-      getMints();
-    }
-  }, [currentUser]);
 
   return (
     <div className="w-full md:w-[460px] rounded-xl bg-bgLancerSecondary/[8%] overflow-hidden p-6 text-textGreen">

@@ -10,7 +10,7 @@ import { updateList } from "@/src/utils";
 import { BountyActionsButton } from ".";
 import { useState } from "react";
 
-export const RequestToSubmit = () => {
+export const Apply = () => {
   const { currentUser, currentWallet } = useUserWallet();
   const { currentBounty, setCurrentBounty } = useBounty();
   const { currentTutorialState, setCurrentTutorialState } = useTutorial();
@@ -18,6 +18,8 @@ export const RequestToSubmit = () => {
   const { createReferralMember } = useReferral();
 
   const [isLoading, setIsLoading] = useState(false);
+
+  if (!currentBounty || currentBounty.currentUserRelationsList) return null;
 
   const onClick = async () => {
     // Request to submit. Does not interact on chain
