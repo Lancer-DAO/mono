@@ -67,7 +67,7 @@ const Coinflow: React.FC<{
   wallet: LancerWallet;
 }> = ({ transaction, onSuccess, amount, connection, wallet }) => {
   return (
-    <div className="coinflow-wrapper">
+    <div className="h-80">
       <CoinflowPurchase
         wallet={wallet}
         merchantId="lancer"

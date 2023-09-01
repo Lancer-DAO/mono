@@ -8,6 +8,7 @@ import {
 } from "react";
 import { useOutsideAlerter } from "@/src/hooks";
 import { Close } from "@/components";
+import { motion } from "framer-motion";
 
 interface Props extends HTMLAttributes<HTMLDivElement> {
   children: ReactNode;
@@ -26,17 +27,20 @@ const Modal: FC<Props> = (props: Props) => {
   // }, [showModal, setShowModal]);
 
   return (
-    <div
+    <motion.div
       key="image-modal"
-      className="fixed inset-0 backdrop-blur-sm z-50 w-screen h-screen
-      bg-bgLancer border border-primaryBtnBorder"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ ease: "easeInOut", duration: 0.2 }}
+      className="fixed inset-0 backdrop-blur-sm z-50 w-screen h-screen bg-black/30"
       onClick={componentProps.onClick}
     >
       <div
         onClick={(e) => e.stopPropagation()}
-        className={`md:bg-opacity-90 absolute left-1/2 top-1/2 transform 
-        -translate-y-1/2 -translate-x-1/2 overflow-clip
-        bg-main bg-cover rounded-md w-[90%] p-4
+        className={`absolute left-1/2 top-1/2 transform 
+        -translate-y-1/2 -translate-x-1/2 overflow-x-hidden overflow-y-auto
+        bg-bgLancer rounded-xl w-[90%] p-5 max-h-[90vh]
         lg:w-[100vh] xl:w-[120vh] 3xl:w-[70vh] ${className}`}
         ref={wrapperRef}
       >
@@ -44,11 +48,11 @@ const Modal: FC<Props> = (props: Props) => {
           className="fixed top-5 right-5 cursor-pointer"
           onClick={() => setShowModal(false)}
         >
-          <Close />
+          <Close className="fill-black w-4 h-4" />
         </div>
         {children}
       </div>
-    </div>
+    </motion.div>
   );
 };
 

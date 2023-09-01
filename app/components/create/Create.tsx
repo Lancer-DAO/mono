@@ -8,7 +8,6 @@ import { PublicKey } from "@solana/web3.js";
 import {
   AdditionalInfoForm,
   CreateBountyForm,
-  FundBountyForm,
   PreviewForm,
   SuccessForm,
 } from "./components";
@@ -68,11 +67,7 @@ export const Create = () => {
     <div className="w-full max-w-[1200px] mx-auto flex md:justify-evenly mt-10">
       {/* quest info entry section */}
       <div
-        className={`${
-          formSection === "PREVIEW" || formSection === "FUND"
-            ? "w-full"
-            : "md:w-[515px]"
-        }`}
+        className={`${formSection === "PREVIEW" ? "w-full" : "md:w-[515px]"}`}
       >
         {formSection === "CREATE" && (
           <CreateBountyForm
@@ -98,19 +93,10 @@ export const Create = () => {
             mint={mint}
           />
         )}
-        {formSection === "FUND" && (
-          <FundBountyForm
-            isAccountCreated={isAccountCreated}
-            formData={formData}
-            setFormData={setFormData}
-            setFormSection={setFormSection}
-            mint={mint}
-          />
-        )}
         {formSection === "SUCCESS" && <SuccessForm />}
       </div>
       {/* preview section */}
-      {formSection !== "PREVIEW" && formSection !== "FUND" && (
+      {formSection !== "PREVIEW" && (
         <div className="md:w-[515px] pt-10">
           <PreviewCardBase>
             <BountyCard

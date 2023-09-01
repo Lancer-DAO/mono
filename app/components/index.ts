@@ -7,6 +7,7 @@ const QuestCreated = dynamic(() => import("./@animations/QuestCreated"));
 
 // @icons
 const Close = dynamic(() => import("./@icons/Close"));
+const Coins = dynamic(() => import("./@icons/Coins"));
 const ExternalLinkIcon = dynamic(() => import("./@icons/ExternalLinkIcon"));
 const LockIcon = dynamic(() => import("./@icons/LockIcon"));
 const Logo = dynamic(() => import("./@icons/Logo"));
@@ -38,17 +39,19 @@ const CoinflowFund = dynamic(() => import("./molecules/CoinflowFund"));
 const CopyLinkField = dynamic(() => import("./molecules/CopyLinkField"));
 const ImageUpload = dynamic(() => import("./molecules/ImageUpload"));
 const IndustryDropdown = dynamic(() => import("./molecules/IndustryDropdown"));
+const MintsDropdown = dynamic(() => import("./molecules/MintsDropdown"));
+const Modal = dynamic(() => import("./molecules/Modal"));
 const MultiSelectDropdown = dynamic(
   () => import("./molecules/MultiSelectDropdown")
 );
 const RangeSlider = dynamic(() => import("./molecules/RangeSlider"));
-const MintsDropdown = dynamic(() => import("./molecules/MintsDropdown"));
 const SidePanel = dynamic(() => import("./molecules/SidePanel"));
 const Toggle = dynamic(() => import("./molecules/Toggle"));
 const TutorialsModal = dynamic(() => import("./molecules/TutorialsModal"));
 const WalletInfo = dynamic(() => import("./molecules/WalletInfo"));
 
 // organisms
+const FundBountyModal = dynamic(() => import("./organisms/FundBountyModal"));
 const Header = dynamic(() => import("./organisms/Header"));
 const JoyrideWrapper = dynamic(() => import("./organisms/JoyrideWrapper"));
 
@@ -63,6 +66,7 @@ export {
 
   // @icons
   Close,
+  Coins,
   ExternalLinkIcon,
   LockIcon,
   Logo,
@@ -92,15 +96,17 @@ export {
   CopyLinkField,
   ImageUpload,
   IndustryDropdown,
+  MintsDropdown,
+  Modal,
   MultiSelectDropdown,
   RangeSlider,
-  MintsDropdown,
   SidePanel,
   Toggle,
   TutorialsModal,
   WalletInfo,
 
   // organisms
+  FundBountyModal,
   Header,
   JoyrideWrapper,
 
