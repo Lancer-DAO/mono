@@ -57,6 +57,7 @@ const bountyQuery = async (id: number) => {
       issue: true,
       tags: true,
       pullRequests: true,
+      industries: true,
     },
   });
 };
