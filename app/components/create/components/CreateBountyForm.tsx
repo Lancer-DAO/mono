@@ -1,9 +1,9 @@
-import { FC, Dispatch, SetStateAction, useEffect, useState } from "react";
-import { IndustryDropdown, MultiSelectDropdown, Toggle } from "@/components";
-import { CREATE_BOUNTY_TUTORIAL_INITIAL_STATE } from "@/src/constants/tutorials";
+import { useState, Dispatch, FC, SetStateAction, useEffect } from "react";
+import { IndustryDropdown, Toggle } from "@/components";
 import { smallClickAnimation } from "@/src/constants";
-import { FORM_SECTION, FormData } from "@/types/forms";
+import { CREATE_BOUNTY_TUTORIAL_INITIAL_STATE } from "@/src/constants/tutorials";
 import { useTutorial } from "@/src/providers/tutorialProvider";
+import { FORM_SECTION, FormData } from "@/types/forms";
 import { motion } from "framer-motion";
 import { toast } from "react-hot-toast";
 import { Industry } from "@/types";
