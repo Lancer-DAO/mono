@@ -18,6 +18,7 @@ const USDC = dynamic(() => import("./@icons/USDC"));
 // atoms
 const BountyCardFrame = dynamic(() => import("./atoms/BountyCardFrame"));
 const Button = dynamic(() => import("./atoms/Button"));
+const LinkButton = dynamic(() => import("./atoms/LinkButton"));
 const CoinflowOfframp = dynamic(() => import("./atoms/CoinflowOfframp"));
 const ContributorInfo = dynamic(() => import("./atoms/ContributorInfo"));
 const LoadingBar = dynamic(() => import("./atoms/LoadingBar"));

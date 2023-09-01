@@ -9,10 +9,22 @@ import { useAppContext } from "@/src/providers/appContextProvider";
 import { IS_CUSTODIAL } from "@/src/constants";
 import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
 import { useWallet } from "@solana/wallet-adapter-react";
+import LinkButton from "../atoms/LinkButton";
+import { useUserWallet } from "@/src/providers";
 
 const HEADER_LINKS = [
-  { href: "/create", children: "New Quest", id: "create-bounty-link" },
-  { href: "/quests", children: "Quests", id: "bounties-link" },
+  {
+    href: "/create",
+    children: "New Quest",
+    id: "create-bounty-link",
+    disabledText: "You must be Approved to create a Quest.",
+  },
+  {
+    href: "/quests",
+    children: "Quests",
+    id: "bounties-link",
+    disabledText: "You must be Approved to view Quests.",
+  },
 ];
 
 export const Header = () => {
@@ -20,7 +32,7 @@ export const Header = () => {
   const { isRouterReady } = useAppContext();
   const [isTutorialButtonHovered, setIsTutorialButtonHovered] = useState(false);
   const [showTutorialModal, setShowTutorialModal] = useState(false);
-
+  const { currentUser } = useUserWallet();
   const { publicKey } = useWallet();
 
   return (
@@ -31,13 +43,20 @@ export const Header = () => {
           <p className="text-lg text-bgLancerSecondary">Lancer</p>
         </Link>
         <div className="flex gap-8 items-center w-full">
-          {HEADER_LINKS.map(({ href, children }) => {
-            return (
-              <a href={href} className="text-lg font-bold" key={href}>
-                {children}
-              </a>
-            );
-          })}
+          {currentUser &&
+            HEADER_LINKS.map(({ href, children, disabledText }) => {
+              return (
+                <LinkButton
+                  href={href}
+                  className="text-lg font-bold"
+                  key={href}
+                  disabled={!currentUser.hasBeenApproved}
+                  disabledText={disabledText}
+                >
+                  {children}
+                </LinkButton>
+              );
+            })}
           <div className="flex items-center gap-8 ml-auto">
             {publicKey && <AccountHeaderOptions />}
 

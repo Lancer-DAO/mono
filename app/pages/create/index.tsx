@@ -28,6 +28,7 @@ export async function getServerSideProps(
       id: true,
       isAdmin: true,
       hasFinishedOnboarding: true,
+      hasBeenApproved: true,
     },
   });
 
@@ -39,7 +40,7 @@ export async function getServerSideProps(
       },
     };
   }
-  if (!user.hasFinishedOnboarding) {
+  if (!user.hasBeenApproved) {
     return {
       redirect: {
         destination: "/account",
