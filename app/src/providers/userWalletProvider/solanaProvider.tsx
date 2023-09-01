@@ -22,27 +22,6 @@ const solanaProvider = (
 ): WalletActions => {
   const solanaWallet = new SolanaWallet(provider);
 
-  const getConnection = async (): Promise<Connection> => {
-    const connectionConfig = await solanaWallet.request<CustomChainConfig>({
-      method: "solana_provider_config",
-      params: [],
-    });
-    const conn = new Connection(connectionConfig.rpcTarget, "finalized");
-    return conn;
-  };
-
-  const getBalance = async () => {
-    try {
-      const conn = await getConnection();
-      const accounts = await solanaWallet.requestAccounts();
-      const balance = await conn.getBalance(new PublicKey(accounts[0]));
-      uiConsole("Solana balance", balance);
-    } catch (error) {
-      console.error("Error", error);
-      uiConsole("error", error);
-    }
-  };
-
   const signMessage = async (message: Uint8Array): Promise<Uint8Array> => {
     try {
       const res = await solanaWallet.signMessage(message);
@@ -73,7 +52,6 @@ const solanaProvider = (
     transaction: T
   ): Promise<T> => {
     try {
-      const conn = await getConnection();
       const solWeb3 = new SolanaWallet(provider);
       const signedTx = await solWeb3.signTransaction(transaction);
       signedTx.serialize();

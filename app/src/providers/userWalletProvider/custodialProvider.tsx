@@ -48,6 +48,7 @@ import { api } from "@/src/utils/api";
 import { useRouter } from "next/router";
 import { getCookie, setCookie } from "cookies-next";
 import { User } from "@/types/Bounties";
+import { useDebugMode } from "../debugModeProvider";
 const SOLANA_CHAIN_CONFIG = {
   solana: {
     chainNamespace: CHAIN_NAMESPACES.SOLANA,
@@ -97,6 +98,8 @@ export const CustodialWalletProvider: FunctionComponent<IWeb3AuthState> = ({
 }: IWeb3AuthProps) => {
   const [web3Auth, setWeb3Auth] = useState<Web3AuthNoModal | null>(null);
   const router = useRouter();
+  const { isDebugMode } = useDebugMode();
+
   const [jwt, setJwt] = useState<string | null>(null);
   const [walletAction, setWalletActions] = useState<WalletActions | null>(null);
   const [currentWallet, setCurrentWallet] = useState<LancerWallet | null>(null);
@@ -145,7 +148,9 @@ export const CustodialWalletProvider: FunctionComponent<IWeb3AuthState> = ({
         maybeInitAccount({
           publicKey: wallet.publicKey.toBase58(),
         });
-        const provider = new AnchorProvider(connection, wallet, {});
+        const provider = new AnchorProvider(connection, wallet, {
+          skipPreflight: isDebugMode,
+        });
         const program = new Program<MonoProgram>(
           MonoProgramJSON as unknown as MonoProgram,
           new PublicKey(MONO_ADDRESS),

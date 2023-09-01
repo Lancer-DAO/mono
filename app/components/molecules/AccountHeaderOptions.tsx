@@ -11,9 +11,12 @@ import {
 import { useTutorial } from "@/src/providers/tutorialProvider";
 import { IS_CUSTODIAL } from "@/src/constants";
 import { LinkButton } from "@/components";
+import { useDebugMode } from "@/src/providers/debugModeProvider";
+import classNames from "classnames";
 
 const AccountHeaderOptions = () => {
   const { currentUser, logout, currentWallet } = useUserWallet();
+  const { isDebugMode, setIsDebugMode } = useDebugMode();
   const { currentTutorialState, setCurrentTutorialState } = useTutorial();
 
   const [showModal, setShowModal] = useState(false);
@@ -145,6 +148,16 @@ const AccountHeaderOptions = () => {
                   <PubKey pubKey={currentWallet.publicKey} />
                 </>
               )}
+
+              <Button
+                className={classNames(
+                  "flex w-full h-[48px] border-t-gray-400 rounded-b-[20px] border-t-[1px] py-[6px] items-center justify-center  transition-colors duration-300 ease-in-out",
+                  isDebugMode
+                    ? "text-white bg-bgLancerSecondary"
+                    : "hover:bg-turquoise-500 text-gray-800 hover:text-white-100 "
+                )}
+                onClick={() => setIsDebugMode(!isDebugMode)}
+              >{`Debug ${isDebugMode ? "On" : "Off"}`}</Button>
             </div>
           )}
           <ApiKeyModal showModal={showModal} setShowModal={setShowModal} />

@@ -12,6 +12,7 @@ import { DefaultLayout } from "../components";
 // import your default seo configuration
 import SEO from "../next-seo.config";
 import { Toaster } from "react-hot-toast";
+import DebugModeProvider from "@/src/providers/debugModeProvider";
 
 const COOKIE_REF = "referrer";
 
@@ -40,11 +41,13 @@ const App = ({ Component, pageProps }: AppPropsWithLayout) => {
   }, [router.query]);
 
   return (
-    <AllProviders>
-      <DefaultSeo {...SEO} />
-      <Toaster />
-      {getLayout(<Component {...pageProps} />)}
-    </AllProviders>
+    <DebugModeProvider>
+      <AllProviders>
+        <DefaultSeo {...SEO} />
+        <Toaster />
+        {getLayout(<Component {...pageProps} />)}
+      </AllProviders>
+    </DebugModeProvider>
   );
 };
 
