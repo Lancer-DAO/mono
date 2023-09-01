@@ -25,28 +25,26 @@ export const WelcomeView: FC<Props> = ({
         formSection === OnboardStep.Welcome ? "block" : "hidden"
       } flex flex-col items-center justify-center w-full h-full`}
     >
-      {account.isLoading && <LoadingBar title={account.loadingPrompt} />}
-      {account.error && (
-        <div className="color-red">{account.error.message}</div>
-      )}
-      {account.result && (
-        <div className="flex flex-col items-center justify-center w-full max-w-[750px] mx-auto h-full gap-5 px-5">
-          <div className="text-4xl font-bold text-center">
-            Welcome to Lancer.
-          </div>
-          <div className="h-[320px]">
-            <LogoShield width="w-80" height="w-80" />
-          </div>
-          <div className="text-lg text-center">
-            You&apos;re one step away from connecting with the best clients &
-            freelancers on the planet.
-          </div>
-          <div className="text-lg text-center">
-            Velit duis excepteur esse sit dolore nulla. Proident minim cillum
-            magna occaecat sint ipsum consectetur sit velit sit ullamco id non
-            reprehenderit. Amet reprehenderit anim Lorem proident sunt laborum
-            aute labore.
-          </div>
+      <div className="flex flex-col items-center justify-center w-full max-w-[750px] mx-auto h-full gap-5 px-5">
+        <div className="text-4xl font-bold text-center">Welcome to Lancer.</div>
+        <div className="h-[320px]">
+          <LogoShield width="w-80" height="w-80" />
+        </div>
+        <div className="text-lg text-center">
+          You&apos;re one step away from connecting with the best clients &
+          freelancers on the planet.
+        </div>
+        <div className="text-lg text-center">
+          Velit duis excepteur esse sit dolore nulla. Proident minim cillum
+          magna occaecat sint ipsum consectetur sit velit sit ullamco id non
+          reprehenderit. Amet reprehenderit anim Lorem proident sunt laborum
+          aute labore.
+        </div>
+        {account.isLoading && <LoadingBar title={null} />}
+        {account.error && (
+          <div className="text-red-500">{account.error.message}</div>
+        )}
+        {account.result && !account.isLoading && !account.error && (
           <motion.button
             {...smallClickAnimation}
             onClick={() => setFormSection(OnboardStep.Skillset)}
@@ -55,8 +53,8 @@ export const WelcomeView: FC<Props> = ({
           >
             NEXT
           </motion.button>
-        </div>
-      )}
+        )}
+      </div>
     </motion.div>
   );
 };
