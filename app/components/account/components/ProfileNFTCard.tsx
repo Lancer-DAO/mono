@@ -136,47 +136,6 @@ export const ProfileNFTCard = ({
       }
     }
   };
-  
-  const handleCreateLink = useCallback(async () => {
-    await createReferralMember();
-
-    // TODO: success logic
-  }, [initialized]);
-
-  const handleClaim = async (amount: number, treasury: Treasury) => {
-    if (amount) await claim(treasury);
-  };
-
-  const claimButtons = useMemo(() => {
-    return claimables
-      .filter((claimable) => claimable.amount !== 0)
-      .map((claimable, index) => {
-        const claimMintKey = claimable.treasury.account.mint.toString();
-        const claimMint = new PublicKey(USDC_MINT);
-        return (
-          <Button
-            key={`${claimable.treasury.account}-${index}`}
-            onClick={() => handleClaim(claimable.amount, claimable.treasury)}
-          >
-            Claim {claimable.amount} {"USDC"}
-          </Button>
-        );
-      });
-  }, [claimables, allMints]);
-
-  const copyToClipboard = async (text: string) => {
-    try {
-      await navigator.clipboard.writeText(text);
-      setIsCopied(true);
-    } catch (err) {
-      console.error("Failed to copy text: ", err);
-    }
-  };
-
-  const handleCopyClick = (text: string) => {
-    copyToClipboard(text);
-    setTimeout(() => setIsCopied(false), 2000); // Reset the isCopied state after 2 seconds
-  };
 
   return (
     <div className="w-full md:w-[460px] rounded-xl bg-bgLancerSecondary/[8%] overflow-hidden p-6 text-textGreen">
