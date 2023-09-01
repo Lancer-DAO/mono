@@ -16,6 +16,7 @@ import { LoadingBar } from "@/components";
 import { ProfileNFTCard, QuestsCard } from "./components";
 import BadgesCard from "./components/BadgesCard";
 import { ReferCard } from "./components/ReferCard";
+import ResumeCard from "./components/ResumeCard";
 
 dayjs.extend(relativeTime);
 
@@ -146,6 +147,7 @@ export const Account: FC<Props> = ({ self }) => {
           </div>
           {/* right column */}
           <div className="flex flex-col gap-5 w-full">
+            {fetchedUser.id === currentUser.id && <ResumeCard />}
             <QuestsCard />
             {fetchedUser.id === currentUser.id && <ReferCard />}
           </div>

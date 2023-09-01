@@ -356,26 +356,27 @@ model User {
   isAdmin               Boolean?
   verified              Boolean?
   hasProfileNFT         Boolean?
-  hasFinishedOnboarding Boolean? @default(false)
-  githubId              String?  @db.VarChar(24)
   googleId              String?  @db.VarChar(64)
+  githubId              String?  @db.VarChar(24)
   githubLogin           String?  @db.VarChar(64)
   picture               String?  @db.VarChar(2000)
   name                  String?  @db.VarChar(128)
+  bio                   String?  @db.VarChar(2000)
   discord               String?  @db.VarChar(64)
-  linkedin              String?  @db.VarChar(64)
-  github                String?  @db.VarChar(64)
   twitter               String?  @db.VarChar(64)
   instagram             String?  @db.VarChar(64)
+  linkedin              String?  @db.VarChar(64)
+  github                String?  @db.VarChar(64)
   website               String?  @db.VarChar(128)
   email                 String?  @unique @db.VarChar(128)
-  company               String?  @db.VarChar(128)
-  position              String?  @db.VarChar(128)
-  bio                   String?  @db.VarChar(2000)
+  resume                String?  @db.VarChar(256)
   profileWalletId       Int?     @unique
   refferralTreasuryKey  String?  @unique @db.VarChar(128)
   referralId            String?  @unique @db.VarChar(128)
   createdAt             String   @default("") @db.VarChar(24)
+  company               String?  @db.VarChar(128)
+  position              String?  @db.VarChar(128)
+  hasFinishedOnboarding Boolean? @default(false)
 
   // Relations
   wallets      Wallet[]

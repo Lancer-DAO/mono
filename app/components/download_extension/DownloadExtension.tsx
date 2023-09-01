@@ -1,5 +1,6 @@
 import React from "react";
 import { DownloadZipFile } from "./components/DownloadZipFile";
+import { LogoShield } from "@/components";
 
 export const DownloadExtension = () => {
   return (
@@ -14,6 +15,7 @@ export const DownloadExtension = () => {
       >
         Installation Guide
       </a>
+      <LogoShield width="w-12" height="h-12" />
     </div>
   );
 };
