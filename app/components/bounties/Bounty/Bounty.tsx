@@ -153,7 +153,6 @@ export const Bounty = () => {
                       target="_blank"
                       rel="noreferrer"
                       className="underline text-blue-500"
-                      key={link}
                     >
                       {formattedLink}
                     </a>
