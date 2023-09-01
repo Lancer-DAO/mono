@@ -142,6 +142,8 @@ export const Account: FC<Props> = ({ self }) => {
               profileNFT={profileNFT}
               picture={fetchedUser.picture}
               githubId={fetchedUser.githubId}
+              user={fetchedUser}
+              self={self}
             />
             <BadgesCard profileNFT={profileNFT} />
           </div>

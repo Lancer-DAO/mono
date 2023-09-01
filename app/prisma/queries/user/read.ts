@@ -13,6 +13,7 @@ const USER_INCLUDE = {
       referrer: true,
     },
   },
+  industries: true,
 };
 
 const userQuery = async (email: string) =>
