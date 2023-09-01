@@ -1,4 +1,10 @@
-import { LoadingBar, LogoShield } from "@/components";
+import {
+  LoadingBar,
+  LogoShield,
+  ProfileCreated,
+  QuestCompleted,
+  QuestCreated,
+} from "@/components";
 import { IAsyncResult, User } from "@/types";
 import { Dispatch, FC, SetStateAction } from "react";
 import { OnboardStep } from "../Onboard";
@@ -25,8 +31,8 @@ export const WelcomeView: FC<Props> = ({
     >
       <div className="flex flex-col items-center justify-center w-full max-w-[750px] mx-auto h-full gap-5 px-5">
         <div className="text-4xl font-bold text-center">Welcome to Lancer.</div>
-        <div className="h-[320px]">
-          <LogoShield width="w-80" height="w-80" />
+        <div className="h-[390px]">
+          <ProfileCreated width="w-96" height="w-96" />
         </div>
         <div className="text-lg text-center">
           You&apos;re one step away from connecting with the best clients &
