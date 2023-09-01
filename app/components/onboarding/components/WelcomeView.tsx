@@ -18,8 +18,6 @@ export const WelcomeView: FC<Props> = ({
 }) => {
   return (
     <motion.div
-      {...enterAnimation}
-      exit={{ opacity: 0 }}
       key={"welcome"}
       className={`${
         formSection === OnboardStep.Welcome ? "block" : "hidden"
