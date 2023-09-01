@@ -14,6 +14,7 @@ export const RequestChanges = () => {
   const { mutateAsync } = api.bountyUsers.update.useMutation();
 
   if (
+    !currentBounty ||
     !(
       currentBounty.isCreator &&
       currentBounty.currentSubmitter &&
@@ -33,7 +34,7 @@ export const RequestChanges = () => {
       provider
     );
     const newRelations = updateList(
-      currentBounty.currentUserRelationsList,
+      [],
       [BOUNTY_USER_RELATIONSHIP.CurrentSubmitter],
       [BOUNTY_USER_RELATIONSHIP.ChangesRequestedSubmitter]
     );

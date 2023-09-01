@@ -13,14 +13,14 @@ export const DenySubmission = () => {
   const { mutateAsync } = api.bountyUsers.update.useMutation();
 
   if (
+    !currentBounty ||
     !(
       currentBounty.isCreator &&
       currentBounty.currentSubmitter &&
       !currentBounty.completer
     )
-  ) {
+  )
     return null;
-  }
 
   const onClick = async () => {
     const signature = await denyRequestFFA(
@@ -32,7 +32,7 @@ export const DenySubmission = () => {
     );
 
     const newRelations = updateList(
-      currentBounty.currentUserRelationsList,
+      [],
       [],
       [BOUNTY_USER_RELATIONSHIP.DeniedSubmitter]
     );

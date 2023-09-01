@@ -81,7 +81,9 @@ const UserWalletProvider: FunctionComponent<IUserWalletState> = ({
         },
         providerName: "Phantom",
       };
-      const provider = new AnchorProvider(connection, lancerWallet, {});
+      const provider = new AnchorProvider(connection, lancerWallet, {
+        skipPreflight: true,
+      });
       const program = new Program<MonoProgram>(
         MonoProgramJSON as unknown as MonoProgram,
         new PublicKey(MONO_ADDRESS),

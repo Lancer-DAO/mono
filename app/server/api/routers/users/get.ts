@@ -9,7 +9,7 @@ export const getUser = protectedProcedure
       id: z.number(),
     })
   )
-  .mutation(async ({ input: { id } }) => {
+  .query(async ({ input: { id } }) => {
     const user = await queries.user.getById(id);
 
     return user;
