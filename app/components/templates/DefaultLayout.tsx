@@ -1,24 +1,28 @@
 import { Header, JoyrideWrapper } from "@/components";
 import { useUserWallet } from "@/src/providers";
-import { ReactNode } from "react";
+import { ReactNode, useState } from "react";
 import Sidebar from "../organisms/Sidebar";
-import SendbirdProvider from "@sendbird/uikit-react/SendbirdProvider";
+import SidePanel from "../molecules/sidebar";
 
 const DefaultLayout: React.FC<{ children: ReactNode }> = ({ children }) => {
   const { currentUser } = useUserWallet();
+
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
+  const setSidebarOpen = () => {
+    setIsSidebarOpen(true);
+  };
+
   return (
     <div className="relative flex">
       <div className="flex-grow">
-        <Header />
+        <Header setSidebarOpen={setSidebarOpen} />
         {currentUser && <JoyrideWrapper />}
         <main>{children}</main>
       </div>
-      <SendbirdProvider
-        appId={"54A96D9A-1DEA-4962-9F4E-9899BAE7011D"}
-        userId={String(currentUser?.id)}
-      >
-        {/* <Sidebar /> */}
-      </SendbirdProvider>
+
+      {/* {currentUser && <Sidebar />} */}
+      <SidePanel open={isSidebarOpen} setOpen={setIsSidebarOpen} />
     </div>
   );
 };

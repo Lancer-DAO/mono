@@ -47,7 +47,6 @@ const MultiSelectDropdown = dynamic(
   () => import("./molecules/MultiSelectDropdown")
 );
 const RangeSlider = dynamic(() => import("./molecules/RangeSlider"));
-const SidePanel = dynamic(() => import("./molecules/SidePanel"));
 const TutorialsModal = dynamic(() => import("./molecules/TutorialsModal"));
 const WalletInfo = dynamic(() => import("./molecules/WalletInfo"));
 
@@ -102,7 +101,6 @@ export {
   Modal,
   MultiSelectDropdown,
   RangeSlider,
-  SidePanel,
   Toggle,
   TutorialsModal,
   WalletInfo,
