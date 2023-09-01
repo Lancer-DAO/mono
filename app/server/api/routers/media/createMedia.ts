@@ -13,13 +13,17 @@ export const createMedia = protectedProcedure
   )
   .mutation(
     async ({
+      ctx,
       input: {
         imageUrl,
         title,
         description,
       }
     }) => {
+      const { id } = ctx.user;
+
       return await queries.media.create(
+        id,
         imageUrl,
         title,
         description

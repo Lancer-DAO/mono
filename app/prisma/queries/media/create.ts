@@ -3,6 +3,7 @@ import { UnwrapPromise } from "@/types";
 import * as Prisma from "@prisma/client";
 
 export const create = async (
+  id: number,
   imageUrl: string,
   title: string,
   description: string,
@@ -12,6 +13,9 @@ export const create = async (
       imageUrl,
       title,
       description,
+      user: {
+        connect: { id: id },
+      }
     },
   });
   return media;
