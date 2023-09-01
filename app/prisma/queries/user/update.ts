@@ -120,7 +120,7 @@ export const updateLinks = async (
   id: number,
   website: string,
   github: string,
-  linkedin: string,
+  linkedin: string
 ): Promise<Prisma.User> => {
   return await prisma.user.update({
     where: {
@@ -136,7 +136,7 @@ export const updateLinks = async (
 
 export const updateResume = async (
   id: number,
-  resume: string,
+  resume: string
 ): Promise<Prisma.User> => {
   return await prisma.user.update({
     where: {
