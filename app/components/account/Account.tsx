@@ -151,7 +151,8 @@ export const Account: FC<Props> = ({ self }) => {
           <div className="flex flex-col gap-5 w-full">
             {fetchedUser.id === currentUser.id && <ResumeCard />}
             <QuestsCard />
-            {fetchedUser.id === currentUser.id && <ReferCard />}
+            {fetchedUser.id === currentUser.id &&
+              currentUser.hasBeenApproved && <ReferCard />}
           </div>
         </div>
       ) : (
