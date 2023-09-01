@@ -165,36 +165,38 @@ const Onboard: FC = () => {
   }, [account?.result]);
 
   return (
-    <AnimatePresence mode="wait">
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
-        transition={{ duration: 0.2 }}
-        key={`onboard-${formSection}`}
-        className="w-full max-w-[1200px] mx-auto flex flex-col md:flex-row md:justify-evenly mt-10"
-      >
-        <WelcomeView
-          account={account}
-          formSection={formSection}
-          setFormSection={setFormSection}
-        />
-        <SkillsetView
-          formSection={formSection}
-          setFormSection={setFormSection}
-          profileData={profileData}
-          setProfileData={setProfileData}
-          account={account?.result}
-        />
-        <ProfileInfoView
-          formSection={formSection}
-          setFormSection={setFormSection}
-          profileData={profileData}
-          setProfileData={setProfileData}
-          account={account?.result}
-          handleUpdateProfile={handleUpdateProfile}
-        />
-      </motion.div>
+    <div className="w-full h-full">
+      <AnimatePresence mode="wait">
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.2 }}
+          key={`onboard-${formSection}`}
+          className="w-full max-w-[1200px] mx-auto flex flex-col md:flex-row md:justify-evenly mt-10"
+        >
+          <WelcomeView
+            account={account}
+            formSection={formSection}
+            setFormSection={setFormSection}
+          />
+          <SkillsetView
+            formSection={formSection}
+            setFormSection={setFormSection}
+            profileData={profileData}
+            setProfileData={setProfileData}
+            account={account?.result}
+          />
+          <ProfileInfoView
+            formSection={formSection}
+            setFormSection={setFormSection}
+            profileData={profileData}
+            setProfileData={setProfileData}
+            account={account?.result}
+            handleUpdateProfile={handleUpdateProfile}
+          />
+        </motion.div>
+      </AnimatePresence>
       <div className="fixed bottom-0 left-0">
         <Image
           src="/assets/images/knight_left.png"
@@ -211,7 +213,7 @@ const Onboard: FC = () => {
           alt="knight"
         />
       </div>
-    </AnimatePresence>
+    </div>
   );
 };
 
