@@ -1,11 +1,10 @@
+import { useCallback, useMemo, useState } from "react";
 import { Button, CoinflowOfframp, CopyLinkField } from "@/components";
 import { IS_CUSTODIAL } from "@/src/constants";
 import { useUserWallet } from "@/src/providers";
 import { useReferral } from "@/src/providers/referralProvider";
 import { api } from "@/src/utils";
 import { Treasury } from "@ladderlabs/buddy-sdk";
-import * as Prisma from "@prisma/client";
-import { useCallback, useEffect, useMemo, useState } from "react";
 
 const SITE_URL = `https://${IS_CUSTODIAL ? "app" : "pro"}.lancer.so/account?r=`;
 
