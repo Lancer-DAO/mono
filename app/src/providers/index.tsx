@@ -72,7 +72,7 @@ export const AllProviders: React.FC<{ children: ReactNode }> = ({
     <UserProvider>
       <ConnectionProvider
         endpoint={endpoint}
-        config={{ commitment: "confirmed" }}
+        config={{ commitment: "finalized" }}
       >
         <WalletProvider wallets={walletProviders} autoConnect>
           <WalletModalProvider>
