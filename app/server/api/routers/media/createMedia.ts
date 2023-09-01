@@ -22,7 +22,7 @@ export const createMedia = protectedProcedure
     }) => {
       const { id } = ctx.user;
 
-      return await queries.media.create(
+      return await queries.media.createWithUserId(
         id,
         imageUrl,
         title,
