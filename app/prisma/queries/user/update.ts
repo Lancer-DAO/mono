@@ -66,3 +66,52 @@ export const updateName = async (
     },
   });
 };
+
+export const onboardingUpdate = async (
+  id: number,
+  industry: Prisma.Industry,
+  name: string,
+  email: string,
+  company: string,
+  position: string,
+  bio: string,
+  linkedin: string,
+  twitter: string,
+  github: string,
+  website: string
+): Promise<Prisma.User> => {
+  return await prisma.user.update({
+    where: {
+      id: id,
+    },
+    data: {
+      industries: {
+        connect: {
+          id: industry.id,
+        },
+      },
+      name,
+      email,
+      company,
+      position,
+      bio,
+      linkedin,
+      twitter,
+      github,
+      website,
+    },
+  });
+};
+
+export const updateHasFinishedOnboarding = async (
+  id: number
+): Promise<Prisma.User> => {
+  return await prisma.user.update({
+    where: {
+      id: id,
+    },
+    data: {
+      hasFinishedOnboarding: true,
+    },
+  });
+};

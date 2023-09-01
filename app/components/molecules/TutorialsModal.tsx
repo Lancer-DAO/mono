@@ -191,14 +191,14 @@ const TutorialRow: FC<{
               version="text"
               onClick={() => {
                 if (tutorial.pages.includes("bounty")) {
-                  router.push(`/bounties`);
+                  router.push(`/quests`);
                 } else {
                   router.push(`/${tutorial.pages[0]}`);
                 }
               }}
               hoveredText={
                 tutorial.pages.includes("bounty")
-                  ? "You must select a bounty from the bounty list before accessing this tutorial"
+                  ? "You must select a quest from the list before accessing this tutorial"
                   : undefined
               }
             >
@@ -278,16 +278,21 @@ const TutorialsModal: FC<Props> = ({ showModal, setShowModal }) => {
             )}
 
             <h3>Available on this Page</h3>
-            {availableTutorials.map((tutorial) => (
+            {availableTutorials.map((tutorial, index) => (
               <TutorialRow
+                key={`${tutorial.title}-${index}`}
                 tutorial={tutorial}
                 type="available"
                 setShowModal={setShowModal}
               />
             ))}
             <h3>Remaining Tutorials</h3>
-            {unavailableTutorials.map((tutorial) => (
-              <TutorialRow tutorial={tutorial} type="unavailable" />
+            {unavailableTutorials.map((tutorial, index) => (
+              <TutorialRow
+                key={`${tutorial.title}-${index}`}
+                tutorial={tutorial}
+                type="unavailable"
+              />
             ))}
           </div>
         </div>

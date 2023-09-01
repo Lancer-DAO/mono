@@ -1,96 +1,96 @@
-import { useEffect, useState, FC } from "react";
+import { FC, useEffect, useState } from "react";
 import { useRouter } from "next/router";
-import { DefaultLayout, LoadingBar } from "@/components";
-import { BountyNFTCard, ProfileNFTCard } from "./components";
 import {
   BOUNTY_PROJECT_PARAMS,
   IS_CUSTODIAL,
   PROFILE_PROJECT_PARAMS,
 } from "@/src/constants";
-import { api } from "@/utils";
-import { BountyNFT, IAsyncResult, ProfileNFT, User } from "@/types/";
-import { createUnderdogClient } from "@underdog-protocol/js";
-import dayjs from "dayjs";
-import relativeTime from "dayjs/plugin/relativeTime";
 import {
   BOUNTY_ACTIONS_TUTORIAL_II_INITIAL_STATE,
   PROFILE_TUTORIAL_INITIAL_STATE,
 } from "@/src/constants/tutorials";
 import { useUserWallet } from "@/src/providers";
 import { useTutorial } from "@/src/providers/tutorialProvider";
+import { ProfileNFT } from "@/types/";
+import { api } from "@/utils";
+import { createUnderdogClient } from "@underdog-protocol/js";
+import dayjs from "dayjs";
+import relativeTime from "dayjs/plugin/relativeTime";
+import { LoadingBar } from "@/components";
+import { ProfileNFTCard, QuestsCard } from "./components";
+import BadgesCard from "./components/BadgesCard";
+import { ReferCard } from "./components/ReferCard";
 
 dayjs.extend(relativeTime);
 
 const underdogClient = createUnderdogClient({});
 
-export const Account: FC = () => {
+interface Props {
+  self: boolean;
+}
+
+export const Account: FC<Props> = ({ self }) => {
   const router = useRouter();
 
+  // api + context
   const { currentUser, currentWallet } = useUserWallet();
   const { currentTutorialState, setCurrentTutorialState } = useTutorial();
-  const [profileNFT, setProfileNFT] = useState<ProfileNFT>();
-  const [bountyNFTs, setBountyNFTs] = useState<IAsyncResult<BountyNFT[]>>({
-    isLoading: true,
-  });
-  const { mutateAsync: getUser } = api.users.getUser.useMutation();
-  const { mutateAsync: verifyWallet } = api.users.verifyWallet.useMutation();
-  const [account, setAccount] = useState<IAsyncResult<User>>({
-    isLoading: true,
-    loadingPrompt: "Loading Profile",
-  });
-
-  const { mutateAsync: registerProfileNFT } =
-    api.users.registerProfileNFT.useMutation();
-
-  useEffect(() => {
-    const getUserAsync = async () => {
-      if (router.query.id !== undefined) {
-        const fetchAccount = async () => {
-          const account = await getUser({
-            id: parseInt(router.query.id as string),
-          });
-          setAccount({ ...account, result: account });
-        };
-        fetchAccount();
-      } else {
-        try {
-          let loadingPrompt = "Loading Profile";
-          setAccount({ isLoading: true, loadingPrompt });
-          setBountyNFTs({ isLoading: true });
-          setProfileNFT(null);
-
-          const verifiedWallet = await verifyWallet({
-            walletPublicKey: currentWallet?.publicKey.toString(),
-          });
-
-          if (!verifiedWallet.hasProfileNFT) {
-            loadingPrompt = "Creating Profile";
-            setAccount({ isLoading: true, loadingPrompt });
-            await mintProfileNFT();
-          }
-
-          setAccount({
-            isLoading: true,
-            loadingPrompt,
-            result: currentUser,
-            error: null,
-          });
-        } catch (e) {
-          setAccount({ error: e });
-        }
-      }
-    };
-    if (!!currentUser && !!currentWallet?.publicKey) {
-      getUserAsync();
+  const {
+    data: fetchedUser,
+    isLoading: userLoading,
+    isError: userError,
+  } = api.users.getUser.useQuery(
+    {
+      id: self ? currentUser?.id : parseInt(router.query.account as string),
+    },
+    {
+      enabled: self ? !!currentUser : !!router.query.account,
     }
-  }, [currentUser, router.isReady, currentWallet?.publicKey]);
+  );
+
+  const [profileNFT, setProfileNFT] = useState<ProfileNFT>();
+
+  const fetchProfileNFT = async () => {
+    const walletKey =
+      router.query.account !== undefined
+        ? fetchedUser?.wallets.filter((wallet) => wallet.hasProfileNFT)[0]
+            ?.publicKey
+        : currentWallet.publicKey.toString();
+    const nfts = await underdogClient.getNfts({
+      params: PROFILE_PROJECT_PARAMS,
+      query: {
+        page: 1,
+        limit: 1,
+        ownerAddress: walletKey,
+      },
+    });
+
+    if (nfts.totalResults > 0) {
+      const { attributes, image } = nfts.results[0];
+      const profileNFT: ProfileNFT = {
+        name: fetchedUser?.name,
+        reputation: attributes.reputation as number,
+        badges:
+          attributes.badges !== ""
+            ? (attributes.badges as string)?.split(",")
+            : [],
+        certifications:
+          attributes.certifications !== ""
+            ? (attributes.certifications as string)?.split(",")
+            : [],
+        image: image,
+        lastUpdated: attributes.lastUpdated
+          ? dayjs(attributes.lastUpdated)
+          : undefined,
+      };
+      setProfileNFT(profileNFT);
+    }
+  };
 
   useEffect(() => {
-    if (account.result) {
+    if (fetchedUser) {
       const fetchNfts = async () => {
         await fetchProfileNFT();
-
-        await fetchBountyNFTs();
 
         if (
           currentTutorialState?.title ===
@@ -118,153 +118,49 @@ export const Account: FC = () => {
       };
       fetchNfts();
     }
-  }, [account?.result]);
-
-  const fetchProfileNFT = async () => {
-    const nfts = await underdogClient.getNfts({
-      params: PROFILE_PROJECT_PARAMS,
-      query: {
-        page: 1,
-        limit: 1,
-        ownerAddress: currentWallet.publicKey.toString(),
-      },
-    });
-    if (nfts.totalResults > 0) {
-      const { name, attributes, image } = nfts.results[0];
-      const profileNFT: ProfileNFT = {
-        name: name,
-        reputation: attributes.reputation as number,
-        badges:
-          attributes.badges !== ""
-            ? (attributes.badges as string)?.split(",")
-            : [],
-        certifications:
-          attributes.certifications !== ""
-            ? (attributes.certifications as string)?.split(",")
-            : [],
-        image: image,
-        lastUpdated: attributes.lastUpdated
-          ? dayjs(attributes.lastUpdated)
-          : undefined,
-      };
-      setProfileNFT(profileNFT);
-    }
-    setAccount({ ...account, isLoading: false, loadingPrompt: undefined });
-  };
-
-  const fetchBountyNFTs = async () => {
-    const nfts = await underdogClient.getNfts({
-      params: BOUNTY_PROJECT_PARAMS,
-      query: {
-        page: 1,
-        limit: 100,
-        ownerAddress: currentWallet.publicKey.toString(),
-      },
-    });
-    const bountyNFTs: BountyNFT[] = nfts.results.map((nft) => {
-      const { name, attributes, image } = nft;
-      return {
-        name: name,
-        reputation: attributes.reputation as number,
-        tags:
-          attributes.tags !== "" ? (attributes.tags as string)?.split(",") : [],
-        image: image,
-        completed: attributes.completed
-          ? dayjs(attributes.completed)
-          : undefined,
-        description: attributes.description as string,
-        role: attributes.role as string,
-      };
-    });
-    bountyNFTs.reverse();
-    setBountyNFTs({ isLoading: false, result: bountyNFTs });
-  };
-
-  const mintProfileNFT = async () => {
-    if (
-      currentTutorialState?.title === PROFILE_TUTORIAL_INITIAL_STATE.title &&
-      currentTutorialState.currentStep === 2
-    ) {
-      setCurrentTutorialState({
-        ...currentTutorialState,
-        isRunning: false,
-      });
-    }
-    const nfts = await underdogClient.getNfts({
-      params: PROFILE_PROJECT_PARAMS,
-      query: {
-        page: 1,
-        limit: 1,
-        ownerAddress: currentWallet.publicKey.toString(),
-      },
-    });
-
-    if (nfts.totalResults === 0) {
-      const result = await underdogClient.createNft({
-        params: PROFILE_PROJECT_PARAMS,
-        body: {
-          name: `${currentUser.name}`,
-          image: "https://i.imgur.com/3uQq5Zo.png",
-          attributes: {
-            reputation: 0,
-            badges: "",
-            certifications: "",
-            lastUpdated: dayjs().toISOString(),
-          },
-          upsert: true,
-          receiverAddress: currentWallet.publicKey.toString(),
-        },
-      });
-    }
-    await registerProfileNFT({
-      walletPublicKey: currentWallet.publicKey.toString(),
-    });
-  };
+  }, [!!fetchedUser]);
 
   if (!IS_CUSTODIAL && !currentWallet && !profileNFT)
-    return <div>Please Connect a Wallet</div>;
+    return (
+      <div className="w-full h-full flex items-center justify-center">
+        Please Connect a Wallet
+      </div>
+    );
 
-  if (account.error) {
-    return <div className="color-red">{account.error.message}</div>;
+  if (userError) {
+    return <div className="color-red">{"Error loading profile"}</div>;
   }
-  if (account.isLoading) {
-    return <LoadingBar title={account.loadingPrompt} />;
+  if (userLoading) {
+    return <LoadingBar title={"Loading profile"} />;
   }
   return (
-    <>
-      {account?.result && (
-        <div className="w-full flex flex-col md:flex-row items-center md:items-start gap-10 md:gap-5 justify-center">
-          {profileNFT && (
-            <>
-              <ProfileNFTCard
-                profileNFT={profileNFT}
-                picture={account?.result.picture}
-                githubId={account?.result.githubId}
-              />
+    <div className="w-full md:w-[90%] mx-auto px-4 md:px-0 py-10">
+      <h1 className="pb-2">{`${
+        self ? "Your Profile" : `@${fetchedUser?.name}`
+      }`}</h1>
+      {profileNFT && fetchedUser ? (
+        <div className="w-full flex items-start gap-5">
+          {/* left column */}
+          <div className="flex flex-col gap-5 w-full md:max-w-[482px]">
+            <ProfileNFTCard
+              profileNFT={profileNFT}
+              picture={fetchedUser.picture}
+              githubId={fetchedUser.githubId}
+            />
+            <BadgesCard profileNFT={profileNFT} />
+          </div>
+          {/* right column */}
+          <div className="flex flex-col gap-5 w-full">
+            <QuestsCard />
 
-              <div
-                className="flex flex-col gap-3 w-full md:w-[60%] px-5 pb-20"
-                id="bounties-list"
-              >
-                <p className="text-4xl flex items-center justify-center pb-3">
-                  Completed Bounties
-                </p>
-                {bountyNFTs.isLoading ? (
-                  <div className="flex justify-center items-center">
-                    <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-gray-900"></div>
-                  </div>
-                ) : bountyNFTs?.result?.length > 0 ? (
-                  bountyNFTs?.result?.map((bountyNFT) => (
-                    <BountyNFTCard bountyNFT={bountyNFT} />
-                  ))
-                ) : (
-                  <div className="w-full text-center">No bounties yet!</div>
-                )}
-              </div>
-            </>
-          )}
+            {fetchedUser.id === currentUser.id && <ReferCard />}
+          </div>
+        </div>
+      ) : (
+        <div className="w-full flex items-start gap-5">
+          <LoadingBar title="Loading Profile" />
         </div>
       )}
-    </>
+    </div>
   );
 };

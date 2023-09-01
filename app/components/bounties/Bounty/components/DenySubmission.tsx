@@ -1,4 +1,3 @@
-import { Button } from "@/components";
 import { denyRequestFFA } from "@/escrow/adapters";
 import { useUserWallet } from "@/src/providers";
 import { useBounty } from "@/src/providers/bountyProvider";
@@ -6,6 +5,7 @@ import { api } from "@/src/utils/api";
 import { PublicKey } from "@solana/web3.js";
 import { BOUNTY_USER_RELATIONSHIP, BountyState } from "@/types/";
 import { updateList } from "@/src/utils";
+import { BountyActionsButton } from ".";
 
 export const DenySubmission = () => {
   const { currentUser, currentWallet, program, provider } = useUserWallet();
@@ -13,14 +13,14 @@ export const DenySubmission = () => {
   const { mutateAsync } = api.bountyUsers.update.useMutation();
 
   if (
+    !currentBounty ||
     !(
       currentBounty.isCreator &&
       currentBounty.currentSubmitter &&
       !currentBounty.completer
     )
-  ) {
+  )
     return null;
-  }
 
   const onClick = async () => {
     const signature = await denyRequestFFA(
@@ -32,7 +32,7 @@ export const DenySubmission = () => {
     );
 
     const newRelations = updateList(
-      currentBounty.currentUserRelationsList,
+      [],
       [],
       [BOUNTY_USER_RELATIONSHIP.DeniedSubmitter]
     );
@@ -53,8 +53,6 @@ export const DenySubmission = () => {
   };
 
   return (
-    <Button onClick={onClick} disabled={!currentWallet.publicKey}>
-      Deny
-    </Button>
+    <BountyActionsButton type="red" text="Deny Submission" onClick={onClick} />
   );
 };

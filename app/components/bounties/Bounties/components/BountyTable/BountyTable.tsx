@@ -1,13 +1,15 @@
 import { useState, useEffect } from "react";
-import { TABLE_BOUNTY_STATES, TABLE_MY_BOUNTY_STATES } from "@/src/constants";
+import Image from "next/image";
+import { smallClickAnimation } from "@/src/constants";
 import { getUniqueItems } from "@/src/utils";
 import { useUserWallet } from "@/src/providers";
-import { LoadingBar } from "@/components";
+import { LoadingBar, BountyCard } from "@/components";
 import { api } from "@/src/utils/api";
-import { useRouter } from "next/router";
-import { BountyFilters, LancerBounty } from "./components";
-import { IAsyncResult } from "@/types/common";
-import { BountyPreview } from "@/types";
+import { BountyFilters } from "./components";
+import { BountyPreview, Filters, TABLE_BOUNTY_STATES } from "@/types";
+import { AnimatePresence, motion } from "framer-motion";
+import toast from "react-hot-toast";
+
 export const BOUNTY_USER_RELATIONSHIP = [
   "Creator",
   "Requested Submitter",
@@ -16,87 +18,76 @@ export const BOUNTY_USER_RELATIONSHIP = [
   "None",
 ];
 
-export type Filters = {
-  mints: string[];
-  orgs: string[];
-  tags: string[];
-  states: string[];
-  estimatedTimeBounds: [number, number];
-  relationships: string[];
-  isMyBounties: boolean;
-};
-
 const BountyList: React.FC<{}> = () => {
-  const { currentUser } = useUserWallet();
-  const router = useRouter();
-  const { mutateAsync: getBounties } =
-    api.bounties.getAllBounties.useMutation();
+  // state
   const [tags, setTags] = useState<string[]>([]);
-  const [mints, setMints] = useState<string[]>([]);
-  const [orgs, setOrgs] = useState<string[]>([]);
-  const [bounds, setTimeBounds] = useState<[number, number]>([0, 10]);
-  const [bounties, setBounties] = useState<IAsyncResult<BountyPreview[]>>();
+  const [bounds, setPriceBounds] = useState<[number, number]>([5, 10000]);
+  const [industriesFilter, setIndustriesFilter] = useState<string[]>([]);
   const [filteredBounties, setFilteredBounties] = useState<BountyPreview[]>();
+  const [showFilters, setShowFilters] = useState<boolean>(true);
   const [filters, setFilters] = useState<Filters>({
-    mints: mints,
+    industries: industriesFilter,
     tags: tags,
-    orgs: orgs,
-    estimatedTimeBounds: bounds,
+    estimatedPriceBounds: bounds,
     states: TABLE_BOUNTY_STATES,
     relationships: BOUNTY_USER_RELATIONSHIP,
     isMyBounties: false,
   });
 
-  useEffect(() => {
-    const getBs = async () => {
-      if (router.isReady && currentUser?.id) {
-        setBounties({ isLoading: true });
-        try {
-          const bounties = await getBounties({
-            currentUserId: currentUser.id,
-            onlyMyBounties: filters.isMyBounties,
-          });
-          setBounties({ result: bounties, isLoading: false });
-        } catch (e) {
-          console.log("error getting bounties: ", e);
-          setBounties({ error: e, isLoading: false });
-        }
-      }
-    };
-    getBs();
-  }, [router, currentUser?.id, filters.isMyBounties]);
+  // api + context
+  const { currentUser } = useUserWallet();
+  const {
+    data: allBounties,
+    isLoading: bountiesLoading,
+    isError: bountiesError,
+  } = api.bounties.getAllBounties.useQuery(
+    {
+      currentUserId: currentUser?.id,
+      onlyMyBounties: filters.isMyBounties,
+    },
+    {
+      enabled: !!currentUser,
+    }
+  );
+  const {
+    data: allIndustries,
+    isLoading: industriesLoading,
+    isError: industriesError,
+  } = api.industries.getAllIndustries.useQuery();
+  const { data: allMints } = api.mints.getMints.useQuery();
 
   useEffect(() => {
-    const filteredBounties = bounties?.result?.filter((bounty) => {
+    const filteredBounties = allBounties?.filter((bounty) => {
       if (!bounty.escrow.publicKey || !bounty.escrow.mint) {
         return false;
       }
-      if (!filters.mints.includes(bounty.escrow.mint.ticker)) {
+      // check if any of the bounty's industries is
+      // included in the filters.industries list
+      if (
+        !bounty.industries.some((industry) =>
+          filters.industries.includes(industry.name)
+        )
+      ) {
         return false;
       }
 
-      if (!filters.orgs.includes(bounty.repository?.organization)) {
-        return false;
-      }
-
-      const bountyTags = bounty.tags || [];
-      const commonTags = bountyTags.filter((tag) =>
-        filters.tags.includes(tag.name)
-      );
-      if (commonTags.length === 0 && tags.length !== 0) {
+      const bountyTags: string[] = bounty.tags.map((tag) => tag.name) || [];
+      const commonTags = bountyTags.filter((tag) => filters.tags.includes(tag));
+      if (commonTags?.length === 0 && tags?.length !== 0) {
         return false;
       }
 
       if (!filters.states.includes(bounty.state)) {
         return false;
       }
-      const bountyEstimate = parseFloat(bounty.estimatedTime.toString());
-      if (
-        bountyEstimate < filters.estimatedTimeBounds[0] ||
-        bountyEstimate > filters.estimatedTimeBounds[1]
-      ) {
-        return false;
-      }
+
+      // if (
+      //   bounty.price &&
+      //   (Number(bounty.price) < filters.estimatedPriceBounds[0] ||
+      //     Number(bounty.price) > filters.estimatedPriceBounds[1])
+      // ) {
+      //   return false;
+      // }
 
       return true;
     });
@@ -108,11 +99,19 @@ const BountyList: React.FC<{}> = () => {
     // - all tags for bounties
     // - all orgs posting bounties
     // - all payout mints
-    // - upper and lower bounds of estimated time completion
+    // - upper and lower bounds of price
 
-    if (!bounties?.result) return;
-    if (bounties && bounties?.result?.length !== 0) {
-      const allTags = bounties?.result
+    if (bountiesError) {
+      toast.error("Error fetching bounties");
+      return;
+    }
+    if (industriesError) {
+      toast.error("Error fetching industries");
+      return;
+    }
+    if (!allBounties || !allIndustries) return;
+    if (allBounties && allBounties?.length !== 0) {
+      const allTags = allBounties
         ?.map((bounty) => bounty.tags.map((tag) => tag.name))
         ?.reduce(
           (accumulator, currentValue) => [
@@ -122,76 +121,101 @@ const BountyList: React.FC<{}> = () => {
           []
         );
       const uniqueTags = getUniqueItems(allTags);
-      const uniqueOrgs = getUniqueItems(
-        bounties?.result.map((bounty) => bounty.repository?.organization) ?? []
-      );
-      const uniqueMints = getUniqueItems(
-        bounties?.result.map((bounty) => bounty.escrow.mint.ticker) ?? []
-      );
+      const mappedInds = allIndustries.map((industry) => industry.name);
+
+      setIndustriesFilter(mappedInds);
+
       setTags(uniqueTags);
-      setOrgs(uniqueOrgs);
-      setMints(uniqueMints);
-      const allTimes = bounties?.result.map((bounty) =>
-        parseFloat(bounty.estimatedTime.toString())
+      const allPrices = allBounties.map((bounty) =>
+        bounty.price ? parseFloat(bounty.price.toString()) : 0
       );
-      const maxTime = Math.max(...allTimes) || 10;
-      const minTime = Math.min(...allTimes) || 0;
-      const timeBounds: [number, number] = [
-        minTime,
-        maxTime === minTime ? maxTime + 1 : maxTime,
+      const maxPrice = Math.max(...allPrices) || 10;
+      const minPrice = Math.min(...allPrices) || 0;
+      const priceBounds: [number, number] = [
+        minPrice,
+        maxPrice === minPrice ? maxPrice + 1 : maxPrice,
       ];
-      setTimeBounds(timeBounds);
+      setPriceBounds(priceBounds);
       setFilters({
-        mints: uniqueMints,
         tags: allTags,
-        orgs: uniqueOrgs,
-        estimatedTimeBounds: timeBounds,
-        states: filters.isMyBounties
-          ? TABLE_MY_BOUNTY_STATES
-          : TABLE_BOUNTY_STATES,
+        industries: mappedInds,
+        estimatedPriceBounds: priceBounds,
+        states: TABLE_BOUNTY_STATES,
         relationships: BOUNTY_USER_RELATIONSHIP,
         isMyBounties: filters.isMyBounties,
       });
     }
-  }, [bounties?.result]);
+  }, [allBounties, allIndustries]);
 
   return (
-    <div className="bounty-table" id="bounties-table">
-      <div className="empty-cell" />
-      <h1 className="page-header">{`Bounties`}</h1>
-
-      <BountyFilters
-        mints={mints}
-        tags={tags}
-        timeBounds={bounds}
-        orgs={orgs}
-        filters={filters}
-        setFilters={setFilters}
-        setBounties={setBounties}
-      />
-
-      {bounties?.isLoading && (
-        <div className="w-full flex flex-col items-center">
-          <LoadingBar title="Loading Bounties" />
-        </div>
-      )}
-
-      <div className="issue-list" id="bounties-list">
-        {!bounties?.isLoading && filteredBounties?.length === 0 && (
-          <p className="w-full text-center col-span-2">
-            No matching bounties available!
-          </p>
+    <div className="w-full flex items-start mt-5 gap-5 pb-10">
+      <AnimatePresence>
+        {showFilters && !!allBounties && (
+          <BountyFilters
+            mints={allMints}
+            industries={allIndustries}
+            tags={tags}
+            priceBounds={bounds}
+            filters={filters}
+            setFilters={setFilters}
+          />
         )}
-        {filteredBounties?.length > 0 &&
-          filteredBounties?.map((bounty, index) => {
-            return (
-              <LancerBounty
-                bounty={bounty}
-                key={index}
-                id={`bounty-item-${index}`}
-              />
-            );
-          })}
+      </AnimatePresence>
+
+      <div className="w-full flex flex-col gap-5 px-20">
+        <div className="flex items-center gap-2">
+          <Image
+            src="/assets/icons/IndustryTrio.png"
+            width={50}
+            height={50}
+            alt="industry trio icon"
+          />
+          <h1>Quests.</h1>
+        </div>
+        {/* filter button */}
+        {allBounties?.length > 0 && (
+          <motion.button
+            className="w-[85px] h-[40px] flex items-center justify-center border-2
+              bg-primaryBtn border-primaryBtnBorder rounded-xl font-bold text-xs"
+            {...smallClickAnimation}
+            onClick={() => setShowFilters(!showFilters)}
+          >
+            <div className="flex items-center gap-1">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="18px"
+                viewBox="0 0 512 512"
+                className="fill-textPrimary"
+              >
+                <path d="M3.9 54.9C10.5 40.9 24.5 32 40 32H472c15.5 0 29.5 8.9 36.1 22.9s4.6 30.5-5.2 42.5L320 320.9V448c0 12.1-6.8 23.2-17.7 28.6s-23.8 4.3-33.5-3l-64-48c-8.1-6-12.8-15.5-12.8-25.6V320.9L9 97.3C-.7 85.4-2.8 68.8 3.9 54.9z" />
+              </svg>
+              <p className="text-xs">Filters</p>
+            </div>
+          </motion.button>
+        )}
+
+        {bountiesLoading && (
+          <div className="w-full flex flex-col items-center">
+            <LoadingBar title="Loading Bounties" />
+          </div>
+        )}
+
+        <div className={`w-full flex flex-wrap gap-5`}>
+          {!bountiesLoading && filteredBounties?.length === 0 && (
+            <p className="w-full text-center col-span-full">
+              No matching bounties available!
+            </p>
+          )}
+          {bountiesError && (
+            <p className="w-full text-center col-span-full">
+              Error fetching bounties
+            </p>
+          )}
+          {filteredBounties?.length > 0 &&
+            filteredBounties?.map((bounty, index) => {
+              return <BountyCard bounty={bounty} key={index} />;
+            })}
+        </div>
       </div>
     </div>
   );

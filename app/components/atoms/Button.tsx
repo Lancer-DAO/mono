@@ -1,5 +1,4 @@
 import { ButtonHTMLAttributes, DetailedHTMLProps, useState } from "react";
-import { getButtonStyle } from "./LinkButton";
 
 interface ButtonProps
   extends DetailedHTMLProps<
@@ -42,7 +41,7 @@ const Button = ({
       }}
     >
       <button
-        className={getButtonStyle(version, disabled) + " " + extraClasses}
+        className={extraClasses}
         disabled={disabled}
         onClick={async () => {
           setIsLoading(true);

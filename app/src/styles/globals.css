@@ -1,0 +1,58 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@font-face {
+  font-family: charter;
+  font-style: normal;
+  src: url("../../public/fonts/Charter_Regular.ttf") format("truetype");
+  font-display: swap;
+}
+
+@font-face {
+  font-family: charter-bold;
+  font-style: normal;
+  src: url("../../public/fonts/Charter_Bold.ttf") format("truetype");
+  font-display: swap;
+}
+
+@font-face {
+  font-family: charter-italic;
+  font-style: italic;
+  src: url("../../public/fonts/Charter_Italic.ttf") format("truetype");
+  font-display: swap;
+}
+
+@font-face {
+  font-family: charter-bold-italic;
+  font-style: italic;
+  src: url("../../public/fonts/Charter_Bold_Italic.ttf") format("truetype");
+  font-display: swap;
+}
+
+* {
+  @apply font-base;
+}
+
+html {
+  @apply text-textPrimary bg-bgLancer;
+}
+
+h1 {
+  @apply text-4xl font-bold;
+}
+
+.multi-line-ellipsis {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2; /* Number of lines to show */
+  overflow: hidden;
+}
+
+.visibility-hidden {
+  visibility: hidden;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: -1;
+}

@@ -9,15 +9,35 @@ export const create = async (
   title: string,
   escrow: Prisma.Escrow,
   tags: Prisma.Tag[],
+  links: string[],
   user: Prisma.User,
-  wallet: Prisma.Wallet
+  wallet: Prisma.Wallet,
+  industries: Prisma.Industry[],
+  disciplines: Prisma.Discipline[],
+  media: Prisma.Media[],
+  price?: number
 ): Promise<Prisma.Bounty> => {
   const bounty = await prisma.bounty.create({
     data: {
       createdAt,
       description,
+      price,
       estimatedTime,
       isPrivate,
+      industries: {
+        connect: industries.map((industry) => {
+          return {
+            id: industry.id,
+          };
+        }),
+      },
+      disciplines: {
+        connect: disciplines.map((discipline) => {
+          return {
+            id: discipline.id,
+          };
+        }),
+      },
       state: "new",
       title,
       escrow: {
@@ -29,6 +49,15 @@ export const create = async (
         connect: tags.map((tag) => {
           return {
             id: tag.id,
+          };
+        }),
+      },
+      links: links.join(),
+
+      media: {
+        connect: media.map((med) => {
+          return {
+            id: med.id,
           };
         }),
       },

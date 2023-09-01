@@ -1,56 +1,126 @@
-import React, { useState } from "react";
-import { CreateBountyForm, FundBountyForm } from "@/components";
-import { PublicKey } from "@solana/web3.js";
-import { FORM_SECTION } from "@/types/forms";
+import { useEffect, useState } from "react";
+import { BountyCard, PreviewCardBase } from "@/components";
 import { useUserWallet } from "@/src/providers";
+import { api } from "@/src/utils";
+
+import { FORM_SECTION, FormData } from "@/types/forms";
+import { Mint } from "@prisma/client";
+import { PublicKey } from "@solana/web3.js";
+import {
+  AdditionalInfoForm,
+  CreateBountyForm,
+  FundBountyForm,
+  PreviewForm,
+  SuccessForm,
+} from "./components";
+
+interface Media {
+  imageUrl: string;
+  title: string;
+  description: string;
+}
 
 export const Create = () => {
-  const { provider } = useUserWallet();
   const [formSection, setFormSection] = useState<FORM_SECTION>("CREATE");
   const [isAccountCreated, setIsAccountCreated] = useState(false);
+  const [mint, setMint] = useState<Mint>();
+  const [formData, setFormData] = useState<FormData>({
+    issuePrice: "",
+    issueTitle: "",
+    issueDescription: "",
+    industryId: null,
+    displineIds: [],
+    tags: [""],
+    links: [""],
+    media: [],
+    comment: "",
+    organizationName: "",
+    repositoryName: "",
+    estimatedTime: "1",
+    isPrivate: false,
+  });
+
+  const { provider } = useUserWallet();
+  const { data: allMints } = api.mints.getMints.useQuery();
+
   const createAccountPoll = (publicKey: PublicKey) => {
     provider.connection.onAccountChange(publicKey, (callback) => {
       setIsAccountCreated(true);
     });
   };
+
+  const handleChange = (event) => {
+    setFormData({
+      ...formData,
+      [event.target.name]: event.target.value,
+    });
+  };
+
+  // hard code USDC for now
+  useEffect(() => {
+    if (allMints) {
+      // console.log("allMints", allMints);
+      const mint = allMints.find((mint) => mint.ticker === "USDC");
+      setMint(mint);
+    }
+  }, [allMints]);
+
   return (
-    <div>
-        <div className="create-issue-wrapper">
-          <div
-            id="w-node-_8ffcb42d-e16e-0c3e-7b25-93b4dbf873ae-0ae9cdc2"
-            className="form-text-container"
-          >
-            <h1
-              data-w-id="3f54d410-1b35-353e-143c-2d9fcf61c440"
-              className="heading-size-1"
-            >
-              Fund a Lancer Quest
-            </h1>
-            <p
-              data-w-id="e4920e8f-9360-7b18-dba3-32770e1bf1b4"
-              className="paragraph"
-            >
-              By funding an issue with Lancer, you are outsourcing a developer
-              task in one of two ways. The first is internally to your team or a
-              free-lancer and the other is a public bounty to our network of
-              developers. <br />
-              <br />
-              <span className="bold">
-                The more clear you are with your descriptions, the better Lancer
-                is at finding the right developer to solve your issue.
-              </span>
-            </p>
-          </div>
-          {formSection === "CREATE" && (
-            <CreateBountyForm
-              setFormSection={setFormSection}
-              createAccountPoll={createAccountPoll}
+    <div className="w-full max-w-[1200px] mx-auto flex md:justify-evenly mt-10">
+      {/* quest info entry section */}
+      <div
+        className={`${
+          formSection === "PREVIEW" || formSection === "FUND"
+            ? "w-full"
+            : "md:w-[515px]"
+        }`}
+      >
+        {formSection === "CREATE" && (
+          <CreateBountyForm
+            setFormSection={setFormSection}
+            formData={formData}
+            setFormData={setFormData}
+            handleChange={handleChange}
+          />
+        )}
+        {formSection === "MEDIA" && (
+          <AdditionalInfoForm
+            setFormSection={setFormSection}
+            formData={formData}
+            setFormData={setFormData}
+          />
+        )}
+        {formSection === "PREVIEW" && (
+          <PreviewForm
+            setFormSection={setFormSection}
+            formData={formData}
+            handleChange={handleChange}
+            createAccountPoll={createAccountPoll}
+            mint={mint}
+          />
+        )}
+        {formSection === "FUND" && (
+          <FundBountyForm
+            isAccountCreated={isAccountCreated}
+            formData={formData}
+            setFormData={setFormData}
+            setFormSection={setFormSection}
+            mint={mint}
+          />
+        )}
+        {formSection === "SUCCESS" && <SuccessForm />}
+      </div>
+      {/* preview section */}
+      {formSection !== "PREVIEW" && formSection !== "FUND" && (
+        <div className="md:w-[515px] pt-10">
+          <PreviewCardBase>
+            <BountyCard
+              formData={formData}
+              linked={formSection === "SUCCESS"}
             />
-          )}
-          {formSection === "FUND" && (
-            <FundBountyForm isAccountCreated={isAccountCreated} />
-          )}
+          </PreviewCardBase>
         </div>
+      )}
     </div>
   );
 };
