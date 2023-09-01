@@ -1,8 +1,7 @@
 import { prisma } from "@/server/db";
 import * as Prisma from "@prisma/client";
 
-export const getTopBountyUsers = async () => {
-
+export const getTopQuestUsers = async () => {
   // const startDate = '2023-08-01';
   // const endDate = '2023-08-30';
 
@@ -16,7 +15,5 @@ export const getTopBountyUsers = async () => {
     LIMIT 10;
     `;
 
-  return topDevs
+  return topDevs;
 };
-
-

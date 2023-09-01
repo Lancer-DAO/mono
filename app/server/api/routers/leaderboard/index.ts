@@ -1,8 +1,8 @@
 import { createTRPCRouter } from "../../trpc";
-import { getTopBountyUsers } from "./getTopBountyUsers";
+import { getTopQuestUsers } from "./getTopQuestUsers";
 import { getTopEarners } from "./getTopEarners";
 
 export const leaderboard = createTRPCRouter({
-    getTopBountyUsers,
-    getTopEarners,
+  getTopQuestUsers,
+  getTopEarners,
 });

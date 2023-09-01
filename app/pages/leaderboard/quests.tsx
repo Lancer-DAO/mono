@@ -1,7 +1,7 @@
 import Head from "next/head";
 import { withPageAuthRequired } from "@auth0/nextjs-auth0";
 import { LeaderboardCommits } from "@/components/leaderboard/CommitBoard";
-import { TopBountyUsersBoard } from "@/components/leaderboard/TopBountyUsersBoard";
+import { TopQuestUsersBoard } from "@/components/leaderboard/TopQuestUsersBoard";
 export const getServerSideProps = withPageAuthRequired();
 
 export default function Home() {
@@ -12,7 +12,7 @@ export default function Home() {
         <meta name="description" content="Lancer Bounty Leaderboard" />
       </Head>
       <main>
-        <TopBountyUsersBoard />
+        <TopQuestUsersBoard />
       </main>
     </>
   );

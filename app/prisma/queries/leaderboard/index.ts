@@ -1,2 +1,2 @@
-export * from './getTopBountyUsers'
-export * from './getTopEarners'
+export * from "./getTopQuestUsers";
+export * from "./getTopEarners";

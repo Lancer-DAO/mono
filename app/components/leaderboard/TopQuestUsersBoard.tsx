@@ -1,17 +1,21 @@
 import { api } from "@/src/utils";
 import { FC, useEffect, useState } from "react";
 
-export const TopEarnersBoard: FC<any> = () => {
-  const [topDevs, setTopDevs] = useState<any[]>([]);
+export const TopQuestUsersBoard: FC<any> = () => {
+  const [topDevs, setTopDevs] = useState([]);
 
-  const { mutateAsync: getTopEarners } =
-    api.leaderboard.getTopEarners.useMutation();
+  const { mutateAsync: getTopQuestUsers } =
+    api.leaderboard.getTopQuestUsers.useMutation();
 
   useEffect(() => {
     const fetchData = async () => {
-      const res = (await getTopEarners()) as any[];
-      console.log("AAA", res);
-      setTopDevs(res);
+      const res = (await getTopQuestUsers()) as any[];
+      const formattedResults = res.map((result) => ({
+        id: result.id,
+        name: result.name,
+        total_bounties: Number(result.total_bounties), // BigInt to number
+      }));
+      setTopDevs(formattedResults);
     };
 
     fetchData();
@@ -20,10 +24,10 @@ export const TopEarnersBoard: FC<any> = () => {
   return (
     <div className="flex align-center justify-center mt-10 gap-[10px]">
       <div className="bg-gray-100 w-[70%] flex flex-col px-[20px] py-[10px] align-center justify-center">
-        <h1 className="mb-[10px]">Top Earners</h1>
+        <h1 className="mb-[10px]">Top Developers By Quests Finished</h1>
         <div className="w-full flex justify-between w-[100%] border-b border-gray-300">
           <p className="font-bold text-xl">Github Username</p>
-          <p className="font-bold text-xl">Total Earnt</p>
+          <p className="font-bold text-xl">Total Quests</p>
         </div>
         {topDevs &&
           topDevs.map((dev, index) => (
@@ -38,14 +42,14 @@ export const TopEarnersBoard: FC<any> = () => {
                   </p>
                 </a>
               </div>
-              <p className="text-xl">${dev.total_earned}</p>
+              <p className="text-xl">{dev.total_bounties}</p>
             </div>
           ))}
         <a
           className="text-[#51a45b] text-xl mt-[10px]"
-          href="/leaderboard/bounties"
+          href="/leaderboard/earners"
         >
-          View Quest Leaderboard
+          View Earners Leaderboard
         </a>
       </div>
     </div>
