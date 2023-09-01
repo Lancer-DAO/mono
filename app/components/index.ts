@@ -1,5 +1,10 @@
 import dynamic from "next/dynamic";
 
+// @animations
+const LogoShield = dynamic(() => import("./@animations/LogoShield"));
+const ProfileCreated = dynamic(() => import("./@animations/ProfileCreated"));
+const QuestCreated = dynamic(() => import("./@animations/QuestCreated"));
+
 // @icons
 const Close = dynamic(() => import("./@icons/Close"));
 const ExternalLinkIcon = dynamic(() => import("./@icons/ExternalLinkIcon"));
@@ -51,6 +56,11 @@ const JoyrideWrapper = dynamic(() => import("./organisms/JoyrideWrapper"));
 const DefaultLayout = dynamic(() => import("./templates/DefaultLayout"));
 
 export {
+  // @animations
+  LogoShield,
+  ProfileCreated,
+  QuestCreated,
+
   // @icons
   Close,
   ExternalLinkIcon,
