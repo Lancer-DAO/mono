@@ -57,6 +57,12 @@ const JoyrideWrapper = dynamic(() => import("./organisms/JoyrideWrapper"));
 const DefaultLayout = dynamic(() => import("./templates/DefaultLayout"));
 
 export {
+  // @animations
+  LogoShield,
+  ProfileCreated,
+  QuestComplete,
+  QuestCreated,
+
   // @icons
   Close,
   ExternalLinkIcon,

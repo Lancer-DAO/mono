@@ -1,6 +1,6 @@
 import React from "react";
 import { DownloadZipFile } from "./components/DownloadZipFile";
-import { LogoShield } from "../@animations/LogoShield";
+import { LogoShield } from "@/components";
 
 export const DownloadExtension = () => {
   return (
