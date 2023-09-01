@@ -3,6 +3,7 @@ import { z } from "zod";
 import * as queries from "@/prisma/queries";
 import { BountyState } from "@/types/";
 import { createGroupChannel } from "@/utils/sendbird";
+import { HostedHooksClient } from "../../webhooks";
 
 export const update = protectedProcedure
   .input(
@@ -84,6 +85,9 @@ export const update = protectedProcedure
       }
 
       const updatedBounty = await queries.bounty.get(bountyId, currentUserId);
+
+      HostedHooksClient.sendWebhook(updatedBounty, "bounty.updated");
+
       return updatedBounty;
     }
   );
