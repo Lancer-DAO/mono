@@ -68,6 +68,8 @@ export const update = protectedProcedure
         );
       }
 
+      console.log("label", label);
+
       if (label === "add-approved-submitter") {
         // create a messaging group for this bounty
         const bounty = await queries.bounty.get(bountyId, currentUserId);
@@ -75,6 +77,12 @@ export const update = protectedProcedure
         const approvedSubmitters = bounty.approvedSubmitters.map((submitter) =>
           String(submitter.userid)
         );
+
+        console.log({
+          admin: client,
+          lancers: approvedSubmitters,
+          name: bounty.title,
+        });
 
         createGroupChannel({
           admin: client,

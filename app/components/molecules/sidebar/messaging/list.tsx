@@ -19,7 +19,7 @@ const List = ({ setChannel }: { setChannel: (channel: any) => void }) => {
 
         return (
           <div
-            className="w-full hover:bg-slate-100 flex items-center cursor-pointer gap-x-2 h-20 px-3 border-b border-neutral-300"
+            className="w-[35rem] hover:bg-slate-100 flex items-center cursor-pointer gap-x-2 h-20 px-3 border-b border-neutral-300"
             onClick={() => {
               setChannel(channel);
             }}

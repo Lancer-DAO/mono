@@ -7,10 +7,6 @@ import { useUserWallet } from "@/src/providers";
 import ChannelList from "@sendbird/uikit-react/ChannelList";
 import InviteUsers from "@sendbird/uikit-react/CreateChannel/components/InviteUsers";
 
-import {
-  useChannelListContext,
-  ChannelListProvider,
-} from "@sendbird/uikit-react/ChannelList/context";
 import CreateChannelUI from "@sendbird/uikit-react/CreateChannel/components/CreateChannelUI";
 
 import Channel from "@sendbird/uikit-react/Channel";
@@ -18,6 +14,7 @@ import { CreateChannelProvider } from "@sendbird/uikit-react/CreateChannel/conte
 
 import "@sendbird/uikit-react/dist/index.css";
 import List from "./messaging/list";
+import Messaging from "./messaging";
 
 interface Props {
   open: boolean;
@@ -44,7 +41,7 @@ const SidePanel: FC<Props> = ({ open, setOpen }) => {
   return (
     <AnimatePresence>
       {open && (
-        <>
+        <div>
           <motion.div
             className="fixed inset-0 bg-black backdrop-blur-md transition duration-500"
             initial={{ opacity: 0 }}
@@ -56,152 +53,51 @@ const SidePanel: FC<Props> = ({ open, setOpen }) => {
             //   setNumCloses(numCloses + 1);
             // }}
           />
+
           <motion.div
-            className="flex items-start overflow-x-hidden fixed inset-y-0 right-0 z-50 w-80 h-full transform"
+            className="flex items-start overflow-x-hidden fixed inset-y-0 right-0 z-50 w-[35rem] h-full transform rounded-l-lg"
             transition={{ ease: "easeInOut", duration: 0.3 }}
             initial={{ x: "100%" }}
             animate={{ x: 0 }}
             exit={{ x: "100%" }}
             ref={ref}
           >
-            <div
-              className={`text-primary bg-white flex flex-col h-full shadow-2xl w-full`}
-            >
-              <div className="w-full flex p-2">
-                {/* <div className="w-10 h-10 rounded bg-green-200 p-1 mr-2">
+            <div className="flex w-full h-full">
+              <div className="w-14 inset-y-0 cursor-pointer" onClick={close}>
+                <div className="w-full h-full bg-green-200 rounded-l-3xl pt-6 flex justify-center">
                   <svg
-                    xmlns="http://www.w3.org/2000/svg"
+                    width="20"
+                    height="20"
+                    viewBox="0 0 84 54"
                     fill="none"
-                    viewBox="0 0 24 24"
-                    strokeWidth="1.5"
-                    stroke="currentColor"
-                    className="w-full h-full"
+                    xmlns="http://www.w3.org/2000/svg"
+                    className=" rotate-180"
                   >
                     <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      d="M12 6v12m6-6H6"
+                      d="M40.5 27C40.5 27.517 40.767 27.998 41.205 28.272L81.205 53.2721C81.452 53.4271 81.727 53.5 81.998 53.5C82.498 53.5 82.987 53.25 83.271 52.795C83.71 52.092 83.497 51.167 82.794 50.728L44.83 27L82.795 3.27205C83.498 2.83305 83.711 1.90805 83.272 1.20505C82.833 0.502049 81.907 0.289049 81.205 0.728049L41.205 25.7281C40.767 26.0021 40.5 26.483 40.5 27Z"
+                      fill="black"
+                    />
+                    <path
+                      d="M1.205 28.272L41.205 53.2721C41.452 53.4271 41.727 53.5 41.998 53.5C42.498 53.5 42.987 53.25 43.271 52.795C43.71 52.092 43.497 51.167 42.794 50.728L4.83 27L42.795 3.27205C43.498 2.83305 43.711 1.90805 43.272 1.20505C42.833 0.502049 41.908 0.289049 41.205 0.728049L1.205 25.7281C0.767 26.0021 0.5 26.483 0.5 27C0.5 27.517 0.767 27.998 1.205 28.272Z"
+                      fill="black"
                     />
                   </svg>
-                </div> */}
-
-                <button className="flex-grow h-10 rounded bg-green-200 uppercase">
-                  messages
-                </button>
-
-                <button
-                  className="w-10 bg-green-200 h-10 ml-1 p-1.5"
-                  onClick={close}
-                >
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 30 30">
-                    <path d="M 7 4 C 6.744125 4 6.4879687 4.0974687 6.2929688 4.2929688 L 4.2929688 6.2929688 C 3.9019687 6.6839688 3.9019687 7.3170313 4.2929688 7.7070312 L 11.585938 15 L 4.2929688 22.292969 C 3.9019687 22.683969 3.9019687 23.317031 4.2929688 23.707031 L 6.2929688 25.707031 C 6.6839688 26.098031 7.3170313 26.098031 7.7070312 25.707031 L 15 18.414062 L 22.292969 25.707031 C 22.682969 26.098031 23.317031 26.098031 23.707031 25.707031 L 25.707031 23.707031 C 26.098031 23.316031 26.098031 22.682969 25.707031 22.292969 L 18.414062 15 L 25.707031 7.7070312 C 26.098031 7.3170312 26.098031 6.6829688 25.707031 6.2929688 L 23.707031 4.2929688 C 23.316031 3.9019687 22.682969 3.9019687 22.292969 4.2929688 L 15 11.585938 L 7.7070312 4.2929688 C 7.5115312 4.0974687 7.255875 4 7 4 z"></path>
-                  </svg>
-                </button>
+                </div>
               </div>
-
-              <div className="h-full">
-                {currentUser && (
-                  <SendbirdProvider
-                    appId={"54A96D9A-1DEA-4962-9F4E-9899BAE7011D"}
-                    userId={String(currentUser?.id)}
-                    nickname={currentUser?.name}
-                    profileUrl={currentUser?.picture}
-                  >
-                    {!channel ? (
-                      // <ChannelList
-                      //   // @ts-ignore
-                      //   onChannelSelect={(channel) => {
-                      //     if (channel && channel.url) {
-                      //       // compare to prevChannel, if same dont set
-                      //       if (channel && channel.url) {
-                      //         // setChannel(channel);
-                      //       }
-                      //     }
-                      //   }}
-                      //   className="w-full m-0"
-                      //   renderChannelPreview={({ channel }) => {
-                      //     console.log("channel", channel);
-
-                      //     // filter channel.members, if there are only 2 members, then it's a DM
-                      //     // filter by current user and and return the other user
-
-                      //     // members: { nickname: string, userId: string, plainProfileUrl: string }[]
-
-                      //     const meta =
-                      //       channel.members.length === 2
-                      //         ? channel.members.filter(
-                      //             (member) =>
-                      //               member.userId !== String(currentUser?.id)
-                      //           )[0]
-                      //         : null;
-
-                      //     console.log("meta", meta);
-
-                      //     // what can the type of meta be?
-                      //     // { nickname: string, userId: string, plainProfileUrl: string }
-
-                      //     return (
-                      //       <div
-                      //         className="w-full flex hover:bg-slate-100 items-center cursor-pointer gap-x-2 h-20 px-3 border-b border-neutral-300"
-                      //         onClick={() => {
-                      //           setChannel(channel);
-                      //         }}
-                      //       >
-                      //         <img
-                      //           src={
-                      //             meta
-                      //               ? meta.plainProfileUrl
-                      //               : channel.creator.plainProfileUrl
-                      //           }
-                      //           alt=""
-                      //           className="w-10 h-10 rounded-full"
-                      //         />
-
-                      //         <div className="w-full">
-                      //           <div>{meta ? meta.nickname : channel.name}</div>
-                      //           <div className="truncate">
-                      //             {channel.lastMessage
-                      //               ? channel.lastMessage.message
-                      //               : ""}
-                      //           </div>
-                      //         </div>
-                      //       </div>
-                      //     );
-                      //   }}
-                      // />
-                      <ChannelListProvider>
-                        {/* <ChannelListHeader /> */}
-
-                        <List setChannel={setChannel} />
-                      </ChannelListProvider>
-                    ) : (
-                      // <List setChannel={setChannel} />
-                      <Channel
-                        // @ts-ignore
-                        channelUrl={channel.url}
-                        renderChannelHeader={(state) => {
-                          console.log("state", state);
-                          return (
-                            <div className="w-full h-14 flex items-center px-5">
-                              <button
-                                className="font-bold text-2xl"
-                                onClick={back}
-                              >
-                                ←
-                              </button>
-                            </div>
-                          );
-                        }}
-                      />
-                    )}
-
-                    {/* <Messaging /> */}
-                  </SendbirdProvider>
-                )}
+              <div
+                className={`text-primary bg-white flex flex-col h-full shadow-2xl w-full`}
+              >
+                <div className="w-full flex p-4 pt-6">
+                  <button className="flex-grow h-10 rounded text-xl font-bold uppercase">
+                    YOUR INBOX
+                  </button>
+                  <div className="w-10 h-10"></div>
+                </div>
+                <Messaging />
               </div>
             </div>
           </motion.div>
-        </>
+        </div>
       )}
     </AnimatePresence>
   );
