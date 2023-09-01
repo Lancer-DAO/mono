@@ -3,7 +3,6 @@ import dynamic from "next/dynamic";
 // @animations
 const LogoShield = dynamic(() => import("./@animations/LogoShield"));
 const ProfileCreated = dynamic(() => import("./@animations/ProfileCreated"));
-const QuestComplete = dynamic(() => import("./@animations/QuestComplete"));
 const QuestCreated = dynamic(() => import("./@animations/QuestCreated"));
 
 // @icons
@@ -60,7 +59,6 @@ export {
   // @animations
   LogoShield,
   ProfileCreated,
-  QuestComplete,
   QuestCreated,
 
   // @icons
