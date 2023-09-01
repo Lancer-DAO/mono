@@ -399,12 +399,18 @@ model User {
 
 model Wallet {
   id                 Int                 @id @default(autoincrement())
+
+  
   publicKey          String?             @unique @db.VarChar(64)
   isDefault          Boolean?
   hasProfileNFT      Boolean?
   hasBeenInitialized Boolean?
+
+
   userid             Int
   user               User                @relation(fields: [userid], references: [id])
+  
+  
   providers          Provider[]
   transactions       TransactionWallet[]
   chains             ChainWallet[]

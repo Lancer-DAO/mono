@@ -13,7 +13,7 @@ import { updateIndustry } from "./updateIndustry";
 import { updateLinks } from "./updateLinks";
 import { updateName } from "./updateName";
 import { updateResume } from "./updateResume";
-import { deleteMedia } from "./deleteMedia";
+import { deleteResume } from "./deleteResume";
 
 export const users = createTRPCRouter({
   addOnboardingInformation,
@@ -29,5 +29,5 @@ export const users = createTRPCRouter({
   updateLinks,
   updateName,
   updateResume,
-  deleteMedia,
+  deleteResume,
 });

@@ -19,13 +19,13 @@ const LogoShield = ({
     const animation = lottie.loadAnimation({
       container: animationContainer,
       animationData: animationData,
-      loop: true,
+      loop: false,
       autoplay: true,
     });
 
     // Optional: Listen for animation events
     animation.addEventListener("complete", () => {
-      console.log("Animation completed");
+      // console.log("Animation completed");
     });
 
     // Clean up the animation when the component unmounts

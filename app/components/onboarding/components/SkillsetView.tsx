@@ -45,7 +45,8 @@ export const SkillsetView: FC<Props> = ({
         {...smallClickAnimation}
         onClick={() => setFormSection(OnboardStep.Info)}
         className="bg-primaryBtn border border-primaryBtnBorder text-textGreen 
-        mt-10 w-[100px] h-[50px] rounded-lg text-base"
+        mt-10 w-[100px] h-[50px] rounded-lg text-base disabled:opacity-50 disabled:cursor-not-allowed"
+        disabled={profileData?.industry === null}
       >
         NEXT
       </motion.button>

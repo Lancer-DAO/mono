@@ -1,8 +1,8 @@
 import React, { useEffect } from "react";
-import animationData from "@/public/assets/animations/profile-created.json";
+import animationData from "@/public/assets/animations/quest-completed.json";
 import lottie from "lottie-web";
 
-const ProfileCreated = ({
+const QuestCompleted = ({
   height,
   width,
   extraClasses,
@@ -41,4 +41,4 @@ const ProfileCreated = ({
   );
 };
 
-export default ProfileCreated;
+export default QuestCompleted;
