@@ -118,7 +118,7 @@ const ReferenceDialogue = ({ onReferenceAdded }) => {
                 }}
                 onUploadError={(error: Error) => {
                   console.log(error);
-                  alert(`ERROR! ${error.message}`);
+                  toast.error(`Error uploading: ${error.message}`);
                 }}
                 config={{ mode: "auto" }}
               />

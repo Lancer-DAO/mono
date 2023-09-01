@@ -147,3 +147,25 @@ export const updateResume = async (
     },
   });
 };
+
+export const updateMedia = async (
+  id: number,
+  imageUrl: string,
+  title: string,
+  description: string,
+): Promise<Prisma.User> => {
+  return await prisma.user.update({
+    where: {
+      id: id,
+    },
+    data: {
+      media: {
+        create: {
+          imageUrl,
+          title,
+          description
+        },
+      },
+    },
+  });
+};
