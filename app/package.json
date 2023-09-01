@@ -16,6 +16,8 @@
     "prisma:generate": "prisma generate",
     "postinstall": "prisma generate",
     "prisma:db:push": "prisma db push",
+    "lint": "next lint",
+    "lint:report": "next lint --output-file eslint-report.json --format json",
     "prisma:test": "nodemon ./prisma/scripts/test.ts"
   },
   "dependencies": {
@@ -84,6 +86,7 @@
     "keccak": "3.0.3",
     "knex": "2.4.2",
     "lodash": "4.17.21",
+    "lottie-web": "^5.12.2",
     "lucide-react": "^0.268.0",
     "magic-sdk": "15.0.0",
     "marked": "4.2.12",

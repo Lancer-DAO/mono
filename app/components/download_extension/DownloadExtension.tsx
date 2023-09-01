@@ -1,5 +1,6 @@
 import React from "react";
 import { DownloadZipFile } from "./components/DownloadZipFile";
+import { LogoShield } from "@/components";
 
 export const DownloadExtension = () => {
   return (
@@ -10,9 +11,11 @@ export const DownloadExtension = () => {
           "https://webkul.com/blog/how-to-install-the-unpacked-extension-in-chrome/"
         }
         target="_blank"
+        rel="noreferrer"
       >
         Installation Guide
       </a>
+      <LogoShield width="w-12" height="h-12" />
     </div>
   );
 };

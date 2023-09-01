@@ -84,8 +84,8 @@ export const Bounty = () => {
 
   useEffect(() => {
     if (currentBounty?.links) {
-      const links = currentBounty?.links?.split(",");
-      setLinks(links);
+      const separatedLinks = currentBounty?.links?.split(",");
+      setLinks(separatedLinks);
     }
   }, [currentBounty]);
 
@@ -148,18 +148,18 @@ export const Bounty = () => {
             <div>
               <p className="font-bold text-sm">Links</p>
               <div className="flex flex-col w-full gap-1">
-                {links?.map((link) => {
+                {links?.map((link, index) => {
                   const formattedLink =
                     link.startsWith("http://") || link.startsWith("https://")
                       ? link
                       : `http://${link}`;
                   return (
                     <a
+                      key={link}
                       href={formattedLink}
                       target="_blank"
                       rel="noreferrer"
                       className="underline text-blue-500"
-                      key={link}
                     >
                       {formattedLink}
                     </a>

@@ -30,7 +30,7 @@ export const QuestsCard: FC = () => {
         )}
         {allBounties?.length > 0 && (
           <div className="flex items-center gap-4 mb-2">
-            {allBounties.map((bounty, index) => {
+            {allBounties.slice(0, 2).map((bounty, index) => {
               return <BountyCard key={index} bounty={bounty} />;
             })}
           </div>

@@ -1,28 +1,22 @@
-import { useUserWallet } from "@/src/providers";
-import { useReferral } from "@/src/providers/referralProvider";
-import { api } from "@/src/utils/api";
-import { Treasury } from "@ladderlabs/buddy-sdk";
-import * as Prisma from "@prisma/client";
-import dayjs from "dayjs";
-import relativeTime from "dayjs/plugin/relativeTime";
+import { useEffect, useState } from "react";
 import Image from "next/image";
-import { useCallback, useEffect, useMemo, useState } from "react";
-import { IAsyncResult, ProfileNFT } from "@/types/";
-import { Button } from "@/components";
 import { IS_CUSTODIAL, USDC_MINT } from "@/src/constants";
-import { Keypair, PublicKey, Transaction } from "@solana/web3.js";
+import { useUserWallet } from "@/src/providers";
+import { IAsyncResult, ProfileNFT, User } from "@/types/";
 import {
-  createTransferInstruction,
-  createAssociatedTokenAccountInstruction,
-  getAssociatedTokenAddressSync,
-  getAccount,
   TokenAccountNotFoundError,
+  createAssociatedTokenAccountInstruction,
+  createTransferInstruction,
+  getAccount,
+  getAssociatedTokenAddressSync,
 } from "@solana/spl-token";
 import { useConnection } from "@solana/wallet-adapter-react";
+import { PublicKey, Transaction } from "@solana/web3.js";
+import dayjs from "dayjs";
+import relativeTime from "dayjs/plugin/relativeTime";
+import LinksCard from "./LinksCard";
 
 dayjs.extend(relativeTime);
-
-const SITE_URL = `https://${IS_CUSTODIAL ? "app" : "pro"}.lancer.so/account?r=`;
 
 export const ProfileNFTCard = ({
   profileNFT,
@@ -34,9 +28,6 @@ export const ProfileNFTCard = ({
   githubId: string;
 }) => {
   // state
-  const [showCoinflow, setShowCoinflow] = useState(false);
-  const [showReferrerModal, setShowReferrerModal] = useState(false);
-  const [isCopied, setIsCopied] = useState(false);
   const [signature, setSignature] = useState("");
   const [balance, setBalance] = useState<IAsyncResult<number>>({
     isLoading: true,
@@ -46,11 +37,8 @@ export const ProfileNFTCard = ({
   const [sendToPublicKey, setSentToPublicKey] = useState("");
 
   // context + api
-  const { referralId, initialized, createReferralMember, claimables, claim } =
-    useReferral();
   const { connection } = useConnection();
   const { currentWallet } = useUserWallet();
-  const { data: allMints } = api.mints.getMints.useQuery();
 
   useEffect(() => {
     const getBalanceAsync = async () => {
@@ -148,45 +136,6 @@ export const ProfileNFTCard = ({
       }
     }
   };
-  const handleCreateLink = useCallback(async () => {
-    await createReferralMember();
-
-    // TODO: success logic
-  }, [initialized]);
-
-  const handleClaim = async (amount: number, treasury: Treasury) => {
-    if (amount) await claim(treasury);
-  };
-
-  const claimButtons = useMemo(() => {
-    return claimables
-      .filter((claimable) => claimable.amount !== 0)
-      .map((claimable) => {
-        const claimMintKey = claimable.treasury.account.mint.toString();
-        const claimMint = new PublicKey(USDC_MINT);
-        return (
-          <Button
-            onClick={() => handleClaim(claimable.amount, claimable.treasury)}
-          >
-            Claim {claimable.amount} {"USDC"}
-          </Button>
-        );
-      });
-  }, [claimables, allMints]);
-
-  const copyToClipboard = async (text: string) => {
-    try {
-      await navigator.clipboard.writeText(text);
-      setIsCopied(true);
-    } catch (err) {
-      console.error("Failed to copy text: ", err);
-    }
-  };
-
-  const handleCopyClick = (text: string) => {
-    copyToClipboard(text);
-    setTimeout(() => setIsCopied(false), 2000); // Reset the isCopied state after 2 seconds
-  };
 
   return (
     <div className="w-full md:w-[460px] rounded-xl bg-bgLancerSecondary/[8%] overflow-hidden p-6 text-textGreen">
@@ -209,7 +158,6 @@ export const ProfileNFTCard = ({
           {/* Labels column */}
           <div className="flex flex-col gap-4 text-lg">
             <p>name</p>
-            {/* <p>username</p> */}
             <p>industry</p>
             {/* <p>location</p> */}
             <p>xp</p>
@@ -217,8 +165,6 @@ export const ProfileNFTCard = ({
           {/* Data column */}
           <div className="flex flex-col gap-4 text-lg text-textPrimary">
             <p>{profileNFT?.name}</p>
-            {/* <p>{currentUser?.name}</p> */}
-            {/* TODO: hard coded */}
             <div className="flex items-center gap-2">
               <Image
                 src="/assets/icons/eng.png"
@@ -232,6 +178,7 @@ export const ProfileNFTCard = ({
             <p>{profileNFT?.reputation} pts</p>
           </div>
         </div>
+        <LinksCard />
       </div>
     </div>
   );

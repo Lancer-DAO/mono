@@ -1,10 +1,6 @@
 import { FC, useEffect, useState } from "react";
 import { useRouter } from "next/router";
-import {
-  BOUNTY_PROJECT_PARAMS,
-  IS_CUSTODIAL,
-  PROFILE_PROJECT_PARAMS,
-} from "@/src/constants";
+import { IS_CUSTODIAL, PROFILE_PROJECT_PARAMS } from "@/src/constants";
 import {
   BOUNTY_ACTIONS_TUTORIAL_II_INITIAL_STATE,
   PROFILE_TUTORIAL_INITIAL_STATE,
@@ -20,6 +16,7 @@ import { LoadingBar } from "@/components";
 import { ProfileNFTCard, QuestsCard } from "./components";
 import BadgesCard from "./components/BadgesCard";
 import { ReferCard } from "./components/ReferCard";
+import ResumeCard from "./components/ResumeCard";
 
 dayjs.extend(relativeTime);
 
@@ -47,7 +44,6 @@ export const Account: FC<Props> = ({ self }) => {
       enabled: self ? !!currentUser : !!router.query.account,
     }
   );
-
   const [profileNFT, setProfileNFT] = useState<ProfileNFT>();
 
   const fetchProfileNFT = async () => {
@@ -151,8 +147,8 @@ export const Account: FC<Props> = ({ self }) => {
           </div>
           {/* right column */}
           <div className="flex flex-col gap-5 w-full">
+            {fetchedUser.id === currentUser.id && <ResumeCard />}
             <QuestsCard />
-
             {fetchedUser.id === currentUser.id && <ReferCard />}
           </div>
         </div>
