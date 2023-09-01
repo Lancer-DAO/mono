@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import {
   Dialog,
@@ -12,18 +13,19 @@ import * as DialogPrimitive from "@radix-ui/react-dialog";
 import { smallClickAnimation } from "@/src/constants";
 import { UploadDropzone } from "@/src/utils/uploadthing";
 import { motion } from "framer-motion";
-import { Plus, X } from "lucide-react";
+import { Pencil, Plus, X } from "lucide-react";
 import Image from "next/image";
 import { toast } from "react-hot-toast";
 import { api } from "@/src/utils";
 
-const ReferenceDialogue = ({ onReferenceAdded }) => {
+const EditReferenceDialogue = ({ media, onReferenceAdded }) => {
   const { mutateAsync: deleteMedia } = api.bounties.deleteMedia.useMutation();
 
   const [reference, setReference] = useState({
-    imageUrl: "",
-    title: "",
-    description: "",
+    id: media.id,
+    imageUrl: media.imageUrl,
+    title: media.title,
+    description: media.description,
   });
 
   const handleImageUpload = (url) => {
@@ -49,6 +51,7 @@ const ReferenceDialogue = ({ onReferenceAdded }) => {
 
   const handleSubmit = () => {
     const newReference = {
+      id: reference.id,
       imageUrl: reference.imageUrl,
       title: reference.title,
       description: reference.description,
@@ -60,11 +63,6 @@ const ReferenceDialogue = ({ onReferenceAdded }) => {
       toast.error("Please input a title");
     } else {
       onReferenceAdded(newReference);
-      setReference({
-        imageUrl: "",
-        title: "",
-        description: "",
-      });
     }
   };
 
@@ -79,13 +77,16 @@ const ReferenceDialogue = ({ onReferenceAdded }) => {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <button className="flex justify-center items-center border border-gray-300 rounded-md h-44 hover:bg-gray-200">
-          <Plus size={48} />
-        </button>
+        <motion.button 
+          className="absolute top-[-10px] left-[-10px] p-1 bg-yellow-100 border border-yellow-200 rounded-full"
+          {...smallClickAnimation}
+          >
+          <Pencil size={18} strokeWidth={1.25}  />
+        </motion.button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Add a Reference</DialogTitle>
+          <DialogTitle>Edit your Reference</DialogTitle>
           <DialogDescription>
             Make changes to your reference here. Click save when you&apos;re
             done.
@@ -158,4 +159,4 @@ const ReferenceDialogue = ({ onReferenceAdded }) => {
   );
 };
 
-export default ReferenceDialogue;
+export default EditReferenceDialogue;

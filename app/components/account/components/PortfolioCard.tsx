@@ -11,6 +11,7 @@ import { useUserWallet } from "@/src/providers";
 import { Media } from "@/types";
 import { toast } from "react-hot-toast";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/atoms/Modal";
+import EditReferenceDialogue from "@/components/molecules/EditReferenceDialogue";
 
 const PortfolioCard = () => {
   const router = useRouter();
@@ -19,15 +20,14 @@ const PortfolioCard = () => {
     id: parseInt(router.query.account as string) || currentUser.id,
   });
   const maxMedia = 3;
-  const { mutateAsync: updateMedia } = api.users.updateMedia.useMutation();
-  const { mutateAsync: deleteMedia } = api.users.deleteMedia.useMutation();
-  const { data: media } = api.users.getMedia.useQuery({
+  const { mutateAsync: createMedia } = api.media.createMedia.useMutation();
+  const { mutateAsync: deleteMedia } = api.media.deleteMedia.useMutation();
+  const { mutateAsync: updateMedia } = api.media.updateMedia.useMutation();
+  const { data: media } = api.media.getMedia.useQuery({
     userId: fetchedUser?.id
   });
   const [portfolio, setPortfolio] = useState<Media[]>([]);
   const [isAwaitingResponse, setIsAwaitingResponse] = useState(false);
-
-  console.log(fetchedUser?.id === currentUser?.id);
 
   useEffect(() => {
     if (media) {
@@ -83,12 +83,12 @@ const PortfolioCard = () => {
 
 
   const handleMediaAdded = async (newReference: Media) => {
-    await updateMedia({
+    const newMedia = await createMedia({
       imageUrl: newReference.imageUrl,
       title: newReference.title,
       description: newReference.description,
     });
-    setPortfolio([...portfolio, newReference ]);
+    setPortfolio([...portfolio, newMedia ]);
   };
 
   const handleMediaRemoved = async (mediaId, portfolioIndex) => {
@@ -99,17 +99,35 @@ const PortfolioCard = () => {
         fileUrl: portfolio[portfolioIndex].imageUrl
       });
       const updatedPortfolio = portfolio.filter((_, index) => index != portfolioIndex);
-      setPortfolio(updatedPortfolio)
+      setPortfolio(updatedPortfolio);
     } catch (error) {
       console.log(error);
       toast.error(`Error deleting media: ${error.message}`);
     }
   }
 
+  const handleMediaUpdated = async (editedReference: Media) => {
+    await updateMedia({
+      id: editedReference.id,
+      imageUrl: editedReference.imageUrl,
+      title: editedReference.title,
+      description: editedReference.description,
+    });
+
+    const editedMediaIndex = portfolio.findIndex((media) => media.id === editedReference.id);
+
+    if (editedMediaIndex !== -1) {
+      const updatedPortfolio = [...portfolio];
+      updatedPortfolio[editedMediaIndex] = editedReference;
+      
+      setPortfolio(updatedPortfolio);
+    }
+  }
+
   return (
     <div className="relative w-full md:w-[658px] rounded-xl bg-bgLancerSecondary/[8%] overflow-hidden p-6 pt-8 pb-10">
       <p className="font-bold text-2xl text-textGreen mb-2">Portfolio</p>
-      <div className="grid grid-cols-3 gap-4">
+      <div className="grid grid-cols-3 gap-6">
         {[...Array(maxMedia)].map((_, index) => {
           if (index < portfolio.length) {
             const media = portfolio[index];
@@ -117,16 +135,17 @@ const PortfolioCard = () => {
               <Dialog key={index}>
                 <div className="relative border-2 border-primaryBtnBorder rounded-xl p-1">
                   <div className="flex flex-col items-start">
-                    <DialogTrigger>
-                      <div className="flex flex-col items-start justify-start">
+                    <DialogTrigger className="w-full">
+                      <div className="flex flex-col items-start justify-start overflow-hidden w-full">
                         <Image src={media.imageUrl} alt={media.title} width={250} height={250} className="mb-2 rounded-md" />
                         <p className="font-bold text-lg mx-1 overflow-hidden whitespace-nowrap">{media.title}</p>
-                        <p className="text-sm overflow-hidden text-ellipsis whitespace-nowrap mx-1">{media.description}</p>
+                        <p className="text-sm overflow-hidden whitespace-nowrap text-ellipsis mx-1">{media.description}</p>
                       </div>
                     </DialogTrigger>
                   </div>
                   {fetchedUser.id === currentUser.id && (
                     <>
+                      <EditReferenceDialogue media={media} onReferenceAdded={handleMediaUpdated} />
                       <motion.button 
                         className="absolute top-[-10px] right-[-10px] p-1 bg-secondaryBtn border border-secondaryBtnBorder rounded-full"
                         {...smallClickAnimation}

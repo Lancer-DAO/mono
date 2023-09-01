@@ -12,9 +12,6 @@ import { verifyWallet } from "./verifyWallet";
 import { updateLinks } from "./updateLinks";
 import { updateResume } from "./updateResume";
 import { deleteResume } from "./deleteResume";
-import { updateMedia } from "./updateMedia";
-import { deleteMedia } from "./deleteMedia";
-import { getMedia } from "./getMedia";
 
 export const users = createTRPCRouter({
   addOnboardingInformation,
@@ -29,7 +26,4 @@ export const users = createTRPCRouter({
   updateLinks,
   updateResume,
   deleteResume,
-  updateMedia,
-  deleteMedia,
-  getMedia,
 });
