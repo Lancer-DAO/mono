@@ -36,11 +36,14 @@ export const ProfileNFTCard = ({
   // state
   const [signature, setSignature] = useState("");
   const { mutateAsync: updateName } = api.users.updateName.useMutation();
+  const { mutateAsync: updateIndustry } =
+    api.users.updateIndustry.useMutation();
   const [nameEdit, setNameEdit] = useState({ editing: false, name: user.name });
   const [industryEdit, setIndustryEdit] = useState({
     editing: false,
-    industry: user.industries[0].id,
+    industry: user.industries[0],
   });
+
   const [balance, setBalance] = useState<IAsyncResult<number>>({
     isLoading: true,
     loadingPrompt: "Loading Balance",
@@ -233,21 +236,50 @@ export const ProfileNFTCard = ({
               )}
             </div>
             <div className="flex items-center gap-2">
-              <Image
-                src={user.industries[0].icon}
-                width={25}
-                height={25}
-                alt="eng"
-              />
-              <p>{user.industries[0].name}</p>
+              {industryEdit.editing ? (
+                allIndustries.map((industry) => (
+                  <Image
+                    src={industry.icon}
+                    width={25}
+                    height={25}
+                    alt="eng"
+                    key={industry.id}
+                    onClick={() =>
+                      setIndustryEdit({
+                        ...industryEdit,
+                        industry: industry,
+                      })
+                    }
+                    className={
+                      industry.id === industryEdit.industry.id
+                        ? `"border-2 border-[${industry.color}] rounded-full"`
+                        : "rounded-full opacity-50"
+                    }
+                  />
+                ))
+              ) : (
+                <>
+                  <Image
+                    src={industryEdit.industry.icon}
+                    width={25}
+                    height={25}
+                    alt="eng"
+                  />
+                  <p>{industryEdit.industry.name}</p>
+                </>
+              )}
               {self && (
-                <div className="ml-auto">
+                <div className="ml-auto items-center">
                   {industryEdit.editing ? (
                     <>
                       <button
-                        onClick={() =>
-                          setIndustryEdit({ editing: false, industry: 1 })
-                        }
+                        onClick={() => {
+                          updateIndustry({
+                            newIndustryId: industryEdit.industry.id,
+                            oldIndustryId: user.industries[0].id,
+                          });
+                          setIndustryEdit({ ...industryEdit, editing: false });
+                        }}
                         className="rounded-md uppercase font-bold text-textGreen"
                       >
                         <Check />
@@ -256,7 +288,7 @@ export const ProfileNFTCard = ({
                         onClick={() =>
                           setIndustryEdit({
                             editing: false,
-                            industry: user.industries[0].id,
+                            industry: user.industries[0],
                           })
                         }
                         className="rounded-md uppercase font-bold text-textRed"
@@ -267,7 +299,10 @@ export const ProfileNFTCard = ({
                   ) : (
                     <button
                       onClick={() =>
-                        setIndustryEdit({ editing: true, industry: 1 })
+                        setIndustryEdit({
+                          editing: true,
+                          industry: user.industries[0],
+                        })
                       }
                       className="rounded-md uppercase font-bold text-textGreen"
                     >
