@@ -136,10 +136,10 @@ const PortfolioCard = () => {
                 <div className="relative border-2 border-primaryBtnBorder rounded-xl p-1">
                   <div className="flex flex-col items-start">
                     <DialogTrigger className="w-full">
-                      <div className="flex flex-col items-start justify-start overflow-hidden w-full">
+                      <div className="flex flex-col items-start justify-start overflow-hidden">
                         <Image src={media.imageUrl} alt={media.title} width={250} height={250} className="mb-2 rounded-md" />
                         <p className="font-bold text-lg mx-1 overflow-hidden whitespace-nowrap">{media.title}</p>
-                        <p className="text-sm overflow-hidden whitespace-nowrap text-ellipsis mx-1">{media.description}</p>
+                        <p className="text-sm mx-1 truncate w-full">{media.description}</p>
                       </div>
                     </DialogTrigger>
                   </div>
