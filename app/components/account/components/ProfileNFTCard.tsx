@@ -211,7 +211,7 @@ export const ProfileNFTCard = ({
                           updateName({ name: nameEdit.name });
                           setNameEdit({ ...nameEdit, editing: false });
                         }}
-                        className="rounded-md uppercase font-bold text-textGreen"
+                        className="rounded-md uppercase font-bold text-textGreen mr-2"
                       >
                         <Check />
                       </button>
@@ -253,7 +253,7 @@ export const ProfileNFTCard = ({
                     className={
                       industry.id === industryEdit.industry.id
                         ? `"border-2 border-[${industry.color}] rounded-full"`
-                        : "rounded-full opacity-50"
+                        : "rounded-full opacity-50 hover:opacity-100 cursor-pointer"
                     }
                   />
                 ))
@@ -280,7 +280,7 @@ export const ProfileNFTCard = ({
                           });
                           setIndustryEdit({ ...industryEdit, editing: false });
                         }}
-                        className="rounded-md uppercase font-bold text-textGreen"
+                        className="rounded-md uppercase font-bold text-textGreen mr-2"
                       >
                         <Check />
                       </button>
