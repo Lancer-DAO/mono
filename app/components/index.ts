@@ -77,6 +77,7 @@ export {
   Button,
   CoinflowOfframp,
   ContributorInfo,
+  LinkButton,
   LoadingBar,
   PreviewCardBase,
   PriceTag,

@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { AccountHeaderOptions, TutorialsModal } from "@/components";
+import { AccountHeaderOptions, TutorialsModal, LinkButton } from "@/components";
 import Logo from "../@icons/Logo";
 import { HelpCircle } from "react-feather";
 import { useState } from "react";
@@ -9,7 +9,6 @@ import { useAppContext } from "@/src/providers/appContextProvider";
 import { IS_CUSTODIAL } from "@/src/constants";
 import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
 import { useWallet } from "@solana/wallet-adapter-react";
-import LinkButton from "../atoms/LinkButton";
 import { useUserWallet } from "@/src/providers";
 
 const HEADER_LINKS = [
@@ -58,7 +57,7 @@ export const Header = () => {
               );
             })}
           <div className="flex items-center gap-8 ml-auto">
-            {publicKey && <AccountHeaderOptions />}
+            {<AccountHeaderOptions />}
 
             {!IS_CUSTODIAL && (
               <div
