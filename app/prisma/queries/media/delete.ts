@@ -3,10 +3,18 @@ import * as Prisma from "@prisma/client";
 
 export const deleteMedia = async (
   id: number,
-): Promise<Prisma.Media> => {
-  return await prisma.media.delete({
+  userid: number
+): Promise<void> => {
+  await prisma.user.update({
     where: {
-      id: id,
+      id: userid,
+    },
+    data: {
+      media: {
+        delete: {
+          id: id,
+        },
+      },
     },
   });
 };

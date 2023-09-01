@@ -1,4 +1,3 @@
-
 import { protectedProcedure } from "../../trpc";
 import { z } from "zod";
 import { utapi } from "uploadthing/server";
@@ -12,7 +11,9 @@ export const deleteMedia = protectedProcedure
     })
   )
   .mutation(
-    async ({ input: { id, fileUrl } }) => {
+    async ({ input: { id, fileUrl }, ctx: { user } }) => {
+      const userId = user.id;
+
       try {
         const fileKey = fileUrl.split('/f/')[1];
         await utapi.deleteFiles(decodeURI(fileKey));
@@ -21,7 +22,7 @@ export const deleteMedia = protectedProcedure
       }
 
       try {
-        await queries.media.deleteMedia(id);
+        await queries.media.deleteMedia(id, userId);
       } catch (error) {
         console.error(error);
       }
@@ -29,4 +30,3 @@ export const deleteMedia = protectedProcedure
       return { success: "true" };
     }
   );
-

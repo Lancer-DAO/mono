@@ -19,7 +19,7 @@ const QuestCreated = ({
     const animation = lottie.loadAnimation({
       container: animationContainer,
       animationData: animationData,
-      loop: true,
+      loop: false,
       autoplay: true,
     });
 

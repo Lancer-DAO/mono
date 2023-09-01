@@ -1,5 +1,6 @@
 import { prisma } from "@/server/db";
 import * as Prisma from "@prisma/client";
+import { Industry } from "@prisma/client";
 
 export const updateReferrer = async (
   id: number,
@@ -120,7 +121,7 @@ export const updateLinks = async (
   id: number,
   website: string,
   github: string,
-  linkedin: string,
+  linkedin: string
 ): Promise<Prisma.User> => {
   return await prisma.user.update({
     where: {
@@ -136,7 +137,7 @@ export const updateLinks = async (
 
 export const updateResume = async (
   id: number,
-  resume: string,
+  resume: string
 ): Promise<Prisma.User> => {
   return await prisma.user.update({
     where: {
@@ -144,6 +145,28 @@ export const updateResume = async (
     },
     data: {
       resume,
+    },
+  });
+};
+
+export const updateIndustry = async (
+  id: number,
+  newIndustry: Industry,
+  oldIndustry: Industry
+): Promise<Prisma.User> => {
+  return await prisma.user.update({
+    where: {
+      id: id,
+    },
+    data: {
+      industries: {
+        connect: {
+          id: newIndustry.id,
+        },
+        disconnect: {
+          id: oldIndustry.id,
+        },
+      },
     },
   });
 };

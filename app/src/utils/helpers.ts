@@ -23,7 +23,7 @@ export const formatPrice = (price: Decimal | number) => {
       compactDisplay: "short",
     }).format(Number(price))}`;
   } else {
-    return price.toLocaleString();
+    return Number(price);
   }
 };
 

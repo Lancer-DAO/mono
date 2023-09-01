@@ -1,6 +1,6 @@
 import { Toggle } from "@/components";
 import ReferenceDialogue from "@/components/molecules/ReferenceDialogue";
-import { ToggleConfig } from "@/components/molecules/Toggle";
+import { ToggleConfig } from "@/components/atoms/Toggle";
 import {
   CREATE_BOUNTY_TUTORIAL_INITIAL_STATE,
   smallClickAnimation,

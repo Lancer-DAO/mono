@@ -99,7 +99,7 @@ export const PreviewForm: FC<Props> = ({
         network: IS_MAINNET ? "mainnet" : "devnet",
       });
 
-      setFormSection("FUND");
+      setFormSection("SUCCESS");
       setCurrentBounty(bounty);
     } catch (error) {
       setCreateQuestState({ error });
