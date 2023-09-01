@@ -23,7 +23,7 @@ export const formatPrice = (price: Decimal | number) => {
       compactDisplay: "short",
     }).format(Number(price))}`;
   } else {
-    return Number(price).toFixed(2);
+    return Number(price);
   }
 };
 

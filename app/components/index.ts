@@ -19,6 +19,7 @@ const USDC = dynamic(() => import("./@icons/USDC"));
 // atoms
 const BountyCardFrame = dynamic(() => import("./atoms/BountyCardFrame"));
 const Button = dynamic(() => import("./atoms/Button"));
+const LinkButton = dynamic(() => import("./atoms/LinkButton"));
 const CoinflowOfframp = dynamic(() => import("./atoms/CoinflowOfframp"));
 const ContributorInfo = dynamic(() => import("./atoms/ContributorInfo"));
 const LoadingBar = dynamic(() => import("./atoms/LoadingBar"));
@@ -26,6 +27,7 @@ const PreviewCardBase = dynamic(() => import("./atoms/PreviewCardBase"));
 const PriceTag = dynamic(() => import("./atoms/PriceTag"));
 const ProgressBar = dynamic(() => import("./atoms/progressBar"));
 const PubKey = dynamic(() => import("./atoms/PubKey"));
+const Toggle = dynamic(() => import("./atoms/Toggle"));
 const TweetShareButton = dynamic(() => import("./atoms/TweetShareButton"));
 
 // molecules
@@ -46,7 +48,6 @@ const MultiSelectDropdown = dynamic(
 );
 const RangeSlider = dynamic(() => import("./molecules/RangeSlider"));
 const SidePanel = dynamic(() => import("./molecules/SidePanel"));
-const Toggle = dynamic(() => import("./molecules/Toggle"));
 const TutorialsModal = dynamic(() => import("./molecules/TutorialsModal"));
 const WalletInfo = dynamic(() => import("./molecules/WalletInfo"));
 
@@ -80,6 +81,7 @@ export {
   Button,
   CoinflowOfframp,
   ContributorInfo,
+  LinkButton,
   LoadingBar,
   PreviewCardBase,
   PriceTag,

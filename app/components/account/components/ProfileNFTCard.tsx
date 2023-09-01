@@ -15,6 +15,8 @@ import { PublicKey, Transaction } from "@solana/web3.js";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import LinksCard from "./LinksCard";
+import { api } from "@/src/utils";
+import { Check, Edit, X } from "react-feather";
 
 dayjs.extend(relativeTime);
 
@@ -22,19 +24,38 @@ export const ProfileNFTCard = ({
   profileNFT,
   picture,
   githubId,
+  user,
+  self,
 }: {
   profileNFT: ProfileNFT;
   picture: string;
   githubId: string;
+  user: User;
+  self?: boolean;
 }) => {
   // state
   const [signature, setSignature] = useState("");
+  const { mutateAsync: updateName } = api.users.updateName.useMutation();
+  const { mutateAsync: updateIndustry } =
+    api.users.updateIndustry.useMutation();
+  const [nameEdit, setNameEdit] = useState({ editing: false, name: user.name });
+  const [industryEdit, setIndustryEdit] = useState({
+    editing: false,
+    industry: user.industries[0],
+  });
+
   const [balance, setBalance] = useState<IAsyncResult<number>>({
     isLoading: true,
     loadingPrompt: "Loading Balance",
   });
   const [amount, setAmount] = useState(0);
   const [sendToPublicKey, setSentToPublicKey] = useState("");
+
+  const {
+    data: allIndustries,
+    isLoading: industriesLoading,
+    isError: industriesError,
+  } = api.industries.getAllIndustries.useQuery();
 
   // context + api
   const { connection } = useConnection();
@@ -163,16 +184,133 @@ export const ProfileNFTCard = ({
             <p>xp</p>
           </div>
           {/* Data column */}
-          <div className="flex flex-col gap-4 text-lg text-textPrimary">
-            <p>{profileNFT?.name}</p>
+          <div className="flex flex-col gap-4 text-lg text-textPrimary w-full">
+            <div className="flex w-fill">
+              {nameEdit.editing ? (
+                <input
+                  type="text"
+                  className="placeholder:text-textGreen/70 border bg-neutralBtn 
+            border-neutralBtnBorder h-[30px] rounded-lg px-3"
+                  name="company"
+                  placeholder="ex. Jack Sturt"
+                  id="profile-company"
+                  value={nameEdit.name}
+                  onChange={(e) =>
+                    setNameEdit({ ...nameEdit, name: e.target.value })
+                  }
+                />
+              ) : (
+                <p>{nameEdit.name}</p>
+              )}
+              {self && (
+                <div className="ml-auto">
+                  {nameEdit.editing ? (
+                    <>
+                      <button
+                        onClick={() => {
+                          updateName({ name: nameEdit.name });
+                          setNameEdit({ ...nameEdit, editing: false });
+                        }}
+                        className="rounded-md uppercase font-bold text-textGreen mr-2"
+                      >
+                        <Check />
+                      </button>
+                      <button
+                        onClick={() =>
+                          setNameEdit({ editing: false, name: user.name })
+                        }
+                        className="rounded-md uppercase font-bold text-textRed"
+                      >
+                        <X />
+                      </button>
+                    </>
+                  ) : (
+                    <button
+                      onClick={() => setNameEdit({ editing: true, name: "" })}
+                      className="rounded-md uppercase font-bold text-textGreen"
+                    >
+                      <Edit />
+                    </button>
+                  )}
+                </div>
+              )}
+            </div>
             <div className="flex items-center gap-2">
-              <Image
-                src="/assets/icons/eng.png"
-                width={25}
-                height={25}
-                alt="eng"
-              />
-              <p>Engineering</p>
+              {industryEdit.editing ? (
+                allIndustries.map((industry) => (
+                  <Image
+                    src={industry.icon}
+                    width={25}
+                    height={25}
+                    alt="eng"
+                    key={industry.id}
+                    onClick={() =>
+                      setIndustryEdit({
+                        ...industryEdit,
+                        industry: industry,
+                      })
+                    }
+                    className={
+                      industry.id === industryEdit.industry.id
+                        ? `"border-2 border-[${industry.color}] rounded-full"`
+                        : "rounded-full opacity-50 hover:opacity-100 cursor-pointer"
+                    }
+                  />
+                ))
+              ) : (
+                <>
+                  <Image
+                    src={industryEdit.industry.icon}
+                    width={25}
+                    height={25}
+                    alt="eng"
+                  />
+                  <p>{industryEdit.industry.name}</p>
+                </>
+              )}
+              {self && (
+                <div className="ml-auto items-center">
+                  {industryEdit.editing ? (
+                    <>
+                      <button
+                        onClick={() => {
+                          updateIndustry({
+                            newIndustryId: industryEdit.industry.id,
+                            oldIndustryId: user.industries[0].id,
+                          });
+                          setIndustryEdit({ ...industryEdit, editing: false });
+                        }}
+                        className="rounded-md uppercase font-bold text-textGreen mr-2"
+                      >
+                        <Check />
+                      </button>
+                      <button
+                        onClick={() =>
+                          setIndustryEdit({
+                            editing: false,
+                            industry: user.industries[0],
+                          })
+                        }
+                        className="rounded-md uppercase font-bold text-textRed"
+                      >
+                        <X />
+                      </button>
+                    </>
+                  ) : (
+                    <button
+                      onClick={() =>
+                        setIndustryEdit({
+                          editing: true,
+                          industry: user.industries[0],
+                        })
+                      }
+                      className="rounded-md uppercase font-bold text-textGreen"
+                    >
+                      <Edit />
+                    </button>
+                  )}
+                </div>
+              )}
             </div>
             {/* <p>[location]</p> */}
             <p>{profileNFT?.reputation} pts</p>

@@ -109,7 +109,7 @@ const BountyCard: FC<BountyCardProps> = ({
       <div className="w-full absolute top-1">
         <div className="w-full flex items-center justify-between px-1">
           <PriceTag
-            price={bounty ? bounty?.escrow.amount : undefined}
+            price={bounty ? bounty?.escrow.amount : Number(formData.issuePrice)}
             icon={handlePriceIcon()}
           />
           <p className="text-xs font-bold mr-2">

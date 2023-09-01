@@ -5,7 +5,7 @@ import { formatPrice } from "@/utils";
 import Image from "next/image";
 
 interface Props {
-  price: Decimal | undefined;
+  price: Decimal | number | undefined;
   icon: string;
 }
 
