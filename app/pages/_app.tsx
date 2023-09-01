@@ -37,7 +37,7 @@ const App = ({ Component, pageProps }: AppPropsWithLayout) => {
         localStorage.setItem(COOKIE_REF, r as string);
       }
     }
-  }, []);
+  }, [router.query]);
 
   return (
     <AllProviders>

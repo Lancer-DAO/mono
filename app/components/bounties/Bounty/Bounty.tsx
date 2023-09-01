@@ -148,11 +148,11 @@ export const Bounty = () => {
                       : `http://${link}`;
                   return (
                     <a
+                      key={link}
                       href={formattedLink}
                       target="_blank"
                       rel="noreferrer"
                       className="underline text-blue-500"
-                      key={`${link}-${index}`}
                     >
                       {formattedLink}
                     </a>
