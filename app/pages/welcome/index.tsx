@@ -9,6 +9,14 @@ export async function getServerSideProps(
   withPageAuthRequired();
   const { req, res } = context;
   const metadata = await getSession(req, res);
+  if (!metadata?.user) {
+    return {
+      redirect: {
+        destination: "/api/auth/login",
+        permanent: false,
+      },
+    };
+  }
 
   const { email } = metadata.user;
 
