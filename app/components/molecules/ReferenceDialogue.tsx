@@ -131,8 +131,7 @@ const ReferenceDialogue = ({ onReferenceAdded }) => {
               id="title"
               value={reference.title}
               onChange={handleTitleChange}
-              className="col-span-3 border border-gray-300 rounded-md"
-              required
+              className="p-1 pl-2 col-span-3 border border-gray-300 rounded-md"
             />
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
@@ -141,8 +140,7 @@ const ReferenceDialogue = ({ onReferenceAdded }) => {
               id="description"
               value={reference.description}
               onChange={handleDescriptionChange}
-              className="col-span-3 border border-gray-300 rounded-md"
-              required
+              className="p-1 pl-2 col-span-3 border border-gray-300 rounded-md"
             />
           </div>
         </div>

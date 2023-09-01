@@ -11,9 +11,12 @@ export const deleteResume = protectedProcedure
   )
   .mutation(
     async ({ input: { fileUrl } }) => {
-      const fileKey = fileUrl.split('/f/')[1];
-
-      await utapi.deleteFiles(decodeURI(fileKey));
+      try {
+        const fileKey = fileUrl.split('/f/')[1];
+        await utapi.deleteFiles(decodeURI(fileKey));        
+      } catch (error) {
+        console.error(error);
+      }
 
       return { success: "true" };
     }
