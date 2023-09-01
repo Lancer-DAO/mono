@@ -24,6 +24,7 @@ import { motion } from "framer-motion";
 import { smallClickAnimation } from "@/src/constants";
 import { User } from "@prisma/client";
 import { useBounty } from "@/src/providers/bountyProvider";
+import FundCTA from "@/components/atoms/FundCTA";
 
 interface BountyActionsUserProps {
   title: string;
@@ -111,25 +112,31 @@ export const Bounty = () => {
                   .format("MMM D, YYYY")}`}
               </p>
               <div className="h-[30px] w-[1px] bg-neutralBtnBorder mx-3" />
-              <Image
-                src={currentBounty?.escrow?.mint?.logo}
-                width={25}
-                height={25}
-                alt="mint logo"
-              />
-              <p>{`${formatPrice(
-                Number(currentBounty.escrow.amount)
-              )} in escrow`}</p>
-              <motion.a
-                {...smallClickAnimation}
-                href={getSolscanAddress(
-                  new PublicKey(currentBounty?.escrow?.publicKey)
-                )}
-                target="_blank"
-                rel="noreferrer"
-              >
-                <ExternalLinkIcon />
-              </motion.a>
+              {Number(currentBounty.escrow.amount) > 0 ? (
+                <>
+                  <Image
+                    src={currentBounty?.escrow?.mint?.logo}
+                    width={25}
+                    height={25}
+                    alt="mint logo"
+                  />
+                  <p>{`${formatPrice(
+                    Number(currentBounty.escrow.amount)
+                  )} in escrow`}</p>
+                  <motion.a
+                    {...smallClickAnimation}
+                    href={getSolscanAddress(
+                      new PublicKey(currentBounty?.escrow?.publicKey)
+                    )}
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    <ExternalLinkIcon />
+                  </motion.a>
+                </>
+              ) : (
+                <FundCTA />
+              )}
             </div>
           </div>
           <div className="h-[1px] w-full bg-neutralBtnBorder" />

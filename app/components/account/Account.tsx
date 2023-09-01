@@ -1,10 +1,6 @@
 import { FC, useEffect, useState } from "react";
 import { useRouter } from "next/router";
-import {
-  BOUNTY_PROJECT_PARAMS,
-  IS_CUSTODIAL,
-  PROFILE_PROJECT_PARAMS,
-} from "@/src/constants";
+import { IS_CUSTODIAL, PROFILE_PROJECT_PARAMS } from "@/src/constants";
 import {
   BOUNTY_ACTIONS_TUTORIAL_II_INITIAL_STATE,
   PROFILE_TUTORIAL_INITIAL_STATE,
@@ -20,7 +16,6 @@ import { LoadingBar } from "@/components";
 import { ProfileNFTCard, QuestsCard } from "./components";
 import BadgesCard from "./components/BadgesCard";
 import PortfolioCard from "./components/PortfolioCard";
-import LinksCard from "./components/LinksCard";
 import { ReferCard } from "./components/ReferCard";
 import ResumeCard from "./components/ResumeCard";
 
@@ -50,7 +45,6 @@ export const Account: FC<Props> = ({ self }) => {
       enabled: self ? !!currentUser : !!router.query.account,
     }
   );
-
   const [profileNFT, setProfileNFT] = useState<ProfileNFT>();
 
   const fetchProfileNFT = async () => {
@@ -149,6 +143,8 @@ export const Account: FC<Props> = ({ self }) => {
               profileNFT={profileNFT}
               picture={fetchedUser.picture}
               githubId={fetchedUser.githubId}
+              user={fetchedUser}
+              self={self}
             />
             <BadgesCard profileNFT={profileNFT} />
           </div>
