@@ -1,8 +1,8 @@
 import React, { useEffect } from "react";
-import animationData from "@/public/assets/animations/logo-shield.json";
+import animationData from "@/public/assets/animations/quest-created.json";
 import lottie from "lottie-web";
 
-const LogoShield = ({
+const QuestCreated = ({
   height,
   width,
   extraClasses,
@@ -41,4 +41,4 @@ const LogoShield = ({
   );
 };
 
-export default LogoShield;
+export default QuestCreated;
