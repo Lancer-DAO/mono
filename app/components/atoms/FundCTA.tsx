@@ -10,7 +10,7 @@ const FundCTA: FC = () => {
       <motion.button
         {...smallClickAnimation}
         className="h-12 w-fit px-4 border border-industryRedBorder/10 
-        rounded-md flex items-center gap-2"
+        rounded-md flex items-center gap-2 bg-white"
         onClick={() => setShowModal(true)}
       >
         <Coins className="fill-industryRed" />

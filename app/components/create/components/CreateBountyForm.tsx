@@ -1,5 +1,5 @@
-import { Dispatch, FC, SetStateAction } from "react";
-import { IndustryDropdown } from "@/components";
+import { useState, Dispatch, FC, SetStateAction, useEffect } from "react";
+import { IndustryDropdown, Toggle } from "@/components";
 import { smallClickAnimation } from "@/src/constants";
 import { CREATE_BOUNTY_TUTORIAL_INITIAL_STATE } from "@/src/constants/tutorials";
 import { useTutorial } from "@/src/providers/tutorialProvider";
@@ -8,6 +8,7 @@ import { motion } from "framer-motion";
 import { toast } from "react-hot-toast";
 import { Industry } from "@/types";
 import { api } from "@/src/utils";
+import { ToggleConfig } from "@/components/atoms/Toggle";
 
 interface Props {
   setFormSection: Dispatch<SetStateAction<FORM_SECTION>>;
@@ -25,11 +26,22 @@ export const CreateBountyForm: FC<Props> = ({
   const { currentTutorialState, setCurrentTutorialState } = useTutorial();
   const { data: allIndustries } = api.industries.getAllIndustries.useQuery();
 
+  const [toggleConfig, setToggleConfig] = useState<ToggleConfig>({
+    option1: {
+      title: "Set Estimate",
+    },
+    option2: {
+      title: "Request Quotes",
+    },
+    selected: formData.requestQuote ? "option2" : "option1",
+  });
+
   const handleNextSection = () => {
     if (
       formData.issueTitle === "" ||
       formData.issueDescription === "" ||
-      formData.industryId === null
+      formData.industryId === null ||
+      (formData.issuePrice === "" && toggleConfig.selected === "option1")
     ) {
       toast.error("Please fill out all fields");
     } else {
@@ -37,22 +49,45 @@ export const CreateBountyForm: FC<Props> = ({
     }
   };
 
-  // TODO: save for later
-  // useEffect(() => {
-  //   if (toggleConfig.selected === "option2") {
-  //     setFormData({
-  //       ...formData,
-  //       issuePrice: "Requesting Quote",
-  //     });
-  //   }
-  // }, [toggleConfig.selected]);
+  useEffect(() => {
+    if (toggleConfig.selected === "option2") {
+      setFormData({
+        ...formData,
+        issuePrice: "",
+        requestQuote: true,
+      });
+    } else {
+      setFormData({
+        ...formData,
+        requestQuote: false,
+      });
+    }
+  }, [toggleConfig.selected]);
 
   return (
     <div className="px-10">
       <h1>Post a Quest</h1>
       <div className="w-full flex flex-col gap-4 mt-6">
-        <div className="relative flex items-center">
-          <div className="absolute top-1/2 -translate-y-1/2 -left-10">1</div>
+        <div className="relative flex flex-col gap-4">
+          <div className="absolute top-6 -translate-y-1/2 -left-10">1</div>
+          <Toggle
+            toggleConfig={toggleConfig}
+            setToggleConfig={setToggleConfig}
+          />
+          <input
+            type="number"
+            className="placeholder:text-textGreen/70 border bg-neutralBtn 
+            border-neutralBtnBorder w-full h-[50px] rounded-lg px-3 disabled:opacity-50 disabled:cursor-not-allowed"
+            name="issuePrice"
+            placeholder="Price"
+            id="issue-price-input"
+            value={formData.issuePrice}
+            onChange={handleChange}
+            disabled={toggleConfig.selected === "option2"}
+          />
+        </div>
+        <div className="relative flex items-center gap-2">
+          <div className="absolute top-1/2 -translate-y-1/2 -left-10">2</div>
           <IndustryDropdown
             options={allIndustries}
             selected={allIndustries?.find((industry) =>
@@ -67,7 +102,7 @@ export const CreateBountyForm: FC<Props> = ({
           />
         </div>
         <div className="relative">
-          <div className="absolute top-1/2 -translate-y-1/2 -left-10">2</div>
+          <div className="absolute top-1/2 -translate-y-1/2 -left-10">3</div>
           <input
             type="text"
             className="placeholder:text-textGreen/70 border bg-neutralBtn 
@@ -131,7 +166,7 @@ export const CreateBountyForm: FC<Props> = ({
           />
         </div>
         <div className="relative">
-          <div className="absolute top-2 -left-10">3</div>
+          <div className="absolute top-2 -left-10">4</div>
           <textarea
             className="placeholder:text-textGreen/70 border bg-neutralBtn min-h-[50px] 
             border-neutralBtnBorder w-full h-[150px] rounded-lg px-3 py-2 resize-y"
