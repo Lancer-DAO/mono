@@ -9,6 +9,9 @@ import { search } from "./search";
 import { addReferrer } from "./addReferrer";
 import { maybeInitAccount } from "./maybeInitAccount";
 import { verifyWallet } from "./verifyWallet";
+import { updateLinks } from "./updateLinks";
+import { updateResume } from "./updateResume";
+import { deleteMedia } from "./deleteMedia";
 
 export const users = createTRPCRouter({
   addOnboardingInformation,
@@ -20,4 +23,7 @@ export const users = createTRPCRouter({
   addReferrer,
   maybeInitAccount,
   verifyWallet,
+  updateLinks,
+  updateResume,
+  deleteMedia,
 });

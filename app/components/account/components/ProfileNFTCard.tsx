@@ -1,24 +1,26 @@
+import { Button } from "@/components";
+import CopyLinkField from "@/components/molecules/CopyLinkField";
+import { IS_CUSTODIAL, USDC_MINT } from "@/src/constants";
 import { useUserWallet } from "@/src/providers";
 import { useReferral } from "@/src/providers/referralProvider";
 import { api } from "@/src/utils/api";
+import { IAsyncResult, ProfileNFT } from "@/types/";
 import { Treasury } from "@ladderlabs/buddy-sdk";
 import * as Prisma from "@prisma/client";
+import {
+  TokenAccountNotFoundError,
+  createAssociatedTokenAccountInstruction,
+  createTransferInstruction,
+  getAccount,
+  getAssociatedTokenAddressSync,
+} from "@solana/spl-token";
+import { useConnection } from "@solana/wallet-adapter-react";
+import { Keypair, PublicKey, Transaction } from "@solana/web3.js";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import Image from "next/image";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { IAsyncResult, ProfileNFT } from "@/types/";
-import { Button } from "@/components";
-import { IS_CUSTODIAL, USDC_MINT } from "@/src/constants";
-import { Keypair, PublicKey, Transaction } from "@solana/web3.js";
-import {
-  createTransferInstruction,
-  createAssociatedTokenAccountInstruction,
-  getAssociatedTokenAddressSync,
-  getAccount,
-  TokenAccountNotFoundError,
-} from "@solana/spl-token";
-import { useConnection } from "@solana/wallet-adapter-react";
+import LinksCard from "./LinksCard";
 
 dayjs.extend(relativeTime);
 
@@ -233,6 +235,7 @@ export const ProfileNFTCard = ({
             <p>{profileNFT?.reputation} pts</p>
           </div>
         </div>
+        <LinksCard />
       </div>
     </div>
   );
