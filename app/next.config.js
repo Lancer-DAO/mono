@@ -2,6 +2,9 @@
 const withFonts = require("next-fonts");
 const nextConfig = {
     reactStrictMode: true,
+    experimental: {
+        esmExternals: false,
+    },
     images: {
         unoptimized: true,
     },
@@ -11,7 +14,7 @@ const nextConfig = {
     async redirects() {
         return [{
             source: "/",
-            destination: "/account",
+            destination: "/welcome",
             permanent: true,
         }, ];
     },

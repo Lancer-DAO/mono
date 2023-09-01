@@ -7,7 +7,7 @@ import React, {
 } from "react";
 import { useRouter } from "next/router";
 import Image from "next/image";
-import { api, decimalToNumber, getSolscanAddress } from "@/utils";
+import { api, formatPrice, getSolscanAddress } from "@/utils";
 import { marked } from "marked";
 import dayjs from "dayjs";
 import { PublicKey } from "@solana/web3.js";
@@ -19,11 +19,12 @@ import {
   SidePanel,
 } from "@/components";
 import { SubmitterSection, BountyActions } from "./components";
-import { useBounty } from "@/src/providers/bountyProvider";
 import { useUserWallet } from "@/src/providers";
 import { motion } from "framer-motion";
 import { smallClickAnimation } from "@/src/constants";
 import { User } from "@prisma/client";
+import { useBounty } from "@/src/providers/bountyProvider";
+import FundCTA from "@/components/atoms/FundCTA";
 
 interface BountyActionsUserProps {
   title: string;
@@ -31,15 +32,24 @@ interface BountyActionsUserProps {
 }
 
 export const Bounty = () => {
-  const { currentBounty, setCurrentBounty } = useBounty();
   const { currentUser } = useUserWallet();
-  const { mutateAsync: getBounty } = api.bounties.getBounty.useMutation();
+  const { setCurrentBounty } = useBounty();
+  const router = useRouter();
+  const { data: currentBounty } = api.bounties.getBounty.useQuery(
+    {
+      id: parseInt(router.query.quest as string),
+      currentUserId: currentUser?.id,
+    },
+    {
+      enabled: !!currentUser,
+      onSuccess: (data) => {
+        setCurrentBounty(data);
+      },
+    }
+  );
 
   const [pollId, setPollId] = useState(null);
-  const [bountyAmount, setBountyAmount] = useState("");
   const [links, setLinks] = useState<string[]>([]);
-
-  const router = useRouter();
 
   const formatString = (str: string) => {
     return str
@@ -64,24 +74,6 @@ export const Bounty = () => {
   );
 
   useEffect(() => {
-    if (router.isReady && currentUser?.id) {
-      const getB = async () => {
-        const bounty = await getBounty({
-          id: parseInt(router.query.quest as string),
-          currentUserId: currentUser.id,
-        });
-        setCurrentBounty(bounty);
-        if (bounty?.escrow?.amount !== null) {
-          const amount = decimalToNumber(bounty.escrow.amount).toFixed(2);
-
-          setBountyAmount(amount);
-        }
-      };
-      getB();
-    }
-  }, [router.isReady, currentUser?.id]);
-
-  useEffect(() => {
     const setFuturePoll = () => {
       setPollId(setTimeout(() => setFuturePoll(), 5000));
     };
@@ -92,13 +84,13 @@ export const Bounty = () => {
 
   useEffect(() => {
     if (currentBounty?.links) {
-      const links = currentBounty?.links?.split(",");
-      setLinks(links);
+      const separatedLinks = currentBounty?.links?.split(",");
+      setLinks(separatedLinks);
     }
   }, [currentBounty]);
 
   if (!currentUser || !currentBounty) {
-    return <></>;
+    return null;
   }
 
   return (
@@ -120,23 +112,31 @@ export const Bounty = () => {
                   .format("MMM D, YYYY")}`}
               </p>
               <div className="h-[30px] w-[1px] bg-neutralBtnBorder mx-3" />
-              <Image
-                src={currentBounty?.escrow?.mint?.logo}
-                width={25}
-                height={25}
-                alt="mint logo"
-              />
-              <p>{`${bountyAmount} in escrow`}</p>
-              <motion.a
-                {...smallClickAnimation}
-                href={getSolscanAddress(
-                  new PublicKey(currentBounty?.escrow?.publicKey)
-                )}
-                target="_blank"
-                rel="noreferrer"
-              >
-                <ExternalLinkIcon />
-              </motion.a>
+              {Number(currentBounty.escrow.amount) > 0 ? (
+                <>
+                  <Image
+                    src={currentBounty?.escrow?.mint?.logo}
+                    width={25}
+                    height={25}
+                    alt="mint logo"
+                  />
+                  <p>{`${formatPrice(
+                    Number(currentBounty.escrow.amount)
+                  )} in escrow`}</p>
+                  <motion.a
+                    {...smallClickAnimation}
+                    href={getSolscanAddress(
+                      new PublicKey(currentBounty?.escrow?.publicKey)
+                    )}
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    <ExternalLinkIcon />
+                  </motion.a>
+                </>
+              ) : (
+                <FundCTA />
+              )}
             </div>
           </div>
           <div className="h-[1px] w-full bg-neutralBtnBorder" />
@@ -148,13 +148,14 @@ export const Bounty = () => {
             <div>
               <p className="font-bold text-sm">Links</p>
               <div className="flex flex-col w-full gap-1">
-                {links?.map((link) => {
+                {links?.map((link, index) => {
                   const formattedLink =
                     link.startsWith("http://") || link.startsWith("https://")
                       ? link
                       : `http://${link}`;
                   return (
                     <a
+                      key={link}
                       href={formattedLink}
                       target="_blank"
                       rel="noreferrer"
@@ -219,7 +220,6 @@ export const Bounty = () => {
                   ))}
                 </>
               )}
-
             {currentBounty &&
               currentBounty.approvedSubmitters.length > 0 &&
               currentBounty.isCreator && (
@@ -287,7 +287,7 @@ export const Bounty = () => {
                   )}
                 />
               )}
-            <BountyActions />
+            {!!currentBounty && <BountyActions />}
           </div>
         </div>
       </div>

@@ -1,54 +1,65 @@
-import { useUserWallet } from "@/src/providers";
-import { useReferral } from "@/src/providers/referralProvider";
-import { api } from "@/src/utils/api";
-import { Treasury } from "@ladderlabs/buddy-sdk";
-import * as Prisma from "@prisma/client";
-import dayjs from "dayjs";
-import relativeTime from "dayjs/plugin/relativeTime";
+import { useEffect, useState } from "react";
 import Image from "next/image";
-import { useCallback, useEffect, useMemo, useState } from "react";
-import { IAsyncResult, ProfileNFT } from "@/types/";
-import { Button } from "@/components";
 import { IS_CUSTODIAL, USDC_MINT } from "@/src/constants";
-import { Keypair, PublicKey, Transaction } from "@solana/web3.js";
+import { useUserWallet } from "@/src/providers";
+import { IAsyncResult, ProfileNFT, User } from "@/types/";
 import {
-  createTransferInstruction,
-  createAssociatedTokenAccountInstruction,
-  getAssociatedTokenAddressSync,
-  getAccount,
   TokenAccountNotFoundError,
+  createAssociatedTokenAccountInstruction,
+  createTransferInstruction,
+  getAccount,
+  getAssociatedTokenAddressSync,
 } from "@solana/spl-token";
 import { useConnection } from "@solana/wallet-adapter-react";
+import { PublicKey, Transaction } from "@solana/web3.js";
+import dayjs from "dayjs";
+import relativeTime from "dayjs/plugin/relativeTime";
+import LinksCard from "./LinksCard";
+import { api } from "@/src/utils";
+import { Check, Edit, X } from "react-feather";
 
 dayjs.extend(relativeTime);
-
-const SITE_URL = `https://${IS_CUSTODIAL ? "app" : "pro"}.lancer.so/account?r=`;
 
 export const ProfileNFTCard = ({
   profileNFT,
   picture,
   githubId,
+  user,
+  self,
 }: {
   profileNFT: ProfileNFT;
   picture: string;
   githubId: string;
+  user: User;
+  self?: boolean;
 }) => {
-  const [showCoinflow, setShowCoinflow] = useState(false);
-  const [showReferrerModal, setShowReferrerModal] = useState(false);
-  const [isCopied, setIsCopied] = useState(false);
+  // state
   const [signature, setSignature] = useState("");
+  const { mutateAsync: updateName } = api.users.updateName.useMutation();
+  const { mutateAsync: updateIndustry } =
+    api.users.updateIndustry.useMutation();
+  const [nameEdit, setNameEdit] = useState({ editing: false, name: user.name });
+  const [industryEdit, setIndustryEdit] = useState({
+    editing: false,
+    industry: user.industries[0],
+  });
+
   const [balance, setBalance] = useState<IAsyncResult<number>>({
     isLoading: true,
     loadingPrompt: "Loading Balance",
   });
-  const { referralId, initialized, createReferralMember, claimables, claim } =
-    useReferral();
-  const { connection } = useConnection();
   const [amount, setAmount] = useState(0);
-  const { currentUser, currentWallet } = useUserWallet();
   const [sendToPublicKey, setSentToPublicKey] = useState("");
-  const { mutateAsync: getMintsAPI } = api.mints.getMints.useMutation();
-  const [mints, setMints] = useState<Prisma.Mint[]>([]);
+
+  const {
+    data: allIndustries,
+    isLoading: industriesLoading,
+    isError: industriesError,
+  } = api.industries.getAllIndustries.useQuery();
+
+  // context + api
+  const { connection } = useConnection();
+  const { currentWallet } = useUserWallet();
 
   useEffect(() => {
     const getBalanceAsync = async () => {
@@ -73,12 +84,15 @@ export const ProfileNFTCard = ({
       getBalanceAsync();
     }
   }, [currentWallet?.publicKey]);
+
   const handleMessageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSentToPublicKey(event.target.value);
   };
+
   const handleAmountChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setAmount(Number(event.target.value));
   };
+
   const handleSendClick = async () => {
     const sendUSDC = async (sourceTokenAccount, destTokenAccount) => {
       const { blockhash, lastValidBlockHeight } =
@@ -143,57 +157,6 @@ export const ProfileNFTCard = ({
       }
     }
   };
-  const handleCreateLink = useCallback(async () => {
-    await createReferralMember();
-
-    // TODO: success logic
-  }, [initialized]);
-
-  const handleClaim = async (amount: number, treasury: Treasury) => {
-    if (amount) await claim(treasury);
-  };
-
-  const claimButtons = useMemo(() => {
-    return claimables
-      .filter((claimable) => claimable.amount !== 0)
-      .map((claimable) => {
-        const claimMintKey = claimable.treasury.account.mint.toString();
-        const claimMint = mints.filter(
-          (mint) => mint.publicKey === claimMintKey
-        )[0];
-        return (
-          <Button
-            onClick={() => handleClaim(claimable.amount, claimable.treasury)}
-          >
-            Claim {claimable.amount} {claimMint?.ticker}
-          </Button>
-        );
-      });
-  }, [claimables, mints]);
-
-  const copyToClipboard = async (text: string) => {
-    try {
-      await navigator.clipboard.writeText(text);
-      setIsCopied(true);
-    } catch (err) {
-      console.error("Failed to copy text: ", err);
-    }
-  };
-
-  const handleCopyClick = (text: string) => {
-    copyToClipboard(text);
-    setTimeout(() => setIsCopied(false), 2000); // Reset the isCopied state after 2 seconds
-  };
-
-  useEffect(() => {
-    const getMints = async () => {
-      const mints = await getMintsAPI();
-      setMints(mints);
-    };
-    if (!!currentUser) {
-      getMints();
-    }
-  }, [currentUser]);
 
   return (
     <div className="w-full md:w-[460px] rounded-xl bg-bgLancerSecondary/[8%] overflow-hidden p-6 text-textGreen">
@@ -216,29 +179,144 @@ export const ProfileNFTCard = ({
           {/* Labels column */}
           <div className="flex flex-col gap-4 text-lg">
             <p>name</p>
-            {/* <p>username</p> */}
             <p>industry</p>
             {/* <p>location</p> */}
             <p>xp</p>
           </div>
           {/* Data column */}
-          <div className="flex flex-col gap-4 text-lg text-textPrimary">
-            <p>{profileNFT?.name}</p>
-            {/* <p>{currentUser?.name}</p> */}
-            {/* TODO: hard coded */}
+          <div className="flex flex-col gap-4 text-lg text-textPrimary w-full">
+            <div className="flex w-fill">
+              {nameEdit.editing ? (
+                <input
+                  type="text"
+                  className="placeholder:text-textGreen/70 border bg-neutralBtn 
+            border-neutralBtnBorder h-[30px] rounded-lg px-3"
+                  name="company"
+                  placeholder="ex. Jack Sturt"
+                  id="profile-company"
+                  value={nameEdit.name}
+                  onChange={(e) =>
+                    setNameEdit({ ...nameEdit, name: e.target.value })
+                  }
+                />
+              ) : (
+                <p>{nameEdit.name}</p>
+              )}
+              {self && (
+                <div className="ml-auto">
+                  {nameEdit.editing ? (
+                    <>
+                      <button
+                        onClick={() => {
+                          updateName({ name: nameEdit.name });
+                          setNameEdit({ ...nameEdit, editing: false });
+                        }}
+                        className="rounded-md uppercase font-bold text-textGreen mr-2"
+                      >
+                        <Check />
+                      </button>
+                      <button
+                        onClick={() =>
+                          setNameEdit({ editing: false, name: user.name })
+                        }
+                        className="rounded-md uppercase font-bold text-textRed"
+                      >
+                        <X />
+                      </button>
+                    </>
+                  ) : (
+                    <button
+                      onClick={() => setNameEdit({ editing: true, name: "" })}
+                      className="rounded-md uppercase font-bold text-textGreen"
+                    >
+                      <Edit />
+                    </button>
+                  )}
+                </div>
+              )}
+            </div>
             <div className="flex items-center gap-2">
-              <Image
-                src="/assets/icons/eng.png"
-                width={25}
-                height={25}
-                alt="eng"
-              />
-              <p>Engineering</p>
+              {industryEdit.editing ? (
+                allIndustries.map((industry) => (
+                  <Image
+                    src={industry.icon}
+                    width={25}
+                    height={25}
+                    alt="eng"
+                    key={industry.id}
+                    onClick={() =>
+                      setIndustryEdit({
+                        ...industryEdit,
+                        industry: industry,
+                      })
+                    }
+                    className={
+                      industry.id === industryEdit.industry.id
+                        ? `"border-2 border-[${industry.color}] rounded-full"`
+                        : "rounded-full opacity-50 hover:opacity-100 cursor-pointer"
+                    }
+                  />
+                ))
+              ) : (
+                <>
+                  <Image
+                    src={industryEdit.industry.icon}
+                    width={25}
+                    height={25}
+                    alt="eng"
+                  />
+                  <p>{industryEdit.industry.name}</p>
+                </>
+              )}
+              {self && (
+                <div className="ml-auto items-center">
+                  {industryEdit.editing ? (
+                    <>
+                      <button
+                        onClick={() => {
+                          updateIndustry({
+                            newIndustryId: industryEdit.industry.id,
+                            oldIndustryId: user.industries[0].id,
+                          });
+                          setIndustryEdit({ ...industryEdit, editing: false });
+                        }}
+                        className="rounded-md uppercase font-bold text-textGreen mr-2"
+                      >
+                        <Check />
+                      </button>
+                      <button
+                        onClick={() =>
+                          setIndustryEdit({
+                            editing: false,
+                            industry: user.industries[0],
+                          })
+                        }
+                        className="rounded-md uppercase font-bold text-textRed"
+                      >
+                        <X />
+                      </button>
+                    </>
+                  ) : (
+                    <button
+                      onClick={() =>
+                        setIndustryEdit({
+                          editing: true,
+                          industry: user.industries[0],
+                        })
+                      }
+                      className="rounded-md uppercase font-bold text-textGreen"
+                    >
+                      <Edit />
+                    </button>
+                  )}
+                </div>
+              )}
             </div>
             {/* <p>[location]</p> */}
             <p>{profileNFT?.reputation} pts</p>
           </div>
         </div>
+        <LinksCard />
       </div>
     </div>
   );
