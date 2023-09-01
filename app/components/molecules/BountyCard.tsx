@@ -40,7 +40,7 @@ const BountyCard: FC<BountyCardProps> = ({
     : null;
 
   const displayedTags = bounty
-    ? bounty.tags.map((tag) => tag.name)
+    ? bounty.tags.slice(0, 4).map((tag) => tag.name)
     : formData.tags.slice(0, 4).map((tag) => tag);
 
   const tagOverflow = bounty
