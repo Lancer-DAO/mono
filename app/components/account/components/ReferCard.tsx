@@ -1,11 +1,10 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { Button, CoinflowOfframp, CopyLinkField } from "@/components";
 import { IS_CUSTODIAL } from "@/src/constants";
 import { useUserWallet } from "@/src/providers";
 import { useReferral } from "@/src/providers/referralProvider";
 import { api } from "@/src/utils";
 import { Treasury } from "@ladderlabs/buddy-sdk";
-import * as Prisma from "@prisma/client";
 
 const SITE_URL = `https://${IS_CUSTODIAL ? "app" : "pro"}.lancer.so/account?r=`;
 
@@ -84,7 +83,7 @@ export const ReferCard = () => {
         {referralId && initialized ? (
           <>
             <div className="text-textGreen">
-              <p className="uppercase pb-1 px-1 font-medium">
+              <p className="uppercase pb-1 px-1 font-medium text-sm">
                 Share to earn 1% of each referral
               </p>
               <CopyLinkField url={`${SITE_URL}${referralId}`} />

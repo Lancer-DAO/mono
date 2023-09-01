@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { BountyCard, PreviewCardBase } from "@/components";
 import { useUserWallet } from "@/src/providers";
 import { api } from "@/src/utils";
-
 import { FORM_SECTION, FormData } from "@/types/forms";
 import { Mint } from "@prisma/client";
 import { PublicKey } from "@solana/web3.js";
