@@ -26,12 +26,10 @@ export const WelcomeView: FC<Props> = ({ account, formSection }) => {
       )}
       {account.result && (
         <div className="flex flex-col items-center justify-center w-full h-full">
-          <div className="text-3xl font-bold">
-            Welcome {account.result.name}!
-          </div>
-          <div className="text-lg font-bold mt-4">Your Profile is Ready</div>
-          <div className="text-lg font-bold mt-4">
-            You can now start earning rewards
+          <div className="text-4xl font-bold">Welcome to Lancer.</div>
+          <div className="text-lg mt-4">
+            You&apos;re one step away from connecting with the best clients &
+            freelancers on the planet.
           </div>
         </div>
       )}

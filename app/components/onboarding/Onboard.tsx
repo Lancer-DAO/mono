@@ -133,9 +133,9 @@ const Onboard: FC = () => {
 
         // show welcome screen for 2 more seconds
         // then show skillset view
-        timeout = setTimeout(() => {
-          setFormSection(OnboardStep.Skillset);
-        }, 2000);
+        // timeout = setTimeout(() => {
+        //   setFormSection(OnboardStep.Skillset);
+        // }, 2000);
       } catch (e) {
         setAccount({ error: e });
       }
