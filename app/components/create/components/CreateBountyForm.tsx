@@ -1,17 +1,17 @@
-import { FC, Dispatch, SetStateAction } from "react";
 import { IndustryDropdown, MultiSelectDropdown } from "@/components";
-import { CREATE_BOUNTY_TUTORIAL_INITIAL_STATE } from "@/src/constants/tutorials";
 import { smallClickAnimation } from "@/src/constants";
-import { FORM_SECTION, FormData } from "@/types/forms";
+import { CREATE_BOUNTY_TUTORIAL_INITIAL_STATE } from "@/src/constants/tutorials";
 import { useTutorial } from "@/src/providers/tutorialProvider";
+import { FORM_SECTION, FormData } from "@/types/forms";
+import { Dispatch, FC, SetStateAction } from "react";
 import { motion } from "framer-motion";
 import { toast } from "react-hot-toast";
-import { IAsyncResult, Industry, Option } from "@/types";
+import { Industry } from "@/types";
+import { api } from "@/src/utils";
 
 interface Props {
   setFormSection: Dispatch<SetStateAction<FORM_SECTION>>;
   formData: FormData;
-  industries: IAsyncResult<Industry[]>;
   setFormData: Dispatch<SetStateAction<any>>;
   handleChange: (event) => void;
 }
@@ -19,11 +19,11 @@ interface Props {
 export const CreateBountyForm: FC<Props> = ({
   setFormSection,
   formData,
-  industries,
   setFormData,
   handleChange,
 }) => {
   const { currentTutorialState, setCurrentTutorialState } = useTutorial();
+  const { data: allIndustries } = api.industries.getAllIndustries.useQuery();
 
   const handleNextSection = () => {
     if (
@@ -54,8 +54,8 @@ export const CreateBountyForm: FC<Props> = ({
         <div className="relative flex items-center">
           <div className="absolute top-1/2 -translate-y-1/2 -left-10">1</div>
           <IndustryDropdown
-            options={industries?.result}
-            selected={industries?.result?.find((industry) =>
+            options={allIndustries}
+            selected={allIndustries?.find((industry) =>
               formData.industryId === industry.id ? industry : null
             )}
             onChange={(selected: Industry) => {

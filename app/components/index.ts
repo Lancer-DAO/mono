@@ -1,5 +1,10 @@
 import dynamic from "next/dynamic";
 
+// @animations
+const LogoShield = dynamic(() => import("./@animations/LogoShield"));
+const ProfileCreated = dynamic(() => import("./@animations/ProfileCreated"));
+const QuestCreated = dynamic(() => import("./@animations/QuestCreated"));
+
 // @icons
 const Close = dynamic(() => import("./@icons/Close"));
 const ExternalLinkIcon = dynamic(() => import("./@icons/ExternalLinkIcon"));
@@ -38,6 +43,7 @@ const MultiSelectDropdown = dynamic(
 );
 const RangeSlider = dynamic(() => import("./molecules/RangeSlider"));
 const MintsDropdown = dynamic(() => import("./molecules/MintsDropdown"));
+const SidePanel = dynamic(() => import("./molecules/SidePanel"));
 const Toggle = dynamic(() => import("./molecules/Toggle"));
 const TutorialsModal = dynamic(() => import("./molecules/TutorialsModal"));
 const WalletInfo = dynamic(() => import("./molecules/WalletInfo"));
@@ -50,6 +56,11 @@ const JoyrideWrapper = dynamic(() => import("./organisms/JoyrideWrapper"));
 const DefaultLayout = dynamic(() => import("./templates/DefaultLayout"));
 
 export {
+  // @animations
+  LogoShield,
+  ProfileCreated,
+  QuestCreated,
+
   // @icons
   Close,
   ExternalLinkIcon,
@@ -84,6 +95,7 @@ export {
   MultiSelectDropdown,
   RangeSlider,
   MintsDropdown,
+  SidePanel,
   Toggle,
   TutorialsModal,
   WalletInfo,

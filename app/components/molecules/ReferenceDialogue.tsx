@@ -1,4 +1,12 @@
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/atoms/Modal";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/atoms/Modal";
 import { smallClickAnimation } from "@/src/constants";
 import { UploadDropzone } from "@/src/utils/uploadthing";
 import { motion } from "framer-motion";
@@ -6,13 +14,16 @@ import { Plus, X } from "lucide-react";
 import Image from "next/image";
 import { useState } from "react";
 import { toast } from "react-hot-toast";
+import { api } from "@/src/utils";
 
 const ReferenceDialogue = ({ onReferenceAdded }) => {
+  const { mutateAsync: deleteMedia } = api.bounties.deleteMedia.useMutation();
+
   const [reference, setReference] = useState({
     imageUrl: "",
     title: "",
     description: "",
-  })
+  });
 
   const handleImageUpload = (url) => {
     setReference((prevReference) => ({
@@ -42,9 +53,9 @@ const ReferenceDialogue = ({ onReferenceAdded }) => {
       description: reference.description,
     };
 
-    if(newReference.imageUrl === "") {
+    if (newReference.imageUrl === "") {
       toast.error("Please upload an image");
-    } else if(newReference.title === "") {
+    } else if (newReference.title === "") {
       toast.error("Please input a title");
     } else {
       onReferenceAdded(newReference);
@@ -54,10 +65,10 @@ const ReferenceDialogue = ({ onReferenceAdded }) => {
         description: "",
       });
     }
-
   };
 
-  const handleImageDelete = () => {
+  const handleImageDelete = async () => {
+    await deleteMedia({ imageUrl: reference.imageUrl });
     setReference((prevReference) => ({
       ...prevReference,
       imageUrl: "",
@@ -75,15 +86,22 @@ const ReferenceDialogue = ({ onReferenceAdded }) => {
         <DialogHeader>
           <DialogTitle>Add a Reference</DialogTitle>
           <DialogDescription>
-            Make changes to your reference here. Click save when you're done.
+            Make changes to your reference here. Click save when you&apos;re
+            done.
           </DialogDescription>
         </DialogHeader>
-        
+
         <div className="flex flex-col gap-4 py-4">
           <div className="flex justify-center">
-            {reference.imageUrl ? ( 
+            {reference.imageUrl ? (
               <div className="relative">
-                <Image src={reference.imageUrl} alt={reference.title} width={250} height={250} className="justify-self-center" /> 
+                <Image
+                  src={reference.imageUrl}
+                  alt={reference.title}
+                  width={250}
+                  height={250}
+                  className="justify-self-center"
+                />
                 <motion.button
                   className="absolute top-[-10px] right-[-10px] p-1 bg-secondaryBtn border border-secondaryBtnBorder rounded-full"
                   {...smallClickAnimation}
@@ -92,23 +110,22 @@ const ReferenceDialogue = ({ onReferenceAdded }) => {
                   <X size={18} strokeWidth={1.25} />
                 </motion.button>
               </div>
-            ) : ( 
-              <UploadDropzone 
+            ) : (
+              <UploadDropzone
                 endpoint="imageUploader"
                 onClientUploadComplete={(res) => {
                   handleImageUpload(res.at(0).url);
                 }}
                 onUploadError={(error: Error) => {
-                console.log(error);
-                alert(`ERROR! ${error.message}`);
+                  console.log(error);
+                  alert(`ERROR! ${error.message}`);
                 }}
-              /> 
+                config={{ mode: "auto" }}
+              />
             )}
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
-            <div  className="text-right">
-              Title
-            </div>
+            <div className="text-right">Title</div>
             <input
               id="title"
               value={reference.title}
@@ -118,9 +135,7 @@ const ReferenceDialogue = ({ onReferenceAdded }) => {
             />
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
-            <div className="text-right">
-              Description
-            </div>
+            <div className="text-right">Description</div>
             <input
               id="description"
               value={reference.description}
@@ -131,11 +146,13 @@ const ReferenceDialogue = ({ onReferenceAdded }) => {
           </div>
         </div>
         <DialogFooter>
-          <button type="submit" onClick={handleSubmit}>Save changes</button>
+          <button type="submit" onClick={handleSubmit}>
+            Save changes
+          </button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
-  )
-}
+  );
+};
 
 export default ReferenceDialogue;

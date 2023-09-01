@@ -12,7 +12,10 @@ export const CancelEscrow: FC = () => {
   const { currentBounty, setCurrentBounty } = useBounty();
   const { mutateAsync } = api.bountyUsers.update.useMutation();
 
-  if (!(currentBounty.isCreator && currentBounty.needsToVote.length === 0))
+  if (
+    !currentBounty ||
+    !(currentBounty.isCreator && currentBounty.needsToVote.length === 0)
+  )
     return null;
 
   const onClick = async () => {

@@ -1,5 +1,6 @@
 import { createTRPCRouter } from "../../trpc";
 
+import { addOnboardingInformation } from "./addOnboardingInformation";
 import { login } from "./login";
 import { currentUser } from "./currentUser";
 import { registerProfileNFT } from "./registerProfileNFT";
@@ -8,8 +9,12 @@ import { search } from "./search";
 import { addReferrer } from "./addReferrer";
 import { maybeInitAccount } from "./maybeInitAccount";
 import { verifyWallet } from "./verifyWallet";
+import { updateLinks } from "./updateLinks";
+import { updateResume } from "./updateResume";
+import { deleteMedia } from "./deleteMedia";
 
 export const users = createTRPCRouter({
+  addOnboardingInformation,
   login,
   currentUser,
   registerProfileNFT,
@@ -18,4 +23,7 @@ export const users = createTRPCRouter({
   addReferrer,
   maybeInitAccount,
   verifyWallet,
+  updateLinks,
+  updateResume,
+  deleteMedia,
 });

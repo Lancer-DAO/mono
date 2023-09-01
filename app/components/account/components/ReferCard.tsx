@@ -1,4 +1,3 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
 import { Button, CoinflowOfframp, CopyLinkField } from "@/components";
 import { IS_CUSTODIAL } from "@/src/constants";
 import { useUserWallet } from "@/src/providers";
@@ -6,6 +5,7 @@ import { useReferral } from "@/src/providers/referralProvider";
 import { api } from "@/src/utils";
 import { Treasury } from "@ladderlabs/buddy-sdk";
 import * as Prisma from "@prisma/client";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
 const SITE_URL = `https://${IS_CUSTODIAL ? "app" : "pro"}.lancer.so/account?r=`;
 
@@ -15,37 +15,32 @@ export const ReferCard = () => {
   const { referralId, initialized, createReferralMember, claimables, claim } =
     useReferral();
 
-  const { mutateAsync: getMintsAPI } = api.mints.getMints.useMutation();
-  const { currentUser, currentWallet } = useUserWallet();
-  const [mints, setMints] = useState<Prisma.Mint[]>([]);
-  useEffect(() => {
-    const getMints = async () => {
-      const mints = await getMintsAPI();
-      setMints(mints);
-    };
-    if (!!currentUser) {
-      getMints();
-    }
-  }, [currentUser]);
-  const handleCreateLink = useCallback(async () => {
-    await createReferralMember();
+  const { currentWallet } = useUserWallet();
+  const { data: allMints } = api.mints.getMints.useQuery();
 
-    // TODO: success logic
+  const handleCreateLink = useCallback(async () => {
+    try {
+      await createReferralMember();
+    } catch (e) {
+      console.log("error creating referral member: ", e);
+    }
   }, [initialized]);
 
   const handleClaim = async (amount: number, treasury: Treasury) => {
     if (amount) await claim(treasury);
   };
+
   const claimButtons = useMemo(() => {
     return claimables
       .filter((claimable) => claimable.amount !== 0)
-      .map((claimable) => {
+      .map((claimable, index) => {
         const claimMintKey = claimable.treasury.account.mint.toString();
-        const claimMint = mints.filter(
+        const claimMint = allMints?.filter(
           (mint) => mint.publicKey === claimMintKey
         )[0];
         return (
           <Button
+            key={`${claimable.treasury.account.mint.toString()}-${index}`}
             className="border bg-primaryBtn border-primaryBtnBorder text-lg rounded-md px-6 py-3 uppercase font-bold text-textGreen mt-4"
             onClick={() => handleClaim(claimable.amount, claimable.treasury)}
           >
@@ -53,7 +48,7 @@ export const ReferCard = () => {
           </Button>
         );
       });
-  }, [claimables, mints, currentWallet]);
+  }, [claimables, allMints, currentWallet]);
 
   const renderCircles = (invitesLeft) => {
     const circles = [];
@@ -89,7 +84,7 @@ export const ReferCard = () => {
         {referralId && initialized ? (
           <>
             <div className="text-textGreen">
-              <p className="uppercase pb-1 px-1 font-medium">
+              <p className="uppercase pb-1 px-1 font-medium text-sm">
                 Share to earn 1% of each referral
               </p>
               <CopyLinkField url={`${SITE_URL}${referralId}`} />
