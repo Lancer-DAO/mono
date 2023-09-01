@@ -18,9 +18,6 @@ export async function getServerSideProps(
   const { req, res } = context;
   const metadata = await getSession(req, res);
 
-  const token = process.env.NEXT_PUBLIC_IS_CUSTODIAL
-    ? metadata.token
-    : (await getAccessToken(req, res))?.accessToken;
   const { email } = metadata.user;
 
   const user = await prisma.user.findUnique({
