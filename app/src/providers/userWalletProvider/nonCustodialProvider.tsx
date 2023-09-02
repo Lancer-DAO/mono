@@ -21,6 +21,7 @@ import { PROFILE_TUTORIAL_INITIAL_STATE } from "@/src/constants/tutorials";
 import { useTutorial } from "../tutorialProvider";
 import { User } from "@/types/";
 import { useRouter } from "next/router";
+import { useDebugMode } from "../debugModeProvider";
 
 export const NonCustodialWalletContext = createContext<IUserWalletContext>({
   currentUser: null,
@@ -56,6 +57,8 @@ const UserWalletProvider: FunctionComponent<IUserWalletState> = ({
     connected,
   } = useWallet();
   const { connection } = useConnection();
+  const { isDebugMode } = useDebugMode();
+
   const { currentTutorialState, setCurrentTutorialState } = useTutorial();
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [currentWallet, setCurrentWallet] = useState<LancerWallet>();
@@ -73,13 +76,13 @@ const UserWalletProvider: FunctionComponent<IUserWalletState> = ({
         signTransaction,
         connected,
         signAndSendTransaction: async (transaction: Transaction) => {
-          return await sendTransaction(transaction, connection, {});
+          return await sendTransaction(transaction, connection, {
+            skipPreflight: isDebugMode,
+          });
         },
         providerName: "Phantom",
       };
-      const provider = new AnchorProvider(connection, lancerWallet, {
-        skipPreflight: true,
-      });
+      const provider = new AnchorProvider(connection, lancerWallet, {});
       const program = new Program<MonoProgram>(
         MonoProgramJSON as unknown as MonoProgram,
         new PublicKey(MONO_ADDRESS),
@@ -102,7 +105,7 @@ const UserWalletProvider: FunctionComponent<IUserWalletState> = ({
         return;
       }
     }
-  }, [connected, publicKey]);
+  }, [connected, publicKey, isDebugMode, connection, wallet, currentUser]);
 
   useEffect(() => {
     if (user) {

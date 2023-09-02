@@ -16,6 +16,7 @@ import NonCustodialWalletProvider from "./userWalletProvider/nonCustodialProvide
 import CustodialWalletProvider from "./userWalletProvider/custodialProvider";
 import { IS_CUSTODIAL, IS_MAINNET, MAINNET_RPC } from "../constants";
 import ReferralProvider from "./referralProvider";
+import { useDebugMode } from "./debugModeProvider";
 import ChatProvider from "./chatProvider";
 import SendbirdProvider from "@sendbird/uikit-react/SendbirdProvider";
 
@@ -25,6 +26,7 @@ export const AllProviders: React.FC<{ children: ReactNode }> = ({
   children,
 }) => {
   // You can also provide a custom RPC endpoint
+  const { isDebugMode } = useDebugMode();
   const endpoint = useMemo(
     () =>
       IS_MAINNET ? MAINNET_RPC : clusterApiUrl(WalletAdapterNetwork.Devnet),
@@ -53,7 +55,10 @@ export const AllProviders: React.FC<{ children: ReactNode }> = ({
   // console.log("IS_CUSTODIAL", IS_CUSTODIAL);
 
   return IS_CUSTODIAL ? (
-    <ConnectionProvider endpoint={endpoint}>
+    <ConnectionProvider
+      endpoint={endpoint}
+      config={{ commitment: isDebugMode ? "finalized" : "confirmed" }}
+    >
       <WalletProvider wallets={walletProviders} autoConnect>
         <WalletModalProvider>
           <AppContextProvider>
@@ -76,7 +81,7 @@ export const AllProviders: React.FC<{ children: ReactNode }> = ({
     <UserProvider>
       <ConnectionProvider
         endpoint={endpoint}
-        config={{ commitment: "confirmed" }}
+        config={{ commitment: isDebugMode ? "finalized" : "confirmed" }}
       >
         <WalletProvider wallets={walletProviders} autoConnect>
           <WalletModalProvider>
