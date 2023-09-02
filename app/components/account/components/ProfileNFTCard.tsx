@@ -336,6 +336,3 @@ export const ProfileNFTCard = ({
     </div>
   );
 };
-function setIsChatOpen(arg0: boolean) {
-  throw new Error("Function not implemented.");
-}
