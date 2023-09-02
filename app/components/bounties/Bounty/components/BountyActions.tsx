@@ -28,11 +28,9 @@ import { useUserWallet } from "@/src/providers";
 
 export const BountyActions = () => {
   const { currentBounty } = useBounty();
-  const {
-    currentWallet: { publicKey },
-  } = useUserWallet();
+  const { currentWallet } = useUserWallet();
 
-  if (!publicKey) {
+  if (!currentWallet || !currentWallet.publicKey) {
     return IS_CUSTODIAL ? (
       <></>
     ) : (

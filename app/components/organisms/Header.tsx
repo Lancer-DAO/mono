@@ -22,9 +22,7 @@ export const Header = () => {
   const [isTutorialButtonHovered, setIsTutorialButtonHovered] = useState(false);
   const [showTutorialModal, setShowTutorialModal] = useState(false);
 
-  const {
-    currentWallet: { publicKey },
-  } = useUserWallet();
+  const { currentWallet } = useUserWallet();
 
   return (
     <div className="sticky py-4 top-0 z-20 bg-bgLancer">
@@ -42,7 +40,7 @@ export const Header = () => {
             );
           })}
           <div className="flex items-center gap-8 ml-auto">
-            {publicKey && <AccountHeaderOptions />}
+            {currentWallet?.publicKey && <AccountHeaderOptions />}
 
             {!IS_CUSTODIAL && (
               <div
@@ -67,10 +65,10 @@ export const Header = () => {
                 !text-textGreen !rounded-md !whitespace-nowrap !font-base"
                   startIcon={undefined}
                 >
-                  {publicKey
-                    ? publicKey.toBase58().slice(0, 4) +
+                  {currentWallet?.publicKey
+                    ? currentWallet.publicKey.toBase58().slice(0, 4) +
                       " ... " +
-                      publicKey.toBase58().slice(-4)
+                      currentWallet?.publicKey.toBase58().slice(-4)
                     : "Connect"}
                 </WalletMultiButton>
               </div>
