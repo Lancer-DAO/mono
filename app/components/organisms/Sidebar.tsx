@@ -1,7 +1,6 @@
 import { useUserWallet } from "@/src/providers";
 import { useChat } from "@/src/providers/chatProvider";
 import dynamic from "next/dynamic";
-import { useState } from "react";
 
 const ChannelList = dynamic(() => import("@sendbird/uikit-react/ChannelList"), {
   ssr: false,
