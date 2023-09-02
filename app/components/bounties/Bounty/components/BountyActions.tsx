@@ -24,10 +24,13 @@ import {
   SubmitRequest,
   BountyActionsButton,
 } from ".";
+import { useUserWallet } from "@/src/providers";
 
 export const BountyActions = () => {
   const { currentBounty } = useBounty();
-  const { publicKey } = useWallet();
+  const {
+    currentWallet: { publicKey },
+  } = useUserWallet();
 
   if (!publicKey) {
     return IS_CUSTODIAL ? (

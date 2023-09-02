@@ -9,6 +9,7 @@ import { useAppContext } from "@/src/providers/appContextProvider";
 import { IS_CUSTODIAL } from "@/src/constants";
 import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
 import { useWallet } from "@solana/wallet-adapter-react";
+import { useUserWallet } from "@/src/providers";
 
 const HEADER_LINKS = [
   { href: "/create", children: "New Quest", id: "create-bounty-link" },
@@ -21,7 +22,9 @@ export const Header = () => {
   const [isTutorialButtonHovered, setIsTutorialButtonHovered] = useState(false);
   const [showTutorialModal, setShowTutorialModal] = useState(false);
 
-  const { publicKey } = useWallet();
+  const {
+    currentWallet: { publicKey },
+  } = useUserWallet();
 
   return (
     <div className="sticky py-4 top-0 z-20 bg-bgLancer">
