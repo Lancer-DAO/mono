@@ -9,6 +9,7 @@ import { useAppContext } from "@/src/providers/appContextProvider";
 import { IS_CUSTODIAL } from "@/src/constants";
 import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
 import { useWallet } from "@solana/wallet-adapter-react";
+import { useUserWallet } from "@/src/providers";
 
 const HEADER_LINKS = [
   { href: "/create", children: "New Quest", id: "create-bounty-link" },
@@ -21,7 +22,7 @@ export const Header = () => {
   const [isTutorialButtonHovered, setIsTutorialButtonHovered] = useState(false);
   const [showTutorialModal, setShowTutorialModal] = useState(false);
 
-  const { publicKey } = useWallet();
+  const { currentWallet } = useUserWallet();
 
   return (
     <div className="sticky py-4 top-0 z-20 bg-bgLancer">
@@ -39,7 +40,7 @@ export const Header = () => {
             );
           })}
           <div className="flex items-center gap-8 ml-auto">
-            {publicKey && <AccountHeaderOptions />}
+            {currentWallet?.publicKey && <AccountHeaderOptions />}
 
             {!IS_CUSTODIAL && (
               <div
@@ -64,10 +65,10 @@ export const Header = () => {
                 !text-textGreen !rounded-md !whitespace-nowrap !font-base"
                   startIcon={undefined}
                 >
-                  {publicKey
-                    ? publicKey.toBase58().slice(0, 4) +
+                  {currentWallet?.publicKey
+                    ? currentWallet.publicKey.toBase58().slice(0, 4) +
                       " ... " +
-                      publicKey.toBase58().slice(-4)
+                      currentWallet?.publicKey.toBase58().slice(-4)
                     : "Connect"}
                 </WalletMultiButton>
               </div>
