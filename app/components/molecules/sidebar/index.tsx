@@ -43,7 +43,8 @@ const SidePanel: FC = () => {
           />
         )}
         <motion.div
-          className="flex items-start overflow-x-hidden fixed inset-y-0 right-0 z-50 w-[35rem] h-full transform rounded-l-lg"
+          className="flex items-start overflow-x-hidden fixed 
+          inset-y-0 right-0 z-50 w-[35rem] h-full transform rounded-l-lg"
           initial={{ x: "91%" }}
           animate={{ x: isChatOpen ? "0" : "91%" }}
           transition={{ ease: "easeInOut", duration: 0.3 }}
@@ -56,7 +57,8 @@ const SidePanel: FC = () => {
               onClick={handleOpenClose}
             >
               <div
-                className={`w-full h-full bg-green-200 rounded-l-3xl pt-6 flex justify-center`}
+                className={`w-full h-full bg-primaryBtn 
+                rounded-l-3xl pt-6 flex justify-center`}
               >
                 <svg
                   width="20"
