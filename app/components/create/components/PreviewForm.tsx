@@ -82,6 +82,7 @@ export const PreviewForm: FC<Props> = ({
         email: currentUser.email,
         industryIds: [formData.industryId],
         disciplineIds: formData.displineIds,
+        price: parseFloat(formData.issuePrice),
         title: formData.issueTitle,
         description: formData.issueDescription,
         tags: formData.tags,

@@ -71,7 +71,7 @@ export const BountyActions = () => {
         <CancelEscrow />
       </>
     );
-  }, [!!currentBounty]);
+  }, [currentBounty, publicKey]);
 
   return (
     <div className="flex flex-wrap gap-3 pt-4" id="bounty-actions">

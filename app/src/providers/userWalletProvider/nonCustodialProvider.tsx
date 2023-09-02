@@ -9,11 +9,7 @@ import {
 import { AnchorProvider, Program } from "@project-serum/anchor";
 import { MonoProgram } from "@/escrow/sdk/types/mono_program";
 import { LancerWallet } from "@/types/";
-import {
-  IUserWalletContext,
-  ISSUE_LOAD_STATE,
-  LOGIN_STATE,
-} from "@/src/providers/userWalletProvider/types";
+import { IUserWalletContext } from "@/src/providers/userWalletProvider/types";
 import { api } from "@/src/utils/api";
 import { useConnection, useWallet } from "@solana/wallet-adapter-react";
 import { PublicKey, Transaction } from "@solana/web3.js";

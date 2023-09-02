@@ -2,21 +2,17 @@ import {
   BountyCardFrame,
   ContributorInfo,
   PriceTag,
-  StarIcon,
+  // StarIcon,
   LockIcon,
 } from "@/components";
 import { useUserWallet } from "@/providers";
-import {
-  IS_CUSTODIAL,
-  fastEnterAnimation,
-  midClickAnimation,
-} from "@/src/constants";
+import { fastEnterAnimation, midClickAnimation } from "@/src/constants";
 import { useBounty } from "@/src/providers/bountyProvider";
 import { BountyPreview, FormData, Industry } from "@/types/";
 import { api, getFormattedDate } from "@/utils";
 import { motion } from "framer-motion";
 import Image from "next/image";
-import { FC, SVGAttributes, useEffect, useState } from "react";
+import { FC, SVGAttributes, useCallback, useEffect, useState } from "react";
 
 export interface BountyCardProps extends SVGAttributes<SVGSVGElement> {
   bounty?: BountyPreview;
@@ -54,6 +50,14 @@ const BountyCard: FC<BountyCardProps> = ({
       return `/quests/${bounty?.id}`;
     }
   };
+
+  const handlePrice = useCallback(() => {
+    if (bounty) {
+      return Number(bounty?.escrow?.amount);
+    } else {
+      return Number(formData.issuePrice);
+    }
+  }, [bounty, formData]);
 
   useEffect(() => {
     if (formData) {
@@ -104,11 +108,7 @@ const BountyCard: FC<BountyCardProps> = ({
       <div className="w-full absolute top-1">
         <div className="w-full flex items-center justify-between px-1">
           <PriceTag
-            price={
-              bounty
-                ? Number(bounty?.escrow.amount)
-                : Number(formData.issuePrice)
-            }
+            price={handlePrice()}
             icon={handlePriceIcon()}
             funded={bounty ? Number(bounty?.escrow.amount) > 0 : false}
           />

@@ -85,7 +85,7 @@ export const Account: FC<Props> = ({ self }) => {
   };
 
   useEffect(() => {
-    if (fetchedUser) {
+    if (!!fetchedUser && !!currentWallet) {
       const fetchNfts = async () => {
         await fetchProfileNFT();
 
@@ -115,7 +115,7 @@ export const Account: FC<Props> = ({ self }) => {
       };
       fetchNfts();
     }
-  }, [!!fetchedUser]);
+  }, [!!fetchedUser, !!currentWallet]);
 
   if (!IS_CUSTODIAL && !currentWallet && !profileNFT)
     return (
