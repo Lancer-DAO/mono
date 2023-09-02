@@ -1,6 +1,7 @@
 import Head from "next/head";
-import { ContributionBoard } from "@/components/leaderboard/ContributionBoard";
 import { getSession, withPageAuthRequired } from "@auth0/nextjs-auth0";
+import { LeaderboardCommits } from "@/components/leaderboard/CommitBoard";
+import { TopQuestUsersBoard } from "@/components/leaderboard/TopQuestUsersBoard";
 import { GetServerSidePropsContext } from "next";
 import { prisma } from "@/server/db";
 export async function getServerSideProps(
@@ -46,11 +47,11 @@ export default function Home() {
   return (
     <>
       <Head>
-        <title>Lancer | Contribution Leaderboard</title>
-        <meta name="description" content="Lancer Contribution Leaderboard" />
+        <title>Lancer | Bounty User Leaderboard</title>
+        <meta name="description" content="Lancer Bounty Leaderboard" />
       </Head>
       <main>
-        <ContributionBoard />
+        <TopQuestUsersBoard />
       </main>
     </>
   );

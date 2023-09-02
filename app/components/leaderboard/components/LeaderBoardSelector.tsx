@@ -5,15 +5,15 @@ import { useRouter } from "next/router";
 const LEADERBOARD_LINKS = [
   {
     href: "/leaderboard",
+    children: "Quests",
+  },
+  {
+    href: "/leaderboard/contributions",
     children: "Contributions",
   },
   {
     href: "/leaderboard/commits",
     children: "Commits",
-  },
-  {
-    href: "/leaderboard/quests",
-    children: "Quests",
   },
   {
     href: "/leaderboard/earners",
