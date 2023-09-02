@@ -153,7 +153,8 @@ export const Account: FC<Props> = ({ self }) => {
             <PortfolioCard />
             {fetchedUser.id === currentUser.id && <ResumeCard />}
             <QuestsCard />
-            {fetchedUser.id === currentUser.id && <ReferCard />}
+            {fetchedUser.id === currentUser.id &&
+              currentUser.hasBeenApproved && <ReferCard />}
           </div>
         </div>
       ) : (
