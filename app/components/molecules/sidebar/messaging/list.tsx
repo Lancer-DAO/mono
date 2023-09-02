@@ -6,14 +6,14 @@ import Image from "next/image";
 import ReactLoading from "react-loading";
 
 const List = ({ setChannel }: { setChannel: (channel: any) => void }) => {
-  const { allChannels } = useChannelListContext();
+  const { allChannels, loading } = useChannelListContext();
   const { currentUser } = useUserWallet();
 
   const { setCurrentChannel } = useChat();
 
   return (
     <div className="w-[35rem] h-full border-t border-neutral-300">
-      {allChannels ? (
+      {!loading ? (
         allChannels?.map((channel) => {
           const meta =
             channel.members.length === 2
