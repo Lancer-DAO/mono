@@ -6,7 +6,7 @@ import { useBounty } from "@/src/providers/bountyProvider";
 import { BountyState } from "@/types";
 
 interface Props {
-  setIsFunded: Dispatch<SetStateAction<boolean>>;
+  setIsFunded?: Dispatch<SetStateAction<boolean>>;
 }
 
 const FundCTA: FC<Props> = ({ setIsFunded }) => {
