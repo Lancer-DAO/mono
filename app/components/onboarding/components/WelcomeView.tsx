@@ -1,40 +1,64 @@
-import { LoadingBar } from "@/components";
+import {
+  LoadingBar,
+  LogoShield,
+  ProfileCreated,
+  QuestCompleted,
+  QuestCreated,
+} from "@/components";
 import { IAsyncResult, User } from "@/types";
-import { FC } from "react";
+import { Dispatch, FC, SetStateAction } from "react";
 import { OnboardStep } from "../Onboard";
 import { motion } from "framer-motion";
-import { enterAnimation } from "@/src/constants";
+import { enterAnimation, smallClickAnimation } from "@/src/constants";
 
 interface Props {
   account: IAsyncResult<User>;
   formSection: OnboardStep;
+  setFormSection: Dispatch<SetStateAction<OnboardStep>>;
 }
 
-export const WelcomeView: FC<Props> = ({ account, formSection }) => {
+export const WelcomeView: FC<Props> = ({
+  account,
+  formSection,
+  setFormSection,
+}) => {
   return (
     <motion.div
-      {...enterAnimation}
-      exit={{ opacity: 0 }}
       key={"welcome"}
       className={`${
         formSection === OnboardStep.Welcome ? "block" : "hidden"
       } flex flex-col items-center justify-center w-full h-full`}
     >
-      {account.isLoading && <LoadingBar title={account.loadingPrompt} />}
-      {account.error && (
-        <div className="color-red">{account.error.message}</div>
-      )}
-      {account.result && (
-        <div className="flex flex-col items-center justify-center w-full h-full">
-          <div className="text-3xl font-bold">
-            Welcome {account.result.name}!
-          </div>
-          <div className="text-lg font-bold mt-4">Your Profile is Ready</div>
-          <div className="text-lg font-bold mt-4">
-            You can now start earning rewards
-          </div>
+      <div className="flex flex-col items-center justify-center w-full max-w-[750px] mx-auto h-full gap-5 px-5">
+        <div className="text-4xl font-bold text-center">Welcome to Lancer.</div>
+        <div className="h-[390px]">
+          <ProfileCreated width="w-96" height="w-96" />
         </div>
-      )}
+        <div className="text-lg text-center">
+          You&apos;re one step away from connecting with the best clients &
+          freelancers on the planet.
+        </div>
+        <div className="text-lg text-center">
+          Velit duis excepteur esse sit dolore nulla. Proident minim cillum
+          magna occaecat sint ipsum consectetur sit velit sit ullamco id non
+          reprehenderit. Amet reprehenderit anim Lorem proident sunt laborum
+          aute labore.
+        </div>
+        {account.isLoading && <LoadingBar title={null} />}
+        {account.error && (
+          <div className="text-red-500">{account.error.message}</div>
+        )}
+        {account.result && !account.isLoading && !account.error && (
+          <motion.button
+            {...smallClickAnimation}
+            onClick={() => setFormSection(OnboardStep.Skillset)}
+            className="bg-primaryBtn border border-primaryBtnBorder text-textGreen 
+            mt-10 w-[100px] h-[50px] rounded-lg text-base"
+          >
+            NEXT
+          </motion.button>
+        )}
+      </div>
     </motion.div>
   );
 };

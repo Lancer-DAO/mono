@@ -1,3 +1,4 @@
+import { useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -7,12 +8,12 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/atoms/Modal";
+import * as DialogPrimitive from "@radix-ui/react-dialog";
 import { smallClickAnimation } from "@/src/constants";
 import { UploadDropzone } from "@/src/utils/uploadthing";
 import { motion } from "framer-motion";
 import { Plus, X } from "lucide-react";
 import Image from "next/image";
-import { useState } from "react";
 import { toast } from "react-hot-toast";
 import { api } from "@/src/utils";
 
@@ -118,7 +119,7 @@ const ReferenceDialogue = ({ onReferenceAdded }) => {
                 }}
                 onUploadError={(error: Error) => {
                   console.log(error);
-                  alert(`ERROR! ${error.message}`);
+                  toast.error(`Error uploading: ${error.message}`);
                 }}
                 config={{ mode: "auto" }}
               />
@@ -130,8 +131,7 @@ const ReferenceDialogue = ({ onReferenceAdded }) => {
               id="title"
               value={reference.title}
               onChange={handleTitleChange}
-              className="col-span-3 border border-gray-300 rounded-md"
-              required
+              className="p-1 pl-2 col-span-3 border border-gray-300 rounded-md"
             />
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
@@ -140,15 +140,16 @@ const ReferenceDialogue = ({ onReferenceAdded }) => {
               id="description"
               value={reference.description}
               onChange={handleDescriptionChange}
-              className="col-span-3 border border-gray-300 rounded-md"
-              required
+              className="p-1 pl-2 col-span-3 border border-gray-300 rounded-md"
             />
           </div>
         </div>
         <DialogFooter>
-          <button type="submit" onClick={handleSubmit}>
-            Save changes
-          </button>
+          <DialogPrimitive.Close>
+            <button type="submit" onClick={handleSubmit}>
+              Save changes
+            </button>
+          </DialogPrimitive.Close>
         </DialogFooter>
       </DialogContent>
     </Dialog>
