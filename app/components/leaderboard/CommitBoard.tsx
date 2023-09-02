@@ -89,9 +89,6 @@ export const LeaderboardCommits: FC<any> = ({ self }) => {
                 <p className="text-xl">{dev.total_commits}</p>
               </div>
             ))}
-          <a className="text-[#51a45b] text-xl mt-[10px]" href="/leaderboard">
-            View Contribution Leaderboard
-          </a>
         </div>
       </div>
     </>

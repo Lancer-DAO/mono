@@ -48,12 +48,6 @@ export const TopEarnersBoard: FC<any> = () => {
                 <p className="text-xl">${dev.total_earned}</p>
               </div>
             ))}
-          <a
-            className="text-[#51a45b] text-xl mt-[10px]"
-            href="/leaderboard/bounties"
-          >
-            View Quest Leaderboard
-          </a>
         </div>
       </div>
     </>

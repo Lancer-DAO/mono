@@ -145,12 +145,6 @@ export const ContributionBoard: FC<any> = () => {
                 <p className="text-xl">{dev.lines_contributed}</p>
               </div>
             ))}
-          <a
-            className="text-[#51a45b] text-xl mt-[10px]"
-            href="/leaderboard/commits"
-          >
-            View Commit Leaderboard
-          </a>
         </div>
       </div>
     </>
