@@ -17,6 +17,10 @@ import relativeTime from "dayjs/plugin/relativeTime";
 import LinksCard from "./LinksCard";
 import { api } from "@/src/utils";
 import { Check, Edit, X } from "react-feather";
+import { Button } from "@/components";
+import { BountyActionsButton } from "@/components/bounties/Bounty/components";
+import { useChat } from "@/src/providers/chatProvider";
+import { createDM } from "@/src/utils/sendbird";
 
 dayjs.extend(relativeTime);
 
@@ -26,12 +30,14 @@ export const ProfileNFTCard = ({
   githubId,
   user,
   self,
+  id,
 }: {
   profileNFT: ProfileNFT;
   picture: string;
   githubId: string;
   user: User;
   self?: boolean;
+  id: number;
 }) => {
   // state
   const [signature, setSignature] = useState("");
@@ -43,6 +49,7 @@ export const ProfileNFTCard = ({
     editing: false,
     industry: user.industries[0],
   });
+  const { setIsChatOpen, setCurrentChannel } = useChat();
 
   const [balance, setBalance] = useState<IAsyncResult<number>>({
     isLoading: true,
@@ -59,7 +66,7 @@ export const ProfileNFTCard = ({
 
   // context + api
   const { connection } = useConnection();
-  const { currentWallet } = useUserWallet();
+  const { currentWallet, currentUser } = useUserWallet();
 
   useEffect(() => {
     const getBalanceAsync = async () => {
@@ -161,23 +168,24 @@ export const ProfileNFTCard = ({
   return (
     <div className="w-full md:w-[460px] rounded-xl bg-bgLancerSecondary/[8%] overflow-hidden p-6 text-textGreen">
       <div className="flex flex-col gap-3">
-        {(picture || githubId) && (
-          <Image
-            src={
-              picture
-                ? picture
-                : "/assets/images/Lancer-Green-No-Background-p-800.png"
-            }
-            width={58}
-            height={58}
-            alt={profileNFT?.name.split("for ")[1]}
-            className="rounded-full overflow-hidden"
-          />
-        )}
+        <div className="flex items-center justify-between"></div>
 
         <div className="flex items-start gap-16 pb-6">
           {/* Labels column */}
           <div className="flex flex-col gap-4 text-lg">
+            {(picture || githubId) && (
+              <Image
+                src={
+                  picture
+                    ? picture
+                    : "/assets/images/Lancer-Green-No-Background-p-800.png"
+                }
+                width={58}
+                height={58}
+                alt={profileNFT?.name.split("for ")[1]}
+                className="rounded-full overflow-hidden"
+              />
+            )}
             <p>name</p>
             <p>industry</p>
             {/* <p>location</p> */}
@@ -185,6 +193,21 @@ export const ProfileNFTCard = ({
           </div>
           {/* Data column */}
           <div className="flex flex-col gap-4 text-lg text-textPrimary w-full">
+            {currentUser.hasBeenApproved && (
+              <BountyActionsButton
+                onClick={async () => {
+                  const url = await createDM([
+                    String(currentUser.id),
+                    String(id),
+                  ]);
+                  setCurrentChannel({ url });
+                  setIsChatOpen(true);
+                }}
+                type="green"
+                text="Send Message"
+                extraClasses="w-fit"
+              />
+            )}
             <div className="flex w-fill">
               {nameEdit.editing ? (
                 <input

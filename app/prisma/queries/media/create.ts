@@ -4,14 +4,33 @@ import * as Prisma from "@prisma/client";
 
 export const create = async (
   imageUrl: string,
+  title: string,
   description: string,
-  title: string
 ): Promise<Prisma.Media> => {
   const media = await prisma.media.create({
     data: {
       imageUrl,
-      description,
       title,
+      description,
+    },
+  });
+  return media;
+};
+
+export const createWithUserId = async (
+  id: number,
+  imageUrl: string,
+  title: string,
+  description: string,
+): Promise<Prisma.Media> => {
+  const media = await prisma.media.create({
+    data: {
+      imageUrl,
+      title,
+      description,
+      user: {
+        connect: { id: id },
+      }
     },
   });
   return media;

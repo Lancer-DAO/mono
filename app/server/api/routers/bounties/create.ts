@@ -1,6 +1,7 @@
 import * as queries from "@/prisma/queries";
 import { z } from "zod";
 import { protectedProcedure } from "../../trpc";
+import { HostedHooksClient } from "../../webhooks";
 
 export const createBounty = protectedProcedure
   .input(
@@ -103,6 +104,8 @@ export const createBounty = protectedProcedure
         medias,
         price
       );
-      return queries.bounty.get(bounty.id, user.id);
+      const bountyInfo = await queries.bounty.get(bounty.id, user.id);
+      HostedHooksClient.sendWebhook(bountyInfo, "bounty.created", timestamp);
+      return bountyInfo;
     }
   );

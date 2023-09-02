@@ -4,15 +4,7 @@ import { useUserWallet } from "@/src/providers/userWalletProvider";
 import { PublicKey } from "@solana/web3.js";
 import { api } from "@/src/utils/api";
 import { fundFFA } from "@/escrow/adapters";
-import {
-  BONK_DEMICALS,
-  BONK_MINT,
-  IS_CUSTODIAL,
-  IS_MAINNET,
-  USDC_DECIMALS,
-  USDC_MINT,
-  smallClickAnimation,
-} from "@/src/constants";
+import { IS_CUSTODIAL, smallClickAnimation } from "@/src/constants";
 import { CoinflowFund, USDC } from "@/components";
 import { CREATE_BOUNTY_TUTORIAL_INITIAL_STATE } from "@/src/constants/tutorials";
 import { useBounty } from "@/src/providers/bountyProvider";
@@ -23,9 +15,10 @@ import { Modal } from "@/components";
 
 interface Props {
   setShowModal: Dispatch<SetStateAction<boolean>>;
+  setIsFunded: Dispatch<SetStateAction<boolean>>;
 }
 
-const FundBountyModal: FC<Props> = ({ setShowModal }) => {
+const FundBountyModal: FC<Props> = ({ setShowModal, setIsFunded }) => {
   const { currentWallet, program, provider } = useUserWallet();
   const { currentBounty } = useBounty();
   const { currentTutorialState, setCurrentTutorialState } = useTutorial();
@@ -38,7 +31,9 @@ const FundBountyModal: FC<Props> = ({ setShowModal }) => {
     IS_CUSTODIAL ? "card" : "wallet"
   );
 
-  const [issuePrice, setIssuePrice] = useState<string>("");
+  const [issuePrice, setIssuePrice] = useState<string>(
+    currentBounty?.price?.toString()
+  );
 
   const handleChange = (event) => {
     setIssuePrice(event.target.value);
@@ -76,6 +71,7 @@ const FundBountyModal: FC<Props> = ({ setShowModal }) => {
         escrowId: currentBounty?.escrow.id,
         amount: parseFloat(issuePrice),
       });
+      setIsFunded(true);
       toast.success("Quest funded!", { id: toastId });
       setShowModal(false);
     } catch (error) {
@@ -126,7 +122,7 @@ const FundBountyModal: FC<Props> = ({ setShowModal }) => {
   return (
     <Modal setShowModal={setShowModal} className="py-20">
       <div className="w-full px-10">
-        <div className="w-full flex items-start justify-center mt-10 gap-20">
+        <div className="w-full flex items-start justify-center gap-20">
           <div className="w-full flex flex-col gap-5 max-w-[400px]">
             <h1>Funding Details</h1>
             <p>
@@ -215,7 +211,7 @@ const FundBountyModal: FC<Props> = ({ setShowModal }) => {
                       </span>
                     </p>
                     <p className="w-full">
-                      Marketplace Fee:{" "}
+                      Matching Fee:{" "}
                       <span className="font-bold">
                         {handleFee()} {allMints[0]?.ticker}
                       </span>

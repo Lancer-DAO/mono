@@ -12,12 +12,7 @@ import { marked } from "marked";
 import dayjs from "dayjs";
 import { PublicKey } from "@solana/web3.js";
 import { Clock } from "react-feather";
-import {
-  ContributorInfo,
-  ExternalLinkIcon,
-  Logo,
-  SidePanel,
-} from "@/components";
+import { ContributorInfo, ExternalLinkIcon, Logo } from "@/components";
 import { SubmitterSection, BountyActions } from "./components";
 import { useUserWallet } from "@/src/providers";
 import { motion } from "framer-motion";

@@ -10,6 +10,7 @@ import { IS_CUSTODIAL } from "@/src/constants";
 import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { useUserWallet } from "@/src/providers";
+import { useChat } from "@/src/providers/chatProvider";
 
 const HEADER_LINKS = [
   {
@@ -24,6 +25,12 @@ const HEADER_LINKS = [
     id: "bounties-link",
     disabledText: "You must be Approved to view Quests.",
   },
+  ,
+  {
+    href: "/leaderboard",
+    children: "Leaderboards",
+    id: "leaderboards-link",
+  },
 ];
 
 export const Header = () => {
@@ -35,7 +42,7 @@ export const Header = () => {
   const { publicKey } = useWallet();
 
   return (
-    <div className="sticky py-4 top-0 z-20 bg-bgLancer">
+    <div className="py-4 top-0 z-20 bg-bgLancer">
       <div className="flex items-center gap-8 mx-auto w-[90%]">
         <Link href="/" className="flex items-center gap-0.5">
           <Logo width="auto" height="35px" />
@@ -43,13 +50,13 @@ export const Header = () => {
         </Link>
         <div className="flex gap-8 items-center w-full">
           {currentUser &&
-            HEADER_LINKS.map(({ href, children, disabledText }) => {
+            HEADER_LINKS.map(({ href, children, disabledText }, index) => {
               return (
                 <LinkButton
                   href={href}
                   className="text-lg font-bold"
                   key={href}
-                  disabled={!currentUser.hasBeenApproved}
+                  disabled={index === 2 ? false : !currentUser.hasBeenApproved}
                   disabledText={disabledText}
                 >
                   {children}

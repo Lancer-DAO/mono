@@ -17,6 +17,8 @@ import CustodialWalletProvider from "./userWalletProvider/custodialProvider";
 import { IS_CUSTODIAL, IS_MAINNET, MAINNET_RPC } from "../constants";
 import ReferralProvider from "./referralProvider";
 import { useDebugMode } from "./debugModeProvider";
+import ChatProvider from "./chatProvider";
+import SendbirdProvider from "@sendbird/uikit-react/SendbirdProvider";
 
 export * from "./userWalletProvider";
 
@@ -65,7 +67,9 @@ export const AllProviders: React.FC<{ children: ReactNode }> = ({
                 web3AuthNetwork={IS_MAINNET ? "cyan" : "testnet"}
               >
                 <BountyProvider>
-                  <ReferralProvider>{children}</ReferralProvider>
+                  <ReferralProvider>
+                    <ChatProvider>{children}</ChatProvider>
+                  </ReferralProvider>
                 </BountyProvider>
               </CustodialWalletProvider>
             </TutorialProvider>
@@ -85,7 +89,9 @@ export const AllProviders: React.FC<{ children: ReactNode }> = ({
               <TutorialProvider>
                 <NonCustodialWalletProvider>
                   <BountyProvider>
-                    <ReferralProvider>{children}</ReferralProvider>
+                    <ReferralProvider>
+                      <ChatProvider>{children}</ChatProvider>
+                    </ReferralProvider>
                   </BountyProvider>
                 </NonCustodialWalletProvider>
               </TutorialProvider>

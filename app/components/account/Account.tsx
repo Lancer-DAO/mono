@@ -15,6 +15,7 @@ import relativeTime from "dayjs/plugin/relativeTime";
 import { LoadingBar } from "@/components";
 import { ProfileNFTCard, QuestsCard } from "./components";
 import BadgesCard from "./components/BadgesCard";
+import PortfolioCard from "./components/PortfolioCard";
 import { ReferCard } from "./components/ReferCard";
 import ResumeCard from "./components/ResumeCard";
 
@@ -84,7 +85,7 @@ export const Account: FC<Props> = ({ self }) => {
   };
 
   useEffect(() => {
-    if (fetchedUser) {
+    if (!!fetchedUser && !!currentWallet) {
       const fetchNfts = async () => {
         await fetchProfileNFT();
 
@@ -114,7 +115,7 @@ export const Account: FC<Props> = ({ self }) => {
       };
       fetchNfts();
     }
-  }, [!!fetchedUser]);
+  }, [!!fetchedUser, !!currentWallet]);
 
   if (!IS_CUSTODIAL && !currentWallet && !profileNFT)
     return (
@@ -131,9 +132,11 @@ export const Account: FC<Props> = ({ self }) => {
   }
   return (
     <div className="w-full md:w-[90%] mx-auto px-4 md:px-0 py-10">
-      <h1 className="pb-2">{`${
-        self ? "Your Profile" : `@${fetchedUser?.name}`
-      }`}</h1>
+      <div className="flex items-center">
+        <h1 className="pb-2">{`${
+          self ? "Your Profile" : `@${fetchedUser?.name}`
+        }`}</h1>
+      </div>
       {profileNFT && fetchedUser ? (
         <div className="w-full flex items-start gap-5">
           {/* left column */}
@@ -144,14 +147,17 @@ export const Account: FC<Props> = ({ self }) => {
               githubId={fetchedUser.githubId}
               user={fetchedUser}
               self={self}
+              id={fetchedUser.id}
             />
             <BadgesCard profileNFT={profileNFT} />
           </div>
           {/* right column */}
           <div className="flex flex-col gap-5 w-full">
+            <PortfolioCard />
             {fetchedUser.id === currentUser.id && <ResumeCard />}
             <QuestsCard />
-            {fetchedUser.id === currentUser.id && <ReferCard />}
+            {fetchedUser.id === currentUser.id &&
+              currentUser.hasBeenApproved && <ReferCard />}
           </div>
         </div>
       ) : (
