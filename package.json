@@ -1,6 +1,7 @@
 {
   "dependencies": {
-    "@hotjar/browser": "^1.0.7"
+    "@hotjar/browser": "^1.0.7",
+    "@sendbird/chat": "^4.9.9"
   },
   "volta": {
     "node": "16.19.1",

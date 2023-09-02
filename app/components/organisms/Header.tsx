@@ -10,6 +10,7 @@ import { IS_CUSTODIAL } from "@/src/constants";
 import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { useUserWallet } from "@/src/providers";
+import { useChat } from "@/src/providers/chatProvider";
 
 const HEADER_LINKS = [
   {
@@ -41,7 +42,7 @@ export const Header = () => {
   const { publicKey } = useWallet();
 
   return (
-    <div className="sticky py-4 top-0 z-20 bg-bgLancer">
+    <div className="py-4 top-0 z-20 bg-bgLancer">
       <div className="flex items-center gap-8 mx-auto w-[90%]">
         <Link href="/" className="flex items-center gap-0.5">
           <Logo width="auto" height="35px" />

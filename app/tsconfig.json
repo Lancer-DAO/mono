@@ -32,6 +32,11 @@
     "noEmit": false,
     "incremental": true
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    "node_modules/@sendbird/uikit-react/index.d.ts"
+  ],
   "exclude": ["node_modules", "extension", "escrow/tests", "escrow/migrations"]
 }

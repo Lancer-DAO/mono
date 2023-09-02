@@ -2,6 +2,7 @@ import { protectedProcedure } from "../../trpc";
 import { z } from "zod";
 import * as queries from "@/prisma/queries";
 import { BountyState } from "@/types/";
+import { createGroupChannel } from "@/src/utils/sendbird";
 import { HostedHooksClient } from "../../webhooks";
 
 export const update = protectedProcedure
@@ -38,6 +39,7 @@ export const update = protectedProcedure
       let bounty;
       let transaction;
       let userBounty = await queries.bountyUser.get(userId, bountyId);
+
       if (!userBounty) {
         userBounty = await queries.bountyUser.create(
           bountyId,
@@ -66,6 +68,28 @@ export const update = protectedProcedure
           escrow
         );
       }
+
+      // if (label === "add-approved-submitter") {
+      //   // create a messaging group for this bounty
+      //   const bounty = await queries.bounty.get(bountyId, currentUserId);
+      //   const client = String(bounty.creator.userid);
+      //   const approvedSubmitters = bounty.approvedSubmitters.map((submitter) =>
+      //     String(submitter.userid)
+      //   );
+
+      //   console.log({
+      //     admin: client,
+      //     lancers: approvedSubmitters,
+      //     name: bounty.title,
+      //   });
+
+      //   createGroupChannel({
+      //     admin: client,
+      //     lancers: approvedSubmitters,
+      //     name: bounty.title,
+      //   });
+      // }
+
       const updatedBounty = await queries.bounty.get(bountyId, currentUserId);
 
       HostedHooksClient.sendWebhook(updatedBounty, "bounty.updated");
