@@ -17,7 +17,7 @@ const SidePanel: FC = () => {
       <>
         {isChatOpen && (
           <motion.div
-            className="fixed inset-0 bg-black backdrop-blur-md transition duration-500"
+            className="fixed inset-0 bg-black backdrop-blur-md transition duration-500 z-50"
             initial={{ opacity: 0 }}
             animate={{ opacity: 0.3 }}
             exit={{ opacity: 0 }}
