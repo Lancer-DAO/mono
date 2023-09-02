@@ -10,9 +10,12 @@ export const deleteMedia = protectedProcedure
   )
   .mutation(
     async ({ input: { imageUrl } }) => {
-      const fileKey = imageUrl.split('/f/')[1];
-
-      await utapi.deleteFiles(decodeURI(fileKey));
+      try {
+        const fileKey = imageUrl.split('/f/')[1];
+        await utapi.deleteFiles(decodeURI(fileKey));
+      } catch (error) {
+        console.error(error);
+      }
 
       return { success: "true" };
     }

@@ -5,6 +5,8 @@ import { bountyUsers } from "@/server/api/routers/bountyUser/index";
 import { industries } from "@/server/api/routers/industries/index";
 import { mints } from "@/server/api/routers/mint/index";
 import { leaderboard } from '@/server/api/routers/leaderboard/index';
+import { media } from "@/server/api/routers/media/index";
+
 /**
  * This is the primary router for your server.
  *
@@ -15,8 +17,9 @@ export const appRouter = createTRPCRouter({
   bounties,
   bountyUsers,
   industries,
-  mints,
-  leaderboard
+  leaderboard,
+  media,
+  mints
 });
 
 // export type definition of API

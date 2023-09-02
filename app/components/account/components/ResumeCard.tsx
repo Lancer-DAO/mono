@@ -15,7 +15,7 @@ const ResumeCard = () => {
     id: parseInt(router.query.account as string) || currentUser.id,
   });
   const { mutateAsync: updateResume } = api.users.updateResume.useMutation();
-  const { mutateAsync: deleteResume } = api.users.deleteMedia.useMutation();
+  const { mutateAsync: deleteResume } = api.users.deleteResume.useMutation();
 
   const [resumeUrl, setResumeUrl] = useState(fetchedUser?.resume);
   const [isAwaitingResponse, setIsAwaitingResponse] = useState(false);

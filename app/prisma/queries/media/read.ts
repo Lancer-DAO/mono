@@ -9,3 +9,15 @@ export const read = async (id: number): Promise<Prisma.Media> => {
   });
   return media;
 };
+
+export const getMediaByUser = async (id: number): Promise<Prisma.Media[]> => {
+  const user = await prisma.user.findUnique({
+    where: {
+      id: id, 
+    },
+    include: {
+      media: true,
+    },
+  });
+  return user.media;
+} 
