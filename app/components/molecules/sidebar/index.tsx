@@ -52,7 +52,7 @@ const SidePanel: FC = () => {
         >
           <div className="flex w-full h-full">
             <div
-              className="w-14 inset-y-0 cursor-pointer"
+              className="w-14 inset-y-0 cursor-pointer flex-shrink-0"
               onClick={handleOpenClose}
             >
               <div
@@ -80,7 +80,7 @@ const SidePanel: FC = () => {
               </div>
             </div>
             <div
-              className={`text-primary bg-white flex flex-col h-full shadow-2xl w-full`}
+              className={`text-primary bg-white flex flex-col h-full shadow-2xl flex-grow overflow-hidden`}
             >
               <div className="w-full flex p-4 pt-6 text-center">
                 <div className="flex-grow h-10 rounded text-xl font-bold uppercase">
