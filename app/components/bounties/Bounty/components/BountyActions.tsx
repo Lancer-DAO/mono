@@ -27,7 +27,6 @@ import {
 
 export const BountyActions = () => {
   const { currentBounty } = useBounty();
-  const { currentTutorialState } = useTutorial();
   const { publicKey } = useWallet();
 
   if (!publicKey) {
