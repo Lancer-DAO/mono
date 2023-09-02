@@ -26,7 +26,7 @@ const Messaging = () => {
   };
 
   return (
-    <div className="w-full pt-4">
+    <div className="w-full h-full pt-4">
       {currentUser && (
         <SendbirdProvider
           appId={"54A96D9A-1DEA-4962-9F4E-9899BAE7011D"}
@@ -42,6 +42,7 @@ const Messaging = () => {
             <Channel
               // @ts-ignore
               channelUrl={channel.url}
+              style={{ maxWidth: "35rem" }}
               renderChannelHeader={(state) => {
                 console.log("state", state);
                 return (

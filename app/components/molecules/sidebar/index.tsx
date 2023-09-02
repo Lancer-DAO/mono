@@ -23,7 +23,7 @@ const SidePanel: FC = () => {
 
   const [numCloses, setNumCloses] = useState(0);
   const [channel, setChannel] = useState<any | null>();
-  const [xPos, setXPos] = useState("0");
+  const [xPos, setXPos] = useState("91%");
 
   const back = () => {
     setChannel(null);
@@ -60,8 +60,9 @@ const SidePanel: FC = () => {
         )}
         <motion.div
           className="flex items-start overflow-x-hidden fixed inset-y-0 right-0 z-50 w-[35rem] h-full transform rounded-l-lg"
-          transition={{ ease: "easeInOut", duration: 0.3 }}
+          initial={{ x: "91%" }}
           animate={{ x: xPos }}
+          transition={{ ease: "easeInOut", duration: 0.3 }}
           key="panel"
           ref={ref}
         >
@@ -97,11 +98,10 @@ const SidePanel: FC = () => {
             <div
               className={`text-primary bg-white flex flex-col h-full shadow-2xl w-full`}
             >
-              <div className="w-full flex p-4 pt-6">
-                <button className="flex-grow h-10 rounded text-xl font-bold uppercase">
+              <div className="w-full flex p-4 pt-6 text-center">
+                <div className="flex-grow h-10 rounded text-xl font-bold uppercase">
                   YOUR INBOX
-                </button>
-                <div className="w-10 h-10"></div>
+                </div>
               </div>
               <Messaging />
             </div>
