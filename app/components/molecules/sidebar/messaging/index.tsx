@@ -15,14 +15,15 @@ import {
 } from "@sendbird/uikit-react/ChannelList/context";
 
 import List from "./list";
+import { useChat } from "@/src/providers/chatProvider";
 
 const Messaging = () => {
   const { currentUser } = useUserWallet();
 
-  const [channel, setChannel] = useState<any | null>();
+  const { currentChannel, setCurrentChannel } = useChat();
 
   const back = () => {
-    setChannel(null);
+    setCurrentChannel(null);
   };
 
   return (
@@ -34,14 +35,14 @@ const Messaging = () => {
           nickname={currentUser?.name}
           profileUrl={currentUser?.picture}
         >
-          {!channel ? (
+          {!currentChannel ? (
             <ChannelListProvider>
-              <List setChannel={setChannel} />
+              <List setChannel={currentChannel} />
             </ChannelListProvider>
           ) : (
             <Channel
               // @ts-ignore
-              channelUrl={channel.url}
+              channelUrl={currentChannel.url}
               style={{ maxWidth: "35rem" }}
               renderChannelHeader={(state) => {
                 console.log("state", state);

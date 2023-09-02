@@ -1,10 +1,13 @@
 import { useUserWallet } from "@/src/providers";
+import { useChat } from "@/src/providers/chatProvider";
 import { useChannelListContext } from "@sendbird/uikit-react/ChannelList/context";
 import Image from "next/image";
 
 const List = ({ setChannel }: { setChannel: (channel: any) => void }) => {
   const { allChannels } = useChannelListContext();
   const { currentUser } = useUserWallet();
+
+  const { setCurrentChannel } = useChat();
 
   // console.log("allChannels", allChannels);
 
@@ -24,7 +27,7 @@ const List = ({ setChannel }: { setChannel: (channel: any) => void }) => {
             cursor-pointer gap-3 h-20 px-3 border-b border-neutral-300"
             key={channel.url}
             onClick={() => {
-              setChannel(channel);
+              setCurrentChannel(channel);
             }}
           >
             <Image

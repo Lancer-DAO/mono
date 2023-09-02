@@ -20,6 +20,7 @@ import { Check, Edit, X } from "react-feather";
 import { Button } from "@/components";
 import { BountyActionsButton } from "@/components/bounties/Bounty/components";
 import { useChat } from "@/src/providers/chatProvider";
+import { createDM } from "@/src/utils/sendbird";
 
 dayjs.extend(relativeTime);
 
@@ -29,12 +30,14 @@ export const ProfileNFTCard = ({
   githubId,
   user,
   self,
+  id,
 }: {
   profileNFT: ProfileNFT;
   picture: string;
   githubId: string;
   user: User;
   self?: boolean;
+  id: number;
 }) => {
   // state
   const [signature, setSignature] = useState("");
@@ -46,7 +49,7 @@ export const ProfileNFTCard = ({
     editing: false,
     industry: user.industries[0],
   });
-  const { setIsChatOpen } = useChat();
+  const { setIsChatOpen, setCurrentChannel } = useChat();
 
   const [balance, setBalance] = useState<IAsyncResult<number>>({
     isLoading: true,
@@ -192,7 +195,12 @@ export const ProfileNFTCard = ({
           <div className="flex flex-col gap-4 text-lg text-textPrimary w-full">
             {currentUser.hasBeenApproved && (
               <BountyActionsButton
-                onClick={() => {
+                onClick={async () => {
+                  const url = await createDM([
+                    String(currentUser.id),
+                    String(id),
+                  ]);
+                  setCurrentChannel({ url });
                   setIsChatOpen(true);
                 }}
                 type="green"

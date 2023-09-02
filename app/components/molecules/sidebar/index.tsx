@@ -21,24 +21,11 @@ const SidePanel: FC = () => {
   const { currentUser } = useUserWallet();
   const { isChatOpen, setIsChatOpen } = useChat();
 
-  const [numCloses, setNumCloses] = useState(0);
-  const [channel, setChannel] = useState<any | null>();
-  const [xPos, setXPos] = useState("91%");
-
-  const back = () => {
-    setChannel(null);
-  };
-
   const ref = useRef(null);
   // useOutsideAlerter(ref, () => setOpen(false));
 
   const handleOpenClose = () => {
     setIsChatOpen(!isChatOpen);
-    if (isChatOpen) {
-      setXPos("91%");
-    } else {
-      setXPos("0");
-    }
   };
 
   return (
@@ -52,16 +39,13 @@ const SidePanel: FC = () => {
             exit={{ opacity: 0 }}
             transition={{ ease: "easeOut", duration: 0.5 }}
             key="backdrop"
-            onClick={() => {
-              handleOpenClose();
-              setNumCloses(numCloses + 1);
-            }}
+            onClick={handleOpenClose}
           />
         )}
         <motion.div
           className="flex items-start overflow-x-hidden fixed inset-y-0 right-0 z-50 w-[35rem] h-full transform rounded-l-lg"
           initial={{ x: "91%" }}
-          animate={{ x: xPos }}
+          animate={{ x: isChatOpen ? "0" : "91%" }}
           transition={{ ease: "easeInOut", duration: 0.3 }}
           key="panel"
           ref={ref}
