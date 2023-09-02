@@ -64,11 +64,6 @@ const BountyCard: FC<BountyCardProps> = ({
     }
   }, [formData?.industryId]);
 
-  // useEffect(() => {
-  //   console.log("bounty: ", bounty);
-  //   console.log("formData: ", formData);
-  // }, [bounty, formData]);
-
   if (!bounty && !formData) return null;
 
   const handlePriceIcon = () => {
@@ -109,8 +104,13 @@ const BountyCard: FC<BountyCardProps> = ({
       <div className="w-full absolute top-1">
         <div className="w-full flex items-center justify-between px-1">
           <PriceTag
-            price={bounty ? bounty?.escrow.amount : Number(formData.issuePrice)}
+            price={
+              bounty
+                ? Number(bounty?.escrow.amount)
+                : Number(formData.issuePrice)
+            }
             icon={handlePriceIcon()}
+            funded={bounty ? Number(bounty?.escrow.amount) > 0 : false}
           />
           <p className="text-xs font-bold mr-2">
             <span className="text-textPrimary text-[11px] font-base">

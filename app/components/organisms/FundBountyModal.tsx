@@ -215,7 +215,7 @@ const FundBountyModal: FC<Props> = ({ setShowModal }) => {
                       </span>
                     </p>
                     <p className="w-full">
-                      Marketplace Fee:{" "}
+                      Matching Fee:{" "}
                       <span className="font-bold">
                         {handleFee()} {allMints[0]?.ticker}
                       </span>
