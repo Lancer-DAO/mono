@@ -6,7 +6,6 @@ import Channel from "./channel";
 
 const Messaging = () => {
   const { currentUser } = useUserWallet();
-
   const { currentChannel } = useChat();
 
   return (
