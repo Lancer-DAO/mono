@@ -61,6 +61,10 @@ const ChatProvider: FunctionComponent<IChatState> = ({
     <SendbirdProvider
       appId={"54A96D9A-1DEA-4962-9F4E-9899BAE7011D"}
       userId={String(currentUser?.id)}
+      colorSet={{
+        "--sendbird-light-primary-300": "#22c55e",
+        "--sendbird-light-primary-400": "#22c55e",
+      }}
     >
       <ChatContext.Provider value={contextProvider}>
         {children}
