@@ -4,15 +4,7 @@ import { useUserWallet } from "@/src/providers/userWalletProvider";
 import { PublicKey } from "@solana/web3.js";
 import { api } from "@/src/utils/api";
 import { fundFFA } from "@/escrow/adapters";
-import {
-  BONK_DEMICALS,
-  BONK_MINT,
-  IS_CUSTODIAL,
-  IS_MAINNET,
-  USDC_DECIMALS,
-  USDC_MINT,
-  smallClickAnimation,
-} from "@/src/constants";
+import { IS_CUSTODIAL, smallClickAnimation } from "@/src/constants";
 import { CoinflowFund, USDC } from "@/components";
 import { CREATE_BOUNTY_TUTORIAL_INITIAL_STATE } from "@/src/constants/tutorials";
 import { useBounty } from "@/src/providers/bountyProvider";

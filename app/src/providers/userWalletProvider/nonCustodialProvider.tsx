@@ -9,11 +9,7 @@ import {
 import { AnchorProvider, Program } from "@project-serum/anchor";
 import { MonoProgram } from "@/escrow/sdk/types/mono_program";
 import { LancerWallet } from "@/types/";
-import {
-  IUserWalletContext,
-  ISSUE_LOAD_STATE,
-  LOGIN_STATE,
-} from "@/src/providers/userWalletProvider/types";
+import { IUserWalletContext } from "@/src/providers/userWalletProvider/types";
 import { api } from "@/src/utils/api";
 import { useConnection, useWallet } from "@solana/wallet-adapter-react";
 import { PublicKey, Transaction } from "@solana/web3.js";
@@ -25,7 +21,6 @@ import { PROFILE_TUTORIAL_INITIAL_STATE } from "@/src/constants/tutorials";
 import { useTutorial } from "../tutorialProvider";
 import { User } from "@/types/";
 import { useRouter } from "next/router";
-import toast from "react-hot-toast";
 
 export const NonCustodialWalletContext = createContext<IUserWalletContext>({
   currentUser: null,

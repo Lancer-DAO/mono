@@ -1,4 +1,4 @@
-import { FC, useEffect, useState } from "react";
+import { FC, useState } from "react";
 import { CopyLinkField, TweetShareButton } from "@/components";
 import { useBounty } from "@/src/providers/bountyProvider";
 import { IS_CUSTODIAL } from "@/src/constants";

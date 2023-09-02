@@ -2,15 +2,11 @@ import {
   BountyCardFrame,
   ContributorInfo,
   PriceTag,
-  StarIcon,
+  // StarIcon,
   LockIcon,
 } from "@/components";
 import { useUserWallet } from "@/providers";
-import {
-  IS_CUSTODIAL,
-  fastEnterAnimation,
-  midClickAnimation,
-} from "@/src/constants";
+import { fastEnterAnimation, midClickAnimation } from "@/src/constants";
 import { useBounty } from "@/src/providers/bountyProvider";
 import { BountyPreview, FormData, Industry } from "@/types/";
 import { api, getFormattedDate } from "@/utils";
