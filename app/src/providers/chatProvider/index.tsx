@@ -7,6 +7,7 @@ import {
 } from "react";
 import SendbirdProvider from "@sendbird/uikit-react/SendbirdProvider";
 import { useUserWallet } from "../userWalletProvider";
+import "@sendbird/uikit-react/dist/index.css";
 
 export interface IChatContext {
   isChatOpen: boolean;
@@ -47,6 +48,15 @@ const ChatProvider: FunctionComponent<IChatState> = ({
     currentChannel,
     setCurrentChannel,
   };
+
+  if (!currentUser) {
+    return (
+      <ChatContext.Provider value={contextProvider}>
+        {children}
+      </ChatContext.Provider>
+    );
+  }
+
   return (
     <SendbirdProvider
       appId={"54A96D9A-1DEA-4962-9F4E-9899BAE7011D"}

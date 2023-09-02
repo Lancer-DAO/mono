@@ -1,7 +1,6 @@
 import { Header, JoyrideWrapper } from "@/components";
 import { useUserWallet } from "@/src/providers";
 import { ReactNode, useState } from "react";
-import Sidebar from "../organisms/Sidebar";
 import SidePanel from "../molecules/sidebar";
 
 const DefaultLayout: React.FC<{ children: ReactNode }> = ({ children }) => {
@@ -15,7 +14,6 @@ const DefaultLayout: React.FC<{ children: ReactNode }> = ({ children }) => {
         <main>{children}</main>
       </div>
 
-      {/* {currentUser && <Sidebar />} */}
       <SidePanel />
     </div>
   );

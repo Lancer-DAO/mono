@@ -1,28 +1,12 @@
-import React, { FC, useState, Dispatch, SetStateAction, useRef } from "react";
+import React, { FC } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { enterAnimation, smallClickAnimation } from "@/constants";
-import { useOutsideAlerter } from "@/hooks";
-import SendbirdProvider from "@sendbird/uikit-react/SendbirdProvider";
 import { useUserWallet } from "@/src/providers";
-import ChannelList from "@sendbird/uikit-react/ChannelList";
-import InviteUsers from "@sendbird/uikit-react/CreateChannel/components/InviteUsers";
-
-import CreateChannelUI from "@sendbird/uikit-react/CreateChannel/components/CreateChannelUI";
-
-import Channel from "@sendbird/uikit-react/Channel";
-import { CreateChannelProvider } from "@sendbird/uikit-react/CreateChannel/context";
-
-import "@sendbird/uikit-react/dist/index.css";
-import List from "./messaging/list";
 import Messaging from "./messaging";
 import { useChat } from "@/src/providers/chatProvider";
+import Back from "./messaging/back";
 
 const SidePanel: FC = () => {
-  const { currentUser } = useUserWallet();
   const { isChatOpen, setIsChatOpen } = useChat();
-
-  const ref = useRef(null);
-  // useOutsideAlerter(ref, () => setOpen(false));
 
   const handleOpenClose = () => {
     setIsChatOpen(!isChatOpen);
@@ -49,7 +33,6 @@ const SidePanel: FC = () => {
           animate={{ x: isChatOpen ? "0" : "91%" }}
           transition={{ ease: "easeInOut", duration: 0.3 }}
           key="panel"
-          ref={ref}
         >
           <div className="flex w-full h-full">
             <div
@@ -84,10 +67,12 @@ const SidePanel: FC = () => {
             <div
               className={`text-primary bg-white flex flex-col h-full shadow-2xl flex-grow overflow-hidden`}
             >
-              <div className="w-full flex p-4 pt-6 text-center">
-                <div className="flex-grow h-10 rounded text-xl font-bold uppercase">
+              <div className="w-full flex p-4 text-center justify-between items-center">
+                <Back />
+                <div className="rounded text-xl font-bold uppercase">
                   YOUR INBOX
                 </div>
+                <div className="w-10 h-10"></div>
               </div>
               <Messaging />
             </div>

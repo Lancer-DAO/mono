@@ -30,7 +30,6 @@ const HEADER_LINKS = [
 export const Header = () => {
   const { currentTutorialState, setCurrentTutorialState } = useTutorial();
   const { isRouterReady } = useAppContext();
-  const { setIsChatOpen } = useChat();
   const [isTutorialButtonHovered, setIsTutorialButtonHovered] = useState(false);
   const [showTutorialModal, setShowTutorialModal] = useState(false);
   const { currentUser } = useUserWallet();
