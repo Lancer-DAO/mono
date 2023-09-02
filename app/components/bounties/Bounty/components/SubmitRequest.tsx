@@ -1,4 +1,3 @@
-import { Button } from "@/components";
 import { submitRequestFFA } from "@/escrow/adapters";
 import { BOUNTY_ACTIONS_TUTORIAL_II_INITIAL_STATE } from "@/src/constants/tutorials";
 import { useUserWallet } from "@/src/providers";
@@ -8,14 +7,18 @@ import { api } from "@/src/utils/api";
 import { PublicKey } from "@solana/web3.js";
 import { BOUNTY_USER_RELATIONSHIP, BountyState } from "@/types/";
 import { updateList } from "@/src/utils";
+import { BountyActionsButton } from ".";
+import { useState } from "react";
 
 export const SubmitRequest = () => {
   const { currentUser, currentWallet, program, provider } = useUserWallet();
   const { currentBounty, setCurrentBounty } = useBounty();
   const { currentTutorialState, setCurrentTutorialState } = useTutorial();
   const { mutateAsync } = api.bountyUsers.update.useMutation();
+  const [isLoading, setIsLoading] = useState(false);
 
   if (
+    !currentBounty ||
     !(
       (currentBounty.isApprovedSubmitter && !currentBounty.currentSubmitter) ||
       currentBounty.isChangesRequestedSubmitter
@@ -23,7 +26,17 @@ export const SubmitRequest = () => {
   )
     return null;
 
+  if (currentBounty.isCurrentSubmitter)
+    return (
+      <BountyActionsButton
+        type="neutral"
+        text="Request Submitted"
+        disabled={true}
+      />
+    );
+
   const onClick = async () => {
+    setIsLoading(true);
     if (
       currentTutorialState?.title ===
         BOUNTY_ACTIONS_TUTORIAL_II_INITIAL_STATE.title &&
@@ -78,12 +91,10 @@ export const SubmitRequest = () => {
   };
 
   return (
-    <Button
-      disabled={!currentWallet}
+    <BountyActionsButton
+      type="green"
+      text={isLoading ? "Loading ..." : "Submit"}
       onClick={onClick}
-      disabledText="Please Connect your Wallet"
-    >
-      Submit
-    </Button>
+    />
   );
 };

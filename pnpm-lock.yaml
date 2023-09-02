@@ -1,0 +1,28 @@
+lockfileVersion: '6.0'
+
+settings:
+  autoInstallPeers: true
+  excludeLinksFromLockfile: false
+
+dependencies:
+  '@hotjar/browser':
+    specifier: ^1.0.7
+    version: 1.0.9
+  '@sendbird/chat':
+    specifier: ^4.9.9
+    version: 4.9.9
+
+packages:
+
+  /@hotjar/browser@1.0.9:
+    resolution: {integrity: sha512-n9akDMod8BLGpYEQCrHwlYWWd63c1HlhUSXNIDfClZtKYXbUjIUOFlNZNNcUxgHTCsi4l2i+SWKsGsO0t93S8w==}
+    dev: false
+
+  /@sendbird/chat@4.9.9:
+    resolution: {integrity: sha512-4vTFroq1p+iFbWT5qJohuC68sUBt83TvI6ZhUxPMxaRtulb810VetJR1Qn+xr9oNQtZY+q1n9y+L7W4tEq3ATw==}
+    peerDependencies:
+      '@react-native-async-storage/async-storage': ^1.17.6
+    peerDependenciesMeta:
+      '@react-native-async-storage/async-storage':
+        optional: true
+    dev: false

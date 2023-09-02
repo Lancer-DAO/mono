@@ -2,7 +2,10 @@ import * as bounty from "./bounty";
 import * as bountyUser from "./bountyUser";
 import * as bountyUserAction from "./bountyUserAction";
 import * as chain from "./chain";
+import * as discipline from "./discipline";
 import * as escrow from "./escrow";
+import * as industry from "./industry";
+import * as media from "./media";
 import * as mint from "./mint";
 import * as referrerReferree from "./referrerReferree";
 import * as tag from "./tag";
@@ -15,7 +18,10 @@ export {
   bountyUser,
   bountyUserAction,
   chain,
+  discipline,
   escrow,
+  industry,
+  media,
   mint,
   referrerReferree,
   tag,

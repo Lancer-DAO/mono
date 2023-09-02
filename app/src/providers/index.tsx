@@ -16,6 +16,8 @@ import NonCustodialWalletProvider from "./userWalletProvider/nonCustodialProvide
 import CustodialWalletProvider from "./userWalletProvider/custodialProvider";
 import { IS_CUSTODIAL, IS_MAINNET, MAINNET_RPC } from "../constants";
 import ReferralProvider from "./referralProvider";
+import ChatProvider from "./chatProvider";
+import SendbirdProvider from "@sendbird/uikit-react/SendbirdProvider";
 
 export * from "./userWalletProvider";
 
@@ -48,7 +50,7 @@ export const AllProviders: React.FC<{ children: ReactNode }> = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [IS_MAINNET]
   );
-  console.log("IS_CUSTODIAL", IS_CUSTODIAL);
+  // console.log("IS_CUSTODIAL", IS_CUSTODIAL);
 
   return IS_CUSTODIAL ? (
     <ConnectionProvider endpoint={endpoint}>
@@ -60,7 +62,9 @@ export const AllProviders: React.FC<{ children: ReactNode }> = ({
                 web3AuthNetwork={IS_MAINNET ? "cyan" : "testnet"}
               >
                 <BountyProvider>
-                  <ReferralProvider>{children}</ReferralProvider>
+                  <ReferralProvider>
+                    <ChatProvider>{children}</ChatProvider>
+                  </ReferralProvider>
                 </BountyProvider>
               </CustodialWalletProvider>
             </TutorialProvider>
@@ -70,14 +74,19 @@ export const AllProviders: React.FC<{ children: ReactNode }> = ({
     </ConnectionProvider>
   ) : (
     <UserProvider>
-      <ConnectionProvider endpoint={endpoint}>
+      <ConnectionProvider
+        endpoint={endpoint}
+        config={{ commitment: "confirmed" }}
+      >
         <WalletProvider wallets={walletProviders} autoConnect>
           <WalletModalProvider>
             <AppContextProvider>
               <TutorialProvider>
                 <NonCustodialWalletProvider>
                   <BountyProvider>
-                    <ReferralProvider>{children}</ReferralProvider>
+                    <ReferralProvider>
+                      <ChatProvider>{children}</ChatProvider>
+                    </ReferralProvider>
                   </BountyProvider>
                 </NonCustodialWalletProvider>
               </TutorialProvider>

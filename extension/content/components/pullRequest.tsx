@@ -13,7 +13,7 @@ export const PullRequest = ({
         This PR is linked to a Lancer Bounty
       </div>
       <a
-        href={`${endpoint}/bounties/${issue.uuid}`}
+        href={`${endpoint}/quests/${issue.uuid}`}
         target="_blank"
         rel="noreferrer"
       >

@@ -1,82 +1,78 @@
-import MultiSelectDropdown from "@/components/molecules/MultiSelectDropdown";
-import RangeSlider from "@/components/molecules/RangeSlider";
-import { BOUNTY_STATES } from "@/src/constants";
-import classnames from "classnames";
+import { Dispatch, SetStateAction, useEffect } from "react";
+import { RangeSlider, MultiSelectDropdown } from "@/components";
+import { BOUNTY_STATES } from "@/types";
 import { capitalize } from "lodash";
-import { Filters } from "../BountyTable";
-import { IAsyncResult } from "@/types/common";
+import { Filters, Industry, IAsyncResult } from "@/types";
+import { motion } from "framer-motion";
+import IndustrySelection from "./IndustrySelection";
+import { Mint } from "@prisma/client";
 
 interface BountyFiltersProps {
-  mints: string[];
+  mints: Mint[];
+  industries: Industry[];
   tags: string[];
-  orgs: string[];
-  timeBounds: [number, number];
+  // orgs: string[];
+  priceBounds: [number, number];
   filters: Filters;
-  setFilters: (filters: Filters) => void;
-  setBounties: (bounties: IAsyncResult<any[]>) => void;
+  setFilters: Dispatch<SetStateAction<Filters>>;
 }
 
 export const BountyFilters = ({
   mints,
+  industries,
   tags,
-  orgs,
-  timeBounds,
+  // orgs,
+  priceBounds,
   filters,
   setFilters,
-  setBounties,
 }: BountyFiltersProps) => {
   return (
-    <form
+    <motion.form
+      className="flex flex-col items-start gap-6 pl-10 mt-16 sticky top-24"
+      initial={{ opacity: 0, x: -200 }}
+      animate={{ opacity: 1, x: 0 }}
+      exit={{ opacity: 0, x: -200 }}
+      key={`filters`}
       onSubmit={(event) => event.preventDefault()}
-      className="bounty-filters"
-      id="bounty-filters"
     >
-      <div className="filter-section" id="filter-my-bounties">
-        <label className="w-checkbox checkbox-field-2 label-only ">
-          <div
-            className={classnames(
-              "w-checkbox-input w-checkbox-input--inputType-custom checkbox ",
-              {
-                checked: filters.isMyBounties,
-              }
-            )}
-            onClick={() => {
-              setFilters({
-                ...filters,
-                isMyBounties: !filters.isMyBounties,
-              });
-              setBounties({ result: [] });
-            }}
-          />
-
-          <label className="check-label label-only">Only My Bounties</label>
-        </label>
-      </div>
-      <div className="filter-section" id="filter-payout-mints">
-        <label>Payout Mints</label>
-        <MultiSelectDropdown
-          options={mints.map((mint) => {
-            return {
-              value: mint,
-              label: mint,
-            };
-          })}
-          selected={filters.mints.map((mint) => {
-            return {
-              value: mint,
-              label: mint,
-            };
-          })}
-          onChange={(options) => {
+      <div className="flex items-center gap-3 cursor-pointer">
+        <input
+          type="checkbox"
+          className="w-6 h-6 accent-primaryBtn border border-primaryBtnBorder
+          rounded-xl focus:ring-industryGreenBorder focus:border-green-500"
+          checked={filters.isMyBounties}
+          onChange={() => {
             setFilters({
               ...filters,
-              mints: options.map((option) => option.value),
+              isMyBounties: !filters.isMyBounties,
             });
           }}
         />
+        <p className="font-bold">Only My Bounties</p>
       </div>
-      <div className="filter-section" id="filter-creators">
-        <label>Creators</label>
+      {/* {!!filters?.estimatedPriceBounds && (
+        <div className="w-full flex flex-col gap-3">
+          <div className="flex items-center gap-2">
+            <p className="font-bold">Price Range:</p>
+            <p className="text-sm">{`$${filters.estimatedPriceBounds?.[0]} - $${filters.estimatedPriceBounds?.[1]}`}</p>
+          </div>
+
+          <RangeSlider
+            bounds={priceBounds}
+            setBounds={(bounds) => {
+              setFilters({ ...filters, estimatedPriceBounds: bounds });
+            }}
+          />
+        </div>
+      )} */}
+
+      <IndustrySelection
+        industries={industries}
+        filters={filters}
+        setFilters={setFilters}
+      />
+      {/* <div className="flex flex-col gap-3">
+        <p className="font-bold">Creators</p>
         <MultiSelectDropdown
           options={orgs.map((org) => {
             return {
@@ -97,9 +93,9 @@ export const BountyFilters = ({
             });
           }}
         />
-      </div>
-      <div className="filter-section" id="filter-requirements">
-        <label>Requirements</label>
+      </div> */}
+      {/* <div className="flex flex-col gap-3">
+        <p className="font-bold">Tags</p>
         <MultiSelectDropdown
           options={tags.map((tag) => {
             return {
@@ -120,9 +116,9 @@ export const BountyFilters = ({
             });
           }}
         />
-      </div>
-      <div className="filter-section" id="filter-states">
-        <label>States</label>
+      </div> */}
+      <div className="flex flex-col gap-3">
+        <p className="font-bold">Status</p>
         <MultiSelectDropdown
           options={BOUNTY_STATES.map((state) => {
             return {
@@ -145,26 +141,11 @@ export const BountyFilters = ({
           onChange={(options) => {
             setFilters({
               ...filters,
-              states: options.map((option) => option.value),
+              states: options.map((option) => option.value) as string[],
             });
           }}
         />
       </div>
-      <div className="filter-section" id="filter-time">
-        <label htmlFor="estimatedTime">Estimated Time (hours)</label>
-        <div className="range-bounds">
-          <div>{timeBounds[0]}</div>
-          <div>{timeBounds[1]}</div>
-        </div>
-        {timeBounds[0] !== 0 && (
-          <RangeSlider
-            bounds={timeBounds}
-            setBounds={(bounds) => {
-              setFilters({ ...filters, estimatedTimeBounds: bounds });
-            }}
-          />
-        )}
-      </div>
-    </form>
+    </motion.form>
   );
 };

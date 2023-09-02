@@ -1,6 +1,6 @@
 import { useUserWallet } from "@/src/providers";
-import { LinkButton, ApiKeyModal, Button, PubKey } from "@/components";
-import { useEffect, useRef, useState } from "react";
+import { ApiKeyModal, Button, PubKey } from "@/components";
+import { useRef, useState } from "react";
 import { useOutsideAlerter } from "@/src/hooks/useOutsideAlerter";
 import Link from "next/link";
 import {
@@ -10,6 +10,7 @@ import {
 } from "@/src/constants/tutorials";
 import { useTutorial } from "@/src/providers/tutorialProvider";
 import { IS_CUSTODIAL } from "@/src/constants";
+import { LinkButton } from "@/components";
 
 const AccountHeaderOptions = () => {
   const { currentUser, logout, currentWallet } = useUserWallet();
@@ -23,7 +24,7 @@ const AccountHeaderOptions = () => {
   });
   return (
     <div className="relative ">
-      {!!currentUser && (
+      {currentUser ? (
         <>
           <div
             className="cursor-pointer"
@@ -148,6 +149,8 @@ const AccountHeaderOptions = () => {
           )}
           <ApiKeyModal showModal={showModal} setShowModal={setShowModal} />
         </>
+      ) : (
+        <LinkButton href="/api/auth/login">Log In</LinkButton>
       )}
     </div>
   );

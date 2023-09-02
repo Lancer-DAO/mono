@@ -1,5 +1,4 @@
 import { ButtonHTMLAttributes, DetailedHTMLProps, useState } from "react";
-import { getButtonStyle } from "./LinkButton";
 
 interface ButtonProps
   extends DetailedHTMLProps<
@@ -33,7 +32,7 @@ const Button = ({
 
   return (
     <div
-      className="hover-tooltip-wrapper"
+      className="hover-tooltip-wrapper relative"
       onMouseEnter={() => {
         setHoveredButton(true);
       }}
@@ -42,7 +41,7 @@ const Button = ({
       }}
     >
       <button
-        className={getButtonStyle(version, disabled) + " " + extraClasses}
+        className={extraClasses}
         disabled={disabled}
         onClick={async () => {
           setIsLoading(true);
@@ -55,10 +54,10 @@ const Button = ({
         {isLoading ? "Processing..." : children}
       </button>
       {hoveredButton && disabledText && disabled && (
-        <div className="hover-tooltip error">{disabledText}</div>
+        <div className="hover-tooltip error absolute">{disabledText}</div>
       )}
       {hoveredButton && hoveredText && !disabled && (
-        <div className="hover-tooltip">{hoveredText}</div>
+        <div className="hover-tooltip absolute">{hoveredText}</div>
       )}
     </div>
   );

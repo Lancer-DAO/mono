@@ -9,8 +9,8 @@ export const registerProfileNFT = protectedProcedure
       walletPublicKey: z.string(),
     })
   )
-  .mutation(async ({ ctx, input: { walletPublicKey } }) => {
-    const { email, id } = ctx.user;
+  .query(async ({ ctx, input: { walletPublicKey } }) => {
+    const { email } = ctx.user;
     const user = await queries.user.getByEmail(email);
 
     const wallet = await queries.wallet.getOrCreate(

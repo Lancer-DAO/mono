@@ -18,10 +18,12 @@ model Bounty {
   createdAt     String   @db.VarChar(24)
   description   String   @db.VarChar(10000)
   estimatedTime Decimal? @db.Decimal(10, 2)
+  price         Decimal? @db.Decimal(16, 9)
   isPrivate     Boolean
   state         String   @db.VarChar(24)
   title         String   @db.VarChar(256)
   type          String?  @db.VarChar(24)
+  links         String   @default("") @db.VarChar(1024)
 
   // Relations
   certificates BountyCertificate[]
@@ -40,6 +42,9 @@ model Bounty {
   repositoryid Int?
   tags         Tag[]
   users        BountyUser[]
+  industries   Industry[]
+  disciplines  Discipline[]
+  media        Media[]
 }
 
 model Certificate {
@@ -77,6 +82,21 @@ model Comment {
 
   // Relations
   bounty BountyComment[]
+}
+
+model Discipline {
+  id Int @id @default(autoincrement())
+
+  // Fields
+  name        String @unique @db.VarChar(256)
+  color       String @db.VarChar(32)
+  description String @db.VarChar(4096)
+  industryid  Int
+
+  // Relations
+  industry Industry @relation(fields: [industryid], references: [id])
+  bounties Bounty[]
+  tags     Tag[]
 }
 
 model Endorsement {
@@ -131,6 +151,22 @@ model Guild {
   users        GuildUser[]
 }
 
+model Industry {
+  id Int @id @default(autoincrement())
+
+  // Fields
+  name        String @unique @db.VarChar(256)
+  icon        String @db.VarChar(256)
+  color       String @db.VarChar(32)
+  description String @db.VarChar(4096)
+
+  // Relations
+  bounties    Bounty[]
+  users       User[]
+  disciplines Discipline[]
+  tags        Tag[]
+}
+
 model Issue {
   id Int @id @default(autoincrement())
 
@@ -150,6 +186,19 @@ model Issue {
   pullRequests PullRequest[]
 
   @@unique([number, repositoryid])
+}
+
+model Media {
+  id Int @id @default(autoincrement())
+
+  // Fields
+  imageUrl    String? @db.VarChar(256)
+  title       String? @db.VarChar(128)
+  description String? @db.VarChar(512)
+
+  // Relations
+  bounty Bounty[]
+  user   User[]
 }
 
 model Milestone {
@@ -280,6 +329,8 @@ model Tag {
   certificates Certificate[]
   milestones   Milestone[]
   users        User[]
+  disciplines  Discipline[]
+  industries   Industry[]
 }
 
 model Transaction {
@@ -302,22 +353,31 @@ model User {
   id Int @id @default(autoincrement())
 
   // Fields
-  isAdmin              Boolean?
-  verified             Boolean?
-  hasProfileNFT        Boolean?
-  githubId             String?  @db.VarChar(24)
-  googleId             String?  @db.VarChar(64)
-  githubLogin          String?  @db.VarChar(64)
-  picture              String?  @db.VarChar(2000)
-  name                 String?  @db.VarChar(128)
-  discord              String?  @db.VarChar(64)
-  twitter              String?  @db.VarChar(64)
-  instagram            String?  @db.VarChar(64)
-  email                String?  @unique @db.VarChar(128)
-  profileWalletId      Int?     @unique
-  refferralTreasuryKey String?  @unique @db.VarChar(128)
-  referralId           String?  @unique @db.VarChar(128)
-  createdAt            String   @default("") @db.VarChar(24)
+  isAdmin               Boolean?
+  verified              Boolean?
+  hasProfileNFT         Boolean?
+  googleId              String?  @db.VarChar(64)
+  githubId              String?  @db.VarChar(24)
+  githubLogin           String?  @db.VarChar(64)
+  picture               String?  @db.VarChar(2000)
+  name                  String?  @db.VarChar(128)
+  bio                   String?  @db.VarChar(2000)
+  discord               String?  @db.VarChar(64)
+  twitter               String?  @db.VarChar(64)
+  instagram             String?  @db.VarChar(64)
+  linkedin              String?  @db.VarChar(64)
+  github                String?  @db.VarChar(64)
+  website               String?  @db.VarChar(128)
+  email                 String?  @unique @db.VarChar(128)
+  resume                String?  @db.VarChar(256)
+  profileWalletId       Int?     @unique
+  refferralTreasuryKey  String?  @unique @db.VarChar(128)
+  referralId            String?  @unique @db.VarChar(128)
+  createdAt             String   @default("") @db.VarChar(24)
+  company               String?  @db.VarChar(128)
+  position              String?  @db.VarChar(128)
+  hasFinishedOnboarding Boolean? @default(false)
+  hasBeenApproved       Boolean? @default(false)
 
   // Relations
   wallets      Wallet[]
@@ -333,16 +393,24 @@ model User {
   endorsers    Endorsement[]      @relation("endorser")
   referrers    ReferrerReferree[] @relation("referree")
   referrees    ReferrerReferree[] @relation("referrer")
+  industries   Industry[]
+  media        Media[]
 }
 
 model Wallet {
   id                 Int                 @id @default(autoincrement())
+
+  
   publicKey          String?             @unique @db.VarChar(64)
   isDefault          Boolean?
   hasProfileNFT      Boolean?
   hasBeenInitialized Boolean?
+
+
   userid             Int
   user               User                @relation(fields: [userid], references: [id])
+  
+  
   providers          Provider[]
   transactions       TransactionWallet[]
   chains             ChainWallet[]

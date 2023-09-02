@@ -18,10 +18,12 @@ import {
 import {
   AccountMeta,
   ComputeBudgetProgram,
+  Connection,
   Keypair,
   LAMPORTS_PER_SOL,
   PublicKey,
   sendAndConfirmTransaction,
+  Signer,
   Struct,
   SystemProgram,
   SYSVAR_RENT_PUBKEY,
@@ -357,6 +359,28 @@ export const approveRequestWithReferralInstruction = async (
     referral_data_account
   );
 
+  console.log(
+    "creator referrer, completer refferrer",
+    referralAccount.creatorReferrer.toString(),
+    referralAccount.approvedReferrers[0].toString()
+  );
+
+  const creatorReferrer =
+    referralAccount.creatorReferrer.toString() === PublicKey.default.toString()
+      ? []
+      : [
+          {
+            pubkey: referralAccount.creatorReferrer,
+            isWritable: true,
+            isSigner: false,
+          },
+          {
+            pubkey: referralAccount.creatorMember,
+            isWritable: true,
+            isSigner: false,
+          },
+        ];
+
   const remainingAccounts = [
     { pubkey: buddylinkProgramId, isWritable: false, isSigner: false },
     { pubkey: mint, isWritable: false, isSigner: false },
@@ -369,8 +393,8 @@ export const approveRequestWithReferralInstruction = async (
         isWritable: true,
         isSigner: false,
       })),
+    ...creatorReferrer,
   ];
-
   return await program.methods
     .approveRequestWithReferral()
     .accounts({
@@ -613,6 +637,8 @@ export const setShareMultipleSubmittersInstruction = async (
 export const createReferralDataAccountInstruction = async (
   creator: PublicKey,
   feature_data_account: PublicKey,
+  referrer: PublicKey,
+  remainingAccounts: AccountMeta[],
   program: Program<MonoProgram>
 ): Promise<TransactionInstruction> => {
   let [referral_data_account] = await findReferralDataAccount(
@@ -627,9 +653,11 @@ export const createReferralDataAccountInstruction = async (
       creator: creator,
       featureDataAccount: feature_data_account,
       referralDataAccount: referral_data_account,
+      referrer: referrer,
       rent: SYSVAR_RENT_PUBKEY,
       systemProgram: SystemProgram.programId,
     })
+    .remainingAccounts(remainingAccounts)
     .instruction();
 };
 
@@ -774,4 +802,174 @@ export const approveRequestMultipleTransaction = async (
     .add(approve_request_multiple_ix);
 
   return transaction;
+};
+
+export const custodialTransaction = async (
+  connection: Connection,
+  instruction: TransactionInstruction,
+  // payer: PublicKey,
+  backend_signer: Signer
+): Promise<Transaction> => {
+  const tx = new Transaction();
+  const { blockhash } = await connection.getLatestBlockhash();
+  tx.recentBlockhash = blockhash;
+  //@ts-ignore
+  tx.add(instruction);
+  tx.sign(backend_signer);
+  // tx.partialSign(signer);
+  tx.feePayer = backend_signer.publicKey;
+  console.log("fee payer = ", backend_signer.publicKey.toString());
+  // const rawTx = tx.serialize();
+  // const signature = await connection.sendRawTransaction(rawTx);
+  // const serializedTx = tx.serialize({requireAllSignatures: false});
+
+  // return serializedTx;
+  return tx;
+  // const signedTx = await signTransaction(tx)
+  // const txId = await sendTransaction(signedTx, connection,{signers:[]});
+};
+
+export const sendInvoiceInstruction = async (
+  timestamp: string,
+  amount: number,
+  creator: PublicKey,
+  new_creator: PublicKey,
+  mint: PublicKey,
+  program: Program<MonoProgram>
+): Promise<TransactionInstruction> => {
+  const [feature_data_account] = await findFeatureAccount(
+    timestamp,
+    creator,
+    program
+  );
+
+  return await program.methods
+    .sendInvoice(new anchor.BN(amount))
+    .accounts({
+      creator: creator,
+      newCreator: new_creator,
+      fundsMint: mint,
+      featureDataAccount: feature_data_account,
+      tokenProgram: TOKEN_PROGRAM_ID,
+      systemProgram: SystemProgram.programId,
+    })
+    .instruction();
+};
+
+export const acceptInvoiceInstruction = async (
+  timestamp: string,
+  creator: PublicKey,
+  new_creator: PublicKey,
+  mint: PublicKey,
+  program: Program<MonoProgram>
+): Promise<TransactionInstruction> => {
+  const new_creator_token_account = await getAssociatedTokenAddress(
+    mint,
+    new_creator
+  );
+  const [feature_data_account] = await findFeatureAccount(
+    timestamp,
+    creator,
+    program
+  );
+  const [feature_token_account] = await findFeatureTokenAccount(
+    timestamp,
+    creator,
+    mint,
+    program
+  );
+
+  const [program_authority] = await findProgramAuthority(program);
+
+  const [new_feature_data_account] = await findFeatureAccount(
+    timestamp,
+    new_creator,
+    program
+  );
+  const [new_feature_token_account] = await findFeatureTokenAccount(
+    timestamp,
+    new_creator,
+    mint,
+    program
+  );
+
+  return await program.methods
+    .acceptInvoice()
+    .accounts({
+      newCreator: new_creator,
+      newCreatorTokenAccount: new_creator_token_account,
+      fundsMint: mint,
+      newFeatureDataAccount: new_feature_data_account,
+      newFeatureTokenAccount: new_feature_token_account,
+      programAuthority: program_authority,
+      creator: creator,
+      featureDataAccount: feature_data_account,
+      featureTokenAccount: feature_token_account,
+      tokenProgram: TOKEN_PROGRAM_ID,
+      rent: SYSVAR_RENT_PUBKEY,
+      associatedProgram: ASSOCIATED_TOKEN_PROGRAM_ID,
+      systemProgram: SystemProgram.programId,
+    })
+    .instruction();
+};
+
+export const rejectInvoiceInstruction = async (
+  timestamp: string,
+  creator: PublicKey,
+  invoice_acceptor: PublicKey,
+
+  mint: PublicKey,
+  program: Program<MonoProgram>
+): Promise<TransactionInstruction> => {
+  const [feature_data_account] = await findFeatureAccount(
+    timestamp,
+    creator,
+    program
+  );
+
+  return await program.methods
+    .rejectInvoice()
+    .accounts({
+      invoiceAcceptor: invoice_acceptor,
+      creator: creator,
+      fundsMint: mint,
+      featureDataAccount: feature_data_account,
+      tokenProgram: TOKEN_PROGRAM_ID,
+      systemProgram: SystemProgram.programId,
+    })
+    .instruction();
+};
+
+export const closeInvoiceInstruction = async (
+  timestamp: string,
+  creator: PublicKey,
+  mint: PublicKey,
+  program: Program<MonoProgram>
+): Promise<TransactionInstruction> => {
+  const [feature_data_account] = await findFeatureAccount(
+    timestamp,
+    creator,
+    program
+  );
+  const [feature_token_account] = await findFeatureTokenAccount(
+    timestamp,
+    creator,
+    mint,
+    program
+  );
+
+  const [program_authority] = await findProgramAuthority(program);
+
+  return await program.methods
+    .closeInvoice()
+    .accounts({
+      programAuthority: program_authority,
+      creator: creator,
+      featureDataAccount: feature_data_account,
+      featureTokenAccount: feature_token_account,
+      tokenProgram: TOKEN_PROGRAM_ID,
+      associatedProgram: ASSOCIATED_TOKEN_PROGRAM_ID,
+      systemProgram: SystemProgram.programId,
+    })
+    .instruction();
 };

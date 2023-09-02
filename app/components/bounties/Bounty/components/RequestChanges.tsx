@@ -6,6 +6,7 @@ import { api } from "@/src/utils/api";
 import { PublicKey } from "@solana/web3.js";
 import { BOUNTY_USER_RELATIONSHIP, BountyState } from "@/types/";
 import { updateList } from "@/src/utils";
+import { BountyActionsButton } from "./BountyActionsButton";
 
 export const RequestChanges = () => {
   const { currentUser, currentWallet, program, provider } = useUserWallet();
@@ -13,6 +14,7 @@ export const RequestChanges = () => {
   const { mutateAsync } = api.bountyUsers.update.useMutation();
 
   if (
+    !currentBounty ||
     !(
       currentBounty.isCreator &&
       currentBounty.currentSubmitter &&
@@ -32,7 +34,7 @@ export const RequestChanges = () => {
       provider
     );
     const newRelations = updateList(
-      currentBounty.currentUserRelationsList,
+      [],
       [BOUNTY_USER_RELATIONSHIP.CurrentSubmitter],
       [BOUNTY_USER_RELATIONSHIP.ChangesRequestedSubmitter]
     );
@@ -52,8 +54,10 @@ export const RequestChanges = () => {
   };
 
   return (
-    <Button onClick={onClick} disabled={!currentWallet.publicKey}>
-      Request Changes
-    </Button>
+    <BountyActionsButton
+      type="neutral"
+      text="Request Changes"
+      onClick={onClick}
+    />
   );
 };

@@ -1,19 +1,17 @@
-import type { AppProps } from "next/app";
-import "@/src/styles/app.scss";
-import "@/src/styles/Form.scss";
-import "@/src/styles/Bounty.scss";
-import "@/src/styles/webflow.scss";
-
-import { api } from "@/src/utils/api";
 import { AllProviders } from "@/src/providers";
-import { useEffect, ReactNode, ReactElement } from "react";
-import { useRouter } from "next/router";
+import "@/src/styles/Bounty.scss";
+import "@/src/styles/globals.css";
+import { api } from "@/src/utils/api";
 import { NextPage } from "next";
-import { DefaultLayout } from "../components";
 import { DefaultSeo } from "next-seo";
+import type { AppProps } from "next/app";
+import { useRouter } from "next/router";
+import { ReactElement, ReactNode, useEffect } from "react";
+import { DefaultLayout } from "../components";
 
 // import your default seo configuration
 import SEO from "../next-seo.config";
+import { Toaster } from "react-hot-toast";
 
 const COOKIE_REF = "referrer";
 
@@ -39,11 +37,12 @@ const App = ({ Component, pageProps }: AppPropsWithLayout) => {
         localStorage.setItem(COOKIE_REF, r as string);
       }
     }
-  }, []);
+  }, [router.query]);
 
   return (
     <AllProviders>
       <DefaultSeo {...SEO} />
+      <Toaster />
       {getLayout(<Component {...pageProps} />)}
     </AllProviders>
   );

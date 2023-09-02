@@ -41,24 +41,24 @@ export const SubmitterSection: React.FC<SubmitterSectionProps> = ({
           try {
             await removeSubmitterFFA(
               new PublicKey(submitter.publicKey),
-              currentBounty.escrow,
+              currentBounty?.escrow,
               currentWallet,
               program,
               provider
             );
             const newRelations = updateList(
-              currentBounty.currentUserRelationsList,
+              currentBounty?.currentUserRelationsList,
               [BOUNTY_USER_RELATIONSHIP.ApprovedSubmitter],
               [BOUNTY_USER_RELATIONSHIP.DeniedRequester]
             );
             const updatedBounty = await mutateAsync({
-              bountyId: currentBounty.id,
+              bountyId: currentBounty?.id,
               userId: submitter.userid,
               currentUserId: currentUser.id,
               relations: newRelations,
 
               publicKey: submitter.publicKey.toString(),
-              escrowId: currentBounty.escrowid,
+              escrowId: currentBounty?.escrowid,
               signature: "test",
               label: "remove-submitter",
             });
@@ -74,17 +74,17 @@ export const SubmitterSection: React.FC<SubmitterSectionProps> = ({
           try {
             if (cancel) {
               const newRelations = updateList(
-                currentBounty.currentUserRelationsList,
+                currentBounty?.currentUserRelationsList,
                 [],
                 [BOUNTY_USER_RELATIONSHIP.DeniedRequester]
               );
               const updatedBounty = await mutateAsync({
-                bountyId: currentBounty.id,
+                bountyId: currentBounty?.id,
                 currentUserId: currentUser.id,
                 userId: submitter.userid,
                 relations: newRelations,
                 publicKey: submitter.publicKey,
-                escrowId: currentBounty.escrowid,
+                escrowId: currentBounty?.escrowid,
                 signature: "n/a",
                 label: "deny-submitter",
               });
@@ -93,7 +93,7 @@ export const SubmitterSection: React.FC<SubmitterSectionProps> = ({
               const submitterWallet = new PublicKey(submitter.publicKey);
               const remainingAccounts = await getRemainingAccounts(
                 submitterWallet,
-                new PublicKey(currentBounty.escrow.mint.publicKey)
+                new PublicKey(currentBounty?.escrow.mint.publicKey)
               );
               if (
                 currentTutorialState?.title ===
@@ -107,11 +107,11 @@ export const SubmitterSection: React.FC<SubmitterSectionProps> = ({
               }
               const signature = await addSubmitterFFA(
                 submitterWallet,
-                currentBounty.escrow,
+                currentBounty?.escrow,
                 currentWallet,
                 await getSubmitterReferrer(
                   submitterWallet,
-                  new PublicKey(currentBounty.escrow.mint.publicKey)
+                  new PublicKey(currentBounty?.escrow.mint.publicKey)
                 ),
                 remainingAccounts,
                 program,
@@ -119,19 +119,19 @@ export const SubmitterSection: React.FC<SubmitterSectionProps> = ({
               );
               const newRelations = updateList(
                 submitter.userid === currentUser.id
-                  ? currentBounty.currentUserRelationsList
+                  ? currentBounty?.currentUserRelationsList
                   : [],
                 [BOUNTY_USER_RELATIONSHIP.RequestedSubmitter],
                 [BOUNTY_USER_RELATIONSHIP.ApprovedSubmitter]
               );
               const updatedBounty = await mutateAsync({
-                bountyId: currentBounty.id,
+                bountyId: currentBounty?.id,
                 userId: submitter.userid,
                 currentUserId: currentUser.id,
                 relations: newRelations,
                 state: BountyState.IN_PROGRESS,
                 publicKey: submitter.publicKey,
-                escrowId: currentBounty.escrowid,
+                escrowId: currentBounty?.escrowid,
                 signature,
                 label: "add-approved-submitter",
               });
@@ -160,7 +160,7 @@ export const SubmitterSection: React.FC<SubmitterSectionProps> = ({
   };
 
   return (
-    <div className="submitter-section">
+    <div className="submitter-section flex">
       <ContributorInfo user={submitter.user} />
 
       {type === "approved" ? (

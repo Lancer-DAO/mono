@@ -77,13 +77,13 @@ const UserWalletProvider: FunctionComponent<IUserWalletState> = ({
         signTransaction,
         connected,
         signAndSendTransaction: async (transaction: Transaction) => {
-          return await sendTransaction(transaction, connection, {
-            skipPreflight: true,
-          });
+          return await sendTransaction(transaction, connection, {});
         },
         providerName: "Phantom",
       };
-      const provider = new AnchorProvider(connection, lancerWallet, {});
+      const provider = new AnchorProvider(connection, lancerWallet, {
+        skipPreflight: true,
+      });
       const program = new Program<MonoProgram>(
         MonoProgramJSON as unknown as MonoProgram,
         new PublicKey(MONO_ADDRESS),

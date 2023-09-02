@@ -7,7 +7,6 @@ import { Edit, Delete, X, HelpCircle } from "react-feather";
 
 import { FC, useRef } from "react";
 import { useOutsideAlerter } from "../../src/hooks/useOutsideAlerter";
-import { LinkButton } from "..";
 import { GITHUB_API_KEY_TUTORIAL_INITIAL_STATE } from "@/src/constants/tutorials";
 
 export interface APIKeyInfo {
@@ -73,13 +72,12 @@ const ApiKeyModal: FC<Props> = ({ showModal, setShowModal }) => {
   //         <div className="modal-inner" ref={wrapperRef}>
   //           <h2 className="modal-header ">
   //             Select GitHub API Key{" "}
-  //             <LinkButton
+  //             <a
   //               href="https://lancerworks.notion.site/Setting-your-GitHub-API-Token-cbdd37c0502942e4adb775e70e17a9c7?pvs=4"
   //               target="_blank"
   //               onMouseEnter={() => setIsTutorialButtonHovered(true)}
   //               onMouseLeave={() => setIsTutorialButtonHovered(false)}
-  //               version="text"
-  //               extraClasses="ml-[10px]"
+  //               className="ml-[10px]"
   //               id="github-api-key-tutorial-link"
   //               onClick={() => {
   //                 if (!!currentTutorialState && currentTutorialState.isActive) {
@@ -102,7 +100,7 @@ const ApiKeyModal: FC<Props> = ({ showModal, setShowModal }) => {
   //                 strokeWidth={1.25}
   //                 color={isTutorialButtonHovered ? "#14bb88" : "#000"}
   //               />
-  //             </LinkButton>
+  //             </a>
   //           </h2>
   //           <div id="api-key-list">
   //             {apiKeys.map(({ name, token, isDefault }, index) => (

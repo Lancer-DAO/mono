@@ -4,15 +4,18 @@ import { useUserWallet } from "@/src/providers";
 import { useBounty } from "@/src/providers/bountyProvider";
 import { BOUNTY_USER_RELATIONSHIP, BountyState } from "@/types/";
 import { api } from "@/src/utils/api";
-import { Button } from "@/components";
 import { updateList } from "@/src/utils";
+import { BountyActionsButton } from ".";
 
 export const CancelEscrow: FC = () => {
   const { currentUser, currentWallet, program, provider } = useUserWallet();
   const { currentBounty, setCurrentBounty } = useBounty();
   const { mutateAsync } = api.bountyUsers.update.useMutation();
 
-  if (!(currentBounty.isCreator && currentBounty.needsToVote.length === 0))
+  if (
+    !currentBounty ||
+    !(currentBounty.isCreator && currentBounty.needsToVote.length === 0)
+  )
     return null;
 
   const onClick = async () => {
@@ -44,8 +47,6 @@ export const CancelEscrow: FC = () => {
   };
 
   return (
-    <Button onClick={onClick} disabled={!currentWallet.publicKey}>
-      Cancel
-    </Button>
+    <BountyActionsButton type="red" text="Cancel Bounty" onClick={onClick} />
   );
 };
