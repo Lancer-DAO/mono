@@ -1,15 +1,21 @@
-import { FC, useState } from "react";
+import { Dispatch, FC, SetStateAction, useState } from "react";
 import { motion } from "framer-motion";
 import { smallClickAnimation } from "@/src/constants";
 import { FundBountyModal, Coins } from "@/components";
 import { useBounty } from "@/src/providers/bountyProvider";
+import { BountyState } from "@/types";
 
-const FundCTA: FC = () => {
+interface Props {
+  setIsFunded: Dispatch<SetStateAction<boolean>>;
+}
+
+const FundCTA: FC<Props> = ({ setIsFunded }) => {
   const [showModal, setShowModal] = useState(false);
   const { currentBounty } = useBounty();
   return (
     <>
-      {currentBounty?.isCreator ? (
+      {currentBounty?.isCreator &&
+      currentBounty?.state !== BountyState.CANCELED ? (
         <motion.button
           {...smallClickAnimation}
           className="animate-pulse h-12 w-fit px-4 border border-industryRedBorder/10 
@@ -33,7 +39,12 @@ const FundCTA: FC = () => {
         </div>
       )}
 
-      {showModal && <FundBountyModal setShowModal={setShowModal} />}
+      {showModal && (
+        <FundBountyModal
+          setIsFunded={setIsFunded}
+          setShowModal={setShowModal}
+        />
+      )}
     </>
   );
 };

@@ -21,7 +21,7 @@ const FundBounty: React.FC<{ amount: number }> = ({
   const [fundTx, setFundTx] = useState<Transaction>(null);
   useEffect(() => {
     const getFundTransaction = async () => {
-      console.log("coinflow amount", amount);
+      // console.log("coinflow amount", amount);
       const transaction = await getFundFFATX(
         amount,
         currentBounty?.escrow,
@@ -43,7 +43,7 @@ const FundBounty: React.FC<{ amount: number }> = ({
     router.push(`/quests/${currentBounty?.id}`);
   };
   return (
-    <div className="bounty-fund-with-card">
+    <>
       {fundTx && amount && (
         <Coinflow
           transaction={fundTx}
@@ -53,7 +53,7 @@ const FundBounty: React.FC<{ amount: number }> = ({
           connection={provider.connection}
         />
       )}
-    </div>
+    </>
   );
 };
 

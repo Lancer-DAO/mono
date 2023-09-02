@@ -25,6 +25,7 @@ import { PROFILE_TUTORIAL_INITIAL_STATE } from "@/src/constants/tutorials";
 import { useTutorial } from "../tutorialProvider";
 import { User } from "@/types/";
 import { useRouter } from "next/router";
+import toast from "react-hot-toast";
 
 export const NonCustodialWalletContext = createContext<IUserWalletContext>({
   currentUser: null,
