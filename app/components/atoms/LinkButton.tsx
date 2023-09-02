@@ -1,3 +1,4 @@
+import Link from "next/link";
 import {
   ButtonHTMLAttributes,
   DetailedHTMLProps,
@@ -52,17 +53,17 @@ const LinkButton = ({
     >
       <button className={extraClasses} disabled={disabled} id={id} {...props}>
         {disabled ? (
-          <a
+          <Link
             href={href}
             className={"text-lg font-bold  opacity-50 pointer-events-none"}
             key={href}
           >
             {children}
-          </a>
+          </Link>
         ) : (
-          <a href={href} className={"text-lg font-bold"} key={href}>
+          <Link href={href} className={"text-lg font-bold"} key={href}>
             {children}
-          </a>
+          </Link>
         )}
       </button>
       {hoveredButton && disabledText && disabled && (

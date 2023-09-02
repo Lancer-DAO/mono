@@ -12,6 +12,7 @@ import * as tag from "./tag";
 import * as transaction from "./transaction";
 import * as user from "./user";
 import * as wallet from "./wallet";
+import * as leaderboard from "./leaderboard";
 
 export {
   bounty,
@@ -28,4 +29,5 @@ export {
   transaction,
   wallet,
   user,
+  leaderboard
 };
