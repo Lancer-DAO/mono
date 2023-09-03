@@ -174,7 +174,7 @@ const BountyCard: FC<BountyCardProps> = ({
         </div>
       </div>
       {(formData?.isPrivate || bounty?.isPrivate) && (
-        <div className="absolute bottom-4 right-4 z-50">
+        <div className="absolute bottom-4 right-4 z-20">
           <LockIcon fill="#464646" width={15} height={15} />
         </div>
       )}
