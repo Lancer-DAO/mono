@@ -59,8 +59,8 @@ const CreatePage: React.FC = () => {
   return (
     <>
       <NextSeo
-        title="Lancer | New Bounty"
-        description="Create New Lancer Bounty"
+        title="Lancer | New Quest"
+        description="Create New Lancer Quest"
       />
       <Create />
     </>

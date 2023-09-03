@@ -26,7 +26,7 @@ const AccountHeaderOptions = () => {
     setShowOptions(false);
   });
   return (
-    <div className="relative ">
+    <div className="relative z-50">
       {currentUser ? (
         <>
           <div

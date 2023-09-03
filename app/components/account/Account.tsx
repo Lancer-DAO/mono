@@ -150,14 +150,14 @@ export const Account: FC<Props> = ({ self }) => {
               id={fetchedUser.id}
             />
             <BadgesCard profileNFT={profileNFT} />
+            {fetchedUser.id === currentUser.id &&
+              currentUser.hasBeenApproved && <ReferCard />}
           </div>
           {/* right column */}
           <div className="flex flex-col gap-5 w-full">
             <PortfolioCard />
             {fetchedUser.id === currentUser.id && <ResumeCard />}
             <QuestsCard />
-            {fetchedUser.id === currentUser.id &&
-              currentUser.hasBeenApproved && <ReferCard />}
           </div>
         </div>
       ) : (

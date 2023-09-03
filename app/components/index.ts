@@ -29,6 +29,7 @@ const PriceTag = dynamic(() => import("./atoms/PriceTag"));
 const ProgressBar = dynamic(() => import("./atoms/progressBar"));
 const PubKey = dynamic(() => import("./atoms/PubKey"));
 const Toggle = dynamic(() => import("./atoms/Toggle"));
+const Tooltip = dynamic(() => import("./atoms/Tooltip"));
 const TweetShareButton = dynamic(() => import("./atoms/TweetShareButton"));
 
 // molecules
@@ -48,6 +49,7 @@ const MultiSelectDropdown = dynamic(
   () => import("./molecules/MultiSelectDropdown")
 );
 const RangeSlider = dynamic(() => import("./molecules/RangeSlider"));
+const SidePanel = dynamic(() => import("./molecules/sidebar/index"));
 const TutorialsModal = dynamic(() => import("./molecules/TutorialsModal"));
 const WalletInfo = dynamic(() => import("./molecules/WalletInfo"));
 
@@ -88,6 +90,8 @@ export {
   PriceTag,
   ProgressBar,
   PubKey,
+  Toggle,
+  Tooltip,
   TweetShareButton,
 
   // molecules
@@ -103,7 +107,7 @@ export {
   Modal,
   MultiSelectDropdown,
   RangeSlider,
-  Toggle,
+  SidePanel,
   TutorialsModal,
   WalletInfo,
 

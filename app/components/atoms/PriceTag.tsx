@@ -1,5 +1,5 @@
 import { FC, ReactNode } from "react";
-import { USDC } from "@/components";
+import { Tooltip, USDC } from "@/components";
 import { formatPrice } from "@/utils";
 import Image from "next/image";
 import { Lock, ShieldQuestion, Unlock } from "lucide-react";
@@ -9,22 +9,6 @@ interface Props {
   icon: string;
   funded: boolean;
 }
-
-interface TProps {
-  text: string;
-}
-
-const Tooltip: FC<TProps> = ({ text }) => {
-  return (
-    <div
-      className="absolute left-1/2 transform -translate-x-1/2 w-[150px]
-      -translate-y-full bg-white text-black text-sm rounded-md shadow-lg
-      p-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 ease-in-out"
-    >
-      {text}
-    </div>
-  );
-};
 
 const PriceTag: FC<Props> = ({ price, icon, funded }) => {
   return (
