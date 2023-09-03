@@ -28,7 +28,7 @@ const Tooltip: FC<TProps> = ({ text }) => {
 
 const PriceTag: FC<Props> = ({ price, icon, funded }) => {
   return (
-    <div className="z-2 bg-white rounded-full border border-textPrimary h-[28px] flex items-center gap-1 px-0.5">
+    <div className="z-20 bg-white rounded-full border border-textPrimary h-[28px] flex items-center gap-1 px-0.5">
       {icon !== undefined ? (
         <Image
           src={icon}
