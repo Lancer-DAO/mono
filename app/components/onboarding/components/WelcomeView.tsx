@@ -30,19 +30,12 @@ export const WelcomeView: FC<Props> = ({
       } flex flex-col items-center justify-center w-full h-full`}
     >
       <div className="flex flex-col items-center justify-center w-full max-w-[750px] mx-auto h-full gap-5 px-5">
-        <div className="text-4xl font-bold text-center">Welcome to Lancer.</div>
         <div className="h-[390px]">
           <ProfileCreated width="w-96" height="w-96" />
         </div>
         <div className="text-lg text-center">
           You&apos;re one step away from connecting with the best clients &
           freelancers on the planet.
-        </div>
-        <div className="text-lg text-center">
-          Velit duis excepteur esse sit dolore nulla. Proident minim cillum
-          magna occaecat sint ipsum consectetur sit velit sit ullamco id non
-          reprehenderit. Amet reprehenderit anim Lorem proident sunt laborum
-          aute labore.
         </div>
         {account.isLoading && <LoadingBar title={null} />}
         {account.error && (
