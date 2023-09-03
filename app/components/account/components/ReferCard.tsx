@@ -65,9 +65,9 @@ export const ReferCard = () => {
   };
 
   return (
-    <div className="relative w-full md:w-[460px] rounded-xl bg-bgLancerSecondary/[8%] overflow-hidden p-6">
-      <div className="relative group">
-        <InfoIcon className="absolute top-0 right-0 text-textGreen cursor-pointer" />
+    <div className="relative w-full md:w-[460px] rounded-xl bg-bgLancerSecondary/[8%] p-6 overflow-visible">
+      <div className="absolute top-4 right-4 text-textGreen cursor-pointer group">
+        <InfoIcon />
         <Tooltip text="Share your referral link to other freelancers. You earn 1% of the marketplace fee for each person you refer. You can cash out your earnings at any time." />
       </div>
       <div className="flex justify-between">
