@@ -125,7 +125,7 @@ const BountyCard: FC<BountyCardProps> = ({
         <div className="w-full flex items-center justify-between mt-8">
           {/* creator profile */}
           {bounty && bounty?.creator && (
-            <ContributorInfo user={bounty?.creator?.user} />
+            <ContributorInfo user={bounty?.creator?.user} disableLink />
           )}
 
           {formData && currentUser && (
