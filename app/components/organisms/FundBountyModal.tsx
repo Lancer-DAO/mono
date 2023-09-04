@@ -202,7 +202,7 @@ const FundBountyModal: FC<Props> = ({ setShowModal, setIsFunded }) => {
                     </div>
                   </div>
                 </div>
-                {issuePrice && (
+                {issuePrice && allMints && (
                   <>
                     <p className="w-full">
                       Set Price:{" "}
