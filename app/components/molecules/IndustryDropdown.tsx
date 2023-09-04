@@ -25,7 +25,7 @@ const IndustryDropdown: React.FC<Props> = ({ options, selected, onChange }) => {
   };
 
   const renderOptions = () => {
-    return options.map((option) => (
+    return options?.map((option) => (
       <div
         key={option.name}
         className="bg-neutralBtn w-full flex items-center py-2 px-4 font-bold cursor-pointer"

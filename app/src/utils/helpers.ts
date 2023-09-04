@@ -23,8 +23,12 @@ export const formatPrice = (price: Decimal | number) => {
       compactDisplay: "short",
     }).format(Number(price))}`;
   } else {
-    return price.toLocaleString();
+    return Number(price);
   }
+};
+
+export const formatTwoDecimals = (price: Decimal | number) => {
+  return Math.floor(Number(price) * 100) / 100;
 };
 
 export function deepCopy<Type>(obj: Type): Type {

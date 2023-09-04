@@ -1,13 +1,19 @@
-import { FC, Dispatch, SetStateAction, useState, useEffect } from "react";
+import { Toggle } from "@/components";
+import { ToggleConfig } from "@/components/atoms/Toggle";
+import ReferenceDialogue from "@/components/molecules/ReferenceDialogue";
 import {
   CREATE_BOUNTY_TUTORIAL_INITIAL_STATE,
   smallClickAnimation,
 } from "@/src/constants";
-import { FORM_SECTION, FormData } from "@/types/forms";
-import { motion } from "framer-motion";
-import { Toggle } from "@/components";
 import { useTutorial } from "@/src/providers/tutorialProvider";
-import { ToggleConfig } from "@/components/molecules/Toggle";
+import { FORM_SECTION, FormData } from "@/types/forms";
+import "@uploadthing/react/styles.css";
+
+import { api } from "@/src/utils";
+import { motion } from "framer-motion";
+import { X } from "lucide-react";
+import Image from "next/image";
+import { Dispatch, FC, SetStateAction, useEffect, useState } from "react";
 
 interface Props {
   setFormSection: Dispatch<SetStateAction<FORM_SECTION>>;
@@ -20,8 +26,9 @@ export const AdditionalInfoForm: FC<Props> = ({
   formData,
   setFormData,
 }) => {
+  const { mutateAsync: deleteMedia } = api.bounties.deleteMedia.useMutation();
+  const maxReferences = 4;
   const { currentTutorialState, setCurrentTutorialState } = useTutorial();
-
   const [toggleConfig, setToggleConfig] = useState<ToggleConfig>({
     option1: {
       title: "Public",
@@ -43,7 +50,6 @@ export const AdditionalInfoForm: FC<Props> = ({
 
   const removeLink = (targetIndex: number) => {
     const updatedLinks: string[] = [...formData.links];
-    // console.log("updatedLinks, index", updatedLinks, targetIndex);
     setFormData({
       ...formData,
       links: updatedLinks?.filter((_, index) => index !== targetIndex),
@@ -56,6 +62,24 @@ export const AdditionalInfoForm: FC<Props> = ({
     setFormData({
       ...formData,
       links: updatedLinks,
+    });
+  };
+
+  const handleReferenceAdded = (newReference) => {
+    setFormData({
+      ...formData,
+      media: [...formData.media, newReference],
+    });
+  };
+
+  const handleReferenceRemoved = async (removeIndex) => {
+    await deleteMedia({ imageUrl: formData.media.at(removeIndex).imageUrl });
+    const updatedMedia = formData.media.filter(
+      (_, index) => index !== removeIndex
+    );
+    setFormData({
+      ...formData,
+      media: updatedMedia,
     });
   };
 
@@ -113,6 +137,7 @@ export const AdditionalInfoForm: FC<Props> = ({
                 <motion.button
                   onClick={() => removeLink(index)}
                   {...smallClickAnimation}
+                  key={index}
                   className={`${
                     index === 0 && "invisible"
                   } bg-secondaryBtn border border-secondaryBtnBorder pb-1
@@ -214,6 +239,51 @@ export const AdditionalInfoForm: FC<Props> = ({
                 only be shared using your unique link.
               </p>
             </div>
+          </div>
+        </div>
+        <div className="relative">
+          <div className="absolute top-1/2 -translate-y-1/2 -left-10 text-2xl">
+            7
+          </div>
+          <div className="grid grid-cols-2 gap-4">
+            {[...Array(maxReferences)].map((_, index) => {
+              if (index < formData.media.length) {
+                const media = formData.media[index];
+                return (
+                  <div
+                    className="relative border-2 border-primaryBtnBorder rounded-xl p-1"
+                    key={index}
+                  >
+                    <Image
+                      src={media.imageUrl}
+                      alt={media.title}
+                      width={250}
+                      height={250}
+                      className="mb-2 rounded-md"
+                    />
+                    <p className="font-bold text-lg truncate mx-1">{media.title}</p>
+                    <p className="text-sm truncate mx-1">
+                      {media.description}
+                    </p>
+
+                    <motion.button
+                      className="absolute top-[-10px] right-[-10px] p-1 bg-secondaryBtn border border-secondaryBtnBorder rounded-full"
+                      {...smallClickAnimation}
+                      onClick={() => handleReferenceRemoved(index)}
+                    >
+                      <X size={18} strokeWidth={1.25} />
+                    </motion.button>
+                  </div>
+                );
+              } else {
+                return (
+                  <ReferenceDialogue
+                    key={index}
+                    onReferenceAdded={handleReferenceAdded}
+                  />
+                );
+              }
+            })}
           </div>
         </div>
         <div className="w-full flex items-center justify-between my-5">

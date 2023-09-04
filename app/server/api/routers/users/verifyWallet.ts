@@ -9,7 +9,7 @@ export const verifyWallet = protectedProcedure
       walletPublicKey: z.string(),
     })
   )
-  .mutation(async ({ ctx, input: { walletPublicKey } }) => {
+  .query(async ({ ctx, input: { walletPublicKey } }) => {
     const { email, id } = ctx.user;
     const user = await queries.user.getByEmail(email);
 

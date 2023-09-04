@@ -16,6 +16,16 @@ export const SubmitRequest = () => {
   const { currentTutorialState, setCurrentTutorialState } = useTutorial();
   const { mutateAsync } = api.bountyUsers.update.useMutation();
   const [isLoading, setIsLoading] = useState(false);
+
+  if (
+    !currentBounty ||
+    !(
+      (currentBounty.isApprovedSubmitter && !currentBounty.currentSubmitter) ||
+      currentBounty.isChangesRequestedSubmitter
+    )
+  )
+    return null;
+
   if (currentBounty.isCurrentSubmitter)
     return (
       <BountyActionsButton
@@ -24,13 +34,6 @@ export const SubmitRequest = () => {
         disabled={true}
       />
     );
-  if (
-    !(
-      (currentBounty.isApprovedSubmitter && !currentBounty.currentSubmitter) ||
-      currentBounty.isChangesRequestedSubmitter
-    )
-  )
-    return null;
 
   const onClick = async () => {
     setIsLoading(true);
