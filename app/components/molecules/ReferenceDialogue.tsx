@@ -56,18 +56,12 @@ const ReferenceDialogue = ({ onReferenceAdded }) => {
       description: reference.description,
     };
 
-    if (newReference.imageUrl === "") {
-      toast.error("Please upload an image");
-    } else if (newReference.title === "") {
-      toast.error("Please input a title");
-    } else {
-      onReferenceAdded(newReference);
-      setReference({
-        imageUrl: "",
-        title: "",
-        description: "",
-      });
-    }
+    onReferenceAdded(newReference);
+    setReference({
+      imageUrl: "",
+      title: "",
+      description: "",
+    });
   };
 
   const handleImageDelete = async () => {

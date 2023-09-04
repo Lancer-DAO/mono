@@ -14,7 +14,7 @@ import { api } from "@/src/utils";
 import { UploadDropzone } from "@/src/utils/uploadthing";
 import * as DialogPrimitive from "@radix-ui/react-dialog";
 import { motion } from "framer-motion";
-import { Pencil, Plus, X } from "lucide-react";
+import { Pencil, X } from "lucide-react";
 import Image from "next/image";
 import { useState } from "react";
 import { toast } from "react-hot-toast";
@@ -60,13 +60,7 @@ const EditReferenceDialogue = ({ media, onReferenceAdded }) => {
       description: reference.description,
     };
 
-    if (newReference.imageUrl === "") {
-      toast.error("Please upload an image");
-    } else if (newReference.title === "") {
-      toast.error("Please input a title");
-    } else {
-      onReferenceAdded(newReference);
-    }
+    onReferenceAdded(newReference);
   };
 
   const handleImageDelete = async () => {
