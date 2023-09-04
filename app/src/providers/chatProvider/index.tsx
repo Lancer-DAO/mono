@@ -65,6 +65,8 @@ const ChatProvider: FunctionComponent<IChatState> = ({
         "--sendbird-light-primary-300": "#22c55e",
         "--sendbird-light-primary-400": "#22c55e",
       }}
+      nickname={currentUser?.name}
+      profileUrl={currentUser?.picture}
     >
       <ChatContext.Provider value={contextProvider}>
         {children}
