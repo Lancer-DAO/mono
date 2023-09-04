@@ -1,6 +1,7 @@
+import { useRef, useState } from "react";
+import Image from "next/image";
 import { useUserWallet } from "@/src/providers";
 import { ApiKeyModal, Button, PubKey } from "@/components";
-import { useRef, useState } from "react";
 import { useOutsideAlerter } from "@/src/hooks/useOutsideAlerter";
 import Link from "next/link";
 import {
@@ -10,7 +11,6 @@ import {
 } from "@/src/constants/tutorials";
 import { useTutorial } from "@/src/providers/tutorialProvider";
 import { IS_CUSTODIAL } from "@/src/constants";
-import { LinkButton } from "@/components";
 import { useDebugMode } from "@/src/providers/debugModeProvider";
 import classNames from "classnames";
 
@@ -26,8 +26,8 @@ const AccountHeaderOptions = () => {
     setShowOptions(false);
   });
   return (
-    <div className="relative z-50">
-      {currentUser ? (
+    <div className="relative">
+      {currentUser && (
         <>
           <div
             className="cursor-pointer"
@@ -66,7 +66,7 @@ const AccountHeaderOptions = () => {
             }}
             id="account-options"
           >
-            <img
+            <Image
               src={
                 currentUser.picture
                   ? currentUser.picture
@@ -74,13 +74,16 @@ const AccountHeaderOptions = () => {
                       currentUser.githubId?.split("|")[1]
                     }?s=60&v=4`
               }
-              className="h-[40px] w-[40px] rounded-full border-[1px] border-gray-600"
+              width={40}
+              height={40}
+              className="rounded-full"
+              alt="user profile picture"
             />
           </div>
           {showOptions && (
             <div
-              className="absolute items-center justify-center left-[-105px] top-[50px]  
-              bg-white w-[250px] rounded-[20px] shadow-md"
+              className="z-50 absolute items-center justify-center left-[-105px] top-[50px]  
+              bg-white w-[220px] rounded-[20px] shadow-md"
               ref={wrapperRef}
             >
               <Link
@@ -102,8 +105,8 @@ const AccountHeaderOptions = () => {
                   }
                 }}
                 className="flex rounded-t-[20px] h-[48px] py-[6px] items-center justify-center 
-                border-b-gray-400 border-b-[1px] hover:bg-turquoise-500 text-gray-800 
-                hover:text-white-100 transition-colors duration-300 ease-in-out"
+                border-b-gray-400 border-b-[1px] hover:bg-bgLancer text-gray-800 
+                transition-colors duration-300 ease-in-out"
               >
                 Account
               </Link>
@@ -112,7 +115,8 @@ const AccountHeaderOptions = () => {
                 href={"https://discord.gg/gqSpskjvxy"}
                 target="_blank"
                 id="discord-link"
-                className="flex h-[48px] border-b-gray-400 border-b-[1px] py-[6px] items-center justify-center  hover:bg-turquoise-500 text-gray-800 hover:text-white-100 transition-colors duration-300 ease-in-out"
+                className="flex h-[48px] border-b-gray-400 border-b-[1px] py-[6px] items-center justify-center
+                hover:bg-bgLancer text-gray-800 transition-colors duration-300 ease-in-out"
               >
                 Discord
               </Link>
@@ -122,7 +126,8 @@ const AccountHeaderOptions = () => {
                 }
                 id="documentation-link"
                 target="_blank"
-                className="flex h-[48px] border-b-gray-400 border-b-[1px] py-[6px] items-center justify-center  hover:bg-turquoise-500 text-gray-800 hover:text-white-100 transition-colors duration-300 ease-in-out"
+                className="flex h-[48px] border-b-gray-400 border-b-[1px] py-[6px] items-center justify-center
+                hover:bg-bgLancer text-gray-800 transition-colors duration-300 ease-in-out"
               >
                 Documentation
               </Link>
@@ -131,7 +136,8 @@ const AccountHeaderOptions = () => {
                 <Link
                   href={"/api/auth/logout"}
                   id="logout-link"
-                  className="flex h-[48px] rounded-b-[20px] py-[6px] items-center justify-center  hover:bg-turquoise-500 text-gray-800 hover:text-white-100 transition-colors duration-300 ease-in-out"
+                  className="flex h-[48px] rounded-b-[20px] py-[6px] items-center justify-center
+                  hover:bg-bgLancer text-gray-800 transition-colors duration-300 ease-in-out"
                 >
                   Logout
                 </Link>
@@ -141,7 +147,8 @@ const AccountHeaderOptions = () => {
                   <Button
                     onClick={logout}
                     id="logout-link"
-                    className="flex w-full h-[48px] border-b-gray-400 border-b-[1px] py-[6px] items-center justify-center  hover:bg-turquoise-500 text-gray-800 hover:text-white-100 transition-colors duration-300 ease-in-out"
+                    className="flex w-full h-[48px] border-b-gray-400 border-b-[1px] py-[6px] items-center justify-center
+                    hover:bg-bgLancer text-gray-800 transition-colors duration-300 ease-in-out"
                   >
                     Logout
                   </Button>
@@ -151,10 +158,10 @@ const AccountHeaderOptions = () => {
 
               <Button
                 className={classNames(
-                  "flex w-full h-[48px] border-t-gray-400 rounded-b-[20px] border-t-[1px] py-[6px] items-center justify-center  transition-colors duration-300 ease-in-out",
+                  "flex w-full h-[48px] border-t-gray-400 rounded-b-[20px] hover:bg-bgLancer border-t-[1px] py-[6px] items-center justify-center transition-colors duration-300 ease-in-out",
                   isDebugMode
                     ? "text-white bg-bgLancerSecondary"
-                    : "hover:bg-turquoise-500 text-gray-800 hover:text-white-100 "
+                    : "hover:bg-turquoise-500 text-gray-800 "
                 )}
                 onClick={() => setIsDebugMode(!isDebugMode)}
               >{`Debug ${isDebugMode ? "On" : "Off"}`}</Button>
@@ -162,8 +169,6 @@ const AccountHeaderOptions = () => {
           )}
           <ApiKeyModal showModal={showModal} setShowModal={setShowModal} />
         </>
-      ) : (
-        <LinkButton href="/api/auth/login">Log In</LinkButton>
       )}
     </div>
   );

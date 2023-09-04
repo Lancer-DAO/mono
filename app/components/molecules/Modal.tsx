@@ -13,18 +13,22 @@ import { motion } from "framer-motion";
 interface Props extends HTMLAttributes<HTMLDivElement> {
   children: ReactNode;
   setShowModal: Dispatch<SetStateAction<boolean>>;
+  disableOutsideClick?: boolean;
 }
 const Modal: FC<Props> = (props: Props) => {
-  const { setShowModal, children, className, ...componentProps } = props;
+  const {
+    setShowModal,
+    disableOutsideClick = false,
+    children,
+    className,
+    ...componentProps
+  } = props;
 
   const wrapperRef = useRef(null);
-  useOutsideAlerter(wrapperRef, () => setShowModal(false));
-
-  // stop page scroll (when modal or menu open)
-  // useEffect(() => {
-  //   if (showModal) document.body.style.overflow = "hidden";
-  //   else document.body.style.overflow = "auto";
-  // }, [showModal, setShowModal]);
+  useOutsideAlerter(
+    wrapperRef,
+    () => !disableOutsideClick && setShowModal(false)
+  );
 
   return (
     <motion.div

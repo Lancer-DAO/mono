@@ -107,6 +107,8 @@ const Onboard: FC = () => {
         website: profileData.website,
       });
       toast.success("Profile created successfully!", { id: toastId });
+      // save "newUser" in local storage
+      localStorage.setItem("newUser", "true");
       router.push("/account");
     } catch (e) {
       console.log("error updating profile: ", e);

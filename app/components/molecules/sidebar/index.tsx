@@ -17,7 +17,7 @@ const SidePanel: FC = () => {
       <>
         {isChatOpen && (
           <motion.div
-            className="fixed inset-0 bg-black backdrop-blur-md transition duration-500 z-50"
+            className="fixed inset-0 bg-black backdrop-blur-md transition duration-500 z-40"
             initial={{ opacity: 0 }}
             animate={{ opacity: 0.3 }}
             exit={{ opacity: 0 }}
@@ -28,7 +28,7 @@ const SidePanel: FC = () => {
         )}
         <motion.div
           className="flex items-start overflow-x-hidden fixed 
-          inset-y-0 right-0 z-50 w-[35rem] h-full transform rounded-l-lg"
+          inset-y-0 right-0 z-40 w-[35rem] h-full transform rounded-l-lg"
           initial={{ x: "91%" }}
           animate={{ x: isChatOpen ? "0" : "91%" }}
           transition={{ ease: "easeInOut", duration: 0.3 }}
