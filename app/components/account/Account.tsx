@@ -125,7 +125,11 @@ export const Account: FC<Props> = ({ self }) => {
     );
 
   if (userError) {
-    return <div className="color-red">{"Error loading profile"}</div>;
+    return (
+      <div className="flex items-center justify-center text-xl">
+        Error loading profile
+      </div>
+    );
   }
   if (userLoading) {
     return <LoadingBar title={"Loading profile"} />;
