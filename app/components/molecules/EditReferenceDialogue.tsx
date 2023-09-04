@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { Tooltip } from "@/components";
 import {
   Dialog,
   DialogContent,
@@ -9,24 +9,27 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/atoms/Modal";
-import * as DialogPrimitive from "@radix-ui/react-dialog";
 import { smallClickAnimation } from "@/src/constants";
+import { api } from "@/src/utils";
 import { UploadDropzone } from "@/src/utils/uploadthing";
+import * as DialogPrimitive from "@radix-ui/react-dialog";
 import { motion } from "framer-motion";
 import { Pencil, Plus, X } from "lucide-react";
 import Image from "next/image";
+import { useState } from "react";
 import { toast } from "react-hot-toast";
-import { api } from "@/src/utils";
 
 const EditReferenceDialogue = ({ media, onReferenceAdded }) => {
-  const { mutateAsync: deleteMedia } = api.bounties.deleteMedia.useMutation();
-
   const [reference, setReference] = useState({
     id: media.id,
     imageUrl: media.imageUrl,
     title: media.title,
     description: media.description,
   });
+  const isSaveDisabled = reference.imageUrl === "" || reference.title === "";
+
+  const { mutateAsync: deleteMedia } = api.bounties.deleteMedia.useMutation();
+  
 
   const handleImageUpload = (url) => {
     setReference((prevReference) => ({
@@ -147,9 +150,14 @@ const EditReferenceDialogue = ({ media, onReferenceAdded }) => {
         </div>
         <DialogFooter>
           <DialogPrimitive.Close>
-            <button type="submit" onClick={handleSubmit}>
-              Save changes
-            </button>
+            <div className="group">
+              <button type="submit" onClick={handleSubmit} disabled={isSaveDisabled}>
+                Save changes
+              </button>
+              {(isSaveDisabled) ? (
+                <Tooltip text={`${reference.imageUrl === "" ? 'Please upload an image' : 'Please input a title'}`} />
+              ): null}
+            </div>
           </DialogPrimitive.Close>
         </DialogFooter>
       </DialogContent>
