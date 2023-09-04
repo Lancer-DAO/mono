@@ -1,6 +1,6 @@
 import { Toggle } from "@/components";
-import ReferenceDialogue from "@/components/molecules/ReferenceDialogue";
 import { ToggleConfig } from "@/components/atoms/Toggle";
+import ReferenceDialogue from "@/components/molecules/ReferenceDialogue";
 import {
   CREATE_BOUNTY_TUTORIAL_INITIAL_STATE,
   smallClickAnimation,
@@ -9,11 +9,11 @@ import { useTutorial } from "@/src/providers/tutorialProvider";
 import { FORM_SECTION, FormData } from "@/types/forms";
 import "@uploadthing/react/styles.css";
 
+import { api } from "@/src/utils";
 import { motion } from "framer-motion";
 import { X } from "lucide-react";
 import Image from "next/image";
 import { Dispatch, FC, SetStateAction, useEffect, useState } from "react";
-import { api } from "@/src/utils";
 
 interface Props {
   setFormSection: Dispatch<SetStateAction<FORM_SECTION>>;
@@ -261,8 +261,8 @@ export const AdditionalInfoForm: FC<Props> = ({
                       height={250}
                       className="mb-2 rounded-md"
                     />
-                    <p className="font-bold text-lg mx-1">{media.title}</p>
-                    <p className="text-sm overflow-hidden text-ellipsis whitespace-nowrap mx-1">
+                    <p className="font-bold text-lg truncate mx-1">{media.title}</p>
+                    <p className="text-sm truncate mx-1">
                       {media.description}
                     </p>
 

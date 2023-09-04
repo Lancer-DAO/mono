@@ -1,17 +1,17 @@
-import { useEffect, useState } from "react";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/atoms/Modal";
+import EditReferenceDialogue from "@/components/molecules/EditReferenceDialogue";
 import ReferenceDialogue from "@/components/molecules/ReferenceDialogue";
 import { smallClickAnimation } from "@/src/constants";
+import { useUserWallet } from "@/src/providers";
+import { api } from "@/src/utils";
+import { Media } from "@/types";
 import "@uploadthing/react/styles.css";
 import { motion } from "framer-motion";
 import { X } from "lucide-react";
 import Image from "next/image";
-import { api } from "@/src/utils";
 import { useRouter } from "next/router";
-import { useUserWallet } from "@/src/providers";
-import { Media } from "@/types";
+import { useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/atoms/Modal";
-import EditReferenceDialogue from "@/components/molecules/EditReferenceDialogue";
 
 const PortfolioCard = () => {
   const router = useRouter();
@@ -138,7 +138,7 @@ const PortfolioCard = () => {
                     <DialogTrigger className="w-full">
                       <div className="flex flex-col items-start justify-start overflow-hidden">
                         <Image src={media.imageUrl} alt={media.title} width={250} height={250} className="mb-2 rounded-md" />
-                        <p className="font-bold text-lg mx-1 overflow-hidden whitespace-nowrap">{media.title}</p>
+                        <p className="font-bold text-lg mx-1 w-full truncate text-left">{media.title}</p>
                         <p className="text-sm mx-1 truncate w-full text-left">{media.description}</p>
                       </div>
                     </DialogTrigger>
