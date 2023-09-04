@@ -122,7 +122,6 @@ export const Account: FC<Props> = ({ self }) => {
   useEffect(() => {
     if (localStorage.getItem("newUser")) {
       setShowResumeModal(true);
-      localStorage.removeItem("newUser");
     }
   }, []);
 

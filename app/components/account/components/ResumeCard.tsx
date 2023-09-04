@@ -67,6 +67,7 @@ const ResumeCard = () => {
 
   const handleResumeUpload = async (url) => {
     const { resume } = await updateResume({ resume: url });
+    localStorage.removeItem("newUser");
     setResumeUrl(resume);
   };
 
@@ -76,6 +77,7 @@ const ResumeCard = () => {
       await updateResume({ resume: "" });
       await deleteResume({ fileUrl: resumeUrl });
       setResumeUrl("");
+      localStorage.setItem("newUser", "true");
     } catch (error) {
       console.log(error);
       toast.error(`Error deleting resume: ${error.message}`);
@@ -106,7 +108,8 @@ const ResumeCard = () => {
       ) : (
         <UploadButton
           appearance={{
-            button: "bg-[#D4FFD7] text-[#638463] ut-uploading:cursor-not-allowed after:bg-secondaryBtn",
+            button:
+              "bg-[#D4FFD7] text-[#638463] ut-uploading:cursor-not-allowed after:bg-secondaryBtn",
             allowedContent: {
               color: "#638463",
               textTransform: "uppercase",
