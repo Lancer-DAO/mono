@@ -14,7 +14,7 @@ const ResumeModal: FC<Props> = ({ setShowModal }) => {
           <div className="w-full flex flex-col gap-5 max-w-[400px]">
             <h1>Welcome to the Lancer Public Beta</h1>
             <p>
-              We are accepting applications for lancers at this time. Please
+              We are accepting applications for Lancers at this time. Please
               upload your resume to complete the application process. We will be
               accepting talent on a rolling basis.
             </p>
