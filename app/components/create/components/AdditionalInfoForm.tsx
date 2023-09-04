@@ -23,14 +23,14 @@ export const AdditionalInfoForm: FC<Props> = ({
   const { currentTutorialState, setCurrentTutorialState } = useTutorial();
 
   const [toggleConfig, setToggleConfig] = useState<ToggleConfig>({
-    option1: {
-      title: "Public",
-    },
-    option2: {
-      title: "Private",
-    },
-    selected: "option2",
-  });
+      option1: {
+        title: "Public",
+      },
+      option2: {
+        title: "Private",
+      },
+      selected: "option1",
+    });
 
   const addLink = () => {
     if (formData.links.length < 4) {
@@ -78,18 +78,18 @@ export const AdditionalInfoForm: FC<Props> = ({
   };
 
   useEffect(() => {
-    if (toggleConfig.selected === "option2") {
-      setFormData({
-        ...formData,
-        isPrivate: true,
-      });
-    } else {
-      setFormData({
-        ...formData,
-        isPrivate: false,
-      });
-    }
-  }, [toggleConfig.selected]);
+      if (toggleConfig.selected === "option1") {
+        setFormData({
+          ...formData,
+          isPrivate: false,
+        });
+      } else {
+        setFormData({
+          ...formData,
+          isPrivate: true,
+        });
+      }
+    }, [toggleConfig.selected]);
 
   return (
     <div>
