@@ -35,7 +35,7 @@ export async function getServerSideProps(
     },
   });
 
-  if (!user.hasFinishedOnboarding) {
+  if (!user || !user.hasFinishedOnboarding) {
     return {
       redirect: {
         destination: "/welcome",

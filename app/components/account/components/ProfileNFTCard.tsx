@@ -193,7 +193,7 @@ export const ProfileNFTCard = ({
           </div>
           {/* Data column */}
           <div className="flex flex-col gap-4 text-lg text-textPrimary w-full">
-            {currentUser.hasBeenApproved && (
+            {currentUser.hasBeenApproved && !self ? (
               <BountyActionsButton
                 onClick={async () => {
                   const url = await createDM([
@@ -207,6 +207,8 @@ export const ProfileNFTCard = ({
                 text="Send Message"
                 extraClasses="w-fit"
               />
+            ) : (
+              <div className="h-[56px]"></div>
             )}
             <div className="flex w-fill">
               {nameEdit.editing ? (
