@@ -20,7 +20,7 @@ interface Props {
 
 const FundBountyModal: FC<Props> = ({ setShowModal, setIsFunded }) => {
   const { currentWallet, program, provider } = useUserWallet();
-  const { currentBounty } = useBounty();
+  const { currentBounty, setCurrentBounty } = useBounty();
   const { currentTutorialState, setCurrentTutorialState } = useTutorial();
   const { mutateAsync: fundB } = api.bounties.fundBounty.useMutation();
   const { data: allMints } = api.mints.getMints.useQuery();
@@ -66,13 +66,14 @@ const FundBountyModal: FC<Props> = ({ setShowModal, setIsFunded }) => {
         currentBounty?.escrow.mint.decimals,
         new PublicKey(currentBounty?.escrow.mint.publicKey)
       );
-      await fundB({
+      const bounty = await fundB({
         bountyId: currentBounty?.id,
         escrowId: currentBounty?.escrow.id,
         amount: parseFloat(issuePrice),
       });
       setIsFunded && setIsFunded(true);
       toast.success("Quest funded!", { id: toastId });
+      setCurrentBounty(bounty);
       setShowModal(false);
     } catch (error) {
       console.log("error funding Quest: ", error);

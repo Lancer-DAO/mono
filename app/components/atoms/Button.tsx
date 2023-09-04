@@ -54,10 +54,12 @@ const Button = ({
         {isLoading ? "Processing..." : children}
       </button>
       {hoveredButton && disabledText && disabled && (
-        <div className="hover-tooltip error absolute">{disabledText}</div>
+        <div className="hover-tooltip error absolute w-[300px] text-industryRedBorder">
+          {disabledText}
+        </div>
       )}
       {hoveredButton && hoveredText && !disabled && (
-        <div className="hover-tooltip absolute">{hoveredText}</div>
+        <div className="hover-tooltip absolute w-[300px]">{hoveredText}</div>
       )}
     </div>
   );
