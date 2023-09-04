@@ -27,6 +27,10 @@ export const formatPrice = (price: Decimal | number) => {
   }
 };
 
+export const formatTwoDecimals = (price: Decimal | number) => {
+  return Math.floor(Number(price) * 100) / 100;
+};
+
 export function deepCopy<Type>(obj: Type): Type {
   return JSON.parse(JSON.stringify(obj));
 }

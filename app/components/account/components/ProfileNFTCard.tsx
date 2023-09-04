@@ -17,7 +17,7 @@ import relativeTime from "dayjs/plugin/relativeTime";
 import LinksCard from "./LinksCard";
 import { api } from "@/src/utils";
 import { Check, Edit, X } from "react-feather";
-import { Button } from "@/components";
+import { CashoutModal } from "@/components";
 import { BountyActionsButton } from "@/components/bounties/Bounty/components";
 import { useChat } from "@/src/providers/chatProvider";
 import { createDM } from "@/src/utils/sendbird";
@@ -40,7 +40,7 @@ export const ProfileNFTCard = ({
   id: number;
 }) => {
   // state
-  const [signature, setSignature] = useState("");
+  const [showCashout, setShowCashout] = useState(false);
   const { mutateAsync: updateName } = api.users.updateName.useMutation();
   const { mutateAsync: updateIndustry } =
     api.users.updateIndustry.useMutation();
@@ -121,7 +121,6 @@ export const ProfileNFTCard = ({
         )
       );
       const signature2 = await currentWallet.signAndSendTransaction(tx);
-      setSignature(signature2);
       setSentToPublicKey("");
     };
     if (sendToPublicKey.trim() !== "") {
@@ -205,6 +204,15 @@ export const ProfileNFTCard = ({
                 }}
                 type="green"
                 text="Send Message"
+                extraClasses="w-fit"
+              />
+            ) : self && IS_CUSTODIAL ? (
+              <BountyActionsButton
+                onClick={async () => {
+                  setShowCashout(true);
+                }}
+                type="green"
+                text="Cash Out"
                 extraClasses="w-fit"
               />
             ) : (
@@ -343,6 +351,7 @@ export const ProfileNFTCard = ({
         </div>
         <LinksCard />
       </div>
+      {showCashout && <CashoutModal setShowModal={setShowCashout} />}
     </div>
   );
 };
