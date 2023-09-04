@@ -10,6 +10,8 @@ export const getTopQuestUsers = async () => {
     FROM User
     JOIN BountyUser ON User.id = BountyUser.userid
     JOIN Bounty ON BountyUser.bountyid = Bounty.id
+    WHERE Bounty.state = 'complete'
+    AND BountyUser.relations = 'completer'
     GROUP BY User.id
     ORDER BY total_bounties DESC
     LIMIT 10;
