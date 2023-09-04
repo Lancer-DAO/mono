@@ -34,6 +34,8 @@ export const SubmitterSection: React.FC<SubmitterSectionProps> = ({
   const { mutateAsync } = api.bountyUsers.update.useMutation();
   const { getRemainingAccounts, getSubmitterReferrer } = useReferral();
 
+  if (!currentBounty) return null;
+
   const handleSubmitter = async (cancel?: boolean) => {
     switch (type) {
       case "approved":
@@ -162,23 +164,28 @@ export const SubmitterSection: React.FC<SubmitterSectionProps> = ({
   return (
     <div className="submitter-section flex">
       <ContributorInfo user={submitter.user} />
-
-      {type === "approved" ? (
-        <div className="empty-submitter-cell"></div>
+      {Number(currentBounty.escrow.amount) > 0 ? (
+        <>
+          {type === "approved" ? (
+            <div className="empty-submitter-cell"></div>
+          ) : (
+            <button
+              onClick={() => handleSubmitter()}
+              id={`submitter-section-approve-${type}-${index}`}
+            >
+              <Check color="#1488bb" width="20px" height="20px" />
+            </button>
+          )}
+          <button
+            onClick={() => handleSubmitter(true)}
+            id={`submitter-section-deny-${type}-${index}`}
+          >
+            <X color="red" width="20px" height="20px" />
+          </button>
+        </>
       ) : (
-        <button
-          onClick={() => handleSubmitter()}
-          id={`submitter-section-approve-${type}-${index}`}
-        >
-          <Check color="#1488bb" width="20px" height="20px" />
-        </button>
+        <div className="text-industryRed">Fund Quest To Manage Applicants </div>
       )}
-      <button
-        onClick={() => handleSubmitter(true)}
-        id={`submitter-section-deny-${type}-${index}`}
-      >
-        <X color="red" width="20px" height="20px" />
-      </button>
     </div>
   );
 };
