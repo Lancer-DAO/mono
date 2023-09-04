@@ -162,7 +162,7 @@ export const CustodialWalletProvider: FunctionComponent<IWeb3AuthState> = ({
         console.log("ready");
       }, 1000);
     },
-    []
+    [maybeInitAccount, connection]
   );
 
   useEffect(() => {
@@ -180,7 +180,7 @@ export const CustodialWalletProvider: FunctionComponent<IWeb3AuthState> = ({
       };
       getUser();
     }
-  }, [user]);
+  }, [user, getCurrUser, router]);
 
   useEffect(() => {
     console.log("maybeLogin", isLoading, user);
