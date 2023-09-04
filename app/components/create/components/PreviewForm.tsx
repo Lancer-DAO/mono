@@ -1,22 +1,25 @@
-import { FC, useState, Dispatch, SetStateAction, useEffect } from "react";
-import { useUserWallet } from "@/src/providers/userWalletProvider";
+import { BountyCard, PreviewCardBase, USDC } from "@/components";
+import { Dialog, DialogContent, DialogHeader, DialogTrigger } from "@/components/atoms/Modal";
+import { createFFA } from "@/escrow/adapters";
 import {
   CREATE_BOUNTY_TUTORIAL_INITIAL_STATE,
   IS_MAINNET,
   USDC_MINT,
   smallClickAnimation,
 } from "@/src/constants";
-import { FORM_SECTION, FormData } from "@/types/forms";
 import { useBounty } from "@/src/providers/bountyProvider";
-import { useTutorial } from "@/src/providers/tutorialProvider";
-import { motion } from "framer-motion";
-import { PreviewCardBase, BountyCard, USDC } from "@/components";
-import { PublicKey } from "@solana/web3.js";
-import { createFFA } from "@/escrow/adapters";
-import { api } from "@/utils";
-import { Bounty, IAsyncResult, Industry } from "@/types";
-import { Mint } from "@prisma/client";
 import { useReferral } from "@/src/providers/referralProvider";
+import { useTutorial } from "@/src/providers/tutorialProvider";
+import { useUserWallet } from "@/src/providers/userWalletProvider";
+import { Bounty, IAsyncResult, Industry } from "@/types";
+import { FORM_SECTION, FormData } from "@/types/forms";
+import { api } from "@/utils";
+import { Mint } from "@prisma/client";
+import { DialogDescription, DialogTitle } from "@radix-ui/react-dialog";
+import { PublicKey } from "@solana/web3.js";
+import { motion } from "framer-motion";
+import Image from "next/image";
+import { Dispatch, FC, SetStateAction, useEffect, useState } from "react";
 import toast from "react-hot-toast";
 
 interface Props {
@@ -159,6 +162,43 @@ export const PreviewForm: FC<Props> = ({
                 >
                   No links provided!
                 </p>
+              )}
+            </div>
+          </PreviewCardBase>
+          <PreviewCardBase title="References">
+            <div className={`${formData?.media.length > 1 ? 'grid grid-cols-2 gap-4' : 'flex'}`}>
+              {formData?.media.length > 0 && formData?.media[0] ? 
+                (formData?.media.map((med, index) => {
+                  return (
+                    <Dialog key={index}>
+                      <div className="relative border-2 border-primaryBtnBorder rounded-xl p-1">
+                        <div className="flex flex-col items-start">
+                          <DialogTrigger className="w-full">
+                            <div className="flex flex-col overflow-hidden">
+                              <Image src={med.imageUrl} alt={med.title} width={250} height={250} className="mb-2 rounded-md" />
+                              <p className="w-full font-bold text-lg mx-1 truncate text-left">{med.title}</p>
+                              <p className="w-full text-sm truncate mx-1 text-left">{med.description}</p>
+                            </div>
+                          </DialogTrigger>
+                        </div>
+                      </div>
+                      <DialogContent>
+                        <DialogHeader className="flex text-3xl justify-start">
+                          <DialogTitle className="text-3xl">{med.title}</DialogTitle>
+                          <DialogDescription>{med.description}</DialogDescription>
+                        </DialogHeader>
+                        <Image src={med.imageUrl} alt={med.title} width={500} height={500} className="border border-primaryBtnBorder rounded-md mt-4" />
+                    </DialogContent>
+                  </Dialog>
+                )}))
+              : (
+
+               <p
+                  className="bg-white p-3 border border-neutralBtnBorder
+                  rounded-lg text-textGreen text-base"
+                  >
+                  No references provided!
+                </p> 
               )}
             </div>
           </PreviewCardBase>
