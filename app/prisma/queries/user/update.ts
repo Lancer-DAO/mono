@@ -170,3 +170,17 @@ export const updateIndustry = async (
     },
   });
 };
+
+export const updateBio = async (
+  id: number,
+  bio: string
+): Promise<Prisma.User> => {
+  return await prisma.user.update({
+    where: {
+      id: id,
+    },
+    data: {
+      bio,
+    },
+  });
+};

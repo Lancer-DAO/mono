@@ -116,7 +116,7 @@ export const Account: FC<Props> = ({ self }) => {
       };
       fetchNfts();
     }
-  }, [!!fetchedUser, !!currentWallet]);
+  }, [fetchedUser, currentWallet, currentTutorialState]);
 
   // check for "newUser" key in local storage
   useEffect(() => {

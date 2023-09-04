@@ -49,11 +49,8 @@ export const SubmitterSection: React.FC<SubmitterSectionProps> = ({
               program,
               provider
             );
-            const newRelations = updateList(
-              currentBounty?.currentUserRelationsList,
-              [BOUNTY_USER_RELATIONSHIP.ApprovedSubmitter],
-              [BOUNTY_USER_RELATIONSHIP.DeniedRequester]
-            );
+            const newRelations = [BOUNTY_USER_RELATIONSHIP.DeniedRequester];
+
             const updatedBounty = await mutateAsync({
               bountyId: currentBounty?.id,
               userId: submitter.userid,
@@ -76,11 +73,8 @@ export const SubmitterSection: React.FC<SubmitterSectionProps> = ({
         {
           try {
             if (cancel) {
-              const newRelations = updateList(
-                currentBounty?.currentUserRelationsList,
-                [],
-                [BOUNTY_USER_RELATIONSHIP.DeniedRequester]
-              );
+              const newRelations = [BOUNTY_USER_RELATIONSHIP.DeniedRequester];
+
               const updatedBounty = await mutateAsync({
                 bountyId: currentBounty?.id,
                 currentUserId: currentUser.id,
