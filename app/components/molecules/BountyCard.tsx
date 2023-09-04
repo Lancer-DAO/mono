@@ -11,6 +11,7 @@ import { useBounty } from "@/src/providers/bountyProvider";
 import { BountyPreview, FormData, Industry } from "@/types/";
 import { api, getFormattedDate } from "@/utils";
 import { motion } from "framer-motion";
+import { marked } from "marked";
 import Image from "next/image";
 import { FC, SVGAttributes, useCallback, useEffect, useState } from "react";
 
@@ -58,6 +59,14 @@ const BountyCard: FC<BountyCardProps> = ({
       return Number(formData.issuePrice);
     }
   }, [bounty, formData]);
+
+  const previewMarkup = () => {
+    const markdown = marked.parse(
+      bounty ? bounty.description : formData.issueDescription,
+      { breaks: true }
+    );
+    return { __html: markdown };
+  };
 
   useEffect(() => {
     if (formData) {
@@ -155,7 +164,7 @@ const BountyCard: FC<BountyCardProps> = ({
             {bounty ? bounty.title : formData.issueTitle}
           </p>
           <div className="w-full max-h-[60px] multi-line-ellipsis overflow-hidden">
-            <p>{bounty ? bounty.description : formData.issueDescription}</p>
+            <div dangerouslySetInnerHTML={previewMarkup()} />
           </div>
         </div>
         <div className="relative w-full pr-10 flex flex-wrap items-center gap-1 mt-auto">
