@@ -38,8 +38,10 @@ export const Header = () => {
   const { isRouterReady } = useAppContext();
   const [isTutorialButtonHovered, setIsTutorialButtonHovered] = useState(false);
   const [showTutorialModal, setShowTutorialModal] = useState(false);
+
   const { currentUser } = useUserWallet();
   const { publicKey } = useWallet();
+  const { currentWallet } = useUserWallet();
 
   return (
     <div className="py-4 top-0 z-20 bg-bgLancer">
@@ -89,10 +91,10 @@ export const Header = () => {
                 !text-textGreen !rounded-md !whitespace-nowrap !font-base"
                   startIcon={undefined}
                 >
-                  {publicKey
-                    ? publicKey.toBase58().slice(0, 4) +
+                  {currentWallet?.publicKey
+                    ? currentWallet.publicKey.toBase58().slice(0, 4) +
                       " ... " +
-                      publicKey.toBase58().slice(-4)
+                      currentWallet?.publicKey.toBase58().slice(-4)
                     : "Connect"}
                 </WalletMultiButton>
               </div>

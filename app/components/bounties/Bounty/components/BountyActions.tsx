@@ -14,11 +14,11 @@ import {
   BountyActionsButton,
 } from ".";
 import { useMemo } from "react";
+import { useUserWallet } from "@/src/providers";
 
 export const BountyActions = () => {
   const { currentBounty } = useBounty();
-  const { currentTutorialState } = useTutorial();
-  const { publicKey } = useWallet();
+  const { currentWallet } = useUserWallet();
 
   const buttons = useMemo(() => {
     if (!currentBounty) return [null];
