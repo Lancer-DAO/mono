@@ -234,6 +234,7 @@ const getBountyRelations = (
             BOUNTY_USER_RELATIONSHIP.CurrentSubmitter,
             BOUNTY_USER_RELATIONSHIP.DeniedSubmitter,
             BOUNTY_USER_RELATIONSHIP.ChangesRequestedSubmitter,
+            BOUNTY_USER_RELATIONSHIP.ApprovedSubmitter,
           ].includes(relation)
         )
     ),

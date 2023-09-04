@@ -22,7 +22,8 @@ export const VoteToCancel = () => {
       (currentBounty.isCreator ||
         currentBounty.isCurrentSubmitter ||
         currentBounty.isDeniedSubmitter ||
-        currentBounty.isChangesRequestedSubmitter) &&
+        currentBounty.isChangesRequestedSubmitter ||
+        currentBounty.isApprovedSubmitter) &&
       !currentBounty.isVotingCancel
     )
   )

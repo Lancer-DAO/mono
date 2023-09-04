@@ -5,7 +5,7 @@ import {
   removeSubmitterFFA,
   addSubmitterFFAOld,
 } from "@/escrow/adapters";
-import { ContributorInfo } from "@/components";
+import { Button, ContributorInfo } from "@/components";
 import { Check, X } from "react-feather";
 import { PublicKey } from "@solana/web3.js";
 import { api } from "@/src/utils/api";
@@ -33,6 +33,9 @@ export const SubmitterSection: React.FC<SubmitterSectionProps> = ({
   const { currentTutorialState, setCurrentTutorialState } = useTutorial();
   const { mutateAsync } = api.bountyUsers.update.useMutation();
   const { getRemainingAccounts, getSubmitterReferrer } = useReferral();
+
+  if (!currentBounty) return null;
+  const disabled = !(Number(currentBounty.escrow.amount) > 0);
 
   const handleSubmitter = async (cancel?: boolean) => {
     switch (type) {
@@ -160,25 +163,40 @@ export const SubmitterSection: React.FC<SubmitterSectionProps> = ({
   };
 
   return (
-    <div className="submitter-section flex">
+    <div className="submitter-section flex items-center">
       <ContributorInfo user={submitter.user} />
-
-      {type === "approved" ? (
-        <div className="empty-submitter-cell"></div>
-      ) : (
-        <button
-          onClick={() => handleSubmitter()}
-          id={`submitter-section-approve-${type}-${index}`}
+      <div className="items-center flex justify-center">
+        {type === "approved" ? (
+          <div className="empty-submitter-cell"></div>
+        ) : (
+          <Button
+            onClick={async () => {
+              await handleSubmitter();
+            }}
+            id={`submitter-section-approve-${type}-${index}`}
+            className="h-12"
+            disabledText="Fund Quest To Manage Applicants"
+            disabled={disabled}
+          >
+            <Check
+              color={disabled ? "gray" : "#14bb88"}
+              width="20px"
+              height="20px"
+            />
+          </Button>
+        )}
+        <Button
+          onClick={async () => {
+            await handleSubmitter(true);
+          }}
+          id={`submitter-section-deny-${type}-${index}`}
+          className="h-12"
+          disabled={!(Number(currentBounty.escrow.amount) > 0)}
+          disabledText="Fund Quest To Manage Applicants"
         >
-          <Check color="#1488bb" width="20px" height="20px" />
-        </button>
-      )}
-      <button
-        onClick={() => handleSubmitter(true)}
-        id={`submitter-section-deny-${type}-${index}`}
-      >
-        <X color="red" width="20px" height="20px" />
-      </button>
+          <X color={disabled ? "gray" : "red"} width="20px" height="20px" />
+        </Button>
+      </div>
     </div>
   );
 };
