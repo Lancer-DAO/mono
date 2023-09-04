@@ -49,49 +49,52 @@ export const Account: FC<Props> = ({ self }) => {
     api.users.registerProfileNFT.useMutation();
 
   useEffect(() => {
-    const getUserAsync = async () => {
-      if (router.query.account !== undefined) {
-        const fetchAccount = async () => {
-          const account = await getUser({
-            id: parseInt(router.query.account as string),
-          });
-          setAccount({ ...account, result: account });
-        };
-        fetchAccount();
-      } else {
-        try {
-          let loadingPrompt = "Loading Profile";
-          setAccount({ isLoading: true, loadingPrompt });
-          setBountyNFTs({ isLoading: true });
-          setProfileNFT(null);
-
-          const verifiedWallet = await verifyWallet({
-            walletPublicKey: currentWallet?.publicKey.toString(),
-          });
-
-          if (!verifiedWallet.hasProfileNFT) {
-            loadingPrompt = "Creating Profile";
+      const getUserAsync = async () => {
+        if (router.query.account !== undefined) {
+          const fetchAccount = async () => {
+            const account = await getUser({
+              id: parseInt(router.query.account as string),
+            });
+            setAccount({ ...account, result: account });
+          };
+          fetchAccount();
+        } else {
+          try {
+            let loadingPrompt = "Loading Profile";
             setAccount({ isLoading: true, loadingPrompt });
-            await mintProfileNFT();
+            setBountyNFTs({ isLoading: true });
+            setProfileNFT(null);
+  
+            const verifiedWallet = await verifyWallet({
+              walletPublicKey: currentWallet?.publicKey.toString(),
+            });
+  
+            if (!verifiedWallet.hasProfileNFT) {
+              loadingPrompt = "Creating Profile";
+              setAccount({ isLoading: true, loadingPrompt });
+              await mintProfileNFT();
+            }
+  
+            setAccount({
+              isLoading: true,
+              loadingPrompt,
+              result: currentUser,
+              error: null,
+            });
+          } catch (e) {
+            setAccount({ error: e });
           }
-
-          setAccount({
-            isLoading: true,
-            loadingPrompt,
-            result: currentUser,
-            error: null,
-          });
-        } catch (e) {
-          setAccount({ error: e });
         }
+      };
+      if (!!currentUser && !!currentWallet?.publicKey) {
+        getUserAsync();
+        // Log the props and state on the server and the client and compare them to identify any differences.
+        console.log("Props: ", this.props);
+        console.log("State: ", this.state);
+      } else {
+        console.log("no user or wallet");
       }
-    };
-    if (!!currentUser && !!currentWallet?.publicKey) {
-      getUserAsync();
-    } else {
-      console.log("no user or wallet");
-    }
-  }, [currentUser, router.isReady, currentWallet?.publicKey]);
+    }, [currentUser, router.isReady, currentWallet?.publicKey]);
 
   useEffect(() => {
     if (account.result) {
@@ -249,30 +252,29 @@ export const Account: FC<Props> = ({ self }) => {
     return <LoadingBar title={account.loadingPrompt} />;
   }
   return (
-    <div className="w-full md:w-[90%] mx-auto px-4 md:px-0 py-10">
-      <h1 className="pb-2">{`${
-        self ? "Your Profile" : `@${account?.result?.name}`
-      }`}</h1>
-      {/* {profileNFT && ( */}
-      {account?.result && (
-        <div className="w-full flex items-start gap-5">
-          {/* left column */}
-          <div className="flex flex-col gap-5 w-full md:max-w-[482px]">
-            <ProfileNFTCard
-              profileNFT={profileNFT}
-              picture={account?.result.picture}
-              githubId={account?.result.githubId}
-            />
-            <BadgesCard profileNFT={profileNFT} />
+      <div className="w-full md:w-[90%] mx-auto px-4 md:px-0 py-10">
+        <h1 className="pb-2">{`${
+          self ? "Your Profile" : `@${account?.result?.name}`
+        }`}</h1>
+        {/* Commented out to identify the specific part causing the hydration error
+        {account?.result && (
+          <div className="w-full flex items-start gap-5">
+            <div className="flex flex-col gap-5 w-full md:max-w-[482px]">
+              <ProfileNFTCard
+                profileNFT={profileNFT}
+                picture={account?.result.picture}
+                githubId={account?.result.githubId}
+              />
+              <BadgesCard profileNFT={profileNFT} />
+            </div>
+            <div className="flex flex-col gap-5 w-full">
+              <QuestsCard />
+  
+              {account?.result.id === currentUser.id && <ReferCard />}
+            </div>
           </div>
-          {/* right column */}
-          <div className="flex flex-col gap-5 w-full">
-            <QuestsCard />
-
-            {account?.result.id === currentUser.id && <ReferCard />}
-          </div>
-        </div>
-      )}
-    </div>
-  );
+        )}
+        */}
+      </div>
+    );
 };
