@@ -15,7 +15,7 @@ import { Modal } from "@/components";
 
 interface Props {
   setShowModal: Dispatch<SetStateAction<boolean>>;
-  setIsFunded: Dispatch<SetStateAction<boolean>>;
+  setIsFunded?: Dispatch<SetStateAction<boolean>>;
 }
 
 const FundBountyModal: FC<Props> = ({ setShowModal, setIsFunded }) => {
@@ -71,7 +71,7 @@ const FundBountyModal: FC<Props> = ({ setShowModal, setIsFunded }) => {
         escrowId: currentBounty?.escrow.id,
         amount: parseFloat(issuePrice),
       });
-      setIsFunded(true);
+      setIsFunded && setIsFunded(true);
       toast.success("Quest funded!", { id: toastId });
       setShowModal(false);
     } catch (error) {
