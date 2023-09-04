@@ -133,7 +133,7 @@ export const CustodialWalletProvider: FunctionComponent<IWeb3AuthState> = ({
 
   const setWalletProvider = useCallback(
     (web3authProvider: SafeEventEmitterProvider) => {
-      const walletProvider = solanaProvider(web3authProvider, uiConsole);
+      const walletProvider = solanaProvider(web3authProvider);
       const solanaWallet = new SolanaWallet(web3authProvider);
       setTimeout(async () => {
         const acc = await solanaWallet.requestAccounts();
