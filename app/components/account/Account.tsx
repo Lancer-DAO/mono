@@ -12,7 +12,7 @@ import { api } from "@/utils";
 import { createUnderdogClient } from "@underdog-protocol/js";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
-import { LoadingBar } from "@/components";
+import { LoadingBar, ResumeModal } from "@/components";
 import { ProfileNFTCard, QuestsCard } from "./components";
 import BadgesCard from "./components/BadgesCard";
 import PortfolioCard from "./components/PortfolioCard";
@@ -46,6 +46,7 @@ export const Account: FC<Props> = ({ self }) => {
     }
   );
   const [profileNFT, setProfileNFT] = useState<ProfileNFT>();
+  const [showResumeModal, setShowResumeModal] = useState(false);
 
   const fetchProfileNFT = async () => {
     const walletKey =
@@ -117,6 +118,14 @@ export const Account: FC<Props> = ({ self }) => {
     }
   }, [!!fetchedUser, !!currentWallet]);
 
+  // check for "newUser" key in local storage
+  useEffect(() => {
+    if (localStorage.getItem("newUser")) {
+      setShowResumeModal(true);
+      localStorage.removeItem("newUser");
+    }
+  }, []);
+
   if (!IS_CUSTODIAL && !currentWallet && !profileNFT)
     return (
       <div className="w-full h-full flex items-center justify-center">
@@ -135,40 +144,44 @@ export const Account: FC<Props> = ({ self }) => {
     return <LoadingBar title={"Loading profile"} />;
   }
   return (
-    <div className="w-full md:w-[90%] mx-auto px-4 md:px-0 py-10">
-      <div className="flex items-center">
-        <h1 className="pb-2">{`${
-          self ? "Your Profile" : `@${fetchedUser?.name}`
-        }`}</h1>
+    <>
+      <div className="w-full md:w-[90%] mx-auto px-4 md:px-0 py-10">
+        <div className="flex items-center">
+          <h1 className="pb-2">{`${
+            self ? "Your Profile" : `@${fetchedUser?.name}`
+          }`}</h1>
+        </div>
+        {profileNFT && fetchedUser ? (
+          <div className="w-full flex items-start gap-5">
+            {/* left column */}
+            <div className="flex flex-col gap-5 w-full md:max-w-[482px]">
+              <ProfileNFTCard
+                profileNFT={profileNFT}
+                picture={fetchedUser.picture}
+                githubId={fetchedUser.githubId}
+                user={fetchedUser}
+                self={self}
+                id={fetchedUser.id}
+              />
+              <BadgesCard profileNFT={profileNFT} />
+              {fetchedUser.id === currentUser.id &&
+                currentUser.hasBeenApproved && <ReferCard />}
+            </div>
+            {/* right column */}
+            <div className="flex flex-col gap-5 w-full">
+              <PortfolioCard />
+              {fetchedUser.id === currentUser.id && <ResumeCard />}
+              <QuestsCard />
+            </div>
+          </div>
+        ) : (
+          <div className="w-full flex items-start gap-5">
+            <LoadingBar title="Loading Profile" />
+          </div>
+        )}
       </div>
-      {profileNFT && fetchedUser ? (
-        <div className="w-full flex items-start gap-5">
-          {/* left column */}
-          <div className="flex flex-col gap-5 w-full md:max-w-[482px]">
-            <ProfileNFTCard
-              profileNFT={profileNFT}
-              picture={fetchedUser.picture}
-              githubId={fetchedUser.githubId}
-              user={fetchedUser}
-              self={self}
-              id={fetchedUser.id}
-            />
-            <BadgesCard profileNFT={profileNFT} />
-            {fetchedUser.id === currentUser.id &&
-              currentUser.hasBeenApproved && <ReferCard />}
-          </div>
-          {/* right column */}
-          <div className="flex flex-col gap-5 w-full">
-            <PortfolioCard />
-            {fetchedUser.id === currentUser.id && <ResumeCard />}
-            <QuestsCard />
-          </div>
-        </div>
-      ) : (
-        <div className="w-full flex items-start gap-5">
-          <LoadingBar title="Loading Profile" />
-        </div>
-      )}
-    </div>
+      {/* resume modal */}
+      {showResumeModal && <ResumeModal setShowModal={setShowResumeModal} />}
+    </>
   );
 };
