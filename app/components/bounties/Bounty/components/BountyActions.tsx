@@ -2,7 +2,6 @@ import { BountyState } from "@/types/";
 import { IS_CUSTODIAL } from "@/constants";
 import { useBounty } from "@/src/providers/bountyProvider";
 import { useTutorial } from "@/src/providers/tutorialProvider";
-import { useWallet } from "@solana/wallet-adapter-react";
 import {
   CancelEscrow,
   Apply,
@@ -22,7 +21,7 @@ export const BountyActions = () => {
 
   const buttons = useMemo(() => {
     if (!currentBounty) return [null];
-    if (!publicKey) {
+    if (!currentWallet.publicKey) {
       return IS_CUSTODIAL ? (
         <></>
       ) : (
@@ -71,7 +70,7 @@ export const BountyActions = () => {
         <CancelEscrow />
       </>
     );
-  }, [currentBounty, publicKey]);
+  }, [currentBounty, currentWallet?.publicKey]);
 
   return (
     <div className="flex flex-wrap gap-3 pt-4" id="bounty-actions">
