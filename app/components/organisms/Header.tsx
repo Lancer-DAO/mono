@@ -50,13 +50,17 @@ export const Header = () => {
         </Link>
         <div className="flex gap-8 items-center w-full">
           {currentUser &&
-            HEADER_LINKS.map(({ href, children, disabledText }, index) => {
+            HEADER_LINKS.map(({ href, children, disabledText }) => {
               return (
                 <LinkButton
                   href={href}
                   className="text-lg font-bold"
                   key={href}
-                  disabled={index === 2 ? false : !currentUser.hasBeenApproved}
+                  disabled={
+                    children === "Leaderboards"
+                      ? false
+                      : !currentUser.hasBeenApproved
+                  }
                   disabledText={disabledText}
                 >
                   {children}
