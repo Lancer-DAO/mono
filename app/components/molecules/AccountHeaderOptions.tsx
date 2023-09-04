@@ -27,7 +27,7 @@ const AccountHeaderOptions = () => {
   });
   return (
     <div className="relative z-50">
-      {currentUser ? (
+      {currentUser && (
         <>
           <div
             className="cursor-pointer"
@@ -162,8 +162,6 @@ const AccountHeaderOptions = () => {
           )}
           <ApiKeyModal showModal={showModal} setShowModal={setShowModal} />
         </>
-      ) : (
-        <LinkButton href="/api/auth/login">Log In</LinkButton>
       )}
     </div>
   );
