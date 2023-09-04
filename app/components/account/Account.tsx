@@ -115,7 +115,7 @@ export const Account: FC<Props> = ({ self }) => {
       };
       fetchNfts();
     }
-  }, [!!fetchedUser, !!currentWallet]);
+  }, [fetchedUser, currentWallet, currentTutorialState]);
 
   if (!IS_CUSTODIAL && !currentWallet && !profileNFT)
     return (
@@ -141,7 +141,7 @@ export const Account: FC<Props> = ({ self }) => {
           self ? "Your Profile" : `@${fetchedUser?.name}`
         }`}</h1>
       </div>
-      {profileNFT && fetchedUser ? (
+      {profileNFT && fetchedUser && (
         <div className="w-full flex items-start gap-5">
           {/* left column */}
           <div className="flex flex-col gap-5 w-full md:max-w-[482px]">
@@ -163,10 +163,6 @@ export const Account: FC<Props> = ({ self }) => {
             {fetchedUser.id === currentUser.id && <ResumeCard />}
             <QuestsCard />
           </div>
-        </div>
-      ) : (
-        <div className="w-full flex items-start gap-5">
-          <LoadingBar title="Loading Profile" />
         </div>
       )}
     </div>

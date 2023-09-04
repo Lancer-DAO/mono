@@ -42,6 +42,7 @@ export const ProfileNFTCard = ({
   // state
   const [showCashout, setShowCashout] = useState(false);
   const { mutateAsync: updateName } = api.users.updateName.useMutation();
+  const { mutateAsync: updateBio } = api.users.updateBio.useMutation();
   const { mutateAsync: updateIndustry } =
     api.users.updateIndustry.useMutation();
   const [nameEdit, setNameEdit] = useState({ editing: false, name: user.name });
@@ -49,6 +50,7 @@ export const ProfileNFTCard = ({
     editing: false,
     industry: user.industries[0],
   });
+  const [bioEdit, setBioEdit] = useState({ editing: false, bio: user.bio });
   const { setIsChatOpen, setCurrentChannel } = useChat();
 
   const [balance, setBalance] = useState<IAsyncResult<number>>({
@@ -56,6 +58,7 @@ export const ProfileNFTCard = ({
     loadingPrompt: "Loading Balance",
   });
   const [amount, setAmount] = useState(0);
+  const [charCount, setCharCount] = useState(0);
   const [sendToPublicKey, setSentToPublicKey] = useState("");
 
   const {
@@ -168,7 +171,6 @@ export const ProfileNFTCard = ({
     <div className="w-full md:w-[460px] rounded-xl bg-bgLancerSecondary/[8%] overflow-hidden p-6 text-textGreen">
       <div className="flex flex-col gap-3">
         <div className="flex items-center justify-between"></div>
-
         <div className="flex items-start gap-16 pb-6">
           {/* Labels column */}
           <div className="flex flex-col gap-4 text-lg">
@@ -223,7 +225,7 @@ export const ProfileNFTCard = ({
                 <input
                   type="text"
                   className="placeholder:text-textGreen/70 border bg-neutralBtn 
-            border-neutralBtnBorder h-[30px] rounded-lg px-3"
+                  border-neutralBtnBorder h-[30px] rounded-lg px-3"
                   name="company"
                   placeholder="ex. Jack Sturt"
                   id="profile-company"
@@ -262,7 +264,7 @@ export const ProfileNFTCard = ({
                       onClick={() => setNameEdit({ editing: true, name: "" })}
                       className="rounded-md uppercase font-bold text-textGreen"
                     >
-                      <Edit />
+                      <Edit className="w-5" />
                     </button>
                   )}
                 </div>
@@ -339,7 +341,7 @@ export const ProfileNFTCard = ({
                       }
                       className="rounded-md uppercase font-bold text-textGreen"
                     >
-                      <Edit />
+                      <Edit className="w-5" />
                     </button>
                   )}
                 </div>
@@ -349,6 +351,74 @@ export const ProfileNFTCard = ({
             <p>{profileNFT?.reputation} pts</p>
           </div>
         </div>
+        {bioEdit.editing ? (
+          <div>
+            <textarea
+              className="placeholder:text-textGreen/70 border bg-neutralBtn min-h-[50px] 
+              border-neutralBtnBorder w-full h-[150px] rounded-lg px-3 py-2 resize-y max-h-[300px]"
+              name="bio"
+              placeholder="Add bio"
+              id="profile-bio"
+              maxLength={500}
+              value={bioEdit.bio}
+              onChange={(e) => {
+                setCharCount(e.target.value.length);
+                setBioEdit({ ...bioEdit, bio: e.target.value });
+              }}
+            />
+            <div className="w-full flex justify-between items-center">
+              <p
+                className={`text-sm ${
+                  charCount > 450 ? "text-red-500" : "text-gray-500"
+                }`}
+              >
+                {charCount}/500
+              </p>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => {
+                    updateBio({ bio: bioEdit.bio });
+                    setBioEdit({ ...bioEdit, editing: false });
+                  }}
+                  className="rounded-md uppercase font-bold text-textGreen mr-2"
+                >
+                  <Check />
+                </button>
+                <button
+                  onClick={() =>
+                    setBioEdit({
+                      editing: false,
+                      bio: user.bio,
+                    })
+                  }
+                  className="rounded-md uppercase font-bold text-textRed"
+                >
+                  <X />
+                </button>
+              </div>
+            </div>
+          </div>
+        ) : (
+          <div className="flex items-start justify-between">
+            <p className="text-textPrimary pr-5 text-justify leading-5">
+              {bioEdit.bio}
+            </p>
+            {self && (
+              <button
+                onClick={() =>
+                  setBioEdit({
+                    editing: true,
+                    bio: user.bio,
+                  })
+                }
+                className="rounded-md uppercase font-bold text-textGreen"
+              >
+                <Edit className="w-5" />
+              </button>
+            )}
+          </div>
+        )}
+
         <LinksCard />
       </div>
       {showCashout && <CashoutModal setShowModal={setShowCashout} />}

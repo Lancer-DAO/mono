@@ -12,6 +12,7 @@ import { verifyWallet } from "./verifyWallet";
 import { updateIndustry } from "./updateIndustry";
 import { updateLinks } from "./updateLinks";
 import { updateName } from "./updateName";
+import { updateBio } from "./updateBio";
 import { updateResume } from "./updateResume";
 import { deleteResume } from "./deleteResume";
 
@@ -28,6 +29,7 @@ export const users = createTRPCRouter({
   updateIndustry,
   updateLinks,
   updateName,
+  updateBio,
   updateResume,
   deleteResume,
 });
