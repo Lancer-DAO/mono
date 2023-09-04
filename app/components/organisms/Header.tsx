@@ -58,7 +58,7 @@ export const Header = () => {
                   key={href}
                   disabled={
                     children === "Leaderboards"
-                      ? false
+                      ? !currentUser?.hasFinishedOnboarding
                       : !currentUser.hasBeenApproved
                   }
                   disabledText={disabledText}

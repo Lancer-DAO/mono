@@ -12,6 +12,8 @@ export const getTopEarners = async () => {
         JOIN Bounty AS B ON E.id = B.escrowid
         JOIN BountyUser AS BU ON B.id = BU.bountyid
         JOIN User AS U ON BU.userid = U.id
+        WHERE B.state = 'complete'
+        AND BU.relations = 'completer'
         GROUP BY BU.userid, U.name
         ORDER BY total_earned DESC
         LIMIT 20;
