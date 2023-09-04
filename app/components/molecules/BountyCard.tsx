@@ -2,37 +2,32 @@ import {
   BountyCardFrame,
   ContributorInfo,
   PriceTag,
-  StarIcon,
+  // StarIcon,
   LockIcon,
 } from "@/components";
 import { useUserWallet } from "@/providers";
-import {
-  IS_CUSTODIAL,
-  fastEnterAnimation,
-  midClickAnimation,
-} from "@/src/constants";
+import { fastEnterAnimation, midClickAnimation } from "@/src/constants";
 import { useBounty } from "@/src/providers/bountyProvider";
 import { BountyPreview, FormData, Industry } from "@/types/";
-import { getFormattedDate } from "@/utils";
+import { api, getFormattedDate } from "@/utils";
 import { motion } from "framer-motion";
 import Image from "next/image";
-import { FC, SVGAttributes, useEffect, useState } from "react";
+import { FC, SVGAttributes, useCallback, useEffect, useState } from "react";
 
 export interface BountyCardProps extends SVGAttributes<SVGSVGElement> {
   bounty?: BountyPreview;
   formData?: FormData;
-  allIndustries: Industry[];
   linked?: boolean;
 }
 
 const BountyCard: FC<BountyCardProps> = ({
   bounty,
   formData,
-  allIndustries,
   linked = true,
 }) => {
   const { currentUser } = useUserWallet();
   const { currentBounty } = useBounty();
+  const { data: allIndustries } = api.industries.getAllIndustries.useQuery();
   const [selectedIndustry, setSelectedIndustry] = useState<Industry>();
 
   const bountyCardAnimation = linked
@@ -40,7 +35,7 @@ const BountyCard: FC<BountyCardProps> = ({
     : null;
 
   const displayedTags = bounty
-    ? bounty.tags.map((tag) => tag.name)
+    ? bounty.tags.slice(0, 4).map((tag) => tag.name)
     : formData.tags.slice(0, 4).map((tag) => tag);
 
   const tagOverflow = bounty
@@ -56,6 +51,14 @@ const BountyCard: FC<BountyCardProps> = ({
     }
   };
 
+  const handlePrice = useCallback(() => {
+    if (bounty) {
+      return Number(bounty?.escrow?.amount);
+    } else {
+      return Number(formData.issuePrice);
+    }
+  }, [bounty, formData]);
+
   useEffect(() => {
     if (formData) {
       const industry = allIndustries?.find(
@@ -64,11 +67,6 @@ const BountyCard: FC<BountyCardProps> = ({
       setSelectedIndustry(industry);
     }
   }, [formData?.industryId]);
-
-  // useEffect(() => {
-  //   console.log("bounty: ", bounty);
-  //   console.log("formData: ", formData);
-  // }, [bounty, formData]);
 
   if (!bounty && !formData) return null;
 
@@ -110,8 +108,9 @@ const BountyCard: FC<BountyCardProps> = ({
       <div className="w-full absolute top-1">
         <div className="w-full flex items-center justify-between px-1">
           <PriceTag
-            price={bounty ? bounty?.escrow.amount : Number(formData.issuePrice)}
+            price={handlePrice()}
             icon={handlePriceIcon()}
+            funded={bounty ? Number(bounty?.escrow.amount) > 0 : false}
           />
           <p className="text-xs font-bold mr-2">
             <span className="text-textPrimary text-[11px] font-base">
@@ -126,7 +125,7 @@ const BountyCard: FC<BountyCardProps> = ({
         <div className="w-full flex items-center justify-between mt-8">
           {/* creator profile */}
           {bounty && bounty?.creator && (
-            <ContributorInfo user={bounty?.creator?.user} />
+            <ContributorInfo user={bounty?.creator?.user} disableLink />
           )}
 
           {formData && currentUser && (
@@ -175,7 +174,7 @@ const BountyCard: FC<BountyCardProps> = ({
         </div>
       </div>
       {(formData?.isPrivate || bounty?.isPrivate) && (
-        <div className="absolute bottom-4 right-4 z-50">
+        <div className="absolute bottom-4 right-4 z-20">
           <LockIcon fill="#464646" width={15} height={15} />
         </div>
       )}

@@ -28,14 +28,14 @@ const Toggle: FC<Props> = ({ toggleConfig, setToggleConfig }) => {
 
   return (
     <div
-      className={`w-[255px] h-[50px] bg-neutralBtn flex items-center justify-between px-[2.5px] rounded-lg`}
+      className={`w-[285px] h-[50px] bg-neutralBtn flex items-center justify-between px-[2.5px] rounded-lg`}
     >
       <div
         className={`${
           toggleConfig.selected === "option1"
             ? "bg-primaryBtn font-bold text-textGreen"
             : "bg-neutralBtn text-textPrimary font-base"
-        } w-[120px] h-[45px] flex flex-col items-center justify-center hover:cursor-pointer rounded-lg text-sm`}
+        } w-[135px] h-[45px] flex flex-col items-center justify-center hover:cursor-pointer rounded-lg text-sm`}
         onClick={() => handleClick("option1")}
       >
         {toggleConfig.option1.title.toUpperCase()}
@@ -45,7 +45,7 @@ const Toggle: FC<Props> = ({ toggleConfig, setToggleConfig }) => {
           toggleConfig.selected === "option2"
             ? "bg-primaryBtn font-bold text-textGreen"
             : "bg-neutralBtn text-textPrimary font-base"
-        } w-[120px] h-[45px] flex flex-col items-center justify-center hover:cursor-pointer rounded-lg text-sm`}
+        } w-[135px] h-[45px] flex flex-col items-center justify-center hover:cursor-pointer rounded-lg text-sm`}
         onClick={() => handleClick("option2")}
       >
         {toggleConfig.option2.title.toUpperCase()}

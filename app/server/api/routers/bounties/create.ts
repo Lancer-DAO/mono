@@ -1,6 +1,7 @@
-import { protectedProcedure } from "../../trpc";
-import { z } from "zod";
 import * as queries from "@/prisma/queries";
+import { z } from "zod";
+import { protectedProcedure } from "../../trpc";
+import { HostedHooksClient } from "../../webhooks";
 
 export const createBounty = protectedProcedure
   .input(
@@ -13,7 +14,13 @@ export const createBounty = protectedProcedure
       price: z.optional(z.number()),
       tags: z.array(z.string()),
       links: z.array(z.string()),
-      media: z.array(z.string()),
+      media: z.array(
+        z.object({
+          imageUrl: z.string(),
+          title: z.string(),
+          description: z.string(),
+        })
+      ),
       estimatedTime: z.number(),
       isPrivate: z.boolean(),
       publicKey: z.string(),
@@ -58,7 +65,7 @@ export const createBounty = protectedProcedure
         user,
         mint
       );
-      const createTx = await queries.transaction.create(
+      await queries.transaction.create(
         timestamp,
         transactionSignature,
         "create-escrow",
@@ -75,6 +82,12 @@ export const createBounty = protectedProcedure
       const disciplines = await Promise.all(
         disciplineIds.map((id) => queries.discipline.get(id))
       );
+      const medias = await Promise.all(
+        media.map(
+          async (med) =>
+            await queries.media.create(med.imageUrl, med.description, med.title)
+        )
+      );
       const bounty = await queries.bounty.create(
         timestamp,
         description,
@@ -84,13 +97,15 @@ export const createBounty = protectedProcedure
         escrow,
         _tags,
         links,
-        media,
         user,
         wallet,
         industries,
         disciplines,
+        medias,
         price
       );
-      return queries.bounty.get(bounty.id, user.id);
+      const bountyInfo = await queries.bounty.get(bounty.id, user.id);
+      HostedHooksClient.sendWebhook(bountyInfo, "bounty.created", timestamp);
+      return bountyInfo;
     }
   );

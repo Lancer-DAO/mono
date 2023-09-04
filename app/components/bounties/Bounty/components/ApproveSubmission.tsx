@@ -24,11 +24,8 @@ export const ApproveSubmission = () => {
   const { mutateAsync } = api.bountyUsers.update.useMutation();
 
   if (
-    !(
-      currentBounty.isCreator &&
-      currentBounty.currentSubmitter &&
-      !currentBounty.completer
-    )
+    !currentBounty ||
+    !(currentBounty.isCreator && currentBounty.currentSubmitter)
   )
     return null;
 
@@ -44,37 +41,30 @@ export const ApproveSubmission = () => {
       });
     }
 
-    // If we are the creator, then skip requesting and add self as approved
-    // console.log(
-    //   currentBounty.currentSubmitter.publicKey,
-    //   currentBounty.escrow.publicKey.toString(),
-    //   currentWallet.publicKey.toString(),
-    //   buddylinkProgramId.toString()
-    // );
     const signature = await approveRequestFFA(
-      new PublicKey(currentBounty.currentSubmitter.publicKey),
-      currentBounty.escrow,
+      new PublicKey(currentBounty?.currentSubmitter.publicKey),
+      currentBounty?.escrow,
       currentWallet,
       buddylinkProgramId,
       program,
       provider
     );
-    const submitterKey = currentBounty.currentSubmitter.publicKey;
+    const submitterKey = currentBounty?.currentSubmitter.publicKey;
     const updatedBounty = await mutateAsync({
-      bountyId: currentBounty.id,
+      bountyId: currentBounty?.id,
       currentUserId: currentUser.id,
-      userId: currentBounty.currentSubmitter.userid,
+      userId: currentBounty?.currentSubmitter.userid,
       relations: [BOUNTY_USER_RELATIONSHIP.Completer],
       state: BountyState.COMPLETE,
       publicKey: submitterKey,
-      escrowId: currentBounty.escrowid,
+      escrowId: currentBounty?.escrowid,
       signature,
       label: "complete-bounty",
     });
 
     setCurrentBounty(updatedBounty);
 
-    const creatorKey = currentBounty.creator.publicKey;
+    const creatorKey = currentBounty?.creator.publicKey;
     let nfts = await underdogClient.getNfts({
       params: PROFILE_PROJECT_PARAMS,
       query: {
@@ -84,7 +74,7 @@ export const ApproveSubmission = () => {
       },
     });
     const reputationIncrease =
-      100 * decimalToNumber(currentBounty.estimatedTime);
+      100 * decimalToNumber(currentBounty?.estimatedTime);
     if (nfts.totalResults > 0) {
       const profileNFT = nfts.results[0];
       underdogClient.partialUpdateNft({
@@ -102,13 +92,13 @@ export const ApproveSubmission = () => {
     await underdogClient.createNft({
       params: BOUNTY_PROJECT_PARAMS,
       body: {
-        name: `Bounty Completer: ${currentBounty.id}`,
+        name: `Bounty Completer: ${currentBounty?.id}`,
         image: "https://i.imgur.com/3uQq5Zo.png",
-        description: currentBounty.description,
+        description: currentBounty?.description,
         attributes: {
           reputation: reputationIncrease,
           completed: dayjs().toISOString(),
-          tags: currentBounty.tags.map((tag) => tag.name).join(","),
+          tags: currentBounty?.tags.map((tag) => tag.name).join(","),
           role: "completer",
         },
         upsert: false,
@@ -143,13 +133,13 @@ export const ApproveSubmission = () => {
     await underdogClient.createNft({
       params: BOUNTY_PROJECT_PARAMS,
       body: {
-        name: `Bounty Creator: ${currentBounty.id}`,
+        name: `Bounty Creator: ${currentBounty?.id}`,
         image: "https://i.imgur.com/3uQq5Zo.png",
-        description: currentBounty.description,
+        description: currentBounty?.description,
         attributes: {
           reputation: reputationIncrease,
           completed: dayjs().toISOString(),
-          tags: currentBounty.tags.map((tag) => tag.name).join(","),
+          tags: currentBounty?.tags.map((tag) => tag.name).join(","),
           role: "creator",
         },
         upsert: false,

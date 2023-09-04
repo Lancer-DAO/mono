@@ -3,6 +3,7 @@ import { useUserWallet } from "@/src/providers/userWalletProvider";
 import {
   CREATE_BOUNTY_TUTORIAL_INITIAL_STATE,
   IS_MAINNET,
+  USDC_MINT,
   smallClickAnimation,
 } from "@/src/constants";
 import { FORM_SECTION, FormData } from "@/types/forms";
@@ -21,7 +22,6 @@ import toast from "react-hot-toast";
 interface Props {
   setFormSection: Dispatch<SetStateAction<FORM_SECTION>>;
   formData: FormData;
-  industries: Industry[];
   createAccountPoll: (publicKey: PublicKey) => void;
   handleChange: (event) => void;
   mint: Mint;
@@ -30,7 +30,6 @@ interface Props {
 export const PreviewForm: FC<Props> = ({
   setFormSection,
   formData,
-  industries,
   createAccountPoll,
   handleChange,
   mint,
@@ -83,6 +82,7 @@ export const PreviewForm: FC<Props> = ({
         email: currentUser.email,
         industryIds: [formData.industryId],
         disciplineIds: formData.displineIds,
+        price: parseFloat(formData.issuePrice),
         title: formData.issueTitle,
         description: formData.issueDescription,
         tags: formData.tags,
@@ -100,10 +100,15 @@ export const PreviewForm: FC<Props> = ({
         network: IS_MAINNET ? "mainnet" : "devnet",
       });
 
-      setFormSection("FUND");
+      setFormSection("SUCCESS");
       setCurrentBounty(bounty);
     } catch (error) {
       setCreateQuestState({ error });
+      if (error.message === "Wallet is registered to another user") {
+        toast.error(
+          "Wallet is registered to another user. Use another wallet to create this Quest."
+        );
+      }
     }
   };
 
@@ -120,11 +125,7 @@ export const PreviewForm: FC<Props> = ({
           {/* two cards in view */}
           {/* 1. preview card */}
           <PreviewCardBase title="Quest">
-            <BountyCard
-              formData={formData}
-              linked={false}
-              allIndustries={industries}
-            />
+            <BountyCard formData={formData} linked={false} />
           </PreviewCardBase>
           {/* 2. quest links card */}
           <PreviewCardBase title="Links">
