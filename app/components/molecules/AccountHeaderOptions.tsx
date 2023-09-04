@@ -76,7 +76,7 @@ const AccountHeaderOptions = () => {
               }
               width={40}
               height={40}
-              className="rounded-full border-[1px] border-gray-600"
+              className="rounded-full"
               alt="user profile picture"
             />
           </div>
