@@ -61,7 +61,8 @@ export const Header = () => {
                   disabled={
                     children === "Leaderboards"
                       ? !currentUser?.hasFinishedOnboarding
-                      : !currentUser.hasBeenApproved
+                      : !currentUser.hasBeenApproved ||
+                        !currentUser?.hasFinishedOnboarding
                   }
                   disabledText={disabledText}
                 >

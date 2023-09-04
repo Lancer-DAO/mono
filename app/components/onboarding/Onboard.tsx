@@ -10,6 +10,7 @@ import dayjs from "dayjs";
 import { api } from "@/src/utils";
 import toast from "react-hot-toast";
 import { AnimatePresence, motion } from "framer-motion";
+import { LoadingBar } from "@/components";
 
 const underdogClient = createUnderdogClient({});
 
@@ -175,8 +176,12 @@ const Onboard: FC = () => {
           key={`onboard-${formSection}`}
           className="w-full max-w-[1200px] mx-auto flex flex-col md:flex-row md:justify-evenly mt-10"
         >
+          {account.isLoading && <LoadingBar title={null} />}
+          {account.error && (
+            <div className="text-red-500">{account.error.message}</div>
+          )}
           <WelcomeView
-            account={account}
+            account={account?.result}
             formSection={formSection}
             setFormSection={setFormSection}
           />
