@@ -14,123 +14,52 @@ import {
 } from "@/escrow/adapters";
 import { PublicKey } from "@solana/web3.js";
 import { USDC_MINT } from "@/src/constants";
-import { Escrow } from "@/types";
-
+import { Escrow, IAsyncResult } from "@/types";
+import { HuddleIframe } from "@huddle01/iframe";
+import { useCallback, useEffect, useState } from "react";
+import axios from "axios";
+import { LoadingBar } from "@/components";
 export const getServerSideProps = withPageAuthRequired();
 
-const TIMESTAMP = "1691549508859";
-
-const CLIENT_WALLET = new PublicKey(
-  "BuxU7uwwkoobF8p4Py7nRoTgxWRJfni8fc4U3YKGEXKs"
-);
-const LANCER_WALLET = new PublicKey(
-  "WbmLPptTGZTFK5ZSks7oaa4Qx69qS3jFXMrAsbWz1or"
-);
-
-const FUND_AMOUNT = 0.001;
-
 const BountiesPage: React.FC = () => {
-  const { currentWallet, program, provider } = useUserWallet();
-
-  const createFFAClick = async () => {
-    const { timestamp, signature, escrowKey } = await createFFA(
-      currentWallet,
-      program,
-      provider,
-      new PublicKey(USDC_MINT)
-    );
-    console.log("timestamp", timestamp);
-  };
-
-  const sendInvoiceClick = async () => {
-    const signature = await sendInvoice(
-      CLIENT_WALLET,
-      { timestamp: TIMESTAMP } as Escrow,
-      currentWallet,
-      program,
-      provider,
-      FUND_AMOUNT
-    );
-    console.log("timestamp", signature);
-  };
-
-  const acceptInvoiceClick = async () => {
-    const signature = await acceptInvoice(
-      LANCER_WALLET,
-      { timestamp: TIMESTAMP } as Escrow,
-      currentWallet,
-      program,
-      provider
-    );
-    console.log("timestamp", signature);
-  };
-
-  const addApprovedSubmitterClick = async () => {
-    const signature = await addSubmitterFFAOld(
-      LANCER_WALLET,
-      { timestamp: TIMESTAMP } as Escrow,
-      currentWallet,
-      program,
-      provider
-    );
-    console.log("timestamp", signature);
-  };
-
-  const submitClick = async () => {
-    const signature = await submitRequestFFA(
-      CLIENT_WALLET,
-      LANCER_WALLET,
-      { timestamp: TIMESTAMP, mint: { publicKey: USDC_MINT } } as Escrow,
-      currentWallet,
-      program,
-      provider
-    );
-    console.log("timestamp", signature);
-  };
-
-  const approveClick = async () => {
-    const signature = await approveRequestFFAOld(
-      LANCER_WALLET,
-      { timestamp: TIMESTAMP, mint: { publicKey: USDC_MINT } } as Escrow,
-      currentWallet,
-      program,
-      provider
-    );
-    console.log("timestamp", signature);
-  };
-
-  const rejectInvoiceClick = async () => {
-    const signature = await rejectInvoice(
-      LANCER_WALLET,
-      { timestamp: TIMESTAMP } as Escrow,
-      currentWallet,
-      program,
-      provider
-    );
-    console.log("timestamp", signature);
-  };
-
-  const closeInvoiceClick = async () => {
-    const signature = await closeInvoice(
-      { timestamp: TIMESTAMP } as Escrow,
-      currentWallet,
-      program,
-      provider
-    );
-    console.log("timestamp", signature);
-  };
+  const [roomUrl, setRoomUrl] = useState<IAsyncResult<string>>({
+    isLoading: true,
+  });
+  useEffect(() => {
+    const getRoomUrl = async () => {
+      const response = await axios.post(
+        "https://api.huddle01.com/api/v1/create-iframe-room",
+        {
+          title: "Huddle01-Test",
+          hostWallets: ["0xdd305d192E3A69085E5D2756b0469B4fDD03b245"],
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+            "x-api-key": process.env.NEXT_PUBLIC_HUDDLE_01_API_KEY,
+          },
+        }
+      );
+      const meetingURI = response.data.data.roomId;
+      console.log("meetingLink", meetingURI);
+      setRoomUrl({ isLoading: false, result: meetingURI });
+    };
+    getRoomUrl();
+  }, []);
 
   return (
     <>
-      <NextSeo title="Lancer | Bounties" description="Lancer Bounties" />
-      <div onClick={createFFAClick}>Create FFA</div>
-      <div onClick={sendInvoiceClick}>Send Invoice</div>
-      <div onClick={acceptInvoiceClick}>Accept Invoice</div>
-      <div onClick={addApprovedSubmitterClick}>Approve Submitter</div>
-      <div onClick={submitClick}>Submit Request</div>
-      <div onClick={approveClick}>Approve Request</div>
-      <div onClick={rejectInvoiceClick}>Reject Invoice</div>
-      <div onClick={closeInvoiceClick}>Close Invoice</div>
+      <NextSeo title="Lancer | Call" description="Lancer Call" />
+      <div className="h-full w-full">
+        {roomUrl.isLoading ? (
+          <LoadingBar title="Loading Meeting" />
+        ) : (
+          <HuddleIframe
+            roomUrl={`https://lancer.huddle01.com/${roomUrl.result}`}
+            className="w-full h-full aspect-video bg-industryRedBorder"
+          />
+        )}
+      </div>
     </>
   );
 };
