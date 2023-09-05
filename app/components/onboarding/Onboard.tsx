@@ -5,7 +5,7 @@ import { IAsyncResult, ProfileFormData, User } from "@/types";
 import { useUserWallet } from "@/src/providers";
 import { useRouter } from "next/router";
 import { createUnderdogClient } from "@underdog-protocol/js";
-import { PROFILE_PROJECT_PARAMS, enterAnimation } from "@/src/constants";
+import { PROFILE_PROJECT_PARAMS } from "@/src/constants";
 import dayjs from "dayjs";
 import { api } from "@/src/utils";
 import toast from "react-hot-toast";
@@ -41,6 +41,9 @@ const Onboard: FC = () => {
     isLoading: true,
     loadingPrompt: "Welcome to Lancer",
   });
+  const [walletRegistered, setWalletRegistered] = useState<boolean>(false);
+  const [walletError, setWalletError] = useState<string>("");
+
   const { currentUser, currentWallet } = useUserWallet();
   const { mutateAsync: registerOnboardingInfo } =
     api.users.addOnboardingInformation.useMutation();
@@ -52,12 +55,33 @@ const Onboard: FC = () => {
       enabled: !!currentWallet,
     }
   );
-  api.users.verifyWallet.useQuery(
+  const { isLoading: isVerifyingWallet } = api.users.verifyWallet.useQuery(
     {
       walletPublicKey: currentWallet?.publicKey.toString(),
     },
     {
-      enabled: !!currentWallet && !!nftCreated,
+      enabled: !!currentWallet && !!nftCreated && !!account.result,
+      onError: (e) => {
+        setWalletRegistered(false);
+        if (e.message === "Wallet is registered to another user") {
+          toast.error("This wallet is already registered to another user", {
+            id: "verify-wallet",
+          });
+          setWalletError(
+            "This wallet is already registered to another user. Please connect a different wallet to continue."
+          );
+          return;
+        } else {
+          toast.error("Error verifying wallet", { id: "verify-wallet" });
+          console.log("Error verifying wallet: ", e);
+          setWalletError(e.message);
+        }
+      },
+      onSuccess: () => {
+        if (walletRegistered) return;
+        setWalletRegistered(true);
+        toast.success("Wallet verified!", { id: "verify-wallet" });
+      },
     }
   );
 
@@ -168,7 +192,7 @@ const Onboard: FC = () => {
   }, [account?.result]);
 
   return (
-    <div className="w-full h-full">
+    <div className="w-full h-full my-32">
       <AnimatePresence mode="wait">
         <motion.div
           initial={{ opacity: 0 }}
@@ -178,6 +202,9 @@ const Onboard: FC = () => {
           key={`onboard-${formSection}`}
           className="w-full max-w-[1200px] mx-auto flex flex-col md:flex-row md:justify-evenly mt-10"
         >
+          {isVerifyingWallet && !account.isLoading && (
+            <LoadingBar title={"Registering your account"} />
+          )}
           {account.isLoading && <LoadingBar title={null} />}
           {account.error && (
             <div className="text-red-500">{account.error.message}</div>
@@ -186,6 +213,10 @@ const Onboard: FC = () => {
             account={account?.result}
             formSection={formSection}
             setFormSection={setFormSection}
+            walletRegistered={walletRegistered}
+            walletError={walletError}
+            setWalletError={setWalletError}
+            isVerifyingWallet={isVerifyingWallet}
           />
           <SkillsetView
             formSection={formSection}
