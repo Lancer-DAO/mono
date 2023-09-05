@@ -78,6 +78,7 @@ const Onboard: FC = () => {
         }
       },
       onSuccess: () => {
+        if (walletRegistered) return;
         setWalletRegistered(true);
         toast.success("Wallet verified!", { id: "verify-wallet" });
       },
@@ -191,7 +192,7 @@ const Onboard: FC = () => {
   }, [account?.result]);
 
   return (
-    <div className="w-full h-full">
+    <div className="w-full h-full my-32">
       <AnimatePresence mode="wait">
         <motion.div
           initial={{ opacity: 0 }}
