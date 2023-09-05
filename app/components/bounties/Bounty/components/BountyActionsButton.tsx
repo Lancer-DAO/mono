@@ -7,6 +7,7 @@ interface BountyActionsButtonProps {
   onClick?: () => void;
   disabled?: boolean;
   extraClasses?: string;
+  isLoading?: boolean;
 }
 
 export const BountyActionsButton: React.FC<BountyActionsButtonProps> = ({
@@ -15,6 +16,7 @@ export const BountyActionsButton: React.FC<BountyActionsButtonProps> = ({
   onClick,
   disabled = false,
   extraClasses,
+  isLoading = false,
 }) => (
   <motion.button
     {...smallClickAnimation}
@@ -27,6 +29,6 @@ export const BountyActionsButton: React.FC<BountyActionsButtonProps> = ({
     border h-[50px] px-3 text-textPrimary ${extraClasses}`}
     onClick={onClick}
   >
-    {text}
+    {isLoading ? "Loading..." : text}
   </motion.button>
 );

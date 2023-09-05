@@ -1,4 +1,4 @@
-import { FC } from "react";
+import { FC, useState } from "react";
 import { cancelFFA } from "@/escrow/adapters";
 import { useUserWallet } from "@/src/providers";
 import { useBounty } from "@/src/providers/bountyProvider";
@@ -12,6 +12,8 @@ export const CancelEscrow: FC = () => {
   const { currentBounty, setCurrentBounty } = useBounty();
   const { mutateAsync } = api.bountyUsers.update.useMutation();
 
+  const [isLoading, setIsLoading] = useState(false);
+
   if (
     !currentBounty ||
     !(currentBounty.isCreator && currentBounty.needsToVote.length === 0)
@@ -19,6 +21,7 @@ export const CancelEscrow: FC = () => {
     return null;
 
   const onClick = async () => {
+    setIsLoading(true);
     // If we are the creator, then skip requesting and add self as approved
     const signature = await cancelFFA(
       currentBounty.escrow,
@@ -44,9 +47,15 @@ export const CancelEscrow: FC = () => {
     });
 
     setCurrentBounty(updatedBounty);
+    setIsLoading(false);
   };
 
   return (
-    <BountyActionsButton type="red" text="Cancel Bounty" onClick={onClick} />
+    <BountyActionsButton
+      type="red"
+      text="Cancel Bounty"
+      onClick={onClick}
+      isLoading={isLoading}
+    />
   );
 };

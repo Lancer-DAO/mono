@@ -15,6 +15,7 @@ export const SubmitRequest = () => {
   const { currentBounty, setCurrentBounty } = useBounty();
   const { currentTutorialState, setCurrentTutorialState } = useTutorial();
   const { mutateAsync } = api.bountyUsers.update.useMutation();
+
   const [isLoading, setIsLoading] = useState(false);
 
   if (
@@ -95,6 +96,7 @@ export const SubmitRequest = () => {
       type="green"
       text={isLoading ? "Loading ..." : "Submit"}
       onClick={onClick}
+      isLoading={isLoading}
     />
   );
 };

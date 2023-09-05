@@ -1,4 +1,4 @@
-import { Button } from "@/components";
+import { useState } from "react";
 import { denyRequestFFA } from "@/escrow/adapters";
 import { useUserWallet } from "@/src/providers";
 import { useBounty } from "@/src/providers/bountyProvider";
@@ -13,6 +13,8 @@ export const RequestChanges = () => {
   const { currentBounty, setCurrentBounty } = useBounty();
   const { mutateAsync } = api.bountyUsers.update.useMutation();
 
+  const [isLoading, setIsLoading] = useState(false);
+
   if (
     !currentBounty ||
     !(
@@ -25,6 +27,7 @@ export const RequestChanges = () => {
 
   const onClick = async () => {
     // If we are the creator, then skip requesting and add self as approved
+    setIsLoading(true);
     const signature = await denyRequestFFA(
       new PublicKey(currentBounty.currentSubmitter.publicKey),
 
@@ -51,6 +54,7 @@ export const RequestChanges = () => {
     });
 
     setCurrentBounty(updatedBounty);
+    setIsLoading(false);
   };
 
   return (
@@ -58,6 +62,7 @@ export const RequestChanges = () => {
       type="neutral"
       text="Request Changes"
       onClick={onClick}
+      isLoading={isLoading}
     />
   );
 };

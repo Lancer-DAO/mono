@@ -15,6 +15,7 @@ export const VoteToCancel = () => {
   const { mutateAsync } = api.bountyUsers.update.useMutation();
 
   const [isAwaitingResponse, setIsAwaitingResponse] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   if (
     !currentBounty ||
@@ -77,7 +78,7 @@ export const VoteToCancel = () => {
   const onClick = async () => {
     try {
       await confirmAction();
-
+      setIsLoading(true);
       let signature = "";
       if (currentBounty?.isCreator || currentBounty?.isCurrentSubmitter) {
         signature = await voteToCancelFFA(
@@ -108,6 +109,8 @@ export const VoteToCancel = () => {
       setCurrentBounty(updatedBounty);
     } catch (err) {
       toast.error("User rejected this action");
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -117,6 +120,7 @@ export const VoteToCancel = () => {
       text="Vote To Cancel"
       disabled={isAwaitingResponse}
       onClick={onClick}
+      isLoading={isLoading}
     />
   );
 };

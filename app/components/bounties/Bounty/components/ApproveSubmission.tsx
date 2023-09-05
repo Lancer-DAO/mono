@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { approveRequestFFA, approveRequestFFAOld } from "@/escrow/adapters";
 import { PROFILE_PROJECT_PARAMS, BOUNTY_PROJECT_PARAMS } from "@/src/constants";
 import { BOUNTY_ACTIONS_TUTORIAL_II_INITIAL_STATE } from "@/src/constants/tutorials";
@@ -23,6 +24,8 @@ export const ApproveSubmission = () => {
   const { programId: buddylinkProgramId } = useReferral();
   const { mutateAsync } = api.bountyUsers.update.useMutation();
 
+  const [isLoading, setIsLoading] = useState(false);
+
   if (
     !currentBounty ||
     !(currentBounty.isCreator && currentBounty.currentSubmitter)
@@ -30,6 +33,7 @@ export const ApproveSubmission = () => {
     return null;
 
   const onClick = async () => {
+    setIsLoading(true);
     if (
       currentTutorialState?.title ===
         BOUNTY_ACTIONS_TUTORIAL_II_INITIAL_STATE.title &&
@@ -158,6 +162,7 @@ export const ApproveSubmission = () => {
         currentStep: 6,
       });
     }
+    setIsLoading(false);
   };
 
   return (
@@ -165,6 +170,7 @@ export const ApproveSubmission = () => {
       type="green"
       text="Approve Submission"
       onClick={onClick}
+      isLoading={isLoading}
     />
   );
 };

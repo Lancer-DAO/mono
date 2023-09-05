@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { denyRequestFFA } from "@/escrow/adapters";
 import { useUserWallet } from "@/src/providers";
 import { useBounty } from "@/src/providers/bountyProvider";
@@ -12,6 +13,8 @@ export const DenySubmission = () => {
   const { currentBounty, setCurrentBounty } = useBounty();
   const { mutateAsync } = api.bountyUsers.update.useMutation();
 
+  const [isLoading, setIsLoading] = useState(false);
+
   if (
     !currentBounty ||
     !(
@@ -23,6 +26,7 @@ export const DenySubmission = () => {
     return null;
 
   const onClick = async () => {
+    setIsLoading(true);
     const signature = await denyRequestFFA(
       new PublicKey(currentBounty.currentSubmitter.publicKey),
       currentBounty.escrow,
@@ -50,9 +54,15 @@ export const DenySubmission = () => {
     });
 
     setCurrentBounty(updatedBounty);
+    setIsLoading(false);
   };
 
   return (
-    <BountyActionsButton type="red" text="Deny Submission" onClick={onClick} />
+    <BountyActionsButton
+      type="red"
+      text="Deny Submission"
+      onClick={onClick}
+      isLoading={isLoading}
+    />
   );
 };
