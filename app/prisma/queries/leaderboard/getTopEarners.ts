@@ -14,6 +14,7 @@ export const getTopEarners = async () => {
         JOIN User AS U ON BU.userid = U.id
         WHERE B.state = 'complete'
         AND BU.relations = 'completer'
+        AND BU.userid NOT IN (1, 6, 55, 7, 97, 92)
         GROUP BY BU.userid, U.name
         ORDER BY total_earned DESC
         LIMIT 20;

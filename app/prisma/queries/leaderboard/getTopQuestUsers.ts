@@ -12,6 +12,7 @@ export const getTopQuestUsers = async () => {
     JOIN Bounty ON BountyUser.bountyid = Bounty.id
     WHERE Bounty.state = 'complete'
     AND BountyUser.relations = 'completer'
+    AND BountyUser.userid NOT IN (1, 6, 55, 7, 97, 92)
     GROUP BY User.id
     ORDER BY total_bounties DESC
     LIMIT 10;
