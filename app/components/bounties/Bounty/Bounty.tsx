@@ -28,9 +28,9 @@ interface BountyActionsUserProps {
 
 export const Bounty = () => {
   const { currentUser } = useUserWallet();
-  const { setCurrentBounty } = useBounty();
+  const { setCurrentBounty, currentBounty } = useBounty();
   const router = useRouter();
-  const { data: currentBounty } = api.bounties.getBounty.useQuery(
+  const { data: currentBountyData } = api.bounties.getBounty.useQuery(
     {
       id: parseInt(router.query.quest as string),
       currentUserId: currentUser?.id,
@@ -67,15 +67,6 @@ export const Bounty = () => {
       ))}
     </>
   );
-
-  useEffect(() => {
-    const setFuturePoll = () => {
-      setPollId(setTimeout(() => setFuturePoll(), 5000));
-    };
-    if (!pollId) {
-      setPollId(setTimeout(() => setFuturePoll(), 5000));
-    }
-  }, []);
 
   useEffect(() => {
     if (currentBounty?.links) {
