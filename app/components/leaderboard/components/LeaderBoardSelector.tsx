@@ -26,9 +26,8 @@ export const LeaderBoardSelector = () => {
   const router = useRouter();
   const currentLeaderboard = router.pathname;
   const links = LEADERBOARD_LINKS.slice(0, currentUser?.isAdmin ? 4 : 3);
-  console.log(currentLeaderboard);
   return (
-    <div className="flex gap-8 items-center w-full mb-10 ml-28">
+    <div className="flex gap-8 items-center mb-10 w-fit">
       {links.map(({ href, children }, index) => {
         return (
           <LinkButton

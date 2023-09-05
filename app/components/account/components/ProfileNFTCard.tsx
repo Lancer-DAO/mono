@@ -206,7 +206,7 @@ export const ProfileNFTCard = ({
                 }}
                 type="green"
                 text="Send Message"
-                extraClasses="w-fit"
+                extraClasses="w-fit mb-[6px]"
               />
             ) : self && IS_CUSTODIAL ? (
               <BountyActionsButton
@@ -215,7 +215,7 @@ export const ProfileNFTCard = ({
                 }}
                 type="green"
                 text="Cash Out"
-                extraClasses="w-fit"
+                extraClasses="w-fit mb-[6px]"
               />
             ) : (
               <div className="h-[56px]"></div>
