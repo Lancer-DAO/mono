@@ -1,4 +1,4 @@
-import { FC } from "react";
+import { FC, useState } from "react";
 import { cancelFFA } from "@/escrow/adapters";
 import { useUserWallet } from "@/src/providers";
 import { useBounty } from "@/src/providers/bountyProvider";
@@ -6,11 +6,14 @@ import { BOUNTY_USER_RELATIONSHIP, BountyState } from "@/types/";
 import { api } from "@/src/utils/api";
 import { updateList } from "@/src/utils";
 import { BountyActionsButton } from ".";
+import toast from "react-hot-toast";
 
 export const CancelEscrow: FC = () => {
   const { currentUser, currentWallet, program, provider } = useUserWallet();
   const { currentBounty, setCurrentBounty } = useBounty();
   const { mutateAsync } = api.bountyUsers.update.useMutation();
+
+  const [isLoading, setIsLoading] = useState(false);
 
   if (
     !currentBounty ||
@@ -19,6 +22,7 @@ export const CancelEscrow: FC = () => {
     return null;
 
   const onClick = async () => {
+    setIsLoading(true);
     // If we are the creator, then skip requesting and add self as approved
     const signature = await cancelFFA(
       currentBounty.escrow,
@@ -44,9 +48,16 @@ export const CancelEscrow: FC = () => {
     });
 
     setCurrentBounty(updatedBounty);
+    setIsLoading(false);
+    toast.success("Bounty canceled");
   };
 
   return (
-    <BountyActionsButton type="red" text="Cancel Bounty" onClick={onClick} />
+    <BountyActionsButton
+      type="red"
+      text="Cancel Bounty"
+      onClick={onClick}
+      isLoading={isLoading}
+    />
   );
 };

@@ -9,12 +9,14 @@ import { BOUNTY_USER_RELATIONSHIP, BountyState } from "@/types/";
 import { updateList } from "@/src/utils";
 import { BountyActionsButton } from ".";
 import { useState } from "react";
+import toast from "react-hot-toast";
 
 export const SubmitRequest = () => {
   const { currentUser, currentWallet, program, provider } = useUserWallet();
   const { currentBounty, setCurrentBounty } = useBounty();
   const { currentTutorialState, setCurrentTutorialState } = useTutorial();
   const { mutateAsync } = api.bountyUsers.update.useMutation();
+
   const [isLoading, setIsLoading] = useState(false);
 
   if (
@@ -77,6 +79,7 @@ export const SubmitRequest = () => {
     });
 
     setCurrentBounty(updatedBounty);
+    setIsLoading(false);
     if (
       currentTutorialState?.title ===
         BOUNTY_ACTIONS_TUTORIAL_II_INITIAL_STATE.title &&
@@ -88,6 +91,7 @@ export const SubmitRequest = () => {
         currentStep: 2,
       });
     }
+    toast.success("Successfully submitted request");
   };
 
   return (
@@ -95,6 +99,7 @@ export const SubmitRequest = () => {
       type="green"
       text={isLoading ? "Loading ..." : "Submit"}
       onClick={onClick}
+      isLoading={isLoading}
     />
   );
 };

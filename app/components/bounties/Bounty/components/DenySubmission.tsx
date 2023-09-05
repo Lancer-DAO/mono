@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { denyRequestFFA } from "@/escrow/adapters";
 import { useUserWallet } from "@/src/providers";
 import { useBounty } from "@/src/providers/bountyProvider";
@@ -6,11 +7,14 @@ import { PublicKey } from "@solana/web3.js";
 import { BOUNTY_USER_RELATIONSHIP, BountyState } from "@/types/";
 import { updateList } from "@/src/utils";
 import { BountyActionsButton } from ".";
+import toast from "react-hot-toast";
 
 export const DenySubmission = () => {
   const { currentUser, currentWallet, program, provider } = useUserWallet();
   const { currentBounty, setCurrentBounty } = useBounty();
   const { mutateAsync } = api.bountyUsers.update.useMutation();
+
+  const [isLoading, setIsLoading] = useState(false);
 
   if (
     !currentBounty ||
@@ -23,6 +27,7 @@ export const DenySubmission = () => {
     return null;
 
   const onClick = async () => {
+    setIsLoading(true);
     const signature = await denyRequestFFA(
       new PublicKey(currentBounty.currentSubmitter.publicKey),
       currentBounty.escrow,
@@ -50,9 +55,16 @@ export const DenySubmission = () => {
     });
 
     setCurrentBounty(updatedBounty);
+    setIsLoading(false);
+    toast.success("Submission denied");
   };
 
   return (
-    <BountyActionsButton type="red" text="Deny Submission" onClick={onClick} />
+    <BountyActionsButton
+      type="red"
+      text="Deny Submission"
+      onClick={onClick}
+      isLoading={isLoading}
+    />
   );
 };
