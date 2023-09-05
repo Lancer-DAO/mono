@@ -10,7 +10,7 @@ import {
   useState,
 } from "react";
 import { Client, Member, Organization, Treasury } from "@ladderlabs/buddy-sdk";
-import { PublicKey, Transaction } from "@solana/web3.js";
+import { Keypair, PublicKey, Transaction } from "@solana/web3.js";
 import { IReferralContext } from "./types";
 import { getAssociatedTokenAddressSync } from "@solana/spl-token";
 import { IS_MAINNET, USDC_MINT } from "@/src/constants";
@@ -28,6 +28,7 @@ export const ReferralContext = createContext<IReferralContext>({
   initialized: false,
   referrer: PublicKey.default,
   programId: PublicKey.default,
+  getAmountReferred: async () => 0,
   getSubmitterReferrer: async () => PublicKey.default,
   claim: () => null,
   createReferralMember: () => null,
@@ -64,6 +65,7 @@ const ReferralProvider: FunctionComponent<IReferralProps> = ({ children }) => {
   const { mutateAsync: addReferrer } = api.users.addReferrer.useMutation();
   const publicKey = currentWallet?.publicKey;
   const sendTransaction = currentWallet?.sendTransaction;
+  const LIMIT_TO_REFER = 5;
 
   const handleFetches = useCallback(async () => {
     try {
@@ -134,6 +136,7 @@ const ReferralProvider: FunctionComponent<IReferralProps> = ({ children }) => {
   const createReferralMember = useCallback(
     async (mint?: PublicKey) => {
       if (!client) throw CLIENT_NOT_SET;
+
       try {
         const instructions = [];
 
@@ -188,6 +191,13 @@ const ReferralProvider: FunctionComponent<IReferralProps> = ({ children }) => {
             }
           }
         } else {
+          // TODO: replace with actually payer
+          // Also needs to sign
+          const payer = Keypair.generate();
+
+          const amountsReferred = await getAmountReferred();
+          if (amountsReferred >= LIMIT_TO_REFER) return null;
+
           const name = Client.generateMemberName();
           memberPDA = client.pda.getMemberPDA(ORGANIZATION_NAME, name);
           if (mint) {
@@ -196,7 +206,8 @@ const ReferralProvider: FunctionComponent<IReferralProps> = ({ children }) => {
                 ORGANIZATION_NAME,
                 name,
                 mint,
-                cachedReferrer
+                cachedReferrer,
+                payer.publicKey
               ))
             );
           } else {
@@ -204,7 +215,8 @@ const ReferralProvider: FunctionComponent<IReferralProps> = ({ children }) => {
               ...(await client.initialize.createMember(
                 ORGANIZATION_NAME,
                 name,
-                cachedReferrer
+                cachedReferrer,
+                payer.publicKey
               ))
             );
           }
@@ -238,6 +250,14 @@ const ReferralProvider: FunctionComponent<IReferralProps> = ({ children }) => {
     },
     [client, member, cachedReferrer, publicKey, organization]
   );
+
+  const getAmountReferred = useCallback(async () => {
+    if (member) {
+      const referred = await client.member.getByTreasuryReferrer(member.account.owner);
+      return referred.length;
+    }
+    return 0;
+  }, [member]);
 
   const getRemainingAccounts = useCallback(
     async (wallet: PublicKey, mint: PublicKey) => {
@@ -443,6 +463,7 @@ const ReferralProvider: FunctionComponent<IReferralProps> = ({ children }) => {
     initialized,
     referrer,
     programId,
+    getAmountReferred,
     getSubmitterReferrer,
     claim,
     createReferralMember,
@@ -457,7 +478,3 @@ const ReferralProvider: FunctionComponent<IReferralProps> = ({ children }) => {
 
 export default ReferralProvider;
 
-// TODO: for claim, add multi mints
-// TODO: for remaining accounts, check mint - DONE
-// TODO: rewards distribution - DONE
-// TODO: on create buddy, create treasury if doesn't have the treasury - DONE

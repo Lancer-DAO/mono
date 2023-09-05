@@ -13,6 +13,7 @@ export interface IReferralContext {
   initialized: boolean;
   referrer: PublicKey;
   programId: PublicKey;
+  getAmountReferred: () => Promise<number>
   getSubmitterReferrer: (
     submitter: PublicKey,
     alternateMint?: PublicKey
