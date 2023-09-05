@@ -1,17 +1,22 @@
-## Figma Link: 
+## Figma Link:
+
 https://www.figma.com/file/y5KwskdwqOLHZk7TfwNpdE/Lancer-x-Developer-DAO-x-Texaglo?type=design&node-id=31%3A8833&t=PANeGlnY9LQOVJLb-1
 
 ## Getting Started with Lancer
 
 #### Start the app
 
+NOTE: we have moved from yarn to npm due to some technical issues
+
 1. clone the repository
 2. `cd app`
-3. `yarn`
+3. `npm i`
 4. Ask Jack for the `.env` file
-5. `yarn run`
+5. `npm run dev`
 
 #### Build and load the extension
+
+NOTE: the Lancer extension has been depracated for the time being.
 
 1. `cd extension`
 2. `yarn`

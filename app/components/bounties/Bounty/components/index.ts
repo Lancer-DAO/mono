@@ -4,7 +4,7 @@ export * from "./BountyActionsButton";
 export * from "./CancelEscrow";
 export * from "./DenySubmission";
 export * from "./RequestChanges";
-export * from "./RequestToSubmit";
+export * from "./Apply";
 export * from "./SubmitRequest";
 export * from "./SubmitterSection";
 export * from "./VoteToCancel";

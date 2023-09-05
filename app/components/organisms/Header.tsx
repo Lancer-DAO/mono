@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { AccountHeaderOptions, TutorialsModal } from "@/components";
+import { AccountHeaderOptions, TutorialsModal, LinkButton } from "@/components";
 import Logo from "../@icons/Logo";
 import { HelpCircle } from "react-feather";
 import { useState } from "react";
@@ -10,10 +10,27 @@ import { IS_CUSTODIAL } from "@/src/constants";
 import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { useUserWallet } from "@/src/providers";
+import { useChat } from "@/src/providers/chatProvider";
 
 const HEADER_LINKS = [
-  { href: "/create", children: "New Quest", id: "create-bounty-link" },
-  { href: "/quests", children: "Quests", id: "bounties-link" },
+  {
+    href: "/create",
+    children: "New Quest",
+    id: "create-bounty-link",
+    disabledText: "You must be Approved to create a Quest.",
+  },
+  {
+    href: "/quests",
+    children: "Quests",
+    id: "bounties-link",
+    disabledText: "You must be Approved to view Quests.",
+  },
+  ,
+  {
+    href: "/leaderboard",
+    children: "Leaderboards",
+    id: "leaderboards-link",
+  },
 ];
 
 export const Header = () => {
@@ -22,25 +39,39 @@ export const Header = () => {
   const [isTutorialButtonHovered, setIsTutorialButtonHovered] = useState(false);
   const [showTutorialModal, setShowTutorialModal] = useState(false);
 
+  const { currentUser } = useUserWallet();
+  const { publicKey } = useWallet();
   const { currentWallet } = useUserWallet();
 
   return (
-    <div className="sticky py-4 top-0 z-20 bg-bgLancer">
+    <div className="py-4 top-0 z-20 bg-bgLancer">
       <div className="flex items-center gap-8 mx-auto w-[90%]">
         <Link href="/" className="flex items-center gap-0.5">
           <Logo width="auto" height="35px" />
           <p className="text-lg text-bgLancerSecondary">Lancer</p>
         </Link>
         <div className="flex gap-8 items-center w-full">
-          {HEADER_LINKS.map(({ href, children }) => {
-            return (
-              <a href={href} className="text-lg font-bold" key={href}>
-                {children}
-              </a>
-            );
-          })}
+          {currentUser &&
+            HEADER_LINKS.map(({ href, children, disabledText }) => {
+              return (
+                <LinkButton
+                  href={href}
+                  className="text-lg font-bold"
+                  key={href}
+                  disabled={
+                    children === "Leaderboards"
+                      ? !currentUser?.hasFinishedOnboarding
+                      : !currentUser.hasBeenApproved ||
+                        !currentUser?.hasFinishedOnboarding
+                  }
+                  disabledText={disabledText}
+                >
+                  {children}
+                </LinkButton>
+              );
+            })}
           <div className="flex items-center gap-8 ml-auto">
-            {currentWallet?.publicKey && <AccountHeaderOptions />}
+            {<AccountHeaderOptions />}
 
             {!IS_CUSTODIAL && (
               <div

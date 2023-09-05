@@ -19,7 +19,6 @@ export const login = protectedProcedure.mutation(async ({ ctx }) => {
   } else {
     try {
       let user = await queries.user.getByEmail(email);
-      // console.log("picture", user.picture);
       if (!user.picture) {
         await queries.user.updatePicture(user.id, picture);
         user = await queries.user.getByEmail(email);

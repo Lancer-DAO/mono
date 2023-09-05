@@ -23,5 +23,5 @@ export const fundBounty = protectedProcedure
     const returnValue = await queries.bounty.get(bountyId, ctx.user.id);
     HostedHooksClient.sendWebhook(returnValue, "bounty.funded");
 
-    return { bounty, escrow };
+    return returnValue;
   });

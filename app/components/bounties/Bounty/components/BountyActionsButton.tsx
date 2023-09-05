@@ -6,6 +6,7 @@ interface BountyActionsButtonProps {
   text: string;
   onClick?: () => void;
   disabled?: boolean;
+  extraClasses?: string;
 }
 
 export const BountyActionsButton: React.FC<BountyActionsButtonProps> = ({
@@ -13,6 +14,7 @@ export const BountyActionsButton: React.FC<BountyActionsButtonProps> = ({
   text,
   onClick,
   disabled = false,
+  extraClasses,
 }) => (
   <motion.button
     {...smallClickAnimation}
@@ -22,7 +24,7 @@ export const BountyActionsButton: React.FC<BountyActionsButtonProps> = ({
     ${type === "green" && "bg-primaryBtn border-primaryBtnBorder"}
     ${type === "neutral" && "bg-neutralBtn border-neutralBtnBorder"}
     ${type === "red" && "bg-secondaryBtn border-secondaryBtnBorder"}
-    border h-[50px] px-3 text-textPrimary`}
+    border h-[50px] px-3 text-textPrimary ${extraClasses}`}
     onClick={onClick}
   >
     {text}
