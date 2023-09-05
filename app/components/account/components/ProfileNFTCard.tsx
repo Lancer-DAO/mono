@@ -90,7 +90,7 @@ export const ProfileNFTCard = ({
         }
       }
     };
-    if (currentWallet.publicKey) {
+    if (currentWallet?.publicKey) {
       getBalanceAsync();
     }
   }, [currentWallet?.publicKey]);
