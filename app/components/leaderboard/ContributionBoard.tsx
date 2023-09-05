@@ -87,11 +87,11 @@ export const ContributionBoard: FC<any> = () => {
   }, [selectedLanguage]);
 
   return (
-    <>
+    <div className="w-full flex flex-col items-center justify-center mt-10 gap-2.5">
       <LeaderBoardSelector />
-      <div className="flex align-center justify-center mt-10 gap-[10px]">
-        <div className="p-4 bg-gray-200 rounded-md">
-          <h2 className="text-lg font-semibold mb-2">
+      <div className="w-full max-w-[1200px] mx-auto flex items-start gap-2.5">
+        <div className="p-4 bg-gray-200 rounded-md w-fit">
+          <h2 className="text-lg font-bold mb-2">
             Filter by Programming Language
           </h2>
           <ul className="space-y-2">
@@ -110,21 +110,19 @@ export const ContributionBoard: FC<any> = () => {
             ))}
           </ul>
         </div>
-        <div className="bg-gray-100 w-[70%] flex flex-col px-[20px] py-[10px] align-center justify-center">
-          <h1 className="text-3xl font-semibold mb-4 w-full">
-            Top Developers In The Last Week
-          </h1>
-          <div className="w-full flex justify-between w-[100%] border-b border-gray-300">
+        <div className="bg-gray-100 w-full flex flex-col px-[20px] py-2.5 items-center justify-center">
+          <h1 className="text-3xl font-semibold mb-4 w-full">Top Developers</h1>
+          <div className="w-full flex justify-between border-b border-gray-300">
             <p className="font-bold text-xl">Github Username</p>
             <p className="font-bold text-xl">Total Lines Contributed</p>
           </div>
           {topDevs &&
             topDevs.map((dev, index) => (
               <div
-                key={dev.index}
-                className="flex items-center justify-between py-2 border-b border-gray-300 w-[100%]"
+                key={index}
+                className="flex items-center justify-between py-2 border-b border-gray-300 w-full"
               >
-                <div className="flex gap-2 align-center">
+                <div className="flex gap-2 items-center">
                   <a
                     target="_blank"
                     href={`https://github.com/${dev.github_name}`}
@@ -147,6 +145,6 @@ export const ContributionBoard: FC<any> = () => {
             ))}
         </div>
       </div>
-    </>
+    </div>
   );
 };

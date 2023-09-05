@@ -44,15 +44,14 @@ export const LeaderboardCommits: FC<any> = ({ self }) => {
   }, [selectedLanguage, dateValue]);
 
   return (
-    <>
+    <div className="flex flex-col items-center justify-center mt-10 gap-2.5">
       <LeaderBoardSelector />
-      <div className="flex align-center justify-center mt-10 gap-[10px]">
-        <div className="bg-gray-100 w-[70%] flex flex-col px-[20px] py-[10px] align-center justify-center">
-          <h1 className="text-3xl font-semibold mb-4 w-full">
-            Top Developers By Commits In The Last Week
-          </h1>
+      <div className="bg-gray-100 w-[70%] flex flex-col px-5 py-2.5 items-center justify-center">
+        <h1 className="text-3xl font-semibold mb-4 w-full">
+          Top Developers By Commits
+        </h1>
 
-          <h3>Select Date Range</h3>
+        {/* <h3>Select Date Range</h3>
           <Datepicker
             minDate={new Date("2023-08-02")}
             maxDate={new Date()}
@@ -61,36 +60,35 @@ export const LeaderboardCommits: FC<any> = ({ self }) => {
             primaryColor="green"
             value={dateValue}
             onChange={handleValueChange}
-          />
+          /> */}
 
-          <div className="w-full flex justify-between w-[100%] border-b border-gray-300">
-            <p className="font-bold text-xl">Github Username</p>
-            <p className="font-bold text-xl">Total Commits</p>
-          </div>
-          {topDevs &&
-            topDevs.map((dev, index) => (
-              <div
-                key={dev.index}
-                className="flex items-center justify-between py-2 border-b border-gray-300 w-[100%]"
-              >
-                <div className="flex gap-2 align-center">
-                  <a
-                    target="_blank"
-                    href={`https://github.com/${dev.github_name}`}
-                    rel="noreferrer"
-                  >
-                    <p className="text-xl">
-                      {index + 1}. {dev.github_name}
-                    </p>
-                  </a>
-                  {/* {change[dev.name] == "up" ? <ArrowUp color="green"/>
-                : change[dev.name] == "down" ? <ArrowDown color="red" /> : <span>—</span>} */}
-                </div>
-                <p className="text-xl">{dev.total_commits}</p>
-              </div>
-            ))}
+        <div className="w-full flex justify-between border-b border-gray-300">
+          <p className="font-bold text-xl">Github Username</p>
+          <p className="font-bold text-xl">Total Commits</p>
         </div>
+        {topDevs &&
+          topDevs.map((dev, index) => (
+            <div
+              key={dev.index}
+              className="flex items-center justify-between py-2 border-b border-gray-300 w-[100%]"
+            >
+              <div className="flex gap-2 items-center">
+                <a
+                  target="_blank"
+                  href={`https://github.com/${dev.github_name}`}
+                  rel="noreferrer"
+                >
+                  <p className="text-xl">
+                    {index + 1}. {dev.github_name}
+                  </p>
+                </a>
+                {/* {change[dev.name] == "up" ? <ArrowUp color="green"/>
+                : change[dev.name] == "down" ? <ArrowDown color="red" /> : <span>—</span>} */}
+              </div>
+              <p className="text-xl">{dev.total_commits}</p>
+            </div>
+          ))}
       </div>
-    </>
+    </div>
   );
 };
