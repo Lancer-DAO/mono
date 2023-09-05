@@ -183,107 +183,117 @@ export const Bounty = () => {
         </div>
         {/* bountyactions */}
         <div className="bg-white w-[540px] h-fit rounded-md flex flex-col gap-10 p-10">
-          <div className="flex flex-col gap-5" id="contributors-section">
-            {currentBounty?.creator && (
-              <BountActionsUser
-                title="Client"
-                users={[currentBounty.creator.user]}
-              />
-            )}
-            {currentBounty && currentBounty.deniedRequesters.length > 0 && (
-              <BountActionsUser
-                title="Denied Requesters"
-                users={currentBounty.deniedRequesters.map(
-                  (submitter) => submitter.user
+          {currentUser.hasBeenApproved || currentBounty.isCreator ? (
+            <div className="flex flex-col gap-5" id="contributors-section">
+              {currentBounty?.creator && (
+                <BountActionsUser
+                  title="Client"
+                  users={[currentBounty.creator.user]}
+                />
+              )}
+              {currentBounty && currentBounty.deniedRequesters.length > 0 && (
+                <BountActionsUser
+                  title="Denied Requesters"
+                  users={currentBounty.deniedRequesters.map(
+                    (submitter) => submitter.user
+                  )}
+                />
+              )}
+              {currentBounty &&
+                currentBounty.requestedSubmitters.length > 0 &&
+                currentBounty.isCreator && (
+                  <>
+                    <label className="font-bold text-sm">
+                      Requested Applicants
+                    </label>
+                    {currentBounty.requestedSubmitters.map(
+                      (submitter, index) => (
+                        <SubmitterSection
+                          submitter={submitter}
+                          type="requested"
+                          key={`requested-submitters-${submitter.userid}`}
+                          index={index}
+                        />
+                      )
+                    )}
+                  </>
                 )}
-              />
-            )}
-            {currentBounty &&
-              currentBounty.requestedSubmitters.length > 0 &&
-              currentBounty.isCreator && (
-                <>
-                  <label className="font-bold text-sm">
-                    Requested Applicants
-                  </label>
-                  {currentBounty.requestedSubmitters.map((submitter, index) => (
-                    <SubmitterSection
-                      submitter={submitter}
-                      type="requested"
-                      key={`requested-submitters-${submitter.userid}`}
-                      index={index}
-                    />
-                  ))}
-                </>
-              )}
-            {currentBounty &&
-              currentBounty.approvedSubmitters.length > 0 &&
-              currentBounty.isCreator && (
-                <>
-                  <label className="font-bold text-sm">
-                    Approved Applicants
-                  </label>
-                  {currentBounty.approvedSubmitters.map((submitter, index) => (
-                    <SubmitterSection
-                      submitter={submitter}
-                      type="approved"
-                      key={`approved-submitters-${submitter.userid}`}
-                      index={index}
-                    />
-                  ))}
-                </>
-              )}
-            {currentBounty &&
-              currentBounty.currentSubmitter &&
-              currentBounty.isCreator && (
+              {currentBounty &&
+                currentBounty.approvedSubmitters.length > 0 &&
+                currentBounty.isCreator && (
+                  <>
+                    <label className="font-bold text-sm">
+                      Approved Applicants
+                    </label>
+                    {currentBounty.approvedSubmitters.map(
+                      (submitter, index) => (
+                        <SubmitterSection
+                          submitter={submitter}
+                          type="approved"
+                          key={`approved-submitters-${submitter.userid}`}
+                          index={index}
+                        />
+                      )
+                    )}
+                  </>
+                )}
+              {currentBounty &&
+                currentBounty.currentSubmitter &&
+                currentBounty.isCreator && (
+                  <BountActionsUser
+                    title="Submissions"
+                    users={[currentBounty.currentSubmitter.user]}
+                  />
+                )}
+              {currentBounty.isCreator &&
+                currentBounty.changesRequestedSubmitters.length > 0 && (
+                  <BountActionsUser
+                    title="Changes Requested"
+                    users={currentBounty.changesRequestedSubmitters.map(
+                      (submitter) => submitter.user
+                    )}
+                  />
+                )}
+              {currentBounty.isCreator &&
+                currentBounty.deniedSubmitters.length > 0 && (
+                  <BountActionsUser
+                    title="Denied Submitters"
+                    users={currentBounty.deniedSubmitters.map(
+                      (submitter) => submitter.user
+                    )}
+                  />
+                )}
+              {currentBounty.completer && (
                 <BountActionsUser
-                  title="Submissions"
-                  users={[currentBounty.currentSubmitter.user]}
+                  title="Completed By"
+                  users={[currentBounty.completer.user]}
                 />
               )}
-            {currentBounty.isCreator &&
-              currentBounty.changesRequestedSubmitters.length > 0 && (
-                <BountActionsUser
-                  title="Changes Requested"
-                  users={currentBounty.changesRequestedSubmitters.map(
-                    (submitter) => submitter.user
-                  )}
-                />
-              )}
-            {currentBounty.isCreator &&
-              currentBounty.deniedSubmitters.length > 0 && (
-                <BountActionsUser
-                  title="Denied Submitters"
-                  users={currentBounty.deniedSubmitters.map(
-                    (submitter) => submitter.user
-                  )}
-                />
-              )}
-            {currentBounty.completer && (
-              <BountActionsUser
-                title="Completed By"
-                users={[currentBounty.completer.user]}
-              />
-            )}
-            {currentBounty.isCreator &&
-              currentBounty.votingToCancel.length > 0 && (
-                <BountActionsUser
-                  title="Voting To Cancel"
-                  users={currentBounty.votingToCancel.map(
-                    (submitter) => submitter.user
-                  )}
-                />
-              )}
-            {currentBounty.isCreator &&
-              currentBounty.needsToVote.length > 0 && (
-                <BountActionsUser
-                  title="Votes Needed to Cancel"
-                  users={currentBounty.needsToVote.map(
-                    (submitter) => submitter.user
-                  )}
-                />
-              )}
-            {!!currentBounty && <BountyActions />}
-          </div>
+              {currentBounty.isCreator &&
+                currentBounty.votingToCancel.length > 0 && (
+                  <BountActionsUser
+                    title="Voting To Cancel"
+                    users={currentBounty.votingToCancel.map(
+                      (submitter) => submitter.user
+                    )}
+                  />
+                )}
+              {currentBounty.isCreator &&
+                currentBounty.needsToVote.length > 0 && (
+                  <BountActionsUser
+                    title="Votes Needed to Cancel"
+                    users={currentBounty.needsToVote.map(
+                      (submitter) => submitter.user
+                    )}
+                  />
+                )}
+              {!!currentBounty && <BountyActions />}
+            </div>
+          ) : (
+            <div className="text-industryRedBorder">
+              You must be approved to interact with Quests
+            </div>
+          )}
         </div>
       </div>
     </>

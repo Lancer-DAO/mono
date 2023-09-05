@@ -17,13 +17,11 @@ const HEADER_LINKS = [
     href: "/create",
     children: "New Quest",
     id: "create-bounty-link",
-    disabledText: "You must be Approved to create a Quest.",
   },
   {
     href: "/quests",
     children: "Quests",
     id: "bounties-link",
-    disabledText: "You must be Approved to view Quests.",
   },
   ,
   {
@@ -52,19 +50,13 @@ export const Header = () => {
         </Link>
         <div className="flex gap-8 items-center w-full">
           {currentUser &&
-            HEADER_LINKS.map(({ href, children, disabledText }) => {
+            HEADER_LINKS.map(({ href, children }) => {
               return (
                 <LinkButton
                   href={href}
                   className="text-lg font-bold"
                   key={href}
-                  disabled={
-                    children === "Leaderboards"
-                      ? !currentUser?.hasFinishedOnboarding
-                      : !currentUser.hasBeenApproved ||
-                        !currentUser?.hasFinishedOnboarding
-                  }
-                  disabledText={disabledText}
+                  disabled={!currentUser?.hasFinishedOnboarding}
                 >
                   {children}
                 </LinkButton>

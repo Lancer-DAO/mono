@@ -47,14 +47,6 @@ export async function getServerSideProps(
       },
     };
   }
-  if (!user.hasBeenApproved) {
-    return {
-      redirect: {
-        destination: "/account",
-        permanent: false,
-      },
-    };
-  }
   return { props: {} };
 }
 
