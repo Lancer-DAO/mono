@@ -8,7 +8,9 @@ import type { AppProps } from "next/app";
 import { useRouter } from "next/router";
 import { ReactElement, ReactNode, useEffect } from "react";
 import { DefaultLayout } from "../components";
-
+import { getSession, withPageAuthRequired } from "@auth0/nextjs-auth0";
+import { GetServerSidePropsContext } from "next";
+import * as queries from "@/prisma/queries";
 // import your default seo configuration
 import SEO from "../next-seo.config";
 import { Toaster } from "react-hot-toast";
@@ -26,6 +28,8 @@ type AppPropsWithLayout = AppProps & {
 
 const App = ({ Component, pageProps }: AppPropsWithLayout) => {
   const router = useRouter();
+  const user = JSON.parse(pageProps.user);
+  console.log("user, ", user);
 
   const getLayout =
     Component.getLayout ?? ((page) => <DefaultLayout>{page}</DefaultLayout>);
@@ -42,7 +46,7 @@ const App = ({ Component, pageProps }: AppPropsWithLayout) => {
 
   return (
     <DebugModeProvider>
-      <AllProviders>
+      <AllProviders user={user}>
         <DefaultSeo {...SEO} />
         <Toaster />
         {getLayout(<Component {...pageProps} />)}

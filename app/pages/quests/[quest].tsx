@@ -10,6 +10,8 @@ import { Bounty } from "../../components/bounties/Bounty/Bounty";
 import { NextSeo } from "next-seo";
 import { GetServerSidePropsContext } from "next";
 import { prisma } from "@/server/db";
+import * as queries from "@/prisma/queries";
+import { useBounty } from "@/src/providers/bountyProvider";
 
 export async function getServerSideProps(
   context: GetServerSidePropsContext<{ id: string; req; res }>
@@ -25,19 +27,12 @@ export async function getServerSideProps(
       },
     };
   }
+  const questId = parseInt(context.query.quest as string);
   const { email } = metadata.user;
 
-  const user = await prisma.user.findUnique({
-    where: {
-      email,
-    },
-    select: {
-      id: true,
-      isAdmin: true,
-      hasFinishedOnboarding: true,
-      hasBeenApproved: true,
-    },
-  });
+  const user = await queries.user.getByEmail(email);
+
+  const quest = await queries.bounty.get(questId, user.id);
 
   if (!user || !user.hasFinishedOnboarding) {
     return {
@@ -47,10 +42,17 @@ export async function getServerSideProps(
       },
     };
   }
-  return { props: {} };
+  return {
+    props: { quest: JSON.stringify(quest), user: JSON.stringify(user) },
+  };
 }
 
-const BountyDetailPage = () => {
+const BountyDetailPage = ({ quest }) => {
+  const { setCurrentBounty, currentBounty } = useBounty();
+  if (!currentBounty && quest) {
+    setCurrentBounty(JSON.parse(quest));
+  }
+
   return (
     <>
       <NextSeo title="Lancer | Quest" description="Lancer Quest" />

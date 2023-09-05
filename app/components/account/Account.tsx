@@ -7,7 +7,7 @@ import {
 } from "@/src/constants/tutorials";
 import { useUserWallet } from "@/src/providers";
 import { useTutorial } from "@/src/providers/tutorialProvider";
-import { ProfileNFT } from "@/types/";
+import { ProfileNFT, User } from "@/types/";
 import { api } from "@/utils";
 import { createUnderdogClient } from "@underdog-protocol/js";
 import dayjs from "dayjs";
@@ -25,26 +25,15 @@ const underdogClient = createUnderdogClient({});
 
 interface Props {
   self: boolean;
+  fetchedUser: User;
 }
 
-export const Account: FC<Props> = ({ self }) => {
+export const Account: FC<Props> = ({ self, fetchedUser }) => {
   const router = useRouter();
 
   // api + context
   const { currentUser, currentWallet } = useUserWallet();
   const { currentTutorialState, setCurrentTutorialState } = useTutorial();
-  const {
-    data: fetchedUser,
-    isLoading: userLoading,
-    isError: userError,
-  } = api.users.getUser.useQuery(
-    {
-      id: self ? currentUser?.id : parseInt(router.query.account as string),
-    },
-    {
-      enabled: self ? !!currentUser : !!router.query.account,
-    }
-  );
   const [profileNFT, setProfileNFT] = useState<ProfileNFT>();
   const [showResumeModal, setShowResumeModal] = useState(false);
 
@@ -132,16 +121,6 @@ export const Account: FC<Props> = ({ self }) => {
       </div>
     );
 
-  if (userError) {
-    return (
-      <div className="flex items-center justify-center text-xl">
-        Error loading profile
-      </div>
-    );
-  }
-  if (userLoading) {
-    return <LoadingBar title={"Loading profile"} />;
-  }
   return (
     <>
       <div className="w-full md:w-[90%] mx-auto px-4 md:px-0 py-10">

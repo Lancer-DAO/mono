@@ -61,9 +61,7 @@ export default function Home() {
         <title>Lancer | Account</title>
         <meta name="description" content="Lancer Account" />
       </Head>
-      <main>
-        <Account self={false} />
-      </main>
+      <main>{/* <Account self={false} /> */}</main>
     </>
   );
 }
