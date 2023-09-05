@@ -9,6 +9,7 @@ import { BOUNTY_USER_RELATIONSHIP } from "@/types/";
 import { updateList } from "@/src/utils";
 import { BountyActionsButton } from ".";
 import { useState } from "react";
+import toast from "react-hot-toast";
 
 export const Apply = () => {
   const { currentUser, currentWallet } = useUserWallet();
@@ -68,6 +69,7 @@ export const Apply = () => {
         });
       }, 100);
     }
+    toast.success("Application sent");
   };
 
   return (

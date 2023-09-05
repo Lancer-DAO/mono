@@ -107,6 +107,7 @@ export const VoteToCancel = () => {
         label: "vote-to-cancel",
       });
       setCurrentBounty(updatedBounty);
+      toast.success("Successfully voted to cancel");
     } catch (err) {
       toast.error("User rejected this action");
     } finally {

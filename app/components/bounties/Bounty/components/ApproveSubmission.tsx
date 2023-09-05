@@ -13,6 +13,7 @@ import dayjs from "dayjs";
 import { BOUNTY_USER_RELATIONSHIP, BountyState } from "@/types/";
 import { createUnderdogClient } from "@underdog-protocol/js";
 import { BountyActionsButton } from ".";
+import toast from "react-hot-toast";
 
 const underdogClient = createUnderdogClient({});
 
@@ -163,6 +164,7 @@ export const ApproveSubmission = () => {
       });
     }
     setIsLoading(false);
+    toast.success("Successfully approved submission");
   };
 
   return (

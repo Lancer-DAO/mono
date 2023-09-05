@@ -7,6 +7,7 @@ import { PublicKey } from "@solana/web3.js";
 import { BOUNTY_USER_RELATIONSHIP, BountyState } from "@/types/";
 import { updateList } from "@/src/utils";
 import { BountyActionsButton } from ".";
+import toast from "react-hot-toast";
 
 export const DenySubmission = () => {
   const { currentUser, currentWallet, program, provider } = useUserWallet();
@@ -55,6 +56,7 @@ export const DenySubmission = () => {
 
     setCurrentBounty(updatedBounty);
     setIsLoading(false);
+    toast.success("Submission denied");
   };
 
   return (

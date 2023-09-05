@@ -6,6 +6,7 @@ import { BOUNTY_USER_RELATIONSHIP, BountyState } from "@/types/";
 import { api } from "@/src/utils/api";
 import { updateList } from "@/src/utils";
 import { BountyActionsButton } from ".";
+import toast from "react-hot-toast";
 
 export const CancelEscrow: FC = () => {
   const { currentUser, currentWallet, program, provider } = useUserWallet();
@@ -48,6 +49,7 @@ export const CancelEscrow: FC = () => {
 
     setCurrentBounty(updatedBounty);
     setIsLoading(false);
+    toast.success("Bounty canceled");
   };
 
   return (

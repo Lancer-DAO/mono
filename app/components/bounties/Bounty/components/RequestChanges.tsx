@@ -7,6 +7,7 @@ import { PublicKey } from "@solana/web3.js";
 import { BOUNTY_USER_RELATIONSHIP, BountyState } from "@/types/";
 import { updateList } from "@/src/utils";
 import { BountyActionsButton } from "./BountyActionsButton";
+import toast from "react-hot-toast";
 
 export const RequestChanges = () => {
   const { currentUser, currentWallet, program, provider } = useUserWallet();
@@ -55,6 +56,7 @@ export const RequestChanges = () => {
 
     setCurrentBounty(updatedBounty);
     setIsLoading(false);
+    toast.success("Changes requested");
   };
 
   return (
