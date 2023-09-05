@@ -22,13 +22,11 @@ export const QuestsCard: FC = () => {
   );
 
   useEffect(() => {
-    const filteredBounties = allBounties?.filter((bounty) => {
-      if(bounty.state !== BountyState.COMPLETE) {
-        return false;
-      }
-    });
+    const filteredBounties = allBounties?.filter(
+      (bounty) => bounty.state === BountyState.COMPLETE
+    );
     setFilteredBounties(filteredBounties);
-  }, [allBounties])
+  }, [allBounties]);
 
   return (
     <div className="relative w-full md:w-[658px] rounded-xl bg-bgLancerSecondary/[8%] overflow-hidden p-6 pt-8 pb-10">
@@ -46,9 +44,11 @@ export const QuestsCard: FC = () => {
             })}
           </div>
         )}
-        {!bountiesLoading && !bountiesError && filteredBounties?.length === 0 && (
-          <div className="w-full text-center">No completed Quests yet!</div>
-        )}
+        {!bountiesLoading &&
+          !bountiesError &&
+          filteredBounties?.length === 0 && (
+            <div className="w-full text-center">No completed Quests yet!</div>
+          )}
         {/* <div className="absolute right-3 top-1/2 transform -translate-y-1/2 p-3">
           <motion.button {...midClickAnimation}>
             <NextArrow />
