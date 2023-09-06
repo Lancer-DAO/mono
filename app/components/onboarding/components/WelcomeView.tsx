@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 import { ProfileCreated } from "@/components";
 import { User } from "@/types";
 import { OnboardStep } from "../Onboard";
-import { smallClickAnimation } from "@/src/constants";
+import { IS_CUSTODIAL, smallClickAnimation } from "@/src/constants";
 import { useUserWallet } from "@/src/providers";
 import { useWalletModal } from "@solana/wallet-adapter-react-ui";
 
@@ -30,7 +30,7 @@ export const WelcomeView: FC<Props> = ({
   const { setVisible: showProviderModal } = useWalletModal();
 
   useEffect(() => {
-    if (!currentWallet) {
+    if (!currentWallet && !IS_CUSTODIAL) {
       showProviderModal(true);
     }
   }, [currentWallet, account]);
