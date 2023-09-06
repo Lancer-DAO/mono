@@ -1,4 +1,4 @@
-import { FC, ReactNode } from "react";
+import { FC } from "react";
 import { Tooltip, USDC } from "@/components";
 import { formatPrice } from "@/utils";
 import Image from "next/image";
