@@ -22,11 +22,9 @@ export const QuestsCard: FC = () => {
   );
 
   useEffect(() => {
-    console.log(allBounties);
     const filteredBounties = allBounties?.filter(
-      (bounty) => bounty.state !== BountyState.COMPLETE
+      (bounty) => bounty.state === BountyState.COMPLETE
     );
-    console.log("filteredBounties", filteredBounties);
     setFilteredBounties(filteredBounties);
   }, [allBounties]);
 
