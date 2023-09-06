@@ -3,12 +3,16 @@ import Image from "next/image";
 import { Modal } from "@/components";
 import { BountyActionsButton } from "../bounties/Bounty/components";
 import ResumeCard from "../account/components/ResumeCard";
+import { User } from "@/types";
 
 interface Props {
   setShowModal: Dispatch<SetStateAction<boolean>>;
+
+  resumeUrl: string;
+  setResumeUrl: (value: string) => void;
 }
 
-const ResumeModal: FC<Props> = ({ setShowModal }) => {
+const ResumeModal: FC<Props> = ({ setShowModal, resumeUrl, setResumeUrl }) => {
   return (
     <Modal
       setShowModal={setShowModal}
@@ -25,7 +29,12 @@ const ResumeModal: FC<Props> = ({ setShowModal }) => {
           We will be accepting talent on a rolling basis. Your information will
           not be shared.
         </p>
-        <ResumeCard preview />
+        <ResumeCard
+          resumeUrl={resumeUrl}
+          setResumeUrl={setResumeUrl}
+          preview
+          setShowModal={setShowModal}
+        />
 
         <BountyActionsButton
           type="red"

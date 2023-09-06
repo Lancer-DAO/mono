@@ -37,6 +37,7 @@ export const Account: FC<Props> = ({ self }) => {
     data: fetchedUser,
     isLoading: userLoading,
     isError: userError,
+    refetch,
   } = api.users.getUser.useQuery(
     {
       id: self ? currentUser?.id : parseInt(router.query.account as string),
@@ -47,6 +48,7 @@ export const Account: FC<Props> = ({ self }) => {
   );
   const [profileNFT, setProfileNFT] = useState<ProfileNFT>();
   const [showResumeModal, setShowResumeModal] = useState(false);
+  const [resumeUrl, setResumeUrl] = useState(fetchedUser?.resume);
 
   const fetchProfileNFT = async () => {
     const walletKey =
@@ -169,7 +171,9 @@ export const Account: FC<Props> = ({ self }) => {
             {/* right column */}
             <div className="flex flex-col gap-5 w-full">
               <PortfolioCard />
-              {fetchedUser.id === currentUser.id && <ResumeCard />}
+              {fetchedUser.id === currentUser.id && (
+                <ResumeCard resumeUrl={resumeUrl} setResumeUrl={setResumeUrl} />
+              )}
               <QuestsCard />
             </div>
           </div>
@@ -180,7 +184,13 @@ export const Account: FC<Props> = ({ self }) => {
         )}
       </div>
       {/* resume modal */}
-      {showResumeModal && <ResumeModal setShowModal={setShowResumeModal} />}
+      {showResumeModal && (
+        <ResumeModal
+          resumeUrl={resumeUrl}
+          setResumeUrl={setResumeUrl}
+          setShowModal={setShowResumeModal}
+        />
+      )}
     </>
   );
 };
