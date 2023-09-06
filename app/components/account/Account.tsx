@@ -146,15 +146,14 @@ export const Account: FC<Props> = ({ self }) => {
   }
   return (
     <>
-      <div className="w-full md:w-[90%]  items-center justify-center flex flex-col mx-auto px-4 md:px-0 py-10">
-          <h1 className="pb-2">{`${
-            self ? "Your Profile" : `@${fetchedUser?.name}`
-          }`}</h1>
-        </div>
+      <div className="w-full md:w-[90%] items-center justify-center flex flex-col mx-auto px-4 md:px-0 py-24">
         {profileNFT && fetchedUser ? (
-          <div className=" flex  gap-5">
+          <div className="flex gap-5">
             {/* left column */}
             <div className="flex flex-col gap-5 w-full md:max-w-[482px]">
+              <h1 className="pb-2">{`${
+                self ? "Your Profile" : `@${fetchedUser?.name}`
+              }`}</h1>
               <ProfileNFTCard
                 profileNFT={profileNFT}
                 picture={fetchedUser.picture}
@@ -169,11 +168,14 @@ export const Account: FC<Props> = ({ self }) => {
             </div>
             {/* right column */}
             <div className="flex flex-col gap-5 w-full">
+              <h1 className="pb-2 invisible">{`${
+                self ? "Your Profile" : `@${fetchedUser?.name}`
+              }`}</h1>
               <PortfolioCard />
               {fetchedUser.id === currentUser.id && (
                 <ResumeCard resumeUrl={resumeUrl} setResumeUrl={setResumeUrl} />
               )}
-              <QuestsCard />
+              <QuestsCard user={fetchedUser} />
             </div>
           </div>
         ) : (
