@@ -44,7 +44,7 @@ export const LeaderboardCommits: FC<any> = ({ self }) => {
   }, [selectedLanguage, dateValue]);
 
   return (
-    <div className="flex flex-col items-center justify-center mt-10 gap-2.5">
+    <div className="flex flex-col items-center justify-center mt-10 gap-2.5 py-24">
       <LeaderBoardSelector />
       <div className="bg-gray-100 w-[70%] flex flex-col px-5 py-2.5 items-center justify-center">
         <h1 className="text-3xl font-semibold mb-4 w-full">

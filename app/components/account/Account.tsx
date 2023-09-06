@@ -144,7 +144,7 @@ export const Account: FC<Props> = ({ self }) => {
   }
   return (
     <>
-      <div className="w-full md:w-[90%] mx-auto px-4 md:px-0 py-10">
+      <div className="w-full md:w-[90%] mx-auto px-4 md:px-0 py-32">
         <div className="flex items-center">
           <h1 className="pb-2">{`${
             self ? "Your Profile" : `@${fetchedUser?.name}`
