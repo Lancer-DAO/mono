@@ -148,7 +148,7 @@ const BountyList: React.FC<{}> = () => {
   }, [allBounties, allIndustries]);
 
   return (
-    <div className="w-full flex items-start mt-5 gap-5 pb-10">
+    <div className="w-full flex items-start mt-5 gap-5 py-24">
       <AnimatePresence>
         {showFilters && !!allBounties && (
           <BountyFilters
@@ -196,7 +196,7 @@ const BountyList: React.FC<{}> = () => {
 
         {bountiesLoading && (
           <div className="w-full flex flex-col items-center">
-            <LoadingBar title="Loading Bounties" />
+            <LoadingBar title="Loading Quests" />
           </div>
         )}
 
