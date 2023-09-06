@@ -1,32 +1,36 @@
 import { BountyCard } from "@/components";
-import { useUserWallet } from "@/src/providers";
-import { BountyPreview, BountyState } from "@/types";
+import { BountyPreview, BountyState, User } from "@/types";
 import { api } from "@/utils";
 import { FC, useEffect, useState } from "react";
 
-export const QuestsCard: FC = () => {
+interface Props {
+  user: User;
+}
+
+export const QuestsCard: FC<Props> = ({ user }) => {
   const [filteredBounties, setFilteredBounties] = useState<BountyPreview[]>();
-  const { currentUser } = useUserWallet();
   const {
     data: allBounties,
     isLoading: bountiesLoading,
     isError: bountiesError,
   } = api.bounties.getAllBounties.useQuery(
     {
-      currentUserId: currentUser.id,
-      onlyMyBounties: true,
+      currentUserId: user.id,
+      onlyMyBounties: false,
     },
     {
-      enabled: !!currentUser,
+      enabled: !!user,
     }
   );
 
   useEffect(() => {
     const filteredBounties = allBounties?.filter(
-      (bounty) => bounty.state === BountyState.COMPLETE
+      (bounty) =>
+        bounty.state === BountyState.COMPLETE &&
+        bounty.users.find((bountyUser) => bountyUser.userid === user.id)
     );
     setFilteredBounties(filteredBounties);
-  }, [allBounties]);
+  }, [allBounties, user]);
 
   return (
     <div className="relative w-full md:w-[658px] rounded-xl bg-bgLancerSecondary/[8%] overflow-hidden p-6 pt-8 pb-10">
