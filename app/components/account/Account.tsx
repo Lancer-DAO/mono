@@ -37,6 +37,7 @@ export const Account: FC<Props> = ({ self }) => {
     data: fetchedUser,
     isLoading: userLoading,
     isError: userError,
+    refetch,
   } = api.users.getUser.useQuery(
     {
       id: self ? currentUser?.id : parseInt(router.query.account as string),
@@ -47,6 +48,7 @@ export const Account: FC<Props> = ({ self }) => {
   );
   const [profileNFT, setProfileNFT] = useState<ProfileNFT>();
   const [showResumeModal, setShowResumeModal] = useState(false);
+  const [resumeUrl, setResumeUrl] = useState(fetchedUser?.resume);
 
   const fetchProfileNFT = async () => {
     const walletKey =
@@ -144,14 +146,13 @@ export const Account: FC<Props> = ({ self }) => {
   }
   return (
     <>
-      <div className="w-full md:w-[90%] mx-auto px-4 md:px-0 py-32">
-        <div className="flex items-center">
+      <div className="w-full md:w-[90%]  items-center justify-center flex flex-col mx-auto px-4 md:px-0 py-10">
           <h1 className="pb-2">{`${
             self ? "Your Profile" : `@${fetchedUser?.name}`
           }`}</h1>
         </div>
         {profileNFT && fetchedUser ? (
-          <div className="w-full flex items-start gap-5">
+          <div className=" flex  gap-5">
             {/* left column */}
             <div className="flex flex-col gap-5 w-full md:max-w-[482px]">
               <ProfileNFTCard
@@ -169,8 +170,10 @@ export const Account: FC<Props> = ({ self }) => {
             {/* right column */}
             <div className="flex flex-col gap-5 w-full">
               <PortfolioCard />
-              {fetchedUser.id === currentUser.id && <ResumeCard />}
-              <QuestsCard user={fetchedUser} />
+              {fetchedUser.id === currentUser.id && (
+                <ResumeCard resumeUrl={resumeUrl} setResumeUrl={setResumeUrl} />
+              )}
+              <QuestsCard />
             </div>
           </div>
         ) : (
@@ -180,7 +183,13 @@ export const Account: FC<Props> = ({ self }) => {
         )}
       </div>
       {/* resume modal */}
-      {showResumeModal && <ResumeModal setShowModal={setShowResumeModal} />}
+      {showResumeModal && (
+        <ResumeModal
+          resumeUrl={resumeUrl}
+          setResumeUrl={setResumeUrl}
+          setShowModal={setShowResumeModal}
+        />
+      )}
     </>
   );
 };
