@@ -67,3 +67,16 @@ export const searchByName = async (
   const users = await searchUser(query, includeCurrentUser, currentUserId);
   return users;
 };
+
+export const getWaitlistedUsers = async () => {
+  const users = await prisma.user.findMany({
+    where: {
+      resume: {
+        not: null,
+      },
+      hasBeenApproved: false,
+    },
+  });
+
+  return users;
+}

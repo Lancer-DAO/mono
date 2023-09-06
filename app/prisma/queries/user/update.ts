@@ -117,6 +117,19 @@ export const updateHasFinishedOnboarding = async (
   });
 };
 
+export const updateHasBeenApproved = async(
+  id: number
+): Promise<Prisma.User> => {
+  return await prisma.user.update({
+    where: {
+      id: id,
+    },
+    data: {
+      hasBeenApproved: true,
+    },
+  });
+};
+
 export const updateLinks = async (
   id: number,
   website: string,
