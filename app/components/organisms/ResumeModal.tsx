@@ -2,6 +2,7 @@ import { FC, Dispatch, SetStateAction } from "react";
 import Image from "next/image";
 import { Modal } from "@/components";
 import { BountyActionsButton } from "../bounties/Bounty/components";
+import ResumeCard from "../account/components/ResumeCard";
 
 interface Props {
   setShowModal: Dispatch<SetStateAction<boolean>>;
@@ -24,9 +25,11 @@ const ResumeModal: FC<Props> = ({ setShowModal }) => {
           We will be accepting talent on a rolling basis. Your information will
           not be shared.
         </p>
+        <ResumeCard preview />
+
         <BountyActionsButton
-          type="green"
-          text="Got it"
+          type="red"
+          text="Upload Later"
           onClick={() => setShowModal(false)}
         />
       </div>

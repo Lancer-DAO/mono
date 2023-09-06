@@ -8,7 +8,7 @@ import { useRouter } from "next/router";
 import { useState } from "react";
 import toast from "react-hot-toast";
 
-const ResumeCard = () => {
+const ResumeCard: React.FC<{ preview?: boolean }> = ({ preview }) => {
   const router = useRouter();
   const { currentUser } = useUserWallet();
   const { data: fetchedUser } = api.users.getUser.useQuery({
@@ -85,8 +85,20 @@ const ResumeCard = () => {
   };
 
   return (
-    <div className="relative w-full md:w-[658px] rounded-xl bg-bgLancerSecondary/[8%] overflow-hidden p-6 pt-8 pb-10">
-      <p className="font-bold text-2xl text-textGreen mb-4">Resume</p>
+    <div
+      className={`relative rounded-xl bg-bgLancerSecondary/[8%] overflow-hidden p-6 pt-8 pb-10 ${
+        preview
+          ? "w-[400px] items-center justify-center"
+          : "w-full md:w-[658px] justify-start items-start"
+      }`}
+    >
+      <p
+        className={`font-bold text-2xl text-textGreen mb-4 ${
+          preview ? "text-center" : ""
+        }`}
+      >
+        Resume
+      </p>
       {resumeUrl ? (
         <div className="flex">
           <Link

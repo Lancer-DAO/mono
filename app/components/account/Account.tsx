@@ -144,14 +144,14 @@ export const Account: FC<Props> = ({ self }) => {
   }
   return (
     <>
-      <div className="w-full md:w-[90%] mx-auto px-4 md:px-0 py-10">
+      <div className="w-full md:w-[90%]  items-center justify-center flex flex-col mx-auto px-4 md:px-0 py-10">
         <div className="flex items-center">
           <h1 className="pb-2">{`${
             self ? "Your Profile" : `@${fetchedUser?.name}`
           }`}</h1>
         </div>
         {profileNFT && fetchedUser ? (
-          <div className="w-full flex items-start gap-5">
+          <div className=" flex  gap-5">
             {/* left column */}
             <div className="flex flex-col gap-5 w-full md:max-w-[482px]">
               <ProfileNFTCard
