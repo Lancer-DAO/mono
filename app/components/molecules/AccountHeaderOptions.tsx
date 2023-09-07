@@ -82,8 +82,9 @@ const AccountHeaderOptions = () => {
           </div>
           {showOptions && (
             <div
-              className="z-50 absolute items-center justify-center left-[-105px] top-[50px]  
-              bg-white w-[220px] rounded-[20px] shadow-md"
+              className={`z-50 absolute items-center justify-center 
+              ${IS_CUSTODIAL ? "left-[-120px]" : "left-[-105px]"} 
+              top-[50px] bg-white w-[220px] rounded-[20px] shadow-md`}
               ref={wrapperRef}
             >
               <Link
