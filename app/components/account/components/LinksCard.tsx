@@ -1,10 +1,10 @@
-import { useEffect, useState } from "react";
+import { useUserWallet } from "@/src/providers";
 import { api } from "@/src/utils";
 import { useRouter } from "next/router";
-import { useUserWallet } from "@/src/providers";
+import { useEffect, useState } from "react";
 import { Check, Edit } from "react-feather";
-import ViewLinks from "./ViewLinks";
 import EditLinks from "./EditLinks";
+import ViewLinks from "./ViewLinks";
 
 const LinksCard = () => {
   const router = useRouter();
@@ -23,6 +23,7 @@ const LinksCard = () => {
 
   const [links, setLinks] = useState({
     website: fetchedUser?.website || "",
+    twitter: fetchedUser?.twitter || "",
     github: fetchedUser?.github || "",
     linkedin: fetchedUser?.linkedin || "",
   });
@@ -34,12 +35,14 @@ const LinksCard = () => {
   const handleUpdateLinks = async () => {
     const updatedLinks = await updateLinks({
       website: links.website,
+      twitter: links.twitter,
       github: links.github,
       linkedin: links.linkedin,
     });
     setEditLinksMode(false);
     setLinks({
       website: updatedLinks?.website,
+      twitter: updatedLinks?.twitter,
       github: updatedLinks?.github,
       linkedin: updatedLinks?.linkedin,
     });
@@ -81,6 +84,7 @@ const LinksCard = () => {
           ) : (
             <ViewLinks
               website={links.website}
+              twitter={links.twitter}
               github={links.github}
               linkedin={links.linkedin}
             />

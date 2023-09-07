@@ -120,6 +120,7 @@ export const updateHasFinishedOnboarding = async (
 export const updateLinks = async (
   id: number,
   website: string,
+  twitter: string,
   github: string,
   linkedin: string
 ): Promise<Prisma.User> => {
@@ -129,6 +130,7 @@ export const updateLinks = async (
     },
     data: {
       website,
+      twitter,
       github,
       linkedin,
     },

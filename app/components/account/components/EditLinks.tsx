@@ -2,6 +2,7 @@ import { Dispatch, SetStateAction } from "react";
 
 type Links = {
   website: string;
+  twitter: string;
   github: string;
   linkedin: string;
 }
@@ -23,6 +24,16 @@ const EditLinks = ({
           type="text"
           value={links.website}
           onChange={(e) => setLinks({ ...links, website: e.target.value })}
+          className="w-full flex justify-between items-center px-4 py-4 bg-white border border-primaryBtnBorder rounded-md gap-2 text-textGreen text-xs whitespace-nowrap overflow-hidden"
+          disabled={isUpdating}
+          />
+      </div>
+      <div className="my-4 w-3/4">
+        <p className="text-textGreen uppercase pb-2 px-1 font-medium text-sm">Twitter</p>
+        <input
+          type="text"
+          value={links.twitter}
+          onChange={(e) => setLinks({ ...links, twitter: e.target.value })}
           className="w-full flex justify-between items-center px-4 py-4 bg-white border border-primaryBtnBorder rounded-md gap-2 text-textGreen text-xs whitespace-nowrap overflow-hidden"
           disabled={isUpdating}
           />
