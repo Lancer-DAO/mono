@@ -37,13 +37,15 @@ export const Account: FC<Props> = ({ self }) => {
     data: fetchedUser,
     isLoading: userLoading,
     isError: userError,
-    refetch,
   } = api.users.getUser.useQuery(
     {
       id: self ? currentUser?.id : parseInt(router.query.account as string),
     },
     {
       enabled: self ? !!currentUser : !!router.query.account,
+      onSuccess: async (data) => {
+        setResumeUrl(data.resume);
+      },
     }
   );
   const [profileNFT, setProfileNFT] = useState<ProfileNFT>();
