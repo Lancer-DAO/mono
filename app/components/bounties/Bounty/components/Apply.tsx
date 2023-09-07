@@ -50,7 +50,7 @@ export const Apply = () => {
       relations: newRelations,
       publicKey: currentWallet.publicKey.toString(),
       escrowId: currentBounty.escrowid,
-      label: "request-to-submit",
+      label: "apply-to-quest",
       signature: "n/a",
     });
 
