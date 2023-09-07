@@ -62,7 +62,11 @@ export const Header = () => {
                 </LinkButton>
               );
             })}
-          <div className="flex items-center gap-8 ml-auto">
+          <div
+            className={`flex items-center gap-8 ml-auto ${
+              IS_CUSTODIAL && "mr-10"
+            }`}
+          >
             {<AccountHeaderOptions />}
 
             {!IS_CUSTODIAL && (
