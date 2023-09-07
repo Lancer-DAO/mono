@@ -2,7 +2,7 @@ import { useUserWallet } from "@/src/providers";
 import { api } from "@/src/utils";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
-import { Check, Edit } from "react-feather";
+import { Check, Edit, X } from "react-feather";
 import EditLinks from "./EditLinks";
 import ViewLinks from "./ViewLinks";
 
@@ -55,12 +55,17 @@ const LinksCard = () => {
         {fetchedUser?.id === currentUser.id && (
           <>
             {editLinksMode ? (
-              <button
-                onClick={handleUpdateLinks}
-                className="rounded-md uppercase font-bold text-textGreen"
-              >
-                <Check />
-              </button>
+              <div>
+                <button
+                  onClick={handleUpdateLinks}
+                  className="rounded-md uppercase font-bold text-textGreen mr-2 mb-0"
+                >
+                  <Check />
+                </button>
+                <button onClick={() => setEditLinksMode(false)} className="rounded-md upprecase font-bold text-textRed">
+                  <X />
+                </button>
+              </div>
             ) : (
               <button
                 onClick={handleEditLinks}
