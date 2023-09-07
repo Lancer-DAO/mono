@@ -9,6 +9,15 @@ const ViewLinks = ({
   github: string;
   linkedin: string;
 }) => {
+  // if links don't include http, add it
+  const formatLinks = (link: string) => {
+    if (link.includes("http")) {
+      return link;
+    } else {
+      return `https://${link}`;
+    }
+  };
+
   return (
     <>
       {!website && !github && !linkedin && (
@@ -24,7 +33,7 @@ const ViewLinks = ({
               target="_blank"
               rel="noreferrer noopener"
             >
-              {website}
+              {formatLinks(website)}
             </Link>
           </div>
         )}
@@ -37,7 +46,7 @@ const ViewLinks = ({
               target="_blank"
               rel="noreferrer noopener"
             >
-              {github}
+              {formatLinks(github)}
             </Link>
           </div>
         )}
@@ -50,7 +59,7 @@ const ViewLinks = ({
               target="_blank"
               rel="noreferrer noopener"
             >
-              {linkedin}
+              {formatLinks(linkedin)}
             </Link>
           </div>
         )}
