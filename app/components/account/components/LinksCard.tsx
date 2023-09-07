@@ -17,6 +17,7 @@ const LinksCard = () => {
     data: fetchedUser,
     isLoading: userIsLoading,
     isError: userIsError,
+    refetch,
   } = api.users.getUser.useQuery({
     id: parseInt(router.query.account as string) || currentUser.id,
   });
@@ -46,6 +47,7 @@ const LinksCard = () => {
       github: updatedLinks?.github,
       linkedin: updatedLinks?.linkedin,
     });
+    refetch();
   };
 
   return (
@@ -62,7 +64,18 @@ const LinksCard = () => {
                 >
                   <Check />
                 </button>
-                <button onClick={() => setEditLinksMode(false)} className="rounded-md upprecase font-bold text-textRed">
+                <button 
+                  onClick={() => {
+                    setLinks({
+                      website: fetchedUser?.website || "",
+                      twitter: fetchedUser?.twitter || "",
+                      github: fetchedUser?.github || "",
+                      linkedin: fetchedUser?.linkedin || "",
+                    });
+                    setEditLinksMode(false);
+                  }} 
+                  className="rounded-md upprecase font-bold text-textRed"
+                >
                   <X />
                 </button>
               </div>
