@@ -129,20 +129,24 @@ export const Account: FC<Props> = ({ self }) => {
 
   if (!IS_CUSTODIAL && !currentWallet && !profileNFT)
     return (
-      <div className="w-full h-full flex items-center justify-center">
+      <div className="w-full md:w-[90%] items-center justify-center flex flex-col mx-auto px-4 md:px-0 py-24">
         Please Connect a Wallet
       </div>
     );
 
   if (userError) {
     return (
-      <div className="flex items-center justify-center text-xl">
+      <div className="w-full text-xl md:w-[90%] items-center justify-center flex flex-col mx-auto px-4 md:px-0 py-24">
         Error loading profile
       </div>
     );
   }
   if (userLoading) {
-    return <LoadingBar title={"Loading profile"} />;
+    return (
+      <div className="w-full md:w-[90%] items-center justify-center flex flex-col mx-auto px-4 md:px-0 py-24">
+        <LoadingBar title={"Loading profile"} />
+      </div>
+    );
   }
   return (
     <>
