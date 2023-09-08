@@ -28,7 +28,7 @@ export const QuestsCard: FC<Props> = ({ user }) => {
       (bounty) =>
         bounty.state === BountyState.COMPLETE &&
         bounty.users.find((bountyUser) => bountyUser.userid === user.id) &&
-        !bounty.isPrivate
+        (!bounty.isPrivate || self)
     );
     setFilteredBounties(filteredBounties);
   }, [allBounties, user]);
