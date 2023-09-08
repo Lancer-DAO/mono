@@ -7,7 +7,6 @@ import { User } from "@/types";
 
 interface Props {
   setShowModal: Dispatch<SetStateAction<boolean>>;
-
   resumeUrl: string;
   setResumeUrl: (value: string) => void;
 }
