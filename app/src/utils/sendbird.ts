@@ -6,7 +6,7 @@ import {
 } from "@sendbird/chat/groupChannel";
 
 export const sendbird = SendbirdChat.init({
-  appId: process.env.NEXT_PUBLIC_SENDBIRD_APP_ID,
+  appId: "54A96D9A-1DEA-4962-9F4E-9899BAE7011D",
   modules: [new GroupChannelModule()],
 }) as SendbirdGroupChat;
 
@@ -32,7 +32,6 @@ export const createDM = async (ids: string[]) => {
   const { url } = await sendbird.groupChannel.createChannel({
     invitedUserIds: ids,
     isDistinct: true,
-    
   });
 
   return url;
