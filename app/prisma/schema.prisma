@@ -11,6 +11,18 @@ datasource db {
 
 /// MODELS
 
+model Badge {
+  id Int @id @default(autoincrement())
+
+  details   Json
+  src       String
+  name      String
+  createdAt String
+
+  // Relations
+  users BadgeToUser[] @relation("users")
+}
+
 model Bounty {
   id Int @id @default(autoincrement())
 
@@ -395,27 +407,26 @@ model User {
   referrees    ReferrerReferree[] @relation("referrer")
   industries   Industry[]
   media        Media[]
+  badges       BadgeToUser[]      @relation("badges")
 }
 
 model Wallet {
-  id                 Int                 @id @default(autoincrement())
+  id Int @id @default(autoincrement())
 
-  
-  publicKey          String?             @unique @db.VarChar(64)
+  publicKey          String?  @unique @db.VarChar(64)
   isDefault          Boolean?
   hasProfileNFT      Boolean?
   hasBeenInitialized Boolean?
 
+  userid Int
+  user   User @relation(fields: [userid], references: [id])
 
-  userid             Int
-  user               User                @relation(fields: [userid], references: [id])
-  
-  
-  providers          Provider[]
-  transactions       TransactionWallet[]
-  chains             ChainWallet[]
-  reffering          ReferrerReferree[]  @relation("wallet")
-  bountyUsers        BountyUser[]
+  providers    Provider[]
+  transactions TransactionWallet[]
+  chains       ChainWallet[]
+  reffering    ReferrerReferree[]  @relation("wallet")
+  badges       BadgeToUser[]       @relation("wallet")
+  bountyUsers  BountyUser[]
 }
 
 /// RELATIONS
@@ -557,4 +568,17 @@ model ReferrerReferree {
   wallet     Wallet @relation("wallet", fields: [walletid], references: [id])
 
   @@id([referrerid, referreeid])
+}
+
+model BadgeToUser {
+  badgeid        Int
+  userid         Int
+  walletid       Int?
+  relations      String  @db.VarChar(256)
+  hasBeenClaimed Boolean @default(false)
+  badge          Badge   @relation("users", fields: [badgeid], references: [id])
+  user           User    @relation("badges", fields: [userid], references: [id])
+  wallet         Wallet? @relation("wallet", fields: [walletid], references: [id])
+
+  @@id([badgeid, userid])
 }
