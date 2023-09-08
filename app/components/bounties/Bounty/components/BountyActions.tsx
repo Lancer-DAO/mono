@@ -21,7 +21,7 @@ export const BountyActions = () => {
 
   const buttons = useMemo(() => {
     if (!currentBounty) return [null];
-    if (!currentWallet.publicKey) {
+    if (!currentWallet?.publicKey) {
       return IS_CUSTODIAL ? (
         <></>
       ) : (
