@@ -66,7 +66,7 @@ const CashoutModal: FC<Props> = ({ setShowModal }) => {
             <p>
               {`Balance: ${
                 balance?.error
-                  ? "Error"
+                  ? "$0.00"
                   : balance?.isLoading
                   ? "Loading"
                   : `${formatTwoDecimals(balance.result)} USDC`
@@ -74,11 +74,13 @@ const CashoutModal: FC<Props> = ({ setShowModal }) => {
             </p>
             <p>Checkout to a Bank account (United States Only).</p>
           </div>
-          <div className="w-full max-w-[540px] px-10 flex flex-col items-center gap-10 bg-white pb-10 rounded-lg">
-            <div className="w-full">
-              <CoinflowOfframp />
+          {!balance?.error && (
+            <div className="w-full min-w-[540px] px-10 flex flex-col items-center gap-10 bg-white pb-10 rounded-lg">
+              <div className="w-full">
+                <CoinflowOfframp />
+              </div>
             </div>
-          </div>
+          )}
         </div>
       </div>
     </Modal>
