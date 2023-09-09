@@ -44,7 +44,6 @@ const BountyList: React.FC<{}> = () => {
   const { allMints } = useMint();
 
   useEffect(() => {
-    console.log(allBounties);
     const filteredBounties = allBounties?.filter((bounty) => {
       if (!bounty.escrow.publicKey || !bounty.escrow.mint) {
         return false;

@@ -90,7 +90,6 @@ const Home: React.FC<{ user: string; mints: string; industries: string }> = ({
         <meta name="description" content="Lancer Account" />
       </Head>
       <main>
-        {" "}
         <Account self={false} />
       </main>
     </>

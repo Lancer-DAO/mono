@@ -58,7 +58,6 @@ const UserWalletProvider: FunctionComponent<IUserWalletState> = ({
   } = useWallet();
   const { connection } = useConnection();
   const { isDebugMode } = useDebugMode();
-  console.log("user", user);
   const currentUser = user;
   const { currentTutorialState, setCurrentTutorialState } = useTutorial();
   const [currentWallet, setCurrentWallet] = useState<LancerWallet>();

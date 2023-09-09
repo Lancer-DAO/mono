@@ -45,7 +45,7 @@ export const Header = () => {
     <div className="py-4 top-0 z-20 bg-bgLancer">
       <div className="flex items-center gap-8 mx-auto w-[90%]">
         <Link href="/" className="flex items-center gap-0.5">
-          {/* <Logo width="auto" height="35px" /> */}
+          <Logo width="auto" height="35px" />
           <p className="text-lg text-bgLancerSecondary">Lancer</p>
         </Link>
         <div className="flex gap-8 items-center w-full">
