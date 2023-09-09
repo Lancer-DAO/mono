@@ -21,6 +21,7 @@ import { CashoutModal } from "@/components";
 import { BountyActionsButton } from "@/components/bounties/Bounty/components";
 import { useChat } from "@/src/providers/chatProvider";
 import { createDM } from "@/src/utils/sendbird";
+import { useIndustry } from "@/src/providers/industryProvider";
 
 dayjs.extend(relativeTime);
 
@@ -41,7 +42,7 @@ export const ProfileNFTCard = ({
 }) => {
   // state
   const [showCashout, setShowCashout] = useState(false);
-  const { allIndustries } = useIndustries();
+  const { allIndustries } = useIndustry();
   const { mutateAsync: updateName } = api.users.updateName.useMutation();
   const { mutateAsync: updateBio } = api.users.updateBio.useMutation();
   const { mutateAsync: updateIndustry } =
@@ -420,6 +421,3 @@ export const ProfileNFTCard = ({
     </div>
   );
 };
-function useIndustries(): { allIndustries: any } {
-  throw new Error("Function not implemented.");
-}
