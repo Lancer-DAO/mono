@@ -183,7 +183,7 @@ const PortfolioCard = () => {
                     </>
                   )}
                 </div>
-                <DialogContent className="max-w-3xl flex flex-col items-center">
+                <DialogContent className="max-w-fit flex flex-col items-center">
                   <DialogHeader className="flex text-3xl justify-start">
                     <DialogTitle className="text-3xl">
                       {media.title}
