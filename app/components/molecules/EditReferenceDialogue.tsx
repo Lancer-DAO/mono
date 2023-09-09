@@ -81,7 +81,7 @@ const EditReferenceDialogue = ({ media, onReferenceAdded }) => {
           <Pencil size={18} strokeWidth={1.25}  />
         </motion.button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent>
         <DialogHeader>
           <DialogTitle>Edit your Reference</DialogTitle>
           <DialogDescription>

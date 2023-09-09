@@ -182,12 +182,12 @@ export const PreviewForm: FC<Props> = ({
                           </DialogTrigger>
                         </div>
                       </div>
-                      <DialogContent>
+                      <DialogContent className="max-w-fit flex flex-col items-center">
                         <DialogHeader className="flex text-3xl justify-start">
                           <DialogTitle className="text-3xl">{med.title}</DialogTitle>
                           <DialogDescription>{med.description}</DialogDescription>
                         </DialogHeader>
-                        <Image src={med.imageUrl} alt={med.title} width={500} height={500} className="border border-primaryBtnBorder rounded-md mt-4" />
+                        <Image src={med.imageUrl} alt={med.title} width={1000} height={1000} className="rounded-md mt-4" />
                     </DialogContent>
                   </Dialog>
                 )}))
