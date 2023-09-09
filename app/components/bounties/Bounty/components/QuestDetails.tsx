@@ -60,7 +60,7 @@ const QuestDetails = () => {
             className={cn(
               "text-center text w-fit px-2 py-1 rounded-xl border",
               {
-                "text-grey600 border-[#C0D998] bg-[#CBE4A1]": (BountyState.NEW, BountyState.ACCEPTING_APPLICATIONS).includes(currentBounty.state as BountyState),
+                "text-grey600 border-[#C0D998] bg-[#CBE4A1]": [BountyState.NEW, BountyState.ACCEPTING_APPLICATIONS].includes(currentBounty.state as BountyState),
                 "text-grey600 border-[#E2C2F2] bg-[#EDC9FF]": currentBounty.state === BountyState.IN_PROGRESS,
                 "border-[#333] bg-[#3D3D3D] text-white": currentBounty.state === BountyState.COMPLETE,
                 "text-grey600 border-[#F2B0AA] bg-[#FFBCB5]": [BountyState.CANCELED, BountyState.AWAITING_REVIEW].includes(currentBounty.state as BountyState),
