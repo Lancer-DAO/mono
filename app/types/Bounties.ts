@@ -1,11 +1,14 @@
-import { BountyPreviewType, BountyUserType } from "@/prisma/queries/bounty";
-import { BountyType } from "@/prisma/queries/bounty";
-import { UserType, UserSearchType } from "@/prisma/queries/user";
-import { WalletType } from "@/prisma/queries/wallet";
+import {
+  BountyPreviewType,
+  BountyType,
+  BountyUserType,
+} from "@/prisma/queries/bounty";
 import { DisciplineType } from "@/prisma/queries/discipline";
 import { IndustryType } from "@/prisma/queries/industry";
 import { MediaType } from "@/prisma/queries/media";
 import { MintType } from "@/prisma/queries/mint";
+import { UserSearchType, UserType } from "@/prisma/queries/user";
+import { WalletType } from "@/prisma/queries/wallet";
 
 export type Filters = {
   industries: string[];

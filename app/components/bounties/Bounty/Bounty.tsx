@@ -1,3 +1,16 @@
+import { ContributorInfo, ExternalLinkIcon, Logo } from "@/components";
+import FundCTA from "@/components/atoms/FundCTA";
+import { smallClickAnimation } from "@/src/constants";
+import { useUserWallet } from "@/src/providers";
+import { useBounty } from "@/src/providers/bountyProvider";
+import { api, formatPrice, getSolscanAddress } from "@/utils";
+import { User } from "@prisma/client";
+import { PublicKey } from "@solana/web3.js";
+import dayjs from "dayjs";
+import { motion } from "framer-motion";
+import { marked } from "marked";
+import Image from "next/image";
+import { useRouter } from "next/router";
 import React, {
   Dispatch,
   FC,
@@ -5,21 +18,9 @@ import React, {
   useEffect,
   useState,
 } from "react";
-import { useRouter } from "next/router";
-import Image from "next/image";
-import { api, formatPrice, getSolscanAddress } from "@/utils";
-import { marked } from "marked";
-import dayjs from "dayjs";
-import { PublicKey } from "@solana/web3.js";
 import { Clock } from "react-feather";
-import { ContributorInfo, ExternalLinkIcon, Logo } from "@/components";
-import { SubmitterSection, BountyActions } from "./components";
-import { useUserWallet } from "@/src/providers";
-import { motion } from "framer-motion";
-import { smallClickAnimation } from "@/src/constants";
-import { User } from "@prisma/client";
-import { useBounty } from "@/src/providers/bountyProvider";
-import FundCTA from "@/components/atoms/FundCTA";
+import { BountyActions, SubmitterSection } from "./components";
+import QuestDetails from "./components/QuestDetails";
 
 interface BountyActionsUserProps {
   title: string;
