@@ -45,6 +45,11 @@ model Bounty {
   industries   Industry[]
   disciplines  Discipline[]
   media        Media[]
+
+  @@index([milestoneid])
+  @@index([projectid])
+  @@index([guildid])
+  @@index([repositoryid])
 }
 
 model Certificate {
@@ -97,6 +102,8 @@ model Discipline {
   industry Industry @relation(fields: [industryid], references: [id])
   bounties Bounty[]
   tags     Tag[]
+
+  @@index([industryid])
 }
 
 model Endorsement {
@@ -112,6 +119,10 @@ model Endorsement {
   endorserid  Int?
   endoresee   User?  @relation(fields: [endoreseeid], references: [id], name: "endorsee")
   endoreseeid Int?
+
+  @@index([skillid])
+  @@index([endorserid])
+  @@index([endoreseeid])
 }
 
 model Escrow {
@@ -133,6 +144,9 @@ model Escrow {
   milestoneid  Int?
   mintid       Int
   mint         Mint          @relation(fields: [mintid], references: [id])
+
+  @@index([chainid])
+  @@index([mintid])
 }
 
 model Guild {
@@ -186,6 +200,7 @@ model Issue {
   pullRequests PullRequest[]
 
   @@unique([number, repositoryid])
+  @@index([repositoryid])
 }
 
 model Media {
@@ -218,6 +233,7 @@ model Milestone {
   projectid Int
   tags      Tag[]
   users     MilestoneUser[]
+  @@index([projectid])
 }
 
 model Mint {
@@ -252,6 +268,9 @@ model Project {
   repository   Repository    @relation(fields: [repositoryid], references: [id])
   repositoryid Int
   users        ProjectUser[]
+
+  @@index([guildid])
+  @@index([repositoryid])
 }
 
 model Provider {
@@ -284,6 +303,9 @@ model PullRequest {
   users        User[]
 
   @@unique([repositoryid, number])
+  @@index([issueid])
+  @@index([repositoryid])
+  @@index([bountyid])
 }
 
 model Repository {
@@ -304,6 +326,7 @@ model Repository {
   guildid      Int?
 
   @@unique([organization, name])
+  @@index([guildid])
 }
 
 model Skill {
@@ -347,6 +370,9 @@ model Transaction {
   escrowid Int
   escrow   Escrow              @relation(fields: [escrowid], references: [id])
   wallets  TransactionWallet[]
+
+  @@index([chainid])
+  @@index([escrowid])
 }
 
 model User {
@@ -416,6 +442,8 @@ model Wallet {
   chains             ChainWallet[]
   reffering          ReferrerReferree[]  @relation("wallet")
   bountyUsers        BountyUser[]
+
+  @@index([userid])
 }
 
 /// RELATIONS
@@ -428,6 +456,8 @@ model BountyUserAction {
   type       String     @db.VarChar(24)
 
   @@id([timestamp, bountyid, userid])
+
+  @@index([bountyid, userid])
 }
 
 model BountyCertificate {
@@ -438,6 +468,9 @@ model BountyCertificate {
   bounty        Bounty      @relation(fields: [bountyid], references: [id])
 
   @@id([certificateid, bountyid])
+
+  @@index([bountyid])
+  @@index([certificateid])
 }
 
 model BountyComment {
@@ -448,6 +481,9 @@ model BountyComment {
   bounty    Bounty  @relation(fields: [bountyid], references: [id])
 
   @@id([commentid, bountyid])
+
+  @@index([bountyid])
+  @@index([commentid])
 }
 
 model BountyUser {
@@ -464,6 +500,10 @@ model BountyUser {
   actions BountyUserAction[]
 
   @@id([userid, bountyid])
+
+  @@index([bountyid])
+  @@index([userid])
+  @@index([walletid])
 }
 
 model CertificateGuild {
@@ -474,6 +514,9 @@ model CertificateGuild {
   guild         Guild       @relation(fields: [guildid], references: [id])
 
   @@id([certificateid, guildid])
+
+  @@index([guildid])
+  @@index([certificateid])
 }
 
 model CertificateUser {
@@ -485,6 +528,9 @@ model CertificateUser {
   certificate      Certificate @relation(fields: [certificateid], references: [id])
 
   @@id([userid, certificateid])
+
+  @@index([certificateid])
+  @@index([userid])
 }
 
 model ChainWallet {
@@ -495,6 +541,9 @@ model ChainWallet {
   chain     Chain  @relation(fields: [chainid], references: [id])
 
   @@id([walletid, chainid])
+
+  @@index([chainid])
+  @@index([walletid])
 }
 
 model EscrowUser {
@@ -505,6 +554,9 @@ model EscrowUser {
   escrow    Escrow @relation(fields: [escrowid], references: [id])
 
   @@id([userid, escrowid])
+
+  @@index([escrowid])
+  @@index([userid])
 }
 
 model MilestoneUser {
@@ -515,6 +567,8 @@ model MilestoneUser {
   milestone   Milestone @relation(fields: [milestoneid], references: [id])
 
   @@id([userid, milestoneid])
+  @@index([milestoneid])
+  @@index([userid])
 }
 
 model ProjectUser {
@@ -525,6 +579,8 @@ model ProjectUser {
   project   Project @relation(fields: [projectid], references: [id])
 
   @@id([userid, projectid])
+  @@index([projectid])
+  @@index([userid])
 }
 
 model GuildUser {
@@ -535,6 +591,8 @@ model GuildUser {
   guild     Guild  @relation(fields: [guildid], references: [id])
 
   @@id([userid, guildid])
+  @@index([guildid])
+  @@index([userid])
 }
 
 model TransactionWallet {
@@ -545,6 +603,8 @@ model TransactionWallet {
   transaction   Transaction @relation(fields: [transactionid], references: [id])
 
   @@id([walletid, transactionid])
+  @@index([transactionid])
+  @@index([walletid])
 }
 
 model ReferrerReferree {
@@ -557,4 +617,7 @@ model ReferrerReferree {
   wallet     Wallet @relation("wallet", fields: [walletid], references: [id])
 
   @@id([referrerid, referreeid])
+  @@index([walletid])
+  @@index([referreeid])
+  @@index([referrerid])
 }
