@@ -7,6 +7,8 @@ import {
 } from "@auth0/nextjs-auth0";
 import { GetServerSidePropsContext } from "next";
 import { prisma } from "@/server/db";
+import * as queries from "@/prisma/queries";
+
 export async function getServerSideProps(
   context: GetServerSidePropsContext<{ id: string; req; res }>
 ) {
@@ -23,19 +25,9 @@ export async function getServerSideProps(
   }
   const { email } = metadata.user;
 
-  const user = await prisma.user.findUnique({
-    where: {
-      email,
-    },
-    select: {
-      id: true,
-      isAdmin: true,
-      hasFinishedOnboarding: true,
-      hasBeenApproved: true,
-    },
-  });
+  const currentUser = await queries.user.getByEmail(email);
 
-  if (!user || !user.hasFinishedOnboarding) {
+  if (!currentUser || !currentUser || !currentUser.hasFinishedOnboarding) {
     return {
       redirect: {
         destination: "/welcome",
@@ -43,7 +35,8 @@ export async function getServerSideProps(
       },
     };
   }
-  if (!user.hasBeenApproved) {
+
+  if (!currentUser.hasBeenApproved) {
     return {
       redirect: {
         destination: "/account",
@@ -51,17 +44,33 @@ export async function getServerSideProps(
       },
     };
   }
-  return { props: {} };
+  const userId = parseInt(context.query.account as string);
+
+  const user = await queries.user.getById(userId);
+
+  return {
+    props: {
+      currentUser: JSON.stringify(currentUser),
+      user: JSON.stringify(user),
+    },
+  };
 }
 
-export default function Home() {
+const Home: React.FC<{ user: string }> = ({ user }) => {
+  const parsedUser = JSON.parse(user);
+  console.log(parsedUser);
   return (
     <>
       <Head>
         <title>Lancer | Account</title>
         <meta name="description" content="Lancer Account" />
       </Head>
-      <main>{/* <Account self={false} /> */}</main>
+      <main>
+        {" "}
+        <Account self={false} fetchedUser={parsedUser} />
+      </main>
     </>
   );
-}
+};
+
+export default Home;

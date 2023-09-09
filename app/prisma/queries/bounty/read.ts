@@ -125,19 +125,9 @@ export const get = async (id: number, currentUserId: number) => {
 
 export const getMany = async (
   currentUserId: number,
-  onlyMyBounties?: boolean,
-  filteredUserId?: number
+  onlyMyBounties?: boolean
 ) => {
-  if (!!filteredUserId) {
-    const rawBounties = await bountyQueryMany(filteredUserId, true);
-    const mappedBounties = rawBounties.map((bounty) => {
-      const userRelations = bounty.users;
-      const creator = getBountyCreator(userRelations);
-      return { ...bounty, creator };
-    });
-
-    return mappedBounties;
-  } else if (onlyMyBounties) {
+  if (onlyMyBounties) {
     const rawBounties = await bountyQueryMany(currentUserId);
     const mappedBounties = rawBounties.map((bounty) => {
       const userRelations = bounty.users;

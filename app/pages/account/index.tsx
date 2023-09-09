@@ -38,12 +38,14 @@ export async function getServerSideProps(
   }
   return {
     props: {
-      user: user,
+      currentUser: JSON.stringify(user),
+      user: JSON.stringify(user),
     },
   };
 }
-const Home: React.FC<{ user: User }> = ({ user }) => {
-  debugger;
+const Home: React.FC<{ user: string }> = ({ user }) => {
+  const parsedUser = JSON.parse(user);
+  console.log(parsedUser);
   return (
     <>
       <Head>
@@ -51,7 +53,7 @@ const Home: React.FC<{ user: User }> = ({ user }) => {
         <meta name="description" content="Lancer Account" />
       </Head>
       <main>
-        <Account self={true} fetchedUser={user} />
+        <Account self={true} fetchedUser={parsedUser} />
       </main>
     </>
   );

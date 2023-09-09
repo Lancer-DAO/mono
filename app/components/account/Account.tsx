@@ -147,7 +147,7 @@ export const Account: FC<Props> = ({ self, fetchedUser }) => {
             </div>
             {/* right column */}
             <div className="flex flex-col gap-5 w-full">
-              <PortfolioCard />
+              <PortfolioCard fetchedUser={fetchedUser} />
               {fetchedUser.id === currentUser.id && <ResumeCard />}
               <QuestsCard />
             </div>

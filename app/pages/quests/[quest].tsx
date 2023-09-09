@@ -43,7 +43,7 @@ export async function getServerSideProps(
     };
   }
   return {
-    props: { quest: JSON.stringify(quest), user: JSON.stringify(user) },
+    props: { quest: JSON.stringify(quest), currentUser: JSON.stringify(user) },
   };
 }
 
