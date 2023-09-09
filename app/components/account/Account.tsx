@@ -18,6 +18,7 @@ import BadgesCard from "./components/BadgesCard";
 import PortfolioCard from "./components/PortfolioCard";
 import { ReferCard } from "./components/ReferCard";
 import ResumeCard from "./components/ResumeCard";
+import { useAccount } from "@/src/providers/accountProvider";
 
 dayjs.extend(relativeTime);
 
@@ -25,10 +26,9 @@ const underdogClient = createUnderdogClient({});
 
 interface Props {
   self: boolean;
-  fetchedUser: User;
 }
 
-export const Account: FC<Props> = ({ self, fetchedUser }) => {
+export const Account: FC<Props> = ({ self }) => {
   const router = useRouter();
 
   // api + context
@@ -36,11 +36,13 @@ export const Account: FC<Props> = ({ self, fetchedUser }) => {
   const { currentTutorialState, setCurrentTutorialState } = useTutorial();
   const [profileNFT, setProfileNFT] = useState<ProfileNFT>();
   const [showResumeModal, setShowResumeModal] = useState(false);
+  const { account } = useAccount();
+  console.log("account", account);
 
   const fetchProfileNFT = async () => {
     const walletKey =
       router.query.account !== undefined
-        ? fetchedUser?.wallets.filter((wallet) => wallet.hasProfileNFT)[0]
+        ? account?.wallets.filter((wallet) => wallet.hasProfileNFT)[0]
             ?.publicKey
         : currentWallet.publicKey.toString();
     const nfts = await underdogClient.getNfts({
@@ -55,7 +57,7 @@ export const Account: FC<Props> = ({ self, fetchedUser }) => {
     if (nfts.totalResults > 0) {
       const { attributes, image } = nfts.results[0];
       const profileNFT: ProfileNFT = {
-        name: fetchedUser?.name,
+        name: account?.name,
         reputation: attributes.reputation as number,
         badges:
           attributes.badges !== ""
@@ -75,7 +77,7 @@ export const Account: FC<Props> = ({ self, fetchedUser }) => {
   };
 
   useEffect(() => {
-    if (!!fetchedUser && !!currentWallet) {
+    if (!!account && !!currentWallet) {
       const fetchNfts = async () => {
         await fetchProfileNFT();
 
@@ -105,7 +107,7 @@ export const Account: FC<Props> = ({ self, fetchedUser }) => {
       };
       fetchNfts();
     }
-  }, [fetchedUser, currentWallet, currentTutorialState]);
+  }, [account, currentWallet, currentTutorialState]);
 
   // check for "newUser" key in local storage
   useEffect(() => {
@@ -126,29 +128,30 @@ export const Account: FC<Props> = ({ self, fetchedUser }) => {
       <div className="w-full md:w-[90%] mx-auto px-4 md:px-0 py-10">
         <div className="flex items-center">
           <h1 className="pb-2">{`${
-            self ? "Your Profile" : `@${fetchedUser?.name}`
+            self ? "Your Profile" : `@${account?.name}`
           }`}</h1>
         </div>
-        {profileNFT && fetchedUser ? (
+        {profileNFT && account ? (
           <div className="w-full flex items-start gap-5">
             {/* left column */}
             <div className="flex flex-col gap-5 w-full md:max-w-[482px]">
               <ProfileNFTCard
                 profileNFT={profileNFT}
-                picture={fetchedUser.picture}
-                githubId={fetchedUser.githubId}
-                user={fetchedUser}
+                picture={account.picture}
+                githubId={account.githubId}
+                user={account}
                 self={self}
-                id={fetchedUser.id}
+                id={account.id}
               />
               <BadgesCard profileNFT={profileNFT} />
-              {fetchedUser.id === currentUser.id &&
-                currentUser.hasBeenApproved && <ReferCard />}
+              {account.id === currentUser.id && currentUser.hasBeenApproved && (
+                <ReferCard />
+              )}
             </div>
             {/* right column */}
             <div className="flex flex-col gap-5 w-full">
-              <PortfolioCard fetchedUser={fetchedUser} />
-              {fetchedUser.id === currentUser.id && <ResumeCard />}
+              <PortfolioCard />
+              {account.id === currentUser.id && <ResumeCard />}
               <QuestsCard />
             </div>
           </div>

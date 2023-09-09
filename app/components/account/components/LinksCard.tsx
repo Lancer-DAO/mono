@@ -5,26 +5,21 @@ import { useUserWallet } from "@/src/providers";
 import { Check, Edit } from "react-feather";
 import ViewLinks from "./ViewLinks";
 import EditLinks from "./EditLinks";
+import { useAccount } from "@/src/providers/accountProvider";
 
 const LinksCard = () => {
   const router = useRouter();
   const [editLinksMode, setEditLinksMode] = useState(false);
   const { mutateAsync: updateLinks, isLoading: isUpdating } =
     api.users.updateLinks.useMutation();
+  const { account } = useAccount();
 
   const { currentUser } = useUserWallet();
-  const {
-    data: fetchedUser,
-    isLoading: userIsLoading,
-    isError: userIsError,
-  } = api.users.getUser.useQuery({
-    id: parseInt(router.query.account as string) || currentUser.id,
-  });
 
   const [links, setLinks] = useState({
-    website: fetchedUser?.website || "",
-    github: fetchedUser?.github || "",
-    linkedin: fetchedUser?.linkedin || "",
+    website: account?.website || "",
+    github: account?.github || "",
+    linkedin: account?.linkedin || "",
   });
 
   const handleEditLinks = () => {
@@ -49,7 +44,7 @@ const LinksCard = () => {
     <div className="my-3">
       <div className="flex items-center gap-2">
         <p className="text-textGreen font-bold text-2xl">Links</p>
-        {fetchedUser?.id === currentUser.id && (
+        {account?.id === currentUser.id && (
           <>
             {editLinksMode ? (
               <button
@@ -69,8 +64,7 @@ const LinksCard = () => {
           </>
         )}
       </div>
-      {userIsLoading && <div>Loading Links</div>}
-      {fetchedUser && !userIsLoading && !userIsError && (
+      {account && (
         <>
           {editLinksMode ? (
             <EditLinks

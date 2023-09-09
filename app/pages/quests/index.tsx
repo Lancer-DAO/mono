@@ -9,6 +9,9 @@ import { GetServerSidePropsContext } from "next";
 import { prisma } from "@/server/db";
 import * as queries from "@/prisma/queries";
 import { useBounty } from "@/src/providers/bountyProvider";
+import { useMint } from "@/src/providers/mintProvider";
+import { useIndustry } from "@/src/providers/industryProvider";
+import { industries } from "@/server/api/routers/industries";
 
 export async function getServerSideProps(
   context: GetServerSidePropsContext<{ id: string; req; res }>
@@ -37,22 +40,39 @@ export async function getServerSideProps(
     };
   }
   const allBounties = await queries.bounty.getMany(user.id);
-  console.log("all", allBounties);
 
+  const allMints = await queries.mint.getAll();
+  const allIndustries = await queries.industry.getMany();
   return {
     props: {
       currentUser: JSON.stringify(user),
       bounties: JSON.stringify(allBounties),
+
+      mints: JSON.stringify(allMints),
+      industries: JSON.stringify(allIndustries),
     },
   };
 }
 
-const BountiesPage = ({ bounties }) => {
+const BountiesPage: React.FC<{
+  bounties: string;
+  mints: string;
+  industries: string;
+}> = ({ bounties, mints, industries }) => {
   console.log("setting bounties", bounties);
 
+  const { setAllMints, allMints } = useMint();
+  const { setAllIndustries, allIndustries } = useIndustry();
   const { setAllBounties, allBounties } = useBounty();
   if (!allBounties && bounties) {
     setAllBounties(JSON.parse(bounties));
+  }
+
+  if (!allMints && mints) {
+    setAllMints(JSON.parse(mints));
+  }
+  if (!allIndustries && industries) {
+    setAllIndustries(JSON.parse(industries));
   }
   return (
     <>

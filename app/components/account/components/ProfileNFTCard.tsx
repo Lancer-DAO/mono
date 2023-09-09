@@ -41,6 +41,7 @@ export const ProfileNFTCard = ({
 }) => {
   // state
   const [showCashout, setShowCashout] = useState(false);
+  const { allIndustries } = useIndustries();
   const { mutateAsync: updateName } = api.users.updateName.useMutation();
   const { mutateAsync: updateBio } = api.users.updateBio.useMutation();
   const { mutateAsync: updateIndustry } =
@@ -60,12 +61,6 @@ export const ProfileNFTCard = ({
   const [amount, setAmount] = useState(0);
   const [charCount, setCharCount] = useState(0);
   const [sendToPublicKey, setSentToPublicKey] = useState("");
-
-  const {
-    data: allIndustries,
-    isLoading: industriesLoading,
-    isError: industriesError,
-  } = api.industries.getAllIndustries.useQuery();
 
   // context + api
   const { connection } = useConnection();
@@ -425,3 +420,6 @@ export const ProfileNFTCard = ({
     </div>
   );
 };
+function useIndustries(): { allIndustries: any } {
+  throw new Error("Function not implemented.");
+}

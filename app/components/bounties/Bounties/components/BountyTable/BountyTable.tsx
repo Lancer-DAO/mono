@@ -10,6 +10,8 @@ import { BountyPreview, Filters, TABLE_BOUNTY_STATES } from "@/types";
 import { AnimatePresence, motion } from "framer-motion";
 import toast from "react-hot-toast";
 import { useBounty } from "@/src/providers/bountyProvider";
+import { useIndustry } from "@/src/providers/industryProvider";
+import { useMint } from "@/src/providers/mintProvider";
 
 export const BOUNTY_USER_RELATIONSHIP = [
   "Creator",
@@ -38,13 +40,8 @@ const BountyList: React.FC<{}> = () => {
 
   // api + context
   const { currentUser } = useUserWallet();
-
-  const {
-    data: allIndustries,
-    isLoading: industriesLoading,
-    isError: industriesError,
-  } = api.industries.getAllIndustries.useQuery();
-  const { data: allMints } = api.mints.getMints.useQuery();
+  const { allIndustries } = useIndustry();
+  const { allMints } = useMint();
 
   useEffect(() => {
     console.log(allBounties);
@@ -99,10 +96,6 @@ const BountyList: React.FC<{}> = () => {
     // - all payout mints
     // - upper and lower bounds of price
 
-    if (industriesError) {
-      toast.error("Error fetching industries");
-      return;
-    }
     if (!allBounties || !allIndustries) return;
     if (allBounties && allBounties?.length !== 0) {
       const allTags = allBounties

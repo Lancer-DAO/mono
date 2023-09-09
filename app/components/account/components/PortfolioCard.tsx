@@ -10,6 +10,7 @@ import EditReferenceDialogue from "@/components/molecules/EditReferenceDialogue"
 import ReferenceDialogue from "@/components/molecules/ReferenceDialogue";
 import { smallClickAnimation } from "@/src/constants";
 import { useUserWallet } from "@/src/providers";
+import { useAccount } from "@/src/providers/accountProvider";
 import { api } from "@/src/utils";
 import { Media, User } from "@/types";
 import "@uploadthing/react/styles.css";
@@ -20,15 +21,16 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
 
-const PortfolioCard: React.FC<{ fetchedUser: User }> = ({ fetchedUser }) => {
-  const router = useRouter();
+const PortfolioCard: React.FC = () => {
+  const { account } = useAccount();
+
   const { currentUser } = useUserWallet();
   const maxMedia = 3;
   const { mutateAsync: createMedia } = api.media.createMedia.useMutation();
   const { mutateAsync: deleteMedia } = api.media.deleteMedia.useMutation();
   const { mutateAsync: updateMedia } = api.media.updateMedia.useMutation();
   const { data: media } = api.media.getMedia.useQuery({
-    userId: fetchedUser?.id,
+    userId: account?.id,
   });
   const [portfolio, setPortfolio] = useState<Media[]>([]);
   const [isAwaitingResponse, setIsAwaitingResponse] = useState(false);
@@ -159,7 +161,7 @@ const PortfolioCard: React.FC<{ fetchedUser: User }> = ({ fetchedUser }) => {
                       </div>
                     </DialogTrigger>
                   </div>
-                  {fetchedUser.id === currentUser.id && (
+                  {account.id === currentUser.id && (
                     <>
                       <EditReferenceDialogue
                         media={media}
@@ -196,7 +198,7 @@ const PortfolioCard: React.FC<{ fetchedUser: User }> = ({ fetchedUser }) => {
           } else {
             return (
               <>
-                {fetchedUser.id === currentUser.id && (
+                {account.id === currentUser.id && (
                   <ReferenceDialogue
                     key={index}
                     onReferenceAdded={handleMediaAdded}

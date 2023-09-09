@@ -9,6 +9,7 @@ import { toast } from "react-hot-toast";
 import { Industry } from "@/types";
 import { api } from "@/src/utils";
 import { ToggleConfig } from "@/components/atoms/Toggle";
+import { useIndustry } from "@/src/providers/industryProvider";
 
 interface Props {
   setFormSection: Dispatch<SetStateAction<FORM_SECTION>>;
@@ -24,8 +25,7 @@ export const CreateBountyForm: FC<Props> = ({
   handleChange,
 }) => {
   const { currentTutorialState, setCurrentTutorialState } = useTutorial();
-  const { data: allIndustries } = api.industries.getAllIndustries.useQuery();
-
+  const { allIndustries } = useIndustry();
   const [toggleConfig, setToggleConfig] = useState<ToggleConfig>({
     option1: {
       title: "Set Estimate",
@@ -191,3 +191,6 @@ export const CreateBountyForm: FC<Props> = ({
     </div>
   );
 };
+function useIndustries(): { allIndustries: any } {
+  throw new Error("Function not implemented.");
+}

@@ -11,6 +11,9 @@ import {
 import { WalletModalProvider } from "@solana/wallet-adapter-react-ui";
 import AppContextProvider from "./appContextProvider";
 import BountyProvider from "./bountyProvider";
+import IndustryProvider from "./industryProvider";
+import AccountProvider from "./accountProvider";
+import MintProvider from "./mintProvider";
 import TutorialProvider from "./tutorialProvider";
 import NonCustodialWalletProvider from "./userWalletProvider/nonCustodialProvider";
 import CustodialWalletProvider from "./userWalletProvider/custodialProvider";
@@ -69,7 +72,13 @@ export const AllProviders: React.FC<{ children: ReactNode; user }> = ({
               >
                 <BountyProvider>
                   <ReferralProvider>
-                    <ChatProvider>{children}</ChatProvider>
+                    <IndustryProvider>
+                      <MintProvider>
+                        <AccountProvider>
+                          <ChatProvider>{children}</ChatProvider>
+                        </AccountProvider>
+                      </MintProvider>
+                    </IndustryProvider>
                   </ReferralProvider>
                 </BountyProvider>
               </CustodialWalletProvider>
@@ -91,7 +100,13 @@ export const AllProviders: React.FC<{ children: ReactNode; user }> = ({
                 <NonCustodialWalletProvider user={user}>
                   <BountyProvider>
                     <ReferralProvider>
-                      <ChatProvider>{children}</ChatProvider>
+                      <IndustryProvider>
+                        <MintProvider>
+                          <AccountProvider>
+                            <ChatProvider>{children}</ChatProvider>
+                          </AccountProvider>
+                        </MintProvider>
+                      </IndustryProvider>
                     </ReferralProvider>
                   </BountyProvider>
                 </NonCustodialWalletProvider>

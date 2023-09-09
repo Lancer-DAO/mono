@@ -28,7 +28,7 @@ type AppPropsWithLayout = AppProps & {
 
 const App = ({ Component, pageProps }: AppPropsWithLayout) => {
   const router = useRouter();
-  const user = JSON.parse(pageProps.currentUser);
+  const user = pageProps.currentUser ? JSON.parse(pageProps.currentUser) : null;
   console.log("user, ", user);
 
   const getLayout =

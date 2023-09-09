@@ -1,4 +1,5 @@
 import { useUserWallet } from "@/src/providers";
+import { useAccount } from "@/src/providers/accountProvider";
 import { api } from "@/src/utils";
 import { UploadButton } from "@/src/utils/uploadthing";
 import "@uploadthing/react/styles.css";
@@ -11,13 +12,12 @@ import toast from "react-hot-toast";
 const ResumeCard = () => {
   const router = useRouter();
   const { currentUser } = useUserWallet();
-  const { data: fetchedUser } = api.users.getUser.useQuery({
-    id: parseInt(router.query.account as string) || currentUser.id,
-  });
+  const { account } = useAccount();
+
   const { mutateAsync: updateResume } = api.users.updateResume.useMutation();
   const { mutateAsync: deleteResume } = api.users.deleteResume.useMutation();
 
-  const [resumeUrl, setResumeUrl] = useState(fetchedUser?.resume);
+  const [resumeUrl, setResumeUrl] = useState(account?.resume);
   const [isAwaitingResponse, setIsAwaitingResponse] = useState(false);
 
   const confirmAction = (): Promise<void> => {
