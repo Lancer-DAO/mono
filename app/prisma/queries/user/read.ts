@@ -59,6 +59,16 @@ export const getById = async (id: number) => {
   return user;
 };
 
+export const searchByName = async (
+  query: string,
+  includeCurrentUser?: boolean,
+  currentUserId?: number
+) => {
+  const user = await searchUser(query, includeCurrentUser, currentUserId);
+
+  return user
+}
+
 export const getWaitlistedUsers = async () => {
   const users = await prisma.user.findMany({
     where: {
