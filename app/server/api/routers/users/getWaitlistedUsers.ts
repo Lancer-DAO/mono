@@ -4,7 +4,7 @@ import { protectedProcedure } from "../../trpc";
 
 export const getWaitlistedUsers = protectedProcedure
   .query(async () => {
-    const user = await queries.user.getWaitlistedUsers();
+    const users = await queries.user.getWaitlistedUsers();
 
-    return user;
+    return users;
   });
