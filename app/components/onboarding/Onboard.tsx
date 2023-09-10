@@ -5,7 +5,7 @@ import { IAsyncResult, ProfileFormData, User } from "@/types";
 import { useUserWallet } from "@/src/providers";
 import { useRouter } from "next/router";
 import { createUnderdogClient } from "@underdog-protocol/js";
-import { PROFILE_PROJECT_PARAMS, enterAnimation } from "@/src/constants";
+import { PROFILE_PROJECT_PARAMS } from "@/src/constants";
 import dayjs from "dayjs";
 import { api } from "@/src/utils";
 import toast from "react-hot-toast";
@@ -37,11 +37,23 @@ const Onboard: FC = () => {
     website: "",
   });
   const [nftCreated, setNftCreated] = useState(false);
-  const [account, setAccount] = useState<IAsyncResult<User>>({
-    isLoading: true,
-    loadingPrompt: "Welcome to Lancer",
-  });
+  const [walletRegistered, setWalletRegistered] = useState<boolean>(false);
+  const [walletError, setWalletError] = useState<string>("");
+
   const { currentUser, currentWallet } = useUserWallet();
+  const {
+    data: fetchedUser,
+    isLoading: userLoading,
+    isError: userError,
+    refetch,
+  } = api.users.getUser.useQuery(
+    {
+      id: currentUser?.id,
+    },
+    {
+      enabled: !!currentUser,
+    }
+  );
   const { mutateAsync: registerOnboardingInfo } =
     api.users.addOnboardingInformation.useMutation();
   api.users.registerProfileNFT.useQuery(
@@ -52,12 +64,33 @@ const Onboard: FC = () => {
       enabled: !!currentWallet,
     }
   );
-  api.users.verifyWallet.useQuery(
+  const { isLoading: isVerifyingWallet } = api.users.verifyWallet.useQuery(
     {
       walletPublicKey: currentWallet?.publicKey.toString(),
     },
     {
-      enabled: !!currentWallet && !!nftCreated,
+      enabled: !!currentWallet && !!nftCreated && !!fetchedUser,
+      onError: (e) => {
+        setWalletRegistered(false);
+        if (e.message === "Wallet is registered to another user") {
+          toast.error("This wallet is already registered to another user", {
+            id: "verify-wallet",
+          });
+          setWalletError(
+            "This wallet is already registered to another user. Please connect a different wallet to continue."
+          );
+          return;
+        } else {
+          toast.error("Error verifying wallet", { id: "verify-wallet" });
+          console.log("Error verifying wallet: ", e);
+          setWalletError(e.message);
+        }
+      },
+      onSuccess: () => {
+        if (walletRegistered) return;
+        setWalletRegistered(true);
+        toast.success("Wallet verified!", { id: "verify-wallet" });
+      },
     }
   );
 
@@ -118,57 +151,21 @@ const Onboard: FC = () => {
   };
 
   useEffect(() => {
-    if (!currentUser?.name) return;
-    let timeout: NodeJS.Timeout | null = null;
-
-    const getUserAsync = async () => {
-      try {
-        setAccount({
-          isLoading: true,
-          loadingPrompt: "Setting up your profile...",
-        });
-        await mintProfileNFT();
-
-        setAccount({
-          isLoading: false,
-          result: currentUser,
-          error: null,
-        });
-      } catch (e) {
-        setAccount({ error: e });
-      }
-    };
-
-    if (!!currentWallet?.publicKey) {
-      getUserAsync();
-    } else {
-      setAccount({
-        isLoading: true,
-        error: null,
-        result: null,
-        loadingPrompt: "Please connect your wallet to continue...",
-      });
-    }
-
-    return () => {
-      if (timeout) {
-        clearTimeout(timeout);
-      }
-    };
-  }, [currentUser, router.isReady, currentWallet?.publicKey]);
+    if (currentWallet?.publicKey && !nftCreated) mintProfileNFT();
+  }, [currentUser, router.isReady, currentWallet?.publicKey, nftCreated]);
 
   useEffect(() => {
-    if (account?.result) {
+    if (!!fetchedUser && !userLoading && !userError) {
       setProfileData({
         ...profileData,
-        displayName: account?.result?.name,
-        email: account?.result?.email,
+        displayName: fetchedUser?.name,
+        email: fetchedUser?.email,
       });
     }
-  }, [account?.result]);
+  }, [fetchedUser, userLoading, userError]);
 
   return (
-    <div className="w-full h-full">
+    <div className="w-full h-full my-32">
       <AnimatePresence mode="wait">
         <motion.div
           initial={{ opacity: 0 }}
@@ -178,28 +175,35 @@ const Onboard: FC = () => {
           key={`onboard-${formSection}`}
           className="w-full max-w-[1200px] mx-auto flex flex-col md:flex-row md:justify-evenly mt-10"
         >
-          {account.isLoading && <LoadingBar title={null} />}
-          {account.error && (
-            <div className="text-red-500">{account.error.message}</div>
+          {isVerifyingWallet && !userLoading && (
+            <LoadingBar title={"Registering your account"} />
+          )}
+          {userLoading && <LoadingBar title={null} />}
+          {userError && (
+            <div className="text-red-500">{`Error registering your account.`}</div>
           )}
           <WelcomeView
-            account={account?.result}
+            account={fetchedUser}
             formSection={formSection}
             setFormSection={setFormSection}
+            walletRegistered={walletRegistered}
+            walletError={walletError}
+            setWalletError={setWalletError}
+            isVerifyingWallet={isVerifyingWallet}
           />
           <SkillsetView
             formSection={formSection}
             setFormSection={setFormSection}
             profileData={profileData}
             setProfileData={setProfileData}
-            account={account?.result}
+            account={fetchedUser}
           />
           <ProfileInfoView
             formSection={formSection}
             setFormSection={setFormSection}
             profileData={profileData}
             setProfileData={setProfileData}
-            account={account?.result}
+            account={fetchedUser}
             handleUpdateProfile={handleUpdateProfile}
           />
         </motion.div>

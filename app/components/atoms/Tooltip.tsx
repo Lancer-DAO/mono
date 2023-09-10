@@ -7,7 +7,7 @@ interface TProps extends HTMLAttributes<HTMLDivElement> {
 const Tooltip: FC<TProps> = ({ text }) => {
   return (
     <div
-      className="absolute w-[150px] h-full opacity-0 
+      className="absolute w-[150px] h-full opacity-0 pointer-events-none
       group-hover:opacity-100 transition-opacity 
       duration-200 ease-in-out z-50"
     >

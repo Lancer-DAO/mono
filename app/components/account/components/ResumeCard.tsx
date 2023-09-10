@@ -1,6 +1,7 @@
 import { useUserWallet } from "@/src/providers";
 import { api } from "@/src/utils";
 import { UploadButton } from "@/src/utils/uploadthing";
+import { User } from "@/types";
 import "@uploadthing/react/styles.css";
 import { Trash } from "lucide-react";
 import Link from "next/link";
@@ -8,16 +9,15 @@ import { useRouter } from "next/router";
 import { useState } from "react";
 import toast from "react-hot-toast";
 
-const ResumeCard = () => {
-  const router = useRouter();
-  const { currentUser } = useUserWallet();
-  const { data: fetchedUser } = api.users.getUser.useQuery({
-    id: parseInt(router.query.account as string) || currentUser.id,
-  });
+const ResumeCard: React.FC<{
+  resumeUrl: string;
+  setResumeUrl: (value: string) => void;
+  preview?: boolean;
+  setShowModal?: (value: boolean) => void;
+}> = ({ preview, setShowModal, setResumeUrl, resumeUrl }) => {
   const { mutateAsync: updateResume } = api.users.updateResume.useMutation();
   const { mutateAsync: deleteResume } = api.users.deleteResume.useMutation();
 
-  const [resumeUrl, setResumeUrl] = useState(fetchedUser?.resume);
   const [isAwaitingResponse, setIsAwaitingResponse] = useState(false);
 
   const confirmAction = (): Promise<void> => {
@@ -69,6 +69,7 @@ const ResumeCard = () => {
     const { resume } = await updateResume({ resume: url });
     localStorage.removeItem("newUser");
     setResumeUrl(resume);
+    setShowModal && setShowModal(false);
   };
 
   const handleResumeDelete = async () => {
@@ -85,8 +86,20 @@ const ResumeCard = () => {
   };
 
   return (
-    <div className="relative w-full md:w-[658px] rounded-xl bg-bgLancerSecondary/[8%] overflow-hidden p-6 pt-8 pb-10">
-      <p className="font-bold text-2xl text-textGreen mb-4">Resume</p>
+    <div
+      className={`relative rounded-xl bg-bgLancerSecondary/[8%] overflow-hidden p-6 pt-8 pb-10 ${
+        preview
+          ? "w-[400px] items-center justify-center"
+          : "w-full md:w-[658px] justify-start items-start"
+      }`}
+    >
+      <p
+        className={`font-bold text-2xl text-textGreen mb-4 ${
+          preview ? "text-center" : ""
+        }`}
+      >
+        Resume
+      </p>
       {resumeUrl ? (
         <div className="flex">
           <Link
