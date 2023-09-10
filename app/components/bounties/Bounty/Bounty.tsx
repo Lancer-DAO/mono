@@ -82,7 +82,7 @@ export const Bounty = () => {
 
   return (
     <>
-      <div className="w-full h-full flex justify-evenly mt-10 py-24">
+      <div className="w-full h-full flex flex-col sm:flex-row justify-evenly mt-10 py-24">
         {/* quest info */}
         <QuestDetails />
         {/* <div className="flex flex-col gap-5 w-[380px]">
