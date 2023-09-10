@@ -22,7 +22,7 @@ const ViewLinks = ({
 
   return (
     <>
-      {!website && !github && !linkedin && (
+      {!website && !github && !linkedin && !twitter && (
         <div className="w-full text-center">No Links yet!</div>
       )}
       <div className="w-full flex flex-col gap-4 py-5">
