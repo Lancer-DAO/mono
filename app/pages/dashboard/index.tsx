@@ -31,7 +31,7 @@ export async function getServerSideProps(
     },
   });
 
-  if (!user || !user || user.isAdmin) {
+  if (!user || !user || !user.isAdmin) {
     return {
       redirect: {
         destination: "/account",
