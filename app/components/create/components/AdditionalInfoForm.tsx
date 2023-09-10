@@ -95,9 +95,14 @@ export const AdditionalInfoForm: FC<Props> = ({
 
   const handleTagsChange = (event) => {
     const tags: string[] = event.target.value.split(",");
+
+    const filteredTags = tags.filter(
+      (tag, index) => tag.trim() !== "" || index === tags.length - 1
+    );
+
     setFormData({
       ...formData,
-      tags,
+      tags: filteredTags,
     });
   };
 
@@ -261,10 +266,10 @@ export const AdditionalInfoForm: FC<Props> = ({
                       height={250}
                       className="mb-2 rounded-md"
                     />
-                    <p className="font-bold text-lg truncate mx-1">{media.title}</p>
-                    <p className="text-sm truncate mx-1">
-                      {media.description}
+                    <p className="font-bold text-lg truncate mx-1">
+                      {media.title}
                     </p>
+                    <p className="text-sm truncate mx-1">{media.description}</p>
 
                     <motion.button
                       className="absolute top-[-10px] right-[-10px] p-1 bg-secondaryBtn border border-secondaryBtnBorder rounded-full"

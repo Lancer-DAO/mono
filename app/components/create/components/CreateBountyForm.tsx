@@ -172,7 +172,7 @@ export const CreateBountyForm: FC<Props> = ({
             border-neutralBtnBorder w-full h-[150px] rounded-lg px-3 py-2 resize-y"
             name="issueDescription"
             placeholder="Description"
-            id="issue-title-input"
+            id="issue-description-input"
             value={formData.issueDescription}
             onChange={handleChange}
           />
