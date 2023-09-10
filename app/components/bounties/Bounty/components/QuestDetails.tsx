@@ -1,13 +1,17 @@
+import { ExternalLinkIcon } from "@/components";
+import FundCTA from "@/components/atoms/FundCTA";
 import { useBounty } from "@/src/providers/bountyProvider";
-import { cn } from "@/src/utils";
+import { cn, formatPrice, getSolscanAddress } from "@/src/utils";
 import { BountyState } from "@/types";
-import { clsx } from "clsx";
+import { PublicKey } from "@solana/web3.js";
 import dayjs from "dayjs";
 import { marked } from "marked";
-import { ArrowLeft, ChevronUp } from "react-feather";
-import { Bounty } from "../Bounty";
+import Link from "next/link";
+import { useState } from "react";
+import { ArrowLeft, ChevronDown, ChevronUp, ExternalLink } from "react-feather";
 
 const QuestDetails = () => {
+  const [dropdownOpen, setDropdownOpen] = useState(true);
   const { currentBounty } = useBounty();
 
   const formatString = (str: string) => {
@@ -29,17 +33,27 @@ const QuestDetails = () => {
       {/* quest header */}
       <div className="flex flex-col items-start px-4 py-6">
         <div className="flex items-center pb-1 gap-2">
-          <ArrowLeft className="w-4 h-4 text-grey400" />
-          <h1 className="text-grey600 font-bold">{currentBounty?.title}</h1>
+          <Link href="/quests">
+            <ArrowLeft className="text-grey400" width={16} height={16} />
+          </Link>
+          <h2 className="text-grey600 font-bold">{currentBounty?.title}</h2>
         </div>
         <div className="flex items-center pb-[10px] px-6">
-          <p className="text-grey500">{`Created on ${dayjs.unix(parseInt(currentBounty.createdAt) / 1000).format("D MMM YYYY")}`}</p>
+          <p className="text text-grey500">{`Created on ${dayjs.unix(parseInt(currentBounty.createdAt) / 1000).format("D MMM YYYY")}`}</p>
           <div className="h-[20px] w-[1px] mx-4 bg-slate-200" />
-          <p className="text-grey500">{`${currentBounty.estimatedTime.toString()} hour`}</p>
+          <p className="text text-grey500">{`${currentBounty.estimatedTime.toString()} ${Number(currentBounty.estimatedTime) > 1 ? 'hours' : 'hour'}`}</p>
           <div className="h-[20px] w-[1px] mx-4 bg-slate-200" />
-          <div>
-            <p className="text-grey500">{currentBounty.price?.toString()}</p>
-          </div>
+          {currentBounty?.escrow?.amount ? (
+            <div className="flex items-center gap-[6px]">
+              <p className="text text-grey500">{`$${formatPrice(Number(currentBounty?.escrow?.amount))}`}</p>
+              <Link href={getSolscanAddress(new PublicKey(currentBounty?.escrow?.publicKey))} target="true" >
+                <ExternalLink className="text-grey500" width={12} height={12} />
+              </Link>
+            </div>
+
+          ) : (
+            <FundCTA />
+          )}
         </div>
         <div className="flex px-5 gap-2">
           {currentBounty.tags.length > 0 && (
@@ -48,7 +62,7 @@ const QuestDetails = () => {
                 .filter((tag) => tag.name !== "")
                 .map((tag) => (
                   <div
-                    className="text-grey600 text-center text bg-grey100 w-fit px-2 py-1 rounded-xl border border-grey200"
+                    className="text-grey600 text-center text-mini bg-grey100 w-fit px-2 py-1 rounded-lg border border-grey200"
                     key={tag.name}
                   >
                     {tag.name}
@@ -58,12 +72,14 @@ const QuestDetails = () => {
           )}
           <div
             className={cn(
-              "text-center text w-fit px-2 py-1 rounded-xl border",
+              "text-xs text-center w-fit px-2 py-1 rounded-lg border",
               {
-                "text-grey600 border-[#C0D998] bg-[#CBE4A1]": [BountyState.NEW, BountyState.ACCEPTING_APPLICATIONS].includes(currentBounty.state as BountyState),
-                "text-grey600 border-[#E2C2F2] bg-[#EDC9FF]": currentBounty.state === BountyState.IN_PROGRESS,
-                "border-[#333] bg-[#3D3D3D] text-white": currentBounty.state === BountyState.COMPLETE,
-                "text-grey600 border-[#F2B0AA] bg-[#FFBCB5]": [BountyState.CANCELED, BountyState.AWAITING_REVIEW].includes(currentBounty.state as BountyState),
+                "text-grey600 bg-[#CBE4A1] border-[#C0D998]": [BountyState.NEW, BountyState.ACCEPTING_APPLICATIONS].includes(currentBounty.state as BountyState),
+                "text-grey600 bg-[#EDC9FF] border-[#E2C2F2]": currentBounty.state === BountyState.IN_PROGRESS,
+                "text-white bg-[#3D3D3D] border-[#333]": currentBounty.state === BountyState.COMPLETE,
+                "text-grey600 bg-[#FFBCB5] border-[#F2B0AA]": currentBounty.state === BountyState.AWAITING_REVIEW,
+                "text-white bg-[#999] border-[#8C8C8C]": currentBounty.state === BountyState.CANCELED,
+                "text-white bg-[#B26B9B] border-[#A66390]": currentBounty.state === BountyState.VOTING_TO_CANCEL,
               }
             )}
             >
@@ -74,11 +90,17 @@ const QuestDetails = () => {
       <div className="h-[1px] w-full bg-grey200" />
       {/* quest content */}
       <div className="px-10 py-4">
-        <div className="flex justify-between pb-[10px]">
-          <p className="font-bold text-grey600">Job Description</p>
-          <ChevronUp className="w-3 " />
+        <div className={`flex justify-between ${dropdownOpen ? 'pb-[10px]' : ''}`}>
+          <p className="text font-bold text-grey600">Job Description</p>
+          <button onClick={() => setDropdownOpen(!dropdownOpen)}>
+            {dropdownOpen ? (
+              <ChevronDown width={12} height={6} />
+            ) : (
+              <ChevronUp width={12} height={6} />
+            )}
+          </button>
         </div>
-        <p dangerouslySetInnerHTML={previewMarkup()} />
+        <p className={`leading-[25.2px] text-sm text-grey500 ${dropdownOpen ? '' : 'hidden'}`} dangerouslySetInnerHTML={previewMarkup()} />
       </div>
     </div>
   )
