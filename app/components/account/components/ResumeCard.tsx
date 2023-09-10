@@ -67,7 +67,6 @@ const ResumeCard: React.FC<{
 
   const handleResumeUpload = async (url) => {
     const { resume } = await updateResume({ resume: url });
-    localStorage.removeItem("newUser");
     setResumeUrl(resume);
     setShowModal && setShowModal(false);
   };
@@ -78,7 +77,6 @@ const ResumeCard: React.FC<{
       await updateResume({ resume: "" });
       await deleteResume({ fileUrl: resumeUrl });
       setResumeUrl("");
-      localStorage.setItem("newUser", "true");
     } catch (error) {
       console.log(error);
       toast.error(`Error deleting resume: ${error.message}`);

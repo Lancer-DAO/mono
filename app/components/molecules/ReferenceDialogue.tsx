@@ -80,7 +80,7 @@ const ReferenceDialogue = ({ onReferenceAdded }) => {
           <Plus size={48} />
         </button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent>
         <DialogHeader>
           <DialogTitle>Add a Reference</DialogTitle>
           <DialogDescription>

@@ -1,11 +1,12 @@
-import { protectedProcedure } from "../../trpc";
-import { z } from "zod";
 import * as queries from "@/prisma/queries";
+import { z } from "zod";
+import { protectedProcedure } from "../../trpc";
 
 export const updateLinks = protectedProcedure
   .input(
     z.object({
       website: z.string(),
+      twitter: z.string(),
       github: z.string(),
       linkedin: z.string(),
     })
@@ -15,6 +16,7 @@ export const updateLinks = protectedProcedure
       ctx,
       input: {
         website,
+        twitter,
         github,
         linkedin
       }
@@ -24,9 +26,10 @@ export const updateLinks = protectedProcedure
       await queries.user.updateLinks(
         id,
         website,
+        twitter,
         github,
         linkedin
       )
 
-      return { website, github, linkedin };
+      return { website, twitter, github, linkedin };
     });

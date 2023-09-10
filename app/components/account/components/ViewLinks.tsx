@@ -2,10 +2,12 @@ import Link from "next/link";
 
 const ViewLinks = ({
   website,
+  twitter,
   github,
   linkedin,
 }: {
   website: string;
+  twitter: string;
   github: string;
   linkedin: string;
 }) => {
@@ -34,6 +36,19 @@ const ViewLinks = ({
               rel="noreferrer noopener"
             >
               {formatLinks(website)}
+            </Link>
+          </div>
+        )}
+        {twitter && (
+          <div className="w-full">
+            <p className="text-textGreen uppercase text-sm">Twitter</p>
+            <Link
+              className="underline text-textPrimary"
+              href={twitter}
+              target="_blank"
+              rel="noreferrer noopener"
+            >
+              {formatLinks(twitter)}
             </Link>
           </div>
         )}
