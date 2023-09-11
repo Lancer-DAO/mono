@@ -30,43 +30,46 @@ const QuestDetails = () => {
 
   const bountyStateColor = (state: string) => {
     return {
-      "text-grey600 bg-[#CBE4A1] border-[#C0D998]": [
+      "text-neutral600 bg-[#CBE4A1] border-[#C0D998]": [
         BountyState.NEW,
         BountyState.ACCEPTING_APPLICATIONS,
       ].includes(state as BountyState),
-      "text-grey600 bg-[#EDC9FF] border-[#E2C2F2]": state === BountyState.IN_PROGRESS,
+      "text-neutral600 bg-[#EDC9FF] border-[#E2C2F2]":
+        state === BountyState.IN_PROGRESS,
       "text-white bg-[#3D3D3D] border-[#333]": state === BountyState.COMPLETE,
-      "text-grey600 bg-[#FFBCB5] border-[#F2B0AA]": state === BountyState.AWAITING_REVIEW,
+      "text-neutral600 bg-[#FFBCB5] border-[#F2B0AA]":
+        state === BountyState.AWAITING_REVIEW,
       "text-white bg-[#999] border-[#8C8C8C]": state === BountyState.CANCELED,
-      "text-white bg-[#B26B9B] border-[#A66390]": state === BountyState.VOTING_TO_CANCEL,
-    }
-  }
+      "text-white bg-[#B26B9B] border-[#A66390]":
+        state === BountyState.VOTING_TO_CANCEL,
+    };
+  };
 
   return (
-    <div className="flex flex-col bg-white w-[610px] border border-grey200 rounded-lg">
+    <div className="flex flex-col bg-white w-[610px] border border-neutral200 rounded-lg">
       {/* quest header */}
       <div className="flex flex-col items-start px-4 py-6">
         {/* back arrow */}
         <div className="flex items-center pb-1 gap-2">
           <Link href="/quests">
-            <ArrowLeft className="text-grey400" width={16} height={16} />
+            <ArrowLeft className="text-neutral400" width={16} height={16} />
           </Link>
-          <h2 className="text-grey600 font-bold">{currentBounty?.title}</h2>
+          <h2 className="text-neutral600 font-bold">{currentBounty?.title}</h2>
         </div>
         {/* quest info */}
         <div className="flex items-center pb-[10px] px-6">
-          <p className="text text-grey500">{`Created on ${dayjs
+          <p className="text text-neutral500">{`Created on ${dayjs
             .unix(parseInt(currentBounty.createdAt) / 1000)
             .format("D MMM YYYY")}`}</p>
           {/* TODO: either add back estimated time or remove from design */}
           {/* <Divider />
-          <p className="text text-grey500">{`${currentBounty.estimatedTime.toString()} ${
+          <p className="text text-neutral500">{`${currentBounty.estimatedTime.toString()} ${
             Number(currentBounty.estimatedTime) > 1 ? "hours" : "hour"
           }`}</p> */}
           <Divider />
           {currentBounty?.escrow?.amount ? (
             <div className="flex items-center gap-[6px]">
-              <p className="text text-grey500">{`$${formatPrice(
+              <p className="text text-neutral500">{`$${formatPrice(
                 Number(currentBounty?.escrow?.amount)
               )}`}</p>
               <Link
@@ -75,7 +78,11 @@ const QuestDetails = () => {
                 )}
                 target="true"
               >
-                <ExternalLink className="text-grey500" width={12} height={12} />
+                <ExternalLink
+                  className="text-neutral500"
+                  width={12}
+                  height={12}
+                />
               </Link>
             </div>
           ) : (
@@ -89,7 +96,7 @@ const QuestDetails = () => {
                 .filter((tag) => tag.name !== "")
                 .map((tag) => (
                   <div
-                    className="text-grey600 text-center text-mini bg-grey100 w-fit px-2 py-1 rounded-lg border border-grey200"
+                    className="text-neutral600 text-center text-mini bg-neutral100 w-fit px-2 py-1 rounded-lg border border-neutral200"
                     key={tag.name}
                   >
                     {tag.name}
@@ -107,13 +114,13 @@ const QuestDetails = () => {
           </div>
         </div>
       </div>
-      <div className="h-[1px] w-full bg-grey200" />
+      <div className="h-[1px] w-full bg-neutral200" />
       {/* quest content */}
       <div className="px-10 py-4">
         <div
           className={`flex justify-between ${dropdownOpen ? "pb-[10px]" : ""}`}
         >
-          <p className="text font-bold text-grey600">Job Description</p>
+          <p className="text font-bold text-neutral600">Job Description</p>
           <button
             className="h-full"
             onClick={() => setDropdownOpen(!dropdownOpen)}
@@ -126,7 +133,7 @@ const QuestDetails = () => {
           </button>
         </div>
         <p
-          className={`leading-[25.2px] text-sm text-grey500 ${
+          className={`leading-[25.2px] text-sm text-neutral500 ${
             dropdownOpen ? "" : "hidden"
           }`}
           dangerouslySetInnerHTML={previewMarkup()}

@@ -1,11 +1,10 @@
-import { FC, useState } from "react";
-import { useRouter } from "next/router";
+import { FC, useEffect, useState } from "react";
 import { useUserWallet } from "@/src/providers";
 import { useBounty } from "@/src/providers/bountyProvider";
-import { api } from "@/src/utils";
 // import { BountyActions } from "./BountyActions";
 import QuestUser from "./QuestUser";
 import ApplicantsView from "./ApplicantsView";
+import LancerApplyView from "./LancerApplyView";
 
 export enum QuestActionView {
   Apply = "apply", // one-way (Lancer)
@@ -23,25 +22,30 @@ const QuestActions: FC = () => {
 
   // TODO: set loading state, check for user status (creator or applicant?)
   // and then set initial view based on that
-  const [currentActionView, setCurrentActionView] = useState<QuestActionView>(
-    QuestActionView.ViewApplicants
-  );
+  const [currentActionView, setCurrentActionView] = useState<QuestActionView>();
+
+  useEffect(() => {
+    if (!!currentUser && !currentBounty.isCreator) {
+      setCurrentActionView(QuestActionView.Apply);
+    } else if (!!currentUser && currentBounty.isCreator) {
+      setCurrentActionView(QuestActionView.ViewApplicants);
+    }
+  }, [currentUser, currentBounty]);
 
   if (!currentUser || !currentBounty) return null;
 
   return (
-    <div className="flex flex-col bg-white w-[610px] border border-grey200 rounded-lg">
+    <div className="bg-white w-[610px] border border-neutral200 rounded-lg overflow-hidden">
       {/* {currentBounty.isCreator ? ( */}
-      <div className="flex flex-col items-start gap-2 p-6">
-        {currentBounty?.creator && (
+      {/* {currentBounty?.creator && (
           <QuestUser title="Client" users={[currentBounty.creator.user]} />
-        )}
+        )} */}
+      {currentActionView === QuestActionView.Apply && <LancerApplyView />}
+      {currentActionView === QuestActionView.ViewApplicants && (
+        <ApplicantsView />
+      )}
 
-        {currentActionView === QuestActionView.ViewApplicants && (
-          <ApplicantsView />
-        )}
-
-        {/* {currentBounty &&
+      {/* {currentBounty &&
             currentBounty.currentSubmitter &&
             currentBounty.isCreator && (
               <QuestUser
@@ -90,8 +94,7 @@ const QuestActions: FC = () => {
               )}
             />
           )} */}
-        {/* {!!currentBounty && <BountyActions />} */}
-      </div>
+      {/* {!!currentBounty && <BountyActions />} */}
       {/* ) : (
         <div className="text-industryRedBorder">
           You must be approved to interact with Quests

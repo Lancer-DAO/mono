@@ -54,7 +54,7 @@ h4 {
   @apply text-base;
 }
 
-.titleText {
+.title-text {
   @apply text-sm font-bold;
 }
 
