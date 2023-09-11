@@ -3,14 +3,14 @@ import { protectedProcedure } from "../../../trpc";
 import { z } from "zod";
 import * as queries from "@/prisma/queries";
 
-export const getBounty = protectedProcedure
+export const get = protectedProcedure
   .input(
     z.object({
       query: z.string(),
     })
   )
   .query(async ({ input: { query } }) => {
-    await prisma.tag.findMany({
+    return await prisma.tag.findMany({
       where: {
         // full text search on name
         name: {
@@ -19,8 +19,8 @@ export const getBounty = protectedProcedure
       },
       select: {
         name: true,
-        bgColor: true,
-        borderColor: true,
+        // bgColor: true,
+        // borderColor: true,
       },
     });
   });
