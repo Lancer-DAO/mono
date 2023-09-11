@@ -10,8 +10,9 @@ import EditReferenceDialogue from "@/components/molecules/EditReferenceDialogue"
 import ReferenceDialogue from "@/components/molecules/ReferenceDialogue";
 import { smallClickAnimation } from "@/src/constants";
 import { useUserWallet } from "@/src/providers";
+import { useAccount } from "@/src/providers/accountProvider";
 import { api } from "@/src/utils";
-import { Media } from "@/types";
+import { Media, User } from "@/types";
 import "@uploadthing/react/styles.css";
 import { motion } from "framer-motion";
 import { X } from "lucide-react";
@@ -20,18 +21,16 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
 
-const PortfolioCard = () => {
-  const router = useRouter();
+const PortfolioCard: React.FC = () => {
+  const { account } = useAccount();
+
   const { currentUser } = useUserWallet();
-  const { data: fetchedUser } = api.users.getUser.useQuery({
-    id: parseInt(router.query.account as string) || currentUser.id,
-  });
   const maxMedia = 3;
   const { mutateAsync: createMedia } = api.media.createMedia.useMutation();
   const { mutateAsync: deleteMedia } = api.media.deleteMedia.useMutation();
   const { mutateAsync: updateMedia } = api.media.updateMedia.useMutation();
   const { data: media } = api.media.getMedia.useQuery({
-    userId: fetchedUser?.id,
+    userId: account?.id,
   });
   const [portfolio, setPortfolio] = useState<Media[]>([]);
   const [isAwaitingResponse, setIsAwaitingResponse] = useState(false);
@@ -165,7 +164,7 @@ const PortfolioCard = () => {
                       </div>
                     </DialogTrigger>
                   </div>
-                  {fetchedUser.id === currentUser.id && (
+                  {account.id === currentUser.id && (
                     <>
                       <EditReferenceDialogue
                         media={media}
@@ -203,7 +202,7 @@ const PortfolioCard = () => {
           } else {
             return (
               <>
-                {fetchedUser.id === currentUser.id && (
+                {account.id === currentUser.id && (
                   <ReferenceDialogue
                     key={index}
                     onReferenceAdded={handleMediaAdded}

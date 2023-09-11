@@ -9,6 +9,9 @@ import { BountyFilters } from "./components";
 import { BountyPreview, Filters, TABLE_BOUNTY_STATES } from "@/types";
 import { AnimatePresence, motion } from "framer-motion";
 import toast from "react-hot-toast";
+import { useBounty } from "@/src/providers/bountyProvider";
+import { useIndustry } from "@/src/providers/industryProvider";
+import { useMint } from "@/src/providers/mintProvider";
 
 export const BOUNTY_USER_RELATIONSHIP = [
   "Creator",
@@ -19,6 +22,7 @@ export const BOUNTY_USER_RELATIONSHIP = [
 ];
 
 const BountyList: React.FC<{}> = () => {
+  const { allBounties } = useBounty();
   // state
   const [tags, setTags] = useState<string[]>([]);
   const [bounds, setPriceBounds] = useState<[number, number]>([5, 10000]);
@@ -36,31 +40,21 @@ const BountyList: React.FC<{}> = () => {
 
   // api + context
   const { currentUser } = useUserWallet();
-  const {
-    data: allBounties,
-    isLoading: bountiesLoading,
-    isError: bountiesError,
-  } = api.bounties.getAllBounties.useQuery(
-    {
-      currentUserId: currentUser?.id,
-      onlyMyBounties: filters.isMyBounties,
-    },
-    {
-      enabled: !!currentUser,
-    }
-  );
-  const {
-    data: allIndustries,
-    isLoading: industriesLoading,
-    isError: industriesError,
-  } = api.industries.getAllIndustries.useQuery();
-  const { data: allMints } = api.mints.getMints.useQuery();
+  const { allIndustries } = useIndustry();
+  const { allMints } = useMint();
 
   useEffect(() => {
     const filteredBounties = allBounties?.filter((bounty) => {
       if (!bounty.escrow.publicKey || !bounty.escrow.mint) {
         return false;
       }
+      if (
+        filters.isMyBounties &&
+        !bounty.users.some((user) => user.userid === currentUser?.id)
+      ) {
+        return false;
+      }
+
       // check if any of the bounty's industries is
       // included in the filters.industries list
       if (
@@ -101,14 +95,6 @@ const BountyList: React.FC<{}> = () => {
     // - all payout mints
     // - upper and lower bounds of price
 
-    if (bountiesError) {
-      toast.error("Error fetching bounties");
-      return;
-    }
-    if (industriesError) {
-      toast.error("Error fetching industries");
-      return;
-    }
     if (!allBounties || !allIndustries) return;
     if (allBounties && allBounties?.length !== 0) {
       const allTags = allBounties
@@ -194,23 +180,12 @@ const BountyList: React.FC<{}> = () => {
           </motion.button>
         )}
 
-        {bountiesLoading && (
+        {!allBounties && (
           <div className="w-full flex flex-col items-center">
             <LoadingBar title="Loading Quests" />
           </div>
         )}
-
         <div className={`w-full flex flex-wrap gap-5`}>
-          {!bountiesLoading && filteredBounties?.length === 0 && (
-            <p className="w-full text-center col-span-full">
-              No matching bounties available!
-            </p>
-          )}
-          {bountiesError && (
-            <p className="w-full text-center col-span-full">
-              Error fetching bounties
-            </p>
-          )}
           {filteredBounties?.length > 0 &&
             filteredBounties?.map((bounty, index) => {
               return <BountyCard bounty={bounty} key={index} />;

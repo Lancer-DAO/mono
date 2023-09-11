@@ -36,17 +36,17 @@ export function useNonCustodialWallet(): IUserWalletContext {
 
 interface IUserWalletState {
   children?: React.ReactNode;
+  user: User;
 }
 interface IUserWalletProps {
   children?: ReactNode;
+  user: User;
 }
 
 const UserWalletProvider: FunctionComponent<IUserWalletState> = ({
   children,
+  user,
 }: IUserWalletProps) => {
-  const { mutateAsync: getCurrUser } = api.users.login.useMutation();
-  const router = useRouter();
-  const { user } = useUser();
   const {
     wallet,
     publicKey,
@@ -58,9 +58,8 @@ const UserWalletProvider: FunctionComponent<IUserWalletState> = ({
   } = useWallet();
   const { connection } = useConnection();
   const { isDebugMode } = useDebugMode();
-
+  const currentUser = user;
   const { currentTutorialState, setCurrentTutorialState } = useTutorial();
-  const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [currentWallet, setCurrentWallet] = useState<LancerWallet>();
   const [provider, setProvider] = useState<AnchorProvider>();
   const [program, setProgram] = useState<Program<MonoProgram>>();
@@ -110,21 +109,6 @@ const UserWalletProvider: FunctionComponent<IUserWalletState> = ({
       setCurrentWallet(null);
     }
   }, [connected, publicKey, isDebugMode, connection, wallet, currentUser]);
-
-  useEffect(() => {
-    if (user) {
-      const getUser = async () => {
-        try {
-          const userInfo = await getCurrUser();
-          setCurrentUser(userInfo);
-        } catch (e) {
-          console.error(e);
-          // router.push("/api/auth/login");
-        }
-      };
-      getUser();
-    }
-  }, [user]);
 
   const contextProvider = {
     currentUser,

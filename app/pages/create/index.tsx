@@ -8,6 +8,10 @@ import { NextSeo } from "next-seo";
 import { GetServerSidePropsContext } from "next";
 import { prisma } from "@/server/db";
 
+import * as queries from "@/prisma/queries";
+import { useIndustry } from "@/src/providers/industryProvider";
+import { useMint } from "@/src/providers/mintProvider";
+
 export async function getServerSideProps(
   context: GetServerSidePropsContext<{ id: string; req; res }>
 ) {
@@ -24,19 +28,9 @@ export async function getServerSideProps(
   }
   const { email } = metadata.user;
 
-  const user = await prisma.user.findUnique({
-    where: {
-      email,
-    },
-    select: {
-      id: true,
-      isAdmin: true,
-      hasFinishedOnboarding: true,
-      hasBeenApproved: true,
-    },
-  });
+  const user = await queries.user.getByEmail(email);
 
-  if (!user || !user.hasFinishedOnboarding) {
+  if (!user || !user || !user.hasFinishedOnboarding) {
     return {
       redirect: {
         destination: "/welcome",
@@ -44,10 +38,33 @@ export async function getServerSideProps(
       },
     };
   }
-  return { props: {} };
+
+  const allMints = await queries.mint.getAll();
+  const allIndustries = await queries.industry.getMany();
+  return {
+    props: {
+      currentUser: JSON.stringify(user),
+      user: JSON.stringify(user),
+
+      mints: JSON.stringify(allMints),
+      industries: JSON.stringify(allIndustries),
+    },
+  };
 }
 
-const CreatePage: React.FC = () => {
+const CreatePage: React.FC<{ mints: string; industries: string }> = ({
+  mints,
+  industries,
+}) => {
+  const { setAllMints, allMints } = useMint();
+  const { setAllIndustries, allIndustries } = useIndustry();
+
+  if (!allMints && mints) {
+    setAllMints(JSON.parse(mints));
+  }
+  if (!allIndustries && industries) {
+    setAllIndustries(JSON.parse(industries));
+  }
   return (
     <>
       <NextSeo

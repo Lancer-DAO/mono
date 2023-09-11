@@ -6,6 +6,7 @@ import { useReferral } from "@/src/providers/referralProvider";
 import { api } from "@/src/utils";
 import { Treasury } from "@ladderlabs/buddy-sdk";
 import { InfoIcon } from "lucide-react";
+import { useMint } from "@/src/providers/mintProvider";
 
 const SITE_URL = `https://${IS_CUSTODIAL ? "app" : "pro"}.lancer.so/account?r=`;
 
@@ -16,7 +17,7 @@ export const ReferCard = () => {
     useReferral();
 
   const { currentWallet } = useUserWallet();
-  const { data: allMints } = api.mints.getMints.useQuery();
+  const { allMints } = useMint();
 
   const handleCreateLink = useCallback(async () => {
     try {
