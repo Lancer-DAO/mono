@@ -8,6 +8,7 @@ import {
 import { useUserWallet } from "@/providers";
 import { fastEnterAnimation, midClickAnimation } from "@/src/constants";
 import { useBounty } from "@/src/providers/bountyProvider";
+import { useIndustry } from "@/src/providers/industryProvider";
 import { BountyPreview, FormData, Industry } from "@/types/";
 import { api, getFormattedDate } from "@/utils";
 import { motion } from "framer-motion";
@@ -28,7 +29,8 @@ const BountyCard: FC<BountyCardProps> = ({
 }) => {
   const { currentUser } = useUserWallet();
   const { currentBounty } = useBounty();
-  const { data: allIndustries } = api.industries.getAllIndustries.useQuery();
+  const { allIndustries } = useIndustry();
+
   const [selectedIndustry, setSelectedIndustry] = useState<Industry>();
 
   const bountyCardAnimation = linked

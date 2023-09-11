@@ -4,6 +4,7 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { Check, Edit, X } from "react-feather";
 import EditLinks from "./EditLinks";
+import { useAccount } from "@/src/providers/accountProvider";
 import ViewLinks from "./ViewLinks";
 
 const LinksCard = () => {
@@ -11,22 +12,16 @@ const LinksCard = () => {
   const [editLinksMode, setEditLinksMode] = useState(false);
   const { mutateAsync: updateLinks, isLoading: isUpdating } =
     api.users.updateLinks.useMutation();
+  const { account } = useAccount();
 
   const { currentUser } = useUserWallet();
-  const {
-    data: fetchedUser,
-    isLoading: userIsLoading,
-    isError: userIsError,
-    refetch,
-  } = api.users.getUser.useQuery({
-    id: parseInt(router.query.account as string) || currentUser.id,
-  });
 
   const [links, setLinks] = useState({
-    website: fetchedUser?.website || "",
-    twitter: fetchedUser?.twitter || "",
-    github: fetchedUser?.github || "",
-    linkedin: fetchedUser?.linkedin || "",
+    website: account?.website || "",
+    github: account?.github || "",
+    linkedin: account?.linkedin || "",
+
+    twitter: account?.twitter || "",
   });
 
   const handleEditLinks = () => {
@@ -47,14 +42,13 @@ const LinksCard = () => {
       github: updatedLinks?.github,
       linkedin: updatedLinks?.linkedin,
     });
-    refetch();
   };
 
   return (
     <div className="my-3">
       <div className="flex items-center gap-2">
         <p className="text-textGreen font-bold text-2xl">Links</p>
-        {fetchedUser?.id === currentUser.id && (
+        {account?.id === currentUser.id && (
           <>
             {editLinksMode ? (
               <div>
@@ -64,16 +58,16 @@ const LinksCard = () => {
                 >
                   <Check />
                 </button>
-                <button 
+                <button
                   onClick={() => {
                     setLinks({
-                      website: fetchedUser?.website || "",
-                      twitter: fetchedUser?.twitter || "",
-                      github: fetchedUser?.github || "",
-                      linkedin: fetchedUser?.linkedin || "",
+                      website: links.website,
+                      twitter: links?.twitter,
+                      github: links?.github,
+                      linkedin: links?.linkedin,
                     });
                     setEditLinksMode(false);
-                  }} 
+                  }}
                   className="rounded-md upprecase font-bold text-textRed"
                 >
                   <X />
@@ -90,8 +84,7 @@ const LinksCard = () => {
           </>
         )}
       </div>
-      {userIsLoading && <div>Loading Links</div>}
-      {fetchedUser && !userIsLoading && !userIsError && (
+      {account && (
         <>
           {editLinksMode ? (
             <EditLinks
