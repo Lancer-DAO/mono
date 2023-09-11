@@ -122,12 +122,12 @@ export const Account: FC<Props> = ({ self }) => {
     }
   }, [fetchedUser, currentWallet, currentTutorialState]);
 
-  // check for "newUser" key in local storage
+  // check for resume in user object
   useEffect(() => {
-    if (localStorage.getItem("newUser")) {
+    if (!!fetchedUser && !fetchedUser.resume) {
       setShowResumeModal(true);
     }
-  }, []);
+  }, [fetchedUser]);
 
   if (!IS_CUSTODIAL && !currentWallet && !profileNFT)
     return (
@@ -146,7 +146,7 @@ export const Account: FC<Props> = ({ self }) => {
   if (userLoading) {
     return (
       <div className="w-full md:w-[90%] items-center justify-center flex flex-col mx-auto px-4 md:px-0 py-24">
-        <LoadingBar title={"Loading profile"} />
+        <LoadingBar title={"Loading Profile"} />
       </div>
     );
   }
