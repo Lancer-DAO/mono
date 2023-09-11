@@ -1,5 +1,3 @@
-import { useState } from "react";
-import Link from "next/link";
 import FundCTA from "@/components/atoms/FundCTA";
 import { useBounty } from "@/src/providers/bountyProvider";
 import { cn, formatPrice, getSolscanAddress } from "@/src/utils";
@@ -7,6 +5,8 @@ import { BountyState } from "@/types";
 import { PublicKey } from "@solana/web3.js";
 import dayjs from "dayjs";
 import { marked } from "marked";
+import Link from "next/link";
+import { useState } from "react";
 import { ArrowLeft, ChevronDown, ChevronUp, ExternalLink } from "react-feather";
 
 const Divider = () => <div className="h-[20px] w-[1px] mx-4 bg-slate-200" />;
@@ -27,6 +27,20 @@ const QuestDetails = () => {
     const markdown = marked.parse(currentBounty.description, { breaks: true });
     return { __html: markdown };
   };
+
+  const bountyStateColor = (state: string) => {
+    return {
+      "text-grey600 bg-[#CBE4A1] border-[#C0D998]": [
+        BountyState.NEW,
+        BountyState.ACCEPTING_APPLICATIONS,
+      ].includes(state as BountyState),
+      "text-grey600 bg-[#EDC9FF] border-[#E2C2F2]": state === BountyState.IN_PROGRESS,
+      "text-white bg-[#3D3D3D] border-[#333]": state === BountyState.COMPLETE,
+      "text-grey600 bg-[#FFBCB5] border-[#F2B0AA]": state === BountyState.AWAITING_REVIEW,
+      "text-white bg-[#999] border-[#8C8C8C]": state === BountyState.CANCELED,
+      "text-white bg-[#B26B9B] border-[#A66390]": state === BountyState.VOTING_TO_CANCEL,
+    }
+  }
 
   return (
     <div className="flex flex-col bg-white w-[610px] border border-grey200 rounded-lg">
@@ -86,22 +100,7 @@ const QuestDetails = () => {
           <div
             className={cn(
               "text-xs text-center w-fit px-2 py-1 rounded-lg border",
-              {
-                "text-grey600 bg-[#CBE4A1] border-[#C0D998]": [
-                  BountyState.NEW,
-                  BountyState.ACCEPTING_APPLICATIONS,
-                ].includes(currentBounty.state as BountyState),
-                "text-grey600 bg-[#EDC9FF] border-[#E2C2F2]":
-                  currentBounty.state === BountyState.IN_PROGRESS,
-                "text-white bg-[#3D3D3D] border-[#333]":
-                  currentBounty.state === BountyState.COMPLETE,
-                "text-grey600 bg-[#FFBCB5] border-[#F2B0AA]":
-                  currentBounty.state === BountyState.AWAITING_REVIEW,
-                "text-white bg-[#999] border-[#8C8C8C]":
-                  currentBounty.state === BountyState.CANCELED,
-                "text-white bg-[#B26B9B] border-[#A66390]":
-                  currentBounty.state === BountyState.VOTING_TO_CANCEL,
-              }
+              bountyStateColor(currentBounty.state)
             )}
           >
             {formatString(currentBounty.state)}
