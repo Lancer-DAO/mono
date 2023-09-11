@@ -19,20 +19,7 @@ export enum QuestActionView {
 
 const QuestActions: FC = () => {
   const { currentUser } = useUserWallet();
-  const { setCurrentBounty, currentBounty } = useBounty();
-  const router = useRouter();
-  const { data: currentBountyData } = api.bounties.getBounty.useQuery(
-    {
-      id: parseInt(router.query.quest as string),
-      currentUserId: currentUser?.id,
-    },
-    {
-      enabled: !!currentUser,
-      onSuccess: (data) => {
-        setCurrentBounty(data);
-      },
-    }
-  );
+  const { currentBounty } = useBounty();
 
   // TODO: set loading state, check for user status (creator or applicant?)
   // and then set initial view based on that
@@ -41,12 +28,12 @@ const QuestActions: FC = () => {
   );
 
   return (
-    <div className="bg-white w-[540px] h-fit rounded-md flex flex-col gap-10 p-10">
+    <div className="flex flex-col bg-white w-[610px] border border-grey200 rounded-lg">
       {/* {currentBounty.isCreator ? ( */}
-      <div className="flex flex-col gap-5" id="contributors-section">
-        {/* {currentBounty?.creator && (
-            <QuestUser title="Client" users={[currentBounty.creator.user]} />
-          )} */}
+      <div className="flex flex-col items-start gap-2 p-6">
+        {currentBounty?.creator && (
+          <QuestUser title="Client" users={[currentBounty.creator.user]} />
+        )}
 
         {currentActionView === QuestActionView.ViewApplicants && (
           <ApplicantsView />
