@@ -17,6 +17,7 @@ export const update = protectedProcedure
       state: z.optional(z.string()),
       label: z.string(),
       signature: z.string(),
+      applicationText: z.string(),
     })
   )
   .mutation(
@@ -31,6 +32,7 @@ export const update = protectedProcedure
         state,
         label,
         signature,
+        applicationText,
       },
     }) => {
       const user = await queries.user.getById(userId);
@@ -45,7 +47,8 @@ export const update = protectedProcedure
           bountyId,
           relations,
           user,
-          wallet
+          wallet,
+          applicationText
         );
       } else {
         await queries.bountyUser.updateRelations(bountyId, relations, user);
