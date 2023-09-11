@@ -14,12 +14,12 @@ module.exports = {
     extend: {
       colors: {
         // neutrals
-        grey100: "#F7FAF9",
-        grey200: "#EDF2F1",
-        grey300: "#B8CCC6",
-        grey400: "#A1B2AD",
-        grey500: "#73807C",
-        grey600: "#2E3332",
+        neutral100: "#F7FAF9",
+        neutral200: "#EDF2F1",
+        neutral300: "#B8CCC6",
+        neutral400: "#A1B2AD",
+        neutral500: "#73807C",
+        neutral600: "#2E3332",
 
         // primary
         primary100: "#E1FAF2",
@@ -99,12 +99,12 @@ module.exports = withUt({
     extend: {
       colors: {
         // neutrals
-        grey100: "#F7FAF9",
-        grey200: "#EDF2F1",
-        grey300: "#B8CCC6",
-        grey400: "#A1B2AD",
-        grey500: "#73807C",
-        grey600: "#2E3332",
+        neutral100: "#F7FAF9",
+        neutral200: "#EDF2F1",
+        neutral300: "#B8CCC6",
+        neutral400: "#A1B2AD",
+        neutral500: "#73807C",
+        neutral600: "#2E3332",
 
         // primary
         primary100: "#E1FAF2",
