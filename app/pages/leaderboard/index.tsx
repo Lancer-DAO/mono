@@ -51,7 +51,10 @@ export default function Home() {
         <meta name="description" content="Lancer Bounty Leaderboard" />
       </Head>
       <main>
-        <TopQuestUsersBoard />
+        {/* <TopQuestUsersBoard /> */}
+        <h1 className="py-32 w-fit mx-auto text-center">
+          Leaderboard Under Construction
+        </h1>
       </main>
     </>
   );
