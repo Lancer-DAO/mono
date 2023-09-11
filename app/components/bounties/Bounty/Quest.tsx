@@ -1,8 +1,9 @@
 import { useUserWallet } from "@/src/providers";
 import { useBounty } from "@/src/providers/bountyProvider";
 import QuestDetails from "./components/QuestDetails";
+import QuestActions from "./components/QuestActions";
 
-export const Bounty = () => {
+export const Quest = () => {
   const { currentUser } = useUserWallet();
   const { currentBounty } = useBounty();
 
@@ -16,6 +17,7 @@ export const Bounty = () => {
         {/* quest info */}
         <QuestDetails />
         {/* quest actions */}
+        <QuestActions />
       </div>
     </>
   );
