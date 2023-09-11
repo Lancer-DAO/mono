@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { BountyCard, PreviewCardBase } from "@/components";
 import { useUserWallet } from "@/src/providers";
 import { api } from "@/src/utils";
-import { FORM_SECTION, FormData } from "@/types/forms";
+import { FORM_SECTION, QuestFormData } from "@/types/forms";
 import { Mint } from "@prisma/client";
 import { PublicKey } from "@solana/web3.js";
 import {
@@ -22,7 +22,7 @@ export const Create = () => {
   const [formSection, setFormSection] = useState<FORM_SECTION>("CREATE");
   const [isAccountCreated, setIsAccountCreated] = useState(false);
   const [mint, setMint] = useState<Mint>();
-  const [formData, setFormData] = useState<FormData>({
+  const [formData, setFormData] = useState<QuestFormData>({
     requestQuote: false,
     issuePrice: "",
     issueTitle: "",
