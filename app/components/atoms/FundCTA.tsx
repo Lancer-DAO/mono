@@ -18,7 +18,7 @@ const FundCTA: FC<Props> = ({ setIsFunded }) => {
       currentBounty?.state !== BountyState.CANCELED ? (
         <motion.button
           {...smallClickAnimation}
-          className="animate-pulse h-12 w-fit px-4 border border-industryRedBorder/10 
+          className="animate-pulse h-8 w-fit px-4 border border-industryRedBorder/10 
           rounded-md flex items-center gap-2 bg-white"
           onClick={() => setShowModal(true)}
         >
@@ -29,7 +29,7 @@ const FundCTA: FC<Props> = ({ setIsFunded }) => {
         </motion.button>
       ) : (
         <div
-          className="h-12 w-fit px-4 border border-industryRedBorder/10 
+          className="h-8 w-fit px-4 border border-industryRedBorder/10 
           rounded-md flex items-center gap-2 bg-white"
         >
           <Coins className="fill-industryRed" />

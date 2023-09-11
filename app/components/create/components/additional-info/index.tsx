@@ -96,9 +96,14 @@ export const AdditionalInfoForm: FC<Props> = ({
 
   const handleTagsChange = (event) => {
     const tags: string[] = event.target.value.split(",");
+
+    const filteredTags = tags.filter(
+      (tag, index) => tag.trim() !== "" || index === tags.length - 1
+    );
+
     setFormData({
       ...formData,
-      tags,
+      tags: filteredTags,
     });
   };
 

@@ -1,3 +1,16 @@
+import { ContributorInfo, ExternalLinkIcon, Logo } from "@/components";
+import FundCTA from "@/components/atoms/FundCTA";
+import { smallClickAnimation } from "@/src/constants";
+import { useUserWallet } from "@/src/providers";
+import { useBounty } from "@/src/providers/bountyProvider";
+import { api, formatPrice, getSolscanAddress } from "@/utils";
+import { User } from "@prisma/client";
+import { PublicKey } from "@solana/web3.js";
+import dayjs from "dayjs";
+import { motion } from "framer-motion";
+import { marked } from "marked";
+import Image from "next/image";
+import { useRouter } from "next/router";
 import React, {
   Dispatch,
   FC,
@@ -5,21 +18,9 @@ import React, {
   useEffect,
   useState,
 } from "react";
-import { useRouter } from "next/router";
-import Image from "next/image";
-import { api, formatPrice, getSolscanAddress } from "@/utils";
-import { marked } from "marked";
-import dayjs from "dayjs";
-import { PublicKey } from "@solana/web3.js";
 import { Clock } from "react-feather";
-import { ContributorInfo, ExternalLinkIcon, Logo } from "@/components";
-import { SubmitterSection, BountyActions } from "./components";
-import { useUserWallet } from "@/src/providers";
-import { motion } from "framer-motion";
-import { smallClickAnimation } from "@/src/constants";
-import { User } from "@prisma/client";
-import { useBounty } from "@/src/providers/bountyProvider";
-import FundCTA from "@/components/atoms/FundCTA";
+import { BountyActions, SubmitterSection } from "./components";
+import QuestDetails from "./components/QuestDetails";
 
 interface BountyActionsUserProps {
   title: string;
@@ -81,9 +82,10 @@ export const Bounty = () => {
 
   return (
     <>
-      <div className="w-full h-full flex justify-evenly mt-10 py-24">
+      <div className="w-full h-full flex flex-col sm:flex-row justify-evenly mt-10 py-24">
         {/* quest info */}
-        <div className="flex flex-col gap-5 w-[380px]">
+        <QuestDetails />
+        {/* <div className="flex flex-col gap-5 w-[380px]">
           {currentBounty?.state && (
             <div className="bg-white w-fit px-3 py-2 rounded-md">
               <p className="text-sm">{formatString(currentBounty?.state)}</p>
@@ -171,7 +173,7 @@ export const Bounty = () => {
                 </div>
               </div>
             )}
-        </div>
+        </div> */}
         {/* bountyactions */}
         <div className="bg-white w-[540px] h-fit rounded-md flex flex-col gap-10 p-10">
           {currentUser.hasBeenApproved || currentBounty.isCreator ? (
