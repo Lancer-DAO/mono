@@ -124,7 +124,7 @@ export const Account: FC<Props> = ({ self }) => {
 
   // check for resume in user object
   useEffect(() => {
-    if (!!fetchedUser && !fetchedUser.resume) {
+    if (!!fetchedUser && !currentUser.resume) {
       setShowResumeModal(true);
     }
   }, [fetchedUser]);
