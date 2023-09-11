@@ -30,7 +30,7 @@ export const Create = () => {
     issueDescription: "",
     industryId: null,
     displineIds: [],
-    tags: [""],
+    tags: [],
     links: [""],
     media: [],
     comment: "",

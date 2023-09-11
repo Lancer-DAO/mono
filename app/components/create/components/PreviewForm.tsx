@@ -1,5 +1,10 @@
 import { BountyCard, PreviewCardBase, USDC } from "@/components";
-import { Dialog, DialogContent, DialogHeader, DialogTrigger } from "@/components/atoms/Modal";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTrigger,
+} from "@/components/atoms/Modal";
 import { createFFA } from "@/escrow/adapters";
 import {
   CREATE_BOUNTY_TUTORIAL_INITIAL_STATE,
@@ -166,39 +171,63 @@ export const PreviewForm: FC<Props> = ({
             </div>
           </PreviewCardBase>
           <PreviewCardBase title="References">
-            <div className={`${formData?.media.length > 1 ? 'grid grid-cols-2 gap-4' : 'flex'}`}>
-              {formData?.media.length > 0 && formData?.media[0] ? 
-                (formData?.media.map((med, index) => {
+            <div
+              className={`${
+                formData?.media.length > 1 ? "grid grid-cols-2 gap-4" : "flex"
+              }`}
+            >
+              {formData?.media.length > 0 && formData?.media[0] ? (
+                formData?.media.map((med, index) => {
                   return (
                     <Dialog key={index}>
                       <div className="relative border-2 border-primaryBtnBorder rounded-xl p-1">
                         <div className="flex flex-col items-start">
                           <DialogTrigger className="w-full">
                             <div className="flex flex-col overflow-hidden">
-                              <Image src={med.imageUrl} alt={med.title} width={250} height={250} className="mb-2 rounded-md" />
-                              <p className="w-full font-bold text-lg mx-1 truncate text-left">{med.title}</p>
-                              <p className="w-full text-sm truncate mx-1 text-left">{med.description}</p>
+                              <Image
+                                src={med.imageUrl}
+                                alt={med.title}
+                                width={250}
+                                height={250}
+                                className="mb-2 rounded-md"
+                              />
+                              <p className="w-full font-bold text-lg mx-1 truncate text-left">
+                                {med.title}
+                              </p>
+                              <p className="w-full text-sm truncate mx-1 text-left">
+                                {med.description}
+                              </p>
                             </div>
                           </DialogTrigger>
                         </div>
                       </div>
                       <DialogContent className="max-w-fit flex flex-col items-center">
                         <DialogHeader className="flex text-3xl justify-start">
-                          <DialogTitle className="text-3xl">{med.title}</DialogTitle>
-                          <DialogDescription>{med.description}</DialogDescription>
+                          <DialogTitle className="text-3xl">
+                            {med.title}
+                          </DialogTitle>
+                          <DialogDescription>
+                            {med.description}
+                          </DialogDescription>
                         </DialogHeader>
-                        <Image src={med.imageUrl} alt={med.title} width={1000} height={1000} className="rounded-md mt-4" />
-                    </DialogContent>
-                  </Dialog>
-                )}))
-              : (
-
-               <p
+                        <Image
+                          src={med.imageUrl}
+                          alt={med.title}
+                          width={1000}
+                          height={1000}
+                          className="rounded-md mt-4"
+                        />
+                      </DialogContent>
+                    </Dialog>
+                  );
+                })
+              ) : (
+                <p
                   className="bg-white p-3 border border-neutralBtnBorder
                   rounded-lg text-textGreen text-base"
-                  >
+                >
                   No references provided!
-                </p> 
+                </p>
               )}
             </div>
           </PreviewCardBase>
