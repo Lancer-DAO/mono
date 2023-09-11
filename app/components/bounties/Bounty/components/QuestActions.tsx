@@ -1,11 +1,12 @@
-import { FC, useState } from "react";
-import { useRouter } from "next/router";
 import { useUserWallet } from "@/src/providers";
 import { useBounty } from "@/src/providers/bountyProvider";
 import { api } from "@/src/utils";
+import { useRouter } from "next/router";
+import { FC, useState } from "react";
 // import { BountyActions } from "./BountyActions";
-import QuestUser from "./QuestUser";
 import ApplicantsView from "./ApplicantsView";
+import QuestUser from "./QuestUser";
+import SubmitQuote from "./SubmitQuote";
 
 export enum QuestActionView {
   Apply = "apply", // one-way (Lancer)
@@ -30,16 +31,22 @@ const QuestActions: FC = () => {
   if (!currentUser || !currentBounty) return null;
 
   return (
-    <div className="flex flex-col bg-white w-[610px] border border-grey200 rounded-lg">
+    <>
+      {!currentBounty?.isCreator && QuestActionView.SubmitQuote && (
+        <SubmitQuote />
+      )}
+    
+    {/* <div className="flex flex-col bg-white w-[610px] border border-grey200 rounded-lg">
       {/* {currentBounty.isCreator ? ( */}
-      <div className="flex flex-col items-start gap-2 p-6">
-        {currentBounty?.creator && (
+      {/* <div className="flex flex-col items-start gap-2 p-6">
+        {currentBounty?.isCreator && (
           <QuestUser title="Client" users={[currentBounty.creator.user]} />
         )}
 
-        {currentActionView === QuestActionView.ViewApplicants && (
+        {/* {currentActionView === QuestActionView.ViewApplicants && (
           <ApplicantsView />
         )}
+
 
         {/* {currentBounty &&
             currentBounty.currentSubmitter &&
@@ -91,13 +98,14 @@ const QuestActions: FC = () => {
             />
           )} */}
         {/* {!!currentBounty && <BountyActions />} */}
-      </div>
+      {/* </div> */}
       {/* ) : (
         <div className="text-industryRedBorder">
           You must be approved to interact with Quests
         </div>
       )} */}
-    </div>
+    {/* </div> */}
+    </>
   );
 };
 
