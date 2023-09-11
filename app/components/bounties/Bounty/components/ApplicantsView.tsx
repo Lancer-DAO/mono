@@ -23,7 +23,8 @@ const ApplicantsView: FC = () => {
     }
   );
 
-  if (!currentBounty || !currentBounty.isCreator) return null;
+  // if (!currentBounty || !currentBounty.isCreator) return null;
+  if (!currentBounty) return null;
 
   return (
     <div className="flex flex-col gap-5">

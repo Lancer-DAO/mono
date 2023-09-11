@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 import { useUserWallet } from "@/src/providers";
 import { useBounty } from "@/src/providers/bountyProvider";
 import { api } from "@/src/utils";
-import { BountyActions } from "./BountyActions";
+// import { BountyActions } from "./BountyActions";
 import QuestUser from "./QuestUser";
 import ApplicantsView from "./ApplicantsView";
 
@@ -42,17 +42,17 @@ const QuestActions: FC = () => {
 
   return (
     <div className="bg-white w-[540px] h-fit rounded-md flex flex-col gap-10 p-10">
-      {currentBounty.isCreator ? (
-        <div className="flex flex-col gap-5" id="contributors-section">
-          {/* {currentBounty?.creator && (
+      {/* {currentBounty.isCreator ? ( */}
+      <div className="flex flex-col gap-5" id="contributors-section">
+        {/* {currentBounty?.creator && (
             <QuestUser title="Client" users={[currentBounty.creator.user]} />
           )} */}
 
-          {currentActionView === QuestActionView.ViewApplicants && (
-            <ApplicantsView />
-          )}
+        {currentActionView === QuestActionView.ViewApplicants && (
+          <ApplicantsView />
+        )}
 
-          {/* {currentBounty &&
+        {/* {currentBounty &&
             currentBounty.currentSubmitter &&
             currentBounty.isCreator && (
               <QuestUser
@@ -101,13 +101,13 @@ const QuestActions: FC = () => {
               )}
             />
           )} */}
-          {!!currentBounty && <BountyActions />}
-        </div>
-      ) : (
+        {/* {!!currentBounty && <BountyActions />} */}
+      </div>
+      {/* ) : (
         <div className="text-industryRedBorder">
           You must be approved to interact with Quests
         </div>
-      )}
+      )} */}
     </div>
   );
 };
