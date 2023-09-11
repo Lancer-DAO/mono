@@ -8,26 +8,17 @@ import { UnwrapArray, UnwrapPromise } from "@/types/Bounties";
 import * as Prisma from "@prisma/client";
 
 const BOUNTY_MANY_INCLUDE = {
-  repository: true,
   escrow: {
     include: {
-      transactions: {
-        include: {
-          wallets: true,
-        },
-      },
       mint: true,
     },
   },
   users: {
     include: {
       user: true,
-      wallet: true,
     },
   },
-  issue: true,
   tags: true,
-  pullRequests: true,
   industries: true,
 };
 
@@ -80,12 +71,14 @@ const bountyQueryMany = async (userId?: number, excludePrivate?: boolean) => {
           createdAt: "desc",
         },
         include: BOUNTY_MANY_INCLUDE,
+        take: 25,
       })
     : await prisma.bounty.findMany({
         include: BOUNTY_MANY_INCLUDE,
         orderBy: {
           createdAt: "desc",
         },
+        take: 25,
       });
 };
 
@@ -101,6 +94,9 @@ export type UserRelation = UnwrapArray<BountyQueryType["users"]>;
 export type UserRelationsRaw = (Prisma.BountyUser & {
   user: Prisma.User;
   wallet: Prisma.Wallet;
+})[];
+export type UserPreviewRelationsRaw = (Prisma.BountyUser & {
+  user: Prisma.User;
 })[];
 
 export const get = async (id: number, currentUserId: number) => {
@@ -171,7 +167,9 @@ export const convertBountyUserToUser = (user: UserRelation) => {
 
 export type BountyUserType = ReturnType<typeof convertBountyUserToUser>;
 
-const getBountyCreator = (rawUsers: UserRelationsRaw) => {
+const getBountyCreator = (
+  rawUsers: UserRelationsRaw | UserPreviewRelationsRaw
+) => {
   return rawUsers.find((user) =>
     user.relations.includes(BOUNTY_USER_RELATIONSHIP.Creator)
   );
