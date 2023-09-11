@@ -1,6 +1,6 @@
 generator client {
-  provider = "prisma-client-js"
-  // previewFeatures = ["fullTextSearch", "fullTextIndex"]
+  provider        = "prisma-client-js"
+  previewFeatures = ["fullTextSearch", "fullTextIndex"]
 }
 
 datasource db {
@@ -356,6 +356,9 @@ model Tag {
   users        User[]
   disciplines  Discipline[]
   industries   Industry[]
+
+  // full text search name
+  @@fulltext([name])
 }
 
 model Transaction {
