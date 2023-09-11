@@ -27,6 +27,8 @@ const QuestActions: FC = () => {
     QuestActionView.ViewApplicants
   );
 
+  if (!currentUser || !currentBounty) return null;
+
   return (
     <div className="flex flex-col bg-white w-[610px] border border-grey200 rounded-lg">
       {/* {currentBounty.isCreator ? ( */}
