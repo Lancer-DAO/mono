@@ -2,12 +2,19 @@ import { FC, Dispatch, SetStateAction } from "react";
 import Image from "next/image";
 import { Modal } from "@/components";
 import { BountyActionsButton } from "../bounties/Bounty/components";
+import ResumeCard from "../account/components/ResumeCard";
+import { User } from "@/types";
+import { api } from "@/src/utils";
 
 interface Props {
   setShowModal: Dispatch<SetStateAction<boolean>>;
+  resumeUrl: string;
+  setResumeUrl: (value: string) => void;
 }
 
-const ResumeModal: FC<Props> = ({ setShowModal }) => {
+const ResumeModal: FC<Props> = ({ setShowModal, resumeUrl, setResumeUrl }) => {
+  const { mutateAsync: updateResume } = api.users.updateResume.useMutation();
+
   return (
     <Modal
       setShowModal={setShowModal}
@@ -24,10 +31,21 @@ const ResumeModal: FC<Props> = ({ setShowModal }) => {
           We will be accepting talent on a rolling basis. Your information will
           not be shared.
         </p>
+        <ResumeCard
+          resumeUrl={resumeUrl}
+          setResumeUrl={setResumeUrl}
+          preview
+          setShowModal={setShowModal}
+        />
+
         <BountyActionsButton
-          type="green"
-          text="Got it"
-          onClick={() => setShowModal(false)}
+          type="red"
+          text="Upload Later"
+          onClick={() => {
+            updateResume({ resume: "" });
+
+            setShowModal(false);
+          }}
         />
       </div>
       <Image

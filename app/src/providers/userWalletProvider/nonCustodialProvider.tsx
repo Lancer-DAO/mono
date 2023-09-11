@@ -103,6 +103,10 @@ const UserWalletProvider: FunctionComponent<IUserWalletState> = ({
         });
         return;
       }
+    } else {
+      setProvider(null);
+      setProgram(null);
+      setCurrentWallet(null);
     }
   }, [connected, publicKey, isDebugMode, connection, wallet, currentUser]);
 

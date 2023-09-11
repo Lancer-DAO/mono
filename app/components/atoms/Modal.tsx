@@ -1,6 +1,7 @@
-import * as DialogPrimitive from "@radix-ui/react-dialog"
-import { X } from "lucide-react"
-import * as React from "react"
+import * as DialogPrimitive from "@radix-ui/react-dialog";
+import { X } from "lucide-react";
+import * as React from "react";
+import { twMerge } from "tailwind-merge";
  
 const Dialog = DialogPrimitive.Root
  
@@ -34,7 +35,7 @@ const DialogContent = React.forwardRef<
     <DialogOverlay />
     <DialogPrimitive.Content
       ref={ref}
-      className="fixed left-1/2 top-1/2 z-50 transform -translate-x-1/2 -translate-y-1/2 w-full max-w-lg bg-white p-6 shadow-lg sm:rounded-lg duration-200"
+      className={twMerge("fixed left-1/2 top-1/2 z-50 transform -translate-x-1/2 -translate-y-1/2 w-full max-w-lg bg-white p-6 shadow-lg sm:rounded-lg duration-200", className)}
       {...props}
     >
       {children}
@@ -51,7 +52,7 @@ const DialogHeader = ({
   className,
   ...props
 }: React.HTMLAttributes<HTMLDivElement>) => (
-  <div className="flex flex-col space-y-1.5 text-center sm:text-left" {...props} />
+  <div className={twMerge("flex flex-col space-y-1.5 text-center sm:text-left", className)} {...props} />
 )
 DialogHeader.displayName = "DialogHeader"
  
@@ -93,4 +94,5 @@ DialogDescription.displayName = DialogPrimitive.Description.displayName
  
 export {
   Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger
-}
+};
+

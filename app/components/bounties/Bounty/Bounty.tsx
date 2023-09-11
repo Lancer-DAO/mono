@@ -69,7 +69,7 @@ export const Bounty = () => {
   return (
     currentBounty && (
       <>
-        <div className="w-full h-full flex justify-evenly mt-10">
+        <div className="w-full h-full flex justify-evenly mt-10 py-24">
           {/* quest info */}
           <div className="flex flex-col gap-5 w-[380px]">
             {currentBounty?.state && (

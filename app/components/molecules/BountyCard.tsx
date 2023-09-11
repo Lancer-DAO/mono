@@ -42,8 +42,8 @@ const BountyCard: FC<BountyCardProps> = ({
     : formData.tags.slice(0, 4).map((tag) => tag);
 
   const tagOverflow = bounty
-    ? bounty.tags.length > 3
-    : formData.tags.length > 3;
+    ? bounty.tags.filter((tag) => tag.name !== "").length > 4
+    : formData.tags.filter((tag) => tag !== "").length > 4;
 
   const handleBountyLink = () => {
     if (!linked) return null;
@@ -170,17 +170,20 @@ const BountyCard: FC<BountyCardProps> = ({
           </div>
         </div>
         <div className="relative w-full pr-10 flex flex-wrap items-center gap-1 mt-auto">
-          {displayedTags.length > 0 &&
+          {displayedTags.filter((tag) => tag !== "").length > 0 &&
             displayedTags[0] !== "" &&
-            displayedTags.map((tag) => (
-              <div
-                className="border border-neutralBtnBorder rounded-full 
-                px-3 py-1 flex items-center justify-center"
-                key={tag}
-              >
-                {tag}
-              </div>
-            ))}
+            displayedTags.map((tag) => {
+              if (tag === "") return null;
+              return (
+                <div
+                  className="border border-neutralBtnBorder rounded-full 
+                  px-3 py-1 flex items-center justify-center"
+                  key={tag}
+                >
+                  {tag}
+                </div>
+              );
+            })}
           {tagOverflow && <p className="text-xs">+ more</p>}
         </div>
       </div>

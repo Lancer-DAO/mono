@@ -141,9 +141,12 @@ const PortfolioCard: React.FC = () => {
             const media = portfolio[index];
             return (
               <Dialog key={index}>
-                <div className="relative border-2 border-primaryBtnBorder rounded-xl p-1">
+                <div
+                  className="relative border-2 border-primaryBtnBorder rounded-xl p-1"
+                  key={index}
+                >
                   <div className="flex flex-col items-start">
-                    <DialogTrigger className="w-full">
+                    <DialogTrigger className="w-full" key={`dialog-${index}`}>
                       <div className="flex flex-col items-start justify-start overflow-hidden">
                         <Image
                           src={media.imageUrl}
@@ -172,13 +175,14 @@ const PortfolioCard: React.FC = () => {
                         {...smallClickAnimation}
                         onClick={() => handleMediaRemoved(media.id, index)}
                         disabled={isAwaitingResponse}
+                        key={`delete-${index}`}
                       >
                         <X size={18} strokeWidth={1.25} />
                       </motion.button>
                     </>
                   )}
                 </div>
-                <DialogContent>
+                <DialogContent className="max-w-fit flex flex-col items-center">
                   <DialogHeader className="flex text-3xl justify-start">
                     <DialogTitle className="text-3xl">
                       {media.title}
@@ -188,9 +192,9 @@ const PortfolioCard: React.FC = () => {
                   <Image
                     src={media.imageUrl}
                     alt={media.title}
-                    width={500}
-                    height={500}
-                    className="border border-primaryBtnBorder rounded-md mt-4"
+                    width={1000}
+                    height={1000}
+                    className="rounded-md mt-4"
                   />
                 </DialogContent>
               </Dialog>

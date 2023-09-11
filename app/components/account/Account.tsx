@@ -34,10 +34,12 @@ export const Account: FC<Props> = ({ self }) => {
   // api + context
   const { currentUser, currentWallet } = useUserWallet();
   const { currentTutorialState, setCurrentTutorialState } = useTutorial();
+  const { account } = useAccount();
   const [profileNFT, setProfileNFT] = useState<ProfileNFT>();
   const [showResumeModal, setShowResumeModal] = useState(false);
-  const { account } = useAccount();
-  console.log("account", account);
+  const [resumeUrl, setResumeUrl] = useState(
+    self ? currentUser?.resume : account?.resume
+  );
 
   const fetchProfileNFT = async () => {
     const walletKey =
@@ -109,32 +111,30 @@ export const Account: FC<Props> = ({ self }) => {
     }
   }, [account, currentWallet, currentTutorialState]);
 
-  // check for "newUser" key in local storage
+  // check for resume in user object
   useEffect(() => {
-    if (localStorage.getItem("newUser")) {
+    if (!!currentUser && !currentUser.resume) {
       setShowResumeModal(true);
     }
-  }, []);
+  }, [currentUser]);
 
   if (!IS_CUSTODIAL && !currentWallet && !profileNFT)
     return (
-      <div className="w-full h-full flex items-center justify-center">
+      <div className="w-full md:w-[90%] items-center justify-center flex flex-col mx-auto px-4 md:px-0 py-24">
         Please Connect a Wallet
       </div>
     );
 
   return (
     <>
-      <div className="w-full md:w-[90%] mx-auto px-4 md:px-0 py-10">
-        <div className="flex items-center">
-          <h1 className="pb-2">{`${
-            self ? "Your Profile" : `@${account?.name}`
-          }`}</h1>
-        </div>
+      <div className="w-full md:w-[90%] items-center justify-center flex flex-col mx-auto px-4 md:px-0 py-24">
         {profileNFT && account ? (
-          <div className="w-full flex items-start gap-5">
+          <div className="flex gap-5">
             {/* left column */}
             <div className="flex flex-col gap-5 w-full md:max-w-[482px]">
+              <h1 className="pb-2">{`${
+                self ? "Your Profile" : `@${account?.name}`
+              }`}</h1>
               <ProfileNFTCard
                 profileNFT={profileNFT}
                 picture={account.picture}
@@ -150,9 +150,14 @@ export const Account: FC<Props> = ({ self }) => {
             </div>
             {/* right column */}
             <div className="flex flex-col gap-5 w-full">
+              <h1 className="pb-2 invisible">{`${
+                self ? "Your Profile" : `@${account?.name}`
+              }`}</h1>
               <PortfolioCard />
-              {account.id === currentUser.id && <ResumeCard />}
-              <QuestsCard />
+              {account.id === currentUser.id && (
+                <ResumeCard resumeUrl={resumeUrl} setResumeUrl={setResumeUrl} />
+              )}
+              <QuestsCard user={account} />
             </div>
           </div>
         ) : (
@@ -162,7 +167,13 @@ export const Account: FC<Props> = ({ self }) => {
         )}
       </div>
       {/* resume modal */}
-      {showResumeModal && <ResumeModal setShowModal={setShowResumeModal} />}
+      {showResumeModal && (
+        <ResumeModal
+          resumeUrl={resumeUrl}
+          setResumeUrl={setResumeUrl}
+          setShowModal={setShowResumeModal}
+        />
+      )}
     </>
   );
 };

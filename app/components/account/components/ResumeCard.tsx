@@ -2,6 +2,7 @@ import { useUserWallet } from "@/src/providers";
 import { useAccount } from "@/src/providers/accountProvider";
 import { api } from "@/src/utils";
 import { UploadButton } from "@/src/utils/uploadthing";
+import { User } from "@/types";
 import "@uploadthing/react/styles.css";
 import { Trash } from "lucide-react";
 import Link from "next/link";
@@ -9,15 +10,15 @@ import { useRouter } from "next/router";
 import { useState } from "react";
 import toast from "react-hot-toast";
 
-const ResumeCard = () => {
-  const router = useRouter();
-  const { currentUser } = useUserWallet();
-  const { account } = useAccount();
-
+const ResumeCard: React.FC<{
+  resumeUrl: string;
+  setResumeUrl: (value: string) => void;
+  preview?: boolean;
+  setShowModal?: (value: boolean) => void;
+}> = ({ preview, setShowModal, setResumeUrl, resumeUrl }) => {
   const { mutateAsync: updateResume } = api.users.updateResume.useMutation();
   const { mutateAsync: deleteResume } = api.users.deleteResume.useMutation();
 
-  const [resumeUrl, setResumeUrl] = useState(account?.resume);
   const [isAwaitingResponse, setIsAwaitingResponse] = useState(false);
 
   const confirmAction = (): Promise<void> => {
@@ -67,8 +68,8 @@ const ResumeCard = () => {
 
   const handleResumeUpload = async (url) => {
     const { resume } = await updateResume({ resume: url });
-    localStorage.removeItem("newUser");
     setResumeUrl(resume);
+    setShowModal && setShowModal(false);
   };
 
   const handleResumeDelete = async () => {
@@ -77,7 +78,6 @@ const ResumeCard = () => {
       await updateResume({ resume: "" });
       await deleteResume({ fileUrl: resumeUrl });
       setResumeUrl("");
-      localStorage.setItem("newUser", "true");
     } catch (error) {
       console.log(error);
       toast.error(`Error deleting resume: ${error.message}`);
@@ -85,8 +85,20 @@ const ResumeCard = () => {
   };
 
   return (
-    <div className="relative w-full md:w-[658px] rounded-xl bg-bgLancerSecondary/[8%] overflow-hidden p-6 pt-8 pb-10">
-      <p className="font-bold text-2xl text-textGreen mb-4">Resume</p>
+    <div
+      className={`relative rounded-xl bg-bgLancerSecondary/[8%] overflow-hidden p-6 pt-8 pb-10 ${
+        preview
+          ? "w-[400px] items-center justify-center"
+          : "w-full md:w-[658px] justify-start items-start"
+      }`}
+    >
+      <p
+        className={`font-bold text-2xl text-textGreen mb-4 ${
+          preview ? "text-center" : ""
+        }`}
+      >
+        Resume
+      </p>
       {resumeUrl ? (
         <div className="flex">
           <Link

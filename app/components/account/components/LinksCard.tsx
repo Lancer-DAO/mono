@@ -1,11 +1,11 @@
-import { useEffect, useState } from "react";
+import { useUserWallet } from "@/src/providers";
 import { api } from "@/src/utils";
 import { useRouter } from "next/router";
-import { useUserWallet } from "@/src/providers";
-import { Check, Edit } from "react-feather";
-import ViewLinks from "./ViewLinks";
+import { useEffect, useState } from "react";
+import { Check, Edit, X } from "react-feather";
 import EditLinks from "./EditLinks";
 import { useAccount } from "@/src/providers/accountProvider";
+import ViewLinks from "./ViewLinks";
 
 const LinksCard = () => {
   const router = useRouter();
@@ -20,6 +20,8 @@ const LinksCard = () => {
     website: account?.website || "",
     github: account?.github || "",
     linkedin: account?.linkedin || "",
+
+    twitter: account?.twitter || "",
   });
 
   const handleEditLinks = () => {
@@ -29,12 +31,14 @@ const LinksCard = () => {
   const handleUpdateLinks = async () => {
     const updatedLinks = await updateLinks({
       website: links.website,
+      twitter: links.twitter,
       github: links.github,
       linkedin: links.linkedin,
     });
     setEditLinksMode(false);
     setLinks({
       website: updatedLinks?.website,
+      twitter: updatedLinks?.twitter,
       github: updatedLinks?.github,
       linkedin: updatedLinks?.linkedin,
     });
@@ -47,12 +51,28 @@ const LinksCard = () => {
         {account?.id === currentUser.id && (
           <>
             {editLinksMode ? (
-              <button
-                onClick={handleUpdateLinks}
-                className="rounded-md uppercase font-bold text-textGreen"
-              >
-                <Check />
-              </button>
+              <div>
+                <button
+                  onClick={handleUpdateLinks}
+                  className="rounded-md uppercase font-bold text-textGreen mr-2 mb-0"
+                >
+                  <Check />
+                </button>
+                <button
+                  onClick={() => {
+                    setLinks({
+                      website: links.website,
+                      twitter: links?.twitter,
+                      github: links?.github,
+                      linkedin: links?.linkedin,
+                    });
+                    setEditLinksMode(false);
+                  }}
+                  className="rounded-md upprecase font-bold text-textRed"
+                >
+                  <X />
+                </button>
+              </div>
             ) : (
               <button
                 onClick={handleEditLinks}
@@ -75,6 +95,7 @@ const LinksCard = () => {
           ) : (
             <ViewLinks
               website={links.website}
+              twitter={links.twitter}
               github={links.github}
               linkedin={links.linkedin}
             />

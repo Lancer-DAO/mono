@@ -42,7 +42,7 @@ export const Header = () => {
   const { currentWallet } = useUserWallet();
 
   return (
-    <div className="py-4 top-0 z-20 bg-bgLancer">
+    <div className="py-4 fixed w-full top-0 z-40 bg-bgLancer border-b border-neutralBtnBorder">
       <div className="flex items-center gap-8 mx-auto w-[90%]">
         <Link href="/" className="flex items-center gap-0.5">
           <Logo width="auto" height="35px" />
@@ -62,7 +62,11 @@ export const Header = () => {
                 </LinkButton>
               );
             })}
-          <div className="flex items-center gap-8 ml-auto">
+          <div
+            className={`flex items-center gap-8 ml-auto ${
+              IS_CUSTODIAL && "mr-10"
+            }`}
+          >
             {<AccountHeaderOptions />}
 
             {!IS_CUSTODIAL && (

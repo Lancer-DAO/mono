@@ -66,7 +66,7 @@ export const Create = () => {
   }, [allMints]);
 
   return (
-    <div className="w-full max-w-[1200px] mx-auto flex md:justify-evenly mt-10">
+    <div className="w-full max-w-[1200px] mx-auto flex md:justify-evenly mt-10 py-24">
       {/* quest info entry section */}
       <div
         className={`${formSection === "PREVIEW" ? "w-full" : "md:w-[515px]"}`}
