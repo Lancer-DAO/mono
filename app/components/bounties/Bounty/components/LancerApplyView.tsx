@@ -6,17 +6,20 @@ import { useUserWallet } from "@/src/providers";
 import { smallClickAnimation } from "@/src/constants";
 import { motion } from "framer-motion";
 import { LancerApplyData } from "@/types";
+import AlertCard from "./AlertCard";
+import { Image } from "lucide-react";
 
 const LancerApplyView: FC = () => {
   const { currentBounty } = useBounty();
   const { currentUser } = useUserWallet();
   const [applyData, setApplyData] = useState<LancerApplyData>({
-    portfolio: "",
-    linkedin: "",
+    portfolio: currentUser.website,
+    linkedin: currentUser.linkedin,
     about: currentUser.bio,
     resume: currentUser.resume,
     details: "",
   });
+  const [hasApplied, setHasApplied] = useState(true);
 
   if (!currentBounty || !currentUser) return null;
 
@@ -25,16 +28,25 @@ const LancerApplyView: FC = () => {
       <ActionsCardBanner title="Apply to this Quest">
         <ContributorInfo user={currentBounty.creator.user} />
       </ActionsCardBanner>
+      {/* TODO: add check for if user application has been approved or denied. if not, show this: */}
+      {hasApplied && (
+        <AlertCard
+          type="positive"
+          title="Nice!"
+          description="Your application has been sent. Fingers crossed! You will hear an answer from the client within 48 hours."
+        />
+      )}
       <div className="w-full p-6 flex items-center justify-between gap-5">
         <div className="flex items-center gap-4">
           <p className="text-neutral600 text">Portfolio</p>
           <input
             type="text"
-            className="text border border-neutral200 placeholder:text-neutral500/80 
+            className="text border border-neutral200 placeholder:text-neutral500/60 
             bg-neutral100 text-neutral500 w-[190px] h-[34px] rounded-md px-3"
             name={`link-portfolio`}
             placeholder="Paste Link"
             id={`link-portfolio`}
+            disabled={hasApplied}
             value={applyData.portfolio}
             onChange={(e) =>
               setApplyData({ ...applyData, portfolio: e.target.value })
@@ -45,11 +57,12 @@ const LancerApplyView: FC = () => {
           <p className="text-neutral600 text">LinkedIn</p>
           <input
             type="text"
-            className="text border border-neutral200 placeholder:text-neutral500/80 
+            className="text border border-neutral200 placeholder:text-neutral500/60 
             bg-neutral100 text-neutral500 w-[190px] h-[34px] rounded-md px-3"
             name={`link-linkedin`}
             placeholder="Paste Link"
             id={`link-linkedin`}
+            disabled={hasApplied}
             value={applyData.linkedin}
             onChange={(e) =>
               setApplyData({ ...applyData, linkedin: e.target.value })
@@ -62,10 +75,11 @@ const LancerApplyView: FC = () => {
         <p className="text-neutral600 text">Who am I?</p>
         <textarea
           className="text border border-neutral200 placeholder:text-neutral500/80 resize-none h-[232px]
-          bg-neutral100 text-neutral500 w-full rounded-md px-3 p-2"
+          bg-neutral100 text-neutral500 w-full rounded-md px-3 p-2 disabled:opacity-60"
           name={`about`}
           placeholder="Tell us about yourself"
           id={`about`}
+          disabled={hasApplied}
           value={applyData.about}
           onChange={(e) =>
             setApplyData({ ...applyData, about: e.target.value })
@@ -73,7 +87,16 @@ const LancerApplyView: FC = () => {
         />
         {/* TODO: resume upload - link brought from user object, can delete, can reupload */}
         <div className="flex items-center justify-end text text-neutral600">
-          Upload resume
+          <button
+            className="rounded-md bg-white border border-neutral200 flex items-center justify-center gap-2 h-8 px-2"
+            disabled={hasApplied}
+            onClick={() =>
+              window.open(currentUser.resume, "_blank", "noopener noreferrer")
+            }
+          >
+            <Image color="#A1B2AD" size={18} />
+            <p className="text-xs text-neutral400 truncate">resume.pdf</p>
+          </button>
         </div>
       </div>
       <div className="h-[1px] w-full bg-neutral200" />
@@ -81,24 +104,27 @@ const LancerApplyView: FC = () => {
         <p className="text-neutral-600 text">Why am I a good fit?</p>
         <textarea
           className="text border border-neutral200 placeholder:text-neutral500/80 resize-none h-[232px]
-          bg-neutral100 text-neutral500 w-full rounded-md px-3 p-2"
+          bg-neutral100 text-neutral500 w-full rounded-md px-3 p-2 disabled:opacity-60"
           name={`details`}
           placeholder="Type your message here..."
           id={`details`}
+          disabled={hasApplied}
           value={applyData.details}
           onChange={(e) =>
             setApplyData({ ...applyData, details: e.target.value })
           }
         />
       </div>
-      <div className="flex items-center justify-end px-6 py-4">
-        <motion.button
-          {...smallClickAnimation}
-          className="bg-primary200 text-white h-9 w-fit px-4 py-2 title-text rounded-md"
-        >
-          Submit Application
-        </motion.button>
-      </div>
+      {!hasApplied && (
+        <div className="flex items-center justify-end px-6 py-4">
+          <motion.button
+            {...smallClickAnimation}
+            className="bg-primary200 text-white h-9 w-fit px-4 py-2 title-text rounded-md"
+          >
+            Submit Application
+          </motion.button>
+        </div>
+      )}
     </div>
   );
 };

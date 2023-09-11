@@ -1,4 +1,5 @@
 export * from "./ActionsCardBanner";
+export * from "./AlertCard";
 export * from "./ApplicantsView";
 export * from "./Apply";
 export * from "./ApproveSubmission";
