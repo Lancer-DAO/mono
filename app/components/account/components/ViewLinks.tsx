@@ -31,7 +31,7 @@ const ViewLinks = ({
             <p className="text-textGreen uppercase text-sm">Portfolio</p>
             <Link
               className="underline text-textPrimary"
-              href={website}
+              href={formatLinks(website)}
               target="_blank"
               rel="noreferrer noopener"
             >
@@ -44,7 +44,7 @@ const ViewLinks = ({
             <p className="text-textGreen uppercase text-sm">Twitter</p>
             <Link
               className="underline text-textPrimary"
-              href={twitter}
+              href={formatLinks(twitter)}
               target="_blank"
               rel="noreferrer noopener"
             >
@@ -57,7 +57,7 @@ const ViewLinks = ({
             <p className="text-textGreen uppercase text-sm">Github</p>
             <Link
               className="underline text-textPrimary"
-              href={github}
+              href={formatLinks(github)}
               target="_blank"
               rel="noreferrer noopener"
             >
@@ -70,7 +70,7 @@ const ViewLinks = ({
             <p className="text-textGreen uppercase text-sm">Linkedin</p>
             <Link
               className="underline text-textPrimary"
-              href={linkedin}
+              href={formatLinks(linkedin)}
               target="_blank"
               rel="noreferrer noopener"
             >
