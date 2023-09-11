@@ -14,6 +14,7 @@ import { motion } from "framer-motion";
 import { X } from "lucide-react";
 import Image from "next/image";
 import { Dispatch, FC, SetStateAction, useEffect, useState } from "react";
+import Tags from "./tags";
 
 interface Props {
   setFormSection: Dispatch<SetStateAction<FORM_SECTION>>;
@@ -160,7 +161,7 @@ export const AdditionalInfoForm: FC<Props> = ({
         </div>
         <div className="relative">
           <div className="absolute top-1/2 -translate-y-1/2 -left-10">5</div>
-          <input
+          {/* <input
             type="text"
             className="placeholder:text-textGreen/70 border bg-neutralBtn 
             border-neutralBtnBorder w-full h-[50px] rounded-lg px-3"
@@ -220,7 +221,9 @@ export const AdditionalInfoForm: FC<Props> = ({
                 }
               }
             }}
-          />
+          /> */}
+
+          <Tags formData={formData} setFormData={setFormData} />
         </div>
         <div className="relative">
           <div className="absolute top-6 -left-10">6</div>
