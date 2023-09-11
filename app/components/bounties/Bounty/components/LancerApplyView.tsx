@@ -1,18 +1,20 @@
-import { FC, useEffect, useState } from "react";
+import { FC, useState } from "react";
 import ActionsCardBanner from "./ActionsCardBanner";
 import { useBounty } from "@/src/providers/bountyProvider";
 import { ContributorInfo } from "@/components";
 import { useUserWallet } from "@/src/providers";
 import { smallClickAnimation } from "@/src/constants";
 import { motion } from "framer-motion";
+import { LancerApplyData } from "@/types";
 
 const LancerApplyView: FC = () => {
   const { currentBounty } = useBounty();
   const { currentUser } = useUserWallet();
-  const [applyData, setApplyData] = useState({
+  const [applyData, setApplyData] = useState<LancerApplyData>({
     portfolio: "",
     linkedin: "",
     about: currentUser.bio,
+    resume: currentUser.resume,
     details: "",
   });
 

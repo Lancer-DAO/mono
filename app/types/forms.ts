@@ -32,3 +32,11 @@ export interface ProfileFormData {
   twitter: string;
   website: string;
 }
+
+export interface LancerApplyData {
+  portfolio: string;
+  linkedin: string;
+  about: string;
+  resume: string;
+  details: string;
+}
