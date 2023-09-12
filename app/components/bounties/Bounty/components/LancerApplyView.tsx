@@ -5,13 +5,21 @@ import { ContributorInfo } from "@/components";
 import { useUserWallet } from "@/src/providers";
 import { smallClickAnimation } from "@/src/constants";
 import { motion } from "framer-motion";
-import { LancerApplyData } from "@/types";
+import { BOUNTY_USER_RELATIONSHIP, LancerApplyData } from "@/types";
 import AlertCard from "./AlertCard";
 import { Image } from "lucide-react";
+import { useReferral } from "@/src/providers/referralProvider";
+import { PublicKey } from "@solana/web3.js";
+import { api, updateList } from "@/src/utils";
+import toast from "react-hot-toast";
 
 const LancerApplyView: FC = () => {
-  const { currentBounty } = useBounty();
-  const { currentUser } = useUserWallet();
+  const { currentBounty, setCurrentBounty } = useBounty();
+  const { currentUser, currentWallet } = useUserWallet();
+  const { createReferralMember } = useReferral();
+  const { mutateAsync: updateBountyUsers } =
+    api.bountyUsers.update.useMutation();
+
   const [applyData, setApplyData] = useState<LancerApplyData>({
     portfolio: currentUser.website,
     linkedin: currentUser.linkedin,
@@ -19,7 +27,39 @@ const LancerApplyView: FC = () => {
     resume: currentUser.resume,
     details: "",
   });
-  const [hasApplied, setHasApplied] = useState(true);
+  const [hasApplied, setHasApplied] = useState(false);
+
+  const onClick = async () => {
+    // Request to submit. Does not interact on chain
+    const toastId = toast.loading("Sending application...");
+    try {
+      await createReferralMember(
+        new PublicKey(currentBounty.escrow.mint.publicKey)
+      );
+      const newRelations = updateList(
+        currentBounty.currentUserRelationsList ?? [],
+        [],
+        [BOUNTY_USER_RELATIONSHIP.RequestedSubmitter]
+      );
+      const updatedBounty = await updateBountyUsers({
+        currentUserId: currentUser.id,
+        bountyId: currentBounty.id,
+        userId: currentUser.id,
+        relations: newRelations,
+        publicKey: currentWallet.publicKey.toString(),
+        escrowId: currentBounty.escrowid,
+        label: "request-to-submit",
+        signature: "n/a",
+      });
+
+      setCurrentBounty(updatedBounty);
+      toast.success("Application sent", { id: toastId });
+      // TODO: replace state variable with a db check for if user has applied
+      setHasApplied(true);
+    } catch (error) {
+      toast.error("Error submitting application", { id: toastId });
+    }
+  };
 
   if (!currentBounty || !currentUser) return null;
 
@@ -120,6 +160,7 @@ const LancerApplyView: FC = () => {
           <motion.button
             {...smallClickAnimation}
             className="bg-primary200 text-white h-9 w-fit px-4 py-2 title-text rounded-md"
+            onClick={onClick}
           >
             Submit Application
           </motion.button>
