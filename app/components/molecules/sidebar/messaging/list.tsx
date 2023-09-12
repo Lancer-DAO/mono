@@ -25,21 +25,31 @@ const List = ({ setChannel }: { setChannel: (channel: any) => void }) => {
           return (
             <div
               className="w-full hover:bg-slate-100 flex items-center 
-            cursor-pointer gap-3 h-20 px-3 border-b border-neutral-300"
+            cursor-pointer gap-4 h-20 px-3 border-b border-neutral-300"
               key={channel.url}
               onClick={() => {
                 setCurrentChannel(channel);
               }}
             >
-              <Image
-                src={
-                  meta ? meta.plainProfileUrl : channel.creator.plainProfileUrl
-                }
-                width={40}
-                height={40}
-                alt={`${meta ? meta.nickname : channel.name}'s profile picture`}
-                className="rounded-full overflow-hidden"
-              />
+              <div className="relative">
+                {meta && meta.connectionStatus === "online" ? (
+                  <div className="w-3 h-3 absolute bottom-0 right-0 bg-green-500 border border-white rounded-full"></div>
+                ) : null}
+
+                <Image
+                  src={
+                    meta
+                      ? meta.plainProfileUrl
+                      : channel.creator.plainProfileUrl
+                  }
+                  width={40}
+                  height={40}
+                  alt={`${
+                    meta ? meta.nickname : channel.name
+                  }'s profile picture`}
+                  className="rounded-full overflow-hidden"
+                />
+              </div>
 
               <div className="w-full">
                 <div>{meta ? meta.nickname : channel.name}</div>
