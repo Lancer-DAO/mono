@@ -31,17 +31,14 @@ const QuestActions: FC = () => {
 
   if (!currentUser || !currentBounty) return null;
 
-  console.log(currentBounty)
-
   return (
     <>
-      {currentActionView === QuestActionView.Chat && (
+      {!currentBounty?.isCreator && (currentActionView === QuestActionView.Chat) && (
         <Chat 
           bounty={currentBounty}
           client={currentBounty?.creator.user} 
           setCurrentActionView={setCurrentActionView}  
         />
-
       )}
       {!currentBounty?.isCreator && (currentActionView === QuestActionView.SubmitQuote) && (
         <SubmitQuote client={currentBounty?.creator.user} />
