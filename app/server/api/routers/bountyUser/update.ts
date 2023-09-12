@@ -17,7 +17,7 @@ export const update = protectedProcedure
       state: z.optional(z.string()),
       label: z.string(),
       signature: z.string(),
-      applicationText: z.string(),
+      applicationText: z.optional(z.string()),
     })
   )
   .mutation(

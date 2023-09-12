@@ -50,6 +50,7 @@ const LancerApplyView: FC = () => {
         escrowId: currentBounty.escrowid,
         label: "request-to-submit",
         signature: "n/a",
+        applicationText: applyData.details,
       });
 
       setCurrentBounty(updatedBounty);
