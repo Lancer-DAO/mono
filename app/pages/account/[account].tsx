@@ -26,11 +26,43 @@ export async function getServerSideProps(
       },
     };
   }
-  const { email } = metadata.user;
+  try {
+    const { email } = metadata.user;
 
-  const currentUser = await queries.user.getByEmail(email);
+    const currentUser = await queries.user.getByEmail(email);
 
-  if (!currentUser || !currentUser || !currentUser.hasFinishedOnboarding) {
+    if (!currentUser || !currentUser || !currentUser.hasFinishedOnboarding) {
+      return {
+        redirect: {
+          destination: "/welcome",
+          permanent: false,
+        },
+      };
+    }
+
+    if (!currentUser.hasBeenApproved) {
+      return {
+        redirect: {
+          destination: "/account",
+          permanent: false,
+        },
+      };
+    }
+    const userId = parseInt(context.query.account as string);
+
+    const user = await queries.user.getById(userId);
+    const allMints = await queries.mint.getAll();
+    const allIndustries = await queries.industry.getMany();
+
+    return {
+      props: {
+        currentUser: JSON.stringify(currentUser),
+        user: JSON.stringify(user),
+        mints: JSON.stringify(allMints),
+        industries: JSON.stringify(allIndustries),
+      },
+    };
+  } catch (e) {
     return {
       redirect: {
         destination: "/welcome",
@@ -38,29 +70,6 @@ export async function getServerSideProps(
       },
     };
   }
-
-  if (!currentUser.hasBeenApproved) {
-    return {
-      redirect: {
-        destination: "/account",
-        permanent: false,
-      },
-    };
-  }
-  const userId = parseInt(context.query.account as string);
-
-  const user = await queries.user.getById(userId);
-  const allMints = await queries.mint.getAll();
-  const allIndustries = await queries.industry.getMany();
-
-  return {
-    props: {
-      currentUser: JSON.stringify(currentUser),
-      user: JSON.stringify(user),
-      mints: JSON.stringify(allMints),
-      industries: JSON.stringify(allIndustries),
-    },
-  };
 }
 
 const Home: React.FC<{ user: string; mints: string; industries: string }> = ({

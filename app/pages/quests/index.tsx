@@ -27,11 +27,33 @@ export async function getServerSideProps(
       },
     };
   }
-  const { email } = metadata.user;
+  try {
+    const { email } = metadata.user;
 
-  const user = await queries.user.getByEmail(email);
+    const user = await queries.user.getByEmail(email);
 
-  if (!user || !user.hasFinishedOnboarding) {
+    if (!user || !user.hasFinishedOnboarding) {
+      return {
+        redirect: {
+          destination: "/welcome",
+          permanent: false,
+        },
+      };
+    }
+    const allBounties = await queries.bounty.getMany(user.id);
+
+    const allMints = await queries.mint.getAll();
+    const allIndustries = await queries.industry.getMany();
+    return {
+      props: {
+        currentUser: JSON.stringify(user),
+        bounties: JSON.stringify(allBounties),
+
+        mints: JSON.stringify(allMints),
+        industries: JSON.stringify(allIndustries),
+      },
+    };
+  } catch (e) {
     return {
       redirect: {
         destination: "/welcome",
@@ -39,19 +61,6 @@ export async function getServerSideProps(
       },
     };
   }
-  const allBounties = await queries.bounty.getMany(user.id);
-
-  const allMints = await queries.mint.getAll();
-  const allIndustries = await queries.industry.getMany();
-  return {
-    props: {
-      currentUser: JSON.stringify(user),
-      bounties: JSON.stringify(allBounties),
-
-      mints: JSON.stringify(allMints),
-      industries: JSON.stringify(allIndustries),
-    },
-  };
 }
 
 const BountiesPage: React.FC<{
