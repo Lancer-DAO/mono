@@ -186,3 +186,14 @@ export const updateBio = async (
     },
   });
 };
+
+export const approveUser = async (id: number): Promise<Prisma.User> => {
+  return await prisma.user.update({
+    where: {
+      id: id,
+    },
+    data: {
+      hasBeenApproved: true,
+    },
+  });
+};
