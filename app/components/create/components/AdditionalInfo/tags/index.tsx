@@ -45,6 +45,7 @@ const Tags = ({
       <input
         className="placeholder:text-textGreen/70 border bg-neutralBtn border-neutralBtnBorder w-full h-[50px] rounded-lg px-3"
         placeholder="Enter tags"
+        value={query ? query : ""}
         onChange={handleInput}
       />
 
@@ -60,7 +61,7 @@ const Tags = ({
             <>
               {data?.map((tag, key) => (
                 <div
-                  className="rounded hover:bg-neutral-100 uppercase transition-all p-2 cursor-pointer"
+                  className="rounded hover:bg-neutral-100 transition-all p-2 cursor-pointer"
                   key={key}
                   onClick={() => handleTagClick(tag.name)}
                 >
