@@ -27,8 +27,7 @@ const WalletMultiButtonDynamic = dynamic(
 
 export const WithdrawToTreasury: FC = () => {
   const { connection } = useConnection();
-  const {  currentWallet, provider, program } =
-    useUserWallet();
+  const { currentWallet, provider, program } = useUserWallet();
 
   const [formData, setFormData] = useState({
     fundingAmount: null,
@@ -65,8 +64,6 @@ export const WithdrawToTreasury: FC = () => {
   }, [currentWallet, connection]);
 
   const withdrawTokens = useCallback(async () => {
-
-    
     const program = new Program<MonoProgram>(
       MonoProgramJSON as unknown as MonoProgram,
       new PublicKey(MONO_ADDRESS),
@@ -94,19 +91,14 @@ export const WithdrawToTreasury: FC = () => {
 
   return (
     connection && (
-      <>
-        <div>
-          <WalletMultiButtonDynamic />
-          <WalletDisconnectButtonDynamic />
-        </div>
-
+      <div className="ml-10 mt-40">
         <button onClick={createFeesAccount} disabled={!currentWallet}>
           Create New Mint Fees Account
         </button>
         <>
           <input
             type="number"
-            className="input w-input"
+            className="input w-input ml-2"
             name="fundingAmount"
             placeholder="1000 (USD)"
             id="Issue"
@@ -118,7 +110,7 @@ export const WithdrawToTreasury: FC = () => {
             Withdraw Tokens
           </button>
         </>
-      </>
+      </div>
     )
   );
 };
