@@ -32,8 +32,12 @@ export const createDM = async (ids: string[]) => {
   const { url } = await sendbird.groupChannel.createChannel({
     invitedUserIds: ids,
     isDistinct: true,
-    
   });
 
   return url;
+};
+
+export const getUnreadMessageCount = async (userId: string) => {
+  await sendbird.connect(userId);
+  return await sendbird.groupChannel.getTotalUnreadMessageCount();
 };
