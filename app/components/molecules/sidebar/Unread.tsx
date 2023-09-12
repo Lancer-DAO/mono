@@ -17,19 +17,17 @@ const Unread = () => {
     }
   }, [currentUser]);
 
-  if (!count) {
-    return null;
-  }
-
   return (
-    <div className="mt-6 relative">
-      <div
-        className={`absolute right-0.5 -top-1 leading-none 
+    <div className="mt-5 relative">
+      {count && (
+        <div
+          className={`absolute right-0.5 -top-1 leading-none 
         ${count && count > 8 ? "w-6" : "w-4"}
       h-4 bg-red-600 text-white text-[10px] rounded-full flex items-center justify-center`}
-      >
-        {count && count > 8 ? "9+" : count}
-      </div>
+        >
+          {count && count > 8 ? "9+" : count}
+        </div>
+      )}
 
       <svg
         xmlns="http://www.w3.org/2000/svg"
