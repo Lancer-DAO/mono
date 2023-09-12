@@ -27,6 +27,7 @@ export const HostedHooksClient = {
     timestamp: string = Date.now().toString()
   ) => {
     const webhookData = JSON.stringify(requestData);
+    console.log("webhookData", webhookData);
 
     const data = {
       data: webhookData,

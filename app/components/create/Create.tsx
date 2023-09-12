@@ -11,6 +11,7 @@ import {
   PreviewForm,
   SuccessForm,
 } from "./components";
+import { useMint } from "@/src/providers/mintProvider";
 
 interface Media {
   imageUrl: string;
@@ -40,7 +41,7 @@ export const Create = () => {
   });
 
   const { provider } = useUserWallet();
-  const { data: allMints } = api.mints.getMints.useQuery();
+  const { allMints } = useMint();
 
   const createAccountPoll = (publicKey: PublicKey) => {
     provider.connection.onAccountChange(publicKey, (callback) => {

@@ -38,7 +38,7 @@ export const DenySubmission = () => {
 
     const newRelations = updateList(
       [],
-      [],
+      [BOUNTY_USER_RELATIONSHIP.CurrentSubmitter],
       [BOUNTY_USER_RELATIONSHIP.DeniedSubmitter]
     );
 
@@ -51,7 +51,7 @@ export const DenySubmission = () => {
       publicKey: currentBounty.currentSubmitter.publicKey,
       escrowId: currentBounty.escrowid,
       signature,
-      label: "deny-submitter",
+      label: "deny-submission",
     });
 
     setCurrentBounty(updatedBounty);
