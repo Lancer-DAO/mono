@@ -30,9 +30,20 @@ const ApplicantsView: FC = () => {
         </div>
         <p className="title-text">Pending</p>
         {currentBounty.requestedSubmitters.length > 0 &&
-          currentBounty.requestedSubmitters.map((submitter, index) => (
-            <ApplicantProfileCard user={submitter} key={index} />
-          ))}
+          currentBounty.requestedSubmitters.map((submitter, index) => {
+            return (
+              <div
+                className={`w-full pb-5 ${
+                  index !== currentBounty.requestedSubmitters.length - 1
+                    ? "border-b border-neutral200"
+                    : ""
+                }`}
+                key={index}
+              >
+                <ApplicantProfileCard user={submitter} />
+              </div>
+            );
+          })}
       </div>
     </div>
   );
