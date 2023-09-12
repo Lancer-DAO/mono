@@ -4,6 +4,7 @@ import { useUserWallet } from "@/src/providers";
 import Messaging from "./messaging";
 import { useChat } from "@/src/providers/chatProvider";
 import Back from "./messaging/back";
+import Unread from "./Unread";
 
 const SidePanel: FC = () => {
   const { isChatOpen, setIsChatOpen } = useChat();
@@ -41,7 +42,7 @@ const SidePanel: FC = () => {
             >
               <div
                 className={`w-full h-full bg-primaryBtn 
-                rounded-l-3xl pt-6 flex justify-center`}
+                rounded-l-3xl pt-6 flex flex-col items-center`}
               >
                 <svg
                   width="20"
@@ -62,6 +63,7 @@ const SidePanel: FC = () => {
                     fill="black"
                   />
                 </svg>
+                <Unread />
               </div>
             </div>
             <div
