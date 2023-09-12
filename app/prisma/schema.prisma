@@ -492,7 +492,7 @@ model BountyUser {
   onChainPublicKey String  @default("") @db.VarChar(256)
 
   // Fields
-  applicationText String? @db.VarChar(2000)
+  // applicationText String? @db.VarChar(2000)
 
   // Relations
   actions BountyUserAction[]
