@@ -39,14 +39,14 @@ export async function getServerSideProps(
       },
     };
   }
-  const allBounties = await queries.bounty.getMany(user.id);
+  const allBounties = await queries.bounty.getMany(user.id);//NB
 
   const allMints = await queries.mint.getAll();
   const allIndustries = await queries.industry.getMany();
   return {
     props: {
       currentUser: JSON.stringify(user),
-      bounties: JSON.stringify(allBounties),
+      bounties: JSON.stringify(allBounties), // NB
 
       mints: JSON.stringify(allMints),
       industries: JSON.stringify(allIndustries),

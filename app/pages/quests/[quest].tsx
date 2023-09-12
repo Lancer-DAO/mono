@@ -29,7 +29,7 @@ export async function getServerSideProps(
       },
     };
   }
-  const questId = parseInt(context.query.quest as string);
+  const questId = parseInt(context.query.quest as string);//NB
   const { email } = metadata.user;
 
   const user = await queries.user.getByEmail(email);
@@ -42,7 +42,7 @@ export async function getServerSideProps(
       },
     };
   }
-  const quest = await queries.bounty.get(questId, user.id);
+  const quest = await queries.bounty.get(questId, user.id);//NB
 
   const allMints = await queries.mint.getAll();
   const allIndustries = await queries.industry.getMany();

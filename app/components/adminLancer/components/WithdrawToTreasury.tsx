@@ -11,6 +11,8 @@ import {
   withdrawTokensInstruction,
 } from "../../../escrow/sdk/instructions";
 import dynamic from "next/dynamic";
+import { useUserWallet } from "@/src/providers";
+import { currentUser } from "@/server/api/routers/users/currentUser";
 
 const WalletDisconnectButtonDynamic = dynamic(
   async () =>
@@ -23,10 +25,10 @@ const WalletMultiButtonDynamic = dynamic(
   { ssr: false }
 );
 
-export const SendSOLToRandomAddress: FC = () => {
+export const WithdrawToTreasury: FC = () => {
   const { connection } = useConnection();
-  const { publicKey, wallet, signAllTransactions, signTransaction } =
-    useWallet();
+  const {  currentWallet, provider, program } =
+    useUserWallet();
 
   const [formData, setFormData] = useState({
     fundingAmount: null,
@@ -40,12 +42,12 @@ export const SendSOLToRandomAddress: FC = () => {
   };
 
   const createFeesAccount = useCallback(async () => {
-    if (!publicKey) throw new WalletNotConnectedError();
-    const provider = new AnchorProvider(
-      connection,
-      { ...wallet, signAllTransactions, signTransaction, publicKey },
-      {}
-    );
+    // if (!publicKey) throw new WalletNotConnectedError();
+    // const provider = new AnchorProvider(
+    //   connection,
+    //   { ...wallet, signAllTransactions, signTransaction, publicKey },
+    //   {}
+    // );
     const program = new Program<MonoProgram>(
       MonoProgramJSON as unknown as MonoProgram,
       new PublicKey(MONO_ADDRESS),
@@ -60,15 +62,11 @@ export const SendSOLToRandomAddress: FC = () => {
       new Transaction().add(create_lancer_token_account_ix),
       []
     );
-  }, [publicKey, connection]);
+  }, [currentWallet, connection]);
 
   const withdrawTokens = useCallback(async () => {
-    if (!publicKey) throw new WalletNotConnectedError();
-    const provider = new AnchorProvider(
-      connection,
-      { ...wallet, signAllTransactions, signTransaction, publicKey },
-      {}
-    );
+
+    
     const program = new Program<MonoProgram>(
       MonoProgramJSON as unknown as MonoProgram,
       new PublicKey(MONO_ADDRESS),
@@ -92,7 +90,7 @@ export const SendSOLToRandomAddress: FC = () => {
       new Transaction().add(create_lancer_token_account_ix),
       []
     );
-  }, [publicKey, connection, formData]);
+  }, [currentWallet, connection, formData]);
 
   return (
     connection && (
@@ -102,7 +100,7 @@ export const SendSOLToRandomAddress: FC = () => {
           <WalletDisconnectButtonDynamic />
         </div>
 
-        <button onClick={createFeesAccount} disabled={!publicKey}>
+        <button onClick={createFeesAccount} disabled={!currentWallet}>
           Create New Mint Fees Account
         </button>
         <>
@@ -116,7 +114,7 @@ export const SendSOLToRandomAddress: FC = () => {
             onChange={handleChange}
           />
 
-          <button onClick={withdrawTokens} disabled={!publicKey}>
+          <button onClick={withdrawTokens} disabled={!currentWallet}>
             Withdraw Tokens
           </button>
         </>
