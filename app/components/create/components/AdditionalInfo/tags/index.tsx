@@ -25,13 +25,11 @@ const Tags = ({
       setQuery(null);
     }
 
-    // uppercase
-    const value = e.target.value.toUpperCase();
-      setQuery(value);
+    setQuery(e.target.value);
   };
 
   const handleTagClick = (tag: string) => {
-    // check if tag already exists in formData.tags
+    // check if tag already exists in formData tags
     if (formData.tags.find((t) => t === tag)) return;
 
     const newTags = [...formData.tags, tag];
