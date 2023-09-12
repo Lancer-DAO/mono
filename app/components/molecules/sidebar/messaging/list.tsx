@@ -33,7 +33,7 @@ const List = ({ setChannel }: { setChannel: (channel: any) => void }) => {
             >
               <div className="relative">
                 {meta && meta.connectionStatus === "online" ? (
-                  <div className="w-3 h-3 absolute bottom-0 right-0 bg-green-500 border border-white rounded-full"></div>
+                  <div className="w-4 h-4 absolute -bottom-0.5 -right-0.5 bg-green-500 border border-white rounded-full"></div>
                 ) : null}
 
                 <Image
@@ -42,8 +42,8 @@ const List = ({ setChannel }: { setChannel: (channel: any) => void }) => {
                       ? meta.plainProfileUrl
                       : channel.creator.plainProfileUrl
                   }
-                  width={40}
-                  height={40}
+                  width={48}
+                  height={48}
                   alt={`${
                     meta ? meta.nickname : channel.name
                   }'s profile picture`}
