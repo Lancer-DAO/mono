@@ -14,6 +14,7 @@ import { motion } from "framer-motion";
 import { X } from "lucide-react";
 import Image from "next/image";
 import { Dispatch, FC, SetStateAction, useEffect, useState } from "react";
+import Tags from "./tags";
 
 interface Props {
   setFormSection: Dispatch<SetStateAction<FORM_SECTION>>;
@@ -165,67 +166,7 @@ export const AdditionalInfoForm: FC<Props> = ({
         </div>
         <div className="relative">
           <div className="absolute top-1/2 -translate-y-1/2 -left-10">5</div>
-          <input
-            type="text"
-            className="placeholder:text-textGreen/70 border bg-neutralBtn 
-            border-neutralBtnBorder w-full h-[50px] rounded-lg px-3"
-            name="tags"
-            value={formData.tags}
-            onChange={handleTagsChange}
-            placeholder="Tags (comma separated)"
-            id="issue-requirements-input"
-            onBlur={() => {
-              if (
-                formData.tags.length !== 0 &&
-                !!currentTutorialState &&
-                currentTutorialState.isActive
-              ) {
-                if (
-                  currentTutorialState?.title ===
-                    CREATE_BOUNTY_TUTORIAL_INITIAL_STATE.title &&
-                  currentTutorialState.currentStep === 3
-                ) {
-                  setCurrentTutorialState({
-                    ...currentTutorialState,
-                    currentStep: 4,
-                  });
-                }
-              }
-            }}
-            onMouseLeave={() => {
-              if (
-                formData.tags.length !== 0 &&
-                !!currentTutorialState &&
-                currentTutorialState.isActive
-              ) {
-                if (
-                  currentTutorialState?.title ===
-                    CREATE_BOUNTY_TUTORIAL_INITIAL_STATE.title &&
-                  currentTutorialState.currentStep === 3
-                ) {
-                  setCurrentTutorialState({
-                    ...currentTutorialState,
-                    currentStep: 4,
-                    isRunning: true,
-                  });
-                }
-              }
-            }}
-            onFocus={() => {
-              if (!!currentTutorialState && currentTutorialState.isActive) {
-                if (
-                  currentTutorialState?.title ===
-                    CREATE_BOUNTY_TUTORIAL_INITIAL_STATE.title &&
-                  currentTutorialState.currentStep === 3
-                ) {
-                  setCurrentTutorialState({
-                    ...currentTutorialState,
-                    isRunning: false,
-                  });
-                }
-              }
-            }}
-          />
+          <Tags formData={formData} setFormData={setFormData} />
         </div>
         <div className="relative">
           <div className="absolute top-6 -left-10">6</div>
