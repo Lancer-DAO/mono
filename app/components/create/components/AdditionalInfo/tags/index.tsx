@@ -40,8 +40,43 @@ const Tags = ({
     setQuery(null);
   };
 
+  const removeTag = (tag: string) => {
+    const newTags = formData.tags.filter((t) => t !== tag);
+
+    setFormData({
+      ...formData,
+      tags: newTags,
+    });
+  };
+
   return (
     <div className="relative w-full">
+      <div className="flex">
+        {formData.tags.map((tag, key) => (
+          <div
+            className="bg-neutralBtn border flex border-neutralBtnBorder hover:bg-neutral-50 cursor-pointer rounded-full px-3 pr-2 h-8 items-center gap-x-1.5 mr-2 mb-2 text-textGreen/70"
+            key={key}
+            onClick={() => removeTag(tag)}
+          >
+            <div className="-mt-0.5">{tag}</div>
+
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              strokeWidth="1.5"
+              stroke="currentColor"
+              className="w-5 h-5"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M9.75 9.75l4.5 4.5m0-4.5l-4.5 4.5M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+              />
+            </svg>
+          </div>
+        ))}
+      </div>
       <input
         className="placeholder:text-textGreen/70 border bg-neutralBtn border-neutralBtnBorder w-full h-[50px] rounded-lg px-3"
         placeholder="Enter tags"
@@ -50,7 +85,11 @@ const Tags = ({
       />
 
       {query && (
-        <div className="w-full bg-white absolute border z-50 top-14 p-2 flex flex-col gap-y-1 rounded-lg">
+        <div
+          className={`w-full bg-white absolute border z-50 p-2 flex flex-col gap-y-1 rounded-lg ${
+            formData.tags.length > 0 ? "top-24" : "top-14"
+          }`}
+        >
           {isLoading ? (
             <>
               <div className="w-1/3 h-6 animate-pulse bg-neutral-200 rounded m-2"></div>
