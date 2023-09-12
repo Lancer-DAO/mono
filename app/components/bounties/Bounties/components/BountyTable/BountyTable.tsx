@@ -107,7 +107,7 @@ const BountyList: React.FC<{}> = () => {
           []
         );
       const uniqueTags = getUniqueItems(allTags);
-      const mappedInds = allIndustries.map((industry) => industry.name);
+      const mappedInds = [currentUser?.industries[0].name];
 
       setIndustriesFilter(mappedInds);
 
