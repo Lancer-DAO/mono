@@ -5,8 +5,8 @@ export const create = async (
   bountyid: number,
   relations: string[],
   user: Prisma.User,
-  wallet: Prisma.Wallet
-  // applicationText: string
+  wallet: Prisma.Wallet,
+  applicationText: string
 ): Promise<Prisma.BountyUser> => {
   return await prisma.bountyUser.create({
     data: {
@@ -14,7 +14,7 @@ export const create = async (
       bountyid,
       relations: relations.join(),
       walletid: wallet.id,
-      // applicationText,
+      applicationText,
     },
   });
 };
