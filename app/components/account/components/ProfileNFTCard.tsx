@@ -208,7 +208,7 @@ export const ProfileNFTCard = ({
                   text="Send Message"
                   extraClasses="w-fit mb-[6px]"
                 />
-              ) : self && IS_CUSTODIAL ? (
+              ) : self ? (
                 <BountyActionsButton
                   onClick={async () => {
                     setShowCashout(true);
