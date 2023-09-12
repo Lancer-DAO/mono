@@ -23,9 +23,14 @@ export async function getServerSideProps(
     };
   }
 
-  const { email } = metadata.user;
+  const { email, sub, nickname, picture } = metadata.user;
 
-  const user = await queries.user.getByEmail(email);
+  const user = await queries.user.getOrCreateByEmail(
+    email,
+    sub,
+    nickname,
+    picture
+  );
 
   if (user && user.hasFinishedOnboarding) {
     return {
