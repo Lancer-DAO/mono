@@ -5,6 +5,7 @@ import { useRouter } from "next/router";
 import { FC, useState } from "react";
 // import { BountyActions } from "./BountyActions";
 import ApplicantsView from "./ApplicantsView";
+import Chat from "./Chat";
 import QuestUser from "./QuestUser";
 import SubmitQuote from "./SubmitQuote";
 
@@ -25,15 +26,25 @@ const QuestActions: FC = () => {
   // TODO: set loading state, check for user status (creator or applicant?)
   // and then set initial view based on that
   const [currentActionView, setCurrentActionView] = useState<QuestActionView>(
-    QuestActionView.ViewApplicants
+    QuestActionView.Chat
   );
 
   if (!currentUser || !currentBounty) return null;
 
+  console.log(currentBounty)
+
   return (
     <>
-      {!currentBounty?.isCreator && QuestActionView.SubmitQuote && (
-        <SubmitQuote />
+      {currentActionView === QuestActionView.Chat && (
+        <Chat 
+          bounty={currentBounty}
+          client={currentBounty?.creator.user} 
+          setCurrentActionView={setCurrentActionView}  
+        />
+
+      )}
+      {!currentBounty?.isCreator && (currentActionView === QuestActionView.SubmitQuote) && (
+        <SubmitQuote client={currentBounty?.creator.user} />
       )}
     
     {/* <div className="flex flex-col bg-white w-[610px] border border-grey200 rounded-lg">

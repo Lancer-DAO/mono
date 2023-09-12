@@ -1,6 +1,6 @@
-import { FC } from "react";
 import { ContributorInfo } from "@/components";
 import { User } from "@prisma/client";
+import { FC } from "react";
 
 interface BountyActionsUserProps {
   title: string;

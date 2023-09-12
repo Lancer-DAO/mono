@@ -1,9 +1,9 @@
-const SubmitQuote = () => {
+const SubmitQuote = ({ client }) => {
   return (
     <div className="flex flex-col shrink-0 rounded-lg bg-white w-[610px] h-[717px] border border-neutral200">
       {/* card header */}
       <div className="flex flex-col bg-secondary300 px-6 py-4 gap-1 rounded-t-lg text-white">
-        <div className="titleText">Quote to Orlando & Team</div>
+        <div className="titleText">{`Quote to ${client.name}`}</div>
         <div className="text-mini opacity-60">This will be added to the quest description and cannot be modified</div>
       </div>
       {/* content */}
