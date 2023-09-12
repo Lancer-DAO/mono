@@ -1,12 +1,20 @@
 import { useUserWallet } from "@/src/providers";
 import { useAccount } from "@/src/providers/accountProvider";
+import { useChat } from "@/src/providers/chatProvider";
 import { getUnreadMessageCount } from "@/src/utils/sendbird";
 import { useEffect, useState } from "react";
 
 const Unread = () => {
   const { currentUser } = useUserWallet();
+  const { isChatOpen } = useChat();
 
   const [count, setCount] = useState<number>();
+
+  useEffect(() => {
+    if (isChatOpen) {
+      setCount(0);
+    }
+  }, [isChatOpen]);
 
   useEffect(() => {
     if (currentUser && !count) {
@@ -18,23 +26,24 @@ const Unread = () => {
   }, [currentUser]);
 
   return (
-    <div className="mt-5 relative">
-      {count && (
+    <div className="mt-5 relative flex items-center justify-center">
+      {count > 0 && (
         <div
-          className={`absolute right-0.5 -top-1 leading-none 
+          className={`absolute right-0 -top-1.5 leading-none 
         ${count && count > 8 ? "w-6" : "w-4"}
       h-4 bg-red-600 text-white text-[10px] rounded-full flex items-center justify-center`}
         >
-          {count && count > 8 ? "9+" : count}
+          {count > 8 ? "9+" : count}
         </div>
       )}
 
       <svg
         xmlns="http://www.w3.org/2000/svg"
         fill="none"
+        viewBox="0 0 24 24"
         stroke-width="1.5"
         stroke="currentColor"
-        className="w-[30px] h-[30px] text-neutral-500"
+        className="w-6 h-6 text-neutral-500"
       >
         <path
           stroke-linecap="round"
