@@ -18,8 +18,6 @@ const Tags = ({
     }
   );
 
-  console.log(data);
-
   const handleInput = (e: any) => {
     if (e.target.value === "") {
       setQuery(null);
