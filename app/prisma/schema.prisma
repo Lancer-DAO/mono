@@ -409,7 +409,7 @@ model User {
   position              String?  @db.VarChar(128)
   hasFinishedOnboarding Boolean? @default(false)
   hasBeenApproved       Boolean? @default(false)
-  reputation            Decimal? @default(0)
+  experience            Int?     @default(0)
 
   // Relations
   wallets      Wallet[]

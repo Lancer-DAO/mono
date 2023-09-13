@@ -2,7 +2,7 @@ import dayjs from "dayjs";
 
 export type ProfileNFT = {
   name: string;
-  reputation: number;
+  experience: number;
   badges: string[];
   certifications: string[];
   image: string;
@@ -11,7 +11,7 @@ export type ProfileNFT = {
 
 export type BountyNFT = {
   name: string;
-  reputation: number;
+  experience: number;
   tags: string[];
   image: string;
   completed?: dayjs.Dayjs;

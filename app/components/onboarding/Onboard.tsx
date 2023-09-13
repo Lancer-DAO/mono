@@ -141,7 +141,7 @@ const Onboard: FC = () => {
         website: profileData.website,
       });
 
-      // update profileNFT reputation for successfully onboarding
+      // update profileNFT XP for successfully onboarding
       let nfts = await underdogClient.getNfts({
         params: PROFILE_PROJECT_PARAMS,
         query: {

@@ -60,7 +60,7 @@ export const Account: FC<Props> = ({ self }) => {
       const { attributes, image } = nfts.results[0];
       const profileNFT: ProfileNFT = {
         name: account?.name,
-        reputation: attributes.reputation as number,
+        experience: attributes.reputation as number,
         badges:
           attributes.badges !== ""
             ? (attributes.badges as string)?.split(",")

@@ -360,7 +360,7 @@ export const ProfileNFTCard = ({
               )}
             </div>
             {/* <p>[location]</p> */}
-            <p>{profileNFT?.reputation} pts</p>
+            <p>{profileNFT?.experience} pts</p>
           </div>
         </div>
         {bioEdit.editing ? (
