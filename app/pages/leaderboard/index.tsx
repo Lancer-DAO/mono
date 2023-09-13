@@ -4,6 +4,8 @@ import { LeaderboardCommits } from "@/components/leaderboard/CommitBoard";
 import { TopQuestUsersBoard } from "@/components/leaderboard/TopQuestUsersBoard";
 import { GetServerSidePropsContext } from "next";
 import { prisma } from "@/server/db";
+import * as queries from "@/prisma/queries";
+
 export async function getServerSideProps(
   context: GetServerSidePropsContext<{ id: string; req; res }>
 ) {
@@ -18,21 +20,25 @@ export async function getServerSideProps(
       },
     };
   }
-  const { email } = metadata.user;
+  try {
+    const { email } = metadata.user;
 
-  const user = await prisma.user.findUnique({
-    where: {
-      email,
-    },
-    select: {
-      id: true,
-      isAdmin: true,
-      hasFinishedOnboarding: true,
-      hasBeenApproved: true,
-    },
-  });
+    const user = await queries.user.getByEmail(email);
 
-  if (!user || !user.hasFinishedOnboarding) {
+    if (!user || !user.hasFinishedOnboarding) {
+      return {
+        redirect: {
+          destination: "/welcome",
+          permanent: false,
+        },
+      };
+    }
+    return {
+      props: {
+        currentUser: JSON.stringify(user),
+      },
+    };
+  } catch (e) {
     return {
       redirect: {
         destination: "/welcome",
@@ -40,7 +46,6 @@ export async function getServerSideProps(
       },
     };
   }
-  return { props: {} };
 }
 
 export default function Home() {
@@ -51,7 +56,10 @@ export default function Home() {
         <meta name="description" content="Lancer Bounty Leaderboard" />
       </Head>
       <main>
-        <TopQuestUsersBoard />
+        {/* <TopQuestUsersBoard /> */}
+        <h1 className="py-32 w-fit mx-auto text-center">
+          Leaderboard Under Construction
+        </h1>
       </main>
     </>
   );

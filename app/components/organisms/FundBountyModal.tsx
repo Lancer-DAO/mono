@@ -12,6 +12,7 @@ import { useTutorial } from "@/src/providers/tutorialProvider";
 import { IAsyncResult } from "@/types";
 import toast from "react-hot-toast";
 import { Modal } from "@/components";
+import { useMint } from "@/src/providers/mintProvider";
 
 interface Props {
   setShowModal: Dispatch<SetStateAction<boolean>>;
@@ -23,7 +24,7 @@ const FundBountyModal: FC<Props> = ({ setShowModal, setIsFunded }) => {
   const { currentBounty, setCurrentBounty } = useBounty();
   const { currentTutorialState, setCurrentTutorialState } = useTutorial();
   const { mutateAsync: fundB } = api.bounties.fundBounty.useMutation();
-  const { data: allMints } = api.mints.getMints.useQuery();
+  const { allMints } = useMint();
   const [fundQuestState, setFundQuestState] = useState<IAsyncResult<string>>({
     isLoading: false,
   });

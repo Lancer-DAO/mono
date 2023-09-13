@@ -75,7 +75,7 @@ export const SubmitRequest = () => {
       publicKey: currentWallet.publicKey.toString(),
       escrowId: currentBounty.escrowid,
       signature,
-      label: "submit-request",
+      label: "submission",
     });
 
     setCurrentBounty(updatedBounty);

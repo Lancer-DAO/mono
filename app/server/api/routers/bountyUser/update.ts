@@ -36,6 +36,7 @@ export const update = protectedProcedure
       },
     }) => {
       const user = await queries.user.getById(userId);
+      const currentUser = await queries.user.getById(currentUserId);
 
       const wallet = await queries.wallet.getOrCreate(user, publicKey);
       let bounty;
@@ -95,7 +96,21 @@ export const update = protectedProcedure
 
       const updatedBounty = await queries.bounty.get(bountyId, currentUserId);
 
-      HostedHooksClient.sendWebhook(updatedBounty, "bounty.updated");
+      const webhookUpdate = {
+        ...updatedBounty,
+        updateType: label,
+        currentUserEmail: currentUser.email,
+        updatedUserEmail: user.email,
+        creatorEmail: updatedBounty.creator.user.email,
+        votingToCancelEmails: updatedBounty.votingToCancel.map(
+          (user) => user.user.email
+        ),
+        needsToVoteEmails: updatedBounty.needsToVote.map(
+          (user) => user.user.email
+        ),
+      };
+
+      HostedHooksClient.sendWebhook(webhookUpdate, "bounty.updated");
 
       return updatedBounty;
     }

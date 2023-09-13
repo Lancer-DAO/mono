@@ -4,6 +4,7 @@ import { Modal } from "@/components";
 import { BountyActionsButton } from "../bounties/Bounty/components";
 import ResumeCard from "../account/components/ResumeCard";
 import { User } from "@/types";
+import { api } from "@/src/utils";
 
 interface Props {
   setShowModal: Dispatch<SetStateAction<boolean>>;
@@ -12,6 +13,8 @@ interface Props {
 }
 
 const ResumeModal: FC<Props> = ({ setShowModal, resumeUrl, setResumeUrl }) => {
+  const { mutateAsync: updateResume } = api.users.updateResume.useMutation();
+
   return (
     <Modal
       setShowModal={setShowModal}
@@ -38,7 +41,11 @@ const ResumeModal: FC<Props> = ({ setShowModal, resumeUrl, setResumeUrl }) => {
         <BountyActionsButton
           type="red"
           text="Upload Later"
-          onClick={() => setShowModal(false)}
+          onClick={() => {
+            updateResume({ resume: "" });
+
+            setShowModal(false);
+          }}
         />
       </div>
       <Image

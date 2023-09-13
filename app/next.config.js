@@ -76,6 +76,7 @@ module.exports = withSentryConfig(
 
         org: "lancer-works-co",
         project: "javascript-nextjs",
+        
     }, {
         // For all available options, see:
         // https://docs.sentry.io/platforms/javascript/guides/nextjs/manual-setup/
