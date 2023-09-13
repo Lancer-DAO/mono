@@ -55,8 +55,6 @@ const LancerApplyView: FC = () => {
 
       setCurrentBounty(updatedBounty);
       toast.success("Application sent", { id: toastId });
-      // TODO: replace state variable with a db check for if user has applied
-      setHasApplied(true);
     } catch (error) {
       toast.error("Error submitting application", { id: toastId });
     }

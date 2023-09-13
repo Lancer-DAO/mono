@@ -35,11 +35,11 @@
 }
 
 html {
-  @apply text-textPrimary bg-bgLancer;
+  @apply text-[#526660] bg-bgLancer;
 }
 
 h1 {
-  @apply text-2xl;
+  @apply text-2xl font-bold;
 }
 
 h2 {

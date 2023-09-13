@@ -5,7 +5,6 @@ import { FC, useEffect, useState } from "react";
 import ApplicantsView from "./ApplicantsView";
 import LancerApplyView from "./LancerApplyView";
 import LancerSubmitUpdateView from "./LancerSubmitUpdateView";
-import QuestUser from "./QuestUser";
 
 export enum QuestActionView {
   Apply = "apply", // one-way (Lancer)
@@ -14,6 +13,7 @@ export enum QuestActionView {
   SubmitQuote = "submit-quote", // one-way (Lancer)
   ViewQuote = "view-quote", // one-way (client)
   SubmitUpdate = "submit-update", // one-way (Lancer)
+  Ongoing = "ongoing", // two-way (client, Lancer), includes chat and submit update
   ViewUpdate = "view-update", // one-way (client)
 }
 
@@ -27,9 +27,17 @@ const QuestActions: FC = () => {
 
   useEffect(() => {
     if (!!currentUser && !currentBounty.isCreator) {
-      setCurrentActionView(QuestActionView.SubmitUpdate);
+      if (currentBounty.isApprovedSubmitter) {
+        setCurrentActionView(QuestActionView.Chat);
+      } else {
+        setCurrentActionView(QuestActionView.Apply);
+      }
     } else if (!!currentUser && currentBounty.isCreator) {
-      setCurrentActionView(QuestActionView.ViewApplicants);
+      if (currentBounty.approvedSubmitters.length === 0) {
+        setCurrentActionView(QuestActionView.ViewApplicants);
+      } else {
+        setCurrentActionView(QuestActionView.Chat);
+      }
     }
   }, [currentUser, currentBounty]);
 
@@ -37,15 +45,13 @@ const QuestActions: FC = () => {
 
   return (
     <div className="bg-white w-[610px] border border-neutral200 rounded-lg overflow-hidden">
-      {/* {currentBounty.isCreator ? ( */}
-      {/* {currentBounty?.creator && (
-          <QuestUser title="Client" users={[currentBounty.creator.user]} />
-        )} */}
       {currentActionView === QuestActionView.Apply && <LancerApplyView />}
       {currentActionView === QuestActionView.ViewApplicants && (
         <ApplicantsView />
       )}
-      {currentActionView === QuestActionView.SubmitUpdate && <LancerSubmitUpdateView />}
+      {currentActionView === QuestActionView.SubmitUpdate && (
+        <LancerSubmitUpdateView />
+      )}
 
       {/* {currentBounty &&
             currentBounty.currentSubmitter &&
