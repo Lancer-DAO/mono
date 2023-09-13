@@ -16,7 +16,7 @@ const ApplicantsView: FC = () => {
 
   return (
     <div className="flex flex-col">
-      <ActionsCardBanner title="Apply to this Quest">
+      <ActionsCardBanner title="Applications Review">
         {/* TODO: add fund CTA */}
       </ActionsCardBanner>
       <div className="flex flex-col gap-5 px-6 py-4">
@@ -28,7 +28,7 @@ const ApplicantsView: FC = () => {
             projects only.
           </p>
         </div>
-        <p className="title-text">Pending</p>
+        <p className="title-text">Pending Applicants</p>
         {currentBounty.requestedSubmitters.length > 0 &&
           currentBounty.requestedSubmitters.map((submitter, index) => {
             return (

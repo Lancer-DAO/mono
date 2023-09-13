@@ -1,4 +1,4 @@
-import { FC, useState } from "react";
+import { FC, useEffect, useState } from "react";
 import ActionsCardBanner from "./ActionsCardBanner";
 import { useBounty } from "@/src/providers/bountyProvider";
 import { ContributorInfo } from "@/components";
@@ -61,6 +61,15 @@ const LancerApplyView: FC = () => {
       toast.error("Error submitting application", { id: toastId });
     }
   };
+
+  // check if user has applied
+  useEffect(() => {
+    if (!currentBounty || !currentUser) return;
+    const hasApplied = currentBounty.currentUserRelationsList?.some(
+      (relation) => relation === BOUNTY_USER_RELATIONSHIP.RequestedSubmitter
+    );
+    setHasApplied(hasApplied);
+  }, [currentBounty, currentUser]);
 
   if (!currentBounty || !currentUser) return null;
 
