@@ -409,6 +409,7 @@ model User {
   position              String?  @db.VarChar(128)
   hasFinishedOnboarding Boolean? @default(false)
   hasBeenApproved       Boolean? @default(false)
+  reputation            Decimal? @default(0)
 
   // Relations
   wallets      Wallet[]
@@ -486,14 +487,16 @@ model BountyComment {
 }
 
 model BountyUser {
-  userid           Int
-  bountyid         Int
-  walletid         Int?
-  relations        String  @db.VarChar(256)
-  user             User    @relation(fields: [userid], references: [id])
-  bounty           Bounty  @relation(fields: [bountyid], references: [id])
-  wallet           Wallet? @relation(fields: [walletid], references: [id])
-  onChainPublicKey String  @default("") @db.VarChar(256)
+  userid   Int
+  bountyid Int
+  walletid Int?
+  user     User    @relation(fields: [userid], references: [id])
+  bounty   Bounty  @relation(fields: [bountyid], references: [id])
+  wallet   Wallet? @relation(fields: [walletid], references: [id])
+
+  // Fields
+  relations       String  @db.VarChar(256)
+  applicationText String? @db.VarChar(2000)
 
   // Relations
   actions BountyUserAction[]
