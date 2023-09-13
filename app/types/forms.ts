@@ -2,7 +2,7 @@ import { Industry, Media } from "@/types";
 
 export type FORM_SECTION = "CREATE" | "MEDIA" | "FUND" | "PREVIEW" | "SUCCESS";
 
-export interface FormData {
+export interface QuestFormData {
   requestQuote: boolean;
   issuePrice: string;
   issuePriceIcon?: string;
@@ -31,4 +31,12 @@ export interface ProfileFormData {
   github: string;
   twitter: string;
   website: string;
+}
+
+export interface LancerApplyData {
+  portfolio: string;
+  linkedin: string;
+  about: string;
+  resume: string;
+  details: string;
 }

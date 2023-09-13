@@ -6,7 +6,7 @@ import {
   smallClickAnimation,
 } from "@/src/constants";
 import { useTutorial } from "@/src/providers/tutorialProvider";
-import { FORM_SECTION, FormData } from "@/types/forms";
+import { FORM_SECTION, QuestFormData } from "@/types/forms";
 import "@uploadthing/react/styles.css";
 
 import { api } from "@/src/utils";
@@ -18,8 +18,8 @@ import Tags from "./tags";
 
 interface Props {
   setFormSection: Dispatch<SetStateAction<FORM_SECTION>>;
-  formData: FormData;
-  setFormData: Dispatch<SetStateAction<FormData>>;
+  formData: QuestFormData;
+  setFormData: Dispatch<SetStateAction<QuestFormData>>;
 }
 
 export const AdditionalInfoForm: FC<Props> = ({

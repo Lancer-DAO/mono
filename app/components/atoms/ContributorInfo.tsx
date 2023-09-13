@@ -21,12 +21,12 @@ const ContributorInfo: React.FC<{ user: User; disableLink?: boolean }> = ({
                   user.githubId.split("|")[1]
                 }?s=60&v=4`
           }
-          width={40}
-          height={40}
+          width={36}
+          height={36}
           alt={user.name ? user.name : user.githubLogin}
           className="h-[25px] w-[25px] rounded-full"
         />
-        <div className="mx-[10px]">
+        <div className="mx-[10px] text-white text">
           {user.name ? user.name : user.githubLogin}
         </div>
       </div>
@@ -50,12 +50,12 @@ const ContributorInfo: React.FC<{ user: User; disableLink?: boolean }> = ({
                   user.githubId.split("|")[1]
                 }?s=60&v=4`
           }
-          width={40}
-          height={40}
+          width={36}
+          height={36}
           alt={user.name ? user.name : user.githubLogin}
           className="h-[25px] w-[25px] rounded-full"
         />
-        <div className="mx-[10px]">
+        <div className="mx-[10px] text-white text">
           {user.name ? user.name : user.githubLogin}
         </div>
       </motion.button>

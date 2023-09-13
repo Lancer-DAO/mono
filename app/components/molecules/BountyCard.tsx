@@ -9,7 +9,7 @@ import { useUserWallet } from "@/providers";
 import { fastEnterAnimation, midClickAnimation } from "@/src/constants";
 import { useBounty } from "@/src/providers/bountyProvider";
 import { useIndustry } from "@/src/providers/industryProvider";
-import { BountyPreview, FormData, Industry } from "@/types/";
+import { BountyPreview, QuestFormData, Industry } from "@/types/";
 import { api, getFormattedDate } from "@/utils";
 import { motion } from "framer-motion";
 import { marked } from "marked";
@@ -18,7 +18,7 @@ import { FC, SVGAttributes, useCallback, useEffect, useState } from "react";
 
 export interface BountyCardProps extends SVGAttributes<SVGSVGElement> {
   bounty?: BountyPreview;
-  formData?: FormData;
+  formData?: QuestFormData;
   linked?: boolean;
 }
 
