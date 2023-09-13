@@ -29,20 +29,7 @@ interface BountyActionsUserProps {
 
 export const Bounty = () => {
   const { currentUser } = useUserWallet();
-  const { setCurrentBounty, currentBounty } = useBounty();
-  const router = useRouter();
-  const { data: currentBountyData } = api.bounties.getBounty.useQuery(
-    {
-      id: parseInt(router.query.quest as string),
-      currentUserId: currentUser?.id,
-    },
-    {
-      enabled: !!currentUser,
-      onSuccess: (data) => {
-        setCurrentBounty(data);
-      },
-    }
-  );
+  const { currentBounty } = useBounty();
 
   const [pollId, setPollId] = useState(null);
   const [links, setLinks] = useState<string[]>([]);

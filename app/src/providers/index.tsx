@@ -11,6 +11,9 @@ import {
 import { WalletModalProvider } from "@solana/wallet-adapter-react-ui";
 import AppContextProvider from "./appContextProvider";
 import BountyProvider from "./bountyProvider";
+import IndustryProvider from "./industryProvider";
+import AccountProvider from "./accountProvider";
+import MintProvider from "./mintProvider";
 import TutorialProvider from "./tutorialProvider";
 import NonCustodialWalletProvider from "./userWalletProvider/nonCustodialProvider";
 import CustodialWalletProvider from "./userWalletProvider/custodialProvider";
@@ -22,8 +25,9 @@ import SendbirdProvider from "@sendbird/uikit-react/SendbirdProvider";
 
 export * from "./userWalletProvider";
 
-export const AllProviders: React.FC<{ children: ReactNode }> = ({
+export const AllProviders: React.FC<{ children: ReactNode; user }> = ({
   children,
+  user,
 }) => {
   // You can also provide a custom RPC endpoint
   const { isDebugMode } = useDebugMode();
@@ -68,7 +72,13 @@ export const AllProviders: React.FC<{ children: ReactNode }> = ({
               >
                 <BountyProvider>
                   <ReferralProvider>
-                    <ChatProvider>{children}</ChatProvider>
+                    <IndustryProvider>
+                      <MintProvider>
+                        <AccountProvider>
+                          <ChatProvider>{children}</ChatProvider>
+                        </AccountProvider>
+                      </MintProvider>
+                    </IndustryProvider>
                   </ReferralProvider>
                 </BountyProvider>
               </CustodialWalletProvider>
@@ -87,10 +97,16 @@ export const AllProviders: React.FC<{ children: ReactNode }> = ({
           <WalletModalProvider>
             <AppContextProvider>
               <TutorialProvider>
-                <NonCustodialWalletProvider>
+                <NonCustodialWalletProvider user={user}>
                   <BountyProvider>
                     <ReferralProvider>
-                      <ChatProvider>{children}</ChatProvider>
+                      <IndustryProvider>
+                        <MintProvider>
+                          <AccountProvider>
+                            <ChatProvider>{children}</ChatProvider>
+                          </AccountProvider>
+                        </MintProvider>
+                      </IndustryProvider>
                     </ReferralProvider>
                   </BountyProvider>
                 </NonCustodialWalletProvider>

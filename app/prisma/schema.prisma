@@ -1,6 +1,6 @@
 generator client {
-  provider = "prisma-client-js"
-  // previewFeatures = ["fullTextSearch", "fullTextIndex"]
+  provider        = "prisma-client-js"
+  previewFeatures = ["fullTextSearch", "fullTextIndex"]
 }
 
 datasource db {
@@ -344,7 +344,8 @@ model Tag {
   id Int @id @default(autoincrement())
 
   // Fields
-  color       String? @db.VarChar(24)
+  bgColor     String? @db.VarChar(24)
+  borderColor String? @db.VarChar(24)
   description String? @db.VarChar(255)
   name        String? @db.VarChar(64)
 
@@ -355,6 +356,9 @@ model Tag {
   users        User[]
   disciplines  Discipline[]
   industries   Industry[]
+
+  // full text search name
+  @@fulltext([name])
 }
 
 model Transaction {
