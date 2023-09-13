@@ -5,6 +5,7 @@ import { useTutorial } from "@/src/providers/tutorialProvider";
 import {
   CancelEscrow,
   Apply,
+  ArchiveBounty,
   ApproveSubmission,
   DenySubmission,
   VoteToCancel,
@@ -68,6 +69,7 @@ export const BountyActions = () => {
         <DenySubmission />
         <VoteToCancel />
         <CancelEscrow />
+       // <ArchiveBounty />
       </>
     );
   }, [currentBounty, currentWallet?.publicKey]);

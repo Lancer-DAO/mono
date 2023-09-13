@@ -16,3 +16,4 @@ export * from "./RequestChanges";
 export * from "./SubmitRequest";
 export * from "./SubmitterSection";
 export * from "./VoteToCancel";
+export * from "./ArchiveBounty";
