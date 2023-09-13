@@ -14,52 +14,6 @@ interface Props {
 }
 
 const ApplicantProfileCard: FC<Props> = ({ user }) => {
-  const [profileNFT, setProfileNFT] = useState<ProfileNFT | null>();
-
-  // TODO: this is a lot of profile NFTs to fetch...
-  const fetchProfileNFT = async () => {
-    const walletKey = user.user.hasProfileNFT ? user.wallet.publicKey : null;
-    if (!walletKey) {
-      setProfileNFT(null);
-      return;
-    }
-    const nfts = await underdogClient.getNfts({
-      params: PROFILE_PROJECT_PARAMS,
-      query: {
-        page: 1,
-        limit: 1,
-        ownerAddress: walletKey,
-      },
-    });
-
-    if (nfts.totalResults > 0) {
-      const { attributes, image } = nfts.results[0];
-      const profileNFT: ProfileNFT = {
-        name: user.user.name,
-        reputation: attributes.reputation as number,
-        badges:
-          attributes.badges !== ""
-            ? (attributes.badges as string)?.split(",")
-            : [],
-        certifications:
-          attributes.certifications !== ""
-            ? (attributes.certifications as string)?.split(",")
-            : [],
-        image: image,
-        lastUpdated: attributes.lastUpdated
-          ? dayjs(attributes.lastUpdated)
-          : undefined,
-      };
-      setProfileNFT(profileNFT);
-    }
-  };
-
-  useEffect(() => {
-    if (user) {
-      fetchProfileNFT();
-    }
-  }, []);
-
   return (
     <div className="w-full flex flex-col gap-3">
       <div className="w-full flex items-center justify-between">
@@ -73,9 +27,7 @@ const ApplicantProfileCard: FC<Props> = ({ user }) => {
           />
           <div className="flex flex-col">
             <p className="text-neutral600 title-text">{user.user.name}</p>
-            {profileNFT && (
-              <p className="text-neutral500 text-xs">{`${profileNFT.reputation} XP`}</p>
-            )}
+            <p className="text-neutral500 text-xs">{`${user.user.reputation} XP`}</p>
           </div>
         </div>
       </div>

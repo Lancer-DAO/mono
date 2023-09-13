@@ -14,9 +14,7 @@ export const Quest = () => {
   return (
     <>
       <div className="w-full h-full flex flex-col sm:flex-row justify-evenly mt-10 py-24">
-        {/* quest info */}
         <QuestDetails />
-        {/* quest actions */}
         <QuestActions />
       </div>
     </>
