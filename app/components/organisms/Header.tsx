@@ -50,13 +50,17 @@ export const Header = () => {
         </Link>
         <div className="flex gap-8 items-center w-full">
           {currentUser &&
-            HEADER_LINKS.map(({ href, children }) => {
+            HEADER_LINKS.map(({ href, children, id }) => {
               return (
                 <LinkButton
                   href={href}
                   className="text-lg font-bold"
                   key={href}
-                  disabled={!currentUser?.hasFinishedOnboarding}
+                  disabled={
+                    (id === "create-bounty-link" &&
+                      !currentUser.hasBeenApproved) ||
+                    !currentUser?.hasFinishedOnboarding
+                  }
                 >
                   {children}
                 </LinkButton>
