@@ -21,6 +21,7 @@ import { CashoutModal } from "@/components";
 import { BountyActionsButton } from "@/components/bounties/Bounty/components";
 import { useChat } from "@/src/providers/chatProvider";
 import { createDM } from "@/src/utils/sendbird";
+import { useIndustry } from "@/src/providers/industryProvider";
 
 dayjs.extend(relativeTime);
 
@@ -41,10 +42,14 @@ export const ProfileNFTCard = ({
 }) => {
   // state
   const [showCashout, setShowCashout] = useState(false);
+  const { allIndustries } = useIndustry();
   const { mutateAsync: updateName } = api.users.updateName.useMutation();
   const { mutateAsync: updateBio } = api.users.updateBio.useMutation();
   const { mutateAsync: updateIndustry } =
     api.users.updateIndustry.useMutation();
+  const [approvalText, setApprovalText] = useState("Approve");
+
+  const { mutateAsync: approveUser } = api.users.approveUser.useMutation();
   const [nameEdit, setNameEdit] = useState({ editing: false, name: user.name });
   const [industryEdit, setIndustryEdit] = useState({
     editing: false,
@@ -60,12 +65,6 @@ export const ProfileNFTCard = ({
   const [amount, setAmount] = useState(0);
   const [charCount, setCharCount] = useState(0);
   const [sendToPublicKey, setSentToPublicKey] = useState("");
-
-  const {
-    data: allIndustries,
-    isLoading: industriesLoading,
-    isError: industriesError,
-  } = api.industries.getAllIndustries.useQuery();
 
   // context + api
   const { connection } = useConnection();
@@ -194,32 +193,45 @@ export const ProfileNFTCard = ({
           </div>
           {/* Data column */}
           <div className="flex flex-col gap-4 text-lg text-textPrimary w-full">
-            {currentUser.hasBeenApproved && !self ? (
-              <BountyActionsButton
-                onClick={async () => {
-                  const url = await createDM([
-                    String(currentUser.id),
-                    String(id),
-                  ]);
-                  setCurrentChannel({ url });
-                  setIsChatOpen(true);
-                }}
-                type="green"
-                text="Send Message"
-                extraClasses="w-fit mb-[6px]"
-              />
-            ) : self && IS_CUSTODIAL ? (
-              <BountyActionsButton
-                onClick={async () => {
-                  setShowCashout(true);
-                }}
-                type="green"
-                text="Cash Out"
-                extraClasses="w-fit mb-[6px]"
-              />
-            ) : (
-              <div className="h-[56px]"></div>
-            )}
+            <div className="flex">
+              {currentUser.hasBeenApproved && !self ? (
+                <BountyActionsButton
+                  onClick={async () => {
+                    const url = await createDM([
+                      String(currentUser.id),
+                      String(id),
+                    ]);
+                    setCurrentChannel({ url });
+                    setIsChatOpen(true);
+                  }}
+                  type="green"
+                  text="Send Message"
+                  extraClasses="w-fit mb-[6px]"
+                />
+              ) : self ? (
+                <BountyActionsButton
+                  onClick={async () => {
+                    setShowCashout(true);
+                  }}
+                  type="green"
+                  text="Cash Out"
+                  extraClasses="w-fit mb-[6px]"
+                />
+              ) : (
+                <div className="h-[56px]"></div>
+              )}
+              {currentUser.isAdmin && !self && !user.hasBeenApproved && (
+                <BountyActionsButton
+                  onClick={async () => {
+                    approveUser({ id: user.id });
+                    setApprovalText("Approved");
+                  }}
+                  type="green"
+                  text={approvalText}
+                  extraClasses="w-fit mb-[6px] ml-2"
+                />
+              )}
+            </div>
             <div className="flex w-fill">
               {nameEdit.editing ? (
                 <input

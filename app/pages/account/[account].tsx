@@ -7,6 +7,11 @@ import {
 } from "@auth0/nextjs-auth0";
 import { GetServerSidePropsContext } from "next";
 import { prisma } from "@/server/db";
+import * as queries from "@/prisma/queries";
+import { useMint } from "@/src/providers/mintProvider";
+import { useIndustry } from "@/src/providers/industryProvider";
+import { useAccount } from "@/src/providers/accountProvider";
+
 export async function getServerSideProps(
   context: GetServerSidePropsContext<{ id: string; req; res }>
 ) {
@@ -21,21 +26,43 @@ export async function getServerSideProps(
       },
     };
   }
-  const { email } = metadata.user;
+  try {
+    const { email } = metadata.user;
 
-  const user = await prisma.user.findUnique({
-    where: {
-      email,
-    },
-    select: {
-      id: true,
-      isAdmin: true,
-      hasFinishedOnboarding: true,
-      hasBeenApproved: true,
-    },
-  });
+    const currentUser = await queries.user.getByEmail(email);
 
-  if (!user || !user.hasFinishedOnboarding) {
+    if (!currentUser || !currentUser || !currentUser.hasFinishedOnboarding) {
+      return {
+        redirect: {
+          destination: "/welcome",
+          permanent: false,
+        },
+      };
+    }
+
+    if (!currentUser.hasBeenApproved) {
+      return {
+        redirect: {
+          destination: "/account",
+          permanent: false,
+        },
+      };
+    }
+    const userId = parseInt(context.query.account as string);
+
+    const user = await queries.user.getById(userId);
+    const allMints = await queries.mint.getAll();
+    const allIndustries = await queries.industry.getMany();
+
+    return {
+      props: {
+        currentUser: JSON.stringify(currentUser),
+        user: JSON.stringify(user),
+        mints: JSON.stringify(allMints),
+        industries: JSON.stringify(allIndustries),
+      },
+    };
+  } catch (e) {
     return {
       redirect: {
         destination: "/welcome",
@@ -43,18 +70,28 @@ export async function getServerSideProps(
       },
     };
   }
-  if (!user.hasBeenApproved) {
-    return {
-      redirect: {
-        destination: "/account",
-        permanent: false,
-      },
-    };
-  }
-  return { props: {} };
 }
 
-export default function Home() {
+const Home: React.FC<{ user: string; mints: string; industries: string }> = ({
+  user,
+  mints,
+  industries,
+}) => {
+  const parsedUser = JSON.parse(user);
+
+  const { setAllMints, allMints } = useMint();
+  const { setAllIndustries, allIndustries } = useIndustry();
+  const { setAccount, account } = useAccount();
+  if (!allMints && mints) {
+    setAllMints(JSON.parse(mints));
+  }
+  if (!allIndustries && industries) {
+    setAllIndustries(JSON.parse(industries));
+  }
+  if (!account && user) {
+    setAccount(JSON.parse(user));
+  }
+
   return (
     <>
       <Head>
@@ -66,4 +103,6 @@ export default function Home() {
       </main>
     </>
   );
-}
+};
+
+export default Home;

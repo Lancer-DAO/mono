@@ -1,4 +1,5 @@
 import { useUserWallet } from "@/src/providers";
+import { useAccount } from "@/src/providers/accountProvider";
 import { api } from "@/src/utils";
 import { UploadButton } from "@/src/utils/uploadthing";
 import { User } from "@/types";

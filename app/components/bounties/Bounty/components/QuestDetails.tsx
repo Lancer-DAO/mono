@@ -126,9 +126,9 @@ const QuestDetails = () => {
             onClick={() => setDropdownOpen(!dropdownOpen)}
           >
             {dropdownOpen ? (
-              <ChevronDown width={12} height={20} />
-            ) : (
               <ChevronUp width={12} height={20} />
+            ) : (
+              <ChevronDown width={12} height={20} />
             )}
           </button>
         </div>

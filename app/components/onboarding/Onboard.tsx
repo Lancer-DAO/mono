@@ -1,7 +1,7 @@
 import { FC, useEffect, useState } from "react";
 import Image from "next/image";
 import { ProfileInfoView, SkillsetView, WelcomeView } from "./components";
-import { IAsyncResult, ProfileFormData, User } from "@/types";
+import { ProfileFormData } from "@/types";
 import { useUserWallet } from "@/src/providers";
 import { useRouter } from "next/router";
 import { createUnderdogClient } from "@underdog-protocol/js";
@@ -111,7 +111,7 @@ const Onboard: FC = () => {
         params: PROFILE_PROJECT_PARAMS,
         body: {
           name: `${currentUser.name}`,
-          image: "https://i.imgur.com/3uQq5Zo.png",
+          image: "https://i.imgur.com/3uQq5Zo.png", // TODO: change to actual image
           attributes: {
             reputation: 0,
             badges: "",
@@ -140,6 +140,32 @@ const Onboard: FC = () => {
         github: profileData.github,
         website: profileData.website,
       });
+
+      // update profileNFT reputation for successfully onboarding
+      let nfts = await underdogClient.getNfts({
+        params: PROFILE_PROJECT_PARAMS,
+        query: {
+          page: 1,
+          limit: 1,
+          ownerAddress: currentWallet.publicKey.toString(),
+        },
+      });
+      const reputationIncrease = 10;
+      if (nfts.totalResults > 0) {
+        const profileNFT = nfts.results[0];
+        underdogClient.partialUpdateNft({
+          params: { ...PROFILE_PROJECT_PARAMS, nftId: nfts.results[0].id },
+          body: {
+            attributes: {
+              lastUpdated: new Date().toISOString(),
+              reputation:
+                (profileNFT?.attributes.reputation as number) +
+                reputationIncrease,
+            },
+          },
+        });
+      }
+
       toast.success("Profile created successfully!", { id: toastId });
       router.push("/account");
     } catch (e) {

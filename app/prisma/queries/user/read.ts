@@ -1,5 +1,6 @@
 import { prisma } from "@/server/db";
 import { UnwrapPromise } from "@/types";
+import { create } from "./create";
 
 const USER_INCLUDE = {
   wallets: true,
@@ -47,6 +48,22 @@ export type UserSearchType = UnwrapPromise<ReturnType<typeof searchUser>>;
 export const getByEmail = async (email: string) => {
   const user = await userQuery(email);
   return user;
+};
+
+export const getOrCreateByEmail = async (
+  email: string,
+  sub: string,
+  nickname,
+  picture
+) => {
+  try {
+    const user = await userQuery(email);
+    return user;
+  } catch (e) {
+    await create(email, sub, nickname, picture);
+    const user = await userQuery(email);
+    return user;
+  }
 };
 
 export const getById = async (id: number) => {

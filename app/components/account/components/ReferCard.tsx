@@ -6,6 +6,7 @@ import { useReferral } from "@/src/providers/referralProvider";
 import { api } from "@/src/utils";
 import { Treasury } from "@ladderlabs/buddy-sdk";
 import { InfoIcon } from "lucide-react";
+import { useMint } from "@/src/providers/mintProvider";
 
 const SITE_URL = `https://${IS_CUSTODIAL ? "app" : "pro"}.lancer.so/account?r=`;
 
@@ -16,7 +17,7 @@ export const ReferCard = () => {
     useReferral();
 
   const { currentWallet } = useUserWallet();
-  const { data: allMints } = api.mints.getMints.useQuery();
+  const { allMints } = useMint();
 
   const handleCreateLink = useCallback(async () => {
     try {
@@ -94,33 +95,8 @@ export const ReferCard = () => {
           </div>
           <div className="">
             {claimables &&
-            claimables.filter((claimable) => claimable.amount > 0).length >
-              0 ? (
-              <>
-                {claimButtons}
-                <Button
-                  className="border bg-primaryBtn border-primaryBtnBorder text-lg rounded-md px-6 py-3 uppercase font-bold text-textGreen mt-4"
-                  onClick={() => {
-                    setShowCoinflow(!showCoinflow);
-                  }}
-                >
-                  Cash Out
-                </Button>
-                {showCoinflow && <CoinflowOfframp />}
-              </>
-            ) : (
-              <>
-                <Button
-                  className="border bg-primaryBtn border-primaryBtnBorder text-lg rounded-md px-6 py-3 uppercase font-bold text-textGreen mt-4"
-                  onClick={() => {
-                    setShowCoinflow(!showCoinflow);
-                  }}
-                >
-                  Cash Out
-                </Button>
-                {showCoinflow && <CoinflowOfframp />}
-              </>
-            )}
+              claimables.filter((claimable) => claimable.amount > 0).length >
+                0 && <>{claimButtons}</>}
           </div>
         </>
       ) : (
