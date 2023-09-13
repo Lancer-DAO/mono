@@ -1,10 +1,11 @@
-import { FC, useEffect, useState } from "react";
 import { useUserWallet } from "@/src/providers";
 import { useBounty } from "@/src/providers/bountyProvider";
+import { FC, useEffect, useState } from "react";
 // import { BountyActions } from "./BountyActions";
-import QuestUser from "./QuestUser";
 import ApplicantsView from "./ApplicantsView";
 import LancerApplyView from "./LancerApplyView";
+import LancerSubmitUpdateView from "./LancerSubmitUpdateView";
+import QuestUser from "./QuestUser";
 
 export enum QuestActionView {
   Apply = "apply", // one-way (Lancer)
@@ -26,7 +27,7 @@ const QuestActions: FC = () => {
 
   useEffect(() => {
     if (!!currentUser && !currentBounty.isCreator) {
-      setCurrentActionView(QuestActionView.Apply);
+      setCurrentActionView(QuestActionView.SubmitUpdate);
     } else if (!!currentUser && currentBounty.isCreator) {
       setCurrentActionView(QuestActionView.ViewApplicants);
     }
@@ -44,6 +45,7 @@ const QuestActions: FC = () => {
       {currentActionView === QuestActionView.ViewApplicants && (
         <ApplicantsView />
       )}
+      {currentActionView === QuestActionView.SubmitUpdate && <LancerSubmitUpdateView />}
 
       {/* {currentBounty &&
             currentBounty.currentSubmitter &&
