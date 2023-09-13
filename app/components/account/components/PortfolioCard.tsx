@@ -21,7 +21,7 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
 
-const PortfolioCard: React.FC = () => {
+export const PortfolioCard: React.FC = () => {
   const { account } = useAccount();
 
   const { currentUser } = useUserWallet();
@@ -216,5 +216,3 @@ const PortfolioCard: React.FC = () => {
     </div>
   );
 };
-
-export default PortfolioCard;

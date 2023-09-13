@@ -58,7 +58,6 @@ const CashoutModal = dynamic(() => import("./organisms/CashoutModal"));
 const FundBountyModal = dynamic(() => import("./organisms/FundBountyModal"));
 const Header = dynamic(() => import("./organisms/Header"));
 const JoyrideWrapper = dynamic(() => import("./organisms/JoyrideWrapper"));
-const ResumeModal = dynamic(() => import("./organisms/ResumeModal"));
 
 // templates
 const DefaultLayout = dynamic(() => import("./templates/DefaultLayout"));
@@ -118,7 +117,6 @@ export {
   FundBountyModal,
   Header,
   JoyrideWrapper,
-  ResumeModal,
 
   // templates
   DefaultLayout,

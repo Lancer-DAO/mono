@@ -5,7 +5,7 @@ interface Props {
   profileNFT: ProfileNFT;
 }
 
-const BagesCard: FC<Props> = ({ profileNFT }) => {
+export const BadgesCard: FC<Props> = ({ profileNFT }) => {
   return (
     <div className="w-full md:w-[460px] max-h-[320px] rounded-xl bg-bgLancerSecondary/[8%] overflow-hidden p-6">
       <p className="font-bold text-2xl text-textGreen">Badges</p>
@@ -24,5 +24,3 @@ const BagesCard: FC<Props> = ({ profileNFT }) => {
     </div>
   );
 };
-
-export default BagesCard;

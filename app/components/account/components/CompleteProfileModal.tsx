@@ -1,18 +1,14 @@
 import { FC, Dispatch, SetStateAction } from "react";
 import Image from "next/image";
 import { Modal } from "@/components";
-import { BountyActionsButton } from "../bounties/Bounty/components";
-import ResumeCard from "../account/components/ResumeCard";
-import { User } from "@/types";
+import { BountyActionsButton } from "../../bounties/Bounty/components";
 import { api } from "@/src/utils";
 
 interface Props {
   setShowModal: Dispatch<SetStateAction<boolean>>;
-  resumeUrl: string;
-  setResumeUrl: (value: string) => void;
 }
 
-const ResumeModal: FC<Props> = ({ setShowModal, resumeUrl, setResumeUrl }) => {
+export const CompleteProfileModal: FC<Props> = ({ setShowModal }) => {
   const { mutateAsync: updateResume } = api.users.updateResume.useMutation();
 
   return (
@@ -22,25 +18,22 @@ const ResumeModal: FC<Props> = ({ setShowModal, resumeUrl, setResumeUrl }) => {
       className="py-20 relative"
     >
       <div className="w-full flex flex-col items-center justify-center gap-5 max-w-[400px] mx-auto">
-        <h1 className="text-center">Welcome to the Lancer Public Beta</h1>
+        <h1 className="text-center">
+          Welcome to the Public Beta. Almost Done!
+        </h1>
         <p className="text-center">
-          We are accepting applications for Lancers at this time. Please upload
-          your resume via the Account page to complete the application process.
+          Complete your profile to be considered for full access to Lancer.
+          Benefits include:
         </p>
-        <p className="text-center">
-          We will be accepting talent on a rolling basis. Your information will
-          not be shared.
-        </p>
-        <ResumeCard
-          resumeUrl={resumeUrl}
-          setResumeUrl={setResumeUrl}
-          preview
-          setShowModal={setShowModal}
-        />
+        <ol className="text-center">
+          <li>1. Unlock messaging</li>
+          <li>2. Gain access to all Quests</li>
+          <li>3. Referral commissions for inviting others</li>
+        </ol>
 
         <BountyActionsButton
-          type="red"
-          text="Upload Later"
+          type="green"
+          text="Complete Profile"
           onClick={() => {
             updateResume({ resume: "" });
 
@@ -65,5 +58,3 @@ const ResumeModal: FC<Props> = ({ setShowModal, resumeUrl, setResumeUrl }) => {
     </Modal>
   );
 };
-
-export default ResumeModal;

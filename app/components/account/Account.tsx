@@ -7,17 +7,20 @@ import {
 } from "@/src/constants/tutorials";
 import { useUserWallet } from "@/src/providers";
 import { useTutorial } from "@/src/providers/tutorialProvider";
-import { ProfileNFT, User } from "@/types/";
-import { api } from "@/utils";
+import { ProfileNFT } from "@/types/";
 import { createUnderdogClient } from "@underdog-protocol/js";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
-import { LoadingBar, ResumeModal } from "@/components";
-import { ProfileNFTCard, QuestsCard } from "./components";
-import BadgesCard from "./components/BadgesCard";
-import PortfolioCard from "./components/PortfolioCard";
-import { ReferCard } from "./components/ReferCard";
-import ResumeCard from "./components/ResumeCard";
+import { LoadingBar } from "@/components";
+import {
+  BadgesCard,
+  PortfolioCard,
+  ReferCard,
+  ResumeCard,
+  ProfileNFTCard,
+  QuestsCard,
+  CompleteProfileModal,
+} from "./components";
 import { useAccount } from "@/src/providers/accountProvider";
 
 dayjs.extend(relativeTime);
@@ -176,11 +179,7 @@ export const Account: FC<Props> = ({ self }) => {
       </div>
       {/* resume modal */}
       {showResumeModal && (
-        <ResumeModal
-          resumeUrl={resumeUrl}
-          setResumeUrl={setResumeUrl}
-          setShowModal={setShowResumeModal}
-        />
+        <CompleteProfileModal setShowModal={setShowResumeModal} />
       )}
     </>
   );
