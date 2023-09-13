@@ -55,6 +55,7 @@ export const Account: FC<Props> = ({ self }) => {
         ownerAddress: walletKey,
       },
     });
+    console.log("nfts", nfts);
 
     if (nfts.totalResults > 0) {
       const { attributes, image } = nfts.results[0];

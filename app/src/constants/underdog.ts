@@ -38,3 +38,11 @@ export const PROFILE_PROJECT_PARAMS = IS_MAINNET
 export const BOUNTY_PROJECT_PARAMS = IS_MAINNET
   ? MAINNET_BOUNTY_PROJECT_PARAMS
   : DEVNET_BOUNTY_PROJECT_PARAMS;
+
+export const NEW_BOUNTY_PROJECT_PARAMS = {
+  type: {
+    transferable: true,
+    compressed: false,
+  },
+  projectId: 2,
+};
