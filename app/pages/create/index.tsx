@@ -26,11 +26,41 @@ export async function getServerSideProps(
       },
     };
   }
-  const { email } = metadata.user;
+  try {
+    const { email } = metadata.user;
 
-  const user = await queries.user.getByEmail(email);
+    const user = await queries.user.getByEmail(email);
 
-  if (!user || !user || !user.hasFinishedOnboarding) {
+    if (!user || !user.hasFinishedOnboarding) {
+      return {
+        redirect: {
+          destination: "/welcome",
+          permanent: false,
+        },
+      };
+    }
+
+    if (!user.hasBeenApproved) {
+      return {
+        redirect: {
+          destination: "/account",
+          permanent: false,
+        },
+      };
+    }
+
+    const allMints = await queries.mint.getAll();
+    const allIndustries = await queries.industry.getMany();
+    return {
+      props: {
+        currentUser: JSON.stringify(user),
+        user: JSON.stringify(user),
+
+        mints: JSON.stringify(allMints),
+        industries: JSON.stringify(allIndustries),
+      },
+    };
+  } catch (e) {
     return {
       redirect: {
         destination: "/welcome",
@@ -38,18 +68,6 @@ export async function getServerSideProps(
       },
     };
   }
-
-  const allMints = await queries.mint.getAll();
-  const allIndustries = await queries.industry.getMany();
-  return {
-    props: {
-      currentUser: JSON.stringify(user),
-      user: JSON.stringify(user),
-
-      mints: JSON.stringify(allMints),
-      industries: JSON.stringify(allIndustries),
-    },
-  };
 }
 
 const CreatePage: React.FC<{ mints: string; industries: string }> = ({

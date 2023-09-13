@@ -125,6 +125,14 @@ export const Account: FC<Props> = ({ self }) => {
       </div>
     );
 
+  if (!self && !account.hasFinishedOnboarding)
+    return (
+      <div className="w-full md:w-[90%] items-center justify-center flex flex-col mx-auto px-4 md:px-0 py-24">
+        This user has not finished onboarding yet. They must complete onboarding
+        before their profile is viewable
+      </div>
+    );
+
   return (
     <>
       <div className="w-full md:w-[90%] items-center justify-center flex flex-col mx-auto px-4 md:px-0 py-24">

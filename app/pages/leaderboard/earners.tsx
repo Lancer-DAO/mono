@@ -21,11 +21,33 @@ export async function getServerSideProps(
       },
     };
   }
-  const { email } = metadata.user;
+  try {
+    const { email } = metadata.user;
 
-  const user = await queries.user.getByEmail(email);
+    const user = await queries.user.getByEmail(email);
 
-  if (!user || !user.hasFinishedOnboarding) {
+    if (!user || !user.hasFinishedOnboarding) {
+      return {
+        redirect: {
+          destination: "/welcome",
+          permanent: false,
+        },
+      };
+    }
+    if (!user.isAdmin) {
+      return {
+        redirect: {
+          destination: "/leaderboard",
+          permanent: false,
+        },
+      };
+    }
+    return {
+      props: {
+        currentUser: JSON.stringify(user),
+      },
+    };
+  } catch (e) {
     return {
       redirect: {
         destination: "/welcome",
@@ -33,19 +55,6 @@ export async function getServerSideProps(
       },
     };
   }
-  if (!user.isAdmin) {
-    return {
-      redirect: {
-        destination: "/leaderboard",
-        permanent: false,
-      },
-    };
-  }
-  return {
-    props: {
-      currentUser: JSON.stringify(user),
-    },
-  };
 }
 
 export default function Home() {

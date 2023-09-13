@@ -171,7 +171,6 @@ export const Bounty = () => {
                   users={[currentBounty.creator.user]}
                 />
               )}
-
               {currentBounty && currentBounty.deniedRequesters.length > 0 && (
                 <BountActionsUser
                   title="Denied Requesters"

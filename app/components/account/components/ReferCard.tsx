@@ -95,33 +95,8 @@ export const ReferCard = () => {
           </div>
           <div className="">
             {claimables &&
-            claimables.filter((claimable) => claimable.amount > 0).length >
-              0 ? (
-              <>
-                {claimButtons}
-                <Button
-                  className="border bg-primaryBtn border-primaryBtnBorder text-lg rounded-md px-6 py-3 uppercase font-bold text-textGreen mt-4"
-                  onClick={() => {
-                    setShowCoinflow(!showCoinflow);
-                  }}
-                >
-                  Cash Out
-                </Button>
-                {showCoinflow && <CoinflowOfframp />}
-              </>
-            ) : (
-              <>
-                <Button
-                  className="border bg-primaryBtn border-primaryBtnBorder text-lg rounded-md px-6 py-3 uppercase font-bold text-textGreen mt-4"
-                  onClick={() => {
-                    setShowCoinflow(!showCoinflow);
-                  }}
-                >
-                  Cash Out
-                </Button>
-                {showCoinflow && <CoinflowOfframp />}
-              </>
-            )}
+              claimables.filter((claimable) => claimable.amount > 0).length >
+                0 && <>{claimButtons}</>}
           </div>
         </>
       ) : (
