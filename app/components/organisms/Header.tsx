@@ -61,6 +61,7 @@ export const Header = () => {
                       !currentUser.hasBeenApproved) ||
                     !currentUser?.hasFinishedOnboarding
                   }
+                  disabledText={"You must be approved to create a quest"}
                 >
                   {children}
                 </LinkButton>
