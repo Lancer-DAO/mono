@@ -18,6 +18,7 @@ export interface FormData {
   repositoryName?: string;
   estimatedTime?: string;
   isPrivate: boolean;
+  isTest?: boolean;
 }
 
 export interface ProfileFormData {

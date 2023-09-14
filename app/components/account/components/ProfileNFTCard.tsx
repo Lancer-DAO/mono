@@ -28,14 +28,12 @@ import toast from "react-hot-toast";
 dayjs.extend(relativeTime);
 
 export const ProfileNFTCard = ({
-  profileNFT,
   picture,
   githubId,
   user,
   self,
   id,
 }: {
-  profileNFT: ProfileNFT;
   picture: string;
   githubId: string;
   user: User;
@@ -192,7 +190,7 @@ export const ProfileNFTCard = ({
                 }
                 width={58}
                 height={58}
-                alt={profileNFT?.name.split("for ")[1]}
+                alt={user?.name.split("for ")[1]}
                 className="rounded-full overflow-hidden"
               />
             )}
@@ -375,7 +373,7 @@ export const ProfileNFTCard = ({
               )}
             </div>
             {/* <p>[location]</p> */}
-            <p>{profileNFT?.reputation} pts</p>
+            <p>{0} pts</p>
           </div>
         </div>
         {bioEdit.editing ? (
