@@ -149,7 +149,7 @@ export const Account: FC<Props> = ({ self }) => {
       if (currentUser.linkedin !== "") {
         progress += 10;
       }
-      if (media.length > 0) {
+      if (media?.length > 0) {
         progress += 20;
       }
       setProfileProgress(progress);
@@ -164,7 +164,7 @@ export const Account: FC<Props> = ({ self }) => {
     if (
       !!currentUser &&
       profileProgress === 100 &&
-      !currentUser.hasCompletedProfile
+      currentUser.hasCompletedProfile === false
     ) {
       updateHasCompletedProfile({ id: currentUser.id });
       setShowCompleteProfileModal(true);
@@ -211,7 +211,7 @@ export const Account: FC<Props> = ({ self }) => {
             </div>
             {/* right column */}
             <div className="flex flex-col gap-5 w-full">
-              {self && !currentUser.hasCompletedProfile && (
+              {self && currentUser.hasCompletedProfile === false && (
                 <div className="w-1/2 flex items-end ml-auto gap-2 h-[50px]">
                   <div className="w-full flex flex-col items-center gap-0.5">
                     <p className="text-sm text-neutral400">
@@ -237,6 +237,9 @@ export const Account: FC<Props> = ({ self }) => {
           </div>
         )}
       </div>
+      {showCompleteProfileModal ? (
+        <CompleteProfileModal setShowModal={setShowCompleteProfileModal} />
+      ) : null}
     </>
   );
 };
