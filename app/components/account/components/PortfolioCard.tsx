@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -12,20 +13,19 @@ import { smallClickAnimation } from "@/src/constants";
 import { useUserWallet } from "@/src/providers";
 import { useAccount } from "@/src/providers/accountProvider";
 import { api } from "@/src/utils";
-import { Media, User } from "@/types";
-import "@uploadthing/react/styles.css";
+import { Media } from "@/types";
 import { motion } from "framer-motion";
 import { X } from "lucide-react";
 import Image from "next/image";
-import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
+
+import "@uploadthing/react/styles.css";
 
 export const PortfolioCard: React.FC = () => {
   const { account } = useAccount();
 
   const { currentUser } = useUserWallet();
-  const maxMedia = 3;
+  const maxMedia = 4;
   const { mutateAsync: createMedia } = api.media.createMedia.useMutation();
   const { mutateAsync: deleteMedia } = api.media.deleteMedia.useMutation();
   const { mutateAsync: updateMedia } = api.media.updateMedia.useMutation();
@@ -138,7 +138,7 @@ export const PortfolioCard: React.FC = () => {
   return (
     <div className="relative w-full md:w-[658px] rounded-xl bg-bgLancerSecondary/[8%] overflow-hidden p-6 pt-8 pb-10">
       <p className="font-bold text-2xl text-textGreen mb-2">Portfolio</p>
-      <div className="grid grid-cols-3 gap-6">
+      <div className="grid grid-cols-2 gap-6">
         {[...Array(maxMedia)].map((_, index) => {
           if (index < portfolio.length) {
             const media = portfolio[index];
