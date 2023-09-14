@@ -5,7 +5,6 @@ import { IAsyncResult, ProfileFormData, User } from "@/types";
 import { useUserWallet } from "@/src/providers";
 import { useRouter } from "next/router";
 import { createUnderdogClient } from "@underdog-protocol/js";
-import { PROFILE_PROJECT_PARAMS } from "@/src/constants";
 import dayjs from "dayjs";
 import { api } from "@/src/utils";
 import toast from "react-hot-toast";
@@ -96,36 +95,6 @@ const Onboard: FC = () => {
 
   const router = useRouter();
 
-  const mintProfileNFT = async () => {
-    const nfts = await underdogClient.getNfts({
-      params: PROFILE_PROJECT_PARAMS,
-      query: {
-        page: 1,
-        limit: 1,
-        ownerAddress: currentWallet.publicKey.toString(),
-      },
-    });
-
-    if (nfts.totalResults === 0) {
-      await underdogClient.createNft({
-        params: PROFILE_PROJECT_PARAMS,
-        body: {
-          name: `${currentUser.name}`,
-          image: "https://i.imgur.com/3uQq5Zo.png",
-          attributes: {
-            reputation: 0,
-            badges: "",
-            certifications: "",
-            lastUpdated: dayjs().toISOString(),
-          },
-          upsert: true,
-          receiverAddress: currentWallet.publicKey.toString(),
-        },
-      });
-    }
-    setNftCreated(true);
-  };
-
   const handleUpdateProfile = async () => {
     const toastId = toast.loading("Finishing profile creation...");
     try {
@@ -147,10 +116,6 @@ const Onboard: FC = () => {
       toast.error("Error updating profile", { id: toastId });
     }
   };
-
-  useEffect(() => {
-    if (currentWallet?.publicKey && !nftCreated) mintProfileNFT();
-  }, [currentUser, router.isReady, currentWallet?.publicKey, nftCreated]);
 
   useEffect(() => {
     if (!!fetchedUser && !userLoading && !userError) {

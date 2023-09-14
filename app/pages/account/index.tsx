@@ -76,7 +76,6 @@ const Home: React.FC<{ user: string; mints: string; industries: string }> = ({
     setAllIndustries(JSON.parse(industries));
   }
   if (!account && user) {
-    console.log("setting account", user);
     setAccount(JSON.parse(user));
   }
 

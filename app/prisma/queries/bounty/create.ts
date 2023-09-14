@@ -6,6 +6,7 @@ export const create = async (
   description: string,
   estimatedTime: number,
   isPrivate: boolean,
+  isTest: boolean,
   title: string,
   escrow: Prisma.Escrow,
   tags: Prisma.Tag[],
@@ -24,6 +25,7 @@ export const create = async (
       price,
       estimatedTime,
       isPrivate,
+      isTest,
       industries: {
         connect: industries.map((industry) => {
           return {

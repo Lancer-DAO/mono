@@ -1,6 +1,6 @@
 import { FC, useEffect, useState } from "react";
 import { useRouter } from "next/router";
-import { IS_CUSTODIAL, PROFILE_PROJECT_PARAMS } from "@/src/constants";
+import { IS_CUSTODIAL } from "@/src/constants";
 import {
   BOUNTY_ACTIONS_TUTORIAL_II_INITIAL_STATE,
   PROFILE_TUTORIAL_INITIAL_STATE,
@@ -35,54 +35,14 @@ export const Account: FC<Props> = ({ self }) => {
   const { currentUser, currentWallet } = useUserWallet();
   const { currentTutorialState, setCurrentTutorialState } = useTutorial();
   const { account } = useAccount();
-  const [profileNFT, setProfileNFT] = useState<ProfileNFT>();
   const [showResumeModal, setShowResumeModal] = useState(false);
   const [resumeUrl, setResumeUrl] = useState(
     self ? currentUser?.resume : account?.resume
   );
 
-  const fetchProfileNFT = async () => {
-    const walletKey =
-      router.query.account !== undefined
-        ? account?.wallets.filter((wallet) => wallet.hasProfileNFT)[0]
-            ?.publicKey
-        : currentWallet.publicKey.toString();
-    const nfts = await underdogClient.getNfts({
-      params: PROFILE_PROJECT_PARAMS,
-      query: {
-        page: 1,
-        limit: 1,
-        ownerAddress: walletKey,
-      },
-    });
-
-    if (nfts.totalResults > 0) {
-      const { attributes, image } = nfts.results[0];
-      const profileNFT: ProfileNFT = {
-        name: account?.name,
-        reputation: attributes.reputation as number,
-        badges:
-          attributes.badges !== ""
-            ? (attributes.badges as string)?.split(",")
-            : [],
-        certifications:
-          attributes.certifications !== ""
-            ? (attributes.certifications as string)?.split(",")
-            : [],
-        image: image,
-        lastUpdated: attributes.lastUpdated
-          ? dayjs(attributes.lastUpdated)
-          : undefined,
-      };
-      setProfileNFT(profileNFT);
-    }
-  };
-
   useEffect(() => {
     if (!!account && !!currentWallet) {
       const fetchNfts = async () => {
-        await fetchProfileNFT();
-
         if (
           currentTutorialState?.title ===
             BOUNTY_ACTIONS_TUTORIAL_II_INITIAL_STATE.title &&
@@ -118,7 +78,7 @@ export const Account: FC<Props> = ({ self }) => {
     }
   }, [currentUser]);
 
-  if (!IS_CUSTODIAL && !currentWallet && !profileNFT)
+  if (!IS_CUSTODIAL && !currentWallet)
     return (
       <div className="w-full md:w-[90%] items-center justify-center flex flex-col mx-auto px-4 md:px-0 py-24">
         Please Connect a Wallet
@@ -136,7 +96,7 @@ export const Account: FC<Props> = ({ self }) => {
   return (
     <>
       <div className="w-full md:w-[90%] items-center justify-center flex flex-col mx-auto px-4 md:px-0 py-24">
-        {profileNFT && account ? (
+        {account ? (
           <div className="flex gap-5">
             {/* left column */}
             <div className="flex flex-col gap-5 w-full md:max-w-[482px]">
@@ -144,14 +104,13 @@ export const Account: FC<Props> = ({ self }) => {
                 self ? "Your Profile" : `@${account?.name}`
               }`}</h1>
               <ProfileNFTCard
-                profileNFT={profileNFT}
                 picture={account.picture}
                 githubId={account.githubId}
                 user={account}
                 self={self}
                 id={account.id}
               />
-              <BadgesCard profileNFT={profileNFT} />
+              <BadgesCard />
               {account.id === currentUser.id && currentUser.hasBeenApproved && (
                 <ReferCard />
               )}
