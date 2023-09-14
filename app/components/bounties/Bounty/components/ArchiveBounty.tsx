@@ -12,11 +12,9 @@ import { useState } from "react";
 import toast from "react-hot-toast";
 
 export const ArchiveBounty = () => {
-  const { currentUser, currentWallet } = useUserWallet();
-  const { currentBounty, setCurrentBounty } = useBounty();
-  const { currentTutorialState, setCurrentTutorialState } = useTutorial();
+  const { currentUser } = useUserWallet();
+  const { currentBounty } = useBounty();
   const { mutateAsync } = api.bounties.updateBountyToPrivate.useMutation();
-  const { createReferralMember } = useReferral();
 
   const [isLoading, setIsLoading] = useState(false);
 
@@ -26,7 +24,7 @@ export const ArchiveBounty = () => {
   const onClick = async () => {
     setIsLoading(true);
 
-    const updatedBounty = await mutateAsync({
+    await mutateAsync({
       bountyId: currentBounty.id,
       isPrivate: true,
     });
