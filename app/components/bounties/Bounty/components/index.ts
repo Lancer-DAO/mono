@@ -4,6 +4,7 @@ export * from "./ApplicantProfileCard";
 export * from "./ApplicantsView";
 export * from "./Apply";
 export * from "./ApproveSubmission";
+export * from "./ArchiveBounty";
 export * from "./BountyActions";
 export * from "./BountyActionsButton";
 export * from "./CancelEscrow";

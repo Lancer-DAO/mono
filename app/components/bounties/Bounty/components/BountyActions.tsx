@@ -69,7 +69,6 @@ export const BountyActions = () => {
         <DenySubmission />
         <VoteToCancel />
         <CancelEscrow />
-       // <ArchiveBounty />
       </>
     );
   }, [currentBounty, currentWallet?.publicKey]);
