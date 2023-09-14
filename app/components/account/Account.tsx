@@ -131,22 +131,22 @@ export const Account: FC<Props> = ({ self }) => {
   useEffect(() => {
     const getProgress = () => {
       let progress = 0;
-      if (currentUser.name !== "") {
+      if (account.name !== "") {
         progress += 20;
       }
-      if (currentUser.bio !== "") {
+      if (account.bio !== "") {
         progress += 20;
       }
-      if (currentUser.website !== "") {
+      if (account.website !== "") {
         progress += 10;
       }
-      if (currentUser.twitter !== "") {
+      if (account.twitter !== "") {
         progress += 10;
       }
-      if (currentUser.github !== "") {
+      if (account.github !== "") {
         progress += 10;
       }
-      if (currentUser.linkedin !== "") {
+      if (account.linkedin !== "") {
         progress += 10;
       }
       if (media?.length > 0) {
@@ -158,7 +158,7 @@ export const Account: FC<Props> = ({ self }) => {
     if (!!currentUser) {
       getProgress();
     }
-  }, [currentUser, media]);
+  }, [account, media]);
 
   useEffect(() => {
     if (
