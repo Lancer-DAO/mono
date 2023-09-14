@@ -22,6 +22,7 @@ import { BountyActionsButton } from "@/components/bounties/Bounty/components";
 import { useChat } from "@/src/providers/chatProvider";
 import { createDM } from "@/src/utils/sendbird";
 import { useIndustry } from "@/src/providers/industryProvider";
+import { useAccount } from "@/src/providers/accountProvider";
 
 dayjs.extend(relativeTime);
 
@@ -75,6 +76,8 @@ export const ProfileNFTCard = ({
       enabled: !!currentUser,
     }
   );
+
+  const { account, setAccount } = useAccount();
 
   useEffect(() => {
     const getBalanceAsync = async () => {
@@ -263,6 +266,7 @@ export const ProfileNFTCard = ({
                         onClick={() => {
                           updateName({ name: nameEdit.name });
                           setNameEdit({ ...nameEdit, editing: false });
+                          setAccount({ ...account, name: nameEdit.name });
                         }}
                         className="rounded-md uppercase font-bold text-textGreen mr-2"
                       >
@@ -397,6 +401,7 @@ export const ProfileNFTCard = ({
                   onClick={() => {
                     updateBio({ bio: bioEdit.bio });
                     setBioEdit({ ...bioEdit, editing: false });
+                    setAccount({ ...account, bio: bioEdit.bio });
                   }}
                   className="rounded-md uppercase font-bold text-textGreen mr-2"
                 >

@@ -155,7 +155,7 @@ export const Account: FC<Props> = ({ self }) => {
       setProfileProgress(progress);
     };
 
-    if (!!currentUser) {
+    if (account) {
       getProgress();
     }
   }, [account, media]);
