@@ -20,12 +20,7 @@ export const ArchiveBounty = () => {
 
   const [isLoading, setIsLoading] = useState(false);
 
-  if (
-    !currentBounty ||
-    currentBounty.currentUserRelationsList ||
-    !currentUser.isAdmin ||
-    currentBounty.isPrivate
-  )
+  if (!currentBounty || !currentUser.isAdmin || currentBounty.isPrivate)
     return null;
 
   const onClick = async () => {
