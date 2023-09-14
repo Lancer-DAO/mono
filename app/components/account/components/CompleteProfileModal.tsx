@@ -2,15 +2,12 @@ import { FC, Dispatch, SetStateAction } from "react";
 import Image from "next/image";
 import { Modal } from "@/components";
 import { BountyActionsButton } from "../../bounties/Bounty/components";
-import { api } from "@/src/utils";
 
 interface Props {
   setShowModal: Dispatch<SetStateAction<boolean>>;
 }
 
 export const CompleteProfileModal: FC<Props> = ({ setShowModal }) => {
-  const { mutateAsync: updateResume } = api.users.updateResume.useMutation();
-
   return (
     <Modal
       setShowModal={setShowModal}
@@ -18,25 +15,26 @@ export const CompleteProfileModal: FC<Props> = ({ setShowModal }) => {
       className="py-20 relative"
     >
       <div className="w-full flex flex-col items-center justify-center gap-5 max-w-[400px] mx-auto">
-        <h1 className="text-center">
-          Welcome to the Public Beta. Almost Done!
-        </h1>
+        <h1 className="text-center">Profile Complete!</h1>
         <p className="text-center">
-          Complete your profile to be considered for full access to Lancer.
+          You are now qualified to be considered for full access to Lancer.
           Benefits include:
         </p>
         <ol className="text-center">
-          <li>1. Unlock messaging</li>
-          <li>2. Gain access to all Quests</li>
-          <li>3. Referral commissions for inviting others</li>
+          <li className="font-bold">1. Unlock messaging</li>
+          <li className="font-bold">2. Gain access to all Quests</li>
+          <li className="font-bold">
+            3. Referral commissions for inviting others
+          </li>
         </ol>
+        <p className="text-center">
+          You&apos;ll be notified when you&apos;ve been approved.
+        </p>
 
         <BountyActionsButton
           type="green"
-          text="Complete Profile"
+          text="Got it"
           onClick={() => {
-            updateResume({ resume: "" });
-
             setShowModal(false);
           }}
         />

@@ -408,6 +408,7 @@ model User {
   company               String?  @db.VarChar(128)
   position              String?  @db.VarChar(128)
   hasFinishedOnboarding Boolean? @default(false)
+  hasCompletedProfile   Boolean? @default(false)
   hasBeenApproved       Boolean? @default(false)
 
   // Relations

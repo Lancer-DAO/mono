@@ -42,22 +42,13 @@ export const ProfileNFTCard = ({
 }) => {
   // state
   const [showCashout, setShowCashout] = useState(false);
-  const { allIndustries } = useIndustry();
-  const { mutateAsync: updateName } = api.users.updateName.useMutation();
-  const { mutateAsync: updateBio } = api.users.updateBio.useMutation();
-  const { mutateAsync: updateIndustry } =
-    api.users.updateIndustry.useMutation();
   const [approvalText, setApprovalText] = useState("Approve");
-
-  const { mutateAsync: approveUser } = api.users.approveUser.useMutation();
   const [nameEdit, setNameEdit] = useState({ editing: false, name: user.name });
   const [industryEdit, setIndustryEdit] = useState({
     editing: false,
     industry: user.industries[0],
   });
   const [bioEdit, setBioEdit] = useState({ editing: false, bio: user.bio });
-  const { setIsChatOpen, setCurrentChannel } = useChat();
-
   const [balance, setBalance] = useState<IAsyncResult<number>>({
     isLoading: true,
     loadingPrompt: "Loading Balance",
@@ -69,6 +60,21 @@ export const ProfileNFTCard = ({
   // context + api
   const { connection } = useConnection();
   const { currentWallet, currentUser } = useUserWallet();
+  const { allIndustries } = useIndustry();
+  const { mutateAsync: updateName } = api.users.updateName.useMutation();
+  const { mutateAsync: updateBio } = api.users.updateBio.useMutation();
+  const { mutateAsync: updateIndustry } =
+    api.users.updateIndustry.useMutation();
+  const { mutateAsync: approveUser } = api.users.approveUser.useMutation();
+  const { setIsChatOpen, setCurrentChannel } = useChat();
+  const { refetch: refetchUser } = api.users.getUser.useQuery(
+    {
+      id: currentUser?.id,
+    },
+    {
+      enabled: !!currentUser,
+    }
+  );
 
   useEffect(() => {
     const getBalanceAsync = async () => {

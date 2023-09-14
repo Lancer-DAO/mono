@@ -29,7 +29,7 @@ export const PortfolioCard: React.FC = () => {
   const { mutateAsync: createMedia } = api.media.createMedia.useMutation();
   const { mutateAsync: deleteMedia } = api.media.deleteMedia.useMutation();
   const { mutateAsync: updateMedia } = api.media.updateMedia.useMutation();
-  const { data: media } = api.media.getMedia.useQuery({
+  const { data: media, refetch } = api.media.getMedia.useQuery({
     userId: account?.id,
   });
   const [portfolio, setPortfolio] = useState<Media[]>([]);
@@ -93,6 +93,7 @@ export const PortfolioCard: React.FC = () => {
       description: newReference.description,
     });
     setPortfolio([...portfolio, newMedia]);
+    refetch();
   };
 
   const handleMediaRemoved = async (mediaId, portfolioIndex) => {
@@ -106,6 +107,7 @@ export const PortfolioCard: React.FC = () => {
         (_, index) => index != portfolioIndex
       );
       setPortfolio(updatedPortfolio);
+      refetch();
     } catch (error) {
       console.log(error);
       toast.error(`Error deleting media: ${error.message}`);
@@ -130,6 +132,7 @@ export const PortfolioCard: React.FC = () => {
 
       setPortfolio(updatedPortfolio);
     }
+    refetch();
   };
 
   return (
