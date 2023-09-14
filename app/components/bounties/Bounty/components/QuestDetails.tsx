@@ -8,7 +8,6 @@ import { marked } from "marked";
 import Link from "next/link";
 import { useState } from "react";
 import { ArrowLeft, ChevronDown, ChevronUp, ExternalLink } from "react-feather";
-import { ArchiveBounty } from ".";
 
 const Divider = () => <div className="h-[20px] w-[1px] mx-4 bg-slate-200" />;
 
@@ -89,9 +88,6 @@ const QuestDetails = () => {
           ) : (
             <FundCTA />
           )}
-          <div className="ml-2">
-            <ArchiveBounty />
-          </div>
         </div>
         <div className="flex px-5 gap-2">
           {currentBounty.tags.length > 0 && (
