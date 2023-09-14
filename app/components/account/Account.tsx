@@ -1,6 +1,6 @@
 import { FC, useEffect, useState } from "react";
 import { useRouter } from "next/router";
-import { IS_CUSTODIAL, PROFILE_PROJECT_PARAMS } from "@/src/constants";
+import { IS_CUSTODIAL } from "@/src/constants";
 import {
   BOUNTY_ACTIONS_TUTORIAL_II_INITIAL_STATE,
   PROFILE_TUTORIAL_INITIAL_STATE,
