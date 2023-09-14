@@ -113,7 +113,7 @@ export const Account: FC<Props> = ({ self }) => {
 
   // check for resume in user object
   useEffect(() => {
-    if (!!currentUser && !currentUser.resume) {
+    if (!!currentUser && currentUser.resume === null) {
       setShowResumeModal(true);
     }
   }, [currentUser]);
