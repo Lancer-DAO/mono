@@ -3,6 +3,7 @@ import { ToggleConfig } from "@/components/atoms/Toggle";
 import ReferenceDialogue from "@/components/molecules/ReferenceDialogue";
 import {
   CREATE_BOUNTY_TUTORIAL_INITIAL_STATE,
+  CREATE_COMPLETION_BADGES,
   smallClickAnimation,
 } from "@/src/constants";
 import { useTutorial } from "@/src/providers/tutorialProvider";
@@ -15,6 +16,7 @@ import { X } from "lucide-react";
 import Image from "next/image";
 import { Dispatch, FC, SetStateAction, useEffect, useState } from "react";
 import Tags from "./tags";
+import { useUserWallet } from "@/src/providers";
 
 interface Props {
   setFormSection: Dispatch<SetStateAction<FORM_SECTION>>;
@@ -28,6 +30,7 @@ export const AdditionalInfoForm: FC<Props> = ({
   setFormData,
 }) => {
   const { mutateAsync: deleteMedia } = api.bounties.deleteMedia.useMutation();
+  const { currentUser } = useUserWallet();
   const maxReferences = 4;
   const { currentTutorialState, setCurrentTutorialState } = useTutorial();
   const [toggleConfig, setToggleConfig] = useState<ToggleConfig>({
@@ -36,6 +39,15 @@ export const AdditionalInfoForm: FC<Props> = ({
     },
     option2: {
       title: "Private",
+    },
+    selected: "option2",
+  });
+  const [testToggleConfig, setTestToggleConfig] = useState<ToggleConfig>({
+    option1: {
+      title: "Test",
+    },
+    option2: {
+      title: "Real",
     },
     selected: "option2",
   });
@@ -119,7 +131,21 @@ export const AdditionalInfoForm: FC<Props> = ({
         isPrivate: false,
       });
     }
-  }, [toggleConfig.selected]);
+  }, [toggleConfig.selected, formData, setFormData]);
+
+  useEffect(() => {
+    if (testToggleConfig.selected === "option2") {
+      setFormData({
+        ...formData,
+        isTest: true,
+      });
+    } else {
+      setFormData({
+        ...formData,
+        isTest: false,
+      });
+    }
+  }, [testToggleConfig.selected, formData, setFormData]);
 
   return (
     <div>
@@ -168,6 +194,17 @@ export const AdditionalInfoForm: FC<Props> = ({
           <div className="absolute top-1/2 -translate-y-1/2 -left-10">5</div>
           <Tags formData={formData} setFormData={setFormData} />
         </div>
+
+        {currentUser.isLancerDev && (
+          <div className="relative">
+            <div className="flex flex-col gap-8 w-fit py-3">
+              <Toggle
+                toggleConfig={testToggleConfig}
+                setToggleConfig={setTestToggleConfig}
+              />
+            </div>
+          </div>
+        )}
         <div className="relative">
           <div className="absolute top-6 -left-10">6</div>
           <div className="flex flex-col gap-8 w-fit py-3">

@@ -37,7 +37,8 @@ export const Create = () => {
     organizationName: "",
     repositoryName: "",
     estimatedTime: "1",
-    isPrivate: false,
+    isPrivate: true,
+    isTest: false,
   });
 
   const { provider } = useUserWallet();

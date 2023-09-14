@@ -1,36 +1,47 @@
-import {
-  BOUNTY_PROJECT_PARAMS,
-  NEW_BOUNTY_PROJECT_PARAMS,
-} from "@/src/constants";
+import { BADGES_PROJECT_PARAMS } from "@/src/constants";
 import { useUserWallet } from "@/src/providers";
 import { BountyNFT, ProfileNFT } from "@/types";
 import { createUnderdogClient } from "@underdog-protocol/js";
 import dayjs from "dayjs";
 import { FC, useEffect, useState } from "react";
 import Image from "next/image";
+import badgeList from "./badgesnfts.json";
+import { Tooltip } from "@/components";
+
+function delay(ms: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+type BadgeListItem = {
+  name: string;
+  reputation: number;
+  tags: string[];
+  image: string;
+  completed?: string;
+  role: string;
+  id: number;
+  ownerAddress: string;
+};
+
+const badgesList = badgeList as BadgeListItem[];
 
 const underdogClient = createUnderdogClient({});
 
-interface Props {
-  profileNFT: ProfileNFT;
-}
-
-const BagesCard: FC<Props> = ({ profileNFT }) => {
+const BagesCard: FC = () => {
   const { currentWallet } = useUserWallet();
   const [badges, setBadges] = useState<BountyNFT[]>([]);
 
   const fetchBountyNFTs = async () => {
-    const profileNFTHolder = currentWallet.publicKey.toString();
     const nfts = await underdogClient.getNfts({
-      params: BOUNTY_PROJECT_PARAMS,
+      params: BADGES_PROJECT_PARAMS,
       query: {
         page: 1,
-        limit: 100,
+        limit: 12,
+        ownerAddress: currentWallet.publicKey.toBase58(),
       },
     });
-    console.log("nfts", nfts);
     const bountyNFTs: BountyNFT[] = nfts.results.map((nft) => {
-      const { name, attributes, image, id } = nft;
+      const { name, attributes, image, id, ownerAddress } = nft;
       return {
         name: name,
         reputation: attributes.reputation as number,
@@ -43,11 +54,12 @@ const BagesCard: FC<Props> = ({ profileNFT }) => {
         description: attributes.description as string,
         role: attributes.role as string,
         id,
+        ownerAddress,
       };
     });
     bountyNFTs.reverse();
     setBadges(bountyNFTs);
-    console.log(JSON.stringify(bountyNFTs));
+    console.log(nfts);
   };
 
   useEffect(() => {
@@ -67,21 +79,22 @@ const BagesCard: FC<Props> = ({ profileNFT }) => {
     <div className="w-full md:w-[460px] max-h-[320px] rounded-xl bg-bgLancerSecondary/[8%] overflow-hidden p-6">
       <p className="font-bold text-2xl text-textGreen">Badges</p>
       {badges?.length > 0 ? (
-        <div className="grid grid-cols-4 gap-2">
+        <div className="grid grid-cols-6 gap-2">
           {/* TODO: badges need images and to be styled */}
           {badges.map((badge) => (
-            <div className="tag-item" key={badge.id}>
+            <div className="relative group tag-item" key={badge.id}>
               <Image
                 src={badge.image}
                 alt={badge.name}
-                width={25}
-                height={25}
+                width={50}
+                height={50}
               />
+              <Tooltip text={`Quest ${badge.name}`} />
             </div>
           ))}
         </div>
       ) : (
-        <div className="py-4">No badges yet!</div>
+        <div>No Badges Yet</div>
       )}
     </div>
   );
