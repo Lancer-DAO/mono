@@ -211,19 +211,23 @@ export const Account: FC<Props> = ({ self }) => {
             </div>
             {/* right column */}
             <div className="flex flex-col gap-5 w-full">
-              {self && currentUser.hasCompletedProfile === false && (
-                <div className="w-1/2 flex items-end ml-auto gap-2 h-[50px]">
-                  <div className="w-full flex flex-col items-center gap-0.5">
-                    <p className="text-sm text-neutral400">
-                      Complete your profile
-                    </p>
-                    <ProgressBar progress={profileProgress} />
-                  </div>
-                  <span className="w-fit text-sm text-neutral400">
-                    {profileProgress}%
-                  </span>
+              <div
+                className={`${
+                  self && currentUser.hasCompletedProfile === false
+                    ? "visible"
+                    : "invisible"
+                } w-1/2 flex items-end ml-auto gap-2 h-[50px]`}
+              >
+                <div className="w-full flex flex-col items-center gap-0.5">
+                  <p className="text-sm text-neutral400">
+                    Complete your profile
+                  </p>
+                  <ProgressBar progress={profileProgress} />
                 </div>
-              )}
+                <span className="w-fit text-sm text-neutral400">
+                  {profileProgress}%
+                </span>
+              </div>
               <PortfolioCard />
               {account.id === currentUser.id && (
                 <ResumeCard resumeUrl={resumeUrl} setResumeUrl={setResumeUrl} />

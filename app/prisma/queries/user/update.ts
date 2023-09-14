@@ -195,7 +195,7 @@ export const updateHasCompletedProfile = async (
       id: id,
     },
     data: {
-      hasFinishedOnboarding: true,
+      hasCompletedProfile: true,
     },
   });
 };
