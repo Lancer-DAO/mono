@@ -135,19 +135,15 @@ export const Account: FC<Props> = ({ self }) => {
         progress += 20;
       }
       if (account.bio !== "") {
+        progress += 40;
+      }
+      if (
+        account.website !== "" ||
+        account.twitter !== "" ||
+        account.github !== "" ||
+        account.linkedin !== ""
+      ) {
         progress += 20;
-      }
-      if (account.website !== "") {
-        progress += 10;
-      }
-      if (account.twitter !== "") {
-        progress += 10;
-      }
-      if (account.github !== "") {
-        progress += 10;
-      }
-      if (account.linkedin !== "") {
-        progress += 10;
       }
       if (media?.length > 0) {
         progress += 20;

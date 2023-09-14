@@ -23,6 +23,7 @@ import { useChat } from "@/src/providers/chatProvider";
 import { createDM } from "@/src/utils/sendbird";
 import { useIndustry } from "@/src/providers/industryProvider";
 import { useAccount } from "@/src/providers/accountProvider";
+import toast from "react-hot-toast";
 
 dayjs.extend(relativeTime);
 
@@ -264,6 +265,10 @@ export const ProfileNFTCard = ({
                     <>
                       <button
                         onClick={() => {
+                          if (nameEdit.name === "") {
+                            toast.error("Name cannot be empty");
+                            return;
+                          }
                           updateName({ name: nameEdit.name });
                           setNameEdit({ ...nameEdit, editing: false });
                           setAccount({ ...account, name: nameEdit.name });
@@ -424,7 +429,7 @@ export const ProfileNFTCard = ({
         ) : (
           <div className="flex items-start justify-between">
             <p className="text-textPrimary pr-5 text-justify leading-5">
-              {bioEdit.bio}
+              {bioEdit.bio !== "" ? bioEdit.bio : "Add a short bio here"}
             </p>
             {self && (
               <button
