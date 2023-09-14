@@ -1,13 +1,15 @@
 import { ContributorInfo } from "@/components";
+import Crown from "@/components/@icons/Crown";
 import { smallClickAnimation } from "@/src/constants";
 import { useUserWallet } from "@/src/providers";
 import { useBounty } from "@/src/providers/bountyProvider";
 import { useReferral } from "@/src/providers/referralProvider";
 import { api, updateList } from "@/src/utils";
 import { UploadDropzone } from "@/src/utils/uploadthing";
-import { BOUNTY_USER_RELATIONSHIP, LancerApplyData } from "@/types";
+import { BOUNTY_USER_RELATIONSHIP, LancerApplyData, LancerUpdateData } from "@/types";
 import { PublicKey } from "@solana/web3.js";
 import { motion } from "framer-motion";
+import { update } from "lodash";
 import { ChevronsUpDown, Image } from "lucide-react";
 import { FC, useState } from "react";
 import toast from "react-hot-toast";
@@ -21,6 +23,12 @@ const LancerSubmitUpdateView: FC = () => {
   const [hasApplied, setHasApplied] = useState(false);
   const [selectedType, setSelectedType] = useState("Loom recording");
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [updateData, setUpdateData] = useState<LancerUpdateData>({
+    name: "",
+    type: "",
+    content: "",
+    notes: "",
+  });
 
   const toggleDropdown = () => setDropdownOpen(!dropdownOpen);
 
@@ -44,7 +52,8 @@ const LancerSubmitUpdateView: FC = () => {
             bg-neutral100 text-neutral500 w-[190px] h-[34px] rounded-md px-3"
             placeholder="Insert name here..."
             disabled={hasApplied}
-            value={""}
+            value={updateData.name}
+            onChange={(e) => setUpdateData({ ...updateData, name: e.target.value })}
           />
         </div>
         <div className="flex flex-col relative">
@@ -83,10 +92,15 @@ const LancerSubmitUpdateView: FC = () => {
               bg-neutral100 text-neutral500 w-[190px] h-[34px] rounded-md px-3"
               placeholder="www.loom.com/dkdkdkdkd"
               disabled={hasApplied}
-              value={""}
+              value={updateData.content}
+              onChange={(e) => setUpdateData({ ...updateData, content: e.target.value })}
             />
           </div>
-          <div className="rounded-md border px-[151px] py-[33px] h-[228px]">
+          <div className="flex jutify-center items-center rounded-md border px-[151px] py-[33px] h-[228px]">
+            <div className="py-[10px] flex flex-col items-center gap-2">
+              <Crown />
+              <div className="text-mini text-neutral400 text-center">Enter a link above and you will see a preview. Client will see the same.</div>
+            </div>
           </div>
         </div>
       )}
@@ -95,11 +109,10 @@ const LancerSubmitUpdateView: FC = () => {
           <textarea
             className="text border border-neutral200 placeholder:text-neutral500/80 resize-none h-[232px]
             bg-neutral100 text-neutral500 w-full rounded-md px-3 p-2 disabled:opacity-60"
-            name={`about`}
             placeholder="Talk about your work"
-            id={`about`}
             disabled={hasApplied}
-            value={""}
+            value={updateData.content}
+              onChange={(e) => setUpdateData({ ...updateData, content: e.target.value })}
           />
         </div>
       )}
@@ -109,7 +122,7 @@ const LancerSubmitUpdateView: FC = () => {
           <UploadDropzone 
             endpoint="imageUploader" 
             config={{ mode: "auto" }}
-            className="rounded-md border px-[151px] py-[33px] h-[228px]"
+            className="rounded-md border px-[151px] py-[33px] h-[228px] text-mini text-neutral300 ut-label:text-mini ut-label:text-neutral300 ut-upload-icon:h-4 ut-upload-icon:w-4 ut-label:mt-1" 
           />
         </div>
       )}
@@ -130,10 +143,10 @@ const LancerSubmitUpdateView: FC = () => {
         <textarea
           className="text border border-neutral200 placeholder:text-neutral500/80 resize-none h-[232px]
           bg-neutral100 text-neutral500 w-full rounded-md px-3 p-2 disabled:opacity-60"
-          name={`details`}
           placeholder="Type your message here..."
-          id={`details`}
           disabled={hasApplied}
+          value={updateData.notes}
+              onChange={(e) => setUpdateData({ ...updateData, notes: e.target.value })}
         />
       </div>
       {!hasApplied && (

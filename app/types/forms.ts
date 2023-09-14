@@ -40,3 +40,10 @@ export interface LancerApplyData {
   resume: string;
   details: string;
 }
+
+export interface LancerUpdateData {
+  name: string;
+  type: string;
+  content: string;
+  notes: string;
+}
