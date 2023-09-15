@@ -16,6 +16,7 @@ export const Quest = () => {
       <div className="w-full h-full flex flex-col sm:flex-row justify-evenly mt-10 py-24">
         <QuestDetails />
         <QuestActions />
+        {currentUser.isAdmin && <AdminRelationsManagerList/>}
       </div>
     </>
   );

@@ -18,3 +18,5 @@ export * from "./SubmitRequest";
 export * from "./SubmitterSection";
 export * from "./VoteToCancel";
 export * from "./ArchiveBounty";
+export * from "./AdminRelationsManagerSection";
+export * from "./AdminRelationsManagerList";
