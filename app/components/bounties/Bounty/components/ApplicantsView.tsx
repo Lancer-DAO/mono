@@ -12,6 +12,9 @@ import { api, updateList } from "@/src/utils";
 import { BOUNTY_USER_RELATIONSHIP } from "@/types";
 import toast from "react-hot-toast";
 import { QuestActionView } from "./QuestActions";
+import { approveRequestFFA } from "@/escrow/adapters";
+import { PublicKey } from "@solana/web3.js";
+import { useReferral } from "@/src/providers/referralProvider";
 
 export enum EApplicantsView {
   All,
@@ -27,9 +30,10 @@ const ApplicantsView: FC<Props> = ({
   currentActionView,
   setCurrentActionView,
 }) => {
-  const { currentUser } = useUserWallet();
+  const { currentUser, currentWallet, program, provider } = useUserWallet();
   const { currentBounty, setCurrentBounty } = useBounty();
   const { mutateAsync: updateBounty } = api.bountyUsers.update.useMutation();
+  const { programId: buddylinkProgramId } = useReferral();
 
   const [currentApplicantsView, setCurrentApplicantsView] =
     useState<EApplicantsView>(EApplicantsView.All);
@@ -76,6 +80,15 @@ const ApplicantsView: FC<Props> = ({
     setIsLoading(true);
     const toastId = toast.loading("Submitting approval to shortlist...");
 
+    const signature = await approveRequestFFA(
+      new PublicKey(currentBounty?.currentSubmitter.publicKey),
+      currentBounty?.escrow,
+      currentWallet,
+      buddylinkProgramId,
+      program,
+      provider
+    );
+
     const newRelations = [BOUNTY_USER_RELATIONSHIP.ShortlistedSubmitter];
     try {
       const updatedBounty = await updateBounty({
@@ -85,7 +98,7 @@ const ApplicantsView: FC<Props> = ({
         relations: newRelations,
         publicKey: selectedSubmitter.publicKey,
         escrowId: currentBounty?.escrowid,
-        signature: "n/a",
+        signature: signature,
         label: "approve-submitter",
       });
 
