@@ -12,36 +12,34 @@ import { useState } from "react";
 import toast from "react-hot-toast";
 
 export const ArchiveBounty = () => {
-    const { currentUser, currentWallet } = useUserWallet();
-    const { currentBounty, setCurrentBounty } = useBounty();
-    const { currentTutorialState, setCurrentTutorialState } = useTutorial();
-    const { mutateAsync } = api.bounties.updateBountyToPrivate.useMutation();
-    const { createReferralMember } = useReferral();
-  
-    const [isLoading, setIsLoading] = useState(false);
-  
-    if (!currentBounty || currentBounty.currentUserRelationsList || !currentUser.isAdmin) return null;
-  
-    const onClick = async () => {
-    //   setIsLoading(true);
+  const { currentUser } = useUserWallet();
+  const { currentBounty } = useBounty();
+  const { mutateAsync } = api.bounties.updateBountyToPrivate.useMutation();
 
-    const updatedBounty = await mutateAsync({
-        bountyId: currentUser.id,
-        isPrivate: false,
-      });
-  
-    //   setIsLoading(false);
-  
-    //   toast.success("Application sent");
-    };
+  const [isLoading, setIsLoading] = useState(false);
 
-    return (
-      <BountyActionsButton
-        type="green"
-        disabled={isLoading}
-        text={isLoading ? "Loading..." : "Archive Quest"}
-        onClick={onClick}
-      />
-    );
+  if (!currentBounty || !currentUser.isAdmin || currentBounty.isPrivate)
+    return null;
+
+  const onClick = async () => {
+    setIsLoading(true);
+
+    await mutateAsync({
+      bountyId: currentBounty.id,
+      isPrivate: true,
+    });
+
+    setIsLoading(false);
+
+    toast.success("Quest archived successfully!");
   };
-  
+
+  return (
+    <BountyActionsButton
+      type="green"
+      disabled={isLoading}
+      text={isLoading ? "Loading..." : "Make Private"}
+      onClick={onClick}
+    />
+  );
+};
