@@ -1,12 +1,13 @@
-import { Dispatch, FC, SetStateAction } from "react";
-import Image from "next/image";
 import { BountyUserType } from "@/prisma/queries/bounty";
+import { smallClickAnimation } from "@/src/constants";
+import { useBounty } from "@/src/providers/bountyProvider";
+import { createUnderdogClient } from "@underdog-protocol/js";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
-import { useBounty } from "@/src/providers/bountyProvider";
-import { EApplicantsView } from "./ApplicantsView";
-import { smallClickAnimation } from "@/src/constants";
 import { motion } from "framer-motion";
+import Image from "next/image";
+import { FC } from "react";
+import { EApplicantsView } from "./ApplicantsView";
 import { QuestActionView } from "./QuestActions";
 
 dayjs.extend(relativeTime);

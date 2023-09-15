@@ -1,24 +1,28 @@
-import { FC, useEffect, useState } from "react";
-import { useRouter } from "next/router";
-import { IS_CUSTODIAL, PROFILE_PROJECT_PARAMS } from "@/src/constants";
+import { LoadingBar, ProgressBar } from "@/components";
+import { IS_CUSTODIAL } from "@/src/constants";
 import {
   BOUNTY_ACTIONS_TUTORIAL_II_INITIAL_STATE,
   PROFILE_TUTORIAL_INITIAL_STATE,
 } from "@/src/constants/tutorials";
 import { useUserWallet } from "@/src/providers";
+import { useAccount } from "@/src/providers/accountProvider";
 import { useTutorial } from "@/src/providers/tutorialProvider";
-import { ProfileNFT, User } from "@/types/";
-import { api } from "@/utils";
+import { api } from "@/src/utils";
+import { ProfileNFT } from "@/types/";
 import { createUnderdogClient } from "@underdog-protocol/js";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
-import { LoadingBar, ResumeModal } from "@/components";
-import { ProfileNFTCard, QuestsCard } from "./components";
-import BadgesCard from "./components/BadgesCard";
-import PortfolioCard from "./components/PortfolioCard";
-import { ReferCard } from "./components/ReferCard";
-import ResumeCard from "./components/ResumeCard";
-import { useAccount } from "@/src/providers/accountProvider";
+import { useRouter } from "next/router";
+import { FC, useCallback, useEffect, useState } from "react";
+import {
+  BadgesCard,
+  CompleteProfileModal,
+  PortfolioCard,
+  ProfileNFTCard,
+  QuestsCard,
+  ReferCard,
+  ResumeCard,
+} from "./components";
 
 dayjs.extend(relativeTime);
 
@@ -34,55 +38,28 @@ export const Account: FC<Props> = ({ self }) => {
   // api + context
   const { currentUser, currentWallet } = useUserWallet();
   const { currentTutorialState, setCurrentTutorialState } = useTutorial();
+  const { data: media } = api.media.getMedia.useQuery(
+    {
+      userId: currentUser?.id,
+    },
+    {
+      enabled: !!currentUser,
+    }
+  );
+  const { mutateAsync: updateHasCompletedProfile } =
+    api.users.updateHasCompletedProfile.useMutation();
+
   const { account } = useAccount();
-  const [profileNFT, setProfileNFT] = useState<ProfileNFT>();
-  const [showResumeModal, setShowResumeModal] = useState(false);
   const [resumeUrl, setResumeUrl] = useState(
     self ? currentUser?.resume : account?.resume
   );
-
-  const fetchProfileNFT = async () => {
-    const walletKey =
-      router.query.account !== undefined
-        ? account?.wallets.filter((wallet) => wallet.hasProfileNFT)[0]
-            ?.publicKey
-        : currentWallet.publicKey.toString();
-    const nfts = await underdogClient.getNfts({
-      params: PROFILE_PROJECT_PARAMS,
-      query: {
-        page: 1,
-        limit: 1,
-        ownerAddress: walletKey,
-      },
-    });
-
-    if (nfts.totalResults > 0) {
-      const { attributes, image } = nfts.results[0];
-      const profileNFT: ProfileNFT = {
-        name: account?.name,
-        experience: attributes.reputation as number,
-        badges:
-          attributes.badges !== ""
-            ? (attributes.badges as string)?.split(",")
-            : [],
-        certifications:
-          attributes.certifications !== ""
-            ? (attributes.certifications as string)?.split(",")
-            : [],
-        image: image,
-        lastUpdated: attributes.lastUpdated
-          ? dayjs(attributes.lastUpdated)
-          : undefined,
-      };
-      setProfileNFT(profileNFT);
-    }
-  };
+  const [profileProgress, setProfileProgress] = useState(0);
+  const [showCompleteProfileModal, setShowCompleteProfileModal] =
+    useState<boolean>(false);
 
   useEffect(() => {
     if (!!account && !!currentWallet) {
       const fetchNfts = async () => {
-        await fetchProfileNFT();
-
         if (
           currentTutorialState?.title ===
             BOUNTY_ACTIONS_TUTORIAL_II_INITIAL_STATE.title &&
@@ -111,14 +88,46 @@ export const Account: FC<Props> = ({ self }) => {
     }
   }, [account, currentWallet, currentTutorialState]);
 
-  // check for resume in user object
   useEffect(() => {
-    if (!!currentUser && !currentUser.resume) {
-      setShowResumeModal(true);
-    }
-  }, [currentUser]);
+    const getProgress = () => {
+      let progress = 0;
+      if (account.name !== "") {
+        progress += 20;
+      }
+      if (account.bio !== "") {
+        progress += 40;
+      }
+      if (
+        account.website !== "" ||
+        account.twitter !== "" ||
+        account.github !== "" ||
+        account.linkedin !== ""
+      ) {
+        progress += 20;
+      }
+      if (media?.length > 0) {
+        progress += 20;
+      }
+      setProfileProgress(progress);
+    };
 
-  if (!IS_CUSTODIAL && !currentWallet && !profileNFT)
+    if (account) {
+      getProgress();
+    }
+  }, [account, media]);
+
+  useEffect(() => {
+    if (
+      !!currentUser &&
+      profileProgress === 100 &&
+      currentUser.hasCompletedProfile === false
+    ) {
+      updateHasCompletedProfile({ id: currentUser.id });
+      setShowCompleteProfileModal(true);
+    }
+  }, [currentUser, profileProgress]);
+
+  if (!IS_CUSTODIAL && !currentWallet)
     return (
       <div className="w-full md:w-[90%] items-center justify-center flex flex-col mx-auto px-4 md:px-0 py-24">
         Please Connect a Wallet
@@ -136,31 +145,44 @@ export const Account: FC<Props> = ({ self }) => {
   return (
     <>
       <div className="w-full md:w-[90%] items-center justify-center flex flex-col mx-auto px-4 md:px-0 py-24">
-        {profileNFT && account ? (
+        {account && currentUser ? (
           <div className="flex gap-5">
             {/* left column */}
-            <div className="flex flex-col gap-5 w-full md:max-w-[482px]">
-              <h1 className="pb-2">{`${
+            <div className="flex flex-col gap-2 w-full md:max-w-[482px]">
+              <h1 className="mb-3 whitespace-nowrap h-[50px]">{`${
                 self ? "Your Profile" : `@${account?.name}`
               }`}</h1>
               <ProfileNFTCard
-                profileNFT={profileNFT}
                 picture={account.picture}
                 githubId={account.githubId}
                 user={account}
                 self={self}
                 id={account.id}
               />
-              <BadgesCard profileNFT={profileNFT} />
+              <BadgesCard />
               {account.id === currentUser.id && currentUser.hasBeenApproved && (
                 <ReferCard />
               )}
             </div>
             {/* right column */}
             <div className="flex flex-col gap-5 w-full">
-              <h1 className="pb-2 invisible">{`${
-                self ? "Your Profile" : `@${account?.name}`
-              }`}</h1>
+              <div
+                className={`${
+                  self && currentUser.hasCompletedProfile === false
+                    ? "visible"
+                    : "invisible"
+                } w-1/2 flex items-end ml-auto gap-2 h-[50px]`}
+              >
+                <div className="w-full flex flex-col items-center gap-0.5">
+                  <p className="text-sm text-neutral400">
+                    Complete your profile
+                  </p>
+                  <ProgressBar progress={profileProgress} />
+                </div>
+                <span className="w-fit text-sm text-neutral400">
+                  {profileProgress}%
+                </span>
+              </div>
               <PortfolioCard />
               {account.id === currentUser.id && (
                 <ResumeCard resumeUrl={resumeUrl} setResumeUrl={setResumeUrl} />
@@ -174,14 +196,9 @@ export const Account: FC<Props> = ({ self }) => {
           </div>
         )}
       </div>
-      {/* resume modal */}
-      {showResumeModal && (
-        <ResumeModal
-          resumeUrl={resumeUrl}
-          setResumeUrl={setResumeUrl}
-          setShowModal={setShowResumeModal}
-        />
-      )}
+      {showCompleteProfileModal ? (
+        <CompleteProfileModal setShowModal={setShowCompleteProfileModal} />
+      ) : null}
     </>
   );
 };
