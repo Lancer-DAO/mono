@@ -186,16 +186,14 @@ const getBountyRelations = (
     creator: allUsers.find((submitter) =>
       submitter.relations.includes(BOUNTY_USER_RELATIONSHIP.Creator)
     ),
-    requestedSubmitters: allUsers.filter((submitter) =>
-      submitter.relations.includes(BOUNTY_USER_RELATIONSHIP.RequestedSubmitter)
+    requestedLancers: allUsers.filter((submitter) =>
+      submitter.relations.includes(BOUNTY_USER_RELATIONSHIP.RequestedLancer)
     ),
-    shortlistedSubmitters: allUsers.filter((submitter) =>
-      submitter.relations.includes(
-        BOUNTY_USER_RELATIONSHIP.ShortlistedSubmitter
-      )
+    shortlistedLancers: allUsers.filter((submitter) =>
+      submitter.relations.includes(BOUNTY_USER_RELATIONSHIP.ShortlistedLancer)
     ),
-    deniedRequesters: allUsers.filter((submitter) =>
-      submitter.relations.includes(BOUNTY_USER_RELATIONSHIP.DeniedRequester)
+    deniedLancers: allUsers.filter((submitter) =>
+      submitter.relations.includes(BOUNTY_USER_RELATIONSHIP.DeniedLancer)
     ),
     approvedSubmitters: allUsers.filter((submitter) =>
       submitter.relations.includes(BOUNTY_USER_RELATIONSHIP.ApprovedSubmitter)
@@ -241,14 +239,14 @@ const getCurrentUserRelations = (
     isCreator: currentUserRelationsList.includes(
       BOUNTY_USER_RELATIONSHIP.Creator
     ),
-    isRequestedSubmitter: currentUserRelationsList.includes(
-      BOUNTY_USER_RELATIONSHIP.RequestedSubmitter
+    isRequestedLancer: currentUserRelationsList.includes(
+      BOUNTY_USER_RELATIONSHIP.RequestedLancer
     ),
-    isShortlistedSubmitter: currentUserRelationsList.includes(
-      BOUNTY_USER_RELATIONSHIP.ShortlistedSubmitter
+    isShortlistedLancer: currentUserRelationsList.includes(
+      BOUNTY_USER_RELATIONSHIP.ShortlistedLancer
     ),
-    isDeniedRequester: currentUserRelationsList.includes(
-      BOUNTY_USER_RELATIONSHIP.DeniedRequester
+    isDeniedLancer: currentUserRelationsList.includes(
+      BOUNTY_USER_RELATIONSHIP.DeniedLancer
     ),
     isApprovedSubmitter: currentUserRelationsList.includes(
       BOUNTY_USER_RELATIONSHIP.ApprovedSubmitter

@@ -39,7 +39,7 @@ const LancerApplyView: FC = () => {
       const newRelations = updateList(
         currentBounty.currentUserRelationsList ?? [],
         [],
-        [BOUNTY_USER_RELATIONSHIP.RequestedSubmitter]
+        [BOUNTY_USER_RELATIONSHIP.RequestedLancer]
       );
       const updatedBounty = await updateBountyUsers({
         currentUserId: currentUser.id,
@@ -57,7 +57,15 @@ const LancerApplyView: FC = () => {
       setHasApplied(true);
       toast.success("Application sent", { id: toastId });
     } catch (error) {
-      toast.error("Error submitting application", { id: toastId });
+      if (
+        (error.message as string).includes(
+          "Wallet is registered to another user"
+        )
+      ) {
+        toast.error("Wallet is registered to another user", { id: toastId });
+      } else {
+        toast.error("Error submitting application", { id: toastId });
+      }
     }
   };
 
@@ -65,7 +73,7 @@ const LancerApplyView: FC = () => {
   useEffect(() => {
     if (!currentBounty || !currentUser) return;
     const hasApplied = currentBounty.currentUserRelationsList?.some(
-      (relation) => relation === BOUNTY_USER_RELATIONSHIP.RequestedSubmitter
+      (relation) => relation === BOUNTY_USER_RELATIONSHIP.RequestedLancer
     );
     setHasApplied(hasApplied);
   }, [currentBounty, currentUser]);
