@@ -199,7 +199,7 @@ export const updateXP = async (
       id: id,
     },
     data: {
-      experience: {
+      reputation: {
         increment: addXP,
       },
     },
