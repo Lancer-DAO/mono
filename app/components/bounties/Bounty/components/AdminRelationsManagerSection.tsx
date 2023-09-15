@@ -51,7 +51,7 @@ export const AdminRelationsManagerSection: React.FC<
   return (
     <div className="submitter-section flex items-center">
       <ApplicantProfileCard user={user} />
-      <div className="items-center flex justify-center">
+      <div className="items-center ml-2 flex justify-center">
         <>
           <MultiSelectDropdown
             options={RELATIONS.map((state) => {
