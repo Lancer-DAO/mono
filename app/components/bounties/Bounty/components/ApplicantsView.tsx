@@ -8,11 +8,11 @@ import { X } from "lucide-react";
 import { motion } from "framer-motion";
 import { MAX_SHORTLIST, smallClickAnimation } from "@/src/constants";
 import { BountyUserType } from "@/prisma/queries/bounty";
-import { api } from "@/src/utils";
-import { BOUNTY_USER_RELATIONSHIP } from "@/types";
+import { api, updateList } from "@/src/utils";
+import { BOUNTY_USER_RELATIONSHIP, BountyState } from "@/types";
 import toast from "react-hot-toast";
 import { QuestActionView } from "./QuestActions";
-import { approveRequestFFA } from "@/escrow/adapters";
+import { cancelFFA, voteToCancelFFA } from "@/escrow/adapters";
 import { PublicKey } from "@solana/web3.js";
 import { useReferral } from "@/src/providers/referralProvider";
 
@@ -29,19 +29,64 @@ const ApplicantsView: FC<Props> = ({ setCurrentActionView }) => {
   const { currentUser, currentWallet, program, provider } = useUserWallet();
   const { currentBounty, setCurrentBounty } = useBounty();
   const { mutateAsync: updateBounty } = api.bountyUsers.update.useMutation();
-  const { programId: buddylinkProgramId } = useReferral();
 
   const [currentApplicantsView, setCurrentApplicantsView] =
     useState<EApplicantsView>(EApplicantsView.All);
   const [selectedSubmitter, setSelectedSubmitter] =
     useState<BountyUserType | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [isAwaitingResponse, setIsAwaitingResponse] = useState(false);
 
   console.log(currentBounty);
 
   const createdAtDate = new Date(
     Number(currentBounty?.createdAt)
   ).toLocaleDateString();
+
+  const confirmAction = (): Promise<void> => {
+    setIsAwaitingResponse(true);
+
+    return new Promise<void>((resolve, reject) => {
+      const handleYes = () => {
+        toast.dismiss(toastId);
+        setIsAwaitingResponse(false);
+        resolve();
+      };
+
+      const handleNo = () => {
+        toast.dismiss(toastId);
+        setIsAwaitingResponse(false);
+        reject();
+      };
+
+      const toastId = toast(
+        (t) => (
+          <div>
+            Are you sure you want to cancel the Quest?
+            <div className="mt-2 flex items-center gap-4 justify-center">
+              <button
+                onClick={handleYes}
+                className="border border-secondaryBtnBorder bg-secondaryBtn flex
+                items-center justify-center rounded-md px-3 py-1"
+              >
+                Yes
+              </button>
+              <button
+                onClick={handleNo}
+                className="border border-primaryBtnBorder bg-primaryBtn flex
+                items-center justify-center rounded-md px-3 py-1"
+              >
+                No
+              </button>
+            </div>
+          </div>
+        ),
+        {
+          duration: Infinity,
+        }
+      );
+    });
+  };
 
   const handleReject = async () => {
     if (!currentBounty || !selectedSubmitter) return;
@@ -65,28 +110,32 @@ const ApplicantsView: FC<Props> = ({ setCurrentActionView }) => {
       setSelectedSubmitter(null);
       toast.success("Rejection submitted", { id: toastId });
     } catch (error) {
-      toast.error("Error submitting rejection", { id: toastId });
+      if (
+        (error.message as string).includes(
+          "Wallet is registered to another user"
+        )
+      ) {
+        toast.error("Wallet is registered to another user", { id: toastId });
+      } else {
+        toast.error("Error submitting rejection", { id: toastId });
+      }
     } finally {
       setIsLoading(false);
     }
   };
 
-  const handleApprove = async () => {
+  const handleManageShortlist = async (action: "add" | "remove") => {
     if (!currentBounty || !selectedSubmitter) return;
+
     setIsLoading(true);
-    const toastId = toast.loading("Submitting approval to shortlist...");
-
+    const toastId = toast.loading(
+      action === "add" ? "Adding to shortlist..." : "Removing from shortlist..."
+    );
     try {
-      const signature = await approveRequestFFA(
-        new PublicKey(selectedSubmitter.wallet.publicKey),
-        currentBounty?.escrow,
-        currentWallet,
-        buddylinkProgramId,
-        program,
-        provider
-      );
-
-      const newRelations = [BOUNTY_USER_RELATIONSHIP.ShortlistedLancer];
+      const newRelations =
+        action === "add"
+          ? [BOUNTY_USER_RELATIONSHIP.ShortlistedLancer]
+          : [BOUNTY_USER_RELATIONSHIP.RequestedLancer];
       const updatedBounty = await updateBounty({
         bountyId: currentBounty?.id,
         currentUserId: currentUser.id,
@@ -94,17 +143,128 @@ const ApplicantsView: FC<Props> = ({ setCurrentActionView }) => {
         relations: newRelations,
         publicKey: selectedSubmitter.publicKey,
         escrowId: currentBounty?.escrowid,
-        signature: signature,
-        label: "approve-submitter",
+        signature: "n/a",
+        label: action === "add" ? "add-to-shortlist" : "remove-from-shortlist",
       });
 
       setCurrentBounty(updatedBounty);
       setSelectedSubmitter(null);
-      toast.success("Approval submitted", { id: toastId });
+      toast.success(
+        action === "add"
+          ? "Successfully added to shortlist"
+          : "Successfully removed from shortlist",
+        { id: toastId }
+      );
     } catch (error) {
-      toast.error("Error submitting approval", { id: toastId });
+      if (
+        (error.message as string).includes(
+          "Wallet is registered to another user"
+        )
+      ) {
+        toast.error("Wallet is registered to another user", { id: toastId });
+      } else {
+        toast.error(
+          action === "add"
+            ? "Error adding to shortlist"
+            : "Error removing from shortlist",
+          { id: toastId }
+        );
+      }
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const handleVoteToCancel = async () => {
+    await confirmAction();
+    const toastId = toast.loading("Submitting vote to cancel...");
+    try {
+      setIsLoading(true);
+      let signature = "";
+      if (currentBounty?.isCreator || currentBounty?.isCurrentSubmitter) {
+        signature = await voteToCancelFFA(
+          new PublicKey(currentBounty?.creator.publicKey),
+          new PublicKey(currentWallet.publicKey),
+          currentBounty?.escrow,
+          currentWallet,
+          program,
+          provider
+        );
+      }
+      const newRelations = updateList(
+        currentBounty?.currentUserRelationsList,
+        [],
+        [BOUNTY_USER_RELATIONSHIP.VotingCancel]
+      );
+      const updatedBounty = await updateBounty({
+        bountyId: currentBounty?.id,
+        currentUserId: currentUser.id,
+        userId: currentUser.id,
+        relations: newRelations,
+        state: BountyState.VOTING_TO_CANCEL,
+        publicKey: currentWallet.publicKey.toString(),
+        escrowId: currentBounty?.escrowid,
+        signature,
+        label: "vote-to-cancel",
+      });
+      setCurrentBounty(updatedBounty);
+      toast.success("Successfully voted to cancel", { id: toastId });
+    } catch (error) {
+      if (
+        (error.message as string).includes(
+          "Wallet is registered to another user"
+        )
+      ) {
+        toast.error("Wallet is registered to another user", { id: toastId });
+      } else {
+        toast.error("Error submitting application", { id: toastId });
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleCancel = async () => {
+    await confirmAction();
+    const toastId = toast.loading("Cancelling Quest...");
+    try {
+      setIsLoading(true);
+      const signature = await cancelFFA(
+        currentBounty.escrow,
+        currentWallet,
+        program,
+        provider
+      );
+      const newRelation = updateList(
+        currentBounty.currentUserRelationsList,
+        [],
+        [BOUNTY_USER_RELATIONSHIP.Canceler]
+      );
+      const updatedBounty = await updateBounty({
+        bountyId: currentBounty.id,
+        currentUserId: currentUser.id,
+        userId: currentUser.id,
+        relations: newRelation,
+        state: BountyState.CANCELED,
+        publicKey: currentWallet.publicKey.toString(),
+        escrowId: currentBounty.escrowid,
+        signature,
+        label: "cancel-escrow",
+      });
+
+      setCurrentBounty(updatedBounty);
+      setIsLoading(false);
+      toast.success("Quest canceled", { id: toastId });
+    } catch (error) {
+      if (
+        (error.message as string).includes(
+          "Wallet is registered to another user"
+        )
+      ) {
+        toast.error("Wallet is registered to another user", { id: toastId });
+      } else {
+        toast.error("Error cancelling Quest", { id: toastId });
+      }
     }
   };
 
@@ -168,42 +328,54 @@ const ApplicantsView: FC<Props> = ({ setCurrentActionView }) => {
           {/* action buttons */}
           {!selectedSubmitter.relations.includes(
             BOUNTY_USER_RELATIONSHIP.DeniedLancer
-          ) && (
+          ) &&
+          !selectedSubmitter.relations.includes(
+            BOUNTY_USER_RELATIONSHIP.ShortlistedLancer
+          ) ? (
+            <div className="w-full flex items-center justify-end gap-4">
+              <motion.button
+                {...smallClickAnimation}
+                className="bg-white border border-neutral200 h-9 w-fit px-4 py-2
+                  title-text rounded-md text-error disabled:cursor-not-allowed disabled:opacity-80"
+                onClick={handleReject}
+                disabled={isLoading || isAwaitingResponse}
+              >
+                Reject this quote
+              </motion.button>
+              <motion.button
+                {...smallClickAnimation}
+                className="bg-primary200 border border-neutral200 h-9 w-fit px-4 py-2
+                      title-text rounded-md text-white disabled:cursor-not-allowed disabled:opacity-60"
+                onClick={() => handleManageShortlist("add")}
+                disabled={
+                  isLoading ||
+                  isAwaitingResponse ||
+                  currentBounty.shortlistedLancers.length === MAX_SHORTLIST
+                }
+              >
+                {`${
+                  currentBounty.shortlistedLancers.length === MAX_SHORTLIST
+                    ? "Shortlist full"
+                    : `Add to shortlist`
+                }`}
+              </motion.button>
+            </div>
+          ) : null}
+          {selectedSubmitter.relations.includes(
+            BOUNTY_USER_RELATIONSHIP.ShortlistedLancer
+          ) ? (
             <div className="w-full flex items-center justify-end gap-4">
               <motion.button
                 {...smallClickAnimation}
                 className="bg-white border border-neutral200 h-9 w-fit px-4 py-2
                 title-text rounded-md text-error disabled:cursor-not-allowed disabled:opacity-80"
-                onClick={handleReject}
-                disabled={isLoading}
+                onClick={() => handleManageShortlist("remove")}
+                disabled={isLoading || isAwaitingResponse}
               >
-                Reject this quote
+                Remove from shortlist
               </motion.button>
-              {!selectedSubmitter.relations.includes(
-                BOUNTY_USER_RELATIONSHIP.ShortlistedLancer
-              ) &&
-                !selectedSubmitter.relations.includes(
-                  BOUNTY_USER_RELATIONSHIP.DeniedLancer
-                ) && (
-                  <motion.button
-                    {...smallClickAnimation}
-                    className="bg-primary200 border border-neutral200 h-9 w-fit px-4 py-2
-                  title-text rounded-md text-white disabled:cursor-not-allowed disabled:opacity-60"
-                    onClick={handleApprove}
-                    disabled={
-                      isLoading ||
-                      currentBounty.shortlistedLancers.length === MAX_SHORTLIST
-                    }
-                  >
-                    {`${
-                      currentBounty.shortlistedLancers.length === MAX_SHORTLIST
-                        ? "Shortlist full"
-                        : `Add to shortlist`
-                    }`}
-                  </motion.button>
-                )}
             </div>
-          )}
+          ) : null}
         </div>
       </div>
     );
@@ -252,7 +424,7 @@ const ApplicantsView: FC<Props> = ({ setCurrentActionView }) => {
             })}
           </>
         ) : (
-          <p>
+          <p className="text-sm text-neutral-600">
             You haven&apos;t answered any applicants yet. Shortlist up to 5
             profiles to move on.
           </p>
@@ -305,6 +477,42 @@ const ApplicantsView: FC<Props> = ({ setCurrentActionView }) => {
             })}
           </>
         ) : null}
+        <div className="w-full flex items-center justify-end">
+          {currentBounty.state === BountyState.VOTING_TO_CANCEL ? (
+            <motion.button
+              {...smallClickAnimation}
+              className="bg-white border border-neutral200 h-9 w-fit px-4 py-2
+              title-text rounded-md text-error disabled:cursor-not-allowed disabled:opacity-80"
+              onClick={handleCancel}
+              disabled={isLoading || isAwaitingResponse}
+            >
+              Cancel Quest
+            </motion.button>
+          ) : null}
+          {currentBounty.state !== BountyState.VOTING_TO_CANCEL &&
+          currentBounty.state !== BountyState.CANCELED ? (
+            <motion.button
+              {...smallClickAnimation}
+              className="bg-white border border-neutral200 h-9 w-fit px-4 py-2
+              title-text rounded-md text-error disabled:cursor-not-allowed disabled:opacity-80"
+              onClick={handleVoteToCancel}
+              disabled={isLoading || isAwaitingResponse}
+            >
+              Vote to Cancel
+            </motion.button>
+          ) : null}
+          {currentBounty.state === BountyState.CANCELED ? (
+            <motion.button
+              {...smallClickAnimation}
+              className="bg-white border border-neutral200 h-9 w-fit px-4 py-2
+              title-text rounded-md text-error disabled:cursor-not-allowed disabled:opacity-80"
+              onClick={handleVoteToCancel}
+              disabled={true}
+            >
+              Quest Canceled
+            </motion.button>
+          ) : null}
+        </div>
       </div>
     </div>
   );

@@ -48,7 +48,7 @@ const QuestActions: FC = () => {
   if (!currentUser || !currentBounty) return null;
 
   return (
-    <div className="bg-white w-[610px] border border-neutral200 rounded-lg overflow-hidden">
+    <div className="bg-white w-full min-w-[610px] border border-neutral200 rounded-lg overflow-hidden">
       {currentActionView === QuestActionView.Apply && <LancerApplyView />}
       {currentActionView === QuestActionView.ViewApplicants && (
         <ApplicantsView setCurrentActionView={setCurrentActionView} />
