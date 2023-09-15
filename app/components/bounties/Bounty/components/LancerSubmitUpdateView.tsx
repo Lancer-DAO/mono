@@ -11,11 +11,12 @@ import {
   LancerApplyData,
   LancerUpdateData,
 } from "@/types";
+import { oembed } from "@loomhq/loom-embed";
 import { PublicKey } from "@solana/web3.js";
 import { motion } from "framer-motion";
 import { update } from "lodash";
 import { ChevronsUpDown, Image } from "lucide-react";
-import { FC, useState } from "react";
+import { FC, useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import ActionsCardBanner from "./ActionsCardBanner";
 import AlertCard from "./AlertCard";
@@ -33,10 +34,22 @@ const LancerSubmitUpdateView: FC = () => {
     content: "",
     notes: "",
   });
-
-  const toggleDropdown = () => setDropdownOpen(!dropdownOpen);
-
+  const [videoHTML, setVideoHTML] = useState("");
+  
   const types = ["Loom recording", "Text", "PNG image", "MP4 video"];
+  
+  const toggleDropdown = () => setDropdownOpen(!dropdownOpen);
+  
+  useEffect(() => {
+    async function setupLoom() {
+      const { html } = await oembed("https://www.loom.com/share/f6a176ec0fdc4f538e27d8d9ce4e2f0a?sid=717247bb-c0e3-46fb-81e1-a4196ae0a2c0");
+      setVideoHTML(html);
+    }
+
+      setupLoom();
+  
+  }, [updateData.content])
+  
 
   if (!currentBounty || !currentUser) return null;
 
@@ -106,13 +119,14 @@ const LancerSubmitUpdateView: FC = () => {
             />
           </div>
           <div className="flex jutify-center items-center rounded-md border px-[151px] py-[33px] h-[228px]">
-            <div className="py-[10px] flex flex-col items-center gap-2">
+            {/* <div className="py-[10px] flex flex-col items-center gap-2">
               <Crown />
               <div className="text-mini text-neutral400 text-center">
                 Enter a link above and you will see a preview. Client will see
                 the same.
               </div>
-            </div>
+            </div> */}
+            <div dangerouslySetInnerHTML={{ __html: videoHTML }}></div>
           </div>
         </div>
       )}

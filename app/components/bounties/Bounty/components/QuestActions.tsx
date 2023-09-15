@@ -30,7 +30,7 @@ const QuestActions: FC = () => {
       if (currentBounty.isApprovedSubmitter) {
         setCurrentActionView(QuestActionView.Chat);
       } else {
-        setCurrentActionView(QuestActionView.Apply);
+        setCurrentActionView(QuestActionView.SubmitUpdate);
       }
     } else if (!!currentUser && currentBounty.isCreator) {
       if (currentBounty.approvedSubmitters.length === 0) {
