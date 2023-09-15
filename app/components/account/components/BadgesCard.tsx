@@ -1,12 +1,12 @@
+import { FC, useEffect, useState } from "react";
 import { BADGES_PROJECT_PARAMS } from "@/src/constants";
 import { useUserWallet } from "@/src/providers";
-import { BountyNFT, ProfileNFT } from "@/types";
+import { BountyNFT } from "@/types";
 import { createUnderdogClient } from "@underdog-protocol/js";
 import dayjs from "dayjs";
-import { FC, useEffect, useState } from "react";
 import Image from "next/image";
 import badgeList from "./badgesnfts.json";
-import { Tooltip } from "@/components";https://github.com/Lancer-DAO/mono/pull/190/conflict?name=app%252Fcomponents%252Faccount%252Fcomponents%252FBadgesCard.tsx&ancestor_oid=e14036f2f013e36a5a75df58ec4f7cb9ed061f41&base_oid=7cbccae3cea1831a70b81b8f7e6e834f2d7c4513&head_oid=a9a0aadf878233113f3c837c917a1f93dfd0cd9a
+import { Tooltip } from "@/components";
 
 function delay(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms));
@@ -26,7 +26,7 @@ const badgesList = badgeList as BadgeListItem[];
 
 const underdogClient = createUnderdogClient({});
 
-const BagesCard: FC = () => {
+export const BadgesCard: FC = () => {
   const { currentWallet } = useUserWallet();
   const [badges, setBadges] = useState<BountyNFT[]>([]);
 
