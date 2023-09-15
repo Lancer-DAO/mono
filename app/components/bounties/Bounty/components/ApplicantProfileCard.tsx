@@ -8,6 +8,7 @@ import { EApplicantsView } from "./ApplicantsView";
 import { smallClickAnimation } from "@/src/constants";
 import { motion } from "framer-motion";
 import { QuestActionView } from "./QuestActions";
+import { Flame } from "lucide-react";
 
 dayjs.extend(relativeTime);
 
@@ -48,40 +49,39 @@ const ApplicantProfileCard: FC<Props> = ({
           </div>
         </div>
         {/* TODO: conditionally render the following buttons */}
-        {currentBounty.shortlistedSubmitters.some(
+        {currentBounty.shortlistedLancers.some(
           (submitter) => submitter.userid === user.userid
         ) && (
-          <motion.button
-            {...smallClickAnimation}
-            // onClick={() => {
-            //   setSelectedSubmitter(user);
-            //   setCurrentActionView(QuestActionView.Chat);
-            // }}
-            className="bg-white border border-neutral200 rounded-md 
-            text-primary200 title-text px-4 py-2 disabled:opacity-80 
-            disabled:cursor-not-allowed"
-            disabled={true}
-          >
-            Chat
-          </motion.button>
+          <div className="flex items-center gap-2">
+            <motion.button
+              {...smallClickAnimation}
+              onClick={() => {
+                setSelectedSubmitter(user);
+                setCurrentApplicantsView(EApplicantsView.Individual);
+              }}
+              className="bg-[#F0F0F0] rounded-md flex items-center gap-1
+              text-neutral600 title-text px-4 py-2 
+              disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              <Flame width={16} height={16} className="text-tertiary200" />{" "}
+              $1500 Quote
+            </motion.button>
+            <motion.button
+              {...smallClickAnimation}
+              // onClick={() => {
+              //   setSelectedSubmitter(user);
+              //   setCurrentActionView(QuestActionView.Chat);
+              // }}
+              className="bg-white border border-neutral200 rounded-md 
+              text-primary200 title-text px-4 py-2 disabled:opacity-80 
+              disabled:cursor-not-allowed"
+              disabled={true}
+            >
+              Chat
+            </motion.button>
+          </div>
         )}
-        {currentBounty.requestedSubmitters.some(
-          (submitter) => submitter.userid === user.userid
-        ) && (
-          <motion.button
-            {...smallClickAnimation}
-            // onClick={() => {
-            //   setSelectedSubmitter(user);
-            //   setCurrentActionView(QuestActionView.Chat);
-            // }}
-            className="bg-[#F0F0F0] rounded-md 
-            text-neutral600 title-text px-4 py-2 
-            disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            $1500 Quote
-          </motion.button>
-        )}
-        {currentBounty.deniedRequesters.some(
+        {currentBounty.requestedLancers.some(
           (submitter) => submitter.userid === user.userid
         ) && (
           <motion.button
@@ -90,7 +90,25 @@ const ApplicantProfileCard: FC<Props> = ({
               setSelectedSubmitter(user);
               setCurrentApplicantsView(EApplicantsView.Individual);
             }}
-            className="bg-white text-neutral500 title-text"
+            className="bg-[#F0F0F0] rounded-md flex items-center gap-1
+            text-neutral600 title-text px-4 py-2 
+            disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            <Flame width={16} height={16} className="text-tertiary200" /> $1500
+            Quote
+          </motion.button>
+        )}
+        {currentBounty.deniedLancers.some(
+          (submitter) => submitter.userid === user.userid
+        ) && (
+          <motion.button
+            {...smallClickAnimation}
+            onClick={() => {
+              setSelectedSubmitter(user);
+              setCurrentApplicantsView(EApplicantsView.Individual);
+            }}
+            className="bg-white border border-neutral200 text-neutral500 
+            title-text px-4 py-2 rounded-md"
           >
             View
           </motion.button>
@@ -98,7 +116,6 @@ const ApplicantProfileCard: FC<Props> = ({
         {/* <button className="text-neutral600 text-xs">$X Quote</button> */}
         {/* <button className="text-neutral600 text-xs">Chat</button> */}
       </div>
-      <p className="text-xs">{user.user.bio}</p>
     </div>
   );
 };

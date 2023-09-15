@@ -6,9 +6,9 @@ import ActionsCardBanner from "./ActionsCardBanner";
 import ApplicantProfileCard from "./ApplicantProfileCard";
 import { X } from "lucide-react";
 import { motion } from "framer-motion";
-import { smallClickAnimation } from "@/src/constants";
+import { MAX_SHORTLIST, smallClickAnimation } from "@/src/constants";
 import { BountyUserType } from "@/prisma/queries/bounty";
-import { api, updateList } from "@/src/utils";
+import { api } from "@/src/utils";
 import { BOUNTY_USER_RELATIONSHIP } from "@/types";
 import toast from "react-hot-toast";
 import { QuestActionView } from "./QuestActions";
@@ -22,14 +22,10 @@ export enum EApplicantsView {
 }
 
 interface Props {
-  currentActionView: QuestActionView;
   setCurrentActionView: Dispatch<SetStateAction<QuestActionView>>;
 }
 
-const ApplicantsView: FC<Props> = ({
-  currentActionView,
-  setCurrentActionView,
-}) => {
+const ApplicantsView: FC<Props> = ({ setCurrentActionView }) => {
   const { currentUser, currentWallet, program, provider } = useUserWallet();
   const { currentBounty, setCurrentBounty } = useBounty();
   const { mutateAsync: updateBounty } = api.bountyUsers.update.useMutation();
@@ -52,7 +48,7 @@ const ApplicantsView: FC<Props> = ({
     setIsLoading(true);
     const toastId = toast.loading("Submitting rejection...");
 
-    const newRelations = [BOUNTY_USER_RELATIONSHIP.DeniedRequester];
+    const newRelations = [BOUNTY_USER_RELATIONSHIP.DeniedLancer];
     try {
       const updatedBounty = await updateBounty({
         bountyId: currentBounty?.id,
@@ -80,17 +76,17 @@ const ApplicantsView: FC<Props> = ({
     setIsLoading(true);
     const toastId = toast.loading("Submitting approval to shortlist...");
 
-    const signature = await approveRequestFFA(
-      new PublicKey(currentBounty?.currentSubmitter.publicKey),
-      currentBounty?.escrow,
-      currentWallet,
-      buddylinkProgramId,
-      program,
-      provider
-    );
-
-    const newRelations = [BOUNTY_USER_RELATIONSHIP.ShortlistedSubmitter];
     try {
+      const signature = await approveRequestFFA(
+        new PublicKey(selectedSubmitter.wallet.publicKey),
+        currentBounty?.escrow,
+        currentWallet,
+        buddylinkProgramId,
+        program,
+        provider
+      );
+
+      const newRelations = [BOUNTY_USER_RELATIONSHIP.ShortlistedLancer];
       const updatedBounty = await updateBounty({
         bountyId: currentBounty?.id,
         currentUserId: currentUser.id,
@@ -170,26 +166,44 @@ const ApplicantsView: FC<Props> = ({
             <p className="text">{selectedSubmitter.applicationText}</p>
           </div>
           {/* action buttons */}
-          <div className="w-full flex items-center justify-end gap-4">
-            <motion.button
-              {...smallClickAnimation}
-              className="bg-white border border-neutral200 h-9 w-fit px-4 py-2
-              title-text rounded-md text-error disabled:cursor-not-allowed disabled:opacity-80"
-              onClick={handleReject}
-              disabled={isLoading}
-            >
-              Reject this quote
-            </motion.button>
-            <motion.button
-              {...smallClickAnimation}
-              className="bg-primary200 border border-neutral200 h-9 w-fit px-4 py-2
-              title-text rounded-md text-white disabled:cursor-not-allowed disabled:opacity-80"
-              onClick={handleApprove}
-              disabled={isLoading}
-            >
-              Approve this quote
-            </motion.button>
-          </div>
+          {!selectedSubmitter.relations.includes(
+            BOUNTY_USER_RELATIONSHIP.DeniedLancer
+          ) && (
+            <div className="w-full flex items-center justify-end gap-4">
+              <motion.button
+                {...smallClickAnimation}
+                className="bg-white border border-neutral200 h-9 w-fit px-4 py-2
+                title-text rounded-md text-error disabled:cursor-not-allowed disabled:opacity-80"
+                onClick={handleReject}
+                disabled={isLoading}
+              >
+                Reject this quote
+              </motion.button>
+              {!selectedSubmitter.relations.includes(
+                BOUNTY_USER_RELATIONSHIP.ShortlistedLancer
+              ) &&
+                !selectedSubmitter.relations.includes(
+                  BOUNTY_USER_RELATIONSHIP.DeniedLancer
+                ) && (
+                  <motion.button
+                    {...smallClickAnimation}
+                    className="bg-primary200 border border-neutral200 h-9 w-fit px-4 py-2
+                  title-text rounded-md text-white disabled:cursor-not-allowed disabled:opacity-60"
+                    onClick={handleApprove}
+                    disabled={
+                      isLoading ||
+                      currentBounty.shortlistedLancers.length === MAX_SHORTLIST
+                    }
+                  >
+                    {`${
+                      currentBounty.shortlistedLancers.length === MAX_SHORTLIST
+                        ? "Shortlist full"
+                        : `Add to shortlist`
+                    }`}
+                  </motion.button>
+                )}
+            </div>
+          )}
         </div>
       </div>
     );
@@ -203,22 +217,53 @@ const ApplicantsView: FC<Props> = ({
         {/* TODO: add fund CTA */}
       </ActionsCardBanner>
       <div className="flex flex-col gap-5 px-6 py-4">
-        <div className="flex flex-col gap-1">
-          <p className="title-text">{`${
-            currentBounty.requestedSubmitters.length +
-            currentBounty.deniedRequesters.length
-          } profiles applied`}</p>
-          <p className="text-neutral500 text">
-            Shortlist up to 5 profiles to move on.
+        {currentBounty.shortlistedLancers.length > 0 ? (
+          <>
+            <div className="flex items-center justify-between mt-2">
+              <p className="text-sm text-neutral-600">
+                {`You've added ${currentBounty.shortlistedLancers.length}/${MAX_SHORTLIST} candidates to your shortlist.`}
+              </p>
+              <motion.button
+                {...smallClickAnimation}
+                className="bg-secondary200 text-white title-text px-4 py-2 rounded-md"
+              >
+                Proceed with Shortlist
+              </motion.button>
+            </div>
+            <p className="title-text">Shortlist</p>
+            {currentBounty.shortlistedLancers.map((submitter, index) => {
+              return (
+                <div
+                  className={`w-full pb-5 ${
+                    index !== currentBounty.shortlistedLancers.length - 1
+                      ? "border-b border-neutral200"
+                      : ""
+                  }`}
+                  key={index}
+                >
+                  <ApplicantProfileCard
+                    user={submitter}
+                    setSelectedSubmitter={setSelectedSubmitter}
+                    setCurrentApplicantsView={setCurrentApplicantsView}
+                    setCurrentActionView={setCurrentActionView}
+                  />
+                </div>
+              );
+            })}
+          </>
+        ) : (
+          <p>
+            You haven&apos;t answered any applicants yet. Shortlist up to 5
+            profiles to move on.
           </p>
-        </div>
-        <p className="title-text">Pending Applicants</p>
-        {currentBounty.requestedSubmitters.length > 0 ? (
-          currentBounty.requestedSubmitters.map((submitter, index) => {
+        )}
+        <p className="title-text">Pending</p>
+        {currentBounty.requestedLancers.length > 0 ? (
+          currentBounty.requestedLancers.map((submitter, index) => {
             return (
               <div
                 className={`w-full pb-5 ${
-                  index !== currentBounty.requestedSubmitters.length - 1
+                  index !== currentBounty.requestedLancers.length - 1
                     ? "border-b border-neutral200"
                     : ""
                 }`}
@@ -236,14 +281,14 @@ const ApplicantsView: FC<Props> = ({
         ) : (
           <p className="text-neutral500 text pb-5">No pending applicants</p>
         )}
-        {currentBounty.deniedRequesters.length > 0 ? (
+        {currentBounty.deniedLancers.length > 0 ? (
           <>
-            <p className="title-text">Denied Applicants</p>
-            {currentBounty.deniedRequesters.map((submitter, index) => {
+            <p className="title-text">Denied</p>
+            {currentBounty.deniedLancers.map((submitter, index) => {
               return (
                 <div
-                  className={`w-full pb-5 opacity-60 ${
-                    index !== currentBounty.requestedSubmitters.length - 1
+                  className={`w-full pb-5 opacity-70 ${
+                    index !== currentBounty.deniedLancers.length - 1
                       ? "border-b border-neutral200"
                       : ""
                   }`}
