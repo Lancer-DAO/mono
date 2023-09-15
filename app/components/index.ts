@@ -26,7 +26,7 @@ const ContributorInfo = dynamic(() => import("./atoms/ContributorInfo"));
 const LoadingBar = dynamic(() => import("./atoms/LoadingBar"));
 const PreviewCardBase = dynamic(() => import("./atoms/PreviewCardBase"));
 const PriceTag = dynamic(() => import("./atoms/PriceTag"));
-const ProgressBar = dynamic(() => import("./atoms/progressBar"));
+const ProgressBar = dynamic(() => import("./atoms/Progress"));
 const PubKey = dynamic(() => import("./atoms/PubKey"));
 const Toggle = dynamic(() => import("./atoms/Toggle"));
 const Tooltip = dynamic(() => import("./atoms/Tooltip"));
@@ -58,7 +58,6 @@ const CashoutModal = dynamic(() => import("./organisms/CashoutModal"));
 const FundBountyModal = dynamic(() => import("./organisms/FundBountyModal"));
 const Header = dynamic(() => import("./organisms/Header"));
 const JoyrideWrapper = dynamic(() => import("./organisms/JoyrideWrapper"));
-const ResumeModal = dynamic(() => import("./organisms/ResumeModal"));
 
 // templates
 const DefaultLayout = dynamic(() => import("./templates/DefaultLayout"));
@@ -118,7 +117,6 @@ export {
   FundBountyModal,
   Header,
   JoyrideWrapper,
-  ResumeModal,
 
   // templates
   DefaultLayout,
