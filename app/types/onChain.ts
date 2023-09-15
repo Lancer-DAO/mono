@@ -17,4 +17,5 @@ export type BountyNFT = {
   completed?: dayjs.Dayjs;
   description: string;
   role: string;
+  id: number;
 };

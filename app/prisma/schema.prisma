@@ -20,6 +20,7 @@ model Bounty {
   estimatedTime Decimal? @db.Decimal(10, 2)
   price         Decimal? @db.Decimal(16, 9)
   isPrivate     Boolean
+  isTest        Boolean?
   state         String   @db.VarChar(24)
   title         String   @db.VarChar(256)
   type          String?  @db.VarChar(24)
@@ -385,6 +386,7 @@ model User {
 
   // Fields
   isAdmin               Boolean?
+  isLancerDev           Boolean?
   verified              Boolean?
   hasProfileNFT         Boolean?
   googleId              String?  @db.VarChar(64)
@@ -408,6 +410,7 @@ model User {
   company               String?  @db.VarChar(128)
   position              String?  @db.VarChar(128)
   hasFinishedOnboarding Boolean? @default(false)
+  hasCompletedProfile   Boolean? @default(false)
   hasBeenApproved       Boolean? @default(false)
   experience            Int?     @default(0)
 

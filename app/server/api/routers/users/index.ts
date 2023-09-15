@@ -1,37 +1,39 @@
 import { createTRPCRouter } from "../../trpc";
 
 import { addOnboardingInformation } from "./addOnboardingInformation";
-import { approveUser } from "./approveUser";
-import { login } from "./login";
-import { currentUser } from "./currentUser";
-import { registerProfileNFT } from "./registerProfileNFT";
-import { getUser } from "./get";
-import { search } from "./search";
 import { addReferrer } from "./addReferrer";
+import { approveUser } from "./approveUser";
+import { currentUser } from "./currentUser";
+import { deleteResume } from "./deleteResume";
+import { getUser } from "./get";
+import { login } from "./login";
 import { maybeInitAccount } from "./maybeInitAccount";
-import { verifyWallet } from "./verifyWallet";
+import { registerProfileNFT } from "./registerProfileNFT";
+import { search } from "./search";
+import { updateBio } from "./updateBio";
+import { updateHasCompletedProfile } from "./updateHasCompletedProfile";
 import { updateIndustry } from "./updateIndustry";
 import { updateLinks } from "./updateLinks";
 import { updateName } from "./updateName";
-import { updateBio } from "./updateBio";
 import { updateResume } from "./updateResume";
-import { deleteResume } from "./deleteResume";
+import { verifyWallet } from "./verifyWallet";
 
 export const users = createTRPCRouter({
   addOnboardingInformation,
-  approveUser,
-  login,
-  currentUser,
-  registerProfileNFT,
-  getUser,
-  search,
   addReferrer,
+  approveUser,
+  currentUser,
+  deleteResume,
+  getUser,
+  login,
   maybeInitAccount,
-  verifyWallet,
+  registerProfileNFT,
+  search,
+  updateBio,
+  updateHasCompletedProfile,
   updateIndustry,
   updateLinks,
   updateName,
-  updateBio,
   updateResume,
-  deleteResume,
+  verifyWallet,
 });
