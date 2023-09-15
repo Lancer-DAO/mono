@@ -1,9 +1,7 @@
-import { FC, useEffect, useState } from "react";
+import { FC } from "react";
 import Image from "next/image";
 import { BountyUserType } from "@/prisma/queries/bounty";
-import { ProfileNFT } from "@/types";
 import { createUnderdogClient } from "@underdog-protocol/js";
-import { IS_CUSTODIAL, PROFILE_PROJECT_PARAMS } from "@/src/constants";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 

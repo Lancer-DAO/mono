@@ -5,11 +5,11 @@ import { ProfileFormData } from "@/types";
 import { useUserWallet } from "@/src/providers";
 import { useRouter } from "next/router";
 import { createUnderdogClient } from "@underdog-protocol/js";
-import dayjs from "dayjs";
 import { api } from "@/src/utils";
 import toast from "react-hot-toast";
 import { AnimatePresence, motion } from "framer-motion";
 import { LoadingBar } from "@/components";
+import { BADGES_PROJECT_PARAMS } from "@/src/constants";
 
 const underdogClient = createUnderdogClient({});
 
@@ -99,7 +99,7 @@ const Onboard: FC = () => {
 
       // update profileNFT reputation for successfully onboarding
       let nfts = await underdogClient.getNfts({
-        params: PROFILE_PROJECT_PARAMS,
+        params: BADGES_PROJECT_PARAMS,
         query: {
           page: 1,
           limit: 1,
@@ -110,7 +110,7 @@ const Onboard: FC = () => {
       if (nfts.totalResults > 0) {
         const profileNFT = nfts.results[0];
         underdogClient.partialUpdateNft({
-          params: { ...PROFILE_PROJECT_PARAMS, nftId: nfts.results[0].id },
+          params: { ...BADGES_PROJECT_PARAMS, nftId: nfts.results[0].id },
           body: {
             attributes: {
               lastUpdated: new Date().toISOString(),
