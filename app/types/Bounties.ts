@@ -31,6 +31,8 @@ export enum BOUNTY_USER_RELATIONSHIP {
   VotingCancel = "voting_cancel",
   Canceler = "canceler",
 }
+export const RELATIONS = Object.values(BOUNTY_USER_RELATIONSHIP);
+
 export interface CurrentUserBountyInclusions {
   isCreator?: boolean;
   isRequestedSubmitter?: boolean;
