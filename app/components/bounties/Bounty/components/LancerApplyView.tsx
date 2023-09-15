@@ -54,6 +54,7 @@ const LancerApplyView: FC = () => {
       });
 
       setCurrentBounty(updatedBounty);
+      setHasApplied(true);
       toast.success("Application sent", { id: toastId });
     } catch (error) {
       toast.error("Error submitting application", { id: toastId });
