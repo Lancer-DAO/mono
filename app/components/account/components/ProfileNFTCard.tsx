@@ -22,6 +22,8 @@ import { BountyActionsButton } from "@/components/bounties/Bounty/components";
 import { useChat } from "@/src/providers/chatProvider";
 import { createDM } from "@/src/utils/sendbird";
 import { useIndustry } from "@/src/providers/industryProvider";
+import { useAccount } from "@/src/providers/accountProvider";
+import toast from "react-hot-toast";
 
 dayjs.extend(relativeTime);
 
@@ -40,22 +42,13 @@ export const ProfileNFTCard = ({
 }) => {
   // state
   const [showCashout, setShowCashout] = useState(false);
-  const { allIndustries } = useIndustry();
-  const { mutateAsync: updateName } = api.users.updateName.useMutation();
-  const { mutateAsync: updateBio } = api.users.updateBio.useMutation();
-  const { mutateAsync: updateIndustry } =
-    api.users.updateIndustry.useMutation();
   const [approvalText, setApprovalText] = useState("Approve");
-
-  const { mutateAsync: approveUser } = api.users.approveUser.useMutation();
   const [nameEdit, setNameEdit] = useState({ editing: false, name: user.name });
   const [industryEdit, setIndustryEdit] = useState({
     editing: false,
     industry: user.industries[0],
   });
   const [bioEdit, setBioEdit] = useState({ editing: false, bio: user.bio });
-  const { setIsChatOpen, setCurrentChannel } = useChat();
-
   const [balance, setBalance] = useState<IAsyncResult<number>>({
     isLoading: true,
     loadingPrompt: "Loading Balance",
@@ -67,6 +60,23 @@ export const ProfileNFTCard = ({
   // context + api
   const { connection } = useConnection();
   const { currentWallet, currentUser } = useUserWallet();
+  const { allIndustries } = useIndustry();
+  const { mutateAsync: updateName } = api.users.updateName.useMutation();
+  const { mutateAsync: updateBio } = api.users.updateBio.useMutation();
+  const { mutateAsync: updateIndustry } =
+    api.users.updateIndustry.useMutation();
+  const { mutateAsync: approveUser } = api.users.approveUser.useMutation();
+  const { setIsChatOpen, setCurrentChannel } = useChat();
+  const { refetch: refetchUser } = api.users.getUser.useQuery(
+    {
+      id: currentUser?.id,
+    },
+    {
+      enabled: !!currentUser,
+    }
+  );
+
+  const { account, setAccount } = useAccount();
 
   useEffect(() => {
     const getBalanceAsync = async () => {
@@ -253,8 +263,13 @@ export const ProfileNFTCard = ({
                     <>
                       <button
                         onClick={() => {
+                          if (nameEdit.name === "") {
+                            toast.error("Name cannot be empty");
+                            return;
+                          }
                           updateName({ name: nameEdit.name });
                           setNameEdit({ ...nameEdit, editing: false });
+                          setAccount({ ...account, name: nameEdit.name });
                         }}
                         className="rounded-md uppercase font-bold text-textGreen mr-2"
                       >
@@ -389,6 +404,7 @@ export const ProfileNFTCard = ({
                   onClick={() => {
                     updateBio({ bio: bioEdit.bio });
                     setBioEdit({ ...bioEdit, editing: false });
+                    setAccount({ ...account, bio: bioEdit.bio });
                   }}
                   className="rounded-md uppercase font-bold text-textGreen mr-2"
                 >
@@ -411,7 +427,7 @@ export const ProfileNFTCard = ({
         ) : (
           <div className="flex items-start justify-between">
             <p className="text-textPrimary pr-5 text-justify leading-5">
-              {bioEdit.bio}
+              {bioEdit.bio !== "" ? bioEdit.bio : "Add a short bio here"}
             </p>
             {self && (
               <button

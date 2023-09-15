@@ -1,9 +1,9 @@
+import { FC, useEffect, useState } from "react";
 import { BADGES_PROJECT_PARAMS } from "@/src/constants";
 import { useUserWallet } from "@/src/providers";
-import { BountyNFT, ProfileNFT } from "@/types";
+import { BountyNFT } from "@/types";
 import { createUnderdogClient } from "@underdog-protocol/js";
 import dayjs from "dayjs";
-import { FC, useEffect, useState } from "react";
 import Image from "next/image";
 import badgeList from "./badgesnfts.json";
 import { Tooltip } from "@/components";
@@ -11,7 +11,6 @@ import { Tooltip } from "@/components";
 function delay(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
-
 type BadgeListItem = {
   name: string;
   reputation: number;
@@ -27,7 +26,7 @@ const badgesList = badgeList as BadgeListItem[];
 
 const underdogClient = createUnderdogClient({});
 
-const BagesCard: FC = () => {
+export const BadgesCard: FC = () => {
   const { currentWallet } = useUserWallet();
   const [badges, setBadges] = useState<BountyNFT[]>([]);
 
@@ -59,7 +58,6 @@ const BagesCard: FC = () => {
     });
     bountyNFTs.reverse();
     setBadges(bountyNFTs);
-    console.log(nfts);
   };
 
   useEffect(() => {
@@ -67,13 +65,6 @@ const BagesCard: FC = () => {
       fetchBountyNFTs();
     }
   }, [currentWallet]);
-
-  useEffect(() => {
-    const updateNFT = async () => {};
-    if (badges) {
-      updateNFT();
-    }
-  }, [badges]);
 
   return (
     <div className="w-full md:w-[460px] max-h-[320px] rounded-xl bg-bgLancerSecondary/[8%] overflow-hidden p-6">
@@ -99,5 +90,3 @@ const BagesCard: FC = () => {
     </div>
   );
 };
-
-export default BagesCard;

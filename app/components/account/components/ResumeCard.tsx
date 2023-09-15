@@ -10,7 +10,7 @@ import { useRouter } from "next/router";
 import { useState } from "react";
 import toast from "react-hot-toast";
 
-const ResumeCard: React.FC<{
+export const ResumeCard: React.FC<{
   resumeUrl: string;
   setResumeUrl: (value: string) => void;
   preview?: boolean;
@@ -140,5 +140,3 @@ const ResumeCard: React.FC<{
     </div>
   );
 };
-
-export default ResumeCard;
