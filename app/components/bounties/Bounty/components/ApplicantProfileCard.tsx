@@ -1,17 +1,38 @@
-import { FC } from "react";
+import { Dispatch, FC, SetStateAction } from "react";
 import Image from "next/image";
 import { BountyUserType } from "@/prisma/queries/bounty";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
+import { useBounty } from "@/src/providers/bountyProvider";
+import { EApplicantsView } from "./ApplicantsView";
+import { smallClickAnimation } from "@/src/constants";
+import { motion } from "framer-motion";
+import { QuestActionView } from "./QuestActions";
 
 dayjs.extend(relativeTime);
+
 interface Props {
   user: BountyUserType;
+  setSelectedSubmitter: Dispatch<SetStateAction<BountyUserType | null>>;
+  setCurrentApplicantsView: Dispatch<SetStateAction<EApplicantsView>>;
+  setCurrentActionView: Dispatch<SetStateAction<QuestActionView>>;
 }
 
-const ApplicantProfileCard: FC<Props> = ({ user }) => {
+const ApplicantProfileCard: FC<Props> = ({
+  user,
+  setSelectedSubmitter,
+  setCurrentApplicantsView,
+  setCurrentActionView,
+}) => {
+  const { currentBounty } = useBounty();
+
+  if (!currentBounty) return null;
+
   return (
-    <div className="w-full flex flex-col gap-3 bg-white hover:bg-neutral100 justify-center rounded-md">
+    <div
+      className="w-full flex flex-col gap-3 bg-white
+      justify-center rounded-md"
+    >
       <div className="w-full flex items-center justify-between">
         <div className="flex items-center gap-2">
           <Image
@@ -26,6 +47,56 @@ const ApplicantProfileCard: FC<Props> = ({ user }) => {
             <p className="text-neutral500 text-xs">{`${user.user.experience} XP`}</p>
           </div>
         </div>
+        {/* TODO: conditionally render the following buttons */}
+        {currentBounty.shortlistedSubmitters.some(
+          (submitter) => submitter.userid === user.userid
+        ) && (
+          <motion.button
+            {...smallClickAnimation}
+            // onClick={() => {
+            //   setSelectedSubmitter(user);
+            //   setCurrentActionView(QuestActionView.Chat);
+            // }}
+            className="bg-white border border-neutral200 rounded-md 
+            text-primary200 title-text px-4 py-2 disabled:opacity-80 
+            disabled:cursor-not-allowed"
+            disabled={true}
+          >
+            Chat
+          </motion.button>
+        )}
+        {currentBounty.requestedSubmitters.some(
+          (submitter) => submitter.userid === user.userid
+        ) && (
+          <motion.button
+            {...smallClickAnimation}
+            // onClick={() => {
+            //   setSelectedSubmitter(user);
+            //   setCurrentActionView(QuestActionView.Chat);
+            // }}
+            className="bg-[#F0F0F0] rounded-md 
+            text-neutral600 title-text px-4 py-2 
+            disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            $1500 Quote
+          </motion.button>
+        )}
+        {currentBounty.deniedRequesters.some(
+          (submitter) => submitter.userid === user.userid
+        ) && (
+          <motion.button
+            {...smallClickAnimation}
+            onClick={() => {
+              setSelectedSubmitter(user);
+              setCurrentApplicantsView(EApplicantsView.Individual);
+            }}
+            className="bg-white text-neutral500 title-text"
+          >
+            View
+          </motion.button>
+        )}
+        {/* <button className="text-neutral600 text-xs">$X Quote</button> */}
+        {/* <button className="text-neutral600 text-xs">Chat</button> */}
       </div>
       <p className="text-xs">{user.user.bio}</p>
     </div>

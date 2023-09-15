@@ -181,7 +181,6 @@ const getBountyRelations = (
   const allUsers = rawUsers.map((user) => {
     return convertBountyUserToUser(user);
   });
-  // console.log(allUsers);
   const newBounty: BountyUserRelations = {
     all: allUsers,
     creator: allUsers.find((submitter) =>
@@ -189,6 +188,11 @@ const getBountyRelations = (
     ),
     requestedSubmitters: allUsers.filter((submitter) =>
       submitter.relations.includes(BOUNTY_USER_RELATIONSHIP.RequestedSubmitter)
+    ),
+    shortlistedSubmitters: allUsers.filter((submitter) =>
+      submitter.relations.includes(
+        BOUNTY_USER_RELATIONSHIP.ShortlistedSubmitter
+      )
     ),
     deniedRequesters: allUsers.filter((submitter) =>
       submitter.relations.includes(BOUNTY_USER_RELATIONSHIP.DeniedRequester)
@@ -239,6 +243,9 @@ const getCurrentUserRelations = (
     ),
     isRequestedSubmitter: currentUserRelationsList.includes(
       BOUNTY_USER_RELATIONSHIP.RequestedSubmitter
+    ),
+    isShortlistedSubmitter: currentUserRelationsList.includes(
+      BOUNTY_USER_RELATIONSHIP.ShortlistedSubmitter
     ),
     isDeniedRequester: currentUserRelationsList.includes(
       BOUNTY_USER_RELATIONSHIP.DeniedRequester

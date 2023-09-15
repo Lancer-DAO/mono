@@ -6,7 +6,11 @@ import { useBounty } from "@/src/providers/bountyProvider";
 import { useReferral } from "@/src/providers/referralProvider";
 import { api, updateList } from "@/src/utils";
 import { UploadDropzone } from "@/src/utils/uploadthing";
-import { BOUNTY_USER_RELATIONSHIP, LancerApplyData, LancerUpdateData } from "@/types";
+import {
+  BOUNTY_USER_RELATIONSHIP,
+  LancerApplyData,
+  LancerUpdateData,
+} from "@/types";
 import { PublicKey } from "@solana/web3.js";
 import { motion } from "framer-motion";
 import { update } from "lodash";
@@ -32,17 +36,18 @@ const LancerSubmitUpdateView: FC = () => {
 
   const toggleDropdown = () => setDropdownOpen(!dropdownOpen);
 
-  const types = ["Loom recording", "Text", "PNG image", "MP4 video"]
+  const types = ["Loom recording", "Text", "PNG image", "MP4 video"];
 
   if (!currentBounty || !currentUser) return null;
 
   return (
     <div className="flex flex-col">
-      <ActionsCardBanner 
+      <ActionsCardBanner
         title={`Update to ${currentBounty.creator.user.name}`}
-        subtitle={`${currentBounty.pullRequests.length} ${currentBounty.pullRequests.length === 1 ? "update" : "updates"} so far`}  
-      >
-      </ActionsCardBanner>
+        subtitle={`${currentBounty.pullRequests.length} ${
+          currentBounty.pullRequests.length === 1 ? "update" : "updates"
+        } so far`}
+      ></ActionsCardBanner>
       <div className="w-full p-6 flex items-center gap-4">
         <div className="flex items-center gap-4">
           <p className="text-neutral600 text">Name</p>
@@ -53,16 +58,18 @@ const LancerSubmitUpdateView: FC = () => {
             placeholder="Insert name here..."
             disabled={hasApplied}
             value={updateData.name}
-            onChange={(e) => setUpdateData({ ...updateData, name: e.target.value })}
+            onChange={(e) =>
+              setUpdateData({ ...updateData, name: e.target.value })
+            }
           />
         </div>
         <div className="flex flex-col relative">
-          <div 
+          <div
             className="rounded-md text-neutral500 border border-neutral200 bg-neutral100 px-2 py-[6px] text-mini h-[34px] flex justify-between items-center gap-1 w-32"
             onClick={toggleDropdown}
           >
-              {selectedType}
-              <ChevronsUpDown height={12} width={12} />
+            {selectedType}
+            <ChevronsUpDown height={12} width={12} />
           </div>
           {dropdownOpen && (
             <div className="absolute top-full left-0 z-10 bg-secondary200 p-[5px] rounded-md text-mini text-white w-full">
@@ -93,13 +100,18 @@ const LancerSubmitUpdateView: FC = () => {
               placeholder="www.loom.com/dkdkdkdkd"
               disabled={hasApplied}
               value={updateData.content}
-              onChange={(e) => setUpdateData({ ...updateData, content: e.target.value })}
+              onChange={(e) =>
+                setUpdateData({ ...updateData, content: e.target.value })
+              }
             />
           </div>
           <div className="flex jutify-center items-center rounded-md border px-[151px] py-[33px] h-[228px]">
             <div className="py-[10px] flex flex-col items-center gap-2">
               <Crown />
-              <div className="text-mini text-neutral400 text-center">Enter a link above and you will see a preview. Client will see the same.</div>
+              <div className="text-mini text-neutral400 text-center">
+                Enter a link above and you will see a preview. Client will see
+                the same.
+              </div>
             </div>
           </div>
         </div>
@@ -108,45 +120,51 @@ const LancerSubmitUpdateView: FC = () => {
         <div className="w-full px-6 flex flex-col gap-4">
           <textarea
             className="text border border-neutral200 placeholder:text-neutral500/80 resize-none h-[232px]
-            bg-neutral100 text-neutral500 w-full rounded-md px-3 p-2 disabled:opacity-60"
+            bg-neutral100 text-neutral500 w-full rounded-md px-3 p-2 disabled:opacity-80"
             placeholder="Talk about your work"
             disabled={hasApplied}
             value={updateData.content}
-              onChange={(e) => setUpdateData({ ...updateData, content: e.target.value })}
+            onChange={(e) =>
+              setUpdateData({ ...updateData, content: e.target.value })
+            }
           />
         </div>
       )}
       {selectedType === "PNG image" && (
         <div className="w-full px-6">
           {/* <div className="rounded-md border px-[151px] py-[33px] h-[228px]" /> */}
-          <UploadDropzone 
-            endpoint="imageUploader" 
+          <UploadDropzone
+            endpoint="imageUploader"
             config={{ mode: "auto" }}
-            className="rounded-md border px-[151px] py-[33px] h-[228px] text-mini text-neutral300 ut-label:text-mini ut-label:text-neutral300 ut-upload-icon:h-4 ut-upload-icon:w-4 ut-label:mt-1" 
+            className="rounded-md border px-[151px] py-[33px] h-[228px] text-mini text-neutral300 ut-label:text-mini ut-label:text-neutral300 ut-upload-icon:h-4 ut-upload-icon:w-4 ut-label:mt-1"
           />
         </div>
       )}
 
       {selectedType === "MP4 video" && (
-      <div className="w-full px-6">
-        {/* <div className="rounded-md border px-[151px] py-[33px] h-[228px]" /> */}
-        <UploadDropzone 
-          endpoint="imageUploader" 
-          config={{ mode: "auto" }}
-          className="rounded-md border px-[151px] py-[33px] h-[228px]"
-        />
-      </div>
+        <div className="w-full px-6">
+          {/* <div className="rounded-md border px-[151px] py-[33px] h-[228px]" /> */}
+          <UploadDropzone
+            endpoint="imageUploader"
+            config={{ mode: "auto" }}
+            className="rounded-md border px-[151px] py-[33px] h-[228px]"
+          />
+        </div>
       )}
 
       <div className="w-full px-6 py-4 flex flex-col gap-4">
-        <p className="text-neutral-600 text">Need to give instructions/notes about the work?</p>
+        <p className="text-neutral-600 text">
+          Need to give instructions/notes about the work?
+        </p>
         <textarea
           className="text border border-neutral200 placeholder:text-neutral500/80 resize-none h-[232px]
-          bg-neutral100 text-neutral500 w-full rounded-md px-3 p-2 disabled:opacity-60"
+          bg-neutral100 text-neutral500 w-full rounded-md px-3 p-2 disabled:opacity-80"
           placeholder="Type your message here..."
           disabled={hasApplied}
           value={updateData.notes}
-              onChange={(e) => setUpdateData({ ...updateData, notes: e.target.value })}
+          onChange={(e) =>
+            setUpdateData({ ...updateData, notes: e.target.value })
+          }
         />
       </div>
       {!hasApplied && (

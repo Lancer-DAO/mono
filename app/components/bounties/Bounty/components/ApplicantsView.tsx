@@ -1,4 +1,4 @@
-import { FC, useState } from "react";
+import { Dispatch, FC, SetStateAction, useState } from "react";
 import Image from "next/image";
 import { useUserWallet } from "@/src/providers";
 import { useBounty } from "@/src/providers/bountyProvider";
@@ -11,13 +11,22 @@ import { BountyUserType } from "@/prisma/queries/bounty";
 import { api, updateList } from "@/src/utils";
 import { BOUNTY_USER_RELATIONSHIP } from "@/types";
 import toast from "react-hot-toast";
+import { QuestActionView } from "./QuestActions";
 
 export enum EApplicantsView {
   All,
   Individual,
 }
 
-const ApplicantsView: FC = () => {
+interface Props {
+  currentActionView: QuestActionView;
+  setCurrentActionView: Dispatch<SetStateAction<QuestActionView>>;
+}
+
+const ApplicantsView: FC<Props> = ({
+  currentActionView,
+  setCurrentActionView,
+}) => {
   const { currentUser } = useUserWallet();
   const { currentBounty, setCurrentBounty } = useBounty();
   const { mutateAsync: updateBounty } = api.bountyUsers.update.useMutation();
@@ -27,6 +36,12 @@ const ApplicantsView: FC = () => {
   const [selectedSubmitter, setSelectedSubmitter] =
     useState<BountyUserType | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+
+  console.log(currentBounty);
+
+  const createdAtDate = new Date(
+    Number(currentBounty?.createdAt)
+  ).toLocaleDateString();
 
   const handleReject = async () => {
     if (!currentBounty || !selectedSubmitter) return;
@@ -59,9 +74,9 @@ const ApplicantsView: FC = () => {
   const handleApprove = async () => {
     if (!currentBounty || !selectedSubmitter) return;
     setIsLoading(true);
-    const toastId = toast.loading("Submitting approval...");
+    const toastId = toast.loading("Submitting approval to shortlist...");
 
-    const newRelations = [BOUNTY_USER_RELATIONSHIP.ApprovedSubmitter];
+    const newRelations = [BOUNTY_USER_RELATIONSHIP.ShortlistedSubmitter];
     try {
       const updatedBounty = await updateBounty({
         bountyId: currentBounty?.id,
@@ -94,7 +109,10 @@ const ApplicantsView: FC = () => {
       <div className="flex flex-col">
         <div className="w-full flex flex-col">
           {/* banner */}
-          <div className="w-full h-[68px] bg-white flex items-center justify-between px-6 border-b border-neutral200">
+          <div
+            className="w-full h-[68px] bg-white flex items-center 
+            justify-between px-6 border-b border-neutral200"
+          >
             <div className="flex items-center gap-2">
               <Image
                 src={selectedSubmitter.user.picture}
@@ -165,7 +183,10 @@ const ApplicantsView: FC = () => {
 
   return (
     <div className="flex flex-col">
-      <ActionsCardBanner title="Applications Review">
+      <ActionsCardBanner
+        title="Applications Review"
+        subtitle={`Started on ${createdAtDate}`}
+      >
         {/* TODO: add fund CTA */}
       </ActionsCardBanner>
       <div className="flex flex-col gap-5 px-6 py-4">
@@ -173,11 +194,9 @@ const ApplicantsView: FC = () => {
           <p className="title-text">{`${
             currentBounty.requestedSubmitters.length +
             currentBounty.deniedRequesters.length
-          } Members on Applicants List`}</p>
+          } profiles applied`}</p>
           <p className="text-neutral500 text">
-            You need to deposit a fixed fee in an escrow wallet first to be able
-            to proceed. We are committed to keep a curated platform with serious
-            projects only.
+            Shortlist up to 5 profiles to move on.
           </p>
         </div>
         <p className="title-text">Pending Applicants</p>
@@ -185,18 +204,19 @@ const ApplicantsView: FC = () => {
           currentBounty.requestedSubmitters.map((submitter, index) => {
             return (
               <div
-                className={`w-full pb-5 cursor-pointer ${
+                className={`w-full pb-5 ${
                   index !== currentBounty.requestedSubmitters.length - 1
                     ? "border-b border-neutral200"
                     : ""
                 }`}
                 key={index}
-                onClick={() => {
-                  setSelectedSubmitter(submitter);
-                  setCurrentApplicantsView(EApplicantsView.Individual);
-                }}
               >
-                <ApplicantProfileCard user={submitter} />
+                <ApplicantProfileCard
+                  user={submitter}
+                  setSelectedSubmitter={setSelectedSubmitter}
+                  setCurrentApplicantsView={setCurrentApplicantsView}
+                  setCurrentActionView={setCurrentActionView}
+                />
               </div>
             );
           })
@@ -209,18 +229,19 @@ const ApplicantsView: FC = () => {
             {currentBounty.deniedRequesters.map((submitter, index) => {
               return (
                 <div
-                  className={`w-full pb-5 opacity-60 cursor-pointer ${
+                  className={`w-full pb-5 opacity-60 ${
                     index !== currentBounty.requestedSubmitters.length - 1
                       ? "border-b border-neutral200"
                       : ""
                   }`}
                   key={index}
-                  onClick={() => {
-                    setSelectedSubmitter(submitter);
-                    setCurrentApplicantsView(EApplicantsView.Individual);
-                  }}
                 >
-                  <ApplicantProfileCard user={submitter} />
+                  <ApplicantProfileCard
+                    user={submitter}
+                    setSelectedSubmitter={setSelectedSubmitter}
+                    setCurrentApplicantsView={setCurrentApplicantsView}
+                    setCurrentActionView={setCurrentActionView}
+                  />
                 </div>
               );
             })}
@@ -232,39 +253,3 @@ const ApplicantsView: FC = () => {
 };
 
 export default ApplicantsView;
-
-//    {currentBounty.deniedRequesters.length > 0 && (
-//     <QuestUser
-//       title="Denied Requesters"
-//       users={currentBounty.deniedRequesters.map(
-//         (submitter) => submitter.user
-//       )}
-//     />
-//   )}
-//   {currentBounty.requestedSubmitters.length > 0 && (
-//     <>
-//       <label className="font-bold text-sm">Requested Applicants</label>
-//       {currentBounty.requestedSubmitters.map((submitter, index) => (
-//         <SubmitterSection
-//           submitter={submitter}
-//           type="requested"
-//           key={`requested-submitters-${submitter.userid}`}
-//           index={index}
-//         />
-//       ))}
-//     </>
-//   )}
-//   {currentBounty.approvedSubmitters.length > 0 && (
-//     <>
-//       <label className="font-bold text-sm">Approved Applicants</label>
-//       {currentBounty.approvedSubmitters.map((submitter, index) => (
-//         <SubmitterSection
-//           submitter={submitter}
-//           type="approved"
-//           key={`approved-submitters-${submitter.userid}`}
-//           index={index}
-//         />
-//       ))}
-//     </>
-//   )}
-// </div>
