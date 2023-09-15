@@ -43,7 +43,7 @@ export const BadgesCard: FC = () => {
       const { name, attributes, image, id, ownerAddress } = nft;
       return {
         name: name,
-        reputation: attributes.reputation as number,
+        experience: attributes.reputation as number,
         tags:
           attributes.tags !== "" ? (attributes.tags as string)?.split(",") : [],
         image: image,
