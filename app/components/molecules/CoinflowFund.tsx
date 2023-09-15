@@ -5,7 +5,7 @@ import { LancerWallet } from "@/types/";
 import { Connection, Transaction } from "@solana/web3.js";
 import { api } from "@/src/utils/api";
 import { useRouter } from "next/router";
-import { CoinflowPurchase } from "@coinflowlabs/react";
+import { CoinflowPurchase, SolanaWallet } from "@coinflowlabs/react";
 import { useBounty } from "@/src/providers/bountyProvider";
 
 const FundBounty: React.FC<{ amount: number }> = ({
@@ -67,7 +67,7 @@ const Coinflow: React.FC<{
   wallet: LancerWallet;
 }> = ({ transaction, onSuccess, amount, connection, wallet }) => {
   return (
-    <div className="h-[600px]">
+    <div className="h-[600px] w-[600px]">
       <CoinflowPurchase
         wallet={wallet}
         merchantId="lancer"

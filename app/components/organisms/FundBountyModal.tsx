@@ -123,7 +123,7 @@ const FundBountyModal: FC<Props> = ({ setShowModal, setIsFunded }) => {
 
   return (
     <Modal setShowModal={setShowModal} className="py-20">
-      <div className="w-full px-10">
+      <div className="w-[900] px-10">
         <div className="w-full flex items-start justify-center gap-20">
           <div className="w-full flex flex-col gap-5 max-w-[400px]">
             <h1>Funding Details</h1>
@@ -133,7 +133,7 @@ const FundBountyModal: FC<Props> = ({ setShowModal, setIsFunded }) => {
               By proceeding you are agreeing to Lancer’s terms of service.
             </p>
           </div>
-          <div className="w-full max-w-[540px] px-10 flex flex-col items-center gap-10 bg-white pb-10 rounded-lg">
+          <div className="w-full px-10 flex flex-col items-center gap-10 bg-white pb-10 rounded-lg">
             {!IS_CUSTODIAL && (
               <div className="w-full h-10 flex items-center justify-evenly mt-2">
                 <motion.button

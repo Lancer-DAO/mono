@@ -71,9 +71,7 @@ const UserWalletProvider: FunctionComponent<IUserWalletState> = ({
         publicKey,
         sendTransaction,
         signAllTransactions,
-        signMessage,
         signTransaction,
-        connected,
         signAndSendTransaction: async (transaction: Transaction) => {
           return await sendTransaction(transaction, connection, {
             skipPreflight: isDebugMode,
