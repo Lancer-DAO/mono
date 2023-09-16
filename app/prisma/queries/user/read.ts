@@ -76,6 +76,20 @@ export const getById = async (id: number) => {
   return user;
 };
 
+export const getEmailsByIds = async (ids: number[]) => {
+  const emails = await prisma.user.findMany({
+    where: {
+      id: {
+        in: ids,
+      },
+    },
+    select: {
+      email: true,
+    },
+  });
+  return emails;
+};
+
 export const searchByName = async (
   query: string,
   includeCurrentUser?: boolean,

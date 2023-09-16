@@ -40,19 +40,6 @@ const Onboard: FC = () => {
   const [walletError, setWalletError] = useState<string>("");
 
   const { currentUser, currentWallet } = useUserWallet();
-  const {
-    data: fetchedUser,
-    isLoading: userLoading,
-    isError: userError,
-    refetch,
-  } = api.users.getUser.useQuery(
-    {
-      id: currentUser?.id,
-    },
-    {
-      enabled: !!currentUser,
-    }
-  );
   const { mutateAsync: registerOnboardingInfo } =
     api.users.addOnboardingInformation.useMutation();
   api.users.registerProfileNFT.useQuery(
@@ -68,7 +55,7 @@ const Onboard: FC = () => {
       walletPublicKey: currentWallet?.publicKey.toString(),
     },
     {
-      enabled: !!currentWallet && !!nftCreated && !!fetchedUser,
+      enabled: !!currentWallet && !!currentUser && !walletRegistered,
       onError: (e) => {
         setWalletRegistered(false);
         if (e.message === "Wallet is registered to another user") {
@@ -118,14 +105,14 @@ const Onboard: FC = () => {
   };
 
   useEffect(() => {
-    if (!!fetchedUser && !userLoading && !userError) {
+    if (!!currentUser) {
       setProfileData({
         ...profileData,
-        displayName: fetchedUser?.name,
-        email: fetchedUser?.email,
+        displayName: currentUser?.name,
+        email: currentUser?.email,
       });
     }
-  }, [fetchedUser, userLoading, userError]);
+  }, [currentUser]);
 
   return (
     <div className="w-full h-full my-32">
@@ -138,15 +125,11 @@ const Onboard: FC = () => {
           key={`onboard-${formSection}`}
           className="w-full max-w-[1200px] mx-auto flex flex-col md:flex-row md:justify-evenly mt-10"
         >
-          {isVerifyingWallet && !userLoading && (
+          {isVerifyingWallet && !currentUser && (
             <LoadingBar title={"Registering your account"} />
           )}
-          {userLoading && <LoadingBar title={null} />}
-          {userError && (
-            <div className="text-red-500">{`Error registering your account.`}</div>
-          )}
           <WelcomeView
-            account={fetchedUser}
+            account={currentUser}
             formSection={formSection}
             setFormSection={setFormSection}
             walletRegistered={walletRegistered}
@@ -159,14 +142,14 @@ const Onboard: FC = () => {
             setFormSection={setFormSection}
             profileData={profileData}
             setProfileData={setProfileData}
-            account={fetchedUser}
+            account={currentUser}
           />
           <ProfileInfoView
             formSection={formSection}
             setFormSection={setFormSection}
             profileData={profileData}
             setProfileData={setProfileData}
-            account={fetchedUser}
+            account={currentUser}
             handleUpdateProfile={handleUpdateProfile}
           />
         </motion.div>
