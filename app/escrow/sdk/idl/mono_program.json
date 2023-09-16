@@ -335,6 +335,117 @@
       ]
     },
     {
+      "name": "achFundFeature",
+      "accounts": [
+        {
+          "name": "externalFunder",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "creator",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "externalFunderTokenAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "fundsMint",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "featureDataAccount",
+          "isMut": true,
+          "isSigner": false,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "type": "string",
+                "value": "mono"
+              },
+              {
+                "kind": "account",
+                "type": "string",
+                "account": "FeatureDataAccount",
+                "path": "feature_data_account.unix_timestamp"
+              },
+              {
+                "kind": "account",
+                "type": "publicKey",
+                "path": "creator"
+              }
+            ]
+          }
+        },
+        {
+          "name": "featureTokenAccount",
+          "isMut": true,
+          "isSigner": false,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "type": "string",
+                "value": "mono"
+              },
+              {
+                "kind": "account",
+                "type": "string",
+                "account": "FeatureDataAccount",
+                "path": "feature_data_account.unix_timestamp"
+              },
+              {
+                "kind": "account",
+                "type": "publicKey",
+                "path": "creator"
+              },
+              {
+                "kind": "account",
+                "type": "publicKey",
+                "account": "Mint",
+                "path": "funds_mint"
+              }
+            ]
+          }
+        },
+        {
+          "name": "programAuthority",
+          "isMut": false,
+          "isSigner": false,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "type": "string",
+                "value": "mono"
+              }
+            ]
+          }
+        },
+        {
+          "name": "tokenProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "amount",
+          "type": "u64"
+        }
+      ]
+    },
+    {
       "name": "addApprovedSubmitters",
       "accounts": [
         {
