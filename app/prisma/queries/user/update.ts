@@ -113,7 +113,7 @@ export const updateHasFinishedOnboarding = async (
     },
     data: {
       hasFinishedOnboarding: true,
-      reputation: {
+      experience: {
         increment: 10, // add 10 XP for finishing onboarding
       },
     },
@@ -199,7 +199,7 @@ export const updateXP = async (
       id: id,
     },
     data: {
-      reputation: {
+      experience: {
         increment: addXP,
       },
     },

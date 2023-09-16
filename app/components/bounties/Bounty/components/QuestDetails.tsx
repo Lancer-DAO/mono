@@ -46,7 +46,10 @@ const QuestDetails = () => {
   };
 
   return (
-    <div className="flex flex-col bg-white w-[610px] h-fit border border-neutral200 rounded-lg">
+    <div
+      className="flex flex-col bg-white min-w-[610px] w-full h-fit 
+      border border-neutral200 rounded-lg"
+    >
       {/* quest header */}
       <div className="flex flex-col items-start px-4 py-6">
         {/* back arrow */}

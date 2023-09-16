@@ -43,7 +43,7 @@ export const BountyActions = () => {
     if (!currentBounty.currentUserRelationsList) {
       return <Apply />;
     }
-    if (currentBounty.isRequestedSubmitter)
+    if (currentBounty.isRequestedLancer)
       return (
         <BountyActionsButton
           type="neutral"
@@ -51,7 +51,7 @@ export const BountyActions = () => {
           disabled
         />
       );
-    if (currentBounty.isDeniedRequester)
+    if (currentBounty.isDeniedLancer)
       return (
         <BountyActionsButton
           type="red"
