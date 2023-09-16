@@ -86,31 +86,31 @@ export const Bounty = () => {
                     .format("MMM D, YYYY")}`}
                 </p>
                 <div className="h-[30px] w-[1px] bg-neutralBtnBorder mx-3" />
-                {Number(currentBounty.escrow.amount) > 0 ? (
-                  <>
-                    <Image
-                      src={currentBounty?.escrow?.mint?.logo}
-                      width={25}
-                      height={25}
-                      alt="mint logo"
-                    />
-                    <p>{`${formatPrice(
-                      Number(currentBounty.escrow.amount)
-                    )} in escrow`}</p>
-                    <motion.a
-                      {...smallClickAnimation}
-                      href={getSolscanAddress(
-                        new PublicKey(currentBounty?.escrow?.publicKey)
-                      )}
-                      target="_blank"
-                      rel="noreferrer"
-                    >
-                      <ExternalLinkIcon />
-                    </motion.a>
-                  </>
-                ) : (
+                {/* {Number(currentBounty.escrow.amount) > 0 ? ( */}
+                <>
+                  <Image
+                    src={currentBounty?.escrow?.mint?.logo}
+                    width={25}
+                    height={25}
+                    alt="mint logo"
+                  />
+                  <p>{`${formatPrice(
+                    Number(currentBounty.escrow.amount)
+                  )} in escrow`}</p>
+                  <motion.a
+                    {...smallClickAnimation}
+                    href={getSolscanAddress(
+                      new PublicKey(currentBounty?.escrow?.publicKey)
+                    )}
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    <ExternalLinkIcon />
+                  </motion.a>
+                </>
+                {/* ) : (
                   <FundCTA />
-                )}
+                )} */}
               </div>
             </div>
             <div className="h-[1px] w-full bg-neutralBtnBorder" />
