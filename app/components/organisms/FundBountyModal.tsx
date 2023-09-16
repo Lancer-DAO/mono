@@ -156,7 +156,7 @@ const FundBountyModal: FC<Props> = ({ setShowModal, setIsFunded }) => {
                   }`}
                   onClick={() => setFundingType("card")}
                 >
-                  Pay with Credit Card
+                  Pay with Fiat
                 </motion.button>
               </div>
             )}
