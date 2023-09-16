@@ -117,6 +117,44 @@ export const fundFeatureInstruction = async (
     .instruction();
 };
 
+export const fundFeatureInstructionCoinflow = async (
+  amount: number,
+  timestamp: string,
+  creator: PublicKey,
+  mint: PublicKey,
+  program: Program<MonoProgram>
+): Promise<TransactionInstruction> => {
+  const [feature_data_account] = await findFeatureAccount(
+    timestamp,
+    creator,
+    program
+  );
+  const [feature_token_account] = await findFeatureTokenAccount(
+    timestamp,
+    creator,
+    mint,
+    program
+  );
+
+  const [program_authority] = await findProgramAuthority(program);
+
+  return await program.methods
+    .fundFeature(new anchor.BN(amount))
+    .accounts({
+      creator: new PublicKey("22222222222222222222222222222222222222222222"),
+      creatorTokenAccount: new PublicKey(
+        "33333333333333333333333333333333333333333333"
+      ),
+      fundsMint: mint,
+      featureDataAccount: feature_data_account,
+      featureTokenAccount: feature_token_account,
+      programAuthority: program_authority,
+      tokenProgram: TOKEN_PROGRAM_ID,
+      systemProgram: SystemProgram.programId,
+    })
+    .instruction();
+};
+
 export const addApprovedSubmittersInstruction = async (
   timestamp: string,
   creator: PublicKey,

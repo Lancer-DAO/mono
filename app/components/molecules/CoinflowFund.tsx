@@ -1,4 +1,4 @@
-import { getFundFFATX } from "@/escrow/adapters";
+import { getCoinflowFundFFATX, getFundFFATX } from "@/escrow/adapters";
 import { useEffect, useState } from "react";
 import { useUserWallet } from "@/src/providers/userWalletProvider";
 import { LancerWallet } from "@/types/";
@@ -22,7 +22,7 @@ const FundBounty: React.FC<{ amount: number }> = ({
   useEffect(() => {
     const getFundTransaction = async () => {
       // console.log("coinflow amount", amount);
-      const transaction = await getFundFFATX(
+      const transaction = await getCoinflowFundFFATX(
         amount,
         currentBounty?.escrow,
         currentWallet,
