@@ -133,6 +133,7 @@ model Escrow {
   amount    Decimal? @db.Decimal(20, 10)
   publicKey String?  @db.VarChar(100)
   timestamp String?  @db.VarChar(24)
+  achState  String?  @db.VarChar(24)
 
   // Relations
   bounty       Bounty?

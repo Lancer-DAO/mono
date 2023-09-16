@@ -15,3 +15,17 @@ export const updateAmount = async (
     },
   });
 };
+
+export const updateACHState = async (
+  escrowId: number,
+  achState: string
+): Promise<Prisma.Escrow> => {
+  return await prisma.escrow.update({
+    where: {
+      id: escrowId,
+    },
+    data: {
+      achState: achState,
+    },
+  });
+};

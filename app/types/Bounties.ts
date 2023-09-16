@@ -63,6 +63,14 @@ export enum BountyState {
   VOTING_TO_CANCEL = "voting_to_cancel",
 }
 
+export enum ACHState {
+  PRE_INITATION = "pre_initiation",
+  INITIATED = "initiated",
+  SUCCESS = "success",
+  RETURNED = "returned",
+  FAILED = "failed",
+}
+
 export const BOUNTY_STATES = Object.values(BountyState);
 export const TABLE_BOUNTY_STATES = Object.values(BountyState).slice(2);
 
