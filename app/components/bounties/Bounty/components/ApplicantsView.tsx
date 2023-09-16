@@ -14,7 +14,6 @@ import toast from "react-hot-toast";
 import { QuestActionView } from "./QuestActions";
 import { cancelFFA, voteToCancelFFA } from "@/escrow/adapters";
 import { PublicKey } from "@solana/web3.js";
-import { useReferral } from "@/src/providers/referralProvider";
 
 export enum EApplicantsView {
   All,
@@ -36,8 +35,6 @@ const ApplicantsView: FC<Props> = ({ setCurrentActionView }) => {
     useState<BountyUserType | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isAwaitingResponse, setIsAwaitingResponse] = useState(false);
-
-  console.log(currentBounty);
 
   const createdAtDate = new Date(
     Number(currentBounty?.createdAt)
