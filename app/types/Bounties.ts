@@ -1,4 +1,8 @@
-import { BountyPreviewType, BountyUserType } from "@/prisma/queries/bounty";
+import {
+  BountyPreviewType,
+  BountyUserType,
+  UserPreviewType,
+} from "@/prisma/queries/bounty";
 import { BountyType } from "@/prisma/queries/bounty";
 import { UserType, UserSearchType } from "@/prisma/queries/user";
 import { WalletType } from "@/prisma/queries/wallet";
@@ -69,6 +73,7 @@ export const TABLE_BOUNTY_STATES = Object.values(BountyState).slice(2);
 export type Bounty = BountyType;
 export type BountyPreview = BountyPreviewType;
 export type User = UserType;
+export type UserPreview = UserPreviewType;
 export type UserSearch = UserSearchType;
 export type Wallet = WalletType;
 export type Discipline = DisciplineType;
