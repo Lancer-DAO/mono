@@ -34,7 +34,8 @@ const FundBounty: React.FC<{ amount: number }> = ({
     getFundTransaction();
   }, [amount]);
 
-  const onSuccess = () => {
+  const onSuccess = (params: string) => {
+    console.log("onSuccess", params);
     fundB({
       bountyId: currentBounty?.id,
       escrowId: currentBounty?.escrow.id,
@@ -61,7 +62,7 @@ export default FundBounty;
 
 const Coinflow: React.FC<{
   transaction: Transaction;
-  onSuccess: () => void;
+  onSuccess: (params: string) => void;
   amount: number;
   connection: Connection;
   wallet: LancerWallet;
