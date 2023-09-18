@@ -8,6 +8,7 @@ export * from "./ApproveSubmission";
 export * from "./BountyActions";
 export * from "./BountyActionsButton";
 export * from "./CancelEscrow";
+export * from "./ChatView";
 export * from "./DenySubmission";
 export * from "./LancerApplyView";
 export * from "./QuestActions";

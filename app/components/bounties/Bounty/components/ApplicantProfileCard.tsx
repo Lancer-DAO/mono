@@ -74,7 +74,7 @@ const ApplicantProfileCard: FC<Props> = ({
                 }}
                 className="bg-white border border-neutral200 px-4 py-2 rounded-md flex items-center gap-2"
               >
-                <p className="text-neutral500 title-text">Chat</p>
+                <p className="text-neutral600 title-text">Chat</p>
                 <svg
                   width="6"
                   height="6"

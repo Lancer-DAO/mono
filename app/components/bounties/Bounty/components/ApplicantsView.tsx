@@ -23,17 +23,21 @@ export enum EApplicantsView {
 
 interface Props {
   setCurrentActionView: Dispatch<SetStateAction<QuestActionView>>;
+  selectedSubmitter: BountyUserType | null;
+  setSelectedSubmitter: Dispatch<SetStateAction<BountyUserType | null>>;
 }
 
-const ApplicantsView: FC<Props> = ({ setCurrentActionView }) => {
+const ApplicantsView: FC<Props> = ({
+  setCurrentActionView,
+  selectedSubmitter,
+  setSelectedSubmitter,
+}) => {
   const { currentUser, currentWallet, program, provider } = useUserWallet();
   const { currentBounty, setCurrentBounty } = useBounty();
   const { mutateAsync: updateBounty } = api.bountyUsers.update.useMutation();
 
   const [currentApplicantsView, setCurrentApplicantsView] =
     useState<EApplicantsView>(EApplicantsView.All);
-  const [selectedSubmitter, setSelectedSubmitter] =
-    useState<BountyUserType | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isAwaitingResponse, setIsAwaitingResponse] = useState(false);
   const [showModal, setShowModal] = useState(false);
