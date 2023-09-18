@@ -86,7 +86,7 @@ export const ProfileNFTCard = ({
           currentWallet.publicKey
         );
         const usdcAccount = await getAccount(connection, usdcAccountAddress);
-        console.log(usdcAccount);
+        // console.log(usdcAccount);
         const balance = parseFloat(usdcAccount.amount.toString()) / 10.0 ** 6;
         setBalance({ result: balance, isLoading: false });
       } catch (err) {
@@ -426,7 +426,7 @@ export const ProfileNFTCard = ({
           </div>
         ) : (
           <div className="flex items-start justify-between">
-            <p className="text-textPrimary pr-5 text-justify leading-5">
+            <p className="text-textPrimary pr-5 leading-5">
               {bioEdit.bio !== "" ? bioEdit.bio : "Add a short bio here"}
             </p>
             {self && (
