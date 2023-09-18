@@ -85,40 +85,37 @@ const bountyQuery = async (id: number) => {
 };
 
 const bountyQueryMany = async (userId?: number, excludePrivate?: boolean) => {
-  const myBounties = await prisma.bounty.findMany({
+  const bounties = await prisma.bounty.findMany({
     where: {
-      users: {
-        some: {
-          userid: userId,
+      OR: [
+        {
+          users: {
+            some: {
+              userid: userId,
+            },
+          },
+          // delete me if local and testing quests page
+          isTest: false,
         },
-      },
-      // delete me if local and testing quests page
-      isTest: null,
+        {
+          users: {
+            none: {
+              userid: userId,
+            },
+          },
+          isPrivate: false,
+          isTest: false,
+          state: {
+            in: ["accepting_applications", "new"],
+          },
+        },
+      ],
     },
     orderBy: {
       createdAt: "desc",
     },
     select: BOUNTY_MANY_SELECT,
   });
-  const otherBounties = await prisma.bounty.findMany({
-    where: {
-      users: {
-        none: {
-          userid: userId,
-        },
-      },
-      isPrivate: false,
-      isTest: null,
-      state: {
-        in: ["accepting_applications", "new"],
-      },
-    },
-    select: BOUNTY_MANY_SELECT,
-    orderBy: {
-      createdAt: "desc",
-    },
-  });
-  const bounties = [...myBounties, ...otherBounties];
 
   return bounties;
 };
