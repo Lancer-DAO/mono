@@ -1,5 +1,6 @@
 export * from "./ActionsCardBanner";
 export * from "./AlertCard";
+export * from "./AlertCardModal";
 export * from "./ApplicantProfileCard";
 export * from "./ApplicantsView";
 export * from "./Apply";

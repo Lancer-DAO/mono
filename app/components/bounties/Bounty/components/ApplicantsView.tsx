@@ -4,7 +4,7 @@ import { useUserWallet } from "@/src/providers";
 import { useBounty } from "@/src/providers/bountyProvider";
 import ActionsCardBanner from "./ActionsCardBanner";
 import ApplicantProfileCard from "./ApplicantProfileCard";
-import { X } from "lucide-react";
+import { Lock, X } from "lucide-react";
 import { motion } from "framer-motion";
 import { MAX_SHORTLIST, smallClickAnimation } from "@/src/constants";
 import { BountyUserType } from "@/prisma/queries/bounty";
@@ -14,6 +14,7 @@ import toast from "react-hot-toast";
 import { QuestActionView } from "./QuestActions";
 import { cancelFFA, voteToCancelFFA } from "@/escrow/adapters";
 import { PublicKey } from "@solana/web3.js";
+import AlertCardModal from "./AlertCardModal";
 
 export enum EApplicantsView {
   All,
@@ -35,6 +36,7 @@ const ApplicantsView: FC<Props> = ({ setCurrentActionView }) => {
     useState<BountyUserType | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isAwaitingResponse, setIsAwaitingResponse] = useState(false);
+  const [showModal, setShowModal] = useState(false);
 
   const createdAtDate = new Date(
     Number(currentBounty?.createdAt)
@@ -358,9 +360,10 @@ const ApplicantsView: FC<Props> = ({ setCurrentActionView }) => {
               </motion.button>
             </div>
           ) : null}
+          {/* applicant is shortlisted but client has not funded escrow with deposit */}
           {selectedSubmitter.relations.includes(
             BOUNTY_USER_RELATIONSHIP.ShortlistedLancer
-          ) ? (
+          ) && Number(currentBounty.escrow.amount) === 0 ? (
             <div className="w-full flex items-center justify-end gap-4">
               <motion.button
                 {...smallClickAnimation}
@@ -373,6 +376,49 @@ const ApplicantsView: FC<Props> = ({ setCurrentActionView }) => {
               </motion.button>
             </div>
           ) : null}
+          {/* applicant is shortlisted and client has funded escrow with deposit */}
+          {selectedSubmitter.relations.includes(
+            BOUNTY_USER_RELATIONSHIP.ShortlistedLancer
+          ) && Number(currentBounty.escrow.amount) > 0 ? (
+            <div className="w-full flex items-center justify-end gap-4">
+              <motion.button
+                {...smallClickAnimation}
+                onClick={() => {
+                  setCurrentActionView(QuestActionView.Chat);
+                }}
+                className="bg-white border border-neutral200 px-4 py-2 rounded-md flex items-center gap-2"
+              >
+                <p className="text-neutral600 title-text">Chat</p>
+                <svg
+                  width="6"
+                  height="6"
+                  viewBox="0 0 8 8"
+                  fill="none"
+                  className="animate-pulse"
+                >
+                  <circle cx="4" cy="4" r="4" fill="#10966D" />
+                </svg>
+              </motion.button>
+              <motion.button
+                {...smallClickAnimation}
+                className="bg-white border border-neutral300 h-9 w-fit px-4 py-2
+                title-text rounded-md text-neutral600 disabled:cursor-not-allowed disabled:opacity-80"
+                // onClick={() => handleManageShortlist("remove")}
+                disabled={isLoading || isAwaitingResponse}
+              >
+                Reject for the Quest
+              </motion.button>
+              <motion.button
+                {...smallClickAnimation}
+                className="bg-success h-9 w-fit px-4 py-2
+                title-text rounded-md text-white disabled:cursor-not-allowed disabled:opacity-80"
+                // onClick={() => handleManageShortlist("remove")}
+                disabled={isLoading || isAwaitingResponse}
+              >
+                Select for the Quest
+              </motion.button>
+            </div>
+          ) : null}
         </div>
       </div>
     );
@@ -382,24 +428,28 @@ const ApplicantsView: FC<Props> = ({ setCurrentActionView }) => {
       <ActionsCardBanner
         title="Applications Review"
         subtitle={`Started on ${createdAtDate}`}
-      >
-        {/* TODO: add fund CTA */}
-      </ActionsCardBanner>
-      <div className="flex flex-col gap-5 px-6 py-4">
+      />
+      <div className="relative flex flex-col gap-5 px-6 py-4">
         {currentBounty.shortlistedLancers.length > 0 ? (
           <>
-            <div className="flex items-center justify-between mt-2">
-              <p className="text-sm text-neutral-600">
-                {`You've added ${currentBounty.shortlistedLancers.length}/${MAX_SHORTLIST} candidates to your shortlist.`}
-              </p>
-              <motion.button
-                {...smallClickAnimation}
-                className="bg-secondary200 text-white title-text px-4 py-2 rounded-md"
-              >
-                Proceed with Shortlist
-              </motion.button>
+            {Number(currentBounty.escrow.amount) === 0 ? (
+              <div className="flex items-center justify-between mt-2">
+                <p className="text-sm text-neutral-600">
+                  {`You've added ${currentBounty.shortlistedLancers.length}/${MAX_SHORTLIST} candidates to your shortlist.`}
+                </p>
+                <motion.button
+                  {...smallClickAnimation}
+                  className="bg-secondary200 text-white title-text px-4 py-2 rounded-md"
+                  onClick={() => setShowModal(true)}
+                >
+                  Proceed with Shortlist
+                </motion.button>
+              </div>
+            ) : null}
+            <div className="flex items-center gap-2">
+              <p className="title-text">Shortlist</p>
+              {Number(currentBounty.escrow.amount) > 0 && <Lock size={14} />}
             </div>
-            <p className="title-text">Shortlist</p>
             {currentBounty.shortlistedLancers.map((submitter, index) => {
               return (
                 <div
@@ -426,30 +476,34 @@ const ApplicantsView: FC<Props> = ({ setCurrentActionView }) => {
             profiles to move on.
           </p>
         )}
-        <p className="title-text">Pending</p>
-        {currentBounty.requestedLancers.length > 0 ? (
-          currentBounty.requestedLancers.map((submitter, index) => {
-            return (
-              <div
-                className={`w-full pb-5 ${
-                  index !== currentBounty.requestedLancers.length - 1
-                    ? "border-b border-neutral200"
-                    : ""
-                }`}
-                key={index}
-              >
-                <ApplicantProfileCard
-                  user={submitter}
-                  setSelectedSubmitter={setSelectedSubmitter}
-                  setCurrentApplicantsView={setCurrentApplicantsView}
-                  setCurrentActionView={setCurrentActionView}
-                />
-              </div>
-            );
-          })
-        ) : (
-          <p className="text-neutral500 text pb-5">No pending applicants</p>
-        )}
+        {Number(currentBounty.escrow.amount) === 0 ? (
+          <>
+            <p className="title-text">Pending</p>
+            {currentBounty.requestedLancers.length > 0 ? (
+              currentBounty.requestedLancers.map((submitter, index) => {
+                return (
+                  <div
+                    className={`w-full pb-5 ${
+                      index !== currentBounty.requestedLancers.length - 1
+                        ? "border-b border-neutral200"
+                        : ""
+                    }`}
+                    key={index}
+                  >
+                    <ApplicantProfileCard
+                      user={submitter}
+                      setSelectedSubmitter={setSelectedSubmitter}
+                      setCurrentApplicantsView={setCurrentApplicantsView}
+                      setCurrentActionView={setCurrentActionView}
+                    />
+                  </div>
+                );
+              })
+            ) : (
+              <p className="text-neutral500 text pb-5">No pending applicants</p>
+            )}
+          </>
+        ) : null}
         {currentBounty.deniedLancers.length > 0 ? (
           <>
             <p className="title-text">Denied</p>
@@ -510,6 +564,7 @@ const ApplicantsView: FC<Props> = ({ setCurrentActionView }) => {
             </motion.button>
           ) : null}
         </div>
+        {showModal && <AlertCardModal setShowModal={setShowModal} />}
       </div>
     </div>
   );

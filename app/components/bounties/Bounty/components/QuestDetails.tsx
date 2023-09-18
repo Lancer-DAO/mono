@@ -1,4 +1,4 @@
-import FundCTA from "@/components/atoms/FundCTA";
+import { useState } from "react";
 import { useBounty } from "@/src/providers/bountyProvider";
 import { cn, formatPrice, getSolscanAddress } from "@/src/utils";
 import { BountyState } from "@/types";
@@ -6,7 +6,6 @@ import { PublicKey } from "@solana/web3.js";
 import dayjs from "dayjs";
 import { marked } from "marked";
 import Link from "next/link";
-import { useState } from "react";
 import { ArrowLeft, ChevronDown, ChevronUp, ExternalLink } from "react-feather";
 
 const Divider = () => <div className="h-[20px] w-[1px] mx-4 bg-slate-200" />;

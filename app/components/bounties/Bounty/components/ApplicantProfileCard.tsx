@@ -7,8 +7,8 @@ import { useBounty } from "@/src/providers/bountyProvider";
 import { EApplicantsView } from "./ApplicantsView";
 import { smallClickAnimation } from "@/src/constants";
 import { motion } from "framer-motion";
-import { QuestActionView } from "./QuestActions";
 import { Flame } from "lucide-react";
+import { QuestActionView } from "./QuestActions";
 
 dayjs.extend(relativeTime);
 
@@ -48,7 +48,6 @@ const ApplicantProfileCard: FC<Props> = ({
             <p className="text-neutral500 text-xs">{`${user.user.experience} XP`}</p>
           </div>
         </div>
-        {/* TODO: conditionally render the following buttons */}
         {currentBounty.shortlistedLancers.some(
           (submitter) => submitter.userid === user.userid
         ) && (
@@ -66,19 +65,27 @@ const ApplicantProfileCard: FC<Props> = ({
               <Flame width={16} height={16} className="text-tertiary200" />{" "}
               $1500 Quote
             </motion.button>
-            <motion.button
-              {...smallClickAnimation}
-              // onClick={() => {
-              //   setSelectedSubmitter(user);
-              //   setCurrentActionView(QuestActionView.Chat);
-              // }}
-              className="bg-white border border-neutral200 rounded-md 
-              text-primary200 title-text px-4 py-2 disabled:opacity-80 
-              disabled:cursor-not-allowed"
-              disabled={true}
-            >
-              Chat
-            </motion.button>
+            {Number(currentBounty.escrow.amount) > 0 && (
+              <motion.button
+                {...smallClickAnimation}
+                onClick={() => {
+                  setSelectedSubmitter(user);
+                  setCurrentActionView(QuestActionView.Chat);
+                }}
+                className="bg-white border border-neutral200 px-4 py-2 rounded-md flex items-center gap-2"
+              >
+                <p className="text-neutral500 title-text">Chat</p>
+                <svg
+                  width="6"
+                  height="6"
+                  viewBox="0 0 8 8"
+                  fill="none"
+                  className="animate-pulse"
+                >
+                  <circle cx="4" cy="4" r="4" fill="#10966D" />
+                </svg>
+              </motion.button>
+            )}
           </div>
         )}
         {currentBounty.requestedLancers.some(
@@ -113,8 +120,6 @@ const ApplicantProfileCard: FC<Props> = ({
             View
           </motion.button>
         )}
-        {/* <button className="text-neutral600 text-xs">$X Quote</button> */}
-        {/* <button className="text-neutral600 text-xs">Chat</button> */}
       </div>
     </div>
   );
