@@ -70,27 +70,23 @@ const QuestDetails = () => {
             Number(currentBounty.estimatedTime) > 1 ? "hours" : "hour"
           }`}</p> */}
           <Divider />
-          {currentBounty?.escrow?.amount ? (
-            <div className="flex items-center gap-[6px]">
-              <p className="text text-neutral500">{`$${formatPrice(
-                Number(currentBounty?.escrow?.amount)
-              )}`}</p>
-              <Link
-                href={getSolscanAddress(
-                  new PublicKey(currentBounty?.escrow?.publicKey)
-                )}
-                target="true"
-              >
-                <ExternalLink
-                  className="text-neutral500"
-                  width={12}
-                  height={12}
-                />
-              </Link>
-            </div>
-          ) : (
-            <FundCTA />
-          )}
+          <div className="flex items-center gap-1.5">
+            <p className="text text-neutral500">{`$${formatPrice(
+              Number(currentBounty?.escrow?.amount)
+            )}`}</p>
+            <Link
+              href={getSolscanAddress(
+                new PublicKey(currentBounty?.escrow?.publicKey)
+              )}
+              target="true"
+            >
+              <ExternalLink
+                className="text-neutral500"
+                width={12}
+                height={12}
+              />
+            </Link>
+          </div>
         </div>
         <div className="flex px-5 gap-2">
           {currentBounty.tags.length > 0 && (
