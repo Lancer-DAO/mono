@@ -231,7 +231,7 @@ export const ProfileNFTCard = ({
               {currentUser.isAdmin && !self && !user.hasBeenApproved && (
                 <BountyActionsButton
                   onClick={async () => {
-                    approveUser({ id: user.id });
+                    approveUser({ email: user.email });
                     setApprovalText("Approved");
                   }}
                   type="green"
