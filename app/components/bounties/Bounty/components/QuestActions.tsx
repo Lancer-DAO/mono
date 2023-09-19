@@ -3,6 +3,7 @@ import { useBounty } from "@/src/providers/bountyProvider";
 import { FC, useEffect, useState } from "react";
 import ApplicantsView from "./ApplicantsView";
 import LancerApplyView from "./LancerApplyView";
+import LancerSubmitUpdateView from "./LancerSubmitUpdateView";
 import { BountyUserType } from "@/prisma/queries/bounty";
 import ChatView from "./ChatView";
 

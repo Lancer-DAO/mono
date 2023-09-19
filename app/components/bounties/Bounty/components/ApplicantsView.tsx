@@ -35,13 +35,12 @@ const ApplicantsView: FC<Props> = ({
   const { currentUser, currentWallet, program, provider } = useUserWallet();
   const { currentBounty, setCurrentBounty } = useBounty();
   const { mutateAsync: updateBounty } = api.bountyUsers.update.useMutation();
-
   const [currentApplicantsView, setCurrentApplicantsView] =
     useState<EApplicantsView>(EApplicantsView.All);
   const [isLoading, setIsLoading] = useState(false);
   const [isAwaitingResponse, setIsAwaitingResponse] = useState(false);
   const [showModal, setShowModal] = useState(false);
-
+      
   const createdAtDate = new Date(
     Number(currentBounty?.createdAt)
   ).toLocaleDateString();
@@ -97,6 +96,7 @@ const ApplicantsView: FC<Props> = ({
     const toastId = toast.loading("Submitting rejection...");
 
     const newRelations = [BOUNTY_USER_RELATIONSHIP.DeniedLancer];
+
     try {
       const updatedBounty = await updateBounty({
         bountyId: currentBounty?.id,

@@ -1,7 +1,12 @@
-import { useEffect, useState } from "react";
-import Image from "next/image";
+import { CashoutModal } from "@/components";
+import { BountyActionsButton } from "@/components/bounties/Bounty/components";
 import { IS_CUSTODIAL, USDC_MINT } from "@/src/constants";
 import { useUserWallet } from "@/src/providers";
+import { useAccount } from "@/src/providers/accountProvider";
+import { useChat } from "@/src/providers/chatProvider";
+import { useIndustry } from "@/src/providers/industryProvider";
+import { api } from "@/src/utils";
+import { createDM } from "@/src/utils/sendbird";
 import { IAsyncResult, ProfileNFT, User } from "@/types/";
 import {
   TokenAccountNotFoundError,
@@ -14,16 +19,11 @@ import { useConnection } from "@solana/wallet-adapter-react";
 import { PublicKey, Transaction } from "@solana/web3.js";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
-import LinksCard from "./LinksCard";
-import { api } from "@/src/utils";
+import Image from "next/image";
+import { useEffect, useState } from "react";
 import { Check, Edit, X } from "react-feather";
-import { CashoutModal } from "@/components";
-import { BountyActionsButton } from "@/components/bounties/Bounty/components";
-import { useChat } from "@/src/providers/chatProvider";
-import { createDM } from "@/src/utils/sendbird";
-import { useIndustry } from "@/src/providers/industryProvider";
-import { useAccount } from "@/src/providers/accountProvider";
 import toast from "react-hot-toast";
+import LinksCard from "./LinksCard";
 
 dayjs.extend(relativeTime);
 

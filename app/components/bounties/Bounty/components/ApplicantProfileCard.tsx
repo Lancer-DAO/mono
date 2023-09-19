@@ -1,3 +1,4 @@
+
 import { Dispatch, FC, SetStateAction } from "react";
 import Image from "next/image";
 import { BountyUserType } from "@/prisma/queries/bounty";

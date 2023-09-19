@@ -1,28 +1,28 @@
-import { FC, useCallback, useEffect, useState } from "react";
-import { useRouter } from "next/router";
+import { LoadingBar, ProgressBar } from "@/components";
 import { IS_CUSTODIAL } from "@/src/constants";
 import {
   BOUNTY_ACTIONS_TUTORIAL_II_INITIAL_STATE,
   PROFILE_TUTORIAL_INITIAL_STATE,
 } from "@/src/constants/tutorials";
 import { useUserWallet } from "@/src/providers";
+import { useAccount } from "@/src/providers/accountProvider";
 import { useTutorial } from "@/src/providers/tutorialProvider";
+import { api } from "@/src/utils";
 import { ProfileNFT } from "@/types/";
 import { createUnderdogClient } from "@underdog-protocol/js";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
-import { LoadingBar, ProgressBar } from "@/components";
+import { useRouter } from "next/router";
+import { FC, useCallback, useEffect, useState } from "react";
 import {
   BadgesCard,
+  CompleteProfileModal,
   PortfolioCard,
-  ReferCard,
-  ResumeCard,
   ProfileNFTCard,
   QuestsCard,
-  CompleteProfileModal,
+  ReferCard,
+  ResumeCard,
 } from "./components";
-import { useAccount } from "@/src/providers/accountProvider";
-import { api } from "@/src/utils";
 
 dayjs.extend(relativeTime);
 

@@ -1,4 +1,4 @@
-import { Industry, Media } from "@/types";
+import { Industry } from "@/types";
 
 export type FORM_SECTION = "CREATE" | "MEDIA" | "FUND" | "PREVIEW" | "SUCCESS";
 
@@ -42,9 +42,17 @@ export interface LancerApplyData {
   details: string;
 }
 
+interface Media {
+  imageUrl: string;
+  title: string;
+  description: string;
+}
+
 export interface LancerUpdateData {
+  bountyId: number;
   name: string;
   type: string;
-  content: string;
-  notes: string;
+  links: string;
+  description: string;
+  media: Media[];
 }
