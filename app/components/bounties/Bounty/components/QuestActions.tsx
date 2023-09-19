@@ -1,10 +1,11 @@
 import { useUserWallet } from "@/src/providers";
 import { useBounty } from "@/src/providers/bountyProvider";
 import { FC, useEffect, useState } from "react";
-// import { BountyActions } from "./BountyActions";
 import ApplicantsView from "./ApplicantsView";
 import LancerApplyView from "./LancerApplyView";
 import LancerSubmitUpdateView from "./LancerSubmitUpdateView";
+import { BountyUserType } from "@/prisma/queries/bounty";
+import ChatView from "./ChatView";
 
 export enum QuestActionView {
   Apply = "apply", // one-way (Lancer)
@@ -24,18 +25,26 @@ const QuestActions: FC = () => {
   // TODO: set loading state, check for user status (creator or applicant?)
   // and then set initial view based on that
   const [currentActionView, setCurrentActionView] = useState<QuestActionView>();
+  const [selectedSubmitter, setSelectedSubmitter] =
+    useState<BountyUserType | null>(null);
 
   useEffect(() => {
     if (!!currentUser && !currentBounty.isCreator) {
+      // is not the creator
       if (currentBounty.isApprovedSubmitter) {
+        // lancer has been approved to work on the quest
         setCurrentActionView(QuestActionView.Chat);
       } else {
+        // lancer needs to apply or is waiting for approval
         setCurrentActionView(QuestActionView.Apply);
       }
     } else if (!!currentUser && currentBounty.isCreator) {
+      // is the creator
       if (currentBounty.approvedSubmitters.length === 0) {
+        // has not approved an applicant to work on quest yet
         setCurrentActionView(QuestActionView.ViewApplicants);
       } else {
+        // has approved an applicant to work on quest
         setCurrentActionView(QuestActionView.Chat);
       }
     }
@@ -44,73 +53,21 @@ const QuestActions: FC = () => {
   if (!currentUser || !currentBounty) return null;
 
   return (
-    <div className="bg-white w-[610px] border border-neutral200 rounded-lg overflow-hidden">
+    <div className="bg-white w-full min-w-[610px] border border-neutral200 rounded-lg overflow-hidden">
       {currentActionView === QuestActionView.Apply && <LancerApplyView />}
       {currentActionView === QuestActionView.ViewApplicants && (
         <ApplicantsView
-          currentActionView={currentActionView}
+          setCurrentActionView={setCurrentActionView}
+          selectedSubmitter={selectedSubmitter}
+          setSelectedSubmitter={setSelectedSubmitter}
+        />
+      )}
+      {currentActionView === QuestActionView.Chat && (
+        <ChatView
+          selectedSubmitter={selectedSubmitter}
           setCurrentActionView={setCurrentActionView}
         />
       )}
-      {currentActionView === QuestActionView.SubmitUpdate && (
-        <LancerSubmitUpdateView />
-      )}
-
-      {/* {currentBounty &&
-            currentBounty.currentSubmitter &&
-            currentBounty.isCreator && (
-              <QuestUser
-                title="Submissions"
-                users={[currentBounty.currentSubmitter.user]}
-              />
-            )}
-          {currentBounty.isCreator &&
-            currentBounty.changesRequestedSubmitters.length > 0 && (
-              <QuestUser
-                title="Changes Requested"
-                users={currentBounty.changesRequestedSubmitters.map(
-                  (submitter) => submitter.user
-                )}
-              />
-            )}
-          {currentBounty.isCreator &&
-            currentBounty.deniedSubmitters.length > 0 && (
-              <QuestUser
-                title="Denied Submitters"
-                users={currentBounty.deniedSubmitters.map(
-                  (submitter) => submitter.user
-                )}
-              />
-            )}
-          {currentBounty.completer && (
-            <QuestUser
-              title="Completed By"
-              users={[currentBounty.completer.user]}
-            />
-          )}
-          {currentBounty.isCreator &&
-            currentBounty.votingToCancel.length > 0 && (
-              <QuestUser
-                title="Voting To Cancel"
-                users={currentBounty.votingToCancel.map(
-                  (submitter) => submitter.user
-                )}
-              />
-            )}
-          {currentBounty.isCreator && currentBounty.needsToVote.length > 0 && (
-            <QuestUser
-              title="Votes Needed to Cancel"
-              users={currentBounty.needsToVote.map(
-                (submitter) => submitter.user
-              )}
-            />
-          )} */}
-      {/* {!!currentBounty && <BountyActions />} */}
-      {/* ) : (
-        <div className="text-industryRedBorder">
-          You must be approved to interact with Quests
-        </div>
-      )} */}
     </div>
   );
 };

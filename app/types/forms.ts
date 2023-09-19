@@ -47,6 +47,7 @@ interface Media {
   title: string;
   description: string;
 }
+
 export interface LancerUpdateData {
   bountyId: number;
   name: string;

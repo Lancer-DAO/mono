@@ -12,11 +12,9 @@ export const Quest = () => {
   }
 
   return (
-    <>
-      <div className="w-full h-full flex flex-col sm:flex-row justify-evenly mt-10 py-24">
-        <QuestDetails />
-        <QuestActions />
-      </div>
-    </>
+    <div className="w-full max-w-[1700px] mx-auto h-full flex justify-center gap-5 mt-10 py-24 px-3 sm:px-20">
+      <QuestDetails />
+      <QuestActions />
+    </div>
   );
 };
