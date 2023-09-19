@@ -6,9 +6,17 @@ dayjs.extend(relativeTime);
 import { Image } from "lucide-react";
 
 export type UpdateType = "submission" | "message" | "application";
-export type SubmissionType = "accepted" | "rejected" | "changes" | "new";
+export type SubmissionType =
+  //   This submission was accepted
+  | "accepted"
+  //   This submission was rejected [second item in listed picture]
+  | "rejected"
+  //   This submission was requested changes
+  | "changes"
+  //   (client side) this quest has a new submission [third item in listed picture]
+  | "new";
 export type ApplicationType =
-  // The person send an application
+  //   (client side) A person sent an application
   | "applied"
   //   The person was accepted to the shortlist
   | "shortlisted"
