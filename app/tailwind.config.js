@@ -22,6 +22,9 @@ module.exports = withUt({
         neutral500: "#73807C",
         neutral600: "#2E3332",
 
+        // neutralBorders
+        neutralBorder500: "#F4F6FA",
+
         // primary
         primary100: "#E1FAF2",
         primary200: "#14BB88",

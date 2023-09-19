@@ -51,6 +51,7 @@ const MultiSelectDropdown = dynamic(
 const RangeSlider = dynamic(() => import("./molecules/RangeSlider"));
 const SidePanel = dynamic(() => import("./molecules/sidebar/index"));
 const TutorialsModal = dynamic(() => import("./molecules/TutorialsModal"));
+const UpdateTableItem = dynamic(() => import("./molecules/UpdateTableItem"));
 const WalletInfo = dynamic(() => import("./molecules/WalletInfo"));
 
 // organisms
@@ -58,6 +59,7 @@ const CashoutModal = dynamic(() => import("./organisms/CashoutModal"));
 const FundBountyModal = dynamic(() => import("./organisms/FundBountyModal"));
 const Header = dynamic(() => import("./organisms/Header"));
 const JoyrideWrapper = dynamic(() => import("./organisms/JoyrideWrapper"));
+const UpdateTable = dynamic(() => import("./organisms/UpdateTable"));
 
 // templates
 const DefaultLayout = dynamic(() => import("./templates/DefaultLayout"));
@@ -110,6 +112,7 @@ export {
   RangeSlider,
   SidePanel,
   TutorialsModal,
+  UpdateTableItem,
   WalletInfo,
 
   // organisms
@@ -117,6 +120,7 @@ export {
   FundBountyModal,
   Header,
   JoyrideWrapper,
+  UpdateTable,
 
   // templates
   DefaultLayout,

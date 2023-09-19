@@ -11,3 +11,25 @@ export type ApplicationType =
   | "accepted"
   //   The person was at shortlist stage but was rejected
   | "denied-shortlist";
+
+type CommonProps = {};
+
+type Props =
+  | (CommonProps & { type: "submission"; subType: SubmissionType })
+  | (CommonProps & { type: "application"; subType: ApplicationType })
+  | (CommonProps & { type: "message"; subType?: never });
+
+const UpdateTableItem: React.FC<Props> = ({ type, subType }) => {
+  switch (type) {
+    case "submission":
+      return <></>;
+
+    case "message":
+      return <></>;
+
+    case "application":
+      return <></>;
+  }
+};
+
+export default UpdateTableItem;

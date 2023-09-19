@@ -15,6 +15,7 @@ import { motion } from "framer-motion";
 import { marked } from "marked";
 import Image from "next/image";
 import { FC, SVGAttributes, useCallback, useEffect, useState } from "react";
+import UpdateTableItem from "./UpdateTableItem";
 
 export interface BountyCardProps extends SVGAttributes<SVGSVGElement> {
   bounty?: BountyPreview;
@@ -97,6 +98,7 @@ const BountyCard: FC<BountyCardProps> = ({
       {...bountyCardAnimation}
       href={handleBountyLink()}
     >
+      <UpdateTableItem type="message" />
       <div className="absolute left-1/2 -translate-x-[53%] top-[6px] w-7">
         <Image
           src={
