@@ -8,9 +8,6 @@ import Image from "next/image";
 import { FC, useEffect, useState } from "react";
 import badgeList from "./badgesnfts.json";
 
-function delay(ms: number): Promise<void> {
-  return new Promise((resolve) => setTimeout(resolve, ms));
-}
 type BadgeListItem = {
   name: string;
   reputation: number;
@@ -67,13 +64,12 @@ export const BadgesCard: FC = () => {
   }, [currentWallet]);
 
   return (
-    <div className="w-full md:w-[460px] max-h-[320px] rounded-xl bg-bgLancerSecondary/[8%] overflow-hidden p-6">
-      <p className="font-bold text-2xl text-textGreen">Badges</p>
+    <div className="w-full md:w-[460px] max-h-[320px] rounded-xl bg-bgLancerSecondary/[8%] p-6">
+      <p className="font-bold text-2xl text-textGreen pb-2">Badges</p>
       {badges?.length > 0 ? (
         <div className="grid grid-cols-6 gap-2">
-          {/* TODO: badges need images and to be styled */}
           {badges.map((badge) => (
-            <div className="relative group tag-item" key={badge.id}>
+            <div className="relative group tag-item z-30" key={badge.id}>
               <Image
                 src={badge.image}
                 alt={badge.name}
