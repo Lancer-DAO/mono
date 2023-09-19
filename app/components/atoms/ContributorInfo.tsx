@@ -3,6 +3,7 @@ import { User, UserPreview } from "@/types";
 import { motion } from "framer-motion";
 import Image from "next/image";
 import { useRouter } from "next/router";
+import Logo from "../@icons/Logo";
 
 const ContributorInfo: React.FC<{
   user: User | UserPreview;
@@ -13,13 +14,17 @@ const ContributorInfo: React.FC<{
   if (disableLink)
     return (
       <div className="flex items-center">
-        <Image
-          src={user.picture ? user.picture : ``}
-          width={40}
-          height={40}
-          alt={user.name}
-          className="h-[25px] w-[25px] rounded-full"
-        />
+        {user?.picture ? (
+          <Image
+            src={user.picture ? user.picture : ``}
+            width={40}
+            height={40}
+            alt={user.name}
+            className="h-[25px] w-[25px] rounded-full"
+          />
+        ) : (
+          <Logo width="25px" height="25px" />
+        )}
         <div className="mx-[10px]">{user.name}</div>
       </div>
     );
@@ -34,13 +39,17 @@ const ContributorInfo: React.FC<{
           router.push(`/account/${user.id}`);
         }}
       >
-        <Image
-          src={user.picture ? user.picture : ``}
-          width={40}
-          height={40}
-          alt={user.name}
-          className="h-[25px] w-[25px] rounded-full"
-        />
+        {user?.picture ? (
+          <Image
+            src={user.picture ? user.picture : ``}
+            width={40}
+            height={40}
+            alt={user.name}
+            className="h-[25px] w-[25px] rounded-full"
+          />
+        ) : (
+          <Logo width="25px" height="25px" />
+        )}
         <div className="mx-[10px]">{user.name}</div>
       </motion.button>
     )
