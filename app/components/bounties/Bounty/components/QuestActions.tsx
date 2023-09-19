@@ -1,11 +1,12 @@
+import { BountyUserType } from "@/prisma/queries/bounty";
 import { useUserWallet } from "@/src/providers";
 import { useBounty } from "@/src/providers/bountyProvider";
 import { FC, useEffect, useState } from "react";
 import ApplicantsView from "./ApplicantsView";
-import LancerApplyView from "./LancerApplyView";
-import LancerSubmitUpdateView from "./LancerSubmitUpdateView";
-import { BountyUserType } from "@/prisma/queries/bounty";
 import ChatView from "./ChatView";
+import LancerApplyView from "./LancerApplyView";
+import LancerSubmitQuoteView from "./LancerSubmitQuoteView";
+import LancerSubmitUpdateView from "./LancerSubmitUpdateView";
 
 export enum QuestActionView {
   Apply = "apply", // one-way (Lancer)
@@ -36,7 +37,7 @@ const QuestActions: FC = () => {
         setCurrentActionView(QuestActionView.Chat);
       } else {
         // lancer needs to apply or is waiting for approval
-        setCurrentActionView(QuestActionView.Apply);
+        setCurrentActionView(QuestActionView.SubmitQuote);
       }
     } else if (!!currentUser && currentBounty.isCreator) {
       // is the creator
@@ -55,6 +56,7 @@ const QuestActions: FC = () => {
   return (
     <div className="bg-white w-full min-w-[610px] border border-neutral200 rounded-lg overflow-hidden">
       {currentActionView === QuestActionView.Apply && <LancerApplyView />}
+      {currentActionView === QuestActionView.SubmitQuote && <LancerSubmitQuoteView />}
       {currentActionView === QuestActionView.ViewApplicants && (
         <ApplicantsView
           setCurrentActionView={setCurrentActionView}

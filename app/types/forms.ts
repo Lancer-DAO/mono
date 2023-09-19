@@ -56,3 +56,14 @@ export interface LancerUpdateData {
   description: string;
   media: Media[];
 }
+
+export enum QUOTE_STATUS {
+  COMPLETE = "Complete",
+}
+export interface LancerQuoteData {
+  name: string;  
+  price: number;
+  time: number;
+  description: string;
+  status: QUOTE_STATUS;
+}
