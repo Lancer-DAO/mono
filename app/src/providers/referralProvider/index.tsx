@@ -233,7 +233,7 @@ const ReferralProvider: FunctionComponent<IReferralProps> = ({ children }) => {
         return { txId: signature, memberPDA };
       } catch (e) {
         console.error(e);
-        return null;
+        throw new Error(`Failed to create buddy member account`, e);
       }
     },
     [client, member, cachedReferrer, publicKey, organization]

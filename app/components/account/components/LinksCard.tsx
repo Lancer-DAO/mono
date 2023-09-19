@@ -12,7 +12,7 @@ const LinksCard = () => {
   const [editLinksMode, setEditLinksMode] = useState(false);
   const { mutateAsync: updateLinks, isLoading: isUpdating } =
     api.users.updateLinks.useMutation();
-  const { account } = useAccount();
+  const { account, setAccount } = useAccount();
 
   const { currentUser } = useUserWallet();
 
@@ -20,7 +20,6 @@ const LinksCard = () => {
     website: account?.website || "",
     github: account?.github || "",
     linkedin: account?.linkedin || "",
-
     twitter: account?.twitter || "",
   });
 
@@ -35,8 +34,18 @@ const LinksCard = () => {
       github: links.github,
       linkedin: links.linkedin,
     });
+
     setEditLinksMode(false);
+
     setLinks({
+      website: updatedLinks?.website,
+      twitter: updatedLinks?.twitter,
+      github: updatedLinks?.github,
+      linkedin: updatedLinks?.linkedin,
+    });
+
+    setAccount({
+      ...account,
       website: updatedLinks?.website,
       twitter: updatedLinks?.twitter,
       github: updatedLinks?.github,

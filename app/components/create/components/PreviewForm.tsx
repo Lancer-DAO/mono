@@ -100,6 +100,7 @@ export const PreviewForm: FC<Props> = ({
         media: formData.media,
         estimatedTime: parseFloat(formData.estimatedTime),
         isPrivate: formData.isPrivate,
+        isTest: formData.isTest,
         // isPrivateRepo: formData.isPrivate || repo ? repo.private : false,
         publicKey: currentWallet.publicKey.toString(),
         escrowKey: escrowKey.toString(),

@@ -5,12 +5,11 @@ import { ProfileFormData } from "@/types";
 import { useUserWallet } from "@/src/providers";
 import { useRouter } from "next/router";
 import { createUnderdogClient } from "@underdog-protocol/js";
-import { PROFILE_PROJECT_PARAMS } from "@/src/constants";
-import dayjs from "dayjs";
 import { api } from "@/src/utils";
 import toast from "react-hot-toast";
 import { AnimatePresence, motion } from "framer-motion";
 import { LoadingBar } from "@/components";
+import { BADGES_PROJECT_PARAMS } from "@/src/constants";
 
 const underdogClient = createUnderdogClient({});
 
@@ -41,19 +40,6 @@ const Onboard: FC = () => {
   const [walletError, setWalletError] = useState<string>("");
 
   const { currentUser, currentWallet } = useUserWallet();
-  const {
-    data: fetchedUser,
-    isLoading: userLoading,
-    isError: userError,
-    refetch,
-  } = api.users.getUser.useQuery(
-    {
-      id: currentUser?.id,
-    },
-    {
-      enabled: !!currentUser,
-    }
-  );
   const { mutateAsync: registerOnboardingInfo } =
     api.users.addOnboardingInformation.useMutation();
   api.users.registerProfileNFT.useQuery(
@@ -69,7 +55,7 @@ const Onboard: FC = () => {
       walletPublicKey: currentWallet?.publicKey.toString(),
     },
     {
-      enabled: !!currentWallet && !!nftCreated && !!fetchedUser,
+      enabled: !!currentWallet && !!currentUser && !walletRegistered,
       onError: (e) => {
         setWalletRegistered(false);
         if (e.message === "Wallet is registered to another user") {
@@ -96,36 +82,6 @@ const Onboard: FC = () => {
 
   const router = useRouter();
 
-  const mintProfileNFT = async () => {
-    const nfts = await underdogClient.getNfts({
-      params: PROFILE_PROJECT_PARAMS,
-      query: {
-        page: 1,
-        limit: 1,
-        ownerAddress: currentWallet.publicKey.toString(),
-      },
-    });
-
-    if (nfts.totalResults === 0) {
-      await underdogClient.createNft({
-        params: PROFILE_PROJECT_PARAMS,
-        body: {
-          name: `${currentUser.name}`,
-          image: "https://i.imgur.com/3uQq5Zo.png", // TODO: change to actual image
-          attributes: {
-            reputation: 0,
-            badges: "",
-            certifications: "",
-            lastUpdated: dayjs().toISOString(),
-          },
-          upsert: true,
-          receiverAddress: currentWallet.publicKey.toString(),
-        },
-      });
-    }
-    setNftCreated(true);
-  };
-
   const handleUpdateProfile = async () => {
     const toastId = toast.loading("Finishing profile creation...");
     try {
@@ -141,9 +97,9 @@ const Onboard: FC = () => {
         website: profileData.website,
       });
 
-      // update profileNFT reputation for successfully onboarding
+      // update profileNFT XP for successfully onboarding
       let nfts = await underdogClient.getNfts({
-        params: PROFILE_PROJECT_PARAMS,
+        params: BADGES_PROJECT_PARAMS,
         query: {
           page: 1,
           limit: 1,
@@ -154,7 +110,7 @@ const Onboard: FC = () => {
       if (nfts.totalResults > 0) {
         const profileNFT = nfts.results[0];
         underdogClient.partialUpdateNft({
-          params: { ...PROFILE_PROJECT_PARAMS, nftId: nfts.results[0].id },
+          params: { ...BADGES_PROJECT_PARAMS, nftId: nfts.results[0].id },
           body: {
             attributes: {
               lastUpdated: new Date().toISOString(),
@@ -175,18 +131,14 @@ const Onboard: FC = () => {
   };
 
   useEffect(() => {
-    if (currentWallet?.publicKey && !nftCreated) mintProfileNFT();
-  }, [currentUser, router.isReady, currentWallet?.publicKey, nftCreated]);
-
-  useEffect(() => {
-    if (!!fetchedUser && !userLoading && !userError) {
+    if (!!currentUser) {
       setProfileData({
         ...profileData,
-        displayName: fetchedUser?.name,
-        email: fetchedUser?.email,
+        displayName: currentUser?.name,
+        email: currentUser?.email,
       });
     }
-  }, [fetchedUser, userLoading, userError]);
+  }, [currentUser]);
 
   return (
     <div className="w-full h-full my-32">
@@ -199,15 +151,11 @@ const Onboard: FC = () => {
           key={`onboard-${formSection}`}
           className="w-full max-w-[1200px] mx-auto flex flex-col md:flex-row md:justify-evenly mt-10"
         >
-          {isVerifyingWallet && !userLoading && (
+          {isVerifyingWallet && !currentUser && (
             <LoadingBar title={"Registering your account"} />
           )}
-          {userLoading && <LoadingBar title={null} />}
-          {userError && (
-            <div className="text-red-500">{`Error registering your account.`}</div>
-          )}
           <WelcomeView
-            account={fetchedUser}
+            account={currentUser}
             formSection={formSection}
             setFormSection={setFormSection}
             walletRegistered={walletRegistered}
@@ -220,14 +168,14 @@ const Onboard: FC = () => {
             setFormSection={setFormSection}
             profileData={profileData}
             setProfileData={setProfileData}
-            account={fetchedUser}
+            account={currentUser}
           />
           <ProfileInfoView
             formSection={formSection}
             setFormSection={setFormSection}
             profileData={profileData}
             setProfileData={setProfileData}
-            account={fetchedUser}
+            account={currentUser}
             handleUpdateProfile={handleUpdateProfile}
           />
         </motion.div>

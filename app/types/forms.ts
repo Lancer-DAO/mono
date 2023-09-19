@@ -1,4 +1,4 @@
-import { Industry, Media } from "@/types";
+import { Industry } from "@/types";
 
 export type FORM_SECTION = "CREATE" | "MEDIA" | "FUND" | "PREVIEW" | "SUCCESS";
 
@@ -18,6 +18,7 @@ export interface QuestFormData {
   repositoryName?: string;
   estimatedTime?: string;
   isPrivate: boolean;
+  isTest?: boolean;
 }
 
 export interface ProfileFormData {
@@ -39,4 +40,19 @@ export interface LancerApplyData {
   about: string;
   resume: string;
   details: string;
+}
+
+interface Media {
+  imageUrl: string;
+  title: string;
+  description: string;
+}
+
+export interface LancerUpdateData {
+  bountyId: number;
+  name: string;
+  type: string;
+  links: string;
+  description: string;
+  media: Media[];
 }

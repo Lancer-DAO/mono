@@ -53,14 +53,14 @@ export const VoteToCancel = () => {
             <div className="mt-2 flex items-center gap-4 justify-center">
               <button
                 onClick={handleYes}
-                className="border border-secondaryBtnBorder bg-secondaryBtn flex
+                className="bg-white border border-neutral300 text-error flex title-text
                 items-center justify-center rounded-md px-3 py-1"
               >
                 Yes
               </button>
               <button
                 onClick={handleNo}
-                className="border border-primaryBtnBorder bg-primaryBtn flex
+                className="bg-primary200 flex text-white title-text
                 items-center justify-center rounded-md px-3 py-1"
               >
                 No

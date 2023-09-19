@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -12,24 +13,23 @@ import { smallClickAnimation } from "@/src/constants";
 import { useUserWallet } from "@/src/providers";
 import { useAccount } from "@/src/providers/accountProvider";
 import { api } from "@/src/utils";
-import { Media, User } from "@/types";
-import "@uploadthing/react/styles.css";
+import { Media } from "@/types";
 import { motion } from "framer-motion";
 import { X } from "lucide-react";
 import Image from "next/image";
-import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
 
-const PortfolioCard: React.FC = () => {
+import "@uploadthing/react/styles.css";
+
+export const PortfolioCard: React.FC = () => {
   const { account } = useAccount();
 
   const { currentUser } = useUserWallet();
-  const maxMedia = 3;
+  const maxMedia = 4;
   const { mutateAsync: createMedia } = api.media.createMedia.useMutation();
   const { mutateAsync: deleteMedia } = api.media.deleteMedia.useMutation();
   const { mutateAsync: updateMedia } = api.media.updateMedia.useMutation();
-  const { data: media } = api.media.getMedia.useQuery({
+  const { data: media, refetch } = api.media.getMedia.useQuery({
     userId: account?.id,
   });
   const [portfolio, setPortfolio] = useState<Media[]>([]);
@@ -60,18 +60,18 @@ const PortfolioCard: React.FC = () => {
       const toastId = toast(
         (t) => (
           <div>
-            Are you sure you want to delete this?
+            Are you sure you want to cancel the Quest?
             <div className="mt-2 flex items-center gap-4 justify-center">
               <button
                 onClick={handleYes}
-                className="border border-secondaryBtnBorder bg-secondaryBtn flex
+                className="bg-white border border-neutral300 text-error flex title-text
                 items-center justify-center rounded-md px-3 py-1"
               >
                 Yes
               </button>
               <button
                 onClick={handleNo}
-                className="border border-primaryBtnBorder bg-primaryBtn flex
+                className="bg-primary200 flex text-white title-text
                 items-center justify-center rounded-md px-3 py-1"
               >
                 No
@@ -93,6 +93,7 @@ const PortfolioCard: React.FC = () => {
       description: newReference.description,
     });
     setPortfolio([...portfolio, newMedia]);
+    refetch();
   };
 
   const handleMediaRemoved = async (mediaId, portfolioIndex) => {
@@ -106,6 +107,7 @@ const PortfolioCard: React.FC = () => {
         (_, index) => index != portfolioIndex
       );
       setPortfolio(updatedPortfolio);
+      refetch();
     } catch (error) {
       console.log(error);
       toast.error(`Error deleting media: ${error.message}`);
@@ -130,12 +132,13 @@ const PortfolioCard: React.FC = () => {
 
       setPortfolio(updatedPortfolio);
     }
+    refetch();
   };
 
   return (
     <div className="relative w-full md:w-[658px] rounded-xl bg-bgLancerSecondary/[8%] overflow-hidden p-6 pt-8 pb-10">
       <p className="font-bold text-2xl text-textGreen mb-2">Portfolio</p>
-      <div className="grid grid-cols-3 gap-6">
+      <div className="grid grid-cols-2 gap-6">
         {[...Array(maxMedia)].map((_, index) => {
           if (index < portfolio.length) {
             const media = portfolio[index];
@@ -216,5 +219,3 @@ const PortfolioCard: React.FC = () => {
     </div>
   );
 };
-
-export default PortfolioCard;

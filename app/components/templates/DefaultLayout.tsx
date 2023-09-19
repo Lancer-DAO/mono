@@ -14,7 +14,7 @@ const DefaultLayout: React.FC<{ children: ReactNode }> = ({ children }) => {
         <main>{children}</main>
       </div>
 
-      <SidePanel />
+      {/* <SidePanel /> */}
     </div>
   );
 };

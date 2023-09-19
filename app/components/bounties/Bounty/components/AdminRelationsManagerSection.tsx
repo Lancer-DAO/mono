@@ -17,7 +17,7 @@ import { BountyUserType } from "@/prisma/queries/bounty";
 import { updateList } from "@/src/utils";
 import { useState } from "react";
 import { capitalize } from "lodash";
-import ApplicantProfileCard from "./ApplicantProfileCard";
+import Image from "next/image";
 
 export type AdminRelationsManagerSectionType = "approved" | "requested";
 interface AdminRelationsManagerSectionProps {
@@ -50,7 +50,19 @@ export const AdminRelationsManagerSection: React.FC<
 
   return (
     <div className="submitter-section flex items-center">
-      <ApplicantProfileCard user={user} />
+      <div className="flex items-center gap-2">
+        <Image
+          src={user.user.picture}
+          alt="user avatar"
+          width={36}
+          height={36}
+          className="rounded-full overflow-hidden"
+        />
+        <div className="flex flex-col">
+          <p className="text-neutral600 title-text">{user.user.name}</p>
+          <p className="text-neutral500 text-xs">{`${user.user.experience} XP`}</p>
+        </div>
+      </div>
       <div className="items-center ml-2 flex justify-center">
         <>
           <MultiSelectDropdown

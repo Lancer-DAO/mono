@@ -20,6 +20,7 @@ model Bounty {
   estimatedTime Decimal? @db.Decimal(10, 2)
   price         Decimal? @db.Decimal(16, 9)
   isPrivate     Boolean
+  isTest        Boolean  @default(false)
   state         String   @db.VarChar(24)
   title         String   @db.VarChar(256)
   type          String?  @db.VarChar(24)
@@ -45,6 +46,7 @@ model Bounty {
   industries   Industry[]
   disciplines  Discipline[]
   media        Media[]
+  updates      Update[]
 
   @@index([milestoneid])
   @@index([projectid])
@@ -213,6 +215,7 @@ model Media {
 
   // Relations
   bounty Bounty[]
+  update Update[]
   user   User[]
 }
 
@@ -380,11 +383,26 @@ model Transaction {
   @@index([escrowid])
 }
 
+model Update {
+   id Int @id @default(autoincrement())
+
+   // Fields
+   name String @db.VarChar(128)
+   type String @db.VarChar(24)
+   description String @db.VarChar(5000)
+   links String @db.VarChar(256)
+   
+   // Relations
+   media       Media[]
+   bounty      Bounty[]
+}
+
 model User {
   id Int @id @default(autoincrement())
 
   // Fields
   isAdmin               Boolean?
+  isLancerDev           Boolean?
   verified              Boolean?
   hasProfileNFT         Boolean?
   googleId              String?  @db.VarChar(64)
@@ -408,8 +426,9 @@ model User {
   company               String?  @db.VarChar(128)
   position              String?  @db.VarChar(128)
   hasFinishedOnboarding Boolean? @default(false)
+  hasCompletedProfile   Boolean? @default(false)
   hasBeenApproved       Boolean? @default(false)
-  reputation            Decimal? @default(0)
+  experience            Int?     @default(0)
 
   // Relations
   wallets      Wallet[]

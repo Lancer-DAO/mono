@@ -10,7 +10,7 @@ import { useRouter } from "next/router";
 import { useState } from "react";
 import toast from "react-hot-toast";
 
-const ResumeCard: React.FC<{
+export const ResumeCard: React.FC<{
   resumeUrl: string;
   setResumeUrl: (value: string) => void;
   preview?: boolean;
@@ -40,18 +40,18 @@ const ResumeCard: React.FC<{
       const toastId = toast(
         (t) => (
           <div>
-            Are you sure you want to delete this resume?
+            Are you sure you want to cancel the Quest?
             <div className="mt-2 flex items-center gap-4 justify-center">
               <button
                 onClick={handleYes}
-                className="border border-secondaryBtnBorder bg-secondaryBtn flex
+                className="bg-white border border-neutral300 text-error flex title-text
                 items-center justify-center rounded-md px-3 py-1"
               >
                 Yes
               </button>
               <button
                 onClick={handleNo}
-                className="border border-primaryBtnBorder bg-primaryBtn flex
+                className="bg-primary200 flex text-white title-text
                 items-center justify-center rounded-md px-3 py-1"
               >
                 No
@@ -140,5 +140,3 @@ const ResumeCard: React.FC<{
     </div>
   );
 };
-
-export default ResumeCard;

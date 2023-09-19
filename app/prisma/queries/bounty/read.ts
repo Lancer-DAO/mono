@@ -6,20 +6,51 @@ import {
 } from "@/types/";
 import { UnwrapArray, UnwrapPromise } from "@/types/Bounties";
 import * as Prisma from "@prisma/client";
+import { trimEnd } from "lodash";
 
-const BOUNTY_MANY_INCLUDE = {
+const BOUNTY_MANY_SELECT = {
   escrow: {
     include: {
-      mint: true,
+      mint: {
+        select: {
+          id: true,
+          logo: true,
+        },
+      },
     },
   },
   users: {
     include: {
-      user: true,
+      user: {
+        select: {
+          id: true,
+          name: true,
+          picture: true,
+        },
+      },
     },
   },
-  tags: true,
-  industries: true,
+  tags: {
+    select: {
+      name: true,
+    },
+  },
+  industries: {
+    select: {
+      name: true,
+      id: true,
+      color: true,
+      icon: true,
+    },
+  },
+  title: true,
+  id: true,
+  description: true,
+  isPrivate: true,
+  state: true,
+  createdAt: true,
+  isTest: true,
+  price: true,
 };
 
 const bountyQuery = async (id: number) => {
@@ -54,38 +85,46 @@ const bountyQuery = async (id: number) => {
 };
 
 const bountyQueryMany = async (userId?: number, excludePrivate?: boolean) => {
-  let whereClause: any = {
-    users: {
-      some: {
-        userid: userId,
-      },
+  const bounties = await prisma.bounty.findMany({
+    where: {
+      OR: [
+        {
+          users: {
+            some: {
+              userid: userId,
+            },
+          },
+          // delete me if local and testing quests page
+          isTest: false,
+        },
+        {
+          users: {
+            none: {
+              userid: userId,
+            },
+          },
+          isPrivate: false,
+          isTest: false,
+          state: {
+            in: ["accepting_applications", "new"],
+          },
+        },
+      ],
     },
-  };
-  if (excludePrivate) {
-    whereClause = { ...whereClause, isPrivate: false };
-  }
-  return !!userId
-    ? await prisma.bounty.findMany({
-        where: whereClause,
-        orderBy: {
-          createdAt: "desc",
-        },
-        include: BOUNTY_MANY_INCLUDE,
-        take: 25,
-      })
-    : await prisma.bounty.findMany({
-        include: BOUNTY_MANY_INCLUDE,
-        orderBy: {
-          createdAt: "desc",
-        },
-        take: 25,
-      });
+    orderBy: {
+      createdAt: "desc",
+    },
+    select: BOUNTY_MANY_SELECT,
+  });
+
+  return bounties;
 };
 
 export type BountyType = UnwrapPromise<ReturnType<typeof get>>;
 export type BountyPreviewType = UnwrapArray<
   UnwrapPromise<ReturnType<typeof getMany>>
 >;
+export type UserPreviewType = BountyPreviewType["users"][0]["user"];
 export type BountyQueryType = UnwrapPromise<ReturnType<typeof bountyQuery>>;
 export type BountyPreviewQueryType = UnwrapPromise<
   ReturnType<typeof bountyQueryMany>
@@ -96,7 +135,7 @@ export type UserRelationsRaw = (Prisma.BountyUser & {
   wallet: Prisma.Wallet;
 })[];
 export type UserPreviewRelationsRaw = (Prisma.BountyUser & {
-  user: Prisma.User;
+  user: Pick<Prisma.User, "picture" | "id" | "name">;
 })[];
 
 export const get = async (id: number, currentUserId: number) => {
@@ -119,40 +158,16 @@ export const get = async (id: number, currentUserId: number) => {
   };
 };
 
-export const getMany = async (
-  currentUserId: number,
-  onlyMyBounties?: boolean
-) => {
-  if (onlyMyBounties) {
-    const rawBounties = await bountyQueryMany(currentUserId);
-    const mappedBounties = rawBounties.map((bounty) => {
-      const userRelations = bounty.users;
-      const creator = getBountyCreator(userRelations);
-      return { ...bounty, creator };
-    });
+export const getMany = async (currentUserId: number) => {
+  const bounties = await bountyQueryMany(currentUserId);
 
-    return mappedBounties;
-  } else {
-    const bounties = await bountyQueryMany();
-    const filteredByPrivate = bounties.filter((bounty) => {
-      if (bounty.isPrivate) {
-        const bountyUsers = bounty.users.map((user) => user.user.id);
-        if (bountyUsers.includes(currentUserId)) {
-          return true;
-        }
-        return false;
-      }
-      return true;
-    });
+  const mappedBounties = bounties.map((bounty) => {
+    const userRelations = bounty.users;
+    const creator = getBountyCreator(userRelations);
+    return { ...bounty, creator };
+  });
 
-    const mappedBounties = filteredByPrivate.map((bounty) => {
-      const userRelations = bounty.users;
-      const creator = getBountyCreator(userRelations);
-      return { ...bounty, creator };
-    });
-
-    return mappedBounties;
-  }
+  return mappedBounties;
 };
 
 export const convertBountyUserToUser = (user: UserRelation) => {
@@ -181,17 +196,19 @@ const getBountyRelations = (
   const allUsers = rawUsers.map((user) => {
     return convertBountyUserToUser(user);
   });
-  // console.log(allUsers);
   const newBounty: BountyUserRelations = {
     all: allUsers,
     creator: allUsers.find((submitter) =>
       submitter.relations.includes(BOUNTY_USER_RELATIONSHIP.Creator)
     ),
-    requestedSubmitters: allUsers.filter((submitter) =>
-      submitter.relations.includes(BOUNTY_USER_RELATIONSHIP.RequestedSubmitter)
+    requestedLancers: allUsers.filter((submitter) =>
+      submitter.relations.includes(BOUNTY_USER_RELATIONSHIP.RequestedLancer)
     ),
-    deniedRequesters: allUsers.filter((submitter) =>
-      submitter.relations.includes(BOUNTY_USER_RELATIONSHIP.DeniedRequester)
+    shortlistedLancers: allUsers.filter((submitter) =>
+      submitter.relations.includes(BOUNTY_USER_RELATIONSHIP.ShortlistedLancer)
+    ),
+    deniedLancers: allUsers.filter((submitter) =>
+      submitter.relations.includes(BOUNTY_USER_RELATIONSHIP.DeniedLancer)
     ),
     approvedSubmitters: allUsers.filter((submitter) =>
       submitter.relations.includes(BOUNTY_USER_RELATIONSHIP.ApprovedSubmitter)
@@ -237,11 +254,14 @@ const getCurrentUserRelations = (
     isCreator: currentUserRelationsList.includes(
       BOUNTY_USER_RELATIONSHIP.Creator
     ),
-    isRequestedSubmitter: currentUserRelationsList.includes(
-      BOUNTY_USER_RELATIONSHIP.RequestedSubmitter
+    isRequestedLancer: currentUserRelationsList.includes(
+      BOUNTY_USER_RELATIONSHIP.RequestedLancer
     ),
-    isDeniedRequester: currentUserRelationsList.includes(
-      BOUNTY_USER_RELATIONSHIP.DeniedRequester
+    isShortlistedLancer: currentUserRelationsList.includes(
+      BOUNTY_USER_RELATIONSHIP.ShortlistedLancer
+    ),
+    isDeniedLancer: currentUserRelationsList.includes(
+      BOUNTY_USER_RELATIONSHIP.DeniedLancer
     ),
     isApprovedSubmitter: currentUserRelationsList.includes(
       BOUNTY_USER_RELATIONSHIP.ApprovedSubmitter
