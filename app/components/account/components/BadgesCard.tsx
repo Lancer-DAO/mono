@@ -7,6 +7,8 @@ import dayjs from "dayjs";
 import Image from "next/image";
 import badgeList from "./badgesnfts.json";
 import { Tooltip } from "@/components";
+import { useAccount } from "@/src/providers/accountProvider";
+import { api } from "@/src/utils";
 
 type BadgeListItem = {
   name: string;
@@ -24,19 +26,28 @@ const badgesList = badgeList as BadgeListItem[];
 const underdogClient = createUnderdogClient({});
 
 export const BadgesCard: FC = () => {
-  const { currentWallet } = useUserWallet();
+  const { account } = useAccount();
+  const { data: wallets } = api.users.getWallets.useQuery(
+    {
+      id: account?.id,
+    },
+    {
+      enabled: !!account,
+    }
+  );
+
   const [badges, setBadges] = useState<BountyNFT[]>([]);
 
-  const fetchBountyNFTs = async () => {
+  const getBadgeNFTSForWallet = async (wallet: string) => {
     const nfts = await underdogClient.getNfts({
       params: BADGES_PROJECT_PARAMS,
       query: {
         page: 1,
         limit: 12,
-        ownerAddress: currentWallet.publicKey.toBase58(),
+        ownerAddress: wallet,
       },
     });
-    const bountyNFTs: BountyNFT[] = nfts.results.map((nft) => {
+    const badgeNFTs: BountyNFT[] = nfts.results.map((nft) => {
       const { name, attributes, image, id, ownerAddress } = nft;
       return {
         name: name,
@@ -53,15 +64,27 @@ export const BadgesCard: FC = () => {
         ownerAddress,
       };
     });
-    bountyNFTs.reverse();
-    setBadges(bountyNFTs);
+    badgeNFTs.reverse();
+    return badgeNFTs;
+  };
+
+  const fetchBadgeNFTs = async () => {
+    const addresses = wallets.map((wallet) => wallet.publicKey);
+    const badges = [];
+    const allNfts = addresses.map(async (address) => {
+      const nfts = await getBadgeNFTSForWallet(address);
+      badges.push(...nfts);
+    });
+    await Promise.all(allNfts);
+
+    setBadges(badges);
   };
 
   useEffect(() => {
-    if (currentWallet) {
-      fetchBountyNFTs();
+    if (wallets) {
+      fetchBadgeNFTs();
     }
-  }, [currentWallet]);
+  }, [wallets]);
 
   return (
     <div className="w-full md:w-[460px] max-h-[320px] rounded-xl bg-bgLancerSecondary/[8%] p-6">
