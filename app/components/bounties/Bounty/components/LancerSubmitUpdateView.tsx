@@ -1,25 +1,20 @@
-import { ContributorInfo } from "@/components";
 import Crown from "@/components/@icons/Crown";
+import { updateMedia } from "@/server/api/routers/media/updateMedia";
 import { smallClickAnimation } from "@/src/constants";
 import { useUserWallet } from "@/src/providers";
 import { useBounty } from "@/src/providers/bountyProvider";
-import { useReferral } from "@/src/providers/referralProvider";
-import { api, updateList } from "@/src/utils";
+import { api } from "@/src/utils";
 import { UploadDropzone } from "@/src/utils/uploadthing";
 import {
-  BOUNTY_USER_RELATIONSHIP,
-  LancerApplyData,
   LancerUpdateData,
 } from "@/types";
-import { oembed } from "@loomhq/loom-embed";
-import { PublicKey } from "@solana/web3.js";
+import { oembed, validate } from "@loomhq/loom-embed";
 import { motion } from "framer-motion";
-import { update } from "lodash";
-import { ChevronsUpDown, Image } from "lucide-react";
+import { ChevronsUpDown } from "lucide-react";
+import Image from "next/image";
 import { FC, useEffect, useState } from "react";
-import toast from "react-hot-toast";
+import { toast } from "react-hot-toast";
 import ActionsCardBanner from "./ActionsCardBanner";
-import AlertCard from "./AlertCard";
 
 const LancerSubmitUpdateView: FC = () => {
   const { currentBounty, setCurrentBounty } = useBounty();
@@ -29,27 +24,68 @@ const LancerSubmitUpdateView: FC = () => {
   const [selectedType, setSelectedType] = useState("Loom recording");
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [updateData, setUpdateData] = useState<LancerUpdateData>({
+    bountyId: currentBounty.id,
     name: "",
     type: "",
-    content: "",
-    notes: "",
+    description: "",
+    links: "",
+    media: [],
   });
+  const { data: updates, refetch } = api.update.getUpdatesByBounty.useQuery(
+    { id: currentBounty.id }, 
+    { enabled: !!currentBounty }
+  );
+  const { mutateAsync: createUpdate } = api.update.createUpdate.useMutation();
+  const { mutateAsync: deleteMedia } = api.bounties.deleteMedia.useMutation();
   const [videoHTML, setVideoHTML] = useState("");
+
+  enum UPDATE_TYPES {
+    Loom = "Loom recording",
+    Text = "Text",
+    FileUpload = "File Upload",
+  }
   
-  const types = ["Loom recording", "Text", "PNG image", "MP4 video"];
+  const types = [UPDATE_TYPES.Loom, UPDATE_TYPES.FileUpload, UPDATE_TYPES.Text]
   
   const toggleDropdown = () => setDropdownOpen(!dropdownOpen);
+
+  const handleSubmitUpdate = async () => {
+    const toastId = toast.loading("Sending update...");
+    try {
+      await createUpdate(updateData);
+      refetch();
+      setHasApplied(true);
+      toast.success("Update sent", { id: toastId });
+    } catch (error) {
+      toast.error("Error submitting update", { id: toastId });
+    }
+  };
+
+  const handleDropdownChange = async (type: string) => {
+    if(selectedType === UPDATE_TYPES.FileUpload && updateData.media.length && !hasApplied) {
+      await deleteMedia({ imageUrl: updateData.media[0]?.imageUrl });
+      setUpdateData({ ...updateData, type, media: [] });
+    } else {
+      setUpdateData({ ...updateData, type, links: "" });
+    }
+    setSelectedType(type);
+    toggleDropdown();
+  }
+
+  const isVideo = (url: string) => {
+    return url.includes(".mp4") || url.includes(".mov");
+  }
   
   useEffect(() => {
     async function setupLoom() {
-      const { html } = await oembed("https://www.loom.com/share/f6a176ec0fdc4f538e27d8d9ce4e2f0a?sid=717247bb-c0e3-46fb-81e1-a4196ae0a2c0");
+      const { html } = await oembed(updateData.links);
       setVideoHTML(html);
     }
 
+    if(validate.isLoomUrl(updateData.links)) {
       setupLoom();
-  
-  }, [updateData.content])
-  
+    }
+  }, [updateData.links])
 
   if (!currentBounty || !currentUser) return null;
 
@@ -57,8 +93,8 @@ const LancerSubmitUpdateView: FC = () => {
     <div className="flex flex-col">
       <ActionsCardBanner
         title={`Update to ${currentBounty.creator.user.name}`}
-        subtitle={`${currentBounty.pullRequests.length} ${
-          currentBounty.pullRequests.length === 1 ? "update" : "updates"
+        subtitle={`${updates?.length || 0} ${
+          (updates?.length || 0) === 1 ? "update" : "updates"
         } so far`}
       ></ActionsCardBanner>
       <div className="w-full p-6 flex items-center gap-4">
@@ -90,10 +126,7 @@ const LancerSubmitUpdateView: FC = () => {
                 <div
                   key={type}
                   className="px-2 py-[6px]"
-                  onClick={() => {
-                    setSelectedType(type);
-                    toggleDropdown();
-                  }}
+                  onClick={() => handleDropdownChange(type)}
                 >
                   {type}
                 </div>
@@ -102,7 +135,7 @@ const LancerSubmitUpdateView: FC = () => {
           )}
         </div>
       </div>
-      {selectedType === "Loom recording" && (
+      {selectedType === UPDATE_TYPES.Loom && (
         <div className="w-full px-6 flex flex-col gap-4">
           <div className="flex items-center gap-4">
             <p className="text-neutral600 text">Loom Link</p>
@@ -112,60 +145,66 @@ const LancerSubmitUpdateView: FC = () => {
               bg-neutral100 text-neutral500 w-[190px] h-[34px] rounded-md px-3"
               placeholder="www.loom.com/dkdkdkdkd"
               disabled={hasApplied}
-              value={updateData.content}
-              onChange={(e) =>
-                setUpdateData({ ...updateData, content: e.target.value })
-              }
+              value={updateData.links}
+              onChange={(e) => {
+                setUpdateData({ ...updateData, links: e.target.value.split('?')[0] });
+              }}
             />
           </div>
-          <div className="flex jutify-center items-center rounded-md border px-[151px] py-[33px] h-[228px]">
-            {/* <div className="py-[10px] flex flex-col items-center gap-2">
-              <Crown />
-              <div className="text-mini text-neutral400 text-center">
-                Enter a link above and you will see a preview. Client will see
-                the same.
+          {validate.isLoomUrl(updateData.links) === false && (
+            <div className="flex jutify-center items-center rounded-md border px-[151px] py-[33px] h-[228px]">
+              <div className="py-[10px] flex flex-col items-center gap-2">
+                <Crown />
+                <div className="text-mini text-neutral400 text-center">
+                  Enter a link above and you will see a preview. Client will see
+                  the same.
+                </div>
               </div>
-            </div> */}
+            </div>
+          )}
+          {validate.isLoomUrl(updateData.links) && (
             <div dangerouslySetInnerHTML={{ __html: videoHTML }}></div>
-          </div>
+          )}
         </div>
       )}
-      {selectedType === "Text" && (
-        <div className="w-full px-6 flex flex-col gap-4">
-          <textarea
-            className="text border border-neutral200 placeholder:text-neutral500/80 resize-none h-[232px]
-            bg-neutral100 text-neutral500 w-full rounded-md px-3 p-2 disabled:opacity-80"
-            placeholder="Talk about your work"
-            disabled={hasApplied}
-            value={updateData.content}
-            onChange={(e) =>
-              setUpdateData({ ...updateData, content: e.target.value })
-            }
-          />
-        </div>
-      )}
-      {selectedType === "PNG image" && (
+      {selectedType === UPDATE_TYPES.FileUpload && (
         <div className="w-full px-6">
-          {/* <div className="rounded-md border px-[151px] py-[33px] h-[228px]" /> */}
-          <UploadDropzone
-            endpoint="imageUploader"
-            config={{ mode: "auto" }}
-            className="rounded-md border px-[151px] py-[33px] h-[228px] text-mini text-neutral300 ut-label:text-mini ut-label:text-neutral300 ut-upload-icon:h-4 ut-upload-icon:w-4 ut-label:mt-1"
-          />
+
+          {updateData.media.length ? (
+            <>
+              {isVideo(updateData.media[0].imageUrl) ? (
+                <video width={610} height={228} controls>
+                  <source src={updateData.media[0].imageUrl} />
+                </video>
+                ) : (
+                <Image src={updateData.media[0]?.imageUrl} alt={`${updateData.name} image`} width={610} height={228} />
+              )}
+            </>
+          ) : (
+            <UploadDropzone
+              endpoint="imageAndVideoUploader"
+              onClientUploadComplete={(res) => {
+                setUpdateData({ ...updateData, 
+                  media: [{
+                    imageUrl: res.at(0).url,
+                    title: "",
+                    description: "",
+                  }] 
+                });
+              }}
+              onUploadError={(error: Error) => {
+                console.log(error);
+                toast.error(`Error uploading: ${error.message}`)
+              }}
+              config={{ mode: "auto" }}
+              appearance={{
+                button: "w-28 px-4 py-2 rounded-md bg-transparent ut-uploading:cursor-not-allowed ut-uploading:bg-neutral300"
+              }}
+              className="rounded-md border px-[151px] py-[33px] h-[228px] text-mini text-neutral300 ut-label:text-mini ut-label:text-neutral300 ut-upload-icon:h-4 ut-upload-icon:w-4 ut-label:mt-1"
+            />
+          )}
         </div>
       )}
-
-      {selectedType === "MP4 video" && (
-        <div className="w-full px-6">
-          {/* <div className="rounded-md border px-[151px] py-[33px] h-[228px]" /> */}
-          <UploadDropzone
-            endpoint="imageUploader"
-            config={{ mode: "auto" }}
-            className="rounded-md border px-[151px] py-[33px] h-[228px]"
-          />
-        </div>
-      )}
-
       <div className="w-full px-6 py-4 flex flex-col gap-4">
         <p className="text-neutral-600 text">
           Need to give instructions/notes about the work?
@@ -175,9 +214,9 @@ const LancerSubmitUpdateView: FC = () => {
           bg-neutral100 text-neutral500 w-full rounded-md px-3 p-2 disabled:opacity-80"
           placeholder="Type your message here..."
           disabled={hasApplied}
-          value={updateData.notes}
+          value={updateData.description}
           onChange={(e) =>
-            setUpdateData({ ...updateData, notes: e.target.value })
+            setUpdateData({ ...updateData, description: e.target.value })
           }
         />
       </div>
@@ -186,7 +225,7 @@ const LancerSubmitUpdateView: FC = () => {
           <motion.button
             {...smallClickAnimation}
             className="bg-primary200 text-white h-9 w-fit px-4 py-2 title-text rounded-md"
-            onClick={() => {}}
+            onClick={handleSubmitUpdate}
           >
             Submit Update
           </motion.button>

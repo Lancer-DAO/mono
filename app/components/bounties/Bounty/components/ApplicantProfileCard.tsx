@@ -6,7 +6,7 @@ import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import { motion } from "framer-motion";
 import Image from "next/image";
-import { FC } from "react";
+import { Dispatch, FC, SetStateAction } from "react";
 import { EApplicantsView } from "./ApplicantsView";
 import { QuestActionView } from "./QuestActions";
 
