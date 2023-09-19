@@ -1,40 +1,55 @@
-import { withPageAuthRequired } from "@auth0/nextjs-auth0";
-import { Bounties } from "@/components/bounties/Bounties/Bounties";
-import { NextSeo } from "next-seo";
-import { useUserWallet } from "@/src/providers";
-import {
-  createFFA,
-  sendInvoice,
-  acceptInvoice,
-  rejectInvoice,
-  closeInvoice,
-  addSubmitterFFAOld,
-  submitRequestFFA,
-  approveRequestFFAOld,
-} from "@/escrow/adapters";
-import { PublicKey } from "@solana/web3.js";
-import { USDC_MINT } from "@/src/constants";
-import { Escrow } from "@/types";
+import React from "react";
+import { getSession, withPageAuthRequired } from "@auth0/nextjs-auth0";
+import { GetServerSidePropsContext } from "next";
+import * as queries from "@/prisma/queries";
+
+export async function getServerSideProps(
+  context: GetServerSidePropsContext<{ id: string; req; res }>
+) {
+  withPageAuthRequired();
+  const { req, res } = context;
+  const metadata = await getSession(req, res);
+  if (!metadata?.user) {
+    return {
+      redirect: {
+        destination: "/api/auth/login",
+        permanent: false,
+      },
+    };
+  }
+  const { email } = metadata.user;
+
+  const user = await queries.user.getByEmail(email);
+
+  if (!user || !user.hasFinishedOnboarding) {
+    return {
+      redirect: {
+        destination: "/welcome",
+        permanent: false,
+      },
+    };
+  }
+  if (!user.isLancerDev) {
+    return {
+      redirect: {
+        destination: "/account",
+        permanent: false,
+      },
+    };
+  }
+  return {
+    props: {
+      currentUser: JSON.stringify(user),
+    },
+  };
+}
 import { UpdateTable } from "@/components";
-
-export const getServerSideProps = withPageAuthRequired();
-
-const TIMESTAMP = "1691549508859";
-
-const CLIENT_WALLET = new PublicKey(
-  "BuxU7uwwkoobF8p4Py7nRoTgxWRJfni8fc4U3YKGEXKs"
-);
-const LANCER_WALLET = new PublicKey(
-  "WbmLPptTGZTFK5ZSks7oaa4Qx69qS3jFXMrAsbWz1or"
-);
-
-const FUND_AMOUNT = 0.001;
 
 const BountiesPage: React.FC = () => {
   return (
-    <>
+    <div className="w-full flex items-center justify-center mt-5 gap-5 py-24">
       <UpdateTable />
-    </>
+    </div>
   );
 };
 

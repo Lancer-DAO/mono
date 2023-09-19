@@ -10,10 +10,13 @@ const QuestCompleted = dynamic(() => import("./@animations/QuestCompleted"));
 const Close = dynamic(() => import("./@icons/Close"));
 const Coins = dynamic(() => import("./@icons/Coins"));
 const ExternalLinkIcon = dynamic(() => import("./@icons/ExternalLinkIcon"));
+const Flame = dynamic(() => import("./@icons/Flame"));
 const LockIcon = dynamic(() => import("./@icons/LockIcon"));
 const Logo = dynamic(() => import("./@icons/Logo"));
+const Message = dynamic(() => import("./@icons/Message"));
 const NextArrow = dynamic(() => import("./@icons/NextArrow"));
 const PhantomLogo = dynamic(() => import("./@icons/PhantomLogo"));
+const ServiceBell = dynamic(() => import("./@icons/ServiceBell"));
 const StarIcon = dynamic(() => import("./@icons/StarIcon"));
 const USDC = dynamic(() => import("./@icons/USDC"));
 
@@ -75,10 +78,13 @@ export {
   Close,
   Coins,
   ExternalLinkIcon,
+  Flame,
   LockIcon,
   Logo,
+  Message,
   NextArrow,
   PhantomLogo,
+  ServiceBell,
   StarIcon,
   USDC,
 
