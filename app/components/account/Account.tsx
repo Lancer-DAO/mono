@@ -148,8 +148,8 @@ export const Account: FC<Props> = ({ self }) => {
         {account && currentUser ? (
           <div className="flex gap-5">
             {/* left column */}
-            <div className="flex flex-col gap-2 w-full md:max-w-[482px]">
-              <h1 className="mb-3 whitespace-nowrap h-[50px]">{`${
+            <div className="flex flex-col gap-5 w-full md:max-w-[482px]">
+              <h1 className="whitespace-nowrap h-[50px]">{`${
                 self ? "Your Profile" : `@${account?.name}`
               }`}</h1>
               <ProfileNFTCard
