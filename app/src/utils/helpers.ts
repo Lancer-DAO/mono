@@ -1,7 +1,7 @@
-import { Bounty } from "@prisma/client";
+import { Bounty, BountyPreview } from "@/types";
 import { Decimal } from "@prisma/client/runtime";
 
-export const getFormattedDate = (bounty: Bounty) => {
+export const getFormattedDate = (bounty: Bounty | BountyPreview) => {
   var date: Date;
   if (bounty) {
     const createdAtMS = Number(bounty?.createdAt);
