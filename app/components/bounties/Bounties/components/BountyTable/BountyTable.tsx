@@ -45,7 +45,6 @@ const BountyList: React.FC<{}> = () => {
 
   useEffect(() => {
     const filteredBounties = allBounties?.filter((bounty) => {
-      return true;
       if (!currentUser.isLancerDev && bounty.isTest) {
         return false;
       }
