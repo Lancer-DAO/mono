@@ -14,6 +14,7 @@ const ExternalLinkIcon = dynamic(() => import("./@icons/ExternalLinkIcon"));
 const Flame = dynamic(() => import("./@icons/Flame"));
 const LockIcon = dynamic(() => import("./@icons/LockIcon"));
 const Logo = dynamic(() => import("./@icons/Logo"));
+const Mail = dynamic(() => import("./@icons/Mail"));
 const Message = dynamic(() => import("./@icons/Message"));
 const NextArrow = dynamic(() => import("./@icons/NextArrow"));
 const PhantomLogo = dynamic(() => import("./@icons/PhantomLogo"));
@@ -83,6 +84,7 @@ export {
   Flame,
   LockIcon,
   Logo,
+  Mail,
   Message,
   NextArrow,
   PhantomLogo,
