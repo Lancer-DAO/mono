@@ -93,6 +93,8 @@
     "magic-sdk": "15.0.0",
     "marked": "4.2.12",
     "next": "13.1.2",
+    "@solana/octane-core": "https://gitpkg.now.sh/solana-labs/octane/packages/core?630a8d6afc90d2fe5aad88db2dc56c880cdbb5ad&scripts.postinstall=yarn%20install%20--ignore-scripts%20%26%26%20yarn%20run%20build",
+  
     "next-fonts": "1.5.1",
     "next-seo": "^6.1.0",
     "nodemon": "2.0.20",
@@ -123,6 +125,7 @@
     "ts-loader": "9.4.2",
     "tslib": "^2.5.3",
     "tsup": "6.5.0",
+    "tweetnacl": "^1.0.3",
     "typescript": "4.9.4",
     "uploadthing": "^5.5.0",
     "util": "^0.12.4",
