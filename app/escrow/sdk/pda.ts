@@ -26,6 +26,7 @@ import {
   TransactionInstruction,
 } from "@solana/web3.js";
 import {
+  DISPUTE,
   LANCER_ADMIN,
   LANCER_COMPANY_TOKENS,
   LANCER_COMPLETER_TOKENS,
@@ -160,6 +161,23 @@ export const findReferralDataAccount = async (
       Buffer.from(REFERRER),
       feature_data_account.toBuffer(),
       creator.toBuffer(),
+    ],
+    program.programId
+  );
+};
+
+export const findDisputeAccount = async (
+  timestamp: string,
+  creator: PublicKey,
+  mint: PublicKey,
+  program: Program<MonoProgram>
+) => {
+  return await anchor.web3.PublicKey.findProgramAddressSync(
+    [
+      Buffer.from(DISPUTE),
+      anchor.utils.bytes.utf8.encode(timestamp),
+      creator.toBuffer(),
+      mint.toBuffer(),
     ],
     program.programId
   );
