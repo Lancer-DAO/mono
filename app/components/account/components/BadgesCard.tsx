@@ -1,10 +1,9 @@
-import { Tooltip } from "@/components";
+import { FC, useEffect, useState } from "react";
 import { BADGES_PROJECT_PARAMS } from "@/src/constants";
 import { BountyNFT } from "@/types";
 import { createUnderdogClient } from "@underdog-protocol/js";
 import dayjs from "dayjs";
 import Image from "next/image";
-import { FC, useEffect, useState } from "react";
 import badgeList from "./badgesnfts.json";
 import { LoadingBar, Tooltip } from "@/components";
 import { useAccount } from "@/src/providers/accountProvider";
