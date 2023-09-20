@@ -37,7 +37,7 @@ const QuestActions: FC = () => {
         setCurrentActionView(QuestActionView.Chat);
       } else {
         // lancer needs to apply or is waiting for approval
-        setCurrentActionView(QuestActionView.SubmitQuote);
+        setCurrentActionView(QuestActionView.Apply);
       }
     } else if (!!currentUser && currentBounty.isCreator) {
       // is the creator
@@ -55,7 +55,11 @@ const QuestActions: FC = () => {
 
   return (
     <div className="bg-white w-full min-w-[610px] border border-neutral200 rounded-lg overflow-hidden">
-      {currentActionView === QuestActionView.Apply && <LancerApplyView />}
+      {currentActionView === QuestActionView.Apply && (
+        <LancerApplyView 
+          setCurrentActionView={setCurrentActionView}
+        />
+      )}
       {currentActionView === QuestActionView.SubmitQuote && <LancerSubmitQuoteView />}
       {currentActionView === QuestActionView.ViewApplicants && (
         <ApplicantsView
