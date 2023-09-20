@@ -1,5 +1,6 @@
 export * from "./ActionsCardBanner";
 export * from "./AlertCard";
+export * from "./AlertCardModal";
 export * from "./ApplicantProfileCard";
 export * from "./ApplicantsView";
 export * from "./Apply";
@@ -7,6 +8,7 @@ export * from "./ApproveSubmission";
 export * from "./BountyActions";
 export * from "./BountyActionsButton";
 export * from "./CancelEscrow";
+export * from "./ChatView";
 export * from "./DenySubmission";
 export * from "./LancerApplyView";
 export * from "./QuestActions";

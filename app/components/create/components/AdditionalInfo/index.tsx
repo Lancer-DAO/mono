@@ -131,7 +131,7 @@ export const AdditionalInfoForm: FC<Props> = ({
         isPrivate: false,
       });
     }
-  }, [toggleConfig.selected, formData, setFormData]);
+  }, [toggleConfig.selected]);
 
   useEffect(() => {
     if (testToggleConfig.selected === "option2") {
@@ -145,7 +145,7 @@ export const AdditionalInfoForm: FC<Props> = ({
         isTest: false,
       });
     }
-  }, [testToggleConfig.selected, formData, setFormData]);
+  }, [testToggleConfig.selected]);
 
   return (
     <div>

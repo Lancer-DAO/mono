@@ -163,28 +163,30 @@ const ReferralProvider: FunctionComponent<IReferralProps> = ({ children }) => {
               );
             }
 
-            const treasuryReferrer = await client.treasury.getByPDA(
-              member.account.referrer
-            );
-            const ownersReferrer = [
-              treasuryReferrer.account.owners[0].ownerPda,
-            ];
-            const treasuryRewardsReferrerPDA = client.pda.getTreasuryPDA(
-              ownersReferrer,
-              [10_000],
-              mint
-            );
-            const treasuryRewardsReferrer = await client.treasury.getByPDA(
-              treasuryRewardsReferrerPDA
-            );
-
-            if (!treasuryRewardsReferrer) {
-              instructions.push(
-                ...(await client.initialize.createTreasuryByBuddyPDA(
-                  treasuryReferrer.account.owners[0].ownerPda,
-                  mint
-                ))
+            if (member.account.referrer.toString() !== PublicKey.default.toString()) {
+              const treasuryReferrer = await client.treasury.getByPDA(
+                member.account.referrer
               );
+              const ownersReferrer = [
+                treasuryReferrer.account.owners[0].ownerPda,
+              ];
+              const treasuryRewardsReferrerPDA = client.pda.getTreasuryPDA(
+                ownersReferrer,
+                [10_000],
+                mint
+              );
+              const treasuryRewardsReferrer = await client.treasury.getByPDA(
+                treasuryRewardsReferrerPDA
+              );
+
+              if (!treasuryRewardsReferrer) {
+                instructions.push(
+                  ...(await client.initialize.createTreasuryByBuddyPDA(
+                    treasuryReferrer.account.owners[0].ownerPda,
+                    mint
+                  ))
+                );
+              }
             }
           }
         } else {
@@ -233,7 +235,7 @@ const ReferralProvider: FunctionComponent<IReferralProps> = ({ children }) => {
         return { txId: signature, memberPDA };
       } catch (e) {
         console.error(e);
-        return null;
+        throw new Error(`Failed to create buddy member account`, e);
       }
     },
     [client, member, cachedReferrer, publicKey, organization]

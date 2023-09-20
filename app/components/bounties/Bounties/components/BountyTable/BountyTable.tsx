@@ -70,7 +70,11 @@ const BountyList: React.FC<{}> = () => {
 
       const bountyTags: string[] = bounty.tags.map((tag) => tag.name) || [];
       const commonTags = bountyTags.filter((tag) => filters.tags.includes(tag));
-      if (commonTags?.length === 0 && tags?.length !== 0) {
+      if (
+        bountyTags.length !== 0 &&
+        commonTags?.length === 0 &&
+        tags?.length !== 0
+      ) {
         return false;
       }
 

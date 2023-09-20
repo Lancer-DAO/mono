@@ -3,6 +3,9 @@ import { useBounty } from "@/src/providers/bountyProvider";
 import { FC, useEffect, useState } from "react";
 import ApplicantsView from "./ApplicantsView";
 import LancerApplyView from "./LancerApplyView";
+import LancerSubmitUpdateView from "./LancerSubmitUpdateView";
+import { BountyUserType } from "@/prisma/queries/bounty";
+import ChatView from "./ChatView";
 
 export enum QuestActionView {
   Apply = "apply", // one-way (Lancer)
@@ -22,6 +25,8 @@ const QuestActions: FC = () => {
   // TODO: set loading state, check for user status (creator or applicant?)
   // and then set initial view based on that
   const [currentActionView, setCurrentActionView] = useState<QuestActionView>();
+  const [selectedSubmitter, setSelectedSubmitter] =
+    useState<BountyUserType | null>(null);
 
   useEffect(() => {
     if (!!currentUser && !currentBounty.isCreator) {
@@ -51,7 +56,17 @@ const QuestActions: FC = () => {
     <div className="bg-white w-full min-w-[610px] border border-neutral200 rounded-lg overflow-hidden">
       {currentActionView === QuestActionView.Apply && <LancerApplyView />}
       {currentActionView === QuestActionView.ViewApplicants && (
-        <ApplicantsView setCurrentActionView={setCurrentActionView} />
+        <ApplicantsView
+          setCurrentActionView={setCurrentActionView}
+          selectedSubmitter={selectedSubmitter}
+          setSelectedSubmitter={setSelectedSubmitter}
+        />
+      )}
+      {currentActionView === QuestActionView.Chat && (
+        <ChatView
+          selectedSubmitter={selectedSubmitter}
+          setCurrentActionView={setCurrentActionView}
+        />
       )}
     </div>
   );
