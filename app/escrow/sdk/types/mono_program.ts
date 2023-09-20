@@ -333,6 +333,117 @@ export type MonoProgram = {
       ];
     },
     {
+      name: "achFundFeature";
+      accounts: [
+        {
+          name: "externalFunder";
+          isMut: true;
+          isSigner: true;
+        },
+        {
+          name: "creator";
+          isMut: true;
+          isSigner: false;
+        },
+        {
+          name: "externalFunderTokenAccount";
+          isMut: true;
+          isSigner: false;
+        },
+        {
+          name: "fundsMint";
+          isMut: false;
+          isSigner: false;
+        },
+        {
+          name: "featureDataAccount";
+          isMut: true;
+          isSigner: false;
+          pda: {
+            seeds: [
+              {
+                kind: "const";
+                type: "string";
+                value: "mono";
+              },
+              {
+                kind: "account";
+                type: "string";
+                account: "FeatureDataAccount";
+                path: "feature_data_account.unix_timestamp";
+              },
+              {
+                kind: "account";
+                type: "publicKey";
+                path: "creator";
+              }
+            ];
+          };
+        },
+        {
+          name: "featureTokenAccount";
+          isMut: true;
+          isSigner: false;
+          pda: {
+            seeds: [
+              {
+                kind: "const";
+                type: "string";
+                value: "mono";
+              },
+              {
+                kind: "account";
+                type: "string";
+                account: "FeatureDataAccount";
+                path: "feature_data_account.unix_timestamp";
+              },
+              {
+                kind: "account";
+                type: "publicKey";
+                path: "creator";
+              },
+              {
+                kind: "account";
+                type: "publicKey";
+                account: "Mint";
+                path: "funds_mint";
+              }
+            ];
+          };
+        },
+        {
+          name: "programAuthority";
+          isMut: false;
+          isSigner: false;
+          pda: {
+            seeds: [
+              {
+                kind: "const";
+                type: "string";
+                value: "mono";
+              }
+            ];
+          };
+        },
+        {
+          name: "tokenProgram";
+          isMut: false;
+          isSigner: false;
+        },
+        {
+          name: "systemProgram";
+          isMut: false;
+          isSigner: false;
+        }
+      ];
+      args: [
+        {
+          name: "amount";
+          type: "u64";
+        }
+      ];
+    },
+    {
       name: "addApprovedSubmitters";
       accounts: [
         {
@@ -2221,9 +2332,433 @@ export type MonoProgram = {
         }
       ];
       args: [];
+    },
+    {
+      name: "adminCloseBounty";
+      accounts: [
+        {
+          name: "lancerAdmin";
+          isMut: true;
+          isSigner: true;
+        },
+        {
+          name: "creator";
+          isMut: true;
+          isSigner: false;
+        },
+        {
+          name: "creatorTokenAccount";
+          isMut: true;
+          isSigner: false;
+        },
+        {
+          name: "featureDataAccount";
+          isMut: true;
+          isSigner: false;
+          pda: {
+            seeds: [
+              {
+                kind: "const";
+                type: "string";
+                value: "mono";
+              },
+              {
+                kind: "account";
+                type: "string";
+                account: "FeatureDataAccount";
+                path: "feature_data_account.unix_timestamp";
+              },
+              {
+                kind: "account";
+                type: "publicKey";
+                path: "creator";
+              }
+            ];
+          };
+        },
+        {
+          name: "featureTokenAccount";
+          isMut: true;
+          isSigner: false;
+          pda: {
+            seeds: [
+              {
+                kind: "const";
+                type: "string";
+                value: "mono";
+              },
+              {
+                kind: "account";
+                type: "string";
+                account: "FeatureDataAccount";
+                path: "feature_data_account.unix_timestamp";
+              },
+              {
+                kind: "account";
+                type: "publicKey";
+                path: "creator";
+              },
+              {
+                kind: "account";
+                type: "publicKey";
+                account: "FeatureDataAccount";
+                path: "feature_data_account.funds_mint";
+              }
+            ];
+          };
+        },
+        {
+          name: "programAuthority";
+          isMut: false;
+          isSigner: false;
+          pda: {
+            seeds: [
+              {
+                kind: "const";
+                type: "string";
+                value: "mono";
+              }
+            ];
+          };
+        },
+        {
+          name: "tokenProgram";
+          isMut: false;
+          isSigner: false;
+        }
+      ];
+      args: [];
+    },
+    {
+      name: "createDispute";
+      accounts: [
+        {
+          name: "disputeAdmin";
+          isMut: true;
+          isSigner: true;
+        },
+        {
+          name: "creator";
+          isMut: true;
+          isSigner: false;
+        },
+        {
+          name: "disputeAccount";
+          isMut: true;
+          isSigner: false;
+          pda: {
+            seeds: [
+              {
+                kind: "const";
+                type: "string";
+                value: "dispute";
+              },
+              {
+                kind: "account";
+                type: "string";
+                account: "FeatureDataAccount";
+                path: "feature_data_account.unix_timestamp";
+              },
+              {
+                kind: "account";
+                type: "publicKey";
+                path: "creator";
+              },
+              {
+                kind: "account";
+                type: "publicKey";
+                account: "FeatureDataAccount";
+                path: "feature_data_account.funds_mint";
+              }
+            ];
+          };
+        },
+        {
+          name: "featureDataAccount";
+          isMut: true;
+          isSigner: false;
+          pda: {
+            seeds: [
+              {
+                kind: "const";
+                type: "string";
+                value: "mono";
+              },
+              {
+                kind: "account";
+                type: "string";
+                account: "FeatureDataAccount";
+                path: "feature_data_account.unix_timestamp";
+              },
+              {
+                kind: "account";
+                type: "publicKey";
+                path: "creator";
+              }
+            ];
+          };
+        },
+        {
+          name: "featureTokenAccount";
+          isMut: true;
+          isSigner: false;
+          pda: {
+            seeds: [
+              {
+                kind: "const";
+                type: "string";
+                value: "mono";
+              },
+              {
+                kind: "account";
+                type: "string";
+                account: "FeatureDataAccount";
+                path: "feature_data_account.unix_timestamp";
+              },
+              {
+                kind: "account";
+                type: "publicKey";
+                path: "creator";
+              },
+              {
+                kind: "account";
+                type: "publicKey";
+                account: "FeatureDataAccount";
+                path: "feature_data_account.funds_mint";
+              }
+            ];
+          };
+        },
+        {
+          name: "programAuthority";
+          isMut: false;
+          isSigner: false;
+          pda: {
+            seeds: [
+              {
+                kind: "const";
+                type: "string";
+                value: "mono";
+              }
+            ];
+          };
+        },
+        {
+          name: "tokenProgram";
+          isMut: false;
+          isSigner: false;
+        },
+        {
+          name: "systemProgram";
+          isMut: false;
+          isSigner: false;
+        }
+      ];
+      args: [];
+    },
+    {
+      name: "settleDispute";
+      accounts: [
+        {
+          name: "disputeAdmin";
+          isMut: true;
+          isSigner: true;
+        },
+        {
+          name: "creator";
+          isMut: true;
+          isSigner: false;
+        },
+        {
+          name: "creatorTokenAccount";
+          isMut: true;
+          isSigner: false;
+        },
+        {
+          name: "submitter";
+          isMut: true;
+          isSigner: false;
+        },
+        {
+          name: "submitterTokenAccount";
+          isMut: true;
+          isSigner: false;
+        },
+        {
+          name: "lancerDaoTokenAccount";
+          isMut: true;
+          isSigner: false;
+          pda: {
+            seeds: [
+              {
+                kind: "const";
+                type: "string";
+                value: "mono";
+              },
+              {
+                kind: "const";
+                type: "string";
+                value: "LANCER_DAO";
+              },
+              {
+                kind: "account";
+                type: "publicKey";
+                account: "TokenAccount";
+                path: "feature_token_account.mint";
+              }
+            ];
+          };
+        },
+        {
+          name: "lancerTokenProgramAuthority";
+          isMut: false;
+          isSigner: false;
+          pda: {
+            seeds: [
+              {
+                kind: "const";
+                type: "string";
+                value: "LANCER_DAO";
+              }
+            ];
+          };
+        },
+        {
+          name: "disputeAccount";
+          isMut: true;
+          isSigner: false;
+          pda: {
+            seeds: [
+              {
+                kind: "const";
+                type: "string";
+                value: "dispute";
+              },
+              {
+                kind: "account";
+                type: "string";
+                account: "Dispute";
+                path: "dispute_account.unix_timestamp";
+              },
+              {
+                kind: "account";
+                type: "publicKey";
+                path: "creator";
+              },
+              {
+                kind: "account";
+                type: "publicKey";
+                account: "Dispute";
+                path: "dispute_account.mint";
+              }
+            ];
+          };
+        },
+        {
+          name: "featureTokenAccount";
+          isMut: true;
+          isSigner: false;
+          pda: {
+            seeds: [
+              {
+                kind: "const";
+                type: "string";
+                value: "mono";
+              },
+              {
+                kind: "account";
+                type: "string";
+                account: "Dispute";
+                path: "dispute_account.unix_timestamp";
+              },
+              {
+                kind: "account";
+                type: "publicKey";
+                path: "creator";
+              },
+              {
+                kind: "account";
+                type: "publicKey";
+                account: "Dispute";
+                path: "dispute_account.mint";
+              }
+            ];
+          };
+        },
+        {
+          name: "programAuthority";
+          isMut: false;
+          isSigner: false;
+          pda: {
+            seeds: [
+              {
+                kind: "const";
+                type: "string";
+                value: "mono";
+              }
+            ];
+          };
+        },
+        {
+          name: "tokenProgram";
+          isMut: false;
+          isSigner: false;
+        },
+        {
+          name: "systemProgram";
+          isMut: false;
+          isSigner: false;
+        }
+      ];
+      args: [
+        {
+          name: "submitterAmount";
+          type: "u64";
+        }
+      ];
     }
   ];
   accounts: [
+    {
+      name: "dispute";
+      type: {
+        kind: "struct";
+        fields: [
+          {
+            name: "creator";
+            type: "publicKey";
+          },
+          {
+            name: "submitter";
+            type: "publicKey";
+          },
+          {
+            name: "unixTimestamp";
+            type: "string";
+          },
+          {
+            name: "mint";
+            type: "publicKey";
+          },
+          {
+            name: "amount";
+            type: "u64";
+          },
+          {
+            name: "disputeAccountBump";
+            type: "u8";
+          },
+          {
+            name: "programAuthorityBump";
+            type: "u8";
+          },
+          {
+            name: "fundsTokenAccountBump";
+            type: "u8";
+          }
+        ];
+      };
+    },
     {
       name: "featureDataAccount";
       type: {
@@ -2452,6 +2987,26 @@ export type MonoProgram = {
       code: 6018;
       name: "InsufficientFunds";
       msg: "Insufficient funds";
+    },
+    {
+      code: 6019;
+      name: "AdminCannotCloseBounty";
+      msg: "Admin Cannot Close Bounty, check if there is a current submitter";
+    },
+    {
+      code: 6020;
+      name: "CannotVoteToCancel";
+      msg: "Only Creator or Current Submitter can vote to cancel";
+    },
+    {
+      code: 6021;
+      name: "InvalidDisputePubkey";
+      msg: "This Pubkey is not a Valid Dispute Pubkey";
+    },
+    {
+      code: 6022;
+      name: "CannotDispute";
+      msg: "Cannot Dispute Bounty";
     }
   ];
 };
@@ -2694,6 +3249,117 @@ export const IDL: MonoProgram = {
         },
         {
           name: "creatorTokenAccount",
+          isMut: true,
+          isSigner: false,
+        },
+        {
+          name: "fundsMint",
+          isMut: false,
+          isSigner: false,
+        },
+        {
+          name: "featureDataAccount",
+          isMut: true,
+          isSigner: false,
+          pda: {
+            seeds: [
+              {
+                kind: "const",
+                type: "string",
+                value: "mono",
+              },
+              {
+                kind: "account",
+                type: "string",
+                account: "FeatureDataAccount",
+                path: "feature_data_account.unix_timestamp",
+              },
+              {
+                kind: "account",
+                type: "publicKey",
+                path: "creator",
+              },
+            ],
+          },
+        },
+        {
+          name: "featureTokenAccount",
+          isMut: true,
+          isSigner: false,
+          pda: {
+            seeds: [
+              {
+                kind: "const",
+                type: "string",
+                value: "mono",
+              },
+              {
+                kind: "account",
+                type: "string",
+                account: "FeatureDataAccount",
+                path: "feature_data_account.unix_timestamp",
+              },
+              {
+                kind: "account",
+                type: "publicKey",
+                path: "creator",
+              },
+              {
+                kind: "account",
+                type: "publicKey",
+                account: "Mint",
+                path: "funds_mint",
+              },
+            ],
+          },
+        },
+        {
+          name: "programAuthority",
+          isMut: false,
+          isSigner: false,
+          pda: {
+            seeds: [
+              {
+                kind: "const",
+                type: "string",
+                value: "mono",
+              },
+            ],
+          },
+        },
+        {
+          name: "tokenProgram",
+          isMut: false,
+          isSigner: false,
+        },
+        {
+          name: "systemProgram",
+          isMut: false,
+          isSigner: false,
+        },
+      ],
+      args: [
+        {
+          name: "amount",
+          type: "u64",
+        },
+      ],
+    },
+    {
+      name: "achFundFeature",
+      accounts: [
+        {
+          name: "externalFunder",
+          isMut: true,
+          isSigner: true,
+        },
+        {
+          name: "creator",
+          isMut: true,
+          isSigner: false,
+        },
+        {
+          name: "externalFunderTokenAccount",
           isMut: true,
           isSigner: false,
         },
@@ -4680,8 +5346,432 @@ export const IDL: MonoProgram = {
       ],
       args: [],
     },
+    {
+      name: "adminCloseBounty",
+      accounts: [
+        {
+          name: "lancerAdmin",
+          isMut: true,
+          isSigner: true,
+        },
+        {
+          name: "creator",
+          isMut: true,
+          isSigner: false,
+        },
+        {
+          name: "creatorTokenAccount",
+          isMut: true,
+          isSigner: false,
+        },
+        {
+          name: "featureDataAccount",
+          isMut: true,
+          isSigner: false,
+          pda: {
+            seeds: [
+              {
+                kind: "const",
+                type: "string",
+                value: "mono",
+              },
+              {
+                kind: "account",
+                type: "string",
+                account: "FeatureDataAccount",
+                path: "feature_data_account.unix_timestamp",
+              },
+              {
+                kind: "account",
+                type: "publicKey",
+                path: "creator",
+              },
+            ],
+          },
+        },
+        {
+          name: "featureTokenAccount",
+          isMut: true,
+          isSigner: false,
+          pda: {
+            seeds: [
+              {
+                kind: "const",
+                type: "string",
+                value: "mono",
+              },
+              {
+                kind: "account",
+                type: "string",
+                account: "FeatureDataAccount",
+                path: "feature_data_account.unix_timestamp",
+              },
+              {
+                kind: "account",
+                type: "publicKey",
+                path: "creator",
+              },
+              {
+                kind: "account",
+                type: "publicKey",
+                account: "FeatureDataAccount",
+                path: "feature_data_account.funds_mint",
+              },
+            ],
+          },
+        },
+        {
+          name: "programAuthority",
+          isMut: false,
+          isSigner: false,
+          pda: {
+            seeds: [
+              {
+                kind: "const",
+                type: "string",
+                value: "mono",
+              },
+            ],
+          },
+        },
+        {
+          name: "tokenProgram",
+          isMut: false,
+          isSigner: false,
+        },
+      ],
+      args: [],
+    },
+    {
+      name: "createDispute",
+      accounts: [
+        {
+          name: "disputeAdmin",
+          isMut: true,
+          isSigner: true,
+        },
+        {
+          name: "creator",
+          isMut: true,
+          isSigner: false,
+        },
+        {
+          name: "disputeAccount",
+          isMut: true,
+          isSigner: false,
+          pda: {
+            seeds: [
+              {
+                kind: "const",
+                type: "string",
+                value: "dispute",
+              },
+              {
+                kind: "account",
+                type: "string",
+                account: "FeatureDataAccount",
+                path: "feature_data_account.unix_timestamp",
+              },
+              {
+                kind: "account",
+                type: "publicKey",
+                path: "creator",
+              },
+              {
+                kind: "account",
+                type: "publicKey",
+                account: "FeatureDataAccount",
+                path: "feature_data_account.funds_mint",
+              },
+            ],
+          },
+        },
+        {
+          name: "featureDataAccount",
+          isMut: true,
+          isSigner: false,
+          pda: {
+            seeds: [
+              {
+                kind: "const",
+                type: "string",
+                value: "mono",
+              },
+              {
+                kind: "account",
+                type: "string",
+                account: "FeatureDataAccount",
+                path: "feature_data_account.unix_timestamp",
+              },
+              {
+                kind: "account",
+                type: "publicKey",
+                path: "creator",
+              },
+            ],
+          },
+        },
+        {
+          name: "featureTokenAccount",
+          isMut: true,
+          isSigner: false,
+          pda: {
+            seeds: [
+              {
+                kind: "const",
+                type: "string",
+                value: "mono",
+              },
+              {
+                kind: "account",
+                type: "string",
+                account: "FeatureDataAccount",
+                path: "feature_data_account.unix_timestamp",
+              },
+              {
+                kind: "account",
+                type: "publicKey",
+                path: "creator",
+              },
+              {
+                kind: "account",
+                type: "publicKey",
+                account: "FeatureDataAccount",
+                path: "feature_data_account.funds_mint",
+              },
+            ],
+          },
+        },
+        {
+          name: "programAuthority",
+          isMut: false,
+          isSigner: false,
+          pda: {
+            seeds: [
+              {
+                kind: "const",
+                type: "string",
+                value: "mono",
+              },
+            ],
+          },
+        },
+        {
+          name: "tokenProgram",
+          isMut: false,
+          isSigner: false,
+        },
+        {
+          name: "systemProgram",
+          isMut: false,
+          isSigner: false,
+        },
+      ],
+      args: [],
+    },
+    {
+      name: "settleDispute",
+      accounts: [
+        {
+          name: "disputeAdmin",
+          isMut: true,
+          isSigner: true,
+        },
+        {
+          name: "creator",
+          isMut: true,
+          isSigner: false,
+        },
+        {
+          name: "creatorTokenAccount",
+          isMut: true,
+          isSigner: false,
+        },
+        {
+          name: "submitter",
+          isMut: true,
+          isSigner: false,
+        },
+        {
+          name: "submitterTokenAccount",
+          isMut: true,
+          isSigner: false,
+        },
+        {
+          name: "lancerDaoTokenAccount",
+          isMut: true,
+          isSigner: false,
+          pda: {
+            seeds: [
+              {
+                kind: "const",
+                type: "string",
+                value: "mono",
+              },
+              {
+                kind: "const",
+                type: "string",
+                value: "LANCER_DAO",
+              },
+              {
+                kind: "account",
+                type: "publicKey",
+                account: "TokenAccount",
+                path: "feature_token_account.mint",
+              },
+            ],
+          },
+        },
+        {
+          name: "lancerTokenProgramAuthority",
+          isMut: false,
+          isSigner: false,
+          pda: {
+            seeds: [
+              {
+                kind: "const",
+                type: "string",
+                value: "LANCER_DAO",
+              },
+            ],
+          },
+        },
+        {
+          name: "disputeAccount",
+          isMut: true,
+          isSigner: false,
+          pda: {
+            seeds: [
+              {
+                kind: "const",
+                type: "string",
+                value: "dispute",
+              },
+              {
+                kind: "account",
+                type: "string",
+                account: "Dispute",
+                path: "dispute_account.unix_timestamp",
+              },
+              {
+                kind: "account",
+                type: "publicKey",
+                path: "creator",
+              },
+              {
+                kind: "account",
+                type: "publicKey",
+                account: "Dispute",
+                path: "dispute_account.mint",
+              },
+            ],
+          },
+        },
+        {
+          name: "featureTokenAccount",
+          isMut: true,
+          isSigner: false,
+          pda: {
+            seeds: [
+              {
+                kind: "const",
+                type: "string",
+                value: "mono",
+              },
+              {
+                kind: "account",
+                type: "string",
+                account: "Dispute",
+                path: "dispute_account.unix_timestamp",
+              },
+              {
+                kind: "account",
+                type: "publicKey",
+                path: "creator",
+              },
+              {
+                kind: "account",
+                type: "publicKey",
+                account: "Dispute",
+                path: "dispute_account.mint",
+              },
+            ],
+          },
+        },
+        {
+          name: "programAuthority",
+          isMut: false,
+          isSigner: false,
+          pda: {
+            seeds: [
+              {
+                kind: "const",
+                type: "string",
+                value: "mono",
+              },
+            ],
+          },
+        },
+        {
+          name: "tokenProgram",
+          isMut: false,
+          isSigner: false,
+        },
+        {
+          name: "systemProgram",
+          isMut: false,
+          isSigner: false,
+        },
+      ],
+      args: [
+        {
+          name: "submitterAmount",
+          type: "u64",
+        },
+      ],
+    },
   ],
   accounts: [
+    {
+      name: "dispute",
+      type: {
+        kind: "struct",
+        fields: [
+          {
+            name: "creator",
+            type: "publicKey",
+          },
+          {
+            name: "submitter",
+            type: "publicKey",
+          },
+          {
+            name: "unixTimestamp",
+            type: "string",
+          },
+          {
+            name: "mint",
+            type: "publicKey",
+          },
+          {
+            name: "amount",
+            type: "u64",
+          },
+          {
+            name: "disputeAccountBump",
+            type: "u8",
+          },
+          {
+            name: "programAuthorityBump",
+            type: "u8",
+          },
+          {
+            name: "fundsTokenAccountBump",
+            type: "u8",
+          },
+        ],
+      },
+    },
     {
       name: "featureDataAccount",
       type: {
@@ -4910,6 +6000,26 @@ export const IDL: MonoProgram = {
       code: 6018,
       name: "InsufficientFunds",
       msg: "Insufficient funds",
+    },
+    {
+      code: 6019,
+      name: "AdminCannotCloseBounty",
+      msg: "Admin Cannot Close Bounty, check if there is a current submitter",
+    },
+    {
+      code: 6020,
+      name: "CannotVoteToCancel",
+      msg: "Only Creator or Current Submitter can vote to cancel",
+    },
+    {
+      code: 6021,
+      name: "InvalidDisputePubkey",
+      msg: "This Pubkey is not a Valid Dispute Pubkey",
+    },
+    {
+      code: 6022,
+      name: "CannotDispute",
+      msg: "Cannot Dispute Bounty",
     },
   ],
 };
