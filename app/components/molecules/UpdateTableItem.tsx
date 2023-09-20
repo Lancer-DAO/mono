@@ -1,7 +1,7 @@
 import { User } from "@/types";
 import dayjs, { Dayjs } from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
-import { Flame, Message, ServiceBell } from "@/components";
+import { Button, Flame, Message, ServiceBell } from "@/components";
 dayjs.extend(relativeTime);
 import { Image } from "lucide-react";
 
@@ -12,7 +12,7 @@ export type SubmissionType =
   //   This submission was rejected [second item in listed picture]
   | "rejected"
   //   This submission was requested changes
-  | "changes"
+  | "vote-to-cancel"
   //   (client side) this quest has a new submission [third item in listed picture]
   | "new";
 export type ApplicationType =
@@ -73,9 +73,9 @@ const UpdateTableItem: React.FC<Props> = ({ type, subType, updater, time }) => {
           return (
             <div className="flex flex-col px-8 py-4 items-start justify-center w-full border-solid border-y  border-neutralBorder500">
               <div className="flex justify-start items-center w-full">
-                <Flame height="28px" width="28px" />
+                <Flame height="28px" width="28px" version="orange" />
                 <div className="ml-1.5 text-neutral-500 mr-2">
-                  Wireframes for messaging
+                  Review Received
                 </div>
                 <div className="h-5 w-[1px] bg-neutral-400"></div>
                 <div className="ml-2 text-neutral-400 mr-auto">{`${time.fromNow()}`}</div>
@@ -85,6 +85,41 @@ const UpdateTableItem: React.FC<Props> = ({ type, subType, updater, time }) => {
                 Not sure about the colors because it doesn’t match our brand
                 identity. I forgot to give you the real logo in black & white.
                 Can you incorporate this before we move to the polishing part ?
+              </div>
+            </div>
+          );
+        case "accepted":
+          return (
+            <div className="flex flex-col px-8 py-4 items-start justify-center w-full border-solid border-y  border-neutralBorder500">
+              <div className="flex justify-start items-center w-full">
+                <Flame height="28px" width="28px" version="green" />
+                <div className="ml-1.5 text-neutral-500 mr-2">
+                  Review Received
+                </div>
+                <div className="h-5 w-[1px] bg-neutral-400"></div>
+                <div className="ml-2 text-neutral-400 mr-auto">{`${time.fromNow()}`}</div>
+                <div className="ml-auto text-success">Accepted</div>
+              </div>
+              <div className="mt-4 rounded-md text-xs leading-normal text-neutral-500 border border-neutralBorder-200 py-2.5 px-3.5 bg-neutral-100 w-full rounder-md">
+                Not sure about the colors because it doesn’t match our brand
+                identity. I forgot to give you the real logo in black & white.
+                Can you incorporate this before we move to the polishing part ?
+              </div>
+            </div>
+          );
+
+        case "vote-to-cancel":
+          return (
+            <div className="flex flex-col px-8 py-4 items-start justify-center w-full border-solid border-y  border-neutralBorder500">
+              <div className="flex justify-start items-center w-full">
+                <Flame height="28px" width="28px" version="green" />
+                <div className="text-xs ml-1.5 text-warning mr-2">
+                  Client Voted To Cancel
+                </div>
+                <div className="h-5 w-[1px] bg-neutral-400"></div>
+                <div className="text-xs ml-2 text-neutral-400 mr-auto">{`${time.fromNow()}`}</div>
+                <Button version="outlined">Dispute</Button>
+                <Button version="filled">Confirm Cancel</Button>
               </div>
             </div>
           );

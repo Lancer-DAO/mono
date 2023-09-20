@@ -7,6 +7,7 @@ const QuestCreated = dynamic(() => import("./@animations/QuestCreated"));
 const QuestCompleted = dynamic(() => import("./@animations/QuestCompleted"));
 
 // @icons
+const Alert = dynamic(() => import("./@icons/Alert"));
 const Close = dynamic(() => import("./@icons/Close"));
 const Coins = dynamic(() => import("./@icons/Coins"));
 const ExternalLinkIcon = dynamic(() => import("./@icons/ExternalLinkIcon"));
@@ -75,6 +76,7 @@ export {
   QuestCompleted,
 
   // @icons
+  Alert,
   Close,
   Coins,
   ExternalLinkIcon,
