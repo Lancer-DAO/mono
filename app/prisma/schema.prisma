@@ -46,6 +46,7 @@ model Bounty {
   industries   Industry[]
   disciplines  Discipline[]
   media        Media[]
+  updates      Update[]
 
   @@index([milestoneid])
   @@index([projectid])
@@ -214,6 +215,7 @@ model Media {
 
   // Relations
   bounty Bounty[]
+  update Update[]
   user   User[]
 }
 
@@ -381,6 +383,20 @@ model Transaction {
   @@index([escrowid])
 }
 
+model Update {
+   id Int @id @default(autoincrement())
+
+   // Fields
+   name String @db.VarChar(128)
+   type String @db.VarChar(24)
+   description String @db.VarChar(5000)
+   links String @db.VarChar(256)
+   
+   // Relations
+   media       Media[]
+   bounty      Bounty[]
+}
+
 model User {
   id Int @id @default(autoincrement())
 
@@ -412,6 +428,7 @@ model User {
   hasFinishedOnboarding Boolean? @default(false)
   hasCompletedProfile   Boolean? @default(false)
   hasBeenApproved       Boolean? @default(false)
+  experience            Int?     @default(0)
 
   // Relations
   wallets      Wallet[]
@@ -489,14 +506,16 @@ model BountyComment {
 }
 
 model BountyUser {
-  userid           Int
-  bountyid         Int
-  walletid         Int?
-  relations        String  @db.VarChar(256)
-  user             User    @relation(fields: [userid], references: [id])
-  bounty           Bounty  @relation(fields: [bountyid], references: [id])
-  wallet           Wallet? @relation(fields: [walletid], references: [id])
-  onChainPublicKey String  @default("") @db.VarChar(256)
+  userid   Int
+  bountyid Int
+  walletid Int?
+  user     User    @relation(fields: [userid], references: [id])
+  bounty   Bounty  @relation(fields: [bountyid], references: [id])
+  wallet   Wallet? @relation(fields: [walletid], references: [id])
+
+  // Fields
+  relations       String  @db.VarChar(256)
+  applicationText String? @db.VarChar(2000)
 
   // Relations
   actions BountyUserAction[]

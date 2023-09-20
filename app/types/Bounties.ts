@@ -22,8 +22,9 @@ export type Filters = {
 
 export enum BOUNTY_USER_RELATIONSHIP {
   Creator = "creator",
-  RequestedSubmitter = "requested_submitter",
-  DeniedRequester = "denied_requester",
+  RequestedLancer = "requested_lancer",
+  ShortlistedLancer = "shortlisted_lancer",
+  DeniedLancer = "denied_lancer",
   ApprovedSubmitter = "approved_submitter",
   CurrentSubmitter = "current_submitter",
   DeniedSubmitter = "denied_submitter",
@@ -34,8 +35,9 @@ export enum BOUNTY_USER_RELATIONSHIP {
 }
 export interface CurrentUserBountyInclusions {
   isCreator?: boolean;
-  isRequestedSubmitter?: boolean;
-  isDeniedRequester?: boolean;
+  isRequestedLancer?: boolean;
+  isShortlistedLancer?: boolean;
+  isDeniedLancer?: boolean;
   isApprovedSubmitter?: boolean;
   isCurrentSubmitter?: boolean;
   isDeniedSubmitter?: boolean;
@@ -46,8 +48,9 @@ export interface CurrentUserBountyInclusions {
 export interface BountyUserRelations {
   all?: BountyUserType[];
   creator: BountyUserType;
-  requestedSubmitters?: BountyUserType[];
-  deniedRequesters?: BountyUserType[];
+  requestedLancers?: BountyUserType[];
+  shortlistedLancers?: BountyUserType[];
+  deniedLancers?: BountyUserType[];
   approvedSubmitters?: BountyUserType[];
   currentSubmitter?: BountyUserType;
   changesRequestedSubmitters?: BountyUserType[];

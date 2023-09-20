@@ -1,12 +1,12 @@
-import { FC, useEffect, useState } from "react";
+import { Tooltip } from "@/components";
 import { BADGES_PROJECT_PARAMS } from "@/src/constants";
 import { useUserWallet } from "@/src/providers";
 import { BountyNFT } from "@/types";
 import { createUnderdogClient } from "@underdog-protocol/js";
 import dayjs from "dayjs";
 import Image from "next/image";
+import { FC, useEffect, useState } from "react";
 import badgeList from "./badgesnfts.json";
-import { Tooltip } from "@/components";
 
 type BadgeListItem = {
   name: string;
@@ -40,7 +40,7 @@ export const BadgesCard: FC = () => {
       const { name, attributes, image, id, ownerAddress } = nft;
       return {
         name: name,
-        reputation: attributes.reputation as number,
+        experience: attributes.reputation as number,
         tags:
           attributes.tags !== "" ? (attributes.tags as string)?.split(",") : [],
         image: image,

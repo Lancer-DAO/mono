@@ -6,7 +6,7 @@ import {
   getSession,
   withPageAuthRequired,
 } from "@auth0/nextjs-auth0";
-import { Bounty } from "../../components/bounties/Bounty/Bounty";
+import { Quest } from "../../components/bounties/Bounty/Quest";
 import { NextSeo } from "next-seo";
 import { GetServerSidePropsContext } from "next";
 import { prisma } from "@/server/db";
@@ -87,7 +87,7 @@ const BountyDetailPage: React.FC<{
   return (
     <>
       <NextSeo title="Lancer | Quest" description="Lancer Quest" />
-      <Bounty />
+      <Quest />
     </>
   );
 };

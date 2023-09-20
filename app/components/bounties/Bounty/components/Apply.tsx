@@ -41,7 +41,7 @@ export const Apply = () => {
     const newRelations = updateList(
       currentBounty.currentUserRelationsList ?? [],
       [],
-      [BOUNTY_USER_RELATIONSHIP.RequestedSubmitter]
+      [BOUNTY_USER_RELATIONSHIP.RequestedLancer]
     );
     const updatedBounty = await mutateAsync({
       currentUserId: currentUser.id,

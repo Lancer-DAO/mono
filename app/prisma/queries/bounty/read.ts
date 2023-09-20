@@ -196,17 +196,19 @@ const getBountyRelations = (
   const allUsers = rawUsers.map((user) => {
     return convertBountyUserToUser(user);
   });
-  // console.log(allUsers);
   const newBounty: BountyUserRelations = {
     all: allUsers,
     creator: allUsers.find((submitter) =>
       submitter.relations.includes(BOUNTY_USER_RELATIONSHIP.Creator)
     ),
-    requestedSubmitters: allUsers.filter((submitter) =>
-      submitter.relations.includes(BOUNTY_USER_RELATIONSHIP.RequestedSubmitter)
+    requestedLancers: allUsers.filter((submitter) =>
+      submitter.relations.includes(BOUNTY_USER_RELATIONSHIP.RequestedLancer)
     ),
-    deniedRequesters: allUsers.filter((submitter) =>
-      submitter.relations.includes(BOUNTY_USER_RELATIONSHIP.DeniedRequester)
+    shortlistedLancers: allUsers.filter((submitter) =>
+      submitter.relations.includes(BOUNTY_USER_RELATIONSHIP.ShortlistedLancer)
+    ),
+    deniedLancers: allUsers.filter((submitter) =>
+      submitter.relations.includes(BOUNTY_USER_RELATIONSHIP.DeniedLancer)
     ),
     approvedSubmitters: allUsers.filter((submitter) =>
       submitter.relations.includes(BOUNTY_USER_RELATIONSHIP.ApprovedSubmitter)
@@ -252,11 +254,14 @@ const getCurrentUserRelations = (
     isCreator: currentUserRelationsList.includes(
       BOUNTY_USER_RELATIONSHIP.Creator
     ),
-    isRequestedSubmitter: currentUserRelationsList.includes(
-      BOUNTY_USER_RELATIONSHIP.RequestedSubmitter
+    isRequestedLancer: currentUserRelationsList.includes(
+      BOUNTY_USER_RELATIONSHIP.RequestedLancer
     ),
-    isDeniedRequester: currentUserRelationsList.includes(
-      BOUNTY_USER_RELATIONSHIP.DeniedRequester
+    isShortlistedLancer: currentUserRelationsList.includes(
+      BOUNTY_USER_RELATIONSHIP.ShortlistedLancer
+    ),
+    isDeniedLancer: currentUserRelationsList.includes(
+      BOUNTY_USER_RELATIONSHIP.DeniedLancer
     ),
     isApprovedSubmitter: currentUserRelationsList.includes(
       BOUNTY_USER_RELATIONSHIP.ApprovedSubmitter

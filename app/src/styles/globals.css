@@ -35,11 +35,35 @@
 }
 
 html {
-  @apply text-textPrimary bg-bgLancer;
+  @apply text-[#526660] bg-bgLancer;
 }
 
 h1 {
-  @apply text-4xl font-bold;
+  @apply text-2xl font-bold;
+}
+
+h2 {
+  @apply text-xl font-bold;
+}
+
+h3 {
+  @apply text-lg font-bold;
+}
+
+h4 {
+  @apply text-base;
+}
+
+.title-text {
+  @apply text-sm font-bold;
+}
+
+.text {
+  @apply text-sm;
+}
+
+.text-mini {
+  @apply text-xs;
 }
 
 .multi-line-ellipsis {

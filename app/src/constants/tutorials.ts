@@ -429,7 +429,7 @@ export const PROFILE_TUTORIAL_INITIAL_STATE: Tutorial = {
     {
       target: "#mint-profile-nft",
       content:
-        "Next, you need to mint your profile NFT. This is managed by Lancer, so you won't need to sign a transaction. This will store your reputation and skills on chain, and update as you complete tasks.",
+        "Next, you need to mint your profile NFT. This is managed by Lancer, so you won't need to sign a transaction. This will store your XP and skills on chain, and update as you complete tasks.",
       disableBeacon: true,
       disableCloseOnEsc: false,
     },
@@ -437,7 +437,7 @@ export const PROFILE_TUTORIAL_INITIAL_STATE: Tutorial = {
     {
       target: "#profile-nft",
       content:
-        "This is your profile NFT. This will store your reputation and skills on chain, and update as you complete tasks.",
+        "This is your profile NFT. This will store your XP and skills on chain, and update as you complete tasks.",
       disableBeacon: true,
       disableCloseOnEsc: false,
     },
@@ -642,7 +642,7 @@ export const BOUNTY_ACTIONS_TUTORIAL_II_INITIAL_STATE: Tutorial = {
     {
       target: "#profile-nft",
       content:
-        "You can see now that your profile NFT has been updated with your new reputation and skills!",
+        "You can see now that your profile NFT has been updated with your new XP and skills!",
       disableBeacon: true,
       disableCloseOnEsc: false,
     },

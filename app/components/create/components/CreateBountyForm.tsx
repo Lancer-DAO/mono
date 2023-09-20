@@ -3,7 +3,7 @@ import { IndustryDropdown, Toggle } from "@/components";
 import { smallClickAnimation } from "@/src/constants";
 import { CREATE_BOUNTY_TUTORIAL_INITIAL_STATE } from "@/src/constants/tutorials";
 import { useTutorial } from "@/src/providers/tutorialProvider";
-import { FORM_SECTION, FormData } from "@/types/forms";
+import { FORM_SECTION, QuestFormData } from "@/types/forms";
 import { motion } from "framer-motion";
 import { toast } from "react-hot-toast";
 import { Industry } from "@/types";
@@ -13,8 +13,8 @@ import { useIndustry } from "@/src/providers/industryProvider";
 
 interface Props {
   setFormSection: Dispatch<SetStateAction<FORM_SECTION>>;
-  formData: FormData;
-  setFormData: Dispatch<SetStateAction<any>>;
+  formData: QuestFormData;
+  setFormData: Dispatch<SetStateAction<QuestFormData>>;
   handleChange: (event) => void;
 }
 
