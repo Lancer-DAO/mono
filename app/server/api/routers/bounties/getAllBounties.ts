@@ -9,6 +9,6 @@ export const getAllBounties = protectedProcedure
       onlyMyBounties: z.boolean(),
     })
   )
-  .query(async ({ input: { currentUserId, onlyMyBounties } }) => {
-    return await queries.bounty.getMany(currentUserId, onlyMyBounties);
+  .query(async ({ input: { currentUserId } }) => {
+    return await queries.bounty.getMany(currentUserId);
   });
