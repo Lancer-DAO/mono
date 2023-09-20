@@ -1,20 +1,15 @@
-import Edit from "@/components/@icons/Edit";
-import Fire from "@/components/@icons/Fire";
 import Plus from "@/components/@icons/Plus";
 import RedFire from "@/components/@icons/RedFire";
-import Trash from "@/components/@icons/Trash";
 import { smallClickAnimation } from "@/src/constants";
 import { useUserWallet } from "@/src/providers";
 import { useBounty } from "@/src/providers/bountyProvider";
 import { api } from "@/src/utils";
-import { UploadDropzone } from "@/src/utils/uploadthing";
 import { motion } from "framer-motion";
-import Image from "next/image";
-import { FC, useState } from "react";
-import { ChevronDown } from "react-feather";
+import { Dispatch, FC, SetStateAction, useState } from "react";
 import { toast } from "react-hot-toast";
 import ActionsCardBanner from "./ActionsCardBanner";
 import MilestoneView from "./MilestoneView";
+import { QuestActionView } from "./QuestActions";
 
 export interface Milestone {
   name: string;
@@ -23,7 +18,11 @@ export interface Milestone {
   description: string;
 }
 
-const LancerSubmitQuoteView: FC = () => {
+interface Props {
+  setCurrentActionView: Dispatch<SetStateAction<QuestActionView>>,
+}
+
+const LancerSubmitQuoteView: FC<Props> = ({ setCurrentActionView }) => {
   const { currentBounty, setCurrentBounty } = useBounty();
   const { currentUser, currentWallet } = useUserWallet();
   const [quoteData, setQuoteData] = useState<Milestone[]>([
@@ -40,6 +39,17 @@ const LancerSubmitQuoteView: FC = () => {
       description: "",
     }
   ]);
+
+  const addMilestone = () => {
+    const newMilestone = {
+      name: "",
+      price: 0,
+      time: 0,
+      description: "",
+    };
+
+    setQuoteData([...quoteData, newMilestone]);
+  };
 
   if (!currentBounty || !currentUser) return null;
 
@@ -61,12 +71,20 @@ const LancerSubmitQuoteView: FC = () => {
           </div>
           <div className="flex items-center title-text text-primary200">{`$${quoteData.reduce((total, milestone) => total + milestone.price, 0 ) }`}</div>
         </div>
-        {quoteData.map((milestone) => (
-          <MilestoneView milestone={milestone} key={milestone.name} />
+        {quoteData.map((milestone, index) => (
+          <MilestoneView 
+            milestone={milestone} 
+            setQuoteData={setQuoteData} 
+            index={index}
+            key={index} 
+          />
         ))}
-        {quoteData.length <= 5 && (
+        {quoteData.length < 5 && (
           <div className="py-4">
-            <button className="py-1 px-2 flex gap-1 justify-center items-center rounded-md border border-neutral200 text-mini text-neutral500">
+            <button 
+              className="py-1 px-2 flex gap-1 justify-center items-center rounded-md border border-neutral200 text-mini text-neutral500"
+              onClick={() => addMilestone()}
+            >
               <Plus /> 
               Add a Milestone
             </button>
@@ -76,7 +94,12 @@ const LancerSubmitQuoteView: FC = () => {
       </div>
       <div className="flex py-4 px-6 justify-end items-center gap-4 self-stretch opacity-20">
         <button className="px-4 py-2 text-neutral600 title-text rounded-md border border-neutral300">Cancel</button>
-        <button className="px-4 py-2 text-white title-text rounded-md bg-secondary200">Review Profile</button>
+        <button 
+          className="px-4 py-2 text-white title-text rounded-md bg-secondary200"
+          onClick={() => setCurrentActionView(QuestActionView.Apply)}
+        >
+            Review Profile
+        </button>
       </div>
     </div>
   );

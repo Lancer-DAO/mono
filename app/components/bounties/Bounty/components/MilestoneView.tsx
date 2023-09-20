@@ -1,18 +1,32 @@
 import Edit from "@/components/@icons/Edit";
 import Fire from "@/components/@icons/Fire";
 import Trash from "@/components/@icons/Trash";
-import { FC, useState } from "react";
+import { Dispatch, FC, SetStateAction, useState } from "react";
 import { ChevronDown, ChevronUp } from "react-feather";
 import { Milestone } from "./LancerSubmitQuoteView";
 
 interface Props {
-  milestone: Milestone
+  milestone: Milestone,
+  setQuoteData: Dispatch<SetStateAction<Milestone[]>>,
+  index: number,
 }
 
-const MilestoneView: FC<Props> = ({ milestone }) => {
+const MilestoneView: FC<Props> = ({ index, milestone, setQuoteData }) => {
   const [detailsOpen, setDetailsOpen] = useState(false);
   const [canEdit, setCanEdit] = useState(false);
-  const [tempMilestoneData, setTempMilestoneData] = useState<Milestone>(milestone);
+  const [tempMilestone, setTempMilestone  ] = useState<Milestone>(milestone);
+
+  const editMilestone = () => {
+    setQuoteData((prevData) => {
+      const updatedData = [...prevData];
+      updatedData[index] = tempMilestone;
+      return updatedData;
+    });
+  };
+
+  const deleteMilestone = () => {
+    setQuoteData((prevData) => prevData.filter((_, i) => i != index));
+  };
 
   return (
     <div className="flex flex-col" key={milestone.name}>
@@ -45,14 +59,13 @@ const MilestoneView: FC<Props> = ({ milestone }) => {
                 setDetailsOpen(true);
                 setCanEdit(true);
               }}>
-                <Edit 
-                  onClick={() => {
-                    setDetailsOpen(true);
-                    setCanEdit(true);
-                  }} 
-                />
+                <Edit />
               </button>
-              <Trash />
+              <button onClick={() => {
+                deleteMilestone();
+              }}>
+                <Trash />
+              </button>
             </div>
             <div className="title-text text-neutral600">{`$${milestone.price}`}</div>
           </div>
@@ -64,8 +77,8 @@ const MilestoneView: FC<Props> = ({ milestone }) => {
             <div className="text text-neutral600">Milestone name</div>
             <input 
               className="bg-neutral100 text text-neutral400 px-3 py-2 rounded-md border border-neutral200 outline-none"
-              value={tempMilestoneData.name}
-              onChange={(e) => setTempMilestoneData({ ...tempMilestoneData, name: e.target.value})}
+              value={tempMilestone .name}
+              onChange={(e) => setTempMilestone  ({ ...tempMilestone , name: e.target.value})}
               placeholder="Specify a clear objective and title"
               disabled={!canEdit}
             />
@@ -75,11 +88,11 @@ const MilestoneView: FC<Props> = ({ milestone }) => {
               <div className="text text-neutral600">Price</div>
               <input 
                 className="flex gap-2 bg-neutral100 text text-neutral600 px-3 py-2 rounded-md border border-neutral200 outline-none"
-                value={tempMilestoneData.price}
-                onChange={(e) => setTempMilestoneData({ ...tempMilestoneData, price: Number(e.target.value)})}
-                  placeholder="0"
-                  disabled={!canEdit}
-                >
+                value={tempMilestone .price}
+                onChange={(e) => setTempMilestone  ({ ...tempMilestone , price: Number(e.target.value)})}
+                placeholder="0"
+                disabled={!canEdit}
+              >
                 {/* <div className="text text-neutral400">$</div> */}
               </input>
             </div>
@@ -87,8 +100,8 @@ const MilestoneView: FC<Props> = ({ milestone }) => {
               <div className="text text-neutral600">Time to spend</div>
               <input 
                 className="flex gap-2 bg-neutral100 text text-neutral600 px-3 py-2 rounded-md border border-neutral200 outline-none" 
-                value={tempMilestoneData.time}
-                onChange={(e) => setTempMilestoneData({ ...tempMilestoneData, time: Number(e.target.value)})}
+                value={tempMilestone .time}
+                onChange={(e) => setTempMilestone  ({ ...tempMilestone , time: Number(e.target.value)})}
                   placeholder="0"
                   disabled={!canEdit}
               >
@@ -100,8 +113,8 @@ const MilestoneView: FC<Props> = ({ milestone }) => {
             <div className="text text-black">Add few bullet points about the process (try to be as clear as possible) :</div>
             <textarea 
               className="px-2 py-3 text text-[#94A3B8] rouned-md border border-[#E8F8F3] bg-[#FAFCFC] outline-none h-full resize-none" placeholder="Type your message here..." 
-              value={tempMilestoneData.description}
-              onChange={(e) => setTempMilestoneData({ ...tempMilestoneData, description: e.target.value})}
+              value={tempMilestone .description}
+              onChange={(e) => setTempMilestone  ({ ...tempMilestone , description: e.target.value})}
               disabled={!canEdit}
             />
           </div>
@@ -113,9 +126,9 @@ const MilestoneView: FC<Props> = ({ milestone }) => {
               <button 
                 className="px-4 py-2 rounded-md border border-neutral300 text-error title-text"
                 onClick={() => { 
-                  setTempMilestoneData(milestone);
+                  setTempMilestone (milestone);
                   setCanEdit(false);
-                  // setDetailsOpen(false);
+                  setDetailsOpen(false);
                 }}
               >
                 Cancel
@@ -123,9 +136,9 @@ const MilestoneView: FC<Props> = ({ milestone }) => {
               <button 
                 className="px-4 py-2 rounded-md border border-neutral300 text-neutral600 title-text"
                 onClick={() => {
-                  // setMilestone(setTempMilestoneData)
+                  editMilestone();
                   setCanEdit(false);
-                  // setDetailsOpen(false);
+                  setDetailsOpen(false);
                 }}
               >
                 Save Changes

@@ -60,7 +60,9 @@ const QuestActions: FC = () => {
           setCurrentActionView={setCurrentActionView}
         />
       )}
-      {currentActionView === QuestActionView.SubmitQuote && <LancerSubmitQuoteView />}
+      {currentActionView === QuestActionView.SubmitQuote && <LancerSubmitQuoteView 
+        setCurrentActionView={setCurrentActionView}
+      />}
       {currentActionView === QuestActionView.ViewApplicants && (
         <ApplicantsView
           setCurrentActionView={setCurrentActionView}
