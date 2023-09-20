@@ -54,7 +54,9 @@ const QuestActions: FC = () => {
 
   return (
     <div className="bg-white w-full min-w-[610px] border border-neutral200 rounded-lg overflow-hidden">
-      {currentActionView === QuestActionView.Apply && <LancerApplyView />}
+      {currentActionView === QuestActionView.Apply && (
+        <LancerApplyView setCurrentActionView={setCurrentActionView} />
+      )}
       {currentActionView === QuestActionView.ViewApplicants && (
         <ApplicantsView
           setCurrentActionView={setCurrentActionView}

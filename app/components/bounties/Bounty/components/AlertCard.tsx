@@ -1,3 +1,4 @@
+import { Rocket } from "@/components";
 import Image from "next/image";
 import { FC } from "react";
 
@@ -5,15 +6,9 @@ interface Props {
   type: "positive" | "negative" | "neutral";
   title: string;
   description: string;
-  icon?: string;
 }
 
-const AlertCard: FC<Props> = ({
-  type,
-  title,
-  description,
-  icon = "/assets/icons/rocket.svg",
-}) => {
+const AlertCard: FC<Props> = ({ type, title, description }) => {
   return (
     <div
       className={`w-[92%] mx-auto rounded-md p-4 pl-12 mt-4 flex flex-col justify-evenly
@@ -27,11 +22,19 @@ const AlertCard: FC<Props> = ({
     >
       <div className="relative w-full">
         <p className="title-text">{title}</p>
-        {icon && (
-          <div className="absolute top-0 -left-8">
-            <Image src={icon} width={24} height={24} alt="icon" />
-          </div>
-        )}
+        <div className="absolute top-0 -left-8">
+          <Rocket
+            width={24}
+            style={{
+              stroke:
+                type === "positive"
+                  ? "#10966D"
+                  : type === "negative"
+                  ? "#F5364F"
+                  : "#73807C",
+            }}
+          />
+        </div>
       </div>
       <p className="text">{description}</p>
     </div>

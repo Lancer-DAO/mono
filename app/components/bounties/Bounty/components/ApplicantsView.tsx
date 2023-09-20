@@ -15,6 +15,7 @@ import { QuestActionView } from "./QuestActions";
 import { cancelFFA, voteToCancelFFA } from "@/escrow/adapters";
 import { PublicKey } from "@solana/web3.js";
 import AlertCardModal from "./AlertCardModal";
+import { ChatButton, FundBountyModal } from "@/components";
 
 export enum EApplicantsView {
   All,
@@ -39,8 +40,15 @@ const ApplicantsView: FC<Props> = ({
     useState<EApplicantsView>(EApplicantsView.All);
   const [isLoading, setIsLoading] = useState(false);
   const [isAwaitingResponse, setIsAwaitingResponse] = useState(false);
-  const [showModal, setShowModal] = useState(false);
-      
+  const [showModal, setShowModal] = useState(true);
+  const [showFundModal, setShowFundModal] = useState(false);
+
+  // TODO: add logic to determine deposit amount
+  // 5% of highest quote
+  const depositAmount = () => {
+    return 1;
+  };
+
   const createdAtDate = new Date(
     Number(currentBounty?.createdAt)
   ).toLocaleDateString();
@@ -278,7 +286,7 @@ const ApplicantsView: FC<Props> = ({
     !!selectedSubmitter
   )
     return (
-      <div className="flex flex-col">
+      <div className="flex flex-col h-full">
         <div className="w-full flex flex-col">
           {/* banner */}
           <div
@@ -385,24 +393,7 @@ const ApplicantsView: FC<Props> = ({
             BOUNTY_USER_RELATIONSHIP.ShortlistedLancer
           ) && Number(currentBounty.escrow.amount) > 0 ? (
             <div className="w-full flex items-center justify-end gap-4">
-              <motion.button
-                {...smallClickAnimation}
-                onClick={() => {
-                  setCurrentActionView(QuestActionView.Chat);
-                }}
-                className="bg-white border border-neutral200 px-4 py-2 rounded-md flex items-center gap-2"
-              >
-                <p className="text-neutral600 title-text">Chat</p>
-                <svg
-                  width="6"
-                  height="6"
-                  viewBox="0 0 8 8"
-                  fill="none"
-                  className="animate-pulse"
-                >
-                  <circle cx="4" cy="4" r="4" fill="#10966D" />
-                </svg>
-              </motion.button>
+              <ChatButton setCurrentActionView={setCurrentActionView} />
               <motion.button
                 {...smallClickAnimation}
                 className="bg-white border border-neutral300 h-9 w-fit px-4 py-2
@@ -428,67 +419,38 @@ const ApplicantsView: FC<Props> = ({
     );
 
   return (
-    <div className="flex flex-col">
-      <ActionsCardBanner
-        title="Applications Review"
-        subtitle={`Started on ${createdAtDate}`}
-      />
-      <div className="relative flex flex-col gap-5 px-6 py-4">
-        {currentBounty.shortlistedLancers.length > 0 ? (
-          <>
-            {Number(currentBounty.escrow.amount) === 0 ? (
-              <div className="flex items-center justify-between mt-2">
-                <p className="text-sm text-neutral-600">
-                  {`You've added ${currentBounty.shortlistedLancers.length}/${MAX_SHORTLIST} candidates to your shortlist.`}
-                </p>
-                <motion.button
-                  {...smallClickAnimation}
-                  className="bg-secondary200 text-white title-text px-4 py-2 rounded-md"
-                  onClick={() => setShowModal(true)}
-                >
-                  Proceed with Shortlist
-                </motion.button>
-              </div>
-            ) : null}
-            <div className="flex items-center gap-2">
-              <p className="title-text">Shortlist</p>
-              {Number(currentBounty.escrow.amount) > 0 && <Lock size={14} />}
-            </div>
-            {currentBounty.shortlistedLancers.map((submitter, index) => {
-              return (
-                <div
-                  className={`w-full pb-5 ${
-                    index !== currentBounty.shortlistedLancers.length - 1
-                      ? "border-b border-neutral200"
-                      : ""
-                  }`}
-                  key={index}
-                >
-                  <ApplicantProfileCard
-                    user={submitter}
-                    setSelectedSubmitter={setSelectedSubmitter}
-                    setCurrentApplicantsView={setCurrentApplicantsView}
-                    setCurrentActionView={setCurrentActionView}
-                  />
+    <>
+      <div className="flex flex-col h-full">
+        <ActionsCardBanner
+          title="Applications Review"
+          subtitle={`Started on ${createdAtDate}`}
+        />
+        <div className="relative flex flex-col h-full gap-5 px-6 py-4">
+          {currentBounty.shortlistedLancers.length > 0 ? (
+            <>
+              {Number(currentBounty.escrow.amount) === 0 ? (
+                <div className="flex items-center justify-between mt-2">
+                  <p className="text-sm text-neutral-600">
+                    {`You've added ${currentBounty.shortlistedLancers.length}/${MAX_SHORTLIST} candidates to your shortlist.`}
+                  </p>
+                  <motion.button
+                    {...smallClickAnimation}
+                    className="bg-secondary200 text-white title-text px-4 py-2 rounded-md"
+                    onClick={() => setShowModal(true)}
+                  >
+                    Proceed with Shortlist
+                  </motion.button>
                 </div>
-              );
-            })}
-          </>
-        ) : (
-          <p className="text-sm text-neutral-600">
-            You haven&apos;t answered any applicants yet. Shortlist up to 5
-            profiles to move on.
-          </p>
-        )}
-        {Number(currentBounty.escrow.amount) === 0 ? (
-          <>
-            <p className="title-text">Pending</p>
-            {currentBounty.requestedLancers.length > 0 ? (
-              currentBounty.requestedLancers.map((submitter, index) => {
+              ) : null}
+              <div className="flex items-center gap-2">
+                <p className="title-text">Shortlist</p>
+                {Number(currentBounty.escrow.amount) > 0 && <Lock size={14} />}
+              </div>
+              {currentBounty.shortlistedLancers.map((submitter, index) => {
                 return (
                   <div
                     className={`w-full pb-5 ${
-                      index !== currentBounty.requestedLancers.length - 1
+                      index !== currentBounty.shortlistedLancers.length - 1
                         ? "border-b border-neutral200"
                         : ""
                     }`}
@@ -502,20 +464,21 @@ const ApplicantsView: FC<Props> = ({
                     />
                   </div>
                 );
-              })
-            ) : (
-              <p className="text-neutral500 text pb-5">No pending applicants</p>
-            )}
-          </>
-        ) : null}
-        {currentBounty.deniedLancers.length > 0 ? (
-          <>
-            <p className="title-text">Denied</p>
-            {currentBounty.deniedLancers.map((submitter, index) => {
+              })}
+            </>
+          ) : (
+            <p className="text-sm text-neutral-600">
+              You haven&apos;t answered any applicants yet. Shortlist up to 5
+              profiles to move on.
+            </p>
+          )}
+          <p className="title-text">Pending</p>
+          {currentBounty.requestedLancers.length > 0 ? (
+            currentBounty.requestedLancers.map((submitter, index) => {
               return (
                 <div
-                  className={`w-full pb-5 opacity-70 ${
-                    index !== currentBounty.deniedLancers.length - 1
+                  className={`w-full pb-5 ${
+                    index !== currentBounty.requestedLancers.length - 1
                       ? "border-b border-neutral200"
                       : ""
                   }`}
@@ -529,48 +492,121 @@ const ApplicantsView: FC<Props> = ({
                   />
                 </div>
               );
-            })}
-          </>
-        ) : null}
-        <div className="w-full flex items-center justify-end">
-          {currentBounty.state === BountyState.VOTING_TO_CANCEL ? (
-            <motion.button
-              {...smallClickAnimation}
-              className="bg-white border border-neutral200 h-9 w-fit px-4 py-2
-              title-text rounded-md text-error disabled:cursor-not-allowed disabled:opacity-80"
-              onClick={handleCancel}
-              disabled={isLoading || isAwaitingResponse}
-            >
-              Cancel Quest
-            </motion.button>
+            })
+          ) : (
+            <p className="text-neutral500 text pb-5">No pending applicants</p>
+          )}
+          {currentBounty.deniedLancers.length > 0 ? (
+            <>
+              <p className="title-text">Denied</p>
+              {currentBounty.deniedLancers.map((submitter, index) => {
+                return (
+                  <div
+                    className={`w-full pb-5 ${
+                      index !== currentBounty.deniedLancers.length - 1
+                        ? "border-b border-neutral200"
+                        : ""
+                    }`}
+                    key={index}
+                  >
+                    <ApplicantProfileCard
+                      user={submitter}
+                      setSelectedSubmitter={setSelectedSubmitter}
+                      setCurrentApplicantsView={setCurrentApplicantsView}
+                      setCurrentActionView={setCurrentActionView}
+                    />
+                  </div>
+                );
+              })}
+            </>
           ) : null}
-          {currentBounty.state !== BountyState.VOTING_TO_CANCEL &&
-          currentBounty.state !== BountyState.CANCELED ? (
-            <motion.button
-              {...smallClickAnimation}
-              className="bg-white border border-neutral200 h-9 w-fit px-4 py-2
-              title-text rounded-md text-error disabled:cursor-not-allowed disabled:opacity-80"
-              onClick={handleVoteToCancel}
-              disabled={isLoading || isAwaitingResponse}
-            >
-              Vote to Cancel
-            </motion.button>
-          ) : null}
-          {currentBounty.state === BountyState.CANCELED ? (
-            <motion.button
-              {...smallClickAnimation}
-              className="bg-white border border-neutral200 h-9 w-fit px-4 py-2
-              title-text rounded-md text-error disabled:cursor-not-allowed disabled:opacity-80"
-              onClick={handleVoteToCancel}
-              disabled={true}
-            >
-              Quest Canceled
-            </motion.button>
-          ) : null}
+          <div className="w-full flex items-center justify-end">
+            {currentBounty.state === BountyState.VOTING_TO_CANCEL ? (
+              <motion.button
+                {...smallClickAnimation}
+                className="bg-white border border-neutral200 h-9 w-fit px-4 py-2
+                title-text rounded-md text-error disabled:cursor-not-allowed disabled:opacity-80"
+                onClick={handleCancel}
+                disabled={isLoading || isAwaitingResponse}
+              >
+                Cancel Quest
+              </motion.button>
+            ) : null}
+            {currentBounty.state !== BountyState.VOTING_TO_CANCEL &&
+            currentBounty.state !== BountyState.CANCELED ? (
+              <motion.button
+                {...smallClickAnimation}
+                className="bg-white border border-neutral200 h-9 w-fit px-4 py-2
+                title-text rounded-md text-error disabled:cursor-not-allowed disabled:opacity-80"
+                onClick={handleVoteToCancel}
+                disabled={isLoading || isAwaitingResponse}
+              >
+                Vote to Cancel
+              </motion.button>
+            ) : null}
+            {currentBounty.state === BountyState.CANCELED ? (
+              <motion.button
+                {...smallClickAnimation}
+                className="bg-white border border-neutral200 h-9 w-fit px-4 py-2
+                title-text rounded-md text-error disabled:cursor-not-allowed disabled:opacity-80"
+                onClick={handleVoteToCancel}
+                disabled={true}
+              >
+                Quest Canceled
+              </motion.button>
+            ) : null}
+          </div>
+          {showModal && (
+            <AlertCardModal setShowModal={setShowModal}>
+              <div className="w-full p-4 pl-12 mt-4 flex flex-col justify-evenly bg-neutral100">
+                <div className="relative w-full">
+                  <p className="title-text">Almost done!</p>
+                  <div className="absolute top-0 -left-8">
+                    <Image
+                      src="/assets/icons/rocket.svg"
+                      width={24}
+                      height={24}
+                      alt="icon"
+                    />
+                  </div>
+                </div>
+                <p className="text pt-1">{`Now that you shortlisted some solid candidates, we need you to commit and deposit into an escrow 5% of the highest quote you received, which equates to $${depositAmount()}.`}</p>
+                <p className="text pt-1">
+                  This unlocks the ability to chat with your shortlisted
+                  applicants. Once you decide which candidate you want to work
+                  with, we will ask you to deposit 100% of the funds into escrow
+                  to kick things off.
+                </p>
+                <div className="w-full flex items-center justify-end gap-2 pt-4">
+                  <motion.button
+                    {...smallClickAnimation}
+                    className="bg-white border border-neutral300 h-9 w-fit px-4 py-2
+                    title-text rounded-md text-neutral60"
+                    onClick={() => setShowModal(false)}
+                  >
+                    Cancel
+                  </motion.button>
+                  <motion.button
+                    {...smallClickAnimation}
+                    className="bg-secondary200 h-9 w-fit px-4 py-2
+                    title-text rounded-md text-white disabled:cursor-not-allowed disabled:opacity-80"
+                    onClick={() => setShowFundModal(true)}
+                  >
+                    {`Deposit $${depositAmount()} into escrow`}
+                  </motion.button>
+                </div>
+              </div>
+            </AlertCardModal>
+          )}
         </div>
-        {showModal && <AlertCardModal setShowModal={setShowModal} />}
       </div>
-    </div>
+      {showFundModal && (
+        <FundBountyModal
+          setShowModal={setShowFundModal}
+          amount={depositAmount()}
+        />
+      )}
+    </>
   );
 };
 

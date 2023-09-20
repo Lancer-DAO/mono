@@ -1,19 +1,28 @@
-import { FC, useEffect, useState } from "react";
+import { Dispatch, FC, SetStateAction, useEffect, useState } from "react";
 import ActionsCardBanner from "./ActionsCardBanner";
 import { useBounty } from "@/src/providers/bountyProvider";
-import { ContributorInfo } from "@/components";
+import { ChatButton, ContributorInfo } from "@/components";
 import { useUserWallet } from "@/src/providers";
 import { smallClickAnimation } from "@/src/constants";
 import { motion } from "framer-motion";
-import { BOUNTY_USER_RELATIONSHIP, LancerApplyData } from "@/types";
+import {
+  BOUNTY_USER_RELATIONSHIP,
+  BountyState,
+  LancerApplyData,
+} from "@/types";
 import AlertCard from "./AlertCard";
-import { Image } from "lucide-react";
+import { Image as ImageIcon } from "lucide-react";
 import { useReferral } from "@/src/providers/referralProvider";
 import { PublicKey } from "@solana/web3.js";
 import { api, updateList } from "@/src/utils";
 import toast from "react-hot-toast";
+import { QuestActionView } from "./QuestActions";
 
-const LancerApplyView: FC = () => {
+interface Props {
+  setCurrentActionView: Dispatch<SetStateAction<QuestActionView>>;
+}
+
+const LancerApplyView: FC<Props> = ({ setCurrentActionView }) => {
   const { currentBounty, setCurrentBounty } = useBounty();
   const { currentUser, currentWallet } = useUserWallet();
   const { createReferralMember } = useReferral();
@@ -27,7 +36,13 @@ const LancerApplyView: FC = () => {
     resume: currentUser.resume,
     details: "",
   });
-  const [hasApplied, setHasApplied] = useState(false);
+
+  const applicationDisabled =
+    currentBounty.isRequestedLancer ||
+    currentBounty.isDeniedLancer ||
+    currentBounty.isCreator ||
+    (currentBounty.state !== BountyState.ACCEPTING_APPLICATIONS &&
+      currentBounty.state !== BountyState.NEW);
 
   const onClick = async () => {
     // Request to submit. Does not interact on chain
@@ -54,7 +69,6 @@ const LancerApplyView: FC = () => {
       });
 
       setCurrentBounty(updatedBounty);
-      setHasApplied(true);
       toast.success("Application sent", { id: toastId });
     } catch (error) {
       if (
@@ -69,31 +83,65 @@ const LancerApplyView: FC = () => {
     }
   };
 
-  // check if user has applied
-  useEffect(() => {
-    if (!currentBounty || !currentUser) return;
-    const hasApplied = currentBounty.currentUserRelationsList?.some(
-      (relation) => relation === BOUNTY_USER_RELATIONSHIP.RequestedLancer
-    );
-    setHasApplied(hasApplied);
-  }, [currentBounty, currentUser]);
-
   if (!currentBounty || !currentUser) return null;
 
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col h-full">
       <ActionsCardBanner title="Apply to this Quest">
-        <ContributorInfo user={currentBounty.creator.user} />
+        {currentBounty.isShortlistedLancer ||
+        currentBounty.currentSubmitter ||
+        currentBounty.isCompleter ? (
+          <ChatButton setCurrentActionView={setCurrentActionView} />
+        ) : null}
       </ActionsCardBanner>
-      {/* TODO: add check for if user application has been approved or denied. if not, show this: */}
-      {hasApplied && (
+      {/* notification logic */}
+      {currentBounty.isRequestedLancer && (
         <AlertCard
           type="positive"
           title="Nice!"
           description="Your application has been sent. Fingers crossed! You will hear an answer from the client within 48 hours."
         />
       )}
-      <div className="w-full p-6 flex items-center justify-between gap-5">
+      {currentBounty.isDeniedLancer && (
+        <AlertCard
+          type="negative"
+          title="Denied"
+          description="Your application has been denied. You can still apply to other quests."
+        />
+      )}
+      {currentBounty.state === BountyState.IN_PROGRESS &&
+        !currentBounty.isApprovedSubmitter && (
+          <AlertCard
+            type="neutral"
+            title="Quest In Progress"
+            description="This Quest is already in progress. You can apply to other quests."
+          />
+        )}
+      {currentBounty.state === BountyState.COMPLETE &&
+        !currentBounty.isCompleter && (
+          <AlertCard
+            type="neutral"
+            title="Quest Complete"
+            description="This Quest has already been completed. You can apply to other quests."
+          />
+        )}
+      {currentBounty.state === BountyState.COMPLETE &&
+        currentBounty.isCompleter && (
+          <AlertCard
+            type="positive"
+            title="Wow! Congrats!"
+            description="You have completed this Quest. It is now archived so you can always access the details of this project later on."
+          />
+        )}
+      {currentBounty.state === BountyState.CANCELED &&
+        currentBounty.users.some((user) => user.userid !== currentUser.id) && (
+          <AlertCard
+            type="neutral"
+            title="Quest Canceled"
+            description="This Quest has been canceled. You can apply to other Quests."
+          />
+        )}
+      <div className="w-full h-full p-6 flex items-center justify-between gap-5">
         <div className="flex items-center gap-4">
           <p className="text-neutral600 text">Portfolio</p>
           <input
@@ -103,7 +151,7 @@ const LancerApplyView: FC = () => {
             name={`link-portfolio`}
             placeholder="Paste Link"
             id={`link-portfolio`}
-            disabled={hasApplied}
+            disabled={applicationDisabled}
             value={applyData.portfolio}
             onChange={(e) =>
               setApplyData({ ...applyData, portfolio: e.target.value })
@@ -119,7 +167,7 @@ const LancerApplyView: FC = () => {
             name={`link-linkedin`}
             placeholder="Paste Link"
             id={`link-linkedin`}
-            disabled={hasApplied}
+            disabled={applicationDisabled}
             value={applyData.linkedin}
             onChange={(e) =>
               setApplyData({ ...applyData, linkedin: e.target.value })
@@ -136,7 +184,7 @@ const LancerApplyView: FC = () => {
           name={`about`}
           placeholder="Tell us about yourself"
           id={`about`}
-          disabled={hasApplied}
+          disabled={applicationDisabled}
           value={applyData.about}
           onChange={(e) =>
             setApplyData({ ...applyData, about: e.target.value })
@@ -146,12 +194,12 @@ const LancerApplyView: FC = () => {
         <div className="flex items-center justify-end text text-neutral600">
           <button
             className="rounded-md bg-white border border-neutral200 flex items-center justify-center gap-2 h-8 px-2"
-            disabled={hasApplied}
+            disabled={applicationDisabled}
             onClick={() =>
               window.open(currentUser.resume, "_blank", "noopener noreferrer")
             }
           >
-            <Image color="#A1B2AD" size={18} />
+            <ImageIcon color="#A1B2AD" size={18} />
             <p className="text-xs text-neutral400 truncate">resume.pdf</p>
           </button>
         </div>
@@ -165,14 +213,14 @@ const LancerApplyView: FC = () => {
           name={`details`}
           placeholder="Type your message here..."
           id={`details`}
-          disabled={hasApplied}
+          disabled={applicationDisabled}
           value={applyData.details}
           onChange={(e) =>
             setApplyData({ ...applyData, details: e.target.value })
           }
         />
       </div>
-      {!hasApplied && (
+      {!applicationDisabled && (
         <div className="flex items-center justify-end px-6 py-4">
           <motion.button
             {...smallClickAnimation}

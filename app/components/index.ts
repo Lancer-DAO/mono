@@ -14,15 +14,17 @@ const LockIcon = dynamic(() => import("./@icons/LockIcon"));
 const Logo = dynamic(() => import("./@icons/Logo"));
 const NextArrow = dynamic(() => import("./@icons/NextArrow"));
 const PhantomLogo = dynamic(() => import("./@icons/PhantomLogo"));
+const Rocket = dynamic(() => import("./@icons/Rocket"));
 const StarIcon = dynamic(() => import("./@icons/StarIcon"));
 const USDC = dynamic(() => import("./@icons/USDC"));
 
 // atoms
 const BountyCardFrame = dynamic(() => import("./atoms/BountyCardFrame"));
 const Button = dynamic(() => import("./atoms/Button"));
-const LinkButton = dynamic(() => import("./atoms/LinkButton"));
+const ChatButton = dynamic(() => import("./atoms/ChatButton"));
 const CoinflowOfframp = dynamic(() => import("./atoms/CoinflowOfframp"));
 const ContributorInfo = dynamic(() => import("./atoms/ContributorInfo"));
+const LinkButton = dynamic(() => import("./atoms/LinkButton"));
 const LoadingBar = dynamic(() => import("./atoms/LoadingBar"));
 const PreviewCardBase = dynamic(() => import("./atoms/PreviewCardBase"));
 const PriceTag = dynamic(() => import("./atoms/PriceTag"));
@@ -77,12 +79,14 @@ export {
   Logo,
   NextArrow,
   PhantomLogo,
+  Rocket,
   StarIcon,
   USDC,
 
   // atoms
   BountyCardFrame,
   Button,
+  ChatButton,
   CoinflowOfframp,
   ContributorInfo,
   LinkButton,

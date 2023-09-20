@@ -1,4 +1,3 @@
-
 import { Dispatch, FC, SetStateAction } from "react";
 import Image from "next/image";
 import { BountyUserType } from "@/prisma/queries/bounty";
@@ -115,7 +114,7 @@ const ApplicantProfileCard: FC<Props> = ({
               setSelectedSubmitter(user);
               setCurrentApplicantsView(EApplicantsView.Individual);
             }}
-            className="bg-white border border-neutral200 text-neutral500 
+            className="bg-white border border-neutral200 text-neutral600 
             title-text px-4 py-2 rounded-md"
           >
             View
