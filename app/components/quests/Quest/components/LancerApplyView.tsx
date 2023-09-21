@@ -1,4 +1,4 @@
-import { Dispatch, FC, SetStateAction, useState } from "react";
+import { Dispatch, FC, SetStateAction, useEffect, useState } from "react";
 import ActionsCardBanner from "./ActionsCardBanner";
 import { useBounty } from "@/src/providers/bountyProvider";
 import { ChatButton } from "@/components";
@@ -84,6 +84,12 @@ const LancerApplyView: FC<Props> = ({ setCurrentActionView }) => {
     }
   };
 
+  useEffect(() => {
+    if (currentBounty && currentBounty.isRequestedLancer) {
+      // TODO: fetch user's application
+    }
+  }, [currentBounty]);
+
   if (!currentBounty || !currentUser) return null;
 
   return (
@@ -111,7 +117,8 @@ const LancerApplyView: FC<Props> = ({ setCurrentActionView }) => {
         />
       )}
       {currentBounty.state === BountyState.IN_PROGRESS &&
-        !currentBounty.isApprovedSubmitter && (
+        !currentBounty.isApprovedSubmitter &&
+        !currentBounty.isDeniedLancer && (
           <AlertCard
             type="neutral"
             title="Quest In Progress"
@@ -142,7 +149,9 @@ const LancerApplyView: FC<Props> = ({ setCurrentActionView }) => {
             description="This Quest has been canceled. You can apply to other Quests."
           />
         )}
-      {applicationDisabled && !currentBounty.isCompleter ? (
+      {applicationDisabled &&
+      !currentBounty.isCompleter &&
+      !currentBounty.isRequestedLancer ? (
         <div className="w-full h-[400px] flex flex-col items-center justify-center">
           <div className="w-32">
             <Image
@@ -167,7 +176,7 @@ const LancerApplyView: FC<Props> = ({ setCurrentActionView }) => {
                 placeholder="Paste Link"
                 id={`link-portfolio`}
                 disabled={applicationDisabled}
-                value={applyData.portfolio}
+                value={applyData.portfolio || currentUser.website}
                 onChange={(e) =>
                   setApplyData({ ...applyData, portfolio: e.target.value })
                 }

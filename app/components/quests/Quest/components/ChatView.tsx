@@ -6,6 +6,7 @@ import { useBounty } from "@/src/providers/bountyProvider";
 import { smallClickAnimation } from "@/src/constants";
 import { X } from "lucide-react";
 import { QuestActionView } from "./QuestActions";
+import { BountyState } from "@/types";
 
 interface Props {
   selectedSubmitter: BountyUserType | null;
@@ -19,7 +20,9 @@ const ChatView: FC<Props> = ({ selectedSubmitter, setCurrentActionView }) => {
       <ActionsCardBanner
         title={`Conversation with ${
           currentBounty.isCreator
-            ? selectedSubmitter.user.name
+            ? currentBounty.state === BountyState.ACCEPTING_APPLICATIONS
+              ? selectedSubmitter.user.name
+              : currentBounty.approvedSubmitters[0].user.name
             : currentBounty.creator.user.name
         } `}
       >

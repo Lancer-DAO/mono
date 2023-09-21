@@ -12,10 +12,11 @@ import { api, updateList } from "@/src/utils";
 import { BOUNTY_USER_RELATIONSHIP, BountyState } from "@/types";
 import toast from "react-hot-toast";
 import { QuestActionView } from "./QuestActions";
-import { cancelFFA, voteToCancelFFA } from "@/escrow/adapters";
+import { addSubmitterFFA, cancelFFA, voteToCancelFFA } from "@/escrow/adapters";
 import { PublicKey } from "@solana/web3.js";
 import AlertCardModal from "./AlertCardModal";
 import { ChatButton, FundBountyModal } from "@/components";
+import { useReferral } from "@/src/providers/referralProvider";
 
 export enum EApplicantsView {
   All,
@@ -36,11 +37,13 @@ const ApplicantsView: FC<Props> = ({
   const { currentUser, currentWallet, program, provider } = useUserWallet();
   const { currentBounty, setCurrentBounty } = useBounty();
   const { mutateAsync: updateBounty } = api.bountyUsers.update.useMutation();
+  const { getRemainingAccounts, getSubmitterReferrer } = useReferral();
+
   const [currentApplicantsView, setCurrentApplicantsView] =
     useState<EApplicantsView>(EApplicantsView.All);
   const [isLoading, setIsLoading] = useState(false);
   const [isAwaitingResponse, setIsAwaitingResponse] = useState(false);
-  const [showModal, setShowModal] = useState(true);
+  const [showModal, setShowModal] = useState(false);
   const [showFundModal, setShowFundModal] = useState(false);
 
   // TODO: add logic to determine deposit amount
@@ -53,7 +56,7 @@ const ApplicantsView: FC<Props> = ({
     Number(currentBounty?.createdAt)
   ).toLocaleDateString();
 
-  const confirmAction = (): Promise<void> => {
+  const confirmAction = (action: string): Promise<void> => {
     setIsAwaitingResponse(true);
 
     return new Promise<void>((resolve, reject) => {
@@ -72,7 +75,7 @@ const ApplicantsView: FC<Props> = ({
       const toastId = toast(
         (t) => (
           <div>
-            Are you sure you want to cancel the Quest?
+            <p className="text-center">{`Are you sure you want to ${action}?`}</p>
             <div className="mt-2 flex items-center gap-4 justify-center">
               <button
                 onClick={handleYes}
@@ -186,8 +189,68 @@ const ApplicantsView: FC<Props> = ({
     }
   };
 
+  const handleApproveForQuest = async () => {
+    if (!currentBounty || !selectedSubmitter) return;
+
+    setIsLoading(true);
+    await confirmAction("approve this Lancer");
+    const toastId = toast.loading("Approving Your Lancer...");
+    try {
+      const submitterWallet = new PublicKey(selectedSubmitter.publicKey);
+      const remainingAccounts = await getRemainingAccounts(
+        submitterWallet,
+        new PublicKey(currentBounty?.escrow.mint.publicKey)
+      );
+      const signature = await addSubmitterFFA(
+        submitterWallet,
+        currentBounty?.escrow,
+        currentWallet,
+        await getSubmitterReferrer(
+          submitterWallet,
+          new PublicKey(currentBounty?.escrow.mint.publicKey)
+        ),
+        remainingAccounts,
+        program,
+        provider
+      );
+      const newRelations = updateList(
+        selectedSubmitter.userid === currentUser.id
+          ? currentBounty?.currentUserRelationsList
+          : [],
+        [BOUNTY_USER_RELATIONSHIP.RequestedLancer],
+        [BOUNTY_USER_RELATIONSHIP.ApprovedSubmitter]
+      );
+      const updatedBounty = await updateBounty({
+        bountyId: currentBounty?.id,
+        userId: selectedSubmitter.userid,
+        currentUserId: currentUser.id,
+        relations: newRelations,
+        state: BountyState.IN_PROGRESS,
+        publicKey: selectedSubmitter.publicKey,
+        escrowId: currentBounty?.escrowid,
+        signature,
+        label: "add-approved-submitter",
+      });
+
+      setCurrentBounty(updatedBounty);
+      toast.success("Successfully approved submitter", { id: toastId });
+    } catch (error) {
+      if (
+        (error.message as string).includes(
+          "Wallet is registered to another user"
+        )
+      ) {
+        toast.error("Wallet is registered to another user", { id: toastId });
+      } else {
+        toast.error("Error approving submitter", { id: toastId });
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const handleVoteToCancel = async () => {
-    await confirmAction();
+    await confirmAction("vote to cancel the Quest");
     const toastId = toast.loading("Submitting vote to cancel...");
     try {
       setIsLoading(true);
@@ -236,7 +299,7 @@ const ApplicantsView: FC<Props> = ({
   };
 
   const handleCancel = async () => {
-    await confirmAction();
+    await confirmAction("cancel the Quest");
     const toastId = toast.loading("Cancelling Quest...");
     try {
       setIsLoading(true);
@@ -393,7 +456,10 @@ const ApplicantsView: FC<Props> = ({
             BOUNTY_USER_RELATIONSHIP.ShortlistedLancer
           ) && Number(currentBounty.escrow.amount) > 0 ? (
             <div className="w-full flex items-center justify-end gap-4">
-              <ChatButton setCurrentActionView={setCurrentActionView} />
+              <ChatButton
+                setCurrentActionView={setCurrentActionView}
+                disabled={isLoading || isAwaitingResponse}
+              />
               <motion.button
                 {...smallClickAnimation}
                 className="bg-white border border-neutral300 h-9 w-fit px-4 py-2
@@ -407,7 +473,7 @@ const ApplicantsView: FC<Props> = ({
                 {...smallClickAnimation}
                 className="bg-success h-9 w-fit px-4 py-2
                 title-text rounded-md text-white disabled:cursor-not-allowed disabled:opacity-80"
-                // onClick={() => handleManageShortlist("remove")}
+                onClick={() => handleApproveForQuest()}
                 disabled={isLoading || isAwaitingResponse}
               >
                 Select for the Quest
@@ -603,6 +669,7 @@ const ApplicantsView: FC<Props> = ({
       {showFundModal && (
         <FundBountyModal
           setShowModal={setShowFundModal}
+          setShowFundModal={setShowFundModal}
           amount={depositAmount()}
         />
       )}

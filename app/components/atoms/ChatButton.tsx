@@ -5,11 +5,13 @@ import { QuestActionView } from "../quests/Quest/components";
 
 interface Props {
   setCurrentActionView: Dispatch<SetStateAction<QuestActionView>>;
+  disabled?: boolean;
 }
-const ChatButton: FC<Props> = ({ setCurrentActionView }) => {
+const ChatButton: FC<Props> = ({ setCurrentActionView, disabled = false }) => {
   return (
     <motion.button
       {...smallClickAnimation}
+      disabled={disabled}
       onClick={() => {
         setCurrentActionView(QuestActionView.Chat);
       }}
