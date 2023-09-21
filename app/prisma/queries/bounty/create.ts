@@ -1,5 +1,7 @@
 import { prisma } from "@/server/db";
+import { BountyState } from "@/types";
 import * as Prisma from "@prisma/client";
+import * as queries from "../";
 
 export const create = async (
   createdAt: string,
@@ -66,7 +68,7 @@ export const create = async (
       users: {
         create: {
           userid: user.id,
-          relations: "[creator]",
+          relations: "creator",
           walletid: wallet.id,
         },
       },
@@ -78,28 +80,27 @@ export const create = async (
 export const createExternal = async (
   createdAt: string,
   description: string,
-  isPrivate: boolean,
-  isExternal: boolean,
   title: string,
-  links: string[],
-  user: string,
+  link: string,
+  userName: string,
+  userPicture: string,
   price?: number
 ): Promise<Prisma.Bounty> => {
+  const user = await queries.user.getOrCreateByName(userName, userPicture);
   const bounty = await prisma.bounty.create({
     data: {
       createdAt,
       description,
       price,
-      isPrivate,
-      isExternal,
-      state: "new",
+      isPrivate: false,
+      isExternal: true,
+      state: BountyState.ACCEPTING_APPLICATIONS,
       title,
-      links: links.join(),
+      links: link,
       users: {
         create: {
-          userid: process.env[user.toUpperCase() + '_USER_ID'],
-          relations: "[creator]",
-          walletid: process.env[user.toUpperCase() + '_WALLET_ID'],
+          userid: user.id,
+          relations: "creator",
         },
       },
     },
