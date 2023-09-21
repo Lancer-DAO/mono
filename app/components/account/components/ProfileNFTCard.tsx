@@ -227,7 +227,7 @@ export const ProfileNFTCard = ({
               {currentUser.isAdmin && !self && !user.hasBeenApproved && (
                 <QuestActionsButton
                   onClick={async () => {
-                    approveUser({ id: user.id });
+                    approveUser({ email: user.email });
                     setApprovalText("Approved");
                   }}
                   type="green"

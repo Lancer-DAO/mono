@@ -55,10 +55,7 @@ export default function Home() {
         <meta name="description" content="Lancer Contribution Leaderboard" />
       </Head>
       <main>
-        {/* <ContributionBoard /> */}
-        <h1 className="py-32 w-fit mx-auto text-center">
-          Leaderboard Under Construction
-        </h1>
+        <ContributionBoard />
       </main>
     </>
   );
