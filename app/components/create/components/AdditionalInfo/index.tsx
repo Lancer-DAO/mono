@@ -134,7 +134,7 @@ export const AdditionalInfoForm: FC<Props> = ({
   }, [toggleConfig.selected, formData, setFormData]);
 
   useEffect(() => {
-    if (testToggleConfig.selected === "option2") {
+    if (testToggleConfig.selected === "option1") {
       setFormData({
         ...formData,
         isTest: true,
