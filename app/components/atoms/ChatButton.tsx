@@ -1,7 +1,7 @@
 import { Dispatch, FC, SetStateAction } from "react";
 import { smallClickAnimation } from "@/src/constants";
 import { motion } from "framer-motion";
-import { QuestActionView } from "../bounties/Bounty/components";
+import { QuestActionView } from "../quests/Quest/components";
 
 interface Props {
   setCurrentActionView: Dispatch<SetStateAction<QuestActionView>>;

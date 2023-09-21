@@ -6,10 +6,10 @@ import { api } from "@/src/utils/api";
 import { PublicKey } from "@solana/web3.js";
 import { BOUNTY_USER_RELATIONSHIP, BountyState } from "@/types/";
 import { updateList } from "@/src/utils";
-import { BountyActionsButton } from "./BountyActionsButton";
+import { QuestActionsButton } from ".";
 import toast from "react-hot-toast";
 
-export const RequestChanges = () => {
+export const DenySubmission = () => {
   const { currentUser, currentWallet, program, provider } = useUserWallet();
   const { currentBounty, setCurrentBounty } = useBounty();
   const { mutateAsync } = api.bountyUsers.update.useMutation();
@@ -27,42 +27,42 @@ export const RequestChanges = () => {
     return null;
 
   const onClick = async () => {
-    // If we are the creator, then skip requesting and add self as approved
     setIsLoading(true);
     const signature = await denyRequestFFA(
       new PublicKey(currentBounty.currentSubmitter.publicKey),
-
       currentBounty.escrow,
       currentWallet,
       program,
       provider
     );
+
     const newRelations = updateList(
       [],
       [BOUNTY_USER_RELATIONSHIP.CurrentSubmitter],
-      [BOUNTY_USER_RELATIONSHIP.ChangesRequestedSubmitter]
+      [BOUNTY_USER_RELATIONSHIP.DeniedSubmitter]
     );
+
     const updatedBounty = await mutateAsync({
       bountyId: currentBounty.id,
       currentUserId: currentUser.id,
       userId: currentBounty.currentSubmitter.userid,
       relations: newRelations,
-      state: BountyState.IN_PROGRESS,
+      state: BountyState.ACCEPTING_APPLICATIONS,
       publicKey: currentBounty.currentSubmitter.publicKey,
       escrowId: currentBounty.escrowid,
       signature,
-      label: "request-changes",
+      label: "deny-submission",
     });
 
     setCurrentBounty(updatedBounty);
     setIsLoading(false);
-    toast.success("Changes requested");
+    toast.success("Submission denied");
   };
 
   return (
-    <BountyActionsButton
-      type="neutral"
-      text="Request Changes"
+    <QuestActionsButton
+      type="red"
+      text="Deny Submission"
       onClick={onClick}
       isLoading={isLoading}
     />

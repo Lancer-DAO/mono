@@ -5,7 +5,7 @@ import { useBounty } from "@/src/providers/bountyProvider";
 import { BOUNTY_USER_RELATIONSHIP, BountyState } from "@/types/";
 import { api } from "@/src/utils/api";
 import { updateList } from "@/src/utils";
-import { BountyActionsButton } from ".";
+import { QuestActionsButton } from ".";
 import toast from "react-hot-toast";
 
 export const CancelEscrow: FC = () => {
@@ -53,7 +53,7 @@ export const CancelEscrow: FC = () => {
   };
 
   return (
-    <BountyActionsButton
+    <QuestActionsButton
       type="red"
       text="Cancel Bounty"
       onClick={onClick}

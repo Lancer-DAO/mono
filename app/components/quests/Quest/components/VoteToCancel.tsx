@@ -6,7 +6,7 @@ import { api } from "@/src/utils/api";
 import { PublicKey } from "@solana/web3.js";
 import { BOUNTY_USER_RELATIONSHIP, BountyState } from "@/types/";
 import { updateList } from "@/src/utils";
-import { BountyActionsButton } from ".";
+import { QuestActionsButton } from ".";
 import toast from "react-hot-toast";
 
 export const VoteToCancel = () => {
@@ -116,7 +116,7 @@ export const VoteToCancel = () => {
   };
 
   return (
-    <BountyActionsButton
+    <QuestActionsButton
       type="red"
       text="Vote To Cancel"
       disabled={isAwaitingResponse}

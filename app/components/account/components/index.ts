@@ -1,5 +1,6 @@
 export * from "./BadgesCard";
 export * from "./CompleteProfileModal";
+export * from "./EditLinks";
 export * from "./LinksCard";
 export * from "./PortfolioCard";
 export * from "./ProfileNFTCard";

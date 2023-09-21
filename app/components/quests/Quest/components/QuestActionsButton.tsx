@@ -1,7 +1,7 @@
 import { smallClickAnimation } from "@/src/constants";
 import { motion } from "framer-motion";
 
-interface BountyActionsButtonProps {
+interface QuestActionsButtonProps {
   type: "green" | "red" | "neutral";
   text: string;
   onClick?: () => void;
@@ -10,7 +10,7 @@ interface BountyActionsButtonProps {
   isLoading?: boolean;
 }
 
-export const BountyActionsButton: React.FC<BountyActionsButtonProps> = ({
+export const QuestActionsButton: React.FC<QuestActionsButtonProps> = ({
   type,
   text,
   onClick,

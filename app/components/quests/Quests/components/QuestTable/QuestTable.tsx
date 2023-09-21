@@ -4,11 +4,9 @@ import { smallClickAnimation } from "@/src/constants";
 import { getUniqueItems } from "@/src/utils";
 import { useUserWallet } from "@/src/providers";
 import { LoadingBar, BountyCard } from "@/components";
-import { api } from "@/src/utils/api";
-import { BountyFilters } from "./components";
+import { QuestFilters } from "./components";
 import { BountyPreview, Filters, TABLE_BOUNTY_STATES } from "@/types";
 import { AnimatePresence, motion } from "framer-motion";
-import toast from "react-hot-toast";
 import { useBounty } from "@/src/providers/bountyProvider";
 import { useIndustry } from "@/src/providers/industryProvider";
 import { useMint } from "@/src/providers/mintProvider";
@@ -21,7 +19,7 @@ export const BOUNTY_USER_RELATIONSHIP = [
   "None",
 ];
 
-const BountyList: React.FC<{}> = () => {
+const QuestTable: React.FC<{}> = () => {
   const { allBounties } = useBounty();
   // state
   const [tags, setTags] = useState<string[]>([]);
@@ -144,7 +142,7 @@ const BountyList: React.FC<{}> = () => {
     <div className="w-full flex items-start mt-5 gap-5 py-24">
       <AnimatePresence>
         {showFilters && !!allBounties && (
-          <BountyFilters
+          <QuestFilters
             mints={allMints}
             industries={allIndustries}
             tags={tags}
@@ -203,4 +201,4 @@ const BountyList: React.FC<{}> = () => {
   );
 };
 
-export default BountyList;
+export default QuestTable;
