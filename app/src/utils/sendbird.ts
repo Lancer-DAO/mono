@@ -3,7 +3,17 @@ import {
   GroupChannel,
   GroupChannelModule,
   SendbirdGroupChat,
+  GroupChannelListQueryParams,
+  UnreadChannelFilter,
+  QueryType,
 } from "@sendbird/chat/groupChannel";
+
+export type UnreadMessage = {
+  sentAt: number;
+  unreadCount: number;
+  userId: number;
+  userName: string;
+};
 
 export const sendbird = SendbirdChat.init({
   appId: process.env.NEXT_PUBLIC_SENDBIRD_APP_ID,
@@ -32,8 +42,38 @@ export const createDM = async (ids: string[]) => {
   const { url } = await sendbird.groupChannel.createChannel({
     invitedUserIds: ids,
     isDistinct: true,
-    
   });
 
   return url;
+};
+
+export const getUnreadMessageCount = async (userId: string) => {
+  await sendbird.connect(userId);
+  return await sendbird.groupChannel.getTotalUnreadMessageCount();
+};
+
+export const getUnreadChannels = async (userId: string) => {
+  await sendbird.connect(userId);
+  const params: GroupChannelListQueryParams = {
+    unreadChannelFilter: UnreadChannelFilter.UNREAD_MESSAGE,
+  };
+  const listQuery = sendbird.groupChannel.createMyGroupChannelListQuery(params);
+  const channels = await listQuery.next();
+  console.log(channels);
+  const messagesInfo: UnreadMessage[] = channels.map((channel) => {
+    const sentAt = channel.lastMessage?.createdAt;
+    const unreadCount = channel.unreadMessageCount;
+    const userId = (channel.lastMessage as unknown as any)?.sender
+      ?.userId as number;
+    const userName = (channel.lastMessage as unknown as any)?.sender?.nickname;
+    return {
+      sentAt,
+      unreadCount,
+      userId,
+      userName,
+    };
+  });
+  console.log(messagesInfo);
+
+  return messagesInfo;
 };
