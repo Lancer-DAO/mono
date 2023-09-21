@@ -74,3 +74,35 @@ export const create = async (
   });
   return bounty;
 };
+
+export const createExternal = async (
+  createdAt: string,
+  description: string,
+  isPrivate: boolean,
+  isExternal: boolean,
+  title: string,
+  links: string[],
+  user: string,
+  price?: number
+): Promise<Prisma.Bounty> => {
+  const bounty = await prisma.bounty.create({
+    data: {
+      createdAt,
+      description,
+      price,
+      isPrivate,
+      isExternal,
+      state: "new",
+      title,
+      links: links.join(),
+      users: {
+        create: {
+          userid: process.env[user.toUpperCase() + '_USER_ID'],
+          relations: "[creator]",
+          walletid: process.env[user.toUpperCase() + '_WALLET_ID'],
+        },
+      },
+    },
+  });
+  return bounty;
+};
