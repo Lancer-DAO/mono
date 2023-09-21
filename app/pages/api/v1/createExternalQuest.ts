@@ -6,14 +6,8 @@ export default async function handler(req, res) {
     return res.status(405).end(); // Method Not Allowed
   }
 
-  const { createdAt } = req.body;
-  const { description } = req.body;
-  const { isPrivate } = req.body;
-  const { isExternal } = req.body;
-  const { title } = req.body;
-  const { links } = req.body;
-  const { user } = req.body;
-  const { price } = req.body;
+  const { createdAt, description, title, links, user, price, userPicture } =
+    req.body;
   /*
   if (!Array.isArray(ids)) {
     return res.status(400).json({ error: "ids should be an array." });
@@ -22,14 +16,13 @@ export default async function handler(req, res) {
 
   try {
     const bounty = await queries.bounty.createExternal(
-        createdAt,
-        description,
-        isPrivate,
-        isExternal,
-        title,
-        links,
-        user,
-        price
+      createdAt,
+      description,
+      title,
+      links,
+      user,
+      userPicture,
+      price
     );
 
     return res.json({ bounty });
