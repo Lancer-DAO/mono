@@ -23,18 +23,29 @@ const ChatView: FC<Props> = ({ selectedSubmitter, setCurrentActionView }) => {
             : currentBounty.creator.user.name
         } `}
       >
-        <motion.button
-          onClick={() => {
-            if (currentBounty.isCreator) {
-              setCurrentActionView(QuestActionView.ViewApplicants);
-            } else {
-              setCurrentActionView(QuestActionView.Apply);
-            }
-          }}
-          {...smallClickAnimation}
-        >
-          <X height={24} width={24} className="text-white" />
-        </motion.button>
+        {currentBounty.isCreator && (
+          <motion.button
+            onClick={() => {
+              if (currentBounty.isCreator) {
+                setCurrentActionView(QuestActionView.ViewApplicants);
+              } else {
+                setCurrentActionView(QuestActionView.Apply);
+              }
+            }}
+            {...smallClickAnimation}
+          >
+            <X height={24} width={24} className="text-white" />
+          </motion.button>
+        )}
+        {currentBounty.isCurrentSubmitter && (
+          <motion.button
+            {...smallClickAnimation}
+            className="bg-secondary200 text-white title-text px-4 py-2 rounded-md"
+            onClick={() => setCurrentActionView(QuestActionView.SubmitUpdate)}
+          >
+            Submit Update
+          </motion.button>
+        )}
       </ActionsCardBanner>
     </div>
   );
