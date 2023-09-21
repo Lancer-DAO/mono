@@ -59,7 +59,6 @@ const bountyQuery = async (id: number) => {
       id,
     },
     include: {
-      repository: true,
       escrow: {
         include: {
           transactions: {
@@ -76,9 +75,7 @@ const bountyQuery = async (id: number) => {
           wallet: true,
         },
       },
-      issue: true,
       tags: true,
-      pullRequests: true,
       industries: true,
     },
   });

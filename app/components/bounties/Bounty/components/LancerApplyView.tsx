@@ -1,20 +1,25 @@
-import { FC, useEffect, useState } from "react";
-import ActionsCardBanner from "./ActionsCardBanner";
-import { useBounty } from "@/src/providers/bountyProvider";
 import { ContributorInfo } from "@/components";
-import { useUserWallet } from "@/src/providers";
 import { smallClickAnimation } from "@/src/constants";
-import { motion } from "framer-motion";
-import { BOUNTY_USER_RELATIONSHIP, LancerApplyData } from "@/types";
-import AlertCard from "./AlertCard";
-import { Image } from "lucide-react";
+import { useUserWallet } from "@/src/providers";
+import { useBounty } from "@/src/providers/bountyProvider";
 import { useReferral } from "@/src/providers/referralProvider";
-import { PublicKey } from "@solana/web3.js";
 import { api, updateList } from "@/src/utils";
+import { BOUNTY_USER_RELATIONSHIP, LancerApplyData } from "@/types";
+import { PublicKey } from "@solana/web3.js";
+import { motion } from "framer-motion";
+import { Image } from "lucide-react";
+import { Dispatch, FC, SetStateAction, useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { CreateDispute } from "./";
+import ActionsCardBanner from "./ActionsCardBanner";
+import AlertCard from "./AlertCard";
+import { QuestActionView } from "./QuestActions";
 
-const LancerApplyView: FC = () => {
+interface Props {
+  setCurrentActionView: Dispatch<SetStateAction<QuestActionView>>;
+}
+
+const LancerApplyView: FC<Props> = ({ setCurrentActionView }) => {
   const { currentBounty, setCurrentBounty } = useBounty();
   const { currentUser, currentWallet } = useUserWallet();
   const { createReferralMember } = useReferral();
@@ -175,7 +180,13 @@ const LancerApplyView: FC = () => {
         />
       </div>
       {!hasApplied && (
-        <div className="flex items-center justify-end px-6 py-4">
+        <div className="flex items-center justify-end gap-4 px-6 py-4">
+          <button
+            className="title-text text-neutral600 px-4 py-2 rounded-md border border-neutral300"
+            onClick={() => setCurrentActionView(QuestActionView.SubmitQuote)}
+          >
+            Back to Quote
+          </button>
           <motion.button
             {...smallClickAnimation}
             className="bg-primary200 text-white h-9 w-fit px-4 py-2 title-text rounded-md"
