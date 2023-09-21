@@ -98,7 +98,6 @@ const BountyCard: FC<BountyCardProps> = ({
       {...bountyCardAnimation}
       href={handleBountyLink()}
     >
-      <UpdateTableItem type="message" />
       <div className="absolute left-1/2 -translate-x-[53%] top-[6px] w-7">
         <Image
           src={
@@ -178,7 +177,7 @@ const BountyCard: FC<BountyCardProps> = ({
               if (tag === "") return null;
               return (
                 <div
-                  className="border border-neutralBtnBorder rounded-full 
+                  className="border border-neutralBtnBorder rounded-full
                   px-3 py-1 flex items-center justify-center"
                   key={tag}
                 >
