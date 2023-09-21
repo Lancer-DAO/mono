@@ -14,7 +14,6 @@ export const create = async (
   user: Prisma.User,
   wallet: Prisma.Wallet,
   industries: Prisma.Industry[],
-  disciplines: Prisma.Discipline[],
   media: Prisma.Media[],
   price?: number
 ): Promise<Prisma.Bounty> => {
@@ -30,13 +29,6 @@ export const create = async (
         connect: industries.map((industry) => {
           return {
             id: industry.id,
-          };
-        }),
-      },
-      disciplines: {
-        connect: disciplines.map((discipline) => {
-          return {
-            id: discipline.id,
           };
         }),
       },

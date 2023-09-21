@@ -68,7 +68,6 @@ export const update = protectedProcedure
           signature,
           label,
           wallet,
-          escrow.chain,
           escrow
         );
       }
