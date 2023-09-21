@@ -27,104 +27,30 @@ model Bounty {
   links         String   @default("") @db.VarChar(1024)
 
   // Relations
-  certificates BountyCertificate[]
-  comments     BountyComment[]
-  escrow       Escrow              @relation(fields: [escrowid], references: [id])
-  escrowid     Int                 @unique
-  issue        Issue?
-  milestone    Milestone?          @relation(fields: [milestoneid], references: [id])
-  milestoneid  Int?
-  project      Project?            @relation(fields: [projectid], references: [id])
-  projectid    Int?
-  guild        Guild?              @relation(fields: [guildid], references: [id])
-  guildid      Int?
-  pullRequests PullRequest[]
-  repository   Repository?         @relation(fields: [repositoryid], references: [id])
-  repositoryid Int?
-  tags         Tag[]
-  users        BountyUser[]
-  industries   Industry[]
-  disciplines  Discipline[]
-  media        Media[]
-  updates      Update[]
-
-  @@index([milestoneid])
-  @@index([projectid])
-  @@index([guildid])
-  @@index([repositoryid])
+  escrow     Escrow       @relation(fields: [escrowid], references: [id])
+  escrowid   Int          @unique
+  tags       Tag[]
+  users      BountyUser[]
+  industries Industry[]
+  media      Media[]
+  updates    Update[]
+  Quote      Quote[]
 }
 
-model Certificate {
+model Checkpoint {
   id Int @id @default(autoincrement())
 
-  // Fields
-  name String? @db.VarChar(256)
+  title         String   @db.VarChar(256)
+  price         Decimal? @db.Decimal(16, 9)
+  description   String   @db.VarChar(10000)
+  estimatedTime Decimal? @db.Decimal(10, 2)
+  order         Int
 
   // Relations
-  bounties BountyCertificate[]
-  guilds   CertificateGuild[]
-  tags     Tag[]
-  users    CertificateUser[]
-}
+  quote   Quote @relation(fields: [quoteid], references: [id])
+  quoteid Int
 
-model Chain {
-  id Int @id @default(autoincrement())
-
-  // Fields
-  name    String @db.VarChar(24)
-  network String @db.VarChar(24)
-
-  // Relations
-  wallets      ChainWallet[]
-  escrows      Escrow[]
-  transactions Transaction[]
-}
-
-model Comment {
-  id Int @id @default(autoincrement())
-
-  // Fields
-  content   String? @db.VarChar(2000)
-  createdAt String? @db.VarChar(24)
-
-  // Relations
-  bounty BountyComment[]
-}
-
-model Discipline {
-  id Int @id @default(autoincrement())
-
-  // Fields
-  name        String @unique @db.VarChar(256)
-  color       String @db.VarChar(32)
-  description String @db.VarChar(4096)
-  industryid  Int
-
-  // Relations
-  industry Industry @relation(fields: [industryid], references: [id])
-  bounties Bounty[]
-  tags     Tag[]
-
-  @@index([industryid])
-}
-
-model Endorsement {
-  id Int @id @default(autoincrement())
-
-  // Fields
-  timestamp String? @db.VarChar(24)
-
-  // Relations
-  skill       Skill? @relation(fields: [skillid], references: [id])
-  skillid     Int?
-  endoreser   User?  @relation(fields: [endorserid], references: [id], name: "endorser")
-  endorserid  Int?
-  endoresee   User?  @relation(fields: [endoreseeid], references: [id], name: "endorsee")
-  endoreseeid Int?
-
-  @@index([skillid])
-  @@index([endorserid])
-  @@index([endoreseeid])
+  @@index([quoteid])
 }
 
 model Escrow {
@@ -137,34 +63,12 @@ model Escrow {
 
   // Relations
   bounty       Bounty?
-  chainid      Int
-  chain        Chain         @relation(fields: [chainid], references: [id])
-  milestone    Milestone?
-  project      Project?
   transactions Transaction[]
   users        EscrowUser[]
-  milestoneid  Int?
   mintid       Int
   mint         Mint          @relation(fields: [mintid], references: [id])
 
-  @@index([chainid])
   @@index([mintid])
-}
-
-model Guild {
-  id Int @id @default(autoincrement())
-
-  // Fields
-  name    String? @db.VarChar(128)
-  logo    String? @db.VarChar(2000)
-  website String? @db.VarChar(128)
-
-  // Relations
-  bounties     Bounty[]
-  projects     Project[]
-  repositories Repository[]
-  certificates CertificateGuild[]
-  users        GuildUser[]
 }
 
 model Industry {
@@ -177,32 +81,9 @@ model Industry {
   description String @db.VarChar(4096)
 
   // Relations
-  bounties    Bounty[]
-  users       User[]
-  disciplines Discipline[]
-  tags        Tag[]
-}
-
-model Issue {
-  id Int @id @default(autoincrement())
-
-  // Fields
-  title         String  @db.VarChar(256)
-  number        Decimal @db.Decimal(10, 0)
-  description   String  @db.VarChar(2000)
-  state         String  @db.VarChar(24)
-  githubLink    String  @db.VarChar(256)
-  linkingMethod String  @db.VarChar(24)
-
-  // Relations
-  bounty       Bounty        @relation(fields: [bountyid], references: [id])
-  bountyid     Int           @unique
-  repository   Repository    @relation(fields: [repositoryid], references: [id])
-  repositoryid Int
-  pullRequests PullRequest[]
-
-  @@unique([number, repositoryid])
-  @@index([repositoryid])
+  bounties Bounty[]
+  users    User[]
+  tags     Tag[]
 }
 
 model Media {
@@ -217,27 +98,6 @@ model Media {
   bounty Bounty[]
   update Update[]
   user   User[]
-}
-
-model Milestone {
-  id Int @id @default(autoincrement())
-
-  // Fields
-  name        String? @db.VarChar(128)
-  dueDate     String? @db.VarChar(36)
-  description String? @db.VarChar(2000)
-
-  // Relations
-  bounties Bounty[]
-
-  escrow    Escrow?         @relation(fields: [escrowid], references: [id])
-  escrowid  Int             @unique
-  project   Project         @relation(fields: [projectid], references: [id])
-  projectid Int
-  tags      Tag[]
-  users     MilestoneUser[]
-
-  @@index([projectid])
 }
 
 model Mint {
@@ -256,91 +116,25 @@ model Mint {
   escrows Escrow[]
 }
 
-model Project {
+model Quote {
   id Int @id @default(autoincrement())
 
   // Fields
-  description String? @db.VarChar(2000)
+  title         String   @db.VarChar(256)
+  description   String   @db.VarChar(10000)
+  estimatedTime Decimal? @db.Decimal(10, 2)
+  price         Decimal? @db.Decimal(16, 9)
+  createdAt     String   @db.VarChar(24)
 
   // Relations
-  bounties     Bounty[]
-  escrow       Escrow?       @relation(fields: [escrowid], references: [id])
-  escrowid     Int?          @unique
-  milestones   Milestone[]
-  guild        Guild         @relation(fields: [guildid], references: [id])
-  guildid      Int
-  repository   Repository    @relation(fields: [repositoryid], references: [id])
-  repositoryid Int
-  users        ProjectUser[]
+  checkpoints Checkpoint[]
+  bounty      Bounty       @relation(fields: [bountyid], references: [id])
+  bountyid    Int
+  user        User         @relation(fields: [userid], references: [id])
+  userid      Int
 
-  @@index([guildid])
-  @@index([repositoryid])
-}
-
-model Provider {
-  id Int @id @default(autoincrement())
-
-  // Fields
-  name String @unique @db.VarChar(128)
-
-  // Relations
-  wallets Wallet[]
-}
-
-model PullRequest {
-  id Int @id @default(autoincrement())
-
-  // Fields
-  title       String? @db.VarChar(256)
-  number      Decimal @db.Decimal(10, 0)
-  description String? @db.VarChar(2000)
-  state       String  @db.VarChar(24)
-  githubLink  String  @db.VarChar(256)
-
-  // Relations
-  bounty       Bounty     @relation(fields: [bountyid], references: [id])
-  bountyid     Int
-  repository   Repository @relation(fields: [repositoryid], references: [id])
-  repositoryid Int
-  issue        Issue?     @relation(fields: [issueid], references: [id])
-  issueid      Int?
-  users        User[]
-
-  @@unique([repositoryid, number])
-  @@index([issueid])
-  @@index([repositoryid])
   @@index([bountyid])
-}
-
-model Repository {
-  id Int @id @default(autoincrement())
-
-  // Fields
-  githubLink   String  @unique @db.VarChar(255)
-  name         String  @db.VarChar(128)
-  organization String  @db.VarChar(128)
-  isPrivate    Boolean
-
-  // Relations
-  bounties     Bounty[]
-  issues       Issue[]
-  projects     Project[]
-  pullRequests PullRequest[]
-  Guild        Guild?        @relation(fields: [guildid], references: [id])
-  guildid      Int?
-
-  @@unique([organization, name])
-  @@index([guildid])
-}
-
-model Skill {
-  id Int @id @default(autoincrement())
-
-  // Fields
-  name String @unique @db.VarChar(128)
-
-  // Relations
-  endorsements Endorsement[]
+  @@index([userid])
 }
 
 model Tag {
@@ -353,12 +147,9 @@ model Tag {
   name        String? @db.VarChar(64)
 
   // Relations
-  bounties     Bounty[]
-  certificates Certificate[]
-  milestones   Milestone[]
-  users        User[]
-  disciplines  Discipline[]
-  industries   Industry[]
+  bounties   Bounty[]
+  users      User[]
+  industries Industry[]
 
   // full text search name
   @@fulltext([name])
@@ -373,28 +164,26 @@ model Transaction {
   label     String @db.VarChar(24)
 
   // Relations
-  chainid  Int
-  chain    Chain               @relation(fields: [chainid], references: [id])
   escrowid Int
   escrow   Escrow              @relation(fields: [escrowid], references: [id])
   wallets  TransactionWallet[]
 
-  @@index([chainid])
   @@index([escrowid])
 }
 
 model Update {
-   id Int @id @default(autoincrement())
+  id Int @id @default(autoincrement())
 
-   // Fields
-   name String @db.VarChar(128)
-   type String @db.VarChar(24)
-   description String @db.VarChar(5000)
-   links String @db.VarChar(256)
-   
-   // Relations
-   media       Media[]
-   bounty      Bounty[]
+  // Fields
+  name        String @db.VarChar(128)
+  type        String @db.VarChar(24)
+  description String @db.VarChar(5000)
+  links       String @db.VarChar(256)
+  createdAt   String @db.VarChar(24)
+
+  // Relations
+  media  Media[]
+  bounty Bounty[]
 }
 
 model User {
@@ -431,21 +220,15 @@ model User {
   experience            Int?     @default(0)
 
   // Relations
-  wallets      Wallet[]
-  bounties     BountyUser[]
-  certificates CertificateUser[]
-  escrows      EscrowUser[]
-  milestones   MilestoneUser[]
-  projects     ProjectUser[]
-  guilds       GuildUser[]
-  tags         Tag[]
-  pullRequests PullRequest[]
-  endorsees    Endorsement[]      @relation("endorsee")
-  endorsers    Endorsement[]      @relation("endorser")
-  referrers    ReferrerReferree[] @relation("referree")
-  referrees    ReferrerReferree[] @relation("referrer")
-  industries   Industry[]
-  media        Media[]
+  wallets    Wallet[]
+  bounties   BountyUser[]
+  escrows    EscrowUser[]
+  tags       Tag[]
+  referrers  ReferrerReferree[] @relation("referree")
+  referrees  ReferrerReferree[] @relation("referrer")
+  industries Industry[]
+  media      Media[]
+  Quote      Quote[]
 }
 
 model Wallet {
@@ -459,9 +242,7 @@ model Wallet {
   userid Int
   user   User @relation(fields: [userid], references: [id])
 
-  providers    Provider[]
   transactions TransactionWallet[]
-  chains       ChainWallet[]
   reffering    ReferrerReferree[]  @relation("wallet")
   bountyUsers  BountyUser[]
 
@@ -479,30 +260,6 @@ model BountyUserAction {
 
   @@id([timestamp, bountyid, userid])
   @@index([bountyid, userid])
-}
-
-model BountyCertificate {
-  certificateid Int
-  bountyid      Int
-  relations     String      @db.VarChar(256)
-  certificate   Certificate @relation(fields: [certificateid], references: [id])
-  bounty        Bounty      @relation(fields: [bountyid], references: [id])
-
-  @@id([certificateid, bountyid])
-  @@index([bountyid])
-  @@index([certificateid])
-}
-
-model BountyComment {
-  commentid Int
-  bountyid  Int
-  relations String  @db.VarChar(256)
-  comment   Comment @relation(fields: [commentid], references: [id])
-  bounty    Bounty  @relation(fields: [bountyid], references: [id])
-
-  @@id([commentid, bountyid])
-  @@index([bountyid])
-  @@index([commentid])
 }
 
 model BountyUser {
@@ -526,43 +283,6 @@ model BountyUser {
   @@index([walletid])
 }
 
-model CertificateGuild {
-  certificateid Int
-  guildid       Int
-  relations     String      @db.VarChar(256)
-  certificiate  Certificate @relation(fields: [certificateid], references: [id])
-  guild         Guild       @relation(fields: [guildid], references: [id])
-
-  @@id([certificateid, guildid])
-  @@index([guildid])
-  @@index([certificateid])
-}
-
-model CertificateUser {
-  userid           Int
-  certificateid    Int
-  relations        String      @db.VarChar(256)
-  onChainPublicKey String      @default("") @db.VarChar(256)
-  user             User        @relation(fields: [userid], references: [id])
-  certificate      Certificate @relation(fields: [certificateid], references: [id])
-
-  @@id([userid, certificateid])
-  @@index([certificateid])
-  @@index([userid])
-}
-
-model ChainWallet {
-  walletid  Int
-  chainid   Int
-  relations String @db.VarChar(256)
-  wallet    Wallet @relation(fields: [walletid], references: [id])
-  chain     Chain  @relation(fields: [chainid], references: [id])
-
-  @@id([walletid, chainid])
-  @@index([chainid])
-  @@index([walletid])
-}
-
 model EscrowUser {
   userid    Int
   escrowid  Int
@@ -572,42 +292,6 @@ model EscrowUser {
 
   @@id([userid, escrowid])
   @@index([escrowid])
-  @@index([userid])
-}
-
-model MilestoneUser {
-  userid      Int
-  milestoneid Int
-  relations   String    @db.VarChar(256)
-  user        User      @relation(fields: [userid], references: [id])
-  milestone   Milestone @relation(fields: [milestoneid], references: [id])
-
-  @@id([userid, milestoneid])
-  @@index([milestoneid])
-  @@index([userid])
-}
-
-model ProjectUser {
-  userid    Int
-  projectid Int
-  relations String  @db.VarChar(256)
-  user      User    @relation(fields: [userid], references: [id])
-  project   Project @relation(fields: [projectid], references: [id])
-
-  @@id([userid, projectid])
-  @@index([projectid])
-  @@index([userid])
-}
-
-model GuildUser {
-  userid    Int
-  guildid   Int
-  relations String @db.VarChar(256)
-  user      User   @relation(fields: [userid], references: [id])
-  guild     Guild  @relation(fields: [guildid], references: [id])
-
-  @@id([userid, guildid])
-  @@index([guildid])
   @@index([userid])
 }
 

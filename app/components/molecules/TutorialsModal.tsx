@@ -65,13 +65,6 @@ const getCurrentBountyTutorialInitialState = (
   if (currentBounty.isDeniedLancer) {
     steps.push(REQUEST_DENIED_STEP);
   }
-  if (currentBounty.isApprovedSubmitter && !currentBounty.currentSubmitter) {
-    if (currentBounty.pullRequests.length === 0) {
-      steps.push(...SUBMIT_REQUEST_NEEDS_PULL_REQUEST_STEPS);
-    } else {
-      steps.push(...SUBMIT_REQUEST_HAS_PULL_REQUEST_STEPS);
-    }
-  }
   if (currentBounty.isDeniedLancer) {
     steps.push(SUBMISSION_PENDING_STEP);
   }

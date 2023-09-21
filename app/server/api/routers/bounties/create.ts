@@ -59,11 +59,9 @@ export const createBounty = protectedProcedure
     }) => {
       const user = await queries.user.getByEmail(email);
       const wallet = await queries.wallet.getOrCreate(user, publicKey);
-      const chain = await queries.chain.getOrCreate(chainName, network);
       const escrow = await queries.escrow.create(
         timestamp,
         escrowKey,
-        chain,
         user,
         mint
       );
@@ -72,7 +70,6 @@ export const createBounty = protectedProcedure
         transactionSignature,
         "create-escrow",
         wallet,
-        chain,
         escrow
       );
       const _tags = await Promise.all(
@@ -80,9 +77,6 @@ export const createBounty = protectedProcedure
       );
       const industries = await Promise.all(
         industryIds.map((id) => queries.industry.get(id))
-      );
-      const disciplines = await Promise.all(
-        disciplineIds.map((id) => queries.discipline.get(id))
       );
       const medias = await Promise.all(
         media.map(
@@ -103,7 +97,6 @@ export const createBounty = protectedProcedure
         user,
         wallet,
         industries,
-        disciplines,
         medias,
         price
       );
