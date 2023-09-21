@@ -36,16 +36,37 @@ export type QuoteType =
 
 type CommonProps = {
   time: Dayjs;
-  updater: User;
+  extraProps?: {};
 };
 
 type Props =
-  | (CommonProps & { type: "submission"; subType: SubmissionType })
-  | (CommonProps & { type: "application"; subType: ApplicationType })
-  | (CommonProps & { type: "quote"; subType: QuoteType })
-  | (CommonProps & { type: "message"; subType?: never });
+  | (CommonProps & {
+      type: "submission";
+      subType: SubmissionType;
+      updater: User;
+    })
+  | (CommonProps & {
+      type: "application";
+      subType: ApplicationType;
+      updater: User;
+    })
+  | (CommonProps & { type: "quote"; subType: QuoteType; updater: User })
+  | (CommonProps & {
+      type: "message";
+      subType?: never;
+      updater: string;
+      extraProps: {
+        messageCount: number;
+      };
+    });
 
-const UpdateTableItem: React.FC<Props> = ({ type, subType, updater, time }) => {
+const UpdateTableItem: React.FC<Props> = ({
+  type,
+  subType,
+  updater,
+  time,
+  extraProps,
+}) => {
   switch (type) {
     case "submission":
       switch (subType) {
@@ -308,38 +329,17 @@ const UpdateTableItem: React.FC<Props> = ({ type, subType, updater, time }) => {
               </div>
             </div>
           );
-          return (
-            <div className="flex flex-col px-8 py-4 items-start justify-center w-full border-solid border-y  border-neutralBorder500">
-              <div className="flex justify-start items-center w-full">
-                <Flame height="28px" width="28px" version="green" />
-                <div className="text-sm ml-1.5 text-neutral-500 mr-2">
-                  Quote Accepted
-                </div>
-                <div className="h-5 w-[1px] bg-neutral-200"></div>
-                <div className="text-sm ml-2 text-neutral-400 mr-auto">{`${time.fromNow()}`}</div>
-                <div className="ml-auto flex items-center justify-end text text-neutral600">
-                  <button
-                    className="rounded-md bg-white border border-neutral200 flex items-center justify-center gap-2 h-8 px-2"
-                    // disabled={hasApplied}
-                    onClick={() => {}}
-                  >
-                    <Image color="#A1B2AD" size={18} />
-                    <p className="text-xs text-neutral400 truncate">
-                      quote.pdf
-                    </p>
-                  </button>
-                </div>
-                <div className="text-sm ml-2 text-success">Accepted</div>
-              </div>
-            </div>
-          );
       }
 
     case "message":
       return (
         <div className="flex px-8 py-4 items-center justify-start w-full border-solid border-y bg-primary100 border-neutralBorder500">
           <Message height="28px" width="28px" />
-          <div className="text-sm ml-1.5 text-black mr-4">{`New message from ${updater.name}`}</div>
+          <div className="text-sm ml-1.5 text-black mr-4">{`${
+            extraProps.messageCount
+          } New message${
+            extraProps.messageCount > 1 ? "s" : ""
+          } from ${updater}`}</div>
           <div className="text-sm  text-neutral400 mr-4">{`${time.fromNow()}`}</div>
         </div>
       );
