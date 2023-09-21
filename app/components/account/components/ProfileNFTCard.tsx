@@ -183,11 +183,7 @@ export const ProfileNFTCard = ({
           <div className="flex flex-col gap-4 text-lg">
             {(picture || githubId) && (
               <Image
-                src={
-                  picture
-                    ? picture
-                    : "/assets/images/Lancer-Green-No-Background-p-800.png"
-                }
+                src={picture ? picture : "/assets/images/lancer_logo_flat.png"}
                 width={58}
                 height={58}
                 alt={user?.name.split("for ")[1]}

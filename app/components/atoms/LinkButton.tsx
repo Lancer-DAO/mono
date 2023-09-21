@@ -23,6 +23,7 @@ interface ButtonProps
   href: string;
   target?: string;
   rel?: string;
+  active?: boolean;
 }
 
 const LinkButton = ({
@@ -33,17 +34,18 @@ const LinkButton = ({
   hoveredText,
   version,
   id,
-  extraClasses,
+  extraClasses = "",
   href,
   target,
   rel,
+  active,
   ...props
 }: ButtonProps) => {
   const [hoveredButton, setHoveredButton] = useState(false);
 
   return (
     <div
-      className={`hover-tooltip-wrapper relative `}
+      className={`hover-tooltip-wrapper relative`}
       onMouseEnter={() => {
         setHoveredButton(true);
       }}
@@ -51,17 +53,30 @@ const LinkButton = ({
         setHoveredButton(false);
       }}
     >
-      <button className={extraClasses} disabled={disabled} id={id} {...props}>
+      <button
+        className={`${extraClasses}`}
+        disabled={disabled}
+        id={id}
+        {...props}
+      >
         {disabled ? (
           <Link
             href={href}
-            className={"text-lg font-bold  opacity-50 pointer-events-none"}
+            className={`text-sm opacity-50 pointer-events-none py-1.5 px-3`}
             key={href}
           >
             {children}
           </Link>
         ) : (
-          <Link href={href} className={"text-lg font-bold"} key={href}>
+          <Link
+            href={href}
+            className={`py-1.5 px-3 ${
+              active
+                ? "font-bold text-secondary200 bg-secondary100 rounded-md"
+                : ""
+            }`}
+            key={href}
+          >
             {children}
           </Link>
         )}
