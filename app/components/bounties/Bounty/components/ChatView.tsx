@@ -6,6 +6,7 @@ import { useBounty } from "@/src/providers/bountyProvider";
 import { smallClickAnimation } from "@/src/constants";
 import { X } from "lucide-react";
 import { QuestActionView } from "./QuestActions";
+import { SubmitRequest } from "./";
 
 interface Props {
   selectedSubmitter: BountyUserType | null;
@@ -33,6 +34,7 @@ const ChatView: FC<Props> = ({ selectedSubmitter, setCurrentActionView }) => {
             <X height={24} width={24} className="text-white" />
           </motion.button>
         ) : null}
+        <SubmitRequest />
       </ActionsCardBanner>
     </div>
   );

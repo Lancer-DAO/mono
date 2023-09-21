@@ -2,6 +2,7 @@ import { PublicKey } from "@solana/web3.js";
 import { SafeEventEmitterProvider } from "@web3auth/base";
 import { SolanaWallet } from "@web3auth/solana-provider";
 
+export * from "./createDispute";
 export * from "./createFeatureFundingAccount";
 export * from "./fundFeatureAccount";
 export * from "./addApprovedSubmitter";
@@ -13,6 +14,7 @@ export * from "./approveRequest";
 export * from "./voteToCancel";
 export * from "./cancelEscrow";
 export * from "./invoice";
+export * from "./settleDispute";
 
 // Anchor's default export sometimes throws an error saying there is no constructor, so
 // make a wrapper class here to avoid the error.

@@ -12,6 +12,7 @@ import { useReferral } from "@/src/providers/referralProvider";
 import { PublicKey } from "@solana/web3.js";
 import { api, updateList } from "@/src/utils";
 import toast from "react-hot-toast";
+import { CreateDispute } from "./";
 
 const LancerApplyView: FC = () => {
   const { currentBounty, setCurrentBounty } = useBounty();
@@ -84,6 +85,7 @@ const LancerApplyView: FC = () => {
     <div className="flex flex-col">
       <ActionsCardBanner title="Apply to this Quest">
         <ContributorInfo user={currentBounty.creator.user} />
+        <CreateDispute />
       </ActionsCardBanner>
       {/* TODO: add check for if user application has been approved or denied. if not, show this: */}
       {hasApplied && (

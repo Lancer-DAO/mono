@@ -15,7 +15,10 @@ import { QuestActionView } from "./QuestActions";
 import { cancelFFA, voteToCancelFFA } from "@/escrow/adapters";
 import { PublicKey } from "@solana/web3.js";
 import AlertCardModal from "./AlertCardModal";
-
+import { useReferral } from "@/src/providers/referralProvider";
+import { addSubmitterFFA } from "@/escrow/adapters";
+import { RequestChanges } from "./RequestChanges";
+import { CreateDispute, SettleDispute } from "./";
 export enum EApplicantsView {
   All,
   Individual,
@@ -34,13 +37,15 @@ const ApplicantsView: FC<Props> = ({
 }) => {
   const { currentUser, currentWallet, program, provider } = useUserWallet();
   const { currentBounty, setCurrentBounty } = useBounty();
+  const { getRemainingAccounts, getSubmitterReferrer } = useReferral();
+  const { mutateAsync } = api.bountyUsers.update.useMutation();
   const { mutateAsync: updateBounty } = api.bountyUsers.update.useMutation();
   const [currentApplicantsView, setCurrentApplicantsView] =
     useState<EApplicantsView>(EApplicantsView.All);
   const [isLoading, setIsLoading] = useState(false);
   const [isAwaitingResponse, setIsAwaitingResponse] = useState(false);
   const [showModal, setShowModal] = useState(false);
-      
+
   const createdAtDate = new Date(
     Number(currentBounty?.createdAt)
   ).toLocaleDateString();
@@ -121,6 +126,62 @@ const ApplicantsView: FC<Props> = ({
         toast.error("Wallet is registered to another user", { id: toastId });
       } else {
         toast.error("Error submitting rejection", { id: toastId });
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleAccept = async () => {
+    const toastId = toast.loading("Selecting as your Lancer...");
+    try {
+      const submitterWallet = new PublicKey(selectedSubmitter.publicKey);
+      const remainingAccounts = await getRemainingAccounts(
+        submitterWallet,
+        new PublicKey(currentBounty?.escrow.mint.publicKey)
+      );
+      const signature = await addSubmitterFFA(
+        submitterWallet,
+        currentBounty?.escrow,
+        currentWallet,
+        await getSubmitterReferrer(
+          submitterWallet,
+          new PublicKey(currentBounty?.escrow.mint.publicKey)
+        ),
+        remainingAccounts,
+        program,
+        provider
+      );
+      const newRelations = updateList(
+        selectedSubmitter.userid === currentUser.id
+          ? currentBounty?.currentUserRelationsList
+          : [],
+        [BOUNTY_USER_RELATIONSHIP.RequestedLancer],
+        [BOUNTY_USER_RELATIONSHIP.ApprovedSubmitter]
+      );
+      const updatedBounty = await mutateAsync({
+        bountyId: currentBounty?.id,
+        userId: selectedSubmitter.userid,
+        currentUserId: currentUser.id,
+        relations: newRelations,
+        state: BountyState.IN_PROGRESS,
+        publicKey: selectedSubmitter.publicKey,
+        escrowId: currentBounty?.escrowid,
+        signature,
+        label: "add-approved-submitter",
+      });
+
+      setCurrentBounty(updatedBounty);
+      toast.success("Lancer selected!", { id: toastId });
+    } catch (error) {
+      if (
+        (error.message as string).includes(
+          "Wallet is registered to another user"
+        )
+      ) {
+        toast.error("Wallet is registered to another user", { id: toastId });
+      } else {
+        toast.error("Error selecting Lancer.", { id: toastId });
       }
     } finally {
       setIsLoading(false);
@@ -416,7 +477,7 @@ const ApplicantsView: FC<Props> = ({
                 {...smallClickAnimation}
                 className="bg-success h-9 w-fit px-4 py-2
                 title-text rounded-md text-white disabled:cursor-not-allowed disabled:opacity-80"
-                // onClick={() => handleManageShortlist("remove")}
+                onClick={() => handleAccept()}
                 disabled={isLoading || isAwaitingResponse}
               >
                 Select for the Quest
@@ -567,6 +628,9 @@ const ApplicantsView: FC<Props> = ({
               Quest Canceled
             </motion.button>
           ) : null}
+          <RequestChanges />
+          <CreateDispute />
+          <SettleDispute />
         </div>
         {showModal && <AlertCardModal setShowModal={setShowModal} />}
       </div>
