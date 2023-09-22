@@ -6,7 +6,7 @@ export default async function handler(req, res) {
     return res.status(405).end(); // Method Not Allowed
   }
 
-  const { createdAt, description, title, links, user, price, userPicture } =
+  const { createdAt, description, title, link, userName, userPicture, price } =
     req.body;
   /*
   if (!Array.isArray(ids)) {
@@ -19,8 +19,8 @@ export default async function handler(req, res) {
       createdAt,
       description,
       title,
-      links,
-      user,
+      link,
+      userName,
       userPicture,
       price
     );

@@ -48,9 +48,11 @@ const BountyList: React.FC<{}> = () => {
       if (!currentUser.isLancerDev && bounty.isTest) {
         return false;
       }
+      /*
       if (!bounty.escrow.publicKey || !bounty.escrow.mint) {
         return false;
       }
+      */
       if (
         filters.isMyBounties &&
         !bounty.users.some((user) => user.userid === currentUser?.id)
