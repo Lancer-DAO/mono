@@ -4,6 +4,7 @@ import { useBounty } from "@/src/providers/bountyProvider";
 import { FC, useEffect, useState } from "react";
 import ApplicantsView from "./ApplicantsView";
 import ChatView from "./ChatView";
+import LancerApplicationView from "./LancerApplicationView";
 import LancerApplyView from "./LancerApplyView";
 import LancerSubmitQuoteView from "./LancerSubmitQuoteView";
 import LancerSubmitUpdateView from "./LancerSubmitUpdateView";
@@ -55,14 +56,18 @@ const QuestActions: FC = () => {
 
   return (
     <div className="bg-white w-full min-w-[610px] border border-neutral200 rounded-lg overflow-hidden">
-      {currentActionView === QuestActionView.Apply && (
-        <LancerApplyView 
+      {(currentActionView === QuestActionView.Apply || currentActionView === QuestActionView.SubmitQuote) && (
+        // <LancerApplyView 
+        //   setCurrentActionView={setCurrentActionView}
+        // />
+        <LancerApplicationView
+          currentActionView={currentActionView}
           setCurrentActionView={setCurrentActionView}
         />
       )}
-      {currentActionView === QuestActionView.SubmitQuote && <LancerSubmitQuoteView 
+      {/* {currentActionView === QuestActionView.SubmitQuote && <LancerSubmitQuoteView 
         setCurrentActionView={setCurrentActionView}
-      />}
+      />} */}
       {currentActionView === QuestActionView.ViewApplicants && (
         <ApplicantsView
           setCurrentActionView={setCurrentActionView}

@@ -3,40 +3,40 @@ import Fire from "@/components/@icons/Fire";
 import Trash from "@/components/@icons/Trash";
 import { Dispatch, FC, SetStateAction, useState } from "react";
 import { ChevronDown, ChevronUp } from "react-feather";
-import { Milestone } from "./LancerSubmitQuoteView";
+import { Checkpoint } from "./LancerApplicationView";
 
 interface Props {
-  milestone: Milestone,
-  setQuoteData: Dispatch<SetStateAction<Milestone[]>>,
+  checkpoint: Checkpoint,
+  setQuoteData: Dispatch<SetStateAction<Checkpoint[]>>,
   index: number,
 }
 
-const MilestoneView: FC<Props> = ({ index, milestone, setQuoteData }) => {
+const CheckpointView: FC<Props> = ({ index, checkpoint, setQuoteData }) => {
   const [detailsOpen, setDetailsOpen] = useState(false);
   const [canEdit, setCanEdit] = useState(false);
-  const [tempMilestone, setTempMilestone  ] = useState<Milestone>(milestone);
+  const [tempCheckpoint, setTempCheckpoint] = useState<Checkpoint>(checkpoint);
 
-  const editMilestone = () => {
+  const editCheckpoint = () => {
     setQuoteData((prevData) => {
       const updatedData = [...prevData];
-      updatedData[index] = tempMilestone;
+      updatedData[index] = tempCheckpoint;
       return updatedData;
     });
   };
 
-  const deleteMilestone = () => {
+  const deleteCheckpoint = () => {
     setQuoteData((prevData) => prevData.filter((_, i) => i != index));
   };
 
   return (
-    <div className="flex flex-col" key={milestone.name}>
+    <div className="flex flex-col">
       {!canEdit && (
         <div className="flex py-4 justify-between border-b border-neutral200">
           <div className="flex items-center gap-2">
             <Fire />
-            <div className="text text-neutral600">{milestone.name}</div>
+            <div className="text text-neutral600">{checkpoint.title}</div>
             <div className="w-[1px] h-5 bg-neutral200" />
-            <div className="text-mini text-neutral400">{`${milestone.time}h`}</div>
+            <div className="text-mini text-neutral400">{`${checkpoint.estimatedTime}h`}</div>
             <button onClick={() => setDetailsOpen(!detailsOpen)}>
               {detailsOpen ? (
                 <ChevronUp
@@ -62,23 +62,23 @@ const MilestoneView: FC<Props> = ({ index, milestone, setQuoteData }) => {
                 <Edit />
               </button>
               <button onClick={() => {
-                deleteMilestone();
+                deleteCheckpoint();
               }}>
                 <Trash />
               </button>
             </div>
-            <div className="title-text text-neutral600">{`$${milestone.price}`}</div>
+            <div className="title-text text-neutral600">{`$${checkpoint.price}`}</div>
           </div>
         </div>
       )}
       {detailsOpen && (
         <div className="flex flex-col pt-4 gap-6">
           <div className="flex gap-4 items-center">
-            <div className="text text-neutral600">Milestone name</div>
+            <div className="text text-neutral600">Checkpoint name</div>
             <input 
-              className="bg-neutral100 text text-neutral400 px-3 py-2 rounded-md border border-neutral200 outline-none"
-              value={tempMilestone .name}
-              onChange={(e) => setTempMilestone  ({ ...tempMilestone , name: e.target.value})}
+              className="bg-neutral100 text text-neutral600 px-3 py-2 rounded-md border border-neutral200 outline-none"
+              value={tempCheckpoint.title}
+              onChange={(e) => setTempCheckpoint  ({ ...tempCheckpoint, title: e.target.value})}
               placeholder="Specify a clear objective and title"
               disabled={!canEdit}
             />
@@ -88,8 +88,8 @@ const MilestoneView: FC<Props> = ({ index, milestone, setQuoteData }) => {
               <div className="text text-neutral600">Price</div>
               <input 
                 className="flex gap-2 bg-neutral100 text text-neutral600 px-3 py-2 rounded-md border border-neutral200 outline-none"
-                value={tempMilestone .price}
-                onChange={(e) => setTempMilestone  ({ ...tempMilestone , price: Number(e.target.value)})}
+                value={tempCheckpoint.price}
+                onChange={(e) => setTempCheckpoint  ({ ...tempCheckpoint, price: Number(e.target.value)})}
                 placeholder="0"
                 disabled={!canEdit}
               >
@@ -100,8 +100,8 @@ const MilestoneView: FC<Props> = ({ index, milestone, setQuoteData }) => {
               <div className="text text-neutral600">Time to spend</div>
               <input 
                 className="flex gap-2 bg-neutral100 text text-neutral600 px-3 py-2 rounded-md border border-neutral200 outline-none" 
-                value={tempMilestone .time}
-                onChange={(e) => setTempMilestone  ({ ...tempMilestone , time: Number(e.target.value)})}
+                value={tempCheckpoint.estimatedTime}
+                onChange={(e) => setTempCheckpoint  ({ ...tempCheckpoint, estimatedTime: Number(e.target.value)})}
                   placeholder="0"
                   disabled={!canEdit}
               >
@@ -110,23 +110,23 @@ const MilestoneView: FC<Props> = ({ index, milestone, setQuoteData }) => {
             </div>
           </div>
           <div className="flex flex-col gap-4">
-            <div className="text text-black">Add few bullet points about the process (try to be as clear as possible) :</div>
+            <div className="text text-black">Add few bullet points about the process (try to be as clear as possible):</div>
             <textarea 
-              className="px-2 py-3 text text-[#94A3B8] rouned-md border border-[#E8F8F3] bg-[#FAFCFC] outline-none h-full resize-none" placeholder="Type your message here..." 
-              value={tempMilestone .description}
-              onChange={(e) => setTempMilestone  ({ ...tempMilestone , description: e.target.value})}
+              className="px-2 py-3 h-[162px] text-mini text-neutral600 rouned-md border border-[#E8F8F3] bg-[#FAFCFC] outline-none resize-none" placeholder="Type your message here..." 
+              value={tempCheckpoint .description}
+              onChange={(e) => setTempCheckpoint({ ...tempCheckpoint, description: e.target.value})}
               disabled={!canEdit}
             />
           </div>
           {canEdit && (
             <div className="flex justify-end items-center gap-2">
               {/* <button className="px-4 py-2 text-neutral600 title-text rounded-md border border-neutral300">
-                Add milestone
+                Add Checkpoint
               </button> */}
               <button 
                 className="px-4 py-2 rounded-md border border-neutral300 text-error title-text"
                 onClick={() => { 
-                  setTempMilestone (milestone);
+                  setTempCheckpoint(checkpoint);
                   setCanEdit(false);
                   setDetailsOpen(false);
                 }}
@@ -136,7 +136,7 @@ const MilestoneView: FC<Props> = ({ index, milestone, setQuoteData }) => {
               <button 
                 className="px-4 py-2 rounded-md border border-neutral300 text-neutral600 title-text"
                 onClick={() => {
-                  editMilestone();
+                  editCheckpoint();
                   setCanEdit(false);
                   setDetailsOpen(false);
                 }}
@@ -151,4 +151,4 @@ const MilestoneView: FC<Props> = ({ index, milestone, setQuoteData }) => {
   )
 }
 
-export default MilestoneView;
+export default CheckpointView;

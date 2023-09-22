@@ -15,23 +15,18 @@ import AlertCard from "./AlertCard";
 import { QuestActionView } from "./QuestActions";
 
 interface Props {
-  setCurrentActionView: Dispatch<SetStateAction<QuestActionView>>;
+  applyData: LancerApplyData,
+  setApplyData: Dispatch<SetStateAction<LancerApplyData>>,
+  setCurrentActionView: Dispatch<SetStateAction<QuestActionView>>,
 }
 
-const LancerApplyView: FC<Props> = ({ setCurrentActionView }) => {
+const LancerApplyView: FC<Props> = ({ applyData, setApplyData, setCurrentActionView }) => {
   const { currentBounty, setCurrentBounty } = useBounty();
   const { currentUser, currentWallet } = useUserWallet();
   const { createReferralMember } = useReferral();
   const { mutateAsync: updateBountyUsers } =
     api.bountyUsers.update.useMutation();
 
-  const [applyData, setApplyData] = useState<LancerApplyData>({
-    portfolio: currentUser.website,
-    linkedin: currentUser.linkedin,
-    about: currentUser.bio,
-    resume: currentUser.resume,
-    details: "",
-  });
   const [hasApplied, setHasApplied] = useState(false);
 
   const onClick = async () => {

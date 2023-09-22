@@ -5,38 +5,38 @@ import * as Prisma from "@prisma/client";
 export const create = async (
   userId: number,
   bountyId: number,
-  name: string,
-  type: string,
+  title: string,
   description: string,
-  media: Prisma.Media[],
-  links: string,
+  estimatedTime: number,
+  price: number,
   state: QuestProgressState,
-): Promise<Prisma.Update> => {
-  return await prisma.update.create({
+  checkpoints: Prisma.Checkpoint[],
+): Promise<Prisma.Quote> => {
+  return await prisma.quote.create({
     data: {
       user: {
         connect: {
           id: userId,
-        }
+        },
       },
       bounty: {
         connect: {
           id: bountyId,
         },
       },
-      name,
-      type,
+      title,
       description,
+      estimatedTime,
+      price,
       createdAt: Date.now().toString(),
-      media: {
-        connect: media.map((med) => {
+      checkpoints: {
+        connect: checkpoints.map((checkpoint) => {
           return {
-            id: med.id,
+            id: checkpoint.id,
           };
         }),
       },
-      links,
       state,
     },
   });
-};
+}

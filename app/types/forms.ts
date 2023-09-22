@@ -48,6 +48,12 @@ interface Media {
   description: string;
 }
 
+export enum QuestProgressState {
+  NEW = "new",
+  REJECTED = "rejected",
+  ACCEPTED = "accepted",
+}
+
 export interface LancerUpdateData {
   bountyId: number;
   name: string;
@@ -55,4 +61,5 @@ export interface LancerUpdateData {
   links: string;
   description: string;
   media: Media[];
+  state: QuestProgressState;
 }
