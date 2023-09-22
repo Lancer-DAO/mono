@@ -27,14 +27,14 @@ model Bounty {
   links         String   @default("") @db.VarChar(1024)
 
   // Relations
-  escrow     Escrow       @relation(fields: [escrowid], references: [id])
-  escrowid   Int          @unique
+  escrow     Escrow        @relation(fields: [escrowid], references: [id])
+  escrowid   Int           @unique
   tags       Tag[]
   users      BountyUser[]
   industries Industry[]
   media      Media[]
-  updates    Update[]
-  Quote      Quote[]
+  updates    QuestUpdate[]
+  quotes     Quote[]
 }
 
 model Checkpoint {
@@ -97,9 +97,9 @@ model Media {
   description String? @db.VarChar(512)
 
   // Relations
-  bounty Bounty[]
-  update Update[]
-  user   User[]
+  bounty  Bounty[]
+  updates QuestUpdate[]
+  user    User[]
 }
 
 model Mint {
@@ -175,7 +175,7 @@ model Transaction {
   @@index([escrowid])
 }
 
-model Update {
+model QuestUpdate {
   id Int @id @default(autoincrement())
 
   // Fields
@@ -240,8 +240,8 @@ model User {
   referrees  ReferrerReferree[] @relation("referrer")
   industries Industry[]
   media      Media[]
-  Update     Update[]
-  Quote      Quote[]
+  updates    QuestUpdate[]
+  quotes     Quote[]
 }
 
 model Wallet {
