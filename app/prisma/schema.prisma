@@ -47,7 +47,7 @@ model Checkpoint {
   order         Int
 
   // Relations
-  quote      Quote[]
+  quote Quote[]
 
   // quote   Quote @relation(fields: [quoteid], references: [id])
   // quoteid Int
@@ -128,6 +128,7 @@ model Quote {
   price         Decimal? @db.Decimal(16, 9)
   createdAt     String   @db.VarChar(24)
   state         String   @db.VarChar(8)
+  reviedAt      String?  @db.VarChar(24)
 
   // Relations
   checkpoints Checkpoint[]
@@ -178,19 +179,20 @@ model Update {
   id Int @id @default(autoincrement())
 
   // Fields
-  name        String @db.VarChar(128)
-  type        String @db.VarChar(24)
-  description String @db.VarChar(5000)
-  links       String @db.VarChar(256)
-  createdAt   String @db.VarChar(24)
-  state       String @db.VarChar(8)
+  name        String  @db.VarChar(128)
+  type        String  @db.VarChar(24)
+  description String  @db.VarChar(5000)
+  links       String  @db.VarChar(256)
+  createdAt   String  @db.VarChar(24)
+  state       String  @db.VarChar(8)
+  reviedAt    String? @db.VarChar(24)
 
   // Relations
-  media  Media[]
-  bounty      Bounty       @relation(fields: [bountyid], references: [id])
-  bountyid    Int
-  user        User         @relation(fields: [userid], references: [id])
-  userid      Int
+  media    Media[]
+  bounty   Bounty  @relation(fields: [bountyid], references: [id])
+  bountyid Int
+  user     User    @relation(fields: [userid], references: [id])
+  userid   Int
 
   @@index([bountyid])
   @@index([userid])
