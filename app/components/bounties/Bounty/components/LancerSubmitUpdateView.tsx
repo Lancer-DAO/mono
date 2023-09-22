@@ -6,7 +6,7 @@ import { useBounty } from "@/src/providers/bountyProvider";
 import { api } from "@/src/utils";
 import { UploadDropzone } from "@/src/utils/uploadthing";
 import {
-  LancerUpdateData,
+  LancerUpdateData, QuestProgressState,
 } from "@/types";
 import { oembed, validate } from "@loomhq/loom-embed";
 import { motion } from "framer-motion";
@@ -30,6 +30,7 @@ const LancerSubmitUpdateView: FC = () => {
     description: "",
     links: "",
     media: [],
+    state: QuestProgressState.NEW,
   });
   const { data: updates, refetch } = api.update.getUpdatesByBounty.useQuery(
     { id: currentBounty.id }, 

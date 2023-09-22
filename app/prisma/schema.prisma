@@ -47,10 +47,12 @@ model Checkpoint {
   order         Int
 
   // Relations
-  quote   Quote @relation(fields: [quoteid], references: [id])
-  quoteid Int
+  quote      Quote[]
 
-  @@index([quoteid])
+  // quote   Quote @relation(fields: [quoteid], references: [id])
+  // quoteid Int
+
+  // @@index([quoteid])
 }
 
 model Escrow {
@@ -125,6 +127,7 @@ model Quote {
   estimatedTime Decimal? @db.Decimal(10, 2)
   price         Decimal? @db.Decimal(16, 9)
   createdAt     String   @db.VarChar(24)
+  state         String   @db.VarChar(8)
 
   // Relations
   checkpoints Checkpoint[]
@@ -180,10 +183,17 @@ model Update {
   description String @db.VarChar(5000)
   links       String @db.VarChar(256)
   createdAt   String @db.VarChar(24)
+  state       String @db.VarChar(8)
 
   // Relations
   media  Media[]
-  bounty Bounty[]
+  bounty      Bounty       @relation(fields: [bountyid], references: [id])
+  bountyid    Int
+  user        User         @relation(fields: [userid], references: [id])
+  userid      Int
+
+  @@index([bountyid])
+  @@index([userid])
 }
 
 model User {
@@ -228,6 +238,7 @@ model User {
   referrees  ReferrerReferree[] @relation("referrer")
   industries Industry[]
   media      Media[]
+  Update     Update[]
   Quote      Quote[]
 }
 
