@@ -48,6 +48,27 @@ const ApplicantProfileCard: FC<Props> = ({
             <p className="text-neutral500 text-xs">{`${user.user.experience} XP`}</p>
           </div>
         </div>
+
+        {/* requested */}
+        {currentBounty.requestedLancers.some(
+          (submitter) => submitter.userid === user.userid
+        ) && (
+          <motion.button
+            {...smallClickAnimation}
+            onClick={() => {
+              setSelectedSubmitter(user);
+              setCurrentApplicantsView(EApplicantsView.Individual);
+            }}
+            className="bg-[#F0F0F0] rounded-md flex items-center gap-1
+            text-neutral600 title-text px-4 py-2 
+            disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            <Flame width={16} height={16} className="text-tertiary200" /> $1500
+            Quote
+          </motion.button>
+        )}
+
+        {/* shortlisted */}
         {currentBounty.shortlistedLancers.some(
           (submitter) => submitter.userid === user.userid
         ) && (
@@ -88,23 +109,8 @@ const ApplicantProfileCard: FC<Props> = ({
             )}
           </div>
         )}
-        {currentBounty.requestedLancers.some(
-          (submitter) => submitter.userid === user.userid
-        ) && (
-          <motion.button
-            {...smallClickAnimation}
-            onClick={() => {
-              setSelectedSubmitter(user);
-              setCurrentApplicantsView(EApplicantsView.Individual);
-            }}
-            className="bg-[#F0F0F0] rounded-md flex items-center gap-1
-            text-neutral600 title-text px-4 py-2 
-            disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            <Flame width={16} height={16} className="text-tertiary200" /> $1500
-            Quote
-          </motion.button>
-        )}
+
+        {/* denied */}
         {currentBounty.deniedLancers.some(
           (submitter) => submitter.userid === user.userid
         ) && (
@@ -119,6 +125,44 @@ const ApplicantProfileCard: FC<Props> = ({
           >
             View
           </motion.button>
+        )}
+
+        {/* approved */}
+        {currentBounty.approvedSubmitters.some(
+          (submitter) => submitter.userid === user.userid
+        ) && (
+          <div className="flex items-center gap-2">
+            <motion.button
+              {...smallClickAnimation}
+              onClick={() => {
+                setSelectedSubmitter(user);
+                setCurrentApplicantsView(EApplicantsView.Individual);
+              }}
+              className="bg-white border border-neutral200 text-neutral600 
+              title-text px-4 py-2 rounded-md"
+            >
+              View
+            </motion.button>
+            <motion.button
+              {...smallClickAnimation}
+              onClick={() => {
+                setSelectedSubmitter(user);
+                setCurrentActionView(QuestActionView.Chat);
+              }}
+              className="bg-white border border-neutral200 px-4 py-2 rounded-md flex items-center gap-2"
+            >
+              <p className="text-neutral600 title-text">Chat</p>
+              <svg
+                width="6"
+                height="6"
+                viewBox="0 0 8 8"
+                fill="none"
+                className="animate-pulse"
+              >
+                <circle cx="4" cy="4" r="4" fill="#10966D" />
+              </svg>
+            </motion.button>
+          </div>
         )}
       </div>
     </div>

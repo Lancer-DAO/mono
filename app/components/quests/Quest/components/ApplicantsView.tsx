@@ -14,9 +14,10 @@ import toast from "react-hot-toast";
 import { QuestActionView } from "./QuestActions";
 import { addSubmitterFFA, cancelFFA, voteToCancelFFA } from "@/escrow/adapters";
 import { PublicKey } from "@solana/web3.js";
-import AlertCardModal from "./AlertCardModal";
-import { ChatButton, FundBountyModal } from "@/components";
+import { ChatButton, FundQuestModal } from "@/components";
 import { useReferral } from "@/src/providers/referralProvider";
+import DepositCTAModal from "./DepositCTAModal";
+import IndividualApplicantView from "./IndividualApplicantView";
 
 export enum EApplicantsView {
   All,
@@ -37,7 +38,6 @@ const ApplicantsView: FC<Props> = ({
   const { currentUser, currentWallet, program, provider } = useUserWallet();
   const { currentBounty, setCurrentBounty } = useBounty();
   const { mutateAsync: updateBounty } = api.bountyUsers.update.useMutation();
-  const { getRemainingAccounts, getSubmitterReferrer } = useReferral();
 
   const [currentApplicantsView, setCurrentApplicantsView] =
     useState<EApplicantsView>(EApplicantsView.All);
@@ -99,154 +99,6 @@ const ApplicantsView: FC<Props> = ({
         }
       );
     });
-  };
-
-  const handleReject = async () => {
-    if (!currentBounty || !selectedSubmitter) return;
-    setIsLoading(true);
-    const toastId = toast.loading("Submitting rejection...");
-
-    const newRelations = [BOUNTY_USER_RELATIONSHIP.DeniedLancer];
-
-    try {
-      const updatedBounty = await updateBounty({
-        bountyId: currentBounty?.id,
-        currentUserId: currentUser.id,
-        userId: selectedSubmitter.userid,
-        relations: newRelations,
-        publicKey: selectedSubmitter.publicKey,
-        escrowId: currentBounty?.escrowid,
-        signature: "n/a",
-        label: "deny-submitter",
-      });
-
-      setCurrentBounty(updatedBounty);
-      setSelectedSubmitter(null);
-      toast.success("Rejection submitted", { id: toastId });
-    } catch (error) {
-      if (
-        (error.message as string).includes(
-          "Wallet is registered to another user"
-        )
-      ) {
-        toast.error("Wallet is registered to another user", { id: toastId });
-      } else {
-        toast.error("Error submitting rejection", { id: toastId });
-      }
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const handleManageShortlist = async (action: "add" | "remove") => {
-    if (!currentBounty || !selectedSubmitter) return;
-
-    setIsLoading(true);
-    const toastId = toast.loading(
-      action === "add" ? "Adding to shortlist..." : "Removing from shortlist..."
-    );
-    try {
-      const newRelations =
-        action === "add"
-          ? [BOUNTY_USER_RELATIONSHIP.ShortlistedLancer]
-          : [BOUNTY_USER_RELATIONSHIP.RequestedLancer];
-      const updatedBounty = await updateBounty({
-        bountyId: currentBounty?.id,
-        currentUserId: currentUser.id,
-        userId: selectedSubmitter.userid,
-        relations: newRelations,
-        publicKey: selectedSubmitter.publicKey,
-        escrowId: currentBounty?.escrowid,
-        signature: "n/a",
-        label: action === "add" ? "add-to-shortlist" : "remove-from-shortlist",
-      });
-
-      setCurrentBounty(updatedBounty);
-      setSelectedSubmitter(null);
-      toast.success(
-        action === "add"
-          ? "Successfully added to shortlist"
-          : "Successfully removed from shortlist",
-        { id: toastId }
-      );
-    } catch (error) {
-      if (
-        (error.message as string).includes(
-          "Wallet is registered to another user"
-        )
-      ) {
-        toast.error("Wallet is registered to another user", { id: toastId });
-      } else {
-        toast.error(
-          action === "add"
-            ? "Error adding to shortlist"
-            : "Error removing from shortlist",
-          { id: toastId }
-        );
-      }
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const handleApproveForQuest = async () => {
-    if (!currentBounty || !selectedSubmitter) return;
-
-    setIsLoading(true);
-    await confirmAction("approve this Lancer");
-    const toastId = toast.loading("Approving Your Lancer...");
-    try {
-      const submitterWallet = new PublicKey(selectedSubmitter.publicKey);
-      const remainingAccounts = await getRemainingAccounts(
-        submitterWallet,
-        new PublicKey(currentBounty?.escrow.mint.publicKey)
-      );
-      const signature = await addSubmitterFFA(
-        submitterWallet,
-        currentBounty?.escrow,
-        currentWallet,
-        await getSubmitterReferrer(
-          submitterWallet,
-          new PublicKey(currentBounty?.escrow.mint.publicKey)
-        ),
-        remainingAccounts,
-        program,
-        provider
-      );
-      const newRelations = updateList(
-        selectedSubmitter.userid === currentUser.id
-          ? currentBounty?.currentUserRelationsList
-          : [],
-        [BOUNTY_USER_RELATIONSHIP.RequestedLancer],
-        [BOUNTY_USER_RELATIONSHIP.ApprovedSubmitter]
-      );
-      const updatedBounty = await updateBounty({
-        bountyId: currentBounty?.id,
-        userId: selectedSubmitter.userid,
-        currentUserId: currentUser.id,
-        relations: newRelations,
-        state: BountyState.IN_PROGRESS,
-        publicKey: selectedSubmitter.publicKey,
-        escrowId: currentBounty?.escrowid,
-        signature,
-        label: "add-approved-submitter",
-      });
-
-      setCurrentBounty(updatedBounty);
-      toast.success("Successfully approved submitter", { id: toastId });
-    } catch (error) {
-      if (
-        (error.message as string).includes(
-          "Wallet is registered to another user"
-        )
-      ) {
-        toast.error("Wallet is registered to another user", { id: toastId });
-      } else {
-        toast.error("Error approving submitter", { id: toastId });
-      }
-    } finally {
-      setIsLoading(false);
-    }
   };
 
   const handleVoteToCancel = async () => {
@@ -349,139 +201,16 @@ const ApplicantsView: FC<Props> = ({
     !!selectedSubmitter
   )
     return (
-      <div className="flex flex-col h-full">
-        <div className="w-full flex flex-col">
-          {/* banner */}
-          <div
-            className="w-full h-[68px] bg-white flex items-center 
-            justify-between px-6 border-b border-neutral200"
-          >
-            <div className="flex items-center gap-2">
-              <Image
-                src={selectedSubmitter.user.picture}
-                alt="user avatar"
-                width={40}
-                height={40}
-                className="rounded-full overflow-hidden"
-              />
-              <div className="flex flex-col">
-                <h1 className="text-neutral600">
-                  {selectedSubmitter.user.name}
-                </h1>
-                {/* <p className="text text-neutral400">{selectedSubmitter.user.industries}</p> */}
-                <p className="text text-neutral400">{`Engineering`}</p>
-              </div>
-            </div>
-            <motion.button
-              onClick={() => {
-                setCurrentApplicantsView(EApplicantsView.All);
-                setSelectedSubmitter(null);
-              }}
-              {...smallClickAnimation}
-            >
-              <X height={24} width={24} />
-            </motion.button>
-          </div>
-        </div>
-        <div className="flex flex-col gap-6 px-6 py-4">
-          <div className="flex flex-col gap-5">
-            <p className="text-xs text-neutral600">Previously worked with</p>
-            <p className="text-xs text-neutral600">Notable skills</p>
-          </div>
-          <div className="w-full h-[100px] bg-neutral100 rounded-md p-6">
-            Quote goes here
-          </div>
-          <div className="flex flex-col gap-2.5">
-            <p className="text-neutral600 title-text">{`About ${selectedSubmitter.user.name}`}</p>
-            <p className="text">{selectedSubmitter.user.bio}</p>
-          </div>
-          <div className="flex flex-col gap-2.5">
-            <p className="text-neutral600 title-text">{`Why is ${selectedSubmitter.user.name} a good fit?`}</p>
-            <p className="text">{selectedSubmitter.applicationText}</p>
-          </div>
-          {/* action buttons */}
-          {!selectedSubmitter.relations.includes(
-            BOUNTY_USER_RELATIONSHIP.DeniedLancer
-          ) &&
-          !selectedSubmitter.relations.includes(
-            BOUNTY_USER_RELATIONSHIP.ShortlistedLancer
-          ) ? (
-            <div className="w-full flex items-center justify-end gap-4">
-              <motion.button
-                {...smallClickAnimation}
-                className="bg-white border border-neutral200 h-9 w-fit px-4 py-2
-                  title-text rounded-md text-error disabled:cursor-not-allowed disabled:opacity-80"
-                onClick={handleReject}
-                disabled={isLoading || isAwaitingResponse}
-              >
-                Reject this quote
-              </motion.button>
-              <motion.button
-                {...smallClickAnimation}
-                className="bg-primary200 border border-neutral200 h-9 w-fit px-4 py-2
-                      title-text rounded-md text-white disabled:cursor-not-allowed disabled:opacity-60"
-                onClick={() => handleManageShortlist("add")}
-                disabled={
-                  isLoading ||
-                  isAwaitingResponse ||
-                  currentBounty.shortlistedLancers.length === MAX_SHORTLIST
-                }
-              >
-                {`${
-                  currentBounty.shortlistedLancers.length === MAX_SHORTLIST
-                    ? "Shortlist full"
-                    : `Add to shortlist`
-                }`}
-              </motion.button>
-            </div>
-          ) : null}
-          {/* applicant is shortlisted but client has not funded escrow with deposit */}
-          {selectedSubmitter.relations.includes(
-            BOUNTY_USER_RELATIONSHIP.ShortlistedLancer
-          ) && Number(currentBounty.escrow.amount) === 0 ? (
-            <div className="w-full flex items-center justify-end gap-4">
-              <motion.button
-                {...smallClickAnimation}
-                className="bg-white border border-neutral200 h-9 w-fit px-4 py-2
-                title-text rounded-md text-error disabled:cursor-not-allowed disabled:opacity-80"
-                onClick={() => handleManageShortlist("remove")}
-                disabled={isLoading || isAwaitingResponse}
-              >
-                Remove from shortlist
-              </motion.button>
-            </div>
-          ) : null}
-          {/* applicant is shortlisted and client has funded escrow with deposit */}
-          {selectedSubmitter.relations.includes(
-            BOUNTY_USER_RELATIONSHIP.ShortlistedLancer
-          ) && Number(currentBounty.escrow.amount) > 0 ? (
-            <div className="w-full flex items-center justify-end gap-4">
-              <ChatButton
-                setCurrentActionView={setCurrentActionView}
-                disabled={isLoading || isAwaitingResponse}
-              />
-              <motion.button
-                {...smallClickAnimation}
-                className="bg-white border border-neutral300 h-9 w-fit px-4 py-2
-                title-text rounded-md text-neutral600 disabled:cursor-not-allowed disabled:opacity-80"
-                // onClick={() => handleManageShortlist("remove")}
-                disabled={isLoading || isAwaitingResponse}
-              >
-                Reject for the Quest
-              </motion.button>
-              <motion.button
-                {...smallClickAnimation}
-                className="bg-success h-9 w-fit px-4 py-2
-                title-text rounded-md text-white disabled:cursor-not-allowed disabled:opacity-80"
-                onClick={() => handleApproveForQuest()}
-                disabled={isLoading || isAwaitingResponse}
-              >
-                Select for the Quest
-              </motion.button>
-            </div>
-          ) : null}
-        </div>
-      </div>
+      <IndividualApplicantView
+        selectedSubmitter={selectedSubmitter}
+        setSelectedSubmitter={setSelectedSubmitter}
+        setCurrentApplicantsView={setCurrentApplicantsView}
+        setCurrentActionView={setCurrentActionView}
+        isLoading={isLoading}
+        setIsLoading={setIsLoading}
+        isAwaitingResponse={isAwaitingResponse}
+        setIsAwaitingResponse={setIsAwaitingResponse}
+      />
     );
 
   return (
@@ -532,36 +261,66 @@ const ApplicantsView: FC<Props> = ({
                 );
               })}
             </>
-          ) : (
+          ) : currentBounty.approvedSubmitters.length === 0 ? (
             <p className="text-sm text-neutral-600">
               You haven&apos;t answered any applicants yet. Shortlist up to 5
               profiles to move on.
             </p>
-          )}
-          <p className="title-text">Pending</p>
-          {currentBounty.requestedLancers.length > 0 ? (
-            currentBounty.requestedLancers.map((submitter, index) => {
-              return (
-                <div
-                  className={`w-full pb-5 ${
-                    index !== currentBounty.requestedLancers.length - 1
-                      ? "border-b border-neutral200"
-                      : ""
-                  }`}
-                  key={index}
-                >
-                  <ApplicantProfileCard
-                    user={submitter}
-                    setSelectedSubmitter={setSelectedSubmitter}
-                    setCurrentApplicantsView={setCurrentApplicantsView}
-                    setCurrentActionView={setCurrentActionView}
-                  />
-                </div>
-              );
-            })
+          ) : null}
+          {currentBounty.approvedSubmitters.length === 0 ? (
+            <>
+              <p className="title-text">Pending</p>
+              {currentBounty.requestedLancers.length > 0 ? (
+                currentBounty.requestedLancers.map((submitter, index) => {
+                  return (
+                    <div
+                      className={`w-full pb-5 ${
+                        index !== currentBounty.requestedLancers.length - 1
+                          ? "border-b border-neutral200"
+                          : ""
+                      }`}
+                      key={index}
+                    >
+                      <ApplicantProfileCard
+                        user={submitter}
+                        setSelectedSubmitter={setSelectedSubmitter}
+                        setCurrentApplicantsView={setCurrentApplicantsView}
+                        setCurrentActionView={setCurrentActionView}
+                      />
+                    </div>
+                  );
+                })
+              ) : (
+                <p className="text-neutral500 text pb-5">
+                  No pending applicants
+                </p>
+              )}
+            </>
           ) : (
-            <p className="text-neutral500 text pb-5">No pending applicants</p>
+            <>
+              <p className="title-text">Selected</p>
+              {currentBounty.approvedSubmitters.map((submitter, index) => {
+                return (
+                  <div
+                    className={`w-full pb-5 ${
+                      index !== currentBounty.requestedLancers.length - 1
+                        ? "border-b border-neutral200"
+                        : ""
+                    }`}
+                    key={index}
+                  >
+                    <ApplicantProfileCard
+                      user={submitter}
+                      setSelectedSubmitter={setSelectedSubmitter}
+                      setCurrentApplicantsView={setCurrentApplicantsView}
+                      setCurrentActionView={setCurrentActionView}
+                    />
+                  </div>
+                );
+              })}
+            </>
           )}
+
           {currentBounty.deniedLancers.length > 0 ? (
             <>
               <p className="title-text">Denied</p>
@@ -587,7 +346,8 @@ const ApplicantsView: FC<Props> = ({
             </>
           ) : null}
           <div className="w-full flex items-center justify-end">
-            {currentBounty.state === BountyState.VOTING_TO_CANCEL ? (
+            {currentBounty.state === BountyState.VOTING_TO_CANCEL &&
+            currentBounty.isCreator ? (
               <motion.button
                 {...smallClickAnimation}
                 className="bg-white border border-neutral200 h-9 w-fit px-4 py-2
@@ -598,8 +358,12 @@ const ApplicantsView: FC<Props> = ({
                 Cancel Quest
               </motion.button>
             ) : null}
-            {currentBounty.state !== BountyState.VOTING_TO_CANCEL &&
-            currentBounty.state !== BountyState.CANCELED ? (
+            {(currentBounty.state !== BountyState.VOTING_TO_CANCEL &&
+              currentBounty.state !== BountyState.CANCELED) ||
+            (currentBounty.state === BountyState.VOTING_TO_CANCEL &&
+              !currentBounty.needsToVote
+                .map((user) => user.userid)
+                .includes(currentUser.id)) ? (
               <motion.button
                 {...smallClickAnimation}
                 className="bg-white border border-neutral200 h-9 w-fit px-4 py-2
@@ -615,7 +379,6 @@ const ApplicantsView: FC<Props> = ({
                 {...smallClickAnimation}
                 className="bg-white border border-neutral200 h-9 w-fit px-4 py-2
                 title-text rounded-md text-error disabled:cursor-not-allowed disabled:opacity-80"
-                onClick={handleVoteToCancel}
                 disabled={true}
               >
                 Quest Canceled
@@ -623,46 +386,11 @@ const ApplicantsView: FC<Props> = ({
             ) : null}
           </div>
           {showModal && (
-            <AlertCardModal setShowModal={setShowModal}>
-              <div className="w-full p-4 pl-12 mt-4 flex flex-col justify-evenly bg-neutral100">
-                <div className="relative w-full">
-                  <p className="title-text">Almost done!</p>
-                  <div className="absolute top-0 -left-8">
-                    <Image
-                      src="/assets/icons/rocket.svg"
-                      width={24}
-                      height={24}
-                      alt="icon"
-                    />
-                  </div>
-                </div>
-                <p className="text pt-1">{`Now that you shortlisted some solid candidates, we need you to commit and deposit into an escrow 5% of the highest quote you received, which equates to $${depositAmount()}.`}</p>
-                <p className="text pt-1">
-                  This unlocks the ability to chat with your shortlisted
-                  applicants. Once you decide which candidate you want to work
-                  with, we will ask you to deposit 100% of the funds into escrow
-                  to kick things off.
-                </p>
-                <div className="w-full flex items-center justify-end gap-2 pt-4">
-                  <motion.button
-                    {...smallClickAnimation}
-                    className="bg-white border border-neutral300 h-9 w-fit px-4 py-2
-                    title-text rounded-md text-neutral60"
-                    onClick={() => setShowModal(false)}
-                  >
-                    Cancel
-                  </motion.button>
-                  <motion.button
-                    {...smallClickAnimation}
-                    className="bg-secondary200 h-9 w-fit px-4 py-2
-                    title-text rounded-md text-white disabled:cursor-not-allowed disabled:opacity-80"
-                    onClick={() => setShowFundModal(true)}
-                  >
-                    {`Deposit $${depositAmount()} into escrow`}
-                  </motion.button>
-                </div>
-              </div>
-            </AlertCardModal>
+            <DepositCTAModal
+              setShowModal={setShowModal}
+              setShowFundModal={setShowFundModal}
+              amount={depositAmount()}
+            />
           )}
         </div>
       </div>
