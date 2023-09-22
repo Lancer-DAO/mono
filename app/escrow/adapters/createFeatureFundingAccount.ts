@@ -6,10 +6,11 @@ import {
   createFeatureFundingAccountInstruction,
   createReferralDataAccountInstruction,
 } from "@/escrow/sdk/instructions";
-import { USDC_MINT } from "@/src/constants";
+import { DEVNET_USDC_MINT, USDC_MINT } from "@/src/constants";
 import { findFeatureAccount } from "@/escrow/sdk/pda";
 import { LancerWallet } from "@/types/";
 import base58 from "bs58";
+import { sendGaslessTx } from "../gasless";
 
 export const createFFA = async (
   wallet: LancerWallet,
@@ -21,8 +22,8 @@ export const createFFA = async (
 ) => {
   const timestamp = Date.now().toString();
   const ix = await createCustodialFeatureFundingAccountInstruction(
-    mint ? mint : new PublicKey(USDC_MINT),
-    new PublicKey("Am5A8sc2SrGZhzw3X81YA7NxRHKuX6KULQ8CDQbf6rWd"),
+    new PublicKey(DEVNET_USDC_MINT),
+    new PublicKey("pyrSoEahjKGKZpLWEYwCJ8zQAsYZckZH8ZqJ7yGd1ha"),
     new PublicKey(wallet.publicKey),
     program,
   );
@@ -40,28 +41,10 @@ export const createFFA = async (
   //   program
   // );
 
-  const tx = new Transaction().add(ix)
-  const { blockhash } = await new Connection("https://solana-devnet.g.alchemy.com/v2/uUAHkqkfrVERwRHXnj8PEixT8792zETN").getLatestBlockhash()
-
-  tx.recentBlockhash = blockhash
-  tx.feePayer = new PublicKey("Am5A8sc2SrGZhzw3X81YA7NxRHKuX6KULQ8CDQbf6rWd")
-
-
-  // Wallet signature not required for this tx, only fee payer's signature is required
-  // const signed = await wallet.signTransaction(tx)
-
-  const serialized = tx.serialize({requireAllSignatures: false})
-
-  const res = await fetch("/api/gasless", {
-    "method": "POST",
-    "headers": { "Content-Type": "application/json" },
-    "body": JSON.stringify({ "transaction": base58.encode(serialized) }),
-  })
-
-  const json = await res.json()
+  const res = await sendGaslessTx([ix])
   return {
     timestamp,
-    signature: json.txid,
+    signature: res.signature,
     creator: new PublicKey(wallet.publicKey),
     escrowKey: feature_account,
   };

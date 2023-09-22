@@ -22,7 +22,12 @@ export default async function handler(
     return;
   }
 
-  const feePayer = Keypair.fromSecretKey(base58.decode(process.env.NEXT_PUBLIC_GASLESS_KEY));
+  const secret = process.env.FEE_PAYER_KEY;
+  const nums = secret.split(",");
+  const secretArray = nums.map((val) => parseInt(val));
+  const secretKey = Uint8Array.from(secretArray);
+  const feePayer =  Keypair.fromSecretKey(secretKey);
+
   let transaction: Transaction;
   try {
     transaction = Transaction.from(base58.decode(serialized));

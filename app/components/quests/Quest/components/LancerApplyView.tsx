@@ -72,6 +72,7 @@ const LancerApplyView: FC<Props> = ({ setCurrentActionView }) => {
       setCurrentBounty(updatedBounty);
       toast.success("Application sent", { id: toastId });
     } catch (error) {
+      console.log(error)
       if (
         (error.message as string).includes(
           "Wallet is registered to another user"
