@@ -6,7 +6,7 @@ import {
   getSession,
   withPageAuthRequired,
 } from "@auth0/nextjs-auth0";
-import { Quest } from "../../components/bounties/Bounty/Quest";
+import { Quest } from "../../components/quests/Quest/Quest";
 import { NextSeo } from "next-seo";
 import { GetServerSidePropsContext } from "next";
 import { prisma } from "@/server/db";

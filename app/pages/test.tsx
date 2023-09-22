@@ -1,5 +1,5 @@
 import { withPageAuthRequired } from "@auth0/nextjs-auth0";
-import { Bounties } from "@/components/bounties/Bounties/Bounties";
+import { Bounties } from "@/components/quests/Quests/Quests";
 import { NextSeo } from "next-seo";
 import { useUserWallet } from "@/src/providers";
 import {
