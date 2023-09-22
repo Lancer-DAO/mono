@@ -160,6 +160,7 @@ export const get = async (id: number, currentUserId: number) => {
 
 export const getMany = async (currentUserId: number) => {
   const bounties = await bountyQueryMany(currentUserId);
+  console.log("query", bounties);
 
   const mappedBounties = bounties.map((bounty) => {
     const userRelations = bounty.users;

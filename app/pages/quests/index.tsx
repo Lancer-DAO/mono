@@ -74,6 +74,7 @@ const BountiesPage: React.FC<{
   const { setAllIndustries, allIndustries } = useIndustry();
   const { setAllBounties, allBounties } = useBounty();
   if (!allBounties && bounties) {
+    console.log("raw bounties", bounties);
     setAllBounties(JSON.parse(bounties));
   }
 
