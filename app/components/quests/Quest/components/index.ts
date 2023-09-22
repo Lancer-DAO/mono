@@ -9,6 +9,7 @@ export * from "./QuestActionsButton";
 export * from "./CancelEscrow";
 export * from "./ChatView";
 export * from "./DenySubmission";
+export * from "./DepositCTAModal";
 export * from "./LancerApplyView";
 export * from "./QuestActions";
 export * from "./QuestDetails";
