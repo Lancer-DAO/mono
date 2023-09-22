@@ -7,7 +7,7 @@ import { Image } from "lucide-react";
 
 import { motion } from "framer-motion";
 import { smallClickAnimation } from "@/src/constants";
-export type UpdateType = "submission" | "message" | "application" | "quote";
+export type UpdateType = "submission" | "message" | "application" | "cancel";
 export type SubmissionType =
   //   This submission was accepted
   | "accepted"
@@ -28,13 +28,11 @@ export type ApplicationType =
   | "denied"
   //   The person was accepted to complete the quest
   | "accepted";
-export type QuoteType =
+export type CancelType =
   //   (client side) A person sent an application
-  | "received"
+  | "vote-to-cancel"
   //   The person was accepted to the shortlist
-  | "rejected"
-  //   The person was at application stage but was rejected
-  | "accepted";
+  | "cancel-escrow";
 
 export const getApplicationTypeFromLabel = (label: string): ApplicationType => {
   switch (label) {
@@ -76,7 +74,13 @@ export type UpdateItemProps =
         questName: string;
       };
     })
-  | (CommonProps & { type: "quote"; subType: QuoteType; updater: User })
+  | (CommonProps & {
+      type: "cancel";
+      subType: CancelType;
+      extraProps: {
+        questName: string;
+      };
+    })
   | (CommonProps & {
       type: "message";
       subType?: never;
@@ -93,6 +97,18 @@ const UpdateTableItem: React.FC<UpdateItemProps> = ({
   extraProps,
 }) => {
   switch (type) {
+    case "message":
+      return (
+        <div className="flex px-8 py-4 items-center justify-start w-full border-solid border-y bg-primary100 border-neutralBorder500">
+          <Message height="28px" width="28px" />
+          <div className="text-sm ml-1.5 text-black mr-4">{`${
+            extraProps.messageCount
+          } New message${extraProps.messageCount > 1 ? "s" : ""} from ${
+            extraProps.updater
+          }`}</div>
+          <div className="text-sm  text-neutral400 mr-4">{`${time.fromNow()}`}</div>
+        </div>
+      );
     case "submission":
       switch (subType) {
         case "new":
@@ -146,7 +162,9 @@ const UpdateTableItem: React.FC<UpdateItemProps> = ({
               </div>
             </div>
           );
-
+      }
+    case "cancel":
+      switch (subType) {
         case "vote-to-cancel":
           return (
             <div className="flex flex-col px-8 py-4 items-start justify-center w-full border-solid border-y  border-neutralBorder500">
@@ -160,61 +178,19 @@ const UpdateTableItem: React.FC<UpdateItemProps> = ({
               </div>
             </div>
           );
-      }
-    case "quote":
-      switch (subType) {
-        case "received":
+        case "cancel-escrow":
           return (
             <div className="flex flex-col px-8 py-4 items-start justify-center w-full border-solid border-y  border-neutralBorder500">
               <div className="flex justify-start items-center w-full">
-                <Flame height="28px" width="28px" version="purple" />
-                <div className="text-sm ml-1.5 text-neutral-500 mr-2">
-                  Quote Received
-                </div>
-                <div className="h-5 w-[1px] bg-neutral-200"></div>
-                <div className="text-sm ml-2 text-neutral-400">{`${time.fromNow()}`}</div>
-                <div className="ml-auto flex items-center justify-end text text-neutral600">
-                  <button
-                    className="rounded-md bg-white border border-neutral200 flex items-center justify-center gap-2 h-8 px-2"
-                    // disabled={hasApplied}
-                    onClick={() => {}}
-                  >
-                    <Image color="#A1B2AD" size={18} />
-                    <p className="text-xs text-neutral400 truncate">
-                      quote.pdf
-                    </p>
-                  </button>
-                </div>
-              </div>
-            </div>
-          );
-        case "rejected":
-          return (
-            <div className="flex flex-col px-8 py-4 items-start justify-center w-full border-solid border-y  border-neutralBorder500">
-              <div className="flex justify-start items-center w-full">
-                <Flame height="28px" width="28px" version="orange" />
-                <div className="text-sm ml-1.5 text-neutral-500 mr-2">
-                  Quote Rejected
+                <Alert height="28px" width="28px" />
+                <div className="text-sm ml-1.5 text-warning mr-2">
+                  {`Client Cancelled ${extraProps.questName}`}
                 </div>
                 <div className="h-5 w-[1px] bg-neutral-200"></div>
                 <div className="text-sm ml-2 text-neutral-400 mr-auto">{`${time.fromNow()}`}</div>
-                <div className="ml-auto flex items-center justify-end text text-neutral600">
-                  <button
-                    className="rounded-md bg-white border border-neutral200 flex items-center justify-center gap-2 h-8 px-2"
-                    // disabled={hasApplied}
-                    onClick={() => {}}
-                  >
-                    <Image color="#A1B2AD" size={18} />
-                    <p className="text-xs text-neutral400 truncate">
-                      quote.pdf
-                    </p>
-                  </button>
-                </div>
-                <div className="text-sm ml-2 text-warning">Rejected</div>
               </div>
             </div>
           );
-        case "accepted":
           return (
             <div className="flex flex-col px-8 py-4 items-start justify-center w-full border-solid border-y  border-neutralBorder500">
               <div className="flex justify-start items-center w-full">
@@ -310,22 +286,6 @@ const UpdateTableItem: React.FC<UpdateItemProps> = ({
             </div>
           );
       }
-
-    case "message":
-      return (
-        <div className="flex px-8 py-4 items-center justify-start w-full border-solid border-y bg-primary100 border-neutralBorder500">
-          <Message height="28px" width="28px" />
-          <div className="text-sm ml-1.5 text-black mr-4">{`${
-            extraProps.messageCount
-          } New message${extraProps.messageCount > 1 ? "s" : ""} from ${
-            extraProps.updater
-          }`}</div>
-          <div className="text-sm  text-neutral400 mr-4">{`${time.fromNow()}`}</div>
-        </div>
-      );
-
-    case "application":
-      return <></>;
   }
 };
 

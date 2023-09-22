@@ -110,8 +110,8 @@ const UpdateTable: React.FC = () => {
           if (cancelVote.actions.length === 0) return;
           cancelVote.actions.forEach((action) => {
             cancelVotesUpdates.push({
-              type: "submission" as any,
-              subType: "vote-to-cancel",
+              type: "cancel" as any,
+              subType: action.type,
               time: dayjs(action.timestamp),
               extraProps: {
                 questName: cancelVote.bounty.title,
@@ -181,24 +181,6 @@ const UpdateTable: React.FC = () => {
           return <UpdateTableItem {...update} key={update.key} />;
         })}
 
-        <UpdateTableItem
-          type="quote"
-          subType="received"
-          time={dayjs("Tue, 19 Sep 2023 02:26:53 GMT")}
-          updater={currentUser}
-        />
-        <UpdateTableItem
-          type="quote"
-          subType="accepted"
-          time={dayjs("Tue, 19 Sep 2023 02:26:53 GMT")}
-          updater={currentUser}
-        />
-        <UpdateTableItem
-          type="quote"
-          subType="rejected"
-          time={dayjs("Tue, 19 Sep 2023 02:26:53 GMT")}
-          updater={currentUser}
-        />
         <div className="px-8 py-4 text-black"></div>
       </div>
     )

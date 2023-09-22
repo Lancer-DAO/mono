@@ -137,7 +137,7 @@ export const getBountyUpdatesCancel = async (userid: number) => {
       actions: {
         where: {
           type: {
-            in: ["vote-to-cancel", "cancel"],
+            in: ["vote-to-cancel", "cancel-escrow"],
           },
         },
         select: {
