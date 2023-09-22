@@ -3,13 +3,27 @@ import { protectedProcedure } from "../../trpc";
 import { z } from "zod";
 import * as queries from "@/prisma/queries";
 
-export const getBountyUpdatesLancer = protectedProcedure.query(
-  async ({
-    ctx: {
-      user: { id },
-    },
-  }) => {
-    const ret = await queries.bountyUser.getBountyUpdatesLancer(id);
-    return ret;
-  }
-);
+export const getBountyUpdatesLancer = protectedProcedure
+  .input(
+    z.optional(
+      z.object({
+        bountyids: z.array(z.number()),
+      })
+    )
+  )
+  .query(
+    async ({
+      ctx: {
+        user: { id },
+      },
+      input,
+    }) => {
+      const bountyids = input?.bountyids;
+
+      const ret = await queries.bountyUser.getBountyUpdatesLancer(
+        id,
+        bountyids
+      );
+      return ret;
+    }
+  );

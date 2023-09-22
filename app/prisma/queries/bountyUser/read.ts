@@ -10,16 +10,22 @@ export const get = async (userid: number, bountyid: number) => {
   });
 };
 
-export const getBountyUpdatesCreator = async (userid: number) => {
-  const bounties = (await prisma.$queryRaw`
-    SELECT Bounty.id
-    FROM Bounty
-    JOIN BountyUser ON Bounty.id = BountyUser.bountyid
-    WHERE BountyUser.userid = ${userid}
-    AND BountyUser.relations like '%creator%'
-    AND Bounty.state NOT IN ('complete', 'canceled');
-  `) as [{ id: number }];
-  const ids = bounties.map((bounty) => bounty.id);
+export const getBountyUpdatesCreator = async (
+  userid: number,
+  bountyids?: number[]
+) => {
+  const ids =
+    bountyids ||
+    (
+      (await prisma.$queryRaw`
+  SELECT Bounty.id
+  FROM Bounty
+  JOIN BountyUser ON Bounty.id = BountyUser.bountyid
+  WHERE BountyUser.userid = ${userid}
+  AND BountyUser.relations like '%creator%'
+  AND Bounty.state NOT IN ('complete', 'canceled');
+`) as [{ id: number }]
+    ).map((bounty) => bounty.id);
   return prisma.bountyUser.findMany({
     where: {
       bountyid: {
@@ -55,16 +61,22 @@ export const getBountyUpdatesCreator = async (userid: number) => {
   });
 };
 
-export const getBountyUpdatesLancer = async (userid: number) => {
-  const bounties = (await prisma.$queryRaw`
+export const getBountyUpdatesLancer = async (
+  userid: number,
+  bountyids?: number[]
+) => {
+  const ids =
+    bountyids ||
+    (
+      (await prisma.$queryRaw`
     SELECT Bounty.id
     FROM Bounty
     JOIN BountyUser ON Bounty.id = BountyUser.bountyid
     WHERE BountyUser.userid = ${userid}
     AND BountyUser.relations not like '%creator%'
     AND Bounty.state NOT IN ('complete', 'canceled');
-  `) as [{ id: number }];
-  const ids = bounties.map((bounty) => bounty.id);
+  `) as [{ id: number }]
+    ).map((bounty) => bounty.id);
   return prisma.bountyUser.findMany({
     where: {
       bountyid: {
@@ -105,8 +117,14 @@ export const getBountyUpdatesLancer = async (userid: number) => {
   });
 };
 
-export const getBountyUpdatesCancel = async (userid: number) => {
-  const bounties = (await prisma.$queryRaw`
+export const getBountyUpdatesCancel = async (
+  userid: number,
+  bountyids?: number[]
+) => {
+  const ids =
+    bountyids ||
+    (
+      (await prisma.$queryRaw`
     SELECT Bounty.id
     FROM Bounty
     JOIN BountyUser ON Bounty.id = BountyUser.bountyid
@@ -115,8 +133,8 @@ export const getBountyUpdatesCancel = async (userid: number) => {
     AND BountyUser.relations not like '%requested%'
     AND BountyUser.relations not like '%creator%'
     AND Bounty.state IN ('voting_to_cancel', 'canceled');
-  `) as [{ id: number }];
-  const ids = bounties.map((bounty) => bounty.id);
+  `) as [{ id: number }]
+    ).map((bounty) => bounty.id);
   return prisma.bountyUser.findMany({
     where: {
       bountyid: {

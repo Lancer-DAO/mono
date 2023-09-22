@@ -7,6 +7,7 @@ import dayjs from "dayjs";
 import { marked } from "marked";
 import Link from "next/link";
 import { ArrowLeft, ChevronDown, ChevronUp, ExternalLink } from "react-feather";
+import UpdateTable from "@/components/organisms/UpdateTable";
 
 const Divider = () => <div className="h-[20px] w-[1px] mx-4 bg-slate-200" />;
 

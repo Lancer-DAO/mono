@@ -25,8 +25,14 @@ export const getUpdatesByBounty = async (
   return bounty.updates;
 };
 
-export const getQuestUpdatesClient = async (userid: number) => {
-  const bounties = (await prisma.$queryRaw`
+export const getQuestUpdatesClient = async (
+  userid: number,
+  bountyids?: number[]
+) => {
+  const ids =
+    bountyids ||
+    (
+      (await prisma.$queryRaw`
     SELECT Bounty.id
     FROM Bounty
     JOIN BountyUser ON Bounty.id = BountyUser.bountyid
@@ -38,8 +44,8 @@ export const getQuestUpdatesClient = async (userid: number) => {
       FROM QuestUpdate
       WHERE QuestUpdate.bountyid = Bounty.id
     );
-  `) as [{ id: number }];
-  const ids = bounties.map((bounty) => bounty.id);
+  `) as [{ id: number }]
+    ).map((bounty) => bounty.id);
   return prisma.questUpdate.findMany({
     where: {
       bountyid: {
@@ -64,14 +70,28 @@ export const getQuestUpdatesClient = async (userid: number) => {
   });
 };
 
-export const getQuestUpdatesLancer = async (userid: number) => {
+export const getQuestUpdatesLancer = async (
+  userid: number,
+  bountyids?: number[]
+) => {
+  const whereClause = bountyids
+    ? {
+        userid,
+        state: {
+          in: ["accepted", "rejected"],
+        },
+        bountyid: {
+          in: bountyids,
+        },
+      }
+    : {
+        userid,
+        state: {
+          in: ["accepted", "rejected"],
+        },
+      };
   return prisma.questUpdate.findMany({
-    where: {
-      userid,
-      state: {
-        in: ["accepted", "rejected"],
-      },
-    },
+    where: whereClause,
     select: {
       bounty: {
         select: {

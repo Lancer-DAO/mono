@@ -63,13 +63,12 @@ export const getUnreadChannels = async (userId: string) => {
   const messagesInfo: UnreadMessage[] = channels.map((channel) => {
     const sentAt = channel.lastMessage?.createdAt;
     const unreadCount = channel.unreadMessageCount;
-    const userId = (channel.lastMessage as unknown as any)?.sender
-      ?.userId as number;
+    const userId = (channel.lastMessage as unknown as any)?.sender?.userId;
     const userName = (channel.lastMessage as unknown as any)?.sender?.nickname;
     return {
       sentAt,
       unreadCount,
-      userId,
+      userId: parseInt(userId),
       userName,
     };
   });
