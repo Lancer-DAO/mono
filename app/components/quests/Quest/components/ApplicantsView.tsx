@@ -667,7 +667,7 @@ const ApplicantsView: FC<Props> = ({
         </div>
       </div>
       {showFundModal && (
-        <FundBountyModal
+        <FundQuestModal
           setShowModal={setShowFundModal}
           setShowFundModal={setShowFundModal}
           amount={depositAmount()}

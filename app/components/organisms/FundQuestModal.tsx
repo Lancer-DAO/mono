@@ -21,7 +21,7 @@ interface Props {
   amount?: number;
 }
 
-const FundBountyModal: FC<Props> = ({
+const FundQuestModal: FC<Props> = ({
   setShowModal,
   setShowFundModal,
   amount,
@@ -251,4 +251,4 @@ const FundBountyModal: FC<Props> = ({
   );
 };
 
-export default FundBountyModal;
+export default FundQuestModal;
