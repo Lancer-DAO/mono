@@ -128,7 +128,7 @@ model Quote {
   price         Decimal? @db.Decimal(16, 9)
   createdAt     String   @db.VarChar(24)
   state         String   @db.VarChar(8)
-  reviedAt      String?  @db.VarChar(24)
+  reviewedAt    String?  @db.VarChar(24)
 
   // Relations
   checkpoints Checkpoint[]
@@ -185,7 +185,7 @@ model Update {
   links       String? @db.VarChar(256)
   createdAt   String  @db.VarChar(24)
   state       String  @db.VarChar(8)
-  reviedAt    String? @db.VarChar(24)
+  reviewedAt  String? @db.VarChar(24)
 
   // Relations
   media    Media[]
