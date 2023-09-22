@@ -4,48 +4,31 @@ import { smallClickAnimation } from "@/src/constants";
 import { useUserWallet } from "@/src/providers";
 import { useBounty } from "@/src/providers/bountyProvider";
 import { api } from "@/src/utils";
+import { QuestProgressState } from "@/types";
 import { motion } from "framer-motion";
 import { Dispatch, FC, SetStateAction, useState } from "react";
 import { toast } from "react-hot-toast";
 import ActionsCardBanner from "./ActionsCardBanner";
-import MilestoneView from "./MilestoneView";
+import { default as CheckpointView, default as MilestoneView } from "./CheckpointView";
+import { Checkpoint } from "./LancerApplicationView";
 import { QuestActionView } from "./QuestActions";
 
-export interface Milestone {
-  name: string;
-  price: number;
-  time: number;
-  description: string;
-}
-
 interface Props {
+  quoteData: Checkpoint[],
+  setQuoteData: Dispatch<SetStateAction<Checkpoint[]>>,
   setCurrentActionView: Dispatch<SetStateAction<QuestActionView>>,
 }
 
-const LancerSubmitQuoteView: FC<Props> = ({ setCurrentActionView }) => {
+const LancerSubmitQuoteView: FC<Props> = ({ quoteData, setQuoteData, setCurrentActionView }) => {
   const { currentBounty, setCurrentBounty } = useBounty();
   const { currentUser, currentWallet } = useUserWallet();
-  const [quoteData, setQuoteData] = useState<Milestone[]>([
-    {
-      name: "Sketches and early ideas",
-      price: 400,
-      time: 4,
-      description: "",
-    },
-    {
-      name: "Wireframes and iterations",
-      price: 400,
-      time: 4,
-      description: "",
-    }
-  ]);
 
   const addMilestone = () => {
     const newMilestone = {
-      name: "",
+      title: "",
       price: 0,
-      time: 0,
       description: "",
+      estimatedTime: 0,
     };
 
     setQuoteData([...quoteData, newMilestone]);
@@ -67,13 +50,13 @@ const LancerSubmitQuoteView: FC<Props> = ({ setCurrentActionView }) => {
             <RedFire />
             <div className="title-text text-neutral600">Quote Price</div>
             <div className="w-[1px] h-5 bg-neutral200" />
-            <div className="text-mini text-neutral400">{`${quoteData.reduce((total, milestone) => total + milestone.time, 0)}h`}</div>
+            <div className="text-mini text-neutral400">{`${quoteData.reduce((total, checkpoint) => total + checkpoint.estimatedTime, 0)}h`}</div>
           </div>
           <div className="flex items-center title-text text-primary200">{`$${quoteData.reduce((total, milestone) => total + milestone.price, 0 ) }`}</div>
         </div>
-        {quoteData.map((milestone, index) => (
-          <MilestoneView 
-            milestone={milestone} 
+        {quoteData.map((checkpoint, index) => (
+          <CheckpointView
+            checkpoint={checkpoint} 
             setQuoteData={setQuoteData} 
             index={index}
             key={index} 
@@ -92,8 +75,12 @@ const LancerSubmitQuoteView: FC<Props> = ({ setCurrentActionView }) => {
 
         )}
       </div>
-      <div className="flex py-4 px-6 justify-end items-center gap-4 self-stretch opacity-20">
-        <button className="px-4 py-2 text-neutral600 title-text rounded-md border border-neutral300">Cancel</button>
+      <div className="flex py-4 px-6 justify-end items-center gap-4 self-stretch opacity-100">
+        <button 
+          className="px-4 py-2 text-neutral600 title-text rounded-md border border-neutral300"
+        >
+          Cancel
+        </button>
         <button 
           className="px-4 py-2 text-white title-text rounded-md bg-secondary200"
           onClick={() => setCurrentActionView(QuestActionView.Apply)}

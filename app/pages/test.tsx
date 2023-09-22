@@ -48,7 +48,7 @@ import { UpdateTable } from "@/components";
 const BountiesPage: React.FC = () => {
   return (
     <div className="w-full flex items-center justify-center mt-5 gap-5 py-24">
-      <UpdateTable />
+      <UpdateTable allUpdates={true} />
     </div>
   );
 };

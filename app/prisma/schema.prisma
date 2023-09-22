@@ -27,14 +27,14 @@ model Bounty {
   links         String   @default("") @db.VarChar(1024)
 
   // Relations
-  escrow     Escrow       @relation(fields: [escrowid], references: [id])
-  escrowid   Int          @unique
+  escrow     Escrow        @relation(fields: [escrowid], references: [id])
+  escrowid   Int           @unique
   tags       Tag[]
   users      BountyUser[]
   industries Industry[]
   media      Media[]
-  updates    Update[]
-  Quote      Quote[]
+  updates    QuestUpdate[]
+  quotes     Quote[]
 }
 
 model Checkpoint {
@@ -47,10 +47,12 @@ model Checkpoint {
   order         Int
 
   // Relations
-  quote   Quote @relation(fields: [quoteid], references: [id])
-  quoteid Int
+  quote Quote[]
 
-  @@index([quoteid])
+  // quote   Quote @relation(fields: [quoteid], references: [id])
+  // quoteid Int
+
+  // @@index([quoteid])
 }
 
 model Escrow {
@@ -95,9 +97,9 @@ model Media {
   description String? @db.VarChar(512)
 
   // Relations
-  bounty Bounty[]
-  update Update[]
-  user   User[]
+  bounty  Bounty[]
+  updates QuestUpdate[]
+  user    User[]
 }
 
 model Mint {
@@ -125,6 +127,8 @@ model Quote {
   estimatedTime Decimal? @db.Decimal(10, 2)
   price         Decimal? @db.Decimal(16, 9)
   createdAt     String   @db.VarChar(24)
+  state         String   @db.VarChar(8)
+  reviewedAt    String?  @db.VarChar(24)
 
   // Relations
   checkpoints Checkpoint[]
@@ -171,19 +175,28 @@ model Transaction {
   @@index([escrowid])
 }
 
-model Update {
+model QuestUpdate {
   id Int @id @default(autoincrement())
 
   // Fields
-  name        String @db.VarChar(128)
-  type        String @db.VarChar(24)
-  description String @db.VarChar(5000)
-  links       String @db.VarChar(256)
-  createdAt   String @db.VarChar(24)
+  name        String  @db.VarChar(128)
+  type        String  @db.VarChar(24)
+  description String  @db.VarChar(5000)
+  links       String? @db.VarChar(256)
+  createdAt   String  @db.VarChar(24)
+  state       String  @db.VarChar(8)
+  reviewedAt  String? @db.VarChar(24)
+  review      String? @db.VarChar(5000)
 
   // Relations
-  media  Media[]
-  bounty Bounty[]
+  media    Media[]
+  bounty   Bounty  @relation(fields: [bountyid], references: [id])
+  bountyid Int
+  user     User    @relation(fields: [userid], references: [id])
+  userid   Int
+
+  @@index([bountyid])
+  @@index([userid])
 }
 
 model User {
@@ -228,7 +241,8 @@ model User {
   referrees  ReferrerReferree[] @relation("referrer")
   industries Industry[]
   media      Media[]
-  Quote      Quote[]
+  updates    QuestUpdate[]
+  quotes     Quote[]
 }
 
 model Wallet {

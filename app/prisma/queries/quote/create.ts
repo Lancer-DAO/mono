@@ -6,14 +6,14 @@ import dayjs from "dayjs";
 export const create = async (
   userId: number,
   bountyId: number,
-  name: string,
-  type: string,
+  title: string,
   description: string,
-  media: Prisma.Media[],
-  links: string,
-  state: QuestProgressState
-): Promise<Prisma.QuestUpdate> => {
-  return await prisma.questUpdate.create({
+  estimatedTime: number,
+  price: number,
+  state: QuestProgressState,
+  checkpoints: Prisma.Checkpoint[]
+): Promise<Prisma.Quote> => {
+  return await prisma.quote.create({
     data: {
       user: {
         connect: {
@@ -25,18 +25,18 @@ export const create = async (
           id: bountyId,
         },
       },
-      name,
-      type,
+      title,
       description,
+      estimatedTime,
+      price,
       createdAt: dayjs().toISOString(),
-      media: {
-        connect: media.map((med) => {
+      checkpoints: {
+        connect: checkpoints.map((checkpoint) => {
           return {
-            id: med.id,
+            id: checkpoint.id,
           };
         }),
       },
-      links,
       state,
     },
   });
