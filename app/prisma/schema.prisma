@@ -182,7 +182,7 @@ model Update {
   name        String  @db.VarChar(128)
   type        String  @db.VarChar(24)
   description String  @db.VarChar(5000)
-  links       String  @db.VarChar(256)
+  links       String? @db.VarChar(256)
   createdAt   String  @db.VarChar(24)
   state       String  @db.VarChar(8)
   reviedAt    String? @db.VarChar(24)
