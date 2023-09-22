@@ -73,11 +73,21 @@ const QuestDetails = () => {
             <p className="text text-neutral500">{`$${formatPrice(
               Number(currentBounty?.escrow?.amount)
             )}`}</p>
-            <Link
+            {/* <Link
               href={getSolscanAddress(
                 new PublicKey(currentBounty?.escrow?.publicKey)
               )}
               target="true"
+            > */}
+            <Link
+              href={
+                currentBounty?.escrow
+                  ? getSolscanAddress(
+                      new PublicKey(currentBounty?.escrow?.publicKey)
+                    )
+                  : "#"
+              }
+              target="_blank"
             >
               <ExternalLink
                 className="text-neutral500"

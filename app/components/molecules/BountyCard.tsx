@@ -121,7 +121,7 @@ const BountyCard: FC<BountyCardProps> = ({
           <PriceTag
             price={handlePrice()}
             icon={handlePriceIcon()}
-            funded={bounty ? Number(bounty?.escrow.amount) > 0 : false}
+            funded={bounty ? Number(bounty?.escrow?.amount) > 0 : false}
           />
           <p className="text-xs font-bold mr-2">
             <span className="text-textPrimary text-[11px] font-base">

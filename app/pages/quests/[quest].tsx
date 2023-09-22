@@ -21,6 +21,7 @@ export async function getServerSideProps(
   withPageAuthRequired();
   const { req, res } = context;
   const metadata = await getSession(req, res);
+  console.log("metadata", metadata);
   if (!metadata?.user) {
     return {
       redirect: {
@@ -29,12 +30,13 @@ export async function getServerSideProps(
       },
     };
   }
+  console.log("metadata passed");
   try {
     const questId = parseInt(context.query.quest as string);
     const { email } = metadata.user;
 
     const user = await queries.user.getByEmail(email);
-
+    console.log("user", user);
     if (!user || !user.hasFinishedOnboarding) {
       return {
         redirect: {
@@ -43,6 +45,7 @@ export async function getServerSideProps(
         },
       };
     }
+    console.log("user passed");
     const quest = await queries.bounty.get(questId, user.id);
 
     const allMints = await queries.mint.getAll();
@@ -56,6 +59,7 @@ export async function getServerSideProps(
       },
     };
   } catch (e) {
+    console.log("error", e);
     return {
       redirect: {
         destination: "/welcome",

@@ -177,7 +177,7 @@ export const convertBountyUserToUser = (user: UserRelation) => {
     relations: user.relations
       .replace(/[\[\]]/g, "")
       .split(",") as BOUNTY_USER_RELATIONSHIP[],
-    publicKey: user.wallet.publicKey,
+    publicKey: user.wallet?.publicKey,
   };
 };
 

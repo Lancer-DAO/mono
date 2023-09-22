@@ -82,6 +82,7 @@ export const createExternal = async (
   description: string,
   title: string,
   link: string,
+  industries: Array<string>,
   userName: string,
   userPicture: string,
   price?: number
@@ -92,6 +93,13 @@ export const createExternal = async (
       createdAt,
       description,
       price,
+      industries: {
+        connect: industries.map((industry) => {
+          return {
+            name: industry,
+          };
+        })
+      },
       isPrivate: false,
       isExternal: true,
       state: BountyState.ACCEPTING_APPLICATIONS,
