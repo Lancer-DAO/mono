@@ -2,6 +2,7 @@ import { prisma } from "@/server/db";
 import * as Prisma from "@prisma/client";
 
 export const create = async (
+  quoteId: number,
   title: string,
   price: number,
   description: string,
@@ -15,6 +16,11 @@ export const create = async (
       description,
       estimatedTime,
       order,
+      quote: {
+        connect: {
+          id: quoteId,
+        }
+      }
     },
   });
 }
