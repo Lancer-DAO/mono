@@ -3,9 +3,10 @@ import { AnchorProvider, Program } from "@project-serum/anchor";
 import { MonoProgram } from "@/escrow/sdk/types/mono_program";
 import { fundFeatureInstruction } from "@/escrow/sdk/instructions";
 
-import { USDC_MINT } from "@/src/constants";
+import { DEVNET_USDC_MINT, USDC_MINT } from "@/src/constants";
 import { LancerWallet } from "@/types/";
 import { Escrow } from "@/types/";
+import { sendGaslessTx } from "../gasless";
 
 export const getFundFFATX = async (
   baseAmount: number,
@@ -60,4 +61,31 @@ export const fundFFA = async (
   );
 
   return await wallet.signAndSendTransaction(tx);
+};
+
+
+export const fundFFATXGasless = async (
+  baseAmount: number,
+  acc: Escrow,
+  wallet: LancerWallet,
+  program: Program<MonoProgram>,
+  provider: AnchorProvider,
+  decimals?: number,
+  mint?: PublicKey
+) => {
+  const amount = baseAmount * Math.pow(10, decimals ? decimals : 6);
+  console.log("baseAmount, amount", baseAmount, amount, "[This is gasless]");
+  // check balaance before funding feature
+  let fund_feature_ix = await fundFeatureInstruction(
+    amount,
+    acc?.timestamp,
+    wallet?.publicKey,
+    // mint ? mint : new PublicKey(USDC_MINT),
+    new PublicKey(DEVNET_USDC_MINT),
+    program
+  );
+
+  const res = await sendGaslessTx([fund_feature_ix], true, wallet)
+
+  return res
 };

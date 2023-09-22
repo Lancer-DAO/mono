@@ -3,7 +3,7 @@ import ActionsCardBanner from "./ActionsCardBanner";
 import { useBounty } from "@/src/providers/bountyProvider";
 import { ChatButton } from "@/components";
 import { useUserWallet } from "@/src/providers";
-import { smallClickAnimation } from "@/src/constants";
+import { DEVNET_USDC_MINT, smallClickAnimation } from "@/src/constants";
 import { motion } from "framer-motion";
 import {
   BOUNTY_USER_RELATIONSHIP,
@@ -50,6 +50,7 @@ const LancerApplyView: FC<Props> = ({ setCurrentActionView }) => {
     const toastId = toast.loading("Sending application...");
     try {
       await createReferralMember(
+        // locally, need to add cevnet usdc mint
         new PublicKey(currentBounty.escrow.mint.publicKey)
       );
       const newRelations = updateList(

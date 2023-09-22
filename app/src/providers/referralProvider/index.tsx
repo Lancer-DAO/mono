@@ -10,7 +10,7 @@ import {
   useState,
 } from "react";
 import { Client, Member, Organization, Treasury } from "@ladderlabs/buddy-sdk";
-import { PublicKey, Transaction } from "@solana/web3.js";
+import { Keypair, PublicKey, Transaction, sendAndConfirmTransaction } from "@solana/web3.js";
 import { IReferralContext } from "./types";
 import { getAssociatedTokenAddressSync } from "@solana/spl-token";
 import { IS_MAINNET, USDC_MINT } from "@/src/constants";
@@ -95,7 +95,7 @@ const ReferralProvider: FunctionComponent<IReferralProps> = ({ children }) => {
         setTreasuries(treasuries);
       }
     } catch (e) {
-      console.log(e);
+      console.log("Buddy Error: ", e);
       throw new Error("Failed to create buddy account");
     } finally {
       setProgramId(client.getProgramId());
@@ -234,7 +234,7 @@ const ReferralProvider: FunctionComponent<IReferralProps> = ({ children }) => {
 
         return { txId: signature, memberPDA };
       } catch (e) {
-        console.error(e);
+        console.log("Buddy Error: ", e);
         throw new Error(`Failed to create buddy member account`, e);
       }
     },
