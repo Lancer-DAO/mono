@@ -11,15 +11,17 @@ export const read = async (id: number): Promise<Prisma.Quote> => {
   return quote;
 };
 
-export const getQuotesByBounty = async (id: number): Promise<Prisma.Quote[]> => {
+export const getQuotesByBounty = async (
+  id: number
+): Promise<Prisma.Quote[]> => {
   const bounty = await prisma.bounty.findUnique({
     where: {
       id: id,
     },
     include: {
-      Quote: true,
+      quotes: true,
     },
   });
 
-  return bounty.Quote;
-}
+  return bounty.quotes;
+};

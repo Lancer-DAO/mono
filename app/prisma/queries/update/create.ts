@@ -10,14 +10,14 @@ export const create = async (
   description: string,
   media: Prisma.Media[],
   links: string,
-  state: QuestProgressState,
-): Promise<Prisma.Update> => {
-  return await prisma.update.create({
+  state: QuestProgressState
+): Promise<Prisma.QuestUpdate> => {
+  return await prisma.questUpdate.create({
     data: {
       user: {
         connect: {
           id: userId,
-        }
+        },
       },
       bounty: {
         connect: {
