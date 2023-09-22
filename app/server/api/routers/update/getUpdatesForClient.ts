@@ -1,0 +1,12 @@
+import * as queries from "@/prisma/queries";
+import { QuestProgressState } from "@/types";
+import { z } from "zod";
+import { protectedProcedure } from "../../trpc";
+
+export const getQuestUpdatesClient = protectedProcedure.query(
+  async ({ ctx }) => {
+    const { id: userId } = ctx.user;
+
+    return await queries.update.getQuestUpdatesClient(userId);
+  }
+);

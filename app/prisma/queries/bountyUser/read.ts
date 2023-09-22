@@ -19,7 +19,6 @@ export const getBountyUpdatesCreator = async (userid: number) => {
     AND BountyUser.relations like '%creator%'
     AND Bounty.state NOT IN ('complete', 'canceled');
   `) as [{ id: number }];
-  console.log("bounties", bounties);
   const ids = bounties.map((bounty) => bounty.id);
   return prisma.bountyUser.findMany({
     where: {
@@ -65,7 +64,6 @@ export const getBountyUpdatesLancer = async (userid: number) => {
     AND BountyUser.relations not like '%creator%'
     AND Bounty.state NOT IN ('complete', 'canceled');
   `) as [{ id: number }];
-  console.log("bounties", bounties);
   const ids = bounties.map((bounty) => bounty.id);
   return prisma.bountyUser.findMany({
     where: {
@@ -118,7 +116,6 @@ export const getBountyUpdatesCancel = async (userid: number) => {
     AND BountyUser.relations not like '%creator%'
     AND Bounty.state IN ('voting_to_cancel', 'canceled');
   `) as [{ id: number }];
-  console.log("bounties", bounties);
   const ids = bounties.map((bounty) => bounty.id);
   return prisma.bountyUser.findMany({
     where: {

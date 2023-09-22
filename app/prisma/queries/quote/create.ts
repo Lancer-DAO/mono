@@ -1,6 +1,7 @@
 import { prisma } from "@/server/db";
 import { QuestProgressState } from "@/types";
 import * as Prisma from "@prisma/client";
+import dayjs from "dayjs";
 
 export const create = async (
   userId: number,
@@ -10,7 +11,7 @@ export const create = async (
   estimatedTime: number,
   price: number,
   state: QuestProgressState,
-  checkpoints: Prisma.Checkpoint[],
+  checkpoints: Prisma.Checkpoint[]
 ): Promise<Prisma.Quote> => {
   return await prisma.quote.create({
     data: {
@@ -28,7 +29,7 @@ export const create = async (
       description,
       estimatedTime,
       price,
-      createdAt: Date.now().toString(),
+      createdAt: dayjs().toISOString(),
       checkpoints: {
         connect: checkpoints.map((checkpoint) => {
           return {
@@ -39,4 +40,4 @@ export const create = async (
       state,
     },
   });
-}
+};

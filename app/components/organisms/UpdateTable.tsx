@@ -35,6 +35,20 @@ const UpdateTable: React.FC = () => {
     }
   );
 
+  const { data: clientUpdates } = api.update.getQuestUpdatesClient.useQuery(
+    undefined,
+    {
+      enabled: !!currentUser,
+    }
+  );
+
+  const { data: lancerUpdates } = api.update.getQuestUpdatesLancer.useQuery(
+    undefined,
+    {
+      enabled: !!currentUser,
+    }
+  );
+
   console.log("updates", cancelVotes);
   useEffect(() => {
     if (currentUser && !unreadMessages) {
@@ -106,11 +120,41 @@ const UpdateTable: React.FC = () => {
             });
           });
         });
+
+        const clientQuestUpdates = [];
+        clientUpdates?.forEach((clientUpdate) => {
+          clientQuestUpdates.push({
+            type: "submission" as any,
+            subType: "new",
+            time: dayjs(clientUpdate.createdAt),
+            extraProps: {
+              questName: clientUpdate.bounty.title,
+              description: clientUpdate.description,
+            },
+            key: clientUpdate.createdAt,
+          });
+        });
+        const lancerQuestUpdates = [];
+        lancerUpdates?.forEach((lancerUpdate) => {
+          lancerQuestUpdates.push({
+            type: "submission" as any,
+            subType: lancerUpdate.state,
+            time: dayjs(lancerUpdate.reviewedAt),
+            extraProps: {
+              questName: lancerUpdate.bounty.title,
+              description: lancerUpdate.review,
+              updateName: lancerUpdate.name,
+            },
+            key: lancerUpdate.reviewedAt,
+          });
+        });
         const allUpdates: UpdateItemProps[] = [
           ...unreadMessages,
           ...newApplicationUpdates,
           ...newApplicationReviewsUpdates,
           ...cancelVotesUpdates,
+          ...clientQuestUpdates,
+          ...lancerQuestUpdates,
         ];
         allUpdates.sort((a, b) => {
           return b.time.unix() - a.time.unix();
@@ -125,6 +169,8 @@ const UpdateTable: React.FC = () => {
     newApplicationReviews,
     cancelVotes,
     currentUser,
+    clientUpdates,
+    lancerUpdates,
   ]);
 
   return (
@@ -135,30 +181,6 @@ const UpdateTable: React.FC = () => {
           return <UpdateTableItem {...update} key={update.key} />;
         })}
 
-        <UpdateTableItem
-          type="submission"
-          subType="rejected"
-          time={dayjs("Tue, 19 Sep 2023 02:26:53 GMT")}
-          extraProps={{ questName: "Quest Name" }}
-        />
-        <UpdateTableItem
-          type="submission"
-          subType="accepted"
-          time={dayjs("Tue, 19 Sep 2023 02:26:53 GMT")}
-          extraProps={{ questName: "Quest Name" }}
-        />
-        <UpdateTableItem
-          type="submission"
-          subType="vote-to-cancel"
-          time={dayjs("Tue, 19 Sep 2023 02:26:53 GMT")}
-          extraProps={{ questName: "Quest Name" }}
-        />
-        <UpdateTableItem
-          type="submission"
-          subType="new"
-          time={dayjs("Tue, 19 Sep 2023 02:26:53 GMT")}
-          extraProps={{ questName: "Quest Name" }}
-        />
         <UpdateTableItem
           type="quote"
           subType="received"
@@ -176,24 +198,6 @@ const UpdateTable: React.FC = () => {
           subType="rejected"
           time={dayjs("Tue, 19 Sep 2023 02:26:53 GMT")}
           updater={currentUser}
-        />
-        <UpdateTableItem
-          type="application"
-          subType="shortlisted"
-          time={dayjs("Tue, 19 Sep 2023 02:26:53 GMT")}
-          extraProps={{ questName: "Quest Name" }}
-        />
-        <UpdateTableItem
-          type="application"
-          subType="accepted"
-          time={dayjs("Tue, 19 Sep 2023 02:26:53 GMT")}
-          extraProps={{ questName: "Quest Name" }}
-        />
-        <UpdateTableItem
-          type="application"
-          subType="denied"
-          time={dayjs("Tue, 19 Sep 2023 02:26:53 GMT")}
-          extraProps={{ questName: "Quest Name" }}
         />
         <div className="px-8 py-4 text-black"></div>
       </div>

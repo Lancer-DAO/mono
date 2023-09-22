@@ -1,6 +1,7 @@
 import { prisma } from "@/server/db";
 import { QuestProgressState } from "@/types";
 import * as Prisma from "@prisma/client";
+import dayjs from "dayjs";
 
 export const create = async (
   userId: number,
@@ -27,7 +28,7 @@ export const create = async (
       name,
       type,
       description,
-      createdAt: Date.now().toString(),
+      createdAt: dayjs().toISOString(),
       media: {
         connect: media.map((med) => {
           return {

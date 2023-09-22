@@ -186,6 +186,7 @@ model QuestUpdate {
   createdAt   String  @db.VarChar(24)
   state       String  @db.VarChar(8)
   reviewedAt  String? @db.VarChar(24)
+  review      String? @db.VarChar(5000)
 
   // Relations
   media    Media[]

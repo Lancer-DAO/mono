@@ -12,11 +12,7 @@ export const read = async (id: number): Promise<Prisma.QuestUpdate> => {
 
 export const getUpdatesByBounty = async (
   id: number
-<<<<<<< Updated upstream
 ): Promise<Prisma.QuestUpdate[]> => {
-=======
-): Promise<Prisma.Update[]> => {
->>>>>>> Stashed changes
   const bounty = await prisma.bounty.findUnique({
     where: {
       id: id,
@@ -28,27 +24,26 @@ export const getUpdatesByBounty = async (
 
   return bounty.updates;
 };
-<<<<<<< Updated upstream
-=======
 
-export const getBountyUpdatesCancel = async (userid: number) => {
+export const getQuestUpdatesClient = async (userid: number) => {
   const bounties = (await prisma.$queryRaw`
     SELECT Bounty.id
     FROM Bounty
     JOIN BountyUser ON Bounty.id = BountyUser.bountyid
     WHERE BountyUser.userid = ${userid}
     AND BountyUser.relations like '%creator%'
-    AND Bounty.state NOT IN ('new', 'accepting_applications', 'voting_to_cancel', 'canceled');
+    AND Bounty.state NOT IN ('new', 'accepting_applications', 'voting_to_cancel', 'canceled')
+    AND EXISTS (
+      SELECT 1
+      FROM QuestUpdate
+      WHERE QuestUpdate.bountyid = Bounty.id
+    );
   `) as [{ id: number }];
-  console.log("bounties", bounties);
   const ids = bounties.map((bounty) => bounty.id);
-  return prisma.bountyUser.findMany({
+  return prisma.questUpdate.findMany({
     where: {
       bountyid: {
         in: ids,
-      },
-      userid: {
-        not: userid,
       },
     },
     select: {
@@ -56,21 +51,11 @@ export const getBountyUpdatesCancel = async (userid: number) => {
         select: {
           id: true,
           title: true,
-          createdAt: true,
         },
       },
-      actions: {
-        where: {
-          type: {
-            in: ["vote-to-cancel", "cancel"],
-          },
-        },
-        select: {
-          userid: true,
-          type: true,
-          timestamp: true,
-        },
-      },
+      createdAt: true,
+      description: true,
+      name: true,
     },
     orderBy: {
       bountyid: "desc",
@@ -78,4 +63,30 @@ export const getBountyUpdatesCancel = async (userid: number) => {
     take: 5,
   });
 };
->>>>>>> Stashed changes
+
+export const getQuestUpdatesLancer = async (userid: number) => {
+  return prisma.questUpdate.findMany({
+    where: {
+      userid,
+      state: {
+        in: ["accepted", "rejected"],
+      },
+    },
+    select: {
+      bounty: {
+        select: {
+          id: true,
+          title: true,
+        },
+      },
+      reviewedAt: true,
+      review: true,
+      name: true,
+      state: true,
+    },
+    orderBy: {
+      bountyid: "desc",
+    },
+    take: 5,
+  });
+};
