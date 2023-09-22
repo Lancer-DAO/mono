@@ -3,6 +3,7 @@ import { AnchorProvider, Program } from "@project-serum/anchor";
 import { MonoProgram } from "@/escrow/sdk/types/mono_program";
 import {
   createCustodialFeatureFundingAccountInstruction,
+  createCustodialReferralDataAccountInstruction,
   createFeatureFundingAccountInstruction,
   createReferralDataAccountInstruction,
 } from "@/escrow/sdk/instructions";
@@ -33,15 +34,15 @@ export const createFFA = async (
     program
   );
 
-  // This needs to be fixed and updated first and then added to the Tx object
 
-  // const referralAccountIx = await createReferralDataAccountInstruction(
-  //   new PublicKey(wallet.publicKey),
-  //   feature_account,
-  //   program
-  // );
+  const referralAccountIx = await createCustodialReferralDataAccountInstruction(
+    new PublicKey(wallet.publicKey),
+    new PublicKey("pyrSoEahjKGKZpLWEYwCJ8zQAsYZckZH8ZqJ7yGd1ha"),
+    feature_account,
+    program
+  );
 
-  const res = await sendGaslessTx([ix])
+  const res = await sendGaslessTx([ix, referralAccountIx])
   return {
     timestamp,
     signature: res.signature,
