@@ -1,2 +1,2 @@
-export * from "./BountyFilters";
+export * from "./QuestFilters";
 export * from "./IndustrySelection";

@@ -7,7 +7,7 @@ import { api } from "@/src/utils/api";
 import { PublicKey } from "@solana/web3.js";
 import { BOUNTY_USER_RELATIONSHIP, BountyState } from "@/types/";
 import { updateList } from "@/src/utils";
-import { BountyActionsButton } from ".";
+import { QuestActionsButton } from ".";
 import { useState } from "react";
 import toast from "react-hot-toast";
 
@@ -30,7 +30,7 @@ export const SubmitRequest = () => {
 
   if (currentBounty.isCurrentSubmitter)
     return (
-      <BountyActionsButton
+      <QuestActionsButton
         type="neutral"
         text="Request Submitted"
         disabled={true}
@@ -95,7 +95,7 @@ export const SubmitRequest = () => {
   };
 
   return (
-    <BountyActionsButton
+    <QuestActionsButton
       type="green"
       text={isLoading ? "Loading ..." : "Submit"}
       onClick={onClick}

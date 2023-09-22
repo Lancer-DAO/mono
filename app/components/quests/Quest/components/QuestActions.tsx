@@ -11,10 +11,7 @@ export enum QuestActionView {
   Apply = "apply", // one-way (Lancer)
   ViewApplicants = "view-applicants", // one-way (client)
   Chat = "chat", // two-way (client, Lancer)
-  SubmitQuote = "submit-quote", // one-way (Lancer)
-  ViewQuote = "view-quote", // one-way (client)
   SubmitUpdate = "submit-update", // one-way (Lancer)
-  Ongoing = "ongoing", // two-way (client, Lancer), includes chat and submit update
   ViewUpdate = "view-update", // one-way (client)
 }
 
@@ -31,7 +28,10 @@ const QuestActions: FC = () => {
   useEffect(() => {
     if (!!currentUser && !currentBounty.isCreator) {
       // is not the creator
-      if (currentBounty.isApprovedSubmitter) {
+      if (
+        currentBounty.isApprovedSubmitter ||
+        currentBounty.isShortlistedLancer
+      ) {
         // lancer has been approved to work on the quest
         setCurrentActionView(QuestActionView.Chat);
       } else {
@@ -54,7 +54,9 @@ const QuestActions: FC = () => {
 
   return (
     <div className="bg-white w-full min-w-[610px] border border-neutral200 rounded-lg overflow-hidden">
-      {currentActionView === QuestActionView.Apply && <LancerApplyView />}
+      {currentActionView === QuestActionView.Apply && (
+        <LancerApplyView setCurrentActionView={setCurrentActionView} />
+      )}
       {currentActionView === QuestActionView.ViewApplicants && (
         <ApplicantsView
           setCurrentActionView={setCurrentActionView}
@@ -67,6 +69,9 @@ const QuestActions: FC = () => {
           selectedSubmitter={selectedSubmitter}
           setCurrentActionView={setCurrentActionView}
         />
+      )}
+      {currentActionView === QuestActionView.SubmitUpdate && (
+        <LancerSubmitUpdateView />
       )}
     </div>
   );

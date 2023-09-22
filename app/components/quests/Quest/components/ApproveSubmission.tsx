@@ -15,7 +15,7 @@ import { PublicKey } from "@solana/web3.js";
 import dayjs from "dayjs";
 import { BOUNTY_USER_RELATIONSHIP, BountyState } from "@/types/";
 import { createUnderdogClient } from "@underdog-protocol/js";
-import { BountyActionsButton } from ".";
+import { QuestActionsButton } from ".";
 import toast from "react-hot-toast";
 import e from "express";
 
@@ -132,7 +132,7 @@ export const ApproveSubmission = () => {
   };
 
   return (
-    <BountyActionsButton
+    <QuestActionsButton
       type="green"
       text="Approve Submission"
       onClick={onClick}

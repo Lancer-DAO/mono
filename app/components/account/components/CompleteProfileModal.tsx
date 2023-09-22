@@ -1,7 +1,7 @@
 import { FC, Dispatch, SetStateAction } from "react";
 import Image from "next/image";
 import { Modal } from "@/components";
-import { BountyActionsButton } from "../../bounties/Bounty/components";
+import { QuestActionsButton } from "../../quests/Quest/components";
 
 interface Props {
   setShowModal: Dispatch<SetStateAction<boolean>>;
@@ -31,7 +31,7 @@ export const CompleteProfileModal: FC<Props> = ({ setShowModal }) => {
           You&apos;ll be notified when you&apos;ve been approved.
         </p>
 
-        <BountyActionsButton
+        <QuestActionsButton
           type="green"
           text="Got it"
           onClick={() => {

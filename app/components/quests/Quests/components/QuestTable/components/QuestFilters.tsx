@@ -7,7 +7,7 @@ import { motion } from "framer-motion";
 import IndustrySelection from "./IndustrySelection";
 import { Mint } from "@prisma/client";
 
-interface BountyFiltersProps {
+interface QuestFiltersProps {
   mints: Mint[];
   industries: Industry[];
   tags: string[];
@@ -17,7 +17,7 @@ interface BountyFiltersProps {
   setFilters: Dispatch<SetStateAction<Filters>>;
 }
 
-export const BountyFilters = ({
+export const QuestFilters = ({
   mints,
   industries,
   tags,
@@ -25,7 +25,7 @@ export const BountyFilters = ({
   priceBounds,
   filters,
   setFilters,
-}: BountyFiltersProps) => {
+}: QuestFiltersProps) => {
   return (
     <motion.form
       className="flex flex-col items-start gap-6 pl-10 mt-16 sticky top-24"
