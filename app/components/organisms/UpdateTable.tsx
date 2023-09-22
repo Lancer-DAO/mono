@@ -8,62 +8,156 @@ import {
   UnreadMessage,
 } from "@/src/utils/sendbird";
 import { useEffect, useState } from "react";
+import { api } from "@/src/utils";
+import {
+  getApplicationTypeFromLabel,
+  UpdateItemProps,
+  UpdateType,
+} from "../molecules/UpdateTableItem";
 
 const UpdateTable: React.FC = () => {
   const { currentUser } = useUserWallet();
-  const [unreadMessages, setUnreadMessages] = useState<UnreadMessage[]>(null);
+  const [unreadMessages, setUnreadMessages] = useState<UpdateItemProps[]>(null);
+  const [allUpdates, setAllUpdates] = useState<UpdateItemProps[]>(null);
+  const { data: newApplications } =
+    api.bountyUsers.getBountyUpdatesCreator.useQuery(undefined, {
+      enabled: !!currentUser,
+    });
+  const { data: newApplicationReviews } =
+    api.bountyUsers.getBountyUpdatesLancer.useQuery(undefined, {
+      enabled: !!currentUser,
+    });
 
+  const { data: cancelVotes } = api.bountyUsers.getCancelVotesLancer.useQuery(
+    undefined,
+    {
+      enabled: !!currentUser,
+    }
+  );
+
+  console.log("updates", cancelVotes);
   useEffect(() => {
     if (currentUser && !unreadMessages) {
-      console.log("getting messages");
       const getChannels = async () => {
-        console.log("there");
         const unreadChannels = await getUnreadChannels(String(currentUser.id));
-        console.log("hi", unreadChannels);
-        setUnreadMessages(unreadChannels);
+        const messageUpdates = unreadChannels?.map((message) => {
+          return {
+            type: "message" as any,
+            time: dayjs(message.sentAt),
+            extraProps: {
+              messageCount: message.unreadCount,
+              updater: message.userName,
+            },
+            key: message.userId,
+          };
+        });
+
+        setUnreadMessages(messageUpdates);
       };
       getChannels();
     }
   }, [currentUser, unreadMessages]);
+
+  useEffect(() => {
+    if (currentUser && !!unreadMessages) {
+      const getChannels = async () => {
+        const newApplicationUpdates = [];
+        newApplications?.forEach((application) => {
+          if (application.actions.length === 0) return;
+          application.actions.forEach((action) => {
+            newApplicationUpdates.push({
+              type: "application" as any,
+              subType: "applied",
+              time: dayjs(action.timestamp),
+              extraProps: {
+                questName: application.bounty.title,
+              },
+              key: action.timestamp,
+            });
+          });
+        });
+        const newApplicationReviewsUpdates = [];
+        newApplicationReviews?.forEach((application) => {
+          if (application.actions.length === 0) return;
+          application.actions.forEach((action) => {
+            newApplicationReviewsUpdates.push({
+              type: "application" as any,
+              subType: getApplicationTypeFromLabel(action.type),
+              time: dayjs(action.timestamp),
+              extraProps: {
+                questName: application.bounty.title,
+              },
+              key: action.timestamp,
+            });
+          });
+        });
+        const cancelVotesUpdates = [];
+        cancelVotes?.forEach((cancelVote) => {
+          if (cancelVote.actions.length === 0) return;
+          cancelVote.actions.forEach((action) => {
+            cancelVotesUpdates.push({
+              type: "submission" as any,
+              subType: "vote-to-cancel",
+              time: dayjs(action.timestamp),
+              extraProps: {
+                questName: cancelVote.bounty.title,
+              },
+              key: action.timestamp,
+            });
+          });
+        });
+        const allUpdates: UpdateItemProps[] = [
+          ...unreadMessages,
+          ...newApplicationUpdates,
+          ...newApplicationReviewsUpdates,
+          ...cancelVotesUpdates,
+        ];
+        allUpdates.sort((a, b) => {
+          return b.time.unix() - a.time.unix();
+        });
+        setAllUpdates(allUpdates);
+      };
+      getChannels();
+    }
+  }, [
+    unreadMessages,
+    newApplications,
+    newApplicationReviews,
+    cancelVotes,
+    currentUser,
+  ]);
+
   return (
     currentUser && (
-      <div className="flex flex-col w-[610px] border-solid border bg-white border-neutralBorder500 rounded-lg">
+      <div className="flex flex-col w-[710px] border-solid border bg-white border-neutralBorder500 rounded-lg">
         <div className="px-8 py-4 text-black">Updates History</div>
-        {unreadMessages?.map((message) => {
-          return (
-            <UpdateTableItem
-              key={message.userId}
-              type="message"
-              time={dayjs(message.sentAt)}
-              updater={message.userName}
-              extraProps={{ messageCount: message.unreadCount }}
-            />
-          );
+        {allUpdates?.map((update) => {
+          return <UpdateTableItem {...update} key={update.key} />;
         })}
 
         <UpdateTableItem
           type="submission"
           subType="rejected"
           time={dayjs("Tue, 19 Sep 2023 02:26:53 GMT")}
-          updater={currentUser}
+          extraProps={{ questName: "Quest Name" }}
         />
         <UpdateTableItem
           type="submission"
           subType="accepted"
           time={dayjs("Tue, 19 Sep 2023 02:26:53 GMT")}
-          updater={currentUser}
+          extraProps={{ questName: "Quest Name" }}
         />
         <UpdateTableItem
           type="submission"
           subType="vote-to-cancel"
           time={dayjs("Tue, 19 Sep 2023 02:26:53 GMT")}
-          updater={currentUser}
+          extraProps={{ questName: "Quest Name" }}
         />
         <UpdateTableItem
           type="submission"
           subType="new"
           time={dayjs("Tue, 19 Sep 2023 02:26:53 GMT")}
-          updater={currentUser}
+          extraProps={{ questName: "Quest Name" }}
         />
         <UpdateTableItem
           type="quote"
@@ -85,27 +179,21 @@ const UpdateTable: React.FC = () => {
         />
         <UpdateTableItem
           type="application"
-          subType="applied"
-          time={dayjs("Tue, 19 Sep 2023 02:26:53 GMT")}
-          updater={currentUser}
-        />
-        <UpdateTableItem
-          type="application"
           subType="shortlisted"
           time={dayjs("Tue, 19 Sep 2023 02:26:53 GMT")}
-          updater={currentUser}
+          extraProps={{ questName: "Quest Name" }}
         />
         <UpdateTableItem
           type="application"
           subType="accepted"
           time={dayjs("Tue, 19 Sep 2023 02:26:53 GMT")}
-          updater={currentUser}
+          extraProps={{ questName: "Quest Name" }}
         />
         <UpdateTableItem
           type="application"
           subType="denied"
           time={dayjs("Tue, 19 Sep 2023 02:26:53 GMT")}
-          updater={currentUser}
+          extraProps={{ questName: "Quest Name" }}
         />
         <div className="px-8 py-4 text-black"></div>
       </div>

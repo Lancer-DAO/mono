@@ -9,3 +9,150 @@ export const get = async (userid: number, bountyid: number) => {
     },
   });
 };
+
+export const getBountyUpdatesCreator = async (userid: number) => {
+  const bounties = (await prisma.$queryRaw`
+    SELECT Bounty.id
+    FROM Bounty
+    JOIN BountyUser ON Bounty.id = BountyUser.bountyid
+    WHERE BountyUser.userid = ${userid}
+    AND BountyUser.relations like '%creator%'
+    AND Bounty.state NOT IN ('complete', 'canceled');
+  `) as [{ id: number }];
+  console.log("bounties", bounties);
+  const ids = bounties.map((bounty) => bounty.id);
+  return prisma.bountyUser.findMany({
+    where: {
+      bountyid: {
+        in: ids,
+      },
+      userid: {
+        not: userid,
+      },
+    },
+    select: {
+      bounty: {
+        select: {
+          id: true,
+          title: true,
+          createdAt: true,
+        },
+      },
+      actions: {
+        where: {
+          type: "request-to-submit",
+        },
+        select: {
+          userid: true,
+          type: true,
+          timestamp: true,
+        },
+      },
+    },
+    orderBy: {
+      bountyid: "desc",
+    },
+    take: 5,
+  });
+};
+
+export const getBountyUpdatesLancer = async (userid: number) => {
+  const bounties = (await prisma.$queryRaw`
+    SELECT Bounty.id
+    FROM Bounty
+    JOIN BountyUser ON Bounty.id = BountyUser.bountyid
+    WHERE BountyUser.userid = ${userid}
+    AND BountyUser.relations not like '%creator%'
+    AND Bounty.state NOT IN ('complete', 'canceled');
+  `) as [{ id: number }];
+  console.log("bounties", bounties);
+  const ids = bounties.map((bounty) => bounty.id);
+  return prisma.bountyUser.findMany({
+    where: {
+      bountyid: {
+        in: ids,
+      },
+      userid: userid,
+    },
+    select: {
+      bounty: {
+        select: {
+          id: true,
+          title: true,
+          createdAt: true,
+        },
+      },
+      actions: {
+        where: {
+          type: {
+            in: [
+              "add-to-shortlist",
+              "selected",
+              "deny-submitter",
+              "remove-from-shortlist",
+            ],
+          },
+        },
+        select: {
+          userid: true,
+          type: true,
+          timestamp: true,
+        },
+      },
+    },
+    orderBy: {
+      bountyid: "desc",
+    },
+    take: 5,
+  });
+};
+
+export const getBountyUpdatesCancel = async (userid: number) => {
+  const bounties = (await prisma.$queryRaw`
+    SELECT Bounty.id
+    FROM Bounty
+    JOIN BountyUser ON Bounty.id = BountyUser.bountyid
+    WHERE BountyUser.userid = ${userid}
+    AND BountyUser.relations not like '%denied%'
+    AND BountyUser.relations not like '%requested%'
+    AND BountyUser.relations not like '%creator%'
+    AND Bounty.state IN ('voting_to_cancel', 'canceled');
+  `) as [{ id: number }];
+  console.log("bounties", bounties);
+  const ids = bounties.map((bounty) => bounty.id);
+  return prisma.bountyUser.findMany({
+    where: {
+      bountyid: {
+        in: ids,
+      },
+      userid: {
+        not: userid,
+      },
+    },
+    select: {
+      bounty: {
+        select: {
+          id: true,
+          title: true,
+          createdAt: true,
+        },
+      },
+      actions: {
+        where: {
+          type: {
+            in: ["vote-to-cancel", "cancel"],
+          },
+        },
+        select: {
+          userid: true,
+          type: true,
+          timestamp: true,
+        },
+      },
+    },
+    orderBy: {
+      bountyid: "desc",
+    },
+    take: 5,
+  });
+};
