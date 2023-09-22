@@ -2,12 +2,12 @@ import { prisma } from "@/server/db";
 import * as Prisma from "@prisma/client";
 
 export const create = async (
-  quoteId: number,
   title: string,
   price: number,
   description: string,
   estimatedTime: number,
   order: number,
+  quote: Prisma.Quote,
 ): Promise<Prisma.Checkpoint> => {
   return await prisma.checkpoint.create({
     data: {
@@ -18,7 +18,7 @@ export const create = async (
       order,
       quote: {
         connect: {
-          id: quoteId,
+          id: quote.id,
         }
       }
     },

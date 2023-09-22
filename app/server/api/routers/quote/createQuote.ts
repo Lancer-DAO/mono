@@ -51,7 +51,7 @@ export const createQuote = protectedProcedure
         checkpoints.map(
           async (checkpoint, index) =>
           await queries.checkpoint.create(
-            quote.id, checkpoint.title, checkpoint.price, checkpoint.description, checkpoint.estimatedTime, index
+            checkpoint.title, checkpoint.price, checkpoint.description, checkpoint.estimatedTime, index, quote
           )
         )
       );
