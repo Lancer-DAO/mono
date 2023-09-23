@@ -2,6 +2,7 @@ import { api } from "@/src/utils";
 import { useRouter } from "next/router";
 import { FC, useEffect, useState } from "react";
 import { LeaderBoardSelector } from "./components";
+import { ArrowDown, ArrowUp, ArrowUpSquare } from "lucide-react";
 
 const languages = [
   "All",
@@ -31,15 +32,94 @@ export const TopEarnersBoard: FC<any> = () => {
   const { mutateAsync: getTopEarnersLang } =
     api.leaderboard.getTopEarnersLang.useMutation();
 
+  const [changes, setChanges] = useState<any>()
+
   useEffect(() => {
+    const currentDate = new Date();
+    const sevenDaysAgo = new Date(currentDate);
+    sevenDaysAgo.setDate(currentDate.getDate() - 7);
+
     const fetchData = async () => {
 
       if (!selectedLanguage || selectedLanguage == "All") {
-        const res = (await getTopEarners()) as any[];
+        const res = (await getTopEarners({ end_date: new Date() })) as any[];
+        const res2 = (await getTopEarners({ end_date: sevenDaysAgo })) as any[];
+        console.log(res)
+        console.log(res2)
         setTopDevs(res);
+
+        const oneWeekAgoRankDict: { [key: string]: number } = {};
+
+        res2.forEach((user, index) => {
+          oneWeekAgoRankDict[user.name] = index;
+        });
+
+        
+        const rankChangesDict: { [key: string]: "up" | "down" | "same" } = {};
+
+        res.forEach((user, index) => {
+          const oneWeekAgoRank = oneWeekAgoRankDict[user.name];
+
+          if (oneWeekAgoRank !== undefined) {
+            const rankChange = oneWeekAgoRank - index;
+
+            if (rankChange > 0) {
+              rankChangesDict[user.name] = "up";
+            } else if (rankChange < 0) {
+              rankChangesDict[user.name] = "down";
+            } else {
+              rankChangesDict[user.name] = "same";
+            }
+          } else {
+            // User was not found in the oneWeekAgoData, consider them added
+            rankChangesDict[user.name] = "up";
+          }
+
+          return user;
+        });
+
+
+        setChanges(rankChangesDict)
+
+
       }
       else {
         const res = (await getTopEarnersLang({ language: selectedLanguage })) as any[];
+        const res2 = (await getTopEarnersLang({ language: selectedLanguage, end_date: sevenDaysAgo })) as any[];
+
+        const oneWeekAgoRankDict: { [key: string]: number } = {};
+
+        res2.forEach((user, index) => {
+          oneWeekAgoRankDict[user.name] = index;
+        });
+
+        // Initialize an empty dictionary (object) to store rank changes
+        const rankChangesDict: { [key: string]: "up" | "down" | "same" } = {};
+
+        res.forEach((user, index) => {
+          const oneWeekAgoRank = oneWeekAgoRankDict[user.name];
+
+          if (oneWeekAgoRank !== undefined) {
+            const rankChange = oneWeekAgoRank - index;
+
+            if (rankChange > 0) {
+              rankChangesDict[user.name] = "up";
+            } else if (rankChange < 0) {
+              rankChangesDict[user.name] = "down";
+            } else {
+              rankChangesDict[user.name] = "same";
+            }
+          } else {
+            // User was not found in the oneWeekAgoData, consider them added
+            rankChangesDict[user.name] = "up";
+          }
+
+          return user;
+        });
+
+
+        setChanges(rankChangesDict)
+
         setTopDevs(res);
       }
     };
@@ -90,6 +170,13 @@ export const TopEarnersBoard: FC<any> = () => {
                   >
                     {index + 1}. {dev.name}
                   </button>
+                  {changes && changes[dev.name] == "up" ? (
+                    <ArrowUp color="green" />
+                  ) : changes && changes[dev.name] == "down" ? (
+                    <ArrowDown color="red" />
+                  ) : (
+                    <span>—</span>
+                  )}
                 </div>
                 <p className="text-lg">${dev.total_earned}</p>
               </div>

@@ -2,6 +2,7 @@ import { api } from "@/src/utils";
 import { FC, useEffect, useState } from "react";
 import { LeaderBoardSelector } from "./components";
 import { useRouter } from "next/router";
+import { ArrowDown, ArrowUp } from "lucide-react";
 
 const languages = [
   "All",
@@ -32,27 +33,118 @@ export const TopQuestUsersBoard: FC<any> = () => {
     api.leaderboard.getTopQuestUsersLang.useMutation();
 
 
+    const [changes, setChanges] = useState<any>()
+
   const router = useRouter();
 
   useEffect(() => {
+    const currentDate = new Date();
+    const sevenDaysAgo = new Date(currentDate);
+    sevenDaysAgo.setDate(currentDate.getDate() - 7);
+
     const fetchData = async () => {
 
       if (!selectedLanguage || selectedLanguage == "All") {
-        const res = (await getTopQuestUsers()) as any[];
+        const res = (await getTopQuestUsers({ end_date: new Date() })) as any[];
         const formattedResults = res.map((result) => ({
           id: result.id,
           name: result.name,
           total_bounties: Number(result.total_bounties), // BigInt to number
         }));
-        setTopDevs(formattedResults);
+
+        const res2 = (await getTopQuestUsers({ end_date: sevenDaysAgo })) as any[];
+        const formattedResults2 = res2.map((result) => ({
+          id: result.id,
+          name: result.name,
+          total_bounties: Number(result.total_bounties), // BigInt to number
+        }));
+
+        setTopDevs(res)
+
+        const oneWeekAgoRankDict: { [key: string]: number } = {};
+
+        formattedResults2.forEach((user, index) => {
+          oneWeekAgoRankDict[user.name] = index;
+        });
+        
+        // Initialize an empty dictionary (object) to store rank changes
+        const rankChangesDict: { [key: string]: "up" | "down" | "same" } = {};
+        
+        formattedResults.forEach((user, index) => {
+          const oneWeekAgoRank = oneWeekAgoRankDict[user.name];
+        
+          if (oneWeekAgoRank !== undefined) {
+            const rankChange = oneWeekAgoRank - index;
+        
+            if (rankChange > 0) {
+              rankChangesDict[user.name] = "up";
+            } else if (rankChange < 0) {
+              rankChangesDict[user.name] = "down";
+            } else {
+              rankChangesDict[user.name] = "same";
+            }
+          } else {
+            // User was not found in the oneWeekAgoData, consider them added
+            rankChangesDict[user.name] = "up";
+          }
+        
+          return user;
+        });
+        
+        setChanges(rankChangesDict)
+        
       }
       else {
+        console.log("Running filter")
         const res = (await getTopQuestUsersLang({ language: selectedLanguage })) as any[];
         const formattedResults = res.map((result) => ({
           id: result.id,
           name: result.name,
           total_bounties: Number(result.total_bounties), // BigInt to number
         }));
+
+        const res2 = (await getTopQuestUsersLang({ language: selectedLanguage, end_date: sevenDaysAgo })) as any[];
+        const formattedResults2 = res2.map((result) => ({
+          id: result.id,
+          name: result.name,
+          total_bounties: Number(result.total_bounties), // BigInt to number
+        }));
+
+
+        console.log(formattedResults)
+        console.log(formattedResults2)
+
+        const oneWeekAgoRankDict: { [key: string]: number } = {};
+
+        formattedResults2.forEach((user, index) => {
+          oneWeekAgoRankDict[user.name] = index;
+        });
+        
+        // Initialize an empty dictionary (object) to store rank changes
+        const rankChangesDict: { [key: string]: "up" | "down" | "same" } = {};
+        
+        formattedResults.forEach((user, index) => {
+          const oneWeekAgoRank = oneWeekAgoRankDict[user.name];
+        
+          if (oneWeekAgoRank !== undefined) {
+            const rankChange = oneWeekAgoRank - index;
+        
+            if (rankChange > 0) {
+              rankChangesDict[user.name] = "up";
+            } else if (rankChange < 0) {
+              rankChangesDict[user.name] = "down";
+            } else {
+              rankChangesDict[user.name] = "same";
+            }
+          } else {
+            // User was not found in the oneWeekAgoData, consider them added
+            rankChangesDict[user.name] = "up";
+          }
+        
+          return user;
+        });
+        
+        setChanges(rankChangesDict)
         setTopDevs(formattedResults);
       }
     };
@@ -106,6 +198,13 @@ export const TopQuestUsersBoard: FC<any> = () => {
                   >
                     {index + 1}. {dev.name}
                   </button>
+                  {changes[dev.name] == "up" ? (
+                    <ArrowUp color="green" />
+                  ) : changes[dev.name] == "down" ? (
+                    <ArrowDown color="red" />
+                  ) : (
+                    <span>—</span>
+                  )}
                 </div>
                 <p className="text-lg">{dev.total_bounties}</p>
               </div>

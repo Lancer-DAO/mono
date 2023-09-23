@@ -2,7 +2,7 @@ import { prisma } from "@/server/db";
 import * as Prisma from "@prisma/client";
 import { groupBy } from "lodash";
 
-export const getTopEarnersLang = async (language: string) => {
+export const getTopEarnersLang = async (language: string, endDate?: Date) => {
   // const startDate = '2023-08-01';
   // const endDate = '2023-08-30';
 
@@ -15,6 +15,7 @@ export const getTopEarnersLang = async (language: string) => {
   JOIN _BountyToTag AS BT ON B.id = BT.A
   JOIN Tag AS T ON BT.B = T.id
   WHERE B.state = 'complete'
+  AND B.createdAt <= ${endDate ? endDate.getTime() : new Date().getTime()}
   AND BU.relations = 'completer'
   AND BU.userid NOT IN (1, 6, 55, 7, 97, 92)
   AND T.name = ${language} 

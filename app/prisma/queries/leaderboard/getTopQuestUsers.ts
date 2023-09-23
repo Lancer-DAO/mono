@@ -1,7 +1,7 @@
 import { prisma } from "@/server/db";
 import * as Prisma from "@prisma/client";
 
-export const getTopQuestUsers = async () => {
+export const getTopQuestUsers = async (endDate?: Date) => {
   // const startDate = '2023-08-01';
   // const endDate = '2023-08-30';
 
@@ -13,6 +13,7 @@ export const getTopQuestUsers = async () => {
     WHERE Bounty.state = 'complete'
     AND BountyUser.relations = 'completer'
     AND BountyUser.userid NOT IN (1, 6, 55, 7, 97, 92)
+    AND Bounty.createdAt <= ${endDate ? endDate.getTime() : new Date().getTime()}
     GROUP BY User.id
     ORDER BY total_bounties DESC
     LIMIT 10;
