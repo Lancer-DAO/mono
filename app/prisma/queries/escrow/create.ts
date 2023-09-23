@@ -4,7 +4,6 @@ import * as Prisma from "@prisma/client";
 export const create = async (
   timestamp: string,
   escrowKey: string,
-  chain: Prisma.Chain,
   user: Prisma.User,
   mint: number
 ): Promise<Prisma.Escrow> => {
@@ -12,11 +11,6 @@ export const create = async (
     data: {
       timestamp: timestamp,
       publicKey: escrowKey,
-      chain: {
-        connect: {
-          id: chain.id,
-        },
-      },
       mint: {
         connect: {
           id: mint,

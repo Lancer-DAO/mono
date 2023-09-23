@@ -7,7 +7,7 @@ import {
   smallClickAnimation,
 } from "@/src/constants";
 import { useTutorial } from "@/src/providers/tutorialProvider";
-import { FORM_SECTION, FormData } from "@/types/forms";
+import { FORM_SECTION, QuestFormData } from "@/types/forms";
 import "@uploadthing/react/styles.css";
 
 import { api } from "@/src/utils";
@@ -20,8 +20,8 @@ import { useUserWallet } from "@/src/providers";
 
 interface Props {
   setFormSection: Dispatch<SetStateAction<FORM_SECTION>>;
-  formData: FormData;
-  setFormData: Dispatch<SetStateAction<FormData>>;
+  formData: QuestFormData;
+  setFormData: Dispatch<SetStateAction<QuestFormData>>;
 }
 
 export const AdditionalInfoForm: FC<Props> = ({
@@ -131,7 +131,7 @@ export const AdditionalInfoForm: FC<Props> = ({
         isPrivate: false,
       });
     }
-  }, [toggleConfig.selected, formData, setFormData]);
+  }, [toggleConfig.selected]);
 
   useEffect(() => {
     if (testToggleConfig.selected === "option2") {
@@ -145,7 +145,7 @@ export const AdditionalInfoForm: FC<Props> = ({
         isTest: false,
       });
     }
-  }, [testToggleConfig.selected, formData, setFormData]);
+  }, [testToggleConfig.selected]);
 
   return (
     <div>

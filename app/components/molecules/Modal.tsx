@@ -44,15 +44,15 @@ const Modal: FC<Props> = (props: Props) => {
         onClick={(e) => e.stopPropagation()}
         className={`absolute left-1/2 top-1/2 transform 
         -translate-y-1/2 -translate-x-1/2 overflow-x-hidden overflow-y-auto
-        bg-bgLancer rounded-xl w-[90%] p-5 max-h-[90vh]
-         ${className}`}
+        bg-bgLancer rounded-md w-[90%] p-5 max-h-[90vh]
+        lg:w-[100vh] 3xl:w-[70vh] ${className}`}
         ref={wrapperRef}
       >
         <div
           className="fixed top-5 right-5 cursor-pointer"
           onClick={() => setShowModal(false)}
         >
-          <Close className="fill-black w-4 h-4" />
+          <Close className="fill-black w-5 h-5" />
         </div>
         {children}
       </div>

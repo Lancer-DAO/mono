@@ -1,3 +1,4 @@
+import { Dispatch, FC, SetStateAction, useState } from "react";
 import { BountyCard, PreviewCardBase, USDC } from "@/components";
 import {
   Dialog,
@@ -9,27 +10,25 @@ import { createFFA } from "@/escrow/adapters";
 import {
   CREATE_BOUNTY_TUTORIAL_INITIAL_STATE,
   IS_MAINNET,
-  USDC_MINT,
   smallClickAnimation,
 } from "@/src/constants";
 import { useBounty } from "@/src/providers/bountyProvider";
 import { useReferral } from "@/src/providers/referralProvider";
 import { useTutorial } from "@/src/providers/tutorialProvider";
 import { useUserWallet } from "@/src/providers/userWalletProvider";
-import { Bounty, IAsyncResult, Industry } from "@/types";
-import { FORM_SECTION, FormData } from "@/types/forms";
+import { Bounty, IAsyncResult } from "@/types";
+import { FORM_SECTION, QuestFormData } from "@/types/forms";
 import { api } from "@/utils";
 import { Mint } from "@prisma/client";
 import { DialogDescription, DialogTitle } from "@radix-ui/react-dialog";
 import { PublicKey } from "@solana/web3.js";
 import { motion } from "framer-motion";
 import Image from "next/image";
-import { Dispatch, FC, SetStateAction, useEffect, useState } from "react";
 import toast from "react-hot-toast";
 
 interface Props {
   setFormSection: Dispatch<SetStateAction<FORM_SECTION>>;
-  formData: FormData;
+  formData: QuestFormData;
   createAccountPoll: (publicKey: PublicKey) => void;
   handleChange: (event) => void;
   mint: Mint;

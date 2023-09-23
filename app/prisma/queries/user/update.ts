@@ -113,6 +113,9 @@ export const updateHasFinishedOnboarding = async (
     },
     data: {
       hasFinishedOnboarding: true,
+      experience: {
+        increment: 10, // add 10 XP for finishing onboarding
+      },
     },
   });
 };
@@ -187,6 +190,22 @@ export const updateBio = async (
   });
 };
 
+export const updateXP = async (
+  id: number,
+  addXP: number
+): Promise<Prisma.User> => {
+  return await prisma.user.update({
+    where: {
+      id: id,
+    },
+    data: {
+      experience: {
+        increment: addXP,
+      },
+    },
+  });
+};
+
 export const updateHasCompletedProfile = async (
   id: number
 ): Promise<Prisma.User> => {
@@ -200,10 +219,10 @@ export const updateHasCompletedProfile = async (
   });
 };
 
-export const approveUser = async (id: number): Promise<Prisma.User> => {
+export const approveUser = async (email: string): Promise<Prisma.User> => {
   return await prisma.user.update({
     where: {
-      id: id,
+      email,
     },
     data: {
       hasBeenApproved: true,

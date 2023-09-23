@@ -1,13 +1,13 @@
 import { api } from "@/src/utils";
-import { FormData } from "@/types/forms";
+import { QuestFormData } from "@/types/forms";
 import { useState } from "react";
 
 const Tags = ({
   formData,
   setFormData,
 }: {
-  formData: FormData;
-  setFormData: (formData: FormData) => void;
+  formData: QuestFormData;
+  setFormData: (formData: QuestFormData) => void;
 }) => {
   const [query, setQuery] = useState<string | null>();
 

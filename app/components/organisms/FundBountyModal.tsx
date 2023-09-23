@@ -13,13 +13,14 @@ import { IAsyncResult } from "@/types";
 import toast from "react-hot-toast";
 import { Modal } from "@/components";
 import { useMint } from "@/src/providers/mintProvider";
+import Image from "next/image";
 
 interface Props {
   setShowModal: Dispatch<SetStateAction<boolean>>;
-  setIsFunded?: Dispatch<SetStateAction<boolean>>;
+  amount?: number;
 }
 
-const FundBountyModal: FC<Props> = ({ setShowModal, setIsFunded }) => {
+const FundBountyModal: FC<Props> = ({ setShowModal, amount }) => {
   const { currentWallet, program, provider } = useUserWallet();
   const { currentBounty, setCurrentBounty } = useBounty();
   const { currentTutorialState, setCurrentTutorialState } = useTutorial();
@@ -31,14 +32,6 @@ const FundBountyModal: FC<Props> = ({ setShowModal, setIsFunded }) => {
   const [fundingType, setFundingType] = useState<"wallet" | "card">(
     IS_CUSTODIAL ? "card" : "wallet"
   );
-
-  const [issuePrice, setIssuePrice] = useState<string>(
-    currentBounty?.price?.toString()
-  );
-
-  const handleChange = (event) => {
-    setIssuePrice(event.target.value);
-  };
 
   const onClick = async () => {
     const toastId = toast.loading("Funding Quest...");
@@ -59,7 +52,7 @@ const FundBountyModal: FC<Props> = ({ setShowModal, setIsFunded }) => {
     }
     try {
       await fundFFA(
-        parseFloat(issuePrice),
+        amount,
         currentBounty?.escrow,
         currentWallet,
         program,
@@ -70,9 +63,8 @@ const FundBountyModal: FC<Props> = ({ setShowModal, setIsFunded }) => {
       const bounty = await fundB({
         bountyId: currentBounty?.id,
         escrowId: currentBounty?.escrow.id,
-        amount: parseFloat(issuePrice),
+        amount: amount,
       });
-      setIsFunded && setIsFunded(true);
       toast.success("Quest funded!", { id: toastId });
       setCurrentBounty(bounty);
       setShowModal(false);
@@ -84,26 +76,26 @@ const FundBountyModal: FC<Props> = ({ setShowModal, setIsFunded }) => {
   };
 
   const handlePrice = () => {
-    if (!issuePrice) return;
-    if (issuePrice.length > 5) {
+    if (!amount) return;
+    if (amount.toString.length > 5) {
       return new Intl.NumberFormat("en-US", {
         notation: "compact",
         compactDisplay: "short",
-      }).format(1.05 * parseFloat(issuePrice));
+      }).format(1.05 * amount);
     } else {
-      return (1.05 * parseFloat(issuePrice)).toFixed(2);
+      return (1.05 * amount).toFixed(2);
     }
   };
 
   const handleFee = () => {
-    if (!issuePrice) return;
-    if (issuePrice.length > 5) {
+    if (!amount) return;
+    if (amount.toString().length > 5) {
       return new Intl.NumberFormat("en-US", {
         notation: "compact",
         compactDisplay: "short",
-      }).format(0.05 * parseFloat(issuePrice));
+      }).format(0.05 * amount);
     } else {
-      return (0.05 * parseFloat(issuePrice)).toFixed(2);
+      return (0.05 * amount).toFixed(2);
     }
   };
 
@@ -122,20 +114,22 @@ const FundBountyModal: FC<Props> = ({ setShowModal, setIsFunded }) => {
   }, []);
 
   return (
-    <Modal setShowModal={setShowModal} className="py-20">
-      <div className="w-[900] px-10">
-        <div className="w-full flex items-start justify-center gap-20">
+    <Modal setShowModal={setShowModal} className="pt-10">
+      <div className="relative w-full p-5">
+        <div className="w-[900] flex items-start justify-center gap-10">
           <div className="w-full flex flex-col gap-5 max-w-[400px]">
             <h1>Funding Details</h1>
             <p>
-              Deposit the total value of the quest and fund your secure escrow
-              account. You’ll be able to approve or deny the sending of funds.
-              By proceeding you are agreeing to Lancer’s terms of service.
+              This initial deposit shows your commitment to the Quest and will
+              be held in escrow until the Quest is completed or canceled.
+            </p>
+            <p>
+              By proceeding you are agreeing to Lancer&apos;s Terms of Service.
             </p>
           </div>
-          <div className="w-full px-10 flex flex-col items-center gap-10 bg-white pb-10 rounded-lg">
+          <div className="w-full p-5 flex flex-col items-center gap-5 bg-white rounded-md">
             {!IS_CUSTODIAL && (
-              <div className="w-full h-10 flex items-center justify-evenly mt-2">
+              <div className="w-full h-10 flex items-center justify-evenly">
                 <motion.button
                   {...smallClickAnimation}
                   className={`w-full flex items-center justify-center ${
@@ -149,7 +143,7 @@ const FundBountyModal: FC<Props> = ({ setShowModal, setIsFunded }) => {
                 </motion.button>
                 <motion.button
                   {...smallClickAnimation}
-                  className={`w-full h-10 flex items-center justify-center ${
+                  className={`w-full flex items-center justify-center ${
                     fundingType === "card"
                       ? "font-bold text-textLancerGreen"
                       : "font-base"
@@ -172,20 +166,17 @@ const FundBountyModal: FC<Props> = ({ setShowModal, setIsFunded }) => {
                     name="issuePrice"
                     placeholder={`$2500`}
                     disabled={!allMints}
-                    value={issuePrice}
-                    onChange={handleChange}
+                    value={amount}
                   />
                 </div>
-                {issuePrice && (
-                  <CoinflowFund amount={parseInt(issuePrice) || 0} />
-                )}
+                {amount && <CoinflowFund amount={amount} />}
               </div>
             )}
             {fundingType === "wallet" && (
               <div className="w-full flex flex-col items-center gap-5">
                 <div className="w-full">
-                  <p className="w-full my-2 font-bold">
-                    Set a Price for Your Quest
+                  <p className="w-full my-2 font-bold text-center">
+                    Deposit price for your Quest:
                   </p>
                   <div className="relative">
                     <input
@@ -194,49 +185,43 @@ const FundBountyModal: FC<Props> = ({ setShowModal, setIsFunded }) => {
                       border-neutralBtnBorder w-full h-[50px] rounded-lg px-3
                       disabled:opacity-50 disabled:cursor-not-allowed text-center"
                       name="issuePrice"
-                      placeholder={`$2500`}
                       disabled={!allMints}
-                      value={issuePrice}
-                      onChange={handleChange}
+                      value={amount}
                     />
                     <div className="absolute left-4 top-1/2 -translate-y-1/2">
                       <USDC height="25px" width="25px" />
                     </div>
                   </div>
                 </div>
-                {issuePrice && allMints && (
-                  <>
-                    <p className="w-full">
+                {amount && allMints && (
+                  <div className="w-full flex flex-col gap-2">
+                    <p className="w-full text">
                       Set Price:{" "}
                       <span className="font-bold">
-                        {issuePrice} {allMints[0]?.ticker}
+                        {amount} {allMints[0]?.ticker}
                       </span>
                     </p>
-                    <p className="w-full">
+                    <p className="w-full text">
                       Matching Fee:{" "}
                       <span className="font-bold">
                         {handleFee()} {allMints[0]?.ticker}
                       </span>
                     </p>
-                    <p className="w-full">
+                    <p className="w-full text">
                       Total Cost:{" "}
                       <span className="font-bold">
                         {handlePrice()} {allMints[0]?.ticker}
                       </span>
                     </p>
-                  </>
+                  </div>
                 )}
                 <motion.button
                   {...smallClickAnimation}
-                  disabled={!issuePrice}
+                  disabled={!amount}
                   onClick={() => onClick()}
-                  className={`border h-[50px] rounded-lg text-base w-full 
-                  disabled:opacity-50 disabled:cursor-not-allowed
-                  ${
-                    fundQuestState.error
-                      ? " bg-secondaryBtn border-secondaryBtnBorder text-textRed"
-                      : " bg-primaryBtn border-primaryBtnBorder text-textGreen"
-                  } `}
+                  className={`bg-secondary200 h-9 w-full px-4 py-2
+                  title-text rounded-md text-white disabled:cursor-not-allowed disabled:opacity-80
+                  ${fundQuestState.error ? " bg-neutral100 text-error" : ""} `}
                 >
                   {fundQuestState.error
                     ? "Failed to Fund Escrow"
@@ -248,6 +233,13 @@ const FundBountyModal: FC<Props> = ({ setShowModal, setIsFunded }) => {
             )}
           </div>
         </div>
+        <Image
+          src="/assets/images/knight_left.png"
+          width={300}
+          height={300}
+          alt="knight"
+          className="absolute left-0 bottom-0"
+        />
       </div>
     </Modal>
   );

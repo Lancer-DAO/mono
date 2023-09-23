@@ -9,16 +9,17 @@ import { useUserWallet } from "@/providers";
 import { fastEnterAnimation, midClickAnimation } from "@/src/constants";
 import { useBounty } from "@/src/providers/bountyProvider";
 import { useIndustry } from "@/src/providers/industryProvider";
-import { BountyPreview, FormData, Industry } from "@/types/";
+import { BountyPreview, QuestFormData, Industry } from "@/types/";
 import { api, getFormattedDate } from "@/utils";
 import { motion } from "framer-motion";
 import { marked } from "marked";
 import Image from "next/image";
 import { FC, SVGAttributes, useCallback, useEffect, useState } from "react";
+import UpdateTableItem from "./UpdateTableItem";
 
 export interface BountyCardProps extends SVGAttributes<SVGSVGElement> {
   bounty?: BountyPreview;
-  formData?: FormData;
+  formData?: QuestFormData;
   linked?: boolean;
 }
 
@@ -176,7 +177,7 @@ const BountyCard: FC<BountyCardProps> = ({
               if (tag === "") return null;
               return (
                 <div
-                  className="border border-neutralBtnBorder rounded-full 
+                  className="border border-neutralBtnBorder rounded-full
                   px-3 py-1 flex items-center justify-center"
                   key={tag}
                 >

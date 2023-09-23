@@ -7,13 +7,18 @@ const QuestCreated = dynamic(() => import("./@animations/QuestCreated"));
 const QuestCompleted = dynamic(() => import("./@animations/QuestCompleted"));
 
 // @icons
+const Alert = dynamic(() => import("./@icons/Alert"));
 const Close = dynamic(() => import("./@icons/Close"));
 const Coins = dynamic(() => import("./@icons/Coins"));
 const ExternalLinkIcon = dynamic(() => import("./@icons/ExternalLinkIcon"));
+const Flame = dynamic(() => import("./@icons/Flame"));
 const LockIcon = dynamic(() => import("./@icons/LockIcon"));
 const Logo = dynamic(() => import("./@icons/Logo"));
+const Mail = dynamic(() => import("./@icons/Mail"));
+const Message = dynamic(() => import("./@icons/Message"));
 const NextArrow = dynamic(() => import("./@icons/NextArrow"));
 const PhantomLogo = dynamic(() => import("./@icons/PhantomLogo"));
+const ServiceBell = dynamic(() => import("./@icons/ServiceBell"));
 const StarIcon = dynamic(() => import("./@icons/StarIcon"));
 const USDC = dynamic(() => import("./@icons/USDC"));
 
@@ -51,13 +56,16 @@ const MultiSelectDropdown = dynamic(
 const RangeSlider = dynamic(() => import("./molecules/RangeSlider"));
 const SidePanel = dynamic(() => import("./molecules/sidebar/index"));
 const TutorialsModal = dynamic(() => import("./molecules/TutorialsModal"));
+const UpdateTableItem = dynamic(() => import("./molecules/UpdateTableItem"));
 const WalletInfo = dynamic(() => import("./molecules/WalletInfo"));
 
 // organisms
 const CashoutModal = dynamic(() => import("./organisms/CashoutModal"));
+const DisputeModal = dynamic(() => import("./organisms/DisputeModal"));
 const FundBountyModal = dynamic(() => import("./organisms/FundBountyModal"));
 const Header = dynamic(() => import("./organisms/Header"));
 const JoyrideWrapper = dynamic(() => import("./organisms/JoyrideWrapper"));
+const UpdateTable = dynamic(() => import("./organisms/UpdateTable"));
 
 // templates
 const DefaultLayout = dynamic(() => import("./templates/DefaultLayout"));
@@ -70,13 +78,18 @@ export {
   QuestCompleted,
 
   // @icons
+  Alert,
   Close,
   Coins,
   ExternalLinkIcon,
+  Flame,
   LockIcon,
   Logo,
+  Mail,
+  Message,
   NextArrow,
   PhantomLogo,
+  ServiceBell,
   StarIcon,
   USDC,
 
@@ -110,13 +123,16 @@ export {
   RangeSlider,
   SidePanel,
   TutorialsModal,
+  UpdateTableItem,
   WalletInfo,
 
   // organisms
   CashoutModal,
+  DisputeModal,
   FundBountyModal,
   Header,
   JoyrideWrapper,
+  UpdateTable,
 
   // templates
   DefaultLayout,

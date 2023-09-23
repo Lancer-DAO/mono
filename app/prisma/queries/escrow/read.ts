@@ -6,9 +6,6 @@ export const get = async (id: number) => {
     where: {
       id: id,
     },
-    include: {
-      chain: true,
-    },
   });
 };
 

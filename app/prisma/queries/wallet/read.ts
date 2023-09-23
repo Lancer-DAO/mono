@@ -15,3 +15,17 @@ export const getOrThrow = async (
   }
   return wallet;
 };
+
+export const getWalletsForUser = async (
+  user: Prisma.User
+): Promise<Pick<Prisma.Wallet, "publicKey">[]> => {
+  const wallet = await prisma.wallet.findMany({
+    where: {
+      userid: user.id,
+    },
+    select: {
+      publicKey: true,
+    },
+  });
+  return wallet;
+};
