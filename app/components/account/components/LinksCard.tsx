@@ -1,7 +1,7 @@
 import { useUserWallet } from "@/src/providers";
 import { api } from "@/src/utils";
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Check, Edit, X } from "react-feather";
 import EditLinks from "./EditLinks";
 import { useAccount } from "@/src/providers/accountProvider";
