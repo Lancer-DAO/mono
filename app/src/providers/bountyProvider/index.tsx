@@ -40,7 +40,7 @@ const BountyProvider: FunctionComponent<IBountyState> = ({
 }: IBountyProps) => {
   const [currentBounty, setCurrentBounty] = useState<Bounty | null>(null);
   const [allBounties, setAllBounties] = useState<BountyPreview[] | null>(null);
-  const [myQuests, setMyQuests] = useState<BountyPreview[]>([]);
+  const [myQuests, setMyQuests] = useState<BountyPreview[] | null>(null);
 
   const contextProvider = {
     currentBounty,

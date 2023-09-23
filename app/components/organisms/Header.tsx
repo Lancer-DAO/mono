@@ -43,8 +43,7 @@ export const Header = () => {
   const [showTutorialModal, setShowTutorialModal] = useState(false);
 
   const { currentUser } = useUserWallet();
-  const { allBounties } = useBounty();
-  const { publicKey } = useWallet();
+  const { myQuests } = useBounty();
   const { currentWallet } = useUserWallet();
 
   const router = useRouter();
@@ -54,7 +53,6 @@ export const Header = () => {
   const [selectedQuest, setSelectedQuest] = useState<BountyPreview | null>(
     null
   );
-  const [myQuests, setMyQuests] = useState<BountyPreview[]>([]);
 
   const toggleDropdown = () => setDropdownOpen(!dropdownOpen);
 
@@ -62,17 +60,10 @@ export const Header = () => {
     setDropdownOpen(false);
   });
 
-  // get my quests
-  useEffect(() => {
-    const myBounties = allBounties?.filter((bounty) =>
-      bounty.users.some((user) => user.userid === currentUser?.id)
-    );
-    setMyQuests(myBounties);
-  }, [currentUser, allBounties]);
-
   // initialize the selected quest if on one of my quests
   useEffect(() => {
-    if (router.isReady) {
+    if (router.isReady && !!myQuests) {
+      console.log("myQuests", myQuests);
       const selectedQuest = myQuests?.find(
         (quest) => quest.id.toString() === (router.query.quest as string)
       );
