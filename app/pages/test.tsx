@@ -39,7 +39,6 @@ const BountiesPage: React.FC = () => {
       provider,
       new PublicKey(USDC_MINT)
     );
-    console.log("timestamp", timestamp);
   };
 
   const sendInvoiceClick = async () => {
