@@ -65,11 +65,11 @@ export enum BountyState {
 }
 
 export enum ACHState {
-  PRE_INITATION = "pre_initiation",
-  INITIATED = "initiated",
-  SUCCESS = "success",
-  RETURNED = "returned",
-  FAILED = "failed",
+  PRE_INITATION = "PRE_INITATION",
+  INITIATED = "INITIATED",
+  SUCCESS = "SETTLED",
+  RETURNED = "RETURNED",
+  FAILED = "FAILED",
 }
 
 export const BOUNTY_STATES = Object.values(BountyState);

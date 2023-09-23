@@ -13,6 +13,13 @@ interface ACHEvent {
     gasFees: { cents: number };
     total: { cents: number };
   };
+  paymentId: string;
+  bankTransferInfo?: {
+    status: string;
+    processor: string;
+    refundReview: boolean;
+    batchedAt: string;
+  };
 }
 
 export default async function handler(req, res) {
@@ -21,21 +28,14 @@ export default async function handler(req, res) {
     return res.status(405).end(); // Method Not Allowed
   }
 
-  const {
-    eventType,
-    data: { subtotal, wallet },
-  } = req.body as ACHEvent;
+  const { paymentId, bankTransferInfo } = req.body as ACHEvent;
+  if (!bankTransferInfo) {
+    return res.status(200).end();
+  }
 
   try {
-    const escrows = await queries.escrow.getFromACHInfo(
-      (subtotal.cents / 100.0).toFixed(2),
-      wallet
-    );
-    console.log("escrows", escrows);
-    const escrow = {
-      id: escrows[0].escrowid,
-    };
-    await queries.escrow.updateACHState(escrow.id, eventType);
+    const escrow = await queries.escrow.getFromACHInfo(paymentId);
+    await queries.escrow.updateACHState(escrow.id, bankTransferInfo.status);
     console.log("updated ach state");
     return res.json({ success: "Escrow updated" });
   } catch (error) {

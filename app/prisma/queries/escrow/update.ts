@@ -4,7 +4,8 @@ import { BountyState } from "@/types/";
 
 export const updateAmount = async (
   escrowId: number,
-  amount: number
+  amount: number,
+  paymentId?: string
 ): Promise<Prisma.Escrow> => {
   return await prisma.escrow.update({
     where: {
@@ -12,6 +13,7 @@ export const updateAmount = async (
     },
     data: {
       amount,
+      paymentId,
     },
   });
 };

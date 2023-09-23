@@ -10,18 +10,25 @@ export const fundBounty = protectedProcedure
       bountyId: z.number(),
       escrowId: z.number(),
       amount: z.number(),
+      paymentId: z.optional(z.string()),
     })
   )
-  .mutation(async ({ input: { bountyId, escrowId, amount }, ctx }) => {
-    const bounty = await queries.bounty.updateState(
-      bountyId,
-      BountyState.ACCEPTING_APPLICATIONS
-    );
+  .mutation(
+    async ({ input: { bountyId, escrowId, amount, paymentId }, ctx }) => {
+      const bounty = await queries.bounty.updateState(
+        bountyId,
+        BountyState.ACCEPTING_APPLICATIONS
+      );
 
-    const escrow = await queries.escrow.updateAmount(escrowId, amount);
+      const escrow = await queries.escrow.updateAmount(
+        escrowId,
+        amount,
+        paymentId
+      );
 
-    const returnValue = await queries.bounty.get(bountyId, ctx.user.id);
-    HostedHooksClient.sendWebhook(returnValue, "bounty.funded");
+      const returnValue = await queries.bounty.get(bountyId, ctx.user.id);
+      HostedHooksClient.sendWebhook(returnValue, "bounty.funded");
 
-    return returnValue;
-  });
+      return returnValue;
+    }
+  );

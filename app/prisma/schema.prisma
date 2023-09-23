@@ -134,6 +134,7 @@ model Escrow {
   publicKey String?  @db.VarChar(100)
   timestamp String?  @db.VarChar(24)
   achState  String?  @db.VarChar(24)
+  paymentId String?  @db.VarChar(100)
 
   // Relations
   bounty       Bounty?
