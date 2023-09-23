@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { AccountHeaderOptions, TutorialsModal, LinkButton } from "@/components";
 import { HelpCircle } from "react-feather";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { PROFILE_TUTORIAL_INITIAL_STATE } from "@/src/constants/tutorials";
 import { useTutorial } from "@/src/providers/tutorialProvider";
 import { useAppContext } from "@/src/providers/appContextProvider";
@@ -15,6 +15,7 @@ import { useRouter } from "next/router";
 import { ChevronsUpDown } from "lucide-react";
 import { useBounty } from "@/src/providers/bountyProvider";
 import { BountyPreview } from "@/types";
+import { useOutsideAlerter } from "@/src/hooks";
 
 const HEADER_LINKS = [
   {
@@ -48,6 +49,7 @@ export const Header = () => {
 
   const router = useRouter();
 
+  const wrapperRef = useRef(null);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [selectedQuest, setSelectedQuest] = useState<BountyPreview | null>(
     null
@@ -56,18 +58,32 @@ export const Header = () => {
 
   const toggleDropdown = () => setDropdownOpen(!dropdownOpen);
 
+  useOutsideAlerter(wrapperRef, () => {
+    setDropdownOpen(false);
+  });
+
+  // get my quests
   useEffect(() => {
     const myBounties = allBounties?.filter((bounty) =>
       bounty.users.some((user) => user.userid === currentUser?.id)
     );
-    console.log("bounties", allBounties, myBounties, currentUser);
     setMyQuests(myBounties);
   }, [currentUser, allBounties]);
+
+  // initialize the selected quest if on one of my quests
+  useEffect(() => {
+    if (router.isReady) {
+      const selectedQuest = myQuests?.find(
+        (quest) => quest.id.toString() === (router.query.quest as string)
+      );
+      setSelectedQuest(selectedQuest);
+    }
+  }, [router, myQuests]);
 
   return (
     <div className="py-4 fixed w-full top-0 z-40 bg-white">
       <div className="flex items-center gap-8 mx-auto w-[95%] justify-between">
-        <div className="flex items-center gap-8">
+        <div className="flex items-center gap-12">
           <Link href="/" className="flex items-center gap-1">
             <Image
               src="/assets/images/lancer_logo_flat.png"
@@ -78,23 +94,32 @@ export const Header = () => {
             <p className="text-xl text-primary300 font-bold">Lancer</p>
           </Link>
           {myQuests?.length > 0 && (
-            <div className="flex flex-col relative">
+            <div className="relative" ref={wrapperRef}>
               <div
-                className="rounded-md text-neutral500 border border-neutral200 
-                bg-neutral100 px-2 py-[6px] text-mini h-[34px] flex justify-between 
-                items-center gap-1 w-32"
+                className="rounded-md border border-neutral200 bg-neutral100 
+                px-3 py-2 h-9 w-40 flex items-center justify-between gap-2 cursor-pointer"
                 onClick={toggleDropdown}
               >
-                {selectedQuest.title || "My Quests"}
-                <ChevronsUpDown height={12} width={12} />
+                <p className="text-neutral500 w-full truncate text-mini">
+                  {!!selectedQuest ? selectedQuest.title : "My Quests"}
+                </p>
+                <div className="w-3">
+                  <ChevronsUpDown height={12} width={12} />
+                </div>
               </div>
               {dropdownOpen && (
                 <div className="absolute top-full left-0 z-10 bg-secondary200 p-[5px] rounded-md text-mini text-white w-full">
                   {myQuests.map((quest) => (
                     <div
                       key={quest.id}
-                      className="px-2 py-[6px]"
-                      onClick={() => setSelectedQuest(quest)}
+                      className="p-2 truncate cursor-pointer"
+                      onClick={() => {
+                        if (selectedQuest?.id !== quest.id) {
+                          setSelectedQuest(quest);
+                          setDropdownOpen(false);
+                          router.push(`/quests/${quest.id}`);
+                        }
+                      }}
                     >
                       {quest.title}
                     </div>
@@ -125,8 +150,10 @@ export const Header = () => {
               );
             })}
         </div>
-        <div className={`flex items-center gap-8`}>
-          {<AccountHeaderOptions />}
+        <div className={`flex items-center gap-4`}>
+          <div className="w-9">
+            <AccountHeaderOptions />
+          </div>
 
           {!IS_CUSTODIAL && (
             <div
@@ -146,9 +173,9 @@ export const Header = () => {
               }}
             >
               <WalletMultiButton
-                className="flex h-[48px] px-8 py-[6px] items-center justify-center
-                !border-solid !bg-primaryBtn !border-primaryBtnBorder !border
-                !text-textGreen !rounded-md !whitespace-nowrap !font-base"
+                className="flex !h-9 !py-2 !px-3 items-center justify-center gap-2
+                !bg-transparent !border-neutral200 !border !border-solid
+                !text-neutral500 !text-xs !rounded-md !whitespace-nowrap !font-base"
                 startIcon={undefined}
               >
                 {currentWallet?.publicKey
@@ -156,6 +183,9 @@ export const Header = () => {
                     " ... " +
                     currentWallet?.publicKey.toBase58().slice(-4)
                   : "Connect"}
+                {currentWallet?.publicKey && (
+                  <ChevronsUpDown width={12} height={12} />
+                )}
               </WalletMultiButton>
             </div>
           )}
