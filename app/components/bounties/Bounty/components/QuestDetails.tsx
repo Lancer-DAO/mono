@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useBounty } from "@/src/providers/bountyProvider";
 import { cn, formatPrice, getSolscanAddress } from "@/src/utils";
-import { BountyState } from "@/types";
+import { ACHState, BountyState } from "@/types";
 import { PublicKey } from "@solana/web3.js";
 import dayjs from "dayjs";
 import { marked } from "marked";
@@ -47,6 +47,21 @@ const QuestDetails = () => {
         BountyState.VOTING_TO_CANCEL,
         BountyState.DISPUTE_STARTED,
       ].includes(state as BountyState),
+    };
+  };
+
+  const achStateColor = (state: string) => {
+    return {
+      "text-neutral600 bg-[#EDC9FF] border-[#E2C2F2]": [
+        ACHState.PRE_INITATION,
+        ACHState.INITIATED,
+      ].includes(state as ACHState),
+      "text-neutral600 bg-[#CBE4A1] border-[#C0D998]":
+        state === ACHState.SUCCESS,
+      "text-white bg-[#999] border-[#8C8C8C]": [
+        ACHState.RETURNED,
+        ACHState.FAILED,
+      ].includes(state as ACHState),
     };
   };
 
@@ -116,6 +131,18 @@ const QuestDetails = () => {
           >
             {formatString(currentBounty.state)}
           </div>
+          {currentBounty.escrow.achState !== undefined && (
+            <>
+              <div
+                className={cn(
+                  "text-xs text-center w-fit px-2 py-1 rounded-lg border",
+                  achStateColor(currentBounty.escrow.achState)
+                )}
+              >
+                {"ACH " + currentBounty.escrow.achState}
+              </div>
+            </>
+          )}
         </div>
       </div>
       <div className="h-[1px] w-full bg-neutral200" />
