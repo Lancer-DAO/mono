@@ -32,21 +32,12 @@ export const createQuote = protectedProcedure
         estimatedTime,
         price,
         state,
-        checkpoints: checkpointsData,
+        checkpoints,
       }
     }) => {
       const { id: userId } = ctx.user;
 
-       const checkpoints = await Promise.all(
-        checkpointsData.map(
-          async (checkpoint, index) =>
-            await queries.checkpoint.create(
-              checkpoint.title, checkpoint.price, checkpoint.description, checkpoint.estimatedTime, index
-            )
-        )
-      );
-
-      return await queries.quote.create(
+      const quote = await queries.quote.create(
         userId,
         bountyId,
         title,
@@ -54,7 +45,17 @@ export const createQuote = protectedProcedure
         estimatedTime,
         price,
         state,
-        checkpoints,
       )
+
+      await Promise.all(
+        checkpoints.map(
+          async (checkpoint, index) =>
+          await queries.checkpoint.create(
+            checkpoint.title, checkpoint.price, checkpoint.description, checkpoint.estimatedTime, index, quote
+          )
+        )
+      );
+
+      return quote;
     }
   )

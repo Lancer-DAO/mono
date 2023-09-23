@@ -27,6 +27,7 @@ const LancerApplicationView: FC<Props> = ({ currentActionView, setCurrentActionV
     resume: currentUser.resume,
     details: "",
   });
+
   const [quoteData, setQuoteData] = useState<Checkpoint[]>([
     {
       title: "Sketches and early ideas",

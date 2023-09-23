@@ -47,12 +47,10 @@ model Checkpoint {
   order         Int
 
   // Relations
-  quote Quote[]
+  quote   Quote @relation(fields: [quoteid], references: [id])
+  quoteid Int
 
-  // quote   Quote @relation(fields: [quoteid], references: [id])
-  // quoteid Int
-
-  // @@index([quoteid])
+  @@index([quoteid])
 }
 
 model Escrow {

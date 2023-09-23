@@ -12,6 +12,7 @@ export const create = async (
   price: number,
   state: QuestProgressState,
   checkpoints: Prisma.Checkpoint[]
+
 ): Promise<Prisma.Quote> => {
   return await prisma.quote.create({
     data: {
