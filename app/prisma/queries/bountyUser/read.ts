@@ -132,7 +132,7 @@ export const getCancelVotesLancer = async (
     AND BountyUser.relations not like '%denied%'
     AND BountyUser.relations not like '%requested%'
     AND BountyUser.relations not like '%creator%'
-    AND Bounty.state IN ('voting_to_cancel', 'canceled', 'settle-dispute');
+    AND Bounty.state IN ('voting_to_cancel', 'canceled', 'dispute_settled');
   `) as [{ id: number }]
     ).map((bounty) => bounty.id);
   return prisma.bountyUser.findMany({
@@ -184,10 +184,8 @@ export const getDisputesClient = async (
     FROM Bounty
     JOIN BountyUser ON Bounty.id = BountyUser.bountyid
     WHERE BountyUser.userid = ${userid}
-    AND BountyUser.relations not like '%denied%'
-    AND BountyUser.relations not like '%requested%'
-    AND BountyUser.relations not like '%creator%'
-    AND Bounty.state IN ('start-dispute', 'settle-dispute');
+    AND BountyUser.relations like '%creator%'
+    AND Bounty.state IN ('dispute_started', 'dispute_settled');
   `) as [{ id: number }]
     ).map((bounty) => bounty.id);
   return prisma.bountyUser.findMany({
