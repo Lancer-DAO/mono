@@ -39,9 +39,14 @@ const QuestDetails = () => {
       "text-white bg-[#3D3D3D] border-[#333]": state === BountyState.COMPLETE,
       "text-neutral600 bg-[#FFBCB5] border-[#F2B0AA]":
         state === BountyState.AWAITING_REVIEW,
-      "text-white bg-[#999] border-[#8C8C8C]": state === BountyState.CANCELED,
-      "text-white bg-[#B26B9B] border-[#A66390]":
-        state === BountyState.VOTING_TO_CANCEL,
+      "text-white bg-[#999] border-[#8C8C8C]": [
+        BountyState.CANCELED,
+        BountyState.DISPUTE_SETTLED,
+      ].includes(state as BountyState),
+      "text-white bg-[#B26B9B] border-[#A66390]": [
+        BountyState.VOTING_TO_CANCEL,
+        BountyState.DISPUTE_STARTED,
+      ].includes(state as BountyState),
     };
   };
 

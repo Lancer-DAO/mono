@@ -3,7 +3,7 @@ import { protectedProcedure } from "../../trpc";
 import { z } from "zod";
 import * as queries from "@/prisma/queries";
 
-export const getCancelVotesLancer = protectedProcedure
+export const getDisputesClient = protectedProcedure
   .input(
     z.optional(
       z.object({
@@ -20,7 +20,7 @@ export const getCancelVotesLancer = protectedProcedure
     }) => {
       const bountyids = input?.bountyids;
 
-      const ret = await queries.bountyUser.getCancelVotesLancer(id, bountyids);
+      const ret = await queries.bountyUser.getDisputesClient(id, bountyids);
       return ret;
     }
   );

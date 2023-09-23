@@ -16,27 +16,29 @@ interface Props {
 const ChatView: FC<Props> = ({ selectedSubmitter, setCurrentActionView }) => {
   const { currentBounty } = useBounty();
   return (
-    <div className="flex flex-col">
-      <ActionsCardBanner
-        title={`Conversation with ${
-          currentBounty.isCreator
-            ? selectedSubmitter.user.name
-            : currentBounty.creator.user.name
-        } `}
-      >
-        {currentBounty.isCreator ? (
-          <motion.button
-            onClick={() => {
-              setCurrentActionView(QuestActionView.ViewApplicants);
-            }}
-            {...smallClickAnimation}
-          >
-            <X height={24} width={24} className="text-white" />
-          </motion.button>
-        ) : null}
-        <SubmitRequest />
-      </ActionsCardBanner>
-    </div>
+    selectedSubmitter && (
+      <div className="flex flex-col">
+        <ActionsCardBanner
+          title={`Conversation with ${
+            currentBounty.isCreator
+              ? selectedSubmitter.user.name
+              : currentBounty.creator.user.name
+          } `}
+        >
+          {currentBounty.isCreator ? (
+            <motion.button
+              onClick={() => {
+                setCurrentActionView(QuestActionView.ViewApplicants);
+              }}
+              {...smallClickAnimation}
+            >
+              <X height={24} width={24} className="text-white" />
+            </motion.button>
+          ) : null}
+          <SubmitRequest />
+        </ActionsCardBanner>
+      </div>
+    )
   );
 };
 

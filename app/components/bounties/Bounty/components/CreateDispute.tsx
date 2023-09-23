@@ -11,7 +11,9 @@ import { BountyActionsButton } from ".";
 import { useState } from "react";
 import toast from "react-hot-toast";
 
-export const CreateDispute = () => {
+export const CreateDispute: React.FC<{
+  setHasCreatedDispute: (has: boolean) => void;
+}> = ({ setHasCreatedDispute }) => {
   const { currentUser, currentWallet, program, provider } = useUserWallet();
   const { currentBounty, setCurrentBounty } = useBounty();
   const { currentTutorialState, setCurrentTutorialState } = useTutorial();
@@ -44,7 +46,7 @@ export const CreateDispute = () => {
         BOUNTY_USER_RELATIONSHIP.ApprovedSubmitter,
         BOUNTY_USER_RELATIONSHIP.ChangesRequestedSubmitter,
       ],
-      [BOUNTY_USER_RELATIONSHIP.Dispute]
+      [BOUNTY_USER_RELATIONSHIP.DisputeHandler]
     );
 
     const updatedBounty = await mutateAsync({
@@ -56,7 +58,7 @@ export const CreateDispute = () => {
       publicKey: currentWallet.publicKey.toString(),
       escrowId: currentBounty.escrowid,
       signature,
-      label: "dispute",
+      label: "dispute-created",
     });
 
     setCurrentBounty(updatedBounty);
@@ -72,13 +74,14 @@ export const CreateDispute = () => {
         currentStep: 2,
       });
     }
-    toast.success("Successfully submitted request");
+    toast.success("Successfully created dispute account");
+    setHasCreatedDispute(true);
   };
 
   return (
     <BountyActionsButton
       type="green"
-      text={isLoading ? "Loading ..." : "Dispute"}
+      text={isLoading ? "Loading ..." : "Create Dispute Account"}
       onClick={onClick}
       isLoading={isLoading}
     />

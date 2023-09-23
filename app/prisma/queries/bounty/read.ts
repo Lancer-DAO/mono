@@ -240,6 +240,9 @@ const getBountyRelations = (
           ].includes(relation)
         )
     ),
+    disputer: allUsers.find((submitter) =>
+      submitter.relations.includes(BOUNTY_USER_RELATIONSHIP.Disputer)
+    ),
   };
   return newBounty;
 };

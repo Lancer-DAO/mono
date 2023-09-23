@@ -6,7 +6,7 @@ import { useTutorial } from "@/src/providers/tutorialProvider";
 import { api } from "@/src/utils/api";
 import { PublicKey } from "@solana/web3.js";
 import { BOUNTY_USER_RELATIONSHIP, BountyState } from "@/types/";
-import { updateList } from "@/src/utils";
+import { decimalToNumber, updateList } from "@/src/utils";
 import { BountyActionsButton } from ".";
 import { useState } from "react";
 import toast from "react-hot-toast";
@@ -16,6 +16,9 @@ export const SettleDispute = () => {
   const { currentBounty, setCurrentBounty } = useBounty();
   const { currentTutorialState, setCurrentTutorialState } = useTutorial();
   const { mutateAsync } = api.bountyUsers.update.useMutation();
+  const [disputePayoutValue, setDisputePayoutValue] = useState(
+    decimalToNumber(currentBounty.price)
+  );
 
   const [isLoading, setIsLoading] = useState(false);
 
@@ -32,9 +35,9 @@ export const SettleDispute = () => {
       });
     }
     const signature = await settleDisputeFFA(
-      0.5,
+      disputePayoutValue,
       new PublicKey(currentBounty.creator.publicKey),
-      new PublicKey("jy3YXFzKWxnLeqN1nD3cAeKpDhuEovU7ETRsFAsSbcv"),
+      new PublicKey(currentBounty.disputer.publicKey),
       currentBounty.escrow,
       currentWallet,
       program,
@@ -45,8 +48,9 @@ export const SettleDispute = () => {
       [
         BOUNTY_USER_RELATIONSHIP.ApprovedSubmitter,
         BOUNTY_USER_RELATIONSHIP.ChangesRequestedSubmitter,
+        BOUNTY_USER_RELATIONSHIP.DisputeHandler,
       ],
-      [BOUNTY_USER_RELATIONSHIP.Dispute]
+      [BOUNTY_USER_RELATIONSHIP.DisputeHandler]
     );
 
     const updatedBounty = await mutateAsync({
@@ -54,11 +58,11 @@ export const SettleDispute = () => {
       currentUserId: currentUser.id,
       userId: currentUser.id,
       relations: newRelations,
-      state: BountyState.AWAITING_REVIEW,
+      state: BountyState.DISPUTE_SETTLED,
       publicKey: currentWallet.publicKey.toString(),
       escrowId: currentBounty.escrowid,
       signature,
-      label: "dispute",
+      label: "settle-dispute",
     });
 
     setCurrentBounty(updatedBounty);
@@ -78,11 +82,26 @@ export const SettleDispute = () => {
   };
 
   return (
-    <BountyActionsButton
-      type="green"
-      text={isLoading ? "Loading ..." : "Dispute"}
-      onClick={onClick}
-      isLoading={isLoading}
-    />
+    <>
+      <input
+        type="number"
+        className="placeholder:text-textGreen/70 border bg-neutralBtn 
+            border-neutralBtnBorder w-full h-[50px] rounded-lg px-3 disabled:opacity-50 disabled:cursor-not-allowed"
+        name="issuePrice"
+        placeholder="Price"
+        id="issue-price-input"
+        value={disputePayoutValue}
+        onChange={(e) => {
+          setDisputePayoutValue(parseFloat(e.target.value));
+        }}
+      />
+      <BountyActionsButton
+        type="green"
+        text={isLoading ? "Loading ..." : "Settle Dispute"}
+        onClick={onClick}
+        isLoading={isLoading}
+        disabled={disputePayoutValue > decimalToNumber(currentBounty.price)}
+      />
+    </>
   );
 };
