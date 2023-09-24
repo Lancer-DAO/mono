@@ -1,8 +1,10 @@
 import { protectedProcedure } from "../../trpc";
 import { z } from "zod";
-import { BountyState } from "@/types/";
+import { ACHState, BountyState } from "@/types/";
 import * as queries from "@/prisma/queries";
 import { HostedHooksClient } from "../../webhooks";
+import axios from "axios";
+import e from "express";
 
 export const fundBounty = protectedProcedure
   .input(
@@ -19,12 +21,29 @@ export const fundBounty = protectedProcedure
         bountyId,
         BountyState.ACCEPTING_APPLICATIONS
       );
-
-      const escrow = await queries.escrow.updateAmount(
-        escrowId,
-        amount,
-        paymentId
-      );
+      if (paymentId) {
+        const { data } = await axios.get(
+          `https://api.coinflow.cash/api/merchant/payments/${paymentId}`,
+          {
+            headers: {
+              Authorization: "274881c0-100a-4fb4-9dcf-7b239f74da0f",
+              accept: "application/json",
+            },
+          }
+        );
+        if (data.bankTransferInfo) {
+          const escrow = await queries.escrow.updateAmount(
+            escrowId,
+            amount,
+            paymentId,
+            ACHState.PRE_INITATION
+          );
+        } else {
+          const escrow = await queries.escrow.updateAmount(escrowId, amount);
+        }
+      } else {
+        const escrow = await queries.escrow.updateAmount(escrowId, amount);
+      }
 
       const returnValue = await queries.bounty.get(bountyId, ctx.user.id);
       HostedHooksClient.sendWebhook(returnValue, "bounty.funded");

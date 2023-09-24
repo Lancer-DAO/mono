@@ -7,6 +7,7 @@ import { api } from "@/src/utils/api";
 import { useRouter } from "next/router";
 import { CoinflowPurchase, SolanaWallet } from "@coinflowlabs/react";
 import { useBounty } from "@/src/providers/bountyProvider";
+import axios from "axios";
 
 const FundBounty: React.FC<{ amount: number }> = ({
   amount,
@@ -34,12 +35,17 @@ const FundBounty: React.FC<{ amount: number }> = ({
     getFundTransaction();
   }, [amount]);
 
-  const onSuccess = (params: string) => {
-    console.log("onSuccess", params);
+  const onSuccess = async (args) => {
+    console.log("onSuccess", args);
+    console.log("parsed", JSON.parse(args));
+    const {
+      info: { paymentId },
+    } = JSON.parse(args);
     fundB({
       bountyId: currentBounty?.id,
       escrowId: currentBounty?.escrow.id,
       amount,
+      paymentId,
     });
     router.push(`/quests/${currentBounty?.id}`);
   };

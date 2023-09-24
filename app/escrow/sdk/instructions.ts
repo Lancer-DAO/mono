@@ -978,7 +978,6 @@ export const closeInvoiceInstruction = async (
 export const achFundFeatureInstruction = async (
   amount: number,
   timestamp: string,
-  funder: PublicKey,
   creator: PublicKey,
   mint: PublicKey,
   program: Program<MonoProgram>
@@ -997,14 +996,16 @@ export const achFundFeatureInstruction = async (
 
   const [program_authority] = await findProgramAuthority(program);
 
-  const funder_token_account = await getAssociatedTokenAddress(mint, funder);
-
   return await program.methods
     .achFundFeature(new anchor.BN(amount))
     .accounts({
       creator: creator,
-      externalFunder: funder,
-      externalFunderTokenAccount: funder_token_account,
+      externalFunder: new PublicKey(
+        "22222222222222222222222222222222222222222222"
+      ),
+      externalFunderTokenAccount: new PublicKey(
+        "33333333333333333333333333333333333333333333"
+      ),
       fundsMint: mint,
       featureDataAccount: feature_data_account,
       featureTokenAccount: feature_token_account,

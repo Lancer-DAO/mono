@@ -10,18 +10,21 @@ import { motion } from "framer-motion";
 import { Image } from "lucide-react";
 import { Dispatch, FC, SetStateAction, useEffect, useState } from "react";
 import toast from "react-hot-toast";
-import { CreateDispute } from "./";
 import ActionsCardBanner from "./ActionsCardBanner";
 import AlertCard from "./AlertCard";
 import { QuestActionView } from "./QuestActions";
 
 interface Props {
-  applyData: LancerApplyData,
-  setApplyData: Dispatch<SetStateAction<LancerApplyData>>,
-  setCurrentActionView: Dispatch<SetStateAction<QuestActionView>>,
+  applyData: LancerApplyData;
+  setApplyData: Dispatch<SetStateAction<LancerApplyData>>;
+  setCurrentActionView: Dispatch<SetStateAction<QuestActionView>>;
 }
 
-const LancerApplyView: FC<Props> = ({ applyData, setApplyData, setCurrentActionView }) => {
+const LancerApplyView: FC<Props> = ({
+  applyData,
+  setApplyData,
+  setCurrentActionView,
+}) => {
   const { currentBounty, setCurrentBounty } = useBounty();
   const { currentUser, currentWallet } = useUserWallet();
   const { createReferralMember } = useReferral();
@@ -85,7 +88,6 @@ const LancerApplyView: FC<Props> = ({ applyData, setApplyData, setCurrentActionV
     <div className="flex flex-col">
       <ActionsCardBanner title="Apply to this Quest">
         <ContributorInfo user={currentBounty.creator.user} />
-        <CreateDispute />
       </ActionsCardBanner>
       {/* TODO: add check for if user application has been approved or denied. if not, show this: */}
       {hasApplied && (

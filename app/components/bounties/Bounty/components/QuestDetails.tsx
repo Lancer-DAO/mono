@@ -131,7 +131,7 @@ const QuestDetails = () => {
           >
             {formatString(currentBounty.state)}
           </div>
-          {currentBounty.escrow.achState !== undefined && (
+          {currentBounty.escrow.achState !== null && (
             <>
               <div
                 className={cn(

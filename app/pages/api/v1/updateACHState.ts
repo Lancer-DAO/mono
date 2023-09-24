@@ -3,7 +3,6 @@ import * as queries from "@/prisma/queries";
 
 interface ACHEvent {
   eventType: string;
-  created: string; // UTC ISO string
   data: {
     id: string;
     wallet: string;
@@ -13,13 +12,6 @@ interface ACHEvent {
     gasFees: { cents: number };
     total: { cents: number };
   };
-  paymentId: string;
-  bankTransferInfo?: {
-    status: string;
-    processor: string;
-    refundReview: boolean;
-    batchedAt: string;
-  };
 }
 
 export default async function handler(req, res) {
@@ -28,15 +20,17 @@ export default async function handler(req, res) {
     return res.status(405).end(); // Method Not Allowed
   }
 
-  const { paymentId, bankTransferInfo } = req.body as ACHEvent;
-  if (!bankTransferInfo) {
+  const {
+    eventType,
+    data: { id: paymentId },
+  } = req.body as ACHEvent;
+  if (!eventType.includes("ACH")) {
     return res.status(200).end();
   }
 
   try {
     const escrow = await queries.escrow.getFromACHInfo(paymentId);
-    await queries.escrow.updateACHState(escrow.id, bankTransferInfo.status);
-    console.log("updated ach state");
+    await queries.escrow.updateACHState(escrow.id, eventType);
     return res.json({ success: "Escrow updated" });
   } catch (error) {
     console.error(error);

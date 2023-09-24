@@ -18,7 +18,6 @@ import AlertCardModal from "./AlertCardModal";
 import { useReferral } from "@/src/providers/referralProvider";
 import { addSubmitterFFA } from "@/escrow/adapters";
 import { RequestChanges } from "./RequestChanges";
-import { CreateDispute, SettleDispute } from "./";
 export enum EApplicantsView {
   All,
   Individual,
@@ -561,8 +560,6 @@ const ApplicantsView: FC<Props> = ({
               Quest Canceled
             </motion.button>
           ) : null}
-          <CreateDispute />
-          <SettleDispute />
         </div>
         {showModal && <AlertCardModal setShowModal={setShowModal} />}
       </div>
