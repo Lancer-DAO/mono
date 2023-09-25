@@ -147,64 +147,61 @@ const QuestTable: React.FC<{}> = () => {
   }, [allBounties, allIndustries]);
 
   return (
-    <div className="w-full flex items-start mt-5 gap-5 py-24">
 
+    <div className="w-full flex flex-col gap-5 w-[65%] border-solid border-[1px] border-[#E6F2EF]">
 
-      <div className="w-full flex flex-col gap-5 px-20">
+      {!allBounties && (
+        <div className="w-full flex flex-col items-center">
+          <LoadingBar title="Loading Quests" />
+        </div>
+      )}
+      <div className="w-full flex flex-col bg-white rounded-[8px] gap-[16px]">
 
-        {!allBounties && (
-          <div className="w-full flex flex-col items-center">
-            <LoadingBar title="Loading Quests" />
-          </div>
-        )}
-        <div className="w-full flex flex-col bg-white rounded-[8px] gap-[16px]">
+        <AnimatePresence>
+          {!!allBounties && (
+            <QuestFiltersNew
+              mints={allMints}
+              industries={allIndustries}
+              tags={tags}
+              count={filteredBounties ? filteredBounties.length : allBounties.length}
+              priceBounds={bounds}
+              filters={filters}
+              setFilters={setFilters}
+            />
+          )}
+        </AnimatePresence>
 
-          <AnimatePresence>
-            {!!allBounties && (
-              <QuestFiltersNew
-                mints={allMints}
-                industries={allIndustries}
-                tags={tags}
-                count={filteredBounties ? filteredBounties.length : allBounties.length}
-                priceBounds={bounds}
-                filters={filters}
-                setFilters={setFilters}
-              />
-            )}
-          </AnimatePresence>
+        <div className="w-full flex flex-col bg-white rounded-[4px] py-[16px] px-[24px]">
 
-          <div className="w-full flex flex-col bg-white rounded-[4px] py-[16px] px-[24px]">
+          {
+            filteredBounties?.length > 0 &&
+            (() => {
+              // Create an object to store bounties grouped by state
+              const bountyGroups = {};
 
-            {
-              filteredBounties?.length > 0 &&
-              (() => {
-                // Create an object to store bounties grouped by state
-                const bountyGroups = {};
+              // Group bounties by state
+              filteredBounties.forEach((bounty) => {
+                const state = bounty.state;
+                if (!bountyGroups[state]) {
+                  bountyGroups[state] = [];
+                }
+                bountyGroups[state].push(bounty);
+              });
 
-                // Group bounties by state
-                filteredBounties.forEach((bounty) => {
-                  const state = bounty.state;
-                  if (!bountyGroups[state]) {
-                    bountyGroups[state] = [];
-                  }
-                  bountyGroups[state].push(bounty);
-                });
-
-                // Iterate through the groups and render headers and bounties
-                return Object.keys(bountyGroups).map((state) => (
-                  <div key={state}>
-                    <h1 className="text-black mt-[10px]">{stateMap[state] || state}</h1>
-                    {bountyGroups[state].map((bounty, index) => (
-                      <QuestRow bounty={bounty} key={index} />
-                    ))}
-                  </div>
-                ));
-              })()
-            }
-
-          </div>
+              // Iterate through the groups and render headers and bounties
+              return Object.keys(bountyGroups).map((state) => (
+                <div key={state}>
+                  <h1 className="text-black mt-[10px]">{stateMap[state] || state}</h1>
+                  {bountyGroups[state].map((bounty, index) => (
+                    <QuestRow bounty={bounty} key={index} />
+                  ))}
+                </div>
+              ));
+            })()
+          }
 
         </div>
+
       </div>
     </div>
   );

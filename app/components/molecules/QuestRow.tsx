@@ -86,7 +86,6 @@ const QuestRow: FC<BountyCardProps> = ({
   return (
 
     <div
-
       style={{ borderBottom: "1px solid #EDF2F1", opacity: bounty.state == "complete" ? "80%" : "100%" }}
       className="items-center bg-white gap-[10px] rounded-5 flex py-[20px] px-[10px] flex-col justify-start h-[120px] rounded-[5px] hover:bg-[#F7FAF9]">
 
