@@ -194,7 +194,7 @@ export const get = async (id: number, currentUserId: number) => {
   };
 };
 
-export const getMany = async (currentUserId: number) => {
+export const getMany = async (currentUserId?: number) => {
   const bounties = await bountyQueryMany(currentUserId);
 
   const mappedBounties = bounties.map((bounty) => {

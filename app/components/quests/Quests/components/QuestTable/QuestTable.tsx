@@ -1,15 +1,13 @@
 import { useState, useEffect } from "react";
-import Image from "next/image";
-import { smallClickAnimation } from "@/src/constants";
 import { getUniqueItems } from "@/src/utils";
 import { useUserWallet } from "@/src/providers";
-import { LoadingBar, BountyCard } from "@/components";
-import { QuestFilters } from "./components";
+import { LoadingBar } from "@/components";
 import { BountyPreview, Filters, TABLE_BOUNTY_STATES } from "@/types";
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence } from "framer-motion";
 import { useBounty } from "@/src/providers/bountyProvider";
 import { useIndustry } from "@/src/providers/industryProvider";
 import { useMint } from "@/src/providers/mintProvider";
+import { QuestFilters, QuestRow } from "./components";
 
 export const BOUNTY_USER_RELATIONSHIP = [
   "Creator",
@@ -19,6 +17,13 @@ export const BOUNTY_USER_RELATIONSHIP = [
   "None",
 ];
 
+const stateMap = {
+  complete: "Complete",
+  voting_to_cancel: "Voting to Cancel",
+  new: "New",
+  canceled: "Canceled",
+};
+
 const QuestTable: React.FC<{}> = () => {
   const { allBounties } = useBounty();
   // state
@@ -26,7 +31,6 @@ const QuestTable: React.FC<{}> = () => {
   const [bounds, setPriceBounds] = useState<[number, number]>([5, 10000]);
   const [industriesFilter, setIndustriesFilter] = useState<string[]>([]);
   const [filteredBounties, setFilteredBounties] = useState<BountyPreview[]>();
-  const [showFilters, setShowFilters] = useState<boolean>(true);
   const [filters, setFilters] = useState<Filters>({
     industries: industriesFilter,
     tags: tags,
@@ -41,9 +45,16 @@ const QuestTable: React.FC<{}> = () => {
   const { allIndustries } = useIndustry();
   const { allMints } = useMint();
 
+  function snakeToTitleCase(snakeCaseStr: string) {
+    return snakeCaseStr
+      .split("_")
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(" ");
+  }
+
   useEffect(() => {
     const filteredBounties = allBounties?.filter((bounty) => {
-      if (!currentUser.isLancerDev && bounty.isTest) {
+      if ((!currentUser || !currentUser.isLancerDev) && bounty.isTest) {
         return false;
       }
       if (!bounty.escrow.publicKey || !bounty.escrow.mint) {
@@ -91,7 +102,7 @@ const QuestTable: React.FC<{}> = () => {
       return true;
     });
     setFilteredBounties(filteredBounties);
-  }, [filters]);
+  }, [filters, allBounties, currentUser]);
 
   useEffect(() => {
     // Get the meta-info off all bounties that are used for filters. Specifically
@@ -139,62 +150,56 @@ const QuestTable: React.FC<{}> = () => {
   }, [allBounties, allIndustries]);
 
   return (
-    <div className="w-full flex items-start mt-5 gap-5 py-24">
-      <AnimatePresence>
-        {showFilters && !!allBounties && (
-          <QuestFilters
-            mints={allMints}
-            industries={allIndustries}
-            tags={tags}
-            priceBounds={bounds}
-            filters={filters}
-            setFilters={setFilters}
-          />
-        )}
-      </AnimatePresence>
-
-      <div className="w-full flex flex-col gap-5 px-20">
-        <div className="flex items-center gap-2">
-          <Image
-            src="/assets/icons/IndustryTrio.png"
-            width={50}
-            height={50}
-            alt="industry trio icon"
-          />
-          <h1>Quests.</h1>
+    <div className="w-full flex flex-col gap-5 border border-neutral200">
+      {!allBounties && (
+        <div className="w-full flex flex-col items-center">
+          <LoadingBar title="Loading Quests" />
         </div>
-        {/* filter button */}
-        {allBounties?.length > 0 && (
-          <motion.button
-            className="w-[85px] h-[40px] flex items-center justify-center border-2
-              bg-primaryBtn border-primaryBtnBorder rounded-xl font-bold text-xs"
-            {...smallClickAnimation}
-            onClick={() => setShowFilters(!showFilters)}
-          >
-            <div className="flex items-center gap-1">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="18px"
-                viewBox="0 0 512 512"
-                className="fill-textPrimary"
-              >
-                <path d="M3.9 54.9C10.5 40.9 24.5 32 40 32H472c15.5 0 29.5 8.9 36.1 22.9s4.6 30.5-5.2 42.5L320 320.9V448c0 12.1-6.8 23.2-17.7 28.6s-23.8 4.3-33.5-3l-64-48c-8.1-6-12.8-15.5-12.8-25.6V320.9L9 97.3C-.7 85.4-2.8 68.8 3.9 54.9z" />
-              </svg>
-              <p className="text-xs">Filters</p>
-            </div>
-          </motion.button>
-        )}
+      )}
+      <div className="w-full flex flex-col bg-white rounded-md gap-2">
+        <AnimatePresence>
+          {!!allBounties && (
+            <QuestFilters
+              mints={allMints}
+              industries={allIndustries}
+              tags={tags}
+              count={
+                filteredBounties ? filteredBounties.length : allBounties.length
+              }
+              priceBounds={bounds}
+              filters={filters}
+              setFilters={setFilters}
+            />
+          )}
+        </AnimatePresence>
 
-        {!allBounties && (
-          <div className="w-full flex flex-col items-center">
-            <LoadingBar title="Loading Quests" />
-          </div>
-        )}
-        <div className={`w-full flex flex-wrap gap-5`}>
+        <div className="w-full flex flex-col bg-white rounded-md py-4 px-6">
           {filteredBounties?.length > 0 &&
-            filteredBounties?.map((bounty, index) => {
-              return <BountyCard bounty={bounty} key={index} />;
-            })}
+            (() => {
+              // Create an object to store bounties grouped by state
+              const bountyGroups = {};
+
+              // Group bounties by state
+              filteredBounties.forEach((bounty) => {
+                const state = bounty.state;
+                if (!bountyGroups[state]) {
+                  bountyGroups[state] = [];
+                }
+                bountyGroups[state].push(bounty);
+              });
+
+              // Iterate through the groups and render headers and bounties
+              return Object.keys(bountyGroups).map((state) => (
+                <div key={state}>
+                  <h2 className="text-black text-sm mt-[5px]">
+                    {stateMap[state] || snakeToTitleCase(state)}
+                  </h2>
+                  {bountyGroups[state].map((bounty, index) => (
+                    <QuestRow bounty={bounty} key={index} />
+                  ))}
+                </div>
+              ));
+            })()}
         </div>
       </div>
     </div>
