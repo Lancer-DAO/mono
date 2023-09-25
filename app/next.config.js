@@ -11,13 +11,13 @@ const nextConfig = {
     env: {
         AUTH0_BASE_URL: process.env.VERCEL_URL || "http://localhost:3000",
     },
-    async redirects() {
-        return [{
-            source: "/",
-            destination: "/welcome",
-            permanent: true,
-        }, ];
-    },
+    // async redirects() {
+    //     return [{
+    //         source: "/",
+    //         destination: "/welcome",
+    //         permanent: true,
+    //     }, ];
+    // },
     webpack: (config) => {
         config.watchOptions = {
             poll: 10000,
