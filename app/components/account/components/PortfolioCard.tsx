@@ -138,7 +138,7 @@ export const PortfolioCard: React.FC = () => {
   return (
     <div
       className="relative flex flex-col gap-4 bg-white w-full border 
-      border-neutral200 rounded-md overflow-hidden p-6"
+      border-neutral200 rounded-md p-6"
     >
       <p className="text-neutral600 title-text">Portfolio</p>
       <div className="flex flex-wrap gap-4">

@@ -2,7 +2,13 @@ import { useState, useEffect } from "react";
 import { getUniqueItems } from "@/src/utils";
 import { useUserWallet } from "@/src/providers";
 import { LoadingBar } from "@/components";
-import { BountyPreview, Filters, TABLE_BOUNTY_STATES } from "@/types";
+import {
+  BountyPreview,
+  BountyState,
+  Filters,
+  TABLE_BOUNTY_STATES,
+  User,
+} from "@/types";
 import { AnimatePresence } from "framer-motion";
 import { useBounty } from "@/src/providers/bountyProvider";
 import { useIndustry } from "@/src/providers/industryProvider";
@@ -24,7 +30,12 @@ const stateMap = {
   canceled: "Canceled",
 };
 
-const QuestTable: React.FC<{}> = () => {
+interface Props {
+  type: "profile" | "quests";
+  user: User;
+}
+
+const QuestTable: React.FC<Props> = ({ type, user }) => {
   const { allBounties } = useBounty();
   // state
   const [tags, setTags] = useState<string[]>([]);
@@ -53,56 +64,85 @@ const QuestTable: React.FC<{}> = () => {
   }
 
   useEffect(() => {
-    const filteredBounties = allBounties?.filter((bounty) => {
-      if ((!currentUser || !currentUser.isLancerDev) && bounty.isTest) {
-        return false;
-      }
-      if (!bounty.escrow.publicKey || !bounty.escrow.mint) {
-        return false;
-      }
-      if (
-        filters.isMyBounties &&
-        !bounty.users.some((user) => user.userid === currentUser?.id)
-      ) {
-        return false;
-      }
+    var filteredBounties = [];
+    if (type === "profile") {
+      filteredBounties = allBounties?.filter((bounty) => {
+        // filter out test quests unless user is a Lancer dev
+        if ((!currentUser || !currentUser.isLancerDev) && bounty.isTest) {
+          return false;
+        }
+        // filter out quests that don't have an escrow account
+        if (!bounty.escrow.publicKey || !bounty.escrow.mint) {
+          return false;
+        }
+        // filter out quests that don't include the user
+        if (
+          !bounty.users.some((bountyUser) => bountyUser.userid === user?.id)
+        ) {
+          return false;
+        }
 
-      // check if any of the bounty's industries is
-      // included in the filters.industries list
-      if (
-        !bounty.industries.some((industry) =>
-          filters.industries.includes(industry.name)
-        )
-      ) {
-        return false;
-      }
+        if (bounty.state !== BountyState.COMPLETE) {
+          return false;
+        }
 
-      const bountyTags: string[] = bounty.tags.map((tag) => tag.name) || [];
-      const commonTags = bountyTags.filter((tag) => filters.tags.includes(tag));
-      if (
-        bountyTags.length !== 0 &&
-        commonTags?.length === 0 &&
-        tags?.length !== 0
-      ) {
-        return false;
-      }
+        return true;
+      });
+    } else {
+      filteredBounties = allBounties?.filter((bounty) => {
+        if ((!currentUser || !currentUser.isLancerDev) && bounty.isTest) {
+          return false;
+        }
+        if (!bounty.escrow.publicKey || !bounty.escrow.mint) {
+          return false;
+        }
+        if (
+          filters.isMyBounties &&
+          !bounty.users.some((user) => user.userid === currentUser?.id)
+        ) {
+          return false;
+        }
 
-      if (!filters.states.includes(bounty.state)) {
-        return false;
-      }
+        // check if any of the bounty's industries is
+        // included in the filters.industries list
+        if (
+          !bounty.industries.some((industry) =>
+            filters.industries.includes(industry.name)
+          )
+        ) {
+          return false;
+        }
 
-      // if (
-      //   bounty.price &&
-      //   (Number(bounty.price) < filters.estimatedPriceBounds[0] ||
-      //     Number(bounty.price) > filters.estimatedPriceBounds[1])
-      // ) {
-      //   return false;
-      // }
+        const bountyTags: string[] = bounty.tags.map((tag) => tag.name) || [];
+        const commonTags = bountyTags.filter((tag) =>
+          filters.tags.includes(tag)
+        );
+        if (
+          bountyTags.length !== 0 &&
+          commonTags?.length === 0 &&
+          tags?.length !== 0
+        ) {
+          return false;
+        }
 
-      return true;
-    });
+        if (!filters.states.includes(bounty.state)) {
+          return false;
+        }
+
+        // if (
+        //   bounty.price &&
+        //   (Number(bounty.price) < filters.estimatedPriceBounds[0] ||
+        //     Number(bounty.price) > filters.estimatedPriceBounds[1])
+        // ) {
+        //   return false;
+        // }
+
+        return true;
+      });
+    }
+
     setFilteredBounties(filteredBounties);
-  }, [filters, allBounties, currentUser]);
+  }, [filters, allBounties, currentUser, type]);
 
   useEffect(() => {
     // Get the meta-info off all bounties that are used for filters. Specifically
@@ -111,7 +151,7 @@ const QuestTable: React.FC<{}> = () => {
     // - all payout mints
     // - upper and lower bounds of price
 
-    if (!allBounties || !allIndustries) return;
+    if (!allBounties || !allIndustries || type === "profile") return;
     if (allBounties && allBounties?.length !== 0) {
       const allTags = allBounties
         ?.map((bounty) => bounty.tags.map((tag) => tag.name))
@@ -150,15 +190,14 @@ const QuestTable: React.FC<{}> = () => {
   }, [allBounties, allIndustries]);
 
   return (
-    <div className="w-full flex flex-col gap-5 border border-neutral200">
-      {!allBounties && (
-        <div className="w-full flex flex-col items-center">
-          <LoadingBar title="Loading Quests" />
-        </div>
-      )}
+    <div
+      className={`${
+        type === "quests" ? "border border-neutral200" : ""
+      } w-full flex flex-col gap-5`}
+    >
       <div className="w-full flex flex-col bg-white rounded-md gap-2">
         <AnimatePresence>
-          {!!allBounties && (
+          {!!allBounties && type === "quests" && (
             <QuestFilters
               mints={allMints}
               industries={allIndustries}
@@ -191,7 +230,11 @@ const QuestTable: React.FC<{}> = () => {
               // Iterate through the groups and render headers and bounties
               return Object.keys(bountyGroups).map((state) => (
                 <div key={state}>
-                  <h2 className="text-black text-sm mt-[5px]">
+                  <h2
+                    className={`${
+                      type === "profile" && "hidden"
+                    } text-neutral600 text-sm mt-[5px]`}
+                  >
                     {stateMap[state] || snakeToTitleCase(state)}
                   </h2>
                   {bountyGroups[state].map((bounty, index) => (

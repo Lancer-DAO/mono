@@ -40,6 +40,7 @@ export async function getServerSideProps(
       };
     }
 
+    const allBounties = await queries.bounty.getMany();
     const myQuests = await queries.bounty.getMine(user.id);
     const allMints = await queries.mint.getAll();
     const allIndustries = await queries.industry.getMany();
@@ -49,7 +50,8 @@ export async function getServerSideProps(
         user: JSON.stringify(user),
         mints: JSON.stringify(allMints),
         industries: JSON.stringify(allIndustries),
-        quests: JSON.stringify(myQuests),
+        allQuests: JSON.stringify(allBounties),
+        myQuests: JSON.stringify(myQuests),
       },
     };
   } catch (e) {
@@ -65,12 +67,13 @@ const Home: React.FC<{
   user: string;
   mints: string;
   industries: string;
-  quests: string;
-}> = ({ user, mints, industries, quests }) => {
+  allQuests: string;
+  questsMine: string;
+}> = ({ user, mints, industries, questsMine, allQuests }) => {
   const { setAllMints, allMints } = useMint();
   const { setAllIndustries, allIndustries } = useIndustry();
   const { setAccount, account } = useAccount();
-  const { setMyQuests, myQuests } = useBounty();
+  const { setMyQuests, myQuests, setAllBounties, allBounties } = useBounty();
 
   if (!allMints && mints) {
     setAllMints(JSON.parse(mints));
@@ -81,8 +84,11 @@ const Home: React.FC<{
   if (!account && user) {
     setAccount(JSON.parse(user));
   }
-  if (!myQuests && quests) {
-    setMyQuests(JSON.parse(quests));
+  if (!myQuests && questsMine) {
+    setMyQuests(JSON.parse(questsMine));
+  }
+  if (!allBounties && allQuests) {
+    setAllBounties(JSON.parse(allQuests));
   }
 
   return (
