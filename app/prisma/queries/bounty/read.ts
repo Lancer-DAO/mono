@@ -120,6 +120,19 @@ const bountyQueryMany = async (userId?: number, excludePrivate?: boolean) => {
   return bounties;
 };
 
+const externalBountyQuery = async () => {
+  const bounties = await prisma.bounty.findMany({
+    where: {
+      isExternal: true,
+    },
+    select: {
+      links: true
+    },
+  });
+
+  return bounties;
+}
+
 export type BountyType = UnwrapPromise<ReturnType<typeof get>>;
 export type BountyPreviewType = UnwrapArray<
   UnwrapPromise<ReturnType<typeof getMany>>
@@ -169,6 +182,11 @@ export const getMany = async (currentUserId: number) => {
   });
 
   return mappedBounties;
+};
+
+export const getExternal = async () => {
+  const bounties = await externalBountyQuery();
+  return bounties;
 };
 
 export const convertBountyUserToUser = (user: UserRelation) => {

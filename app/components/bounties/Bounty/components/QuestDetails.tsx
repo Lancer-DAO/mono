@@ -79,22 +79,20 @@ const QuestDetails = () => {
               )}
               target="true"
             > */}
-            <Link
-              href={
-                currentBounty?.escrow
-                  ? getSolscanAddress(
-                      new PublicKey(currentBounty?.escrow?.publicKey)
-                    )
-                  : "#"
-              }
-              target="_blank"
-            >
-              <ExternalLink
-                className="text-neutral500"
-                width={12}
-                height={12}
-              />
-            </Link>
+            {currentBounty?.escrow && (
+              <Link
+                href={getSolscanAddress(
+                  new PublicKey(currentBounty?.escrow?.publicKey)
+                )}
+                target="_blank"
+              >
+                <ExternalLink
+                  className="text-neutral500"
+                  width={12}
+                  height={12}
+                />
+              </Link>
+            )}
           </div>
         </div>
         <div className="flex px-5 gap-2">
@@ -121,6 +119,16 @@ const QuestDetails = () => {
             {formatString(currentBounty.state)}
           </div>
         </div>
+        
+        {currentBounty.isExternal && (
+          <div className="flex py-2 px-5">
+            <Link href={currentBounty.links} passHref>
+              <button className="bg-red-500 text-white px-4 py-2 rounded-lg border font-bold">
+                Go to Quest
+              </button>
+            </Link>
+          </div>
+        )}
       </div>
       <div className="h-[1px] w-full bg-neutral200" />
       {/* quest content */}
