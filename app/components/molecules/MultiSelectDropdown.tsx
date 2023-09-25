@@ -71,13 +71,13 @@ const MultiSelectDropdown: React.FC<Props> = ({
   };
 
   return (
-    <div className="relative w-[220px] h-[50px]" ref={menuRef}>
+    <div className="relative max-w-[220px] h-[40px]" ref={menuRef}>
       <div
         className="h-full flex justify-between bg-transparent border border-[#6B7699] text-white 
         items-center cursor-pointer px-4 rounded-lg"
         onClick={toggleOpen}
       >
-        <div className="text-base text-white font-bold overflow-hidden whitespace-nowrap overflow-ellipsis">
+        <div className="text-[14px] text-white overflow-hidden whitespace-nowrap overflow-ellipsis">
           {selected?.length === 0
             ? "Select"
             : selected?.map((item) => item.label).join(", ")}

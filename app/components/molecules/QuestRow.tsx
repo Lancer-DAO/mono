@@ -87,7 +87,7 @@ const QuestRow: FC<BountyCardProps> = ({
 
     <div
       style={{ borderBottom: "1px solid #EDF2F1", opacity: bounty.state == "complete" ? "80%" : "100%" }}
-      className="items-center bg-white gap-[10px] rounded-5 flex py-[20px] px-[10px] flex-col justify-start h-[120px] rounded-[5px] hover:bg-[#F7FAF9]">
+      className="items-center bg-white gap-[10px] rounded-5 flex py-[20px] px-[10px] flex-col justify-start h-[110px] rounded-[5px] hover:bg-[#F7FAF9]">
 
 
       <div className="w-full flex justify-between">
@@ -106,8 +106,8 @@ const QuestRow: FC<BountyCardProps> = ({
           )}
 
           <div className="flex flex-col">
-            <p className="text-[18px] text-[#2E3332] font-bold">{bounty?.creator?.user.name}</p>
-            <p className="text-[16px]">{bounty.title}</p>
+            <p className="text-[14px] text-[#2E3332] font-bold">{bounty?.creator?.user.name}</p>
+            <p className="text-[12px]">{bounty.title}</p>
           </div>
         </div>
 
@@ -116,12 +116,12 @@ const QuestRow: FC<BountyCardProps> = ({
           <div className="flex flex-col items-end justify-center">
             <div className="flex items-center justify-center gap-[10px]">
               {bounty && Number(bounty?.escrow.amount) ? <LockIcon width="20px" height="20px" opacity="70%"/> : null}
-              <p className="text-[18px] text-[#2E3332]">${bounty && Number(bounty?.escrow.amount) ? Number(bounty?.escrow.amount).toLocaleString() : "N/A"}</p>
+              <p className="text-[14px] text-[#2E3332]">${bounty && Number(bounty?.escrow.amount) ? Number(bounty?.escrow.amount).toLocaleString() : "N/A"}</p>
             </div>
 
-            <p className="text-[16px] text-[#73807C]">Created on {getFormattedDate(bounty)}</p>
+            <p className="text-[12px] text-[#73807C]">Created on {getFormattedDate(bounty)}</p>
           </div>
-          <a target="_blank" rel="noreferrer" href={handleBountyLink()} className="rounded-[6px] py-[8px] px-[16px] font-[800] text-[#2E3332] text-[18px] border-[1px] border-solid border-[#EDF2F1]">Details</a>
+          <a target="_blank" rel="noreferrer" href={handleBountyLink()} className="rounded-[6px] py-[8px] px-[16px] font-[800] text-[#2E3332] text-[14px] border-[1px] border-solid border-[#EDF2F1]">Details</a>
         </div>
 
 
@@ -131,7 +131,7 @@ const QuestRow: FC<BountyCardProps> = ({
       <div className="flex flex-wrap gap-[10px] w-full">
         {bounty.tags.map((tag) => (
           <div
-            className="px-[5px] bg-[#F7FAF9] text-[#2E3332] text-[14px] rounded-[8px] border-[1px] border-solid border-[#EDF2F1]"
+            className="px-[7px] bg-[#F7FAF9] text-[#2E3332] text-[12px] rounded-[8px] border-[1px] border-solid border-[#EDF2F1]"
             key={tag.name}>{tag.name}</div>
         ))}
       </div>

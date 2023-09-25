@@ -155,7 +155,7 @@ const QuestTable: React.FC<{}> = () => {
           <LoadingBar title="Loading Quests" />
         </div>
       )}
-      <div className="w-full flex flex-col bg-white rounded-[8px] gap-[16px]">
+      <div className="w-full flex flex-col bg-white rounded-[8px] gap-[4px]">
 
         <AnimatePresence>
           {!!allBounties && (
@@ -191,7 +191,7 @@ const QuestTable: React.FC<{}> = () => {
               // Iterate through the groups and render headers and bounties
               return Object.keys(bountyGroups).map((state) => (
                 <div key={state}>
-                  <h1 className="text-black mt-[10px]">{stateMap[state] || state}</h1>
+                  <h2 className="text-black text-[14px] mt-[5px]">{stateMap[state] || state}</h2>
                   {bountyGroups[state].map((bounty, index) => (
                     <QuestRow bounty={bounty} key={index} />
                   ))}

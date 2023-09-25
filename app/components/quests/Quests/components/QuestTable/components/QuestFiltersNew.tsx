@@ -35,30 +35,13 @@ export const QuestFiltersNew = ({
 
     return (
         <div
-            className="bg-[#262F4D] flex rounded-t-[8px] items-center justify-between px-[24px] py-[16px]"
+            className="bg-[#262F4D] flex rounded-t-[8px] items-center justify-between px-[24px] py-[16px] h-[75px]"
         >
 
             <div>
-                <h1 className="text-white">All Quests</h1>
-                <p className="text-white opacity-[60%]">Showing {count} Open Quests</p>
+                <h1 className="text-white text-[20px] font-bold">All Quests</h1>
+                <p className="text-white opacity-[60%]">Showing {count} Quests</p>
             </div>
-
-            {/* {!!filters?.estimatedPriceBounds && (
-        <div className="w-full flex flex-col gap-3">
-          <div className="flex items-center gap-2">
-            <p className="font-bold">Price Range:</p>
-            <p className="text-sm">{`$${filters.estimatedPriceBounds?.[0]} - $${filters.estimatedPriceBounds?.[1]}`}</p>
-          </div>
-
-          <RangeSlider
-            bounds={priceBounds}
-            setBounds={(bounds) => {
-              setFilters({ ...filters, estimatedPriceBounds: bounds });
-            }}
-          />
-        </div>
-      )}
- */}
 
             <div className="flex gap-3">
                 <MultiSelectDropdown
@@ -112,7 +95,7 @@ export const QuestFiltersNew = ({
                 <button
                     disabled={!currentUser.hasBeenApproved}
                     onClick={() => window.location.href = "/create"}
-                    className="disabled:bg-[#94C2B4] disabled:text-green-100 bg-[#14BB88] px-[6px] py-[12px] text-white text-[18px] font-[700] rounded-[6px] w-[160px]">Create Quest</button>
+                    className="disabled:bg-[#94C2B4] disabled:text-green-100 bg-[#14BB88] py-[4px] text-white text-[14px] font-[700] rounded-[6px] w-[140px]">Create Quest</button>
             </div>
 
 
