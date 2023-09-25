@@ -136,6 +136,7 @@ const ApplicantsView: FC<Props> = ({
       setCurrentBounty(updatedBounty);
       toast.success("Successfully voted to cancel", { id: toastId });
     } catch (error) {
+      console.log(error)
       if (
         (error.message as string).includes(
           "Wallet is registered to another user"

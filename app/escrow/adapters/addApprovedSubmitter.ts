@@ -8,6 +8,7 @@ import {
 
 import { LancerWallet } from "@/types/";
 import { Escrow } from "@/types/Bounties";
+import { sendGaslessTx } from "../gasless";
 
 export const addSubmitterFFA = async (
   submitter: PublicKey,
@@ -23,7 +24,6 @@ export const addSubmitterFFA = async (
     new PublicKey(wallet.publicKey),
     referrer,
     submitter,
-    remainingAccounts,
     program
   );
 
@@ -58,19 +58,6 @@ export const addSubmitterFFAOld = async (
     program
   );
 
-  const { blockhash, lastValidBlockHeight } =
-    await provider.connection.getLatestBlockhash();
-  const txInfo = {
-    /** The transaction fee payer */
-    feePayer: new PublicKey(wallet.publicKey),
-    /** A recent blockhash */
-    blockhash: blockhash,
-    /** the last block chain can advance to before tx is exportd expired */
-    lastValidBlockHeight: lastValidBlockHeight,
-  };
-
-  const tx = await wallet.signAndSendTransaction(
-    new Transaction(txInfo).add(approveSubmitterIx)
-  );
-  return tx;
+  const res = await sendGaslessTx([approveSubmitterIx], true, wallet)
+  return res.signature;
 };

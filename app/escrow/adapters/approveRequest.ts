@@ -26,7 +26,6 @@ export const approveRequestFFA = async (
     creator,
     submitter,
     tokenAddress,
-    buddylinkProgramId,
     mint,
     program
   );
