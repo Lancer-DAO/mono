@@ -15,3 +15,17 @@ export const updateState = async (
     },
   });
 };
+
+export const updateIsPrivate = async (
+  bountyId: number,
+  isPrivate: boolean,
+) : Promise<Prisma.Bounty> => {
+  return await prisma.bounty.update({
+    where: {
+      id: bountyId,
+    },
+    data: {
+      isPrivate
+    }
+  })
+}

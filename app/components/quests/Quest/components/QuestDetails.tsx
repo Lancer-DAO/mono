@@ -7,6 +7,7 @@ import dayjs from "dayjs";
 import { marked } from "marked";
 import Link from "next/link";
 import { ArrowLeft, ChevronDown, ChevronUp, ExternalLink } from "react-feather";
+import { ArchiveBounty } from ".";
 
 const Divider = () => <div className="h-[20px] w-[1px] mx-4 bg-slate-200" />;
 
@@ -86,6 +87,7 @@ const QuestDetails = () => {
               />
             </Link>
           </div>
+          <ArchiveBounty />
         </div>
         <div className="flex px-5 gap-2">
           {currentBounty.tags.length > 0 && (

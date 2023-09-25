@@ -7,6 +7,7 @@ import { fundBounty } from "./fund";
 import { deleteMedia } from "./deleteMedia";
 
 import { tags } from "./tags";
+import { updateBountyToPrivate } from "./updateIsPrivate";
 
 export const bounties = createTRPCRouter({
   createBounty,
@@ -14,5 +15,6 @@ export const bounties = createTRPCRouter({
   fundBounty,
   getAllBounties,
   deleteMedia,
+  updateBountyToPrivate,
   tags,
 });
