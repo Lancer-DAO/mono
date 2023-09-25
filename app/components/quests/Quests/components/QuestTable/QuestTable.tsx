@@ -7,7 +7,7 @@ import { AnimatePresence } from "framer-motion";
 import { useBounty } from "@/src/providers/bountyProvider";
 import { useIndustry } from "@/src/providers/industryProvider";
 import { useMint } from "@/src/providers/mintProvider";
-import { QuestFiltersNew, QuestRow } from "./components";
+import { QuestFilters, QuestRow } from "./components";
 
 export const BOUNTY_USER_RELATIONSHIP = [
   "Creator",
@@ -159,7 +159,7 @@ const QuestTable: React.FC<{}> = () => {
       <div className="w-full flex flex-col bg-white rounded-md gap-2">
         <AnimatePresence>
           {!!allBounties && (
-            <QuestFiltersNew
+            <QuestFilters
               mints={allMints}
               industries={allIndustries}
               tags={tags}
