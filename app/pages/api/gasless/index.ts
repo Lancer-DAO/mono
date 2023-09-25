@@ -1,7 +1,7 @@
 import base58 from 'bs58';
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { Connection, Keypair, sendAndConfirmRawTransaction, Transaction } from "@solana/web3.js";
-import { core } from '@solana/octane-core';
+import { validateTransaction } from '@/src/utils/gaslessUtils';
 
 type Data = { status: 'ok', txid: string } | { status: 'error', message: string };
 
@@ -44,7 +44,7 @@ export default async function handler(
   }
   let signature: string;
   try {
-    signature = (await core.validateTransaction(
+    signature = (await validateTransaction(
       connection,
       transaction,
       feePayer,
@@ -57,7 +57,7 @@ export default async function handler(
     return;
   }
 
-  // 
+  // Wont work with fee payer being signer for actions like initialzing an account on our contract
   // try {
   //   await core.validateInstructions(transaction, feePayer);
   // } catch (e) {
