@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 import { useUserWallet } from "@/src/providers/userWalletProvider";
 import { PublicKey } from "@solana/web3.js";
 import { api } from "@/src/utils/api";
-import { fundFFA } from "@/escrow/adapters";
+import { fundFFA, fundFFATXGasless } from "@/escrow/adapters";
 import { IS_CUSTODIAL, smallClickAnimation } from "@/src/constants";
 import { CoinflowFund, USDC } from "@/components";
 import { CREATE_BOUNTY_TUTORIAL_INITIAL_STATE } from "@/src/constants/tutorials";
@@ -56,7 +56,7 @@ const FundQuestModal: FC<Props> = ({
       });
     }
     try {
-      await fundFFA(
+      await fundFFATXGasless(
         amount,
         currentBounty?.escrow,
         currentWallet,
