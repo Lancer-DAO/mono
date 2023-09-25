@@ -28,6 +28,7 @@ const QuestRow: FC<BountyCardProps> = ({
   formData,
   linked = true,
 }) => {
+
   const { currentUser } = useUserWallet();
   const { currentBounty } = useBounty();
   const { allIndustries } = useIndustry();
@@ -84,47 +85,54 @@ const QuestRow: FC<BountyCardProps> = ({
 
   return (
 
-    <div className="rounded-5 flex px-[10px] py-[5px] flex-col justify-start h-[90px] w-half border-[#EDF2F1] border-[1px] border-solid">
+    <div
+
+      style={{ borderBottom: "1px solid #EDF2F1", opacity: bounty.state == "complete" ? "80%" : "100%" }}
+      className="items-center bg-white gap-[10px] rounded-5 flex py-[20px] px-[10px] flex-col justify-start h-[120px] rounded-[5px] hover:bg-[#F7FAF9]">
 
 
-      <div className="w-full h-[70%] flex justify-between">
+      <div className="w-full flex justify-between">
 
-        <div className="flex h-full items-center justify-center gap-[5px]">
+        <div className="flex h-full items-center justify-center gap-[10px]">
           {bounty?.creator?.user?.picture ? (
             <Image
               src={bounty?.creator?.user.picture ? bounty?.creator?.user.picture : ``}
-              width={24}
-              height={24}
+              width={28}
+              height={28}
               alt={bounty?.creator?.user.name}
-              className="h-[24px] w-[24px] rounded-full"
+              className="h-[28px] w-[28px] rounded-full"
             />
           ) : (
-            <Logo width="24px" height="24px" />
+            <Logo width="28px" height="28px" />
           )}
 
           <div className="flex flex-col">
-            <p className="text-[14px] text-[#2E3332] font-bold">{bounty?.creator?.user.name}</p>
-            <p className="text-[12px]">{bounty.title}</p>
+            <p className="text-[18px] text-[#2E3332] font-bold">{bounty?.creator?.user.name}</p>
+            <p className="text-[16px]">{bounty.title}</p>
           </div>
         </div>
 
         <div className="flex justify-center items-center gap-5">
 
-          <div className="flex flex-col align-center justify-center">
-            <p>{bounty && Number(bounty?.escrow.amount) ? Number(bounty?.escrow.amount) : "N/A"}</p>
-            <p>Created on {getFormattedDate(bounty)}</p>
+          <div className="flex flex-col items-end justify-center">
+            <div className="flex items-center justify-center gap-[10px]">
+              {bounty && Number(bounty?.escrow.amount) ? <LockIcon width="20px" height="20px" opacity="70%"/> : null}
+              <p className="text-[18px] text-[#2E3332]">${bounty && Number(bounty?.escrow.amount) ? Number(bounty?.escrow.amount).toLocaleString() : "N/A"}</p>
+            </div>
+
+            <p className="text-[16px] text-[#73807C]">Created on {getFormattedDate(bounty)}</p>
           </div>
-          <button className="px-[5px] text-[#2E3332] text-[14px] text-bold border-[1px] border-solid border-[#EDF2F1]">Details</button>
+          <a target="_blank" rel="noreferrer" href={handleBountyLink()} className="rounded-[6px] py-[8px] px-[16px] font-[800] text-[#2E3332] text-[18px] border-[1px] border-solid border-[#EDF2F1]">Details</a>
         </div>
 
 
       </div>
 
 
-      <div className="flex flex-wrap gap-[5px] w-full h-[30%]">
+      <div className="flex flex-wrap gap-[10px] w-full">
         {bounty.tags.map((tag) => (
           <div
-            className="text-[#2E3332] text-[12px] rounded-2 bg-[#F7FAF9] border-[1px] border-solid border-[#EDF2F1] "
+            className="px-[5px] bg-[#F7FAF9] text-[#2E3332] text-[14px] rounded-[8px] border-[1px] border-solid border-[#EDF2F1]"
             key={tag.name}>{tag.name}</div>
         ))}
       </div>

@@ -11,6 +11,7 @@ import { useBounty } from "@/src/providers/bountyProvider";
 import { useIndustry } from "@/src/providers/industryProvider";
 import { useMint } from "@/src/providers/mintProvider";
 import QuestRow from "@/components/molecules/QuestRow";
+import { QuestFiltersNew } from "./components/QuestFiltersNew";
 
 export const BOUNTY_USER_RELATIONSHIP = [
   "Creator",
@@ -19,6 +20,13 @@ export const BOUNTY_USER_RELATIONSHIP = [
   "Submitter",
   "None",
 ];
+
+const stateMap = {
+  complete: "Complete",
+  voting_to_cancel: "Voting to Cancel",
+  new: "New",
+  canceled: "Canceled",
+}
 
 const QuestTable: React.FC<{}> = () => {
   const { allBounties } = useBounty();
@@ -140,21 +148,8 @@ const QuestTable: React.FC<{}> = () => {
 
   return (
     <div className="w-full flex items-start mt-5 gap-5 py-24">
-      {/* <AnimatePresence>
-        {!!allBounties && (
-          <QuestFilters
-            mints={allMints}
-            industries={allIndustries}
-            tags={tags}
-            priceBounds={bounds}
-            filters={filters}
-            setFilters={setFilters}
-          />
-        )}
-      </AnimatePresence>
- */}
 
-        
+
       <div className="w-full flex flex-col gap-5 px-20">
 
         {!allBounties && (
@@ -162,11 +157,53 @@ const QuestTable: React.FC<{}> = () => {
             <LoadingBar title="Loading Quests" />
           </div>
         )}
-        <div className="w-full flex flex-col">
-          {filteredBounties?.length > 0 &&
-            filteredBounties?.map((bounty, index) => {
-              return <QuestRow bounty={bounty} key={index} />;
-            })}
+        <div className="w-full flex flex-col bg-white rounded-[8px] gap-[16px]">
+
+          <AnimatePresence>
+            {!!allBounties && (
+              <QuestFiltersNew
+                mints={allMints}
+                industries={allIndustries}
+                tags={tags}
+                count={filteredBounties ? filteredBounties.length : allBounties.length}
+                priceBounds={bounds}
+                filters={filters}
+                setFilters={setFilters}
+              />
+            )}
+          </AnimatePresence>
+
+          <div className="w-full flex flex-col bg-white rounded-[4px] py-[16px] px-[24px]">
+
+            {
+              filteredBounties?.length > 0 &&
+              (() => {
+                // Create an object to store bounties grouped by state
+                const bountyGroups = {};
+
+                // Group bounties by state
+                filteredBounties.forEach((bounty) => {
+                  const state = bounty.state;
+                  if (!bountyGroups[state]) {
+                    bountyGroups[state] = [];
+                  }
+                  bountyGroups[state].push(bounty);
+                });
+
+                // Iterate through the groups and render headers and bounties
+                return Object.keys(bountyGroups).map((state) => (
+                  <div key={state}>
+                    <h1 className="text-black mt-[10px]">{stateMap[state] || state}</h1>
+                    {bountyGroups[state].map((bounty, index) => (
+                      <QuestRow bounty={bounty} key={index} />
+                    ))}
+                  </div>
+                ));
+              })()
+            }
+
+          </div>
+
         </div>
       </div>
     </div>
