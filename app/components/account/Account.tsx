@@ -8,12 +8,10 @@ import { useUserWallet } from "@/src/providers";
 import { useAccount } from "@/src/providers/accountProvider";
 import { useTutorial } from "@/src/providers/tutorialProvider";
 import { api } from "@/src/utils";
-import { createUnderdogClient } from "@underdog-protocol/js";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import { FC, useEffect, useState } from "react";
 import {
-  BadgesCard,
   CompleteProfileModal,
   PortfolioCard,
   ProfileCard,
@@ -23,8 +21,6 @@ import {
 } from "./components";
 
 dayjs.extend(relativeTime);
-
-const underdogClient = createUnderdogClient({});
 
 interface Props {
   self: boolean;
@@ -44,11 +40,8 @@ export const Account: FC<Props> = ({ self }) => {
   );
   const { mutateAsync: updateHasCompletedProfile } =
     api.users.updateHasCompletedProfile.useMutation();
-
   const { account } = useAccount();
-  const [resumeUrl, setResumeUrl] = useState(
-    self ? currentUser?.resume : account?.resume
-  );
+
   const [profileProgress, setProfileProgress] = useState(0);
   const [showCompleteProfileModal, setShowCompleteProfileModal] =
     useState<boolean>(false);
@@ -142,9 +135,9 @@ export const Account: FC<Props> = ({ self }) => {
     <>
       <div className="w-full md:w-[95%] items-center justify-center flex flex-col mx-auto px-4 md:px-0 py-24">
         {account && currentUser ? (
-          <div className="flex gap-5">
+          <div className="w-full flex gap-5 justify-center">
             {/* left column */}
-            <div className="flex flex-col gap-5 w-full">
+            <div className="flex flex-col gap-5 w-full max-w-[550px]">
               <ProfileCard
                 picture={account.picture}
                 githubId={account.githubId}
@@ -173,9 +166,6 @@ export const Account: FC<Props> = ({ self }) => {
               )}
 
               <PortfolioCard />
-              {account.id === currentUser.id && (
-                <ResumeCard resumeUrl={resumeUrl} setResumeUrl={setResumeUrl} />
-              )}
               <QuestsCard user={account} />
             </div>
           </div>

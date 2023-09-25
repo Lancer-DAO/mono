@@ -102,6 +102,12 @@ export const ProfileCard = ({
     }
   }, [currentWallet?.publicKey]);
 
+  useEffect(() => {
+    if (!!user) {
+      setCharCount(user.bio.length);
+    }
+  }, [user]);
+
   const handleMessageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSentToPublicKey(event.target.value);
   };
@@ -177,7 +183,7 @@ export const ProfileCard = ({
   return (
     <div
       className="bg-white w-full border 
-      border-neutral200 rounded-lg overflow-hidden"
+      border-neutral200 rounded-md overflow-hidden"
     >
       <div className="flex items-start justify-between p-5">
         <div className="flex items-center gap-5">
@@ -237,8 +243,8 @@ export const ProfileCard = ({
         )}
       </div>
       <div className="h-[1px] w-full bg-neutral200" />
-      <div className="p-5">
-        <div className="flex items-center gap-2 mb-3">
+      <div className="w-full p-5">
+        <div className="w-full flex items-center gap-2 mb-3">
           <p className="text-neutral600 title-text">Bio</p>
           {self && !bioEdit.editing && (
             <button
@@ -248,7 +254,7 @@ export const ProfileCard = ({
                   bio: user.bio,
                 })
               }
-              className="rounded-md uppercase font-bold text-neutral500"
+              className="rounded-md uppercase font-bold text-neutral600"
             >
               <Edit className="w-4" />
             </button>
@@ -258,7 +264,7 @@ export const ProfileCard = ({
           <>
             <textarea
               className="placeholder:text-neutral400/80 border border-neutral200 bg-neutral100
-              min-h-[50px] w-full h-[150px] rounded-md p-3 resize-y max-h-[300px]"
+              min-h-[50px] w-full h-[150px] rounded-md p-3 resize-y"
               name="bio"
               placeholder="Add bio"
               id="profile-bio"
@@ -272,7 +278,7 @@ export const ProfileCard = ({
             <div className="w-full flex justify-between items-center">
               <p
                 className={`text-sm ${
-                  charCount > 450 ? "text-red-500" : "text-gray-500"
+                  charCount > 450 ? "text-red-500" : "text-neutral500"
                 }`}
               >
                 {charCount}/500
@@ -304,7 +310,7 @@ export const ProfileCard = ({
           </>
         ) : (
           <div className="border border-neutral200 bg-neutral100 min-h-[50px] w-full rounded-md p-3">
-            <p className="text-neutral500">
+            <p className="text-neutral600">
               {bioEdit.bio !== "" ? bioEdit.bio : "Add a short bio here"}
             </p>
           </div>

@@ -25,7 +25,7 @@ export const PortfolioCard: React.FC = () => {
   const { account } = useAccount();
 
   const { currentUser } = useUserWallet();
-  const maxMedia = 4;
+  const maxMedia = 5;
   const { mutateAsync: createMedia } = api.media.createMedia.useMutation();
   const { mutateAsync: deleteMedia } = api.media.deleteMedia.useMutation();
   const { mutateAsync: updateMedia } = api.media.updateMedia.useMutation();
@@ -60,7 +60,7 @@ export const PortfolioCard: React.FC = () => {
       const toastId = toast(
         (t) => (
           <div>
-            Are you sure you want to cancel the Quest?
+            Are you sure you want to remove this reference?
             <div className="mt-2 flex items-center gap-4 justify-center">
               <button
                 onClick={handleYes}
@@ -136,37 +136,29 @@ export const PortfolioCard: React.FC = () => {
   };
 
   return (
-    <div className="relative w-full md:w-[658px] rounded-xl bg-bgLancerSecondary/[8%] overflow-hidden p-6 pt-8 pb-10">
-      <p className="font-bold text-2xl text-textGreen mb-2">Portfolio</p>
-      <div className="grid grid-cols-2 gap-6">
+    <div
+      className="relative flex flex-col gap-4 bg-white w-full border 
+      border-neutral200 rounded-md overflow-hidden p-6"
+    >
+      <p className="text-neutral600 title-text">Portfolio</p>
+      <div className="flex flex-wrap gap-4">
         {[...Array(maxMedia)].map((_, index) => {
           if (index < portfolio.length) {
             const media = portfolio[index];
             return (
               <Dialog key={index}>
-                <div
-                  className="relative border-2 border-primaryBtnBorder rounded-xl p-1"
-                  key={index}
-                >
-                  <div className="flex flex-col items-start">
-                    <DialogTrigger className="w-full" key={`dialog-${index}`}>
-                      <div className="flex flex-col items-start justify-start overflow-hidden">
-                        <Image
-                          src={media.imageUrl}
-                          alt={media.title}
-                          width={250}
-                          height={250}
-                          className="mb-2 rounded-md"
-                        />
-                        <p className="font-bold text-lg mx-1 w-full truncate text-left">
-                          {media.title}
-                        </p>
-                        <p className="text-sm mx-1 truncate w-full text-left">
-                          {media.description}
-                        </p>
-                      </div>
-                    </DialogTrigger>
-                  </div>
+                <div className="relative" key={index}>
+                  <DialogTrigger
+                    className="relative border-2 border-neutral200 rounded-[4px] w-[150px] h-[90px] overflow-hidden"
+                    key={`dialog-${index}`}
+                  >
+                    <Image
+                      src={media.imageUrl}
+                      alt={media.title}
+                      fill
+                      style={{ objectFit: "cover" }}
+                    />
+                  </DialogTrigger>
                   {account.id === currentUser.id && (
                     <>
                       <EditReferenceDialogue
@@ -184,21 +176,34 @@ export const PortfolioCard: React.FC = () => {
                       </motion.button>
                     </>
                   )}
+                  <p className="w-full truncate text-left text-sm text-neutral500">
+                    {media.title}
+                  </p>
                 </div>
-                <DialogContent className="max-w-fit flex flex-col items-center">
-                  <DialogHeader className="flex text-3xl justify-start">
-                    <DialogTitle className="text-3xl">
+                <DialogContent className="w-[400px] flex flex-col gap-3 items-center p-6">
+                  <div
+                    className="relative gap-5 w-full h-[240px] 
+                    overflow-hidden mt-4 rounded-md border-2 border-neutral200"
+                  >
+                    <Image
+                      src={media.imageUrl}
+                      alt={media.title}
+                      fill
+                      style={{ objectFit: "contain" }}
+                    />
+                  </div>
+                  <div className="w-full flex items-center gap-3 text-sm text-neutral600">
+                    <p className="w-32 text-left">Title</p>
+                    <p className="w-full text-left p-2 bg-neutral100 border border-neutral200 rounded-md">
                       {media.title}
-                    </DialogTitle>
-                    <DialogDescription>{media.description}</DialogDescription>
-                  </DialogHeader>
-                  <Image
-                    src={media.imageUrl}
-                    alt={media.title}
-                    width={1000}
-                    height={1000}
-                    className="rounded-md mt-4"
-                  />
+                    </p>
+                  </div>
+                  <div className="w-full flex items-center gap-3 text-sm">
+                    <p className="w-32 text-left">Description</p>
+                    <p className="w-full text-left p-2 bg-neutral100 border border-neutral200 rounded-md">
+                      {media.description}
+                    </p>
+                  </div>
                 </DialogContent>
               </Dialog>
             );

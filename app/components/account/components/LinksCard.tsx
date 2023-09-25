@@ -7,19 +7,21 @@ import { useAccount } from "@/src/providers/accountProvider";
 import ViewLinks from "./ViewLinks";
 
 const LinksCard = () => {
-  const [editLinksMode, setEditLinksMode] = useState(false);
   const { mutateAsync: updateLinks, isLoading: isUpdating } =
     api.users.updateLinks.useMutation();
   const { account, setAccount } = useAccount();
-
   const { currentUser } = useUserWallet();
 
+  const [editLinksMode, setEditLinksMode] = useState(false);
   const [links, setLinks] = useState({
     website: account?.website || "",
     github: account?.github || "",
     linkedin: account?.linkedin || "",
     twitter: account?.twitter || "",
   });
+  const [resumeUrl, setResumeUrl] = useState(
+    self ? currentUser?.resume : account?.resume
+  );
 
   const handleEditLinks = () => {
     setEditLinksMode(true);
@@ -53,7 +55,7 @@ const LinksCard = () => {
 
   return (
     <div className="p-5 pt-0">
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-2 mb-2">
         <p className="text-neutral600 title-text">Links</p>
         {account?.id === currentUser.id && (
           <>
@@ -95,6 +97,8 @@ const LinksCard = () => {
               links={links}
               setLinks={setLinks}
               isUpdating={isUpdating}
+              resumeUrl={resumeUrl}
+              setResumeUrl={setResumeUrl}
             />
           ) : (
             <ViewLinks
@@ -102,6 +106,7 @@ const LinksCard = () => {
               twitter={links.twitter}
               github={links.github}
               linkedin={links.linkedin}
+              resumeUrl={resumeUrl}
             />
           )}
         </>

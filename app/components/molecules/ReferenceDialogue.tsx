@@ -13,7 +13,7 @@ import { api } from "@/src/utils";
 import { UploadDropzone } from "@/src/utils/uploadthing";
 import * as DialogPrimitive from "@radix-ui/react-dialog";
 import { motion } from "framer-motion";
-import { Plus, X } from "lucide-react";
+import { PlusCircle, X } from "lucide-react";
 import Image from "next/image";
 import { useState } from "react";
 import { toast } from "react-hot-toast";
@@ -72,12 +72,14 @@ const ReferenceDialogue = ({ onReferenceAdded }) => {
     }));
   };
 
-
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <button className="flex justify-center items-center border border-gray-300 rounded-md h-44 hover:bg-gray-200">
-          <Plus size={48} />
+        <button
+          className="flex justify-center items-center border border-gray-300 
+          rounded-md hover:bg-gray-200 w-[150px] h-[90px]"
+        >
+          <PlusCircle size={20} className="text-neutral400" />
         </button>
       </DialogTrigger>
       <DialogContent>
@@ -144,12 +146,22 @@ const ReferenceDialogue = ({ onReferenceAdded }) => {
         <DialogFooter>
           <DialogPrimitive.Close>
             <div className="group">
-              <button type="submit" onClick={handleSubmit} disabled={isSaveDisabled}>
+              <button
+                type="submit"
+                onClick={handleSubmit}
+                disabled={isSaveDisabled}
+              >
                 Save changes
               </button>
-              {(isSaveDisabled) ? (
-                <Tooltip text={`${reference.imageUrl === "" ? 'Please upload an image' : 'Please input a title'}`} />
-              ): null}
+              {isSaveDisabled ? (
+                <Tooltip
+                  text={`${
+                    reference.imageUrl === ""
+                      ? "Please upload an image"
+                      : "Please input a title"
+                  }`}
+                />
+              ) : null}
             </div>
           </DialogPrimitive.Close>
         </DialogFooter>
