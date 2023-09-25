@@ -219,7 +219,7 @@ export const ProfileCard = ({
             }}
             type="green"
             text="Cash Out"
-            extraClasses="w-fit mb-[6px]"
+            extraClasses="w-fit"
           />
         ) : (
           <div className="h-[56px]"></div>
