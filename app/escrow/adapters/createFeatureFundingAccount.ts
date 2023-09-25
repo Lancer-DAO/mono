@@ -1,4 +1,11 @@
-import { AccountMeta, Connection, Keypair, PublicKey, Transaction, sendAndConfirmTransaction } from "@solana/web3.js";
+import {
+  AccountMeta,
+  Connection,
+  Keypair,
+  PublicKey,
+  Transaction,
+  sendAndConfirmTransaction,
+} from "@solana/web3.js";
 import { AnchorProvider, Program } from "@project-serum/anchor";
 import { MonoProgram } from "@/escrow/sdk/types/mono_program";
 import {
@@ -23,17 +30,16 @@ export const createFFA = async (
 ) => {
   const timestamp = Date.now().toString();
   const ix = await createCustodialFeatureFundingAccountInstruction(
-    new PublicKey(DEVNET_USDC_MINT),
+    new PublicKey(USDC_MINT),
     new PublicKey("pyrSoEahjKGKZpLWEYwCJ8zQAsYZckZH8ZqJ7yGd1ha"),
     new PublicKey(wallet.publicKey),
-    program,
+    program
   );
   const [feature_account] = await findFeatureAccount(
     timestamp,
     new PublicKey(wallet.publicKey),
     program
   );
-
 
   const referralAccountIx = await createCustodialReferralDataAccountInstruction(
     new PublicKey(wallet.publicKey),
@@ -42,7 +48,7 @@ export const createFFA = async (
     program
   );
 
-  const res = await sendGaslessTx([ix, referralAccountIx])
+  const res = await sendGaslessTx([ix, referralAccountIx]);
   return {
     timestamp,
     signature: res.signature,

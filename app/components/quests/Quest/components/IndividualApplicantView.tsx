@@ -187,14 +187,16 @@ const IndividualApplicantView: FC<Props> = ({
         submitterWallet,
         new PublicKey(currentBounty?.escrow.mint.publicKey)
       );
+      const refferer = await getSubmitterReferrer(
+        submitterWallet,
+        new PublicKey(currentBounty?.escrow.mint.publicKey)
+      );
+      console.log("refferer", refferer.toBase58());
       const signature = await addSubmitterFFA(
         submitterWallet,
         currentBounty?.escrow,
         currentWallet,
-        await getSubmitterReferrer(
-          submitterWallet,
-          new PublicKey(currentBounty?.escrow.mint.publicKey)
-        ),
+        refferer,
         remainingAccounts,
         program,
         provider

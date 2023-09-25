@@ -63,7 +63,6 @@ export const fundFFA = async (
   return await wallet.signAndSendTransaction(tx);
 };
 
-
 export const fundFFATXGasless = async (
   baseAmount: number,
   acc: Escrow,
@@ -81,11 +80,11 @@ export const fundFFATXGasless = async (
     acc?.timestamp,
     wallet?.publicKey,
     // mint ? mint : new PublicKey(USDC_MINT),
-    new PublicKey(DEVNET_USDC_MINT),
+    new PublicKey(USDC_MINT),
     program
   );
 
-  const res = await sendGaslessTx([fund_feature_ix], true, wallet)
+  const res = await sendGaslessTx([fund_feature_ix], true, wallet);
 
-  return res
+  return res;
 };

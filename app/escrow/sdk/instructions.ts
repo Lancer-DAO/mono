@@ -44,8 +44,7 @@ export const createFeatureFundingAccountInstruction = async (
   creator: PublicKey,
   program: Program<MonoProgram>
 ): Promise<TransactionInstruction> => {
-
-  console.log("Mint: ", mint.toBase58())
+  console.log("Mint: ", mint.toBase58());
 
   const timestamp = Date.now().toString();
   console.log("timestamp = ", timestamp);
@@ -654,7 +653,7 @@ export const createCustodialReferralDataAccountInstruction = async (
   custodial_fee_payer: PublicKey,
   feature_data_account: PublicKey,
   program: Program<MonoProgram>,
-  referrer?: PublicKey,
+  referrer?: PublicKey
 ): Promise<TransactionInstruction> => {
   let [referral_data_account] = await findReferralDataAccount(
     creator,
@@ -662,7 +661,10 @@ export const createCustodialReferralDataAccountInstruction = async (
     program
   );
 
-  if (!referrer){ referrer = PublicKey.default; }
+  if (!referrer) {
+    referrer = PublicKey.default;
+  }
+  console.log("FDA", feature_data_account.toBase58());
 
   return await program.methods
     .createCustodialReferralDataAccount()
@@ -677,8 +679,6 @@ export const createCustodialReferralDataAccountInstruction = async (
     })
     .instruction();
 };
-
-
 
 export const approveRequestMultipleTransaction = async (
   timestamp: string,
@@ -1033,8 +1033,6 @@ export const achFundFeatureInstruction = async (
     .instruction();
 };
 
-
-
 export const adminCloseBountyInstruction = async (
   timestamp: string,
   creator: PublicKey,
@@ -1075,7 +1073,7 @@ export const createDisputeInstruction = async (
   dispute_admin: PublicKey,
   creator: PublicKey,
   mint: PublicKey,
-  program: Program<MonoProgram>,
+  program: Program<MonoProgram>
 ) => {
   const [feature_data_account] = await findFeatureAccount(
     timestamp,
@@ -1092,23 +1090,26 @@ export const createDisputeInstruction = async (
   const [program_authority] = await findProgramAuthority(program);
 
   const [dispute_account] = await findDisputeAccount(
-    timestamp, 
-    creator, 
+    timestamp,
+    creator,
     mint,
     program
   );
 
-  return await program.methods.createDispute().accounts({
-    creator: creator,
-    featureDataAccount: feature_data_account,
-    featureTokenAccount: feature_token_account,
-    programAuthority: program_authority,
-    disputeAdmin: dispute_admin,
-    disputeAccount: dispute_account,
-    tokenProgram: TOKEN_PROGRAM_ID,
-    systemProgram: SystemProgram.programId,
-  }).instruction();
-}
+  return await program.methods
+    .createDispute()
+    .accounts({
+      creator: creator,
+      featureDataAccount: feature_data_account,
+      featureTokenAccount: feature_token_account,
+      programAuthority: program_authority,
+      disputeAdmin: dispute_admin,
+      disputeAccount: dispute_account,
+      tokenProgram: TOKEN_PROGRAM_ID,
+      systemProgram: SystemProgram.programId,
+    })
+    .instruction();
+};
 
 // TODO - make sure no instruction creates Token Accounts or make sure all instructions do
 export const settleDisputeInstruction = async (
@@ -1118,7 +1119,7 @@ export const settleDisputeInstruction = async (
   submitter: PublicKey,
   mint: PublicKey,
   amount: number,
-  program: Program<MonoProgram>,
+  program: Program<MonoProgram>
 ) => {
   const [feature_token_account] = await findFeatureTokenAccount(
     timestamp,
@@ -1130,8 +1131,8 @@ export const settleDisputeInstruction = async (
   const [program_authority] = await findProgramAuthority(program);
 
   const [dispute_account] = await findDisputeAccount(
-    timestamp, 
-    creator, 
+    timestamp,
+    creator,
     mint,
     program
   );
@@ -1145,9 +1146,14 @@ export const settleDisputeInstruction = async (
   );
 
   const creator_token_account = await getAssociatedTokenAddress(mint, creator);
-  const submitter_token_account = await getAssociatedTokenAddress(mint, submitter);
+  const submitter_token_account = await getAssociatedTokenAddress(
+    mint,
+    submitter
+  );
 
-  return await program.methods.settleDispute(new anchor.BN(amount)).accounts({
+  return await program.methods
+    .settleDispute(new anchor.BN(amount))
+    .accounts({
       disputeAdmin: dispute_admin,
       creator: creator,
       creatorTokenAccount: creator_token_account,
@@ -1160,6 +1166,6 @@ export const settleDisputeInstruction = async (
       programAuthority: program_authority,
       tokenProgram: TOKEN_PROGRAM_ID,
       systemProgram: SystemProgram.programId,
-  }).instruction();
-
-}
+    })
+    .instruction();
+};
