@@ -7,9 +7,7 @@ import { useTutorial } from "@/src/providers/tutorialProvider";
 import { useAppContext } from "@/src/providers/appContextProvider";
 import { IS_CUSTODIAL } from "@/src/constants";
 import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
-import { useWallet } from "@solana/wallet-adapter-react";
 import { useUserWallet } from "@/src/providers";
-import { useChat } from "@/src/providers/chatProvider";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import { ChevronsUpDown } from "lucide-react";
@@ -19,19 +17,19 @@ import { useOutsideAlerter } from "@/src/hooks";
 
 const HEADER_LINKS = [
   {
+    href: "/",
+    children: "Home",
+    id: "bounties-link",
+  },
+  {
     href: "/create",
     children: "New Quest",
     id: "create-bounty-link",
   },
-  {
-    href: "/quests",
-    children: "Quests",
-    id: "bounties-link",
-  },
   ,
   {
     href: "/leaderboard",
-    children: "Leaderboards",
+    children: "Leaderboard",
     id: "leaderboards-link",
   },
 ];
@@ -63,7 +61,6 @@ export const Header = () => {
   // initialize the selected quest if on one of my quests
   useEffect(() => {
     if (router.isReady && !!myQuests) {
-      console.log("myQuests", myQuests);
       const selectedQuest = myQuests?.find(
         (quest) => quest.id.toString() === (router.query.quest as string)
       );

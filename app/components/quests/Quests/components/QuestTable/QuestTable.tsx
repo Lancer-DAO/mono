@@ -1,17 +1,13 @@
 import { useState, useEffect } from "react";
-import Image from "next/image";
-import { smallClickAnimation } from "@/src/constants";
 import { getUniqueItems } from "@/src/utils";
 import { useUserWallet } from "@/src/providers";
-import { LoadingBar, BountyCard } from "@/components";
-import { QuestFilters } from "./components";
+import { LoadingBar } from "@/components";
 import { BountyPreview, Filters, TABLE_BOUNTY_STATES } from "@/types";
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence } from "framer-motion";
 import { useBounty } from "@/src/providers/bountyProvider";
 import { useIndustry } from "@/src/providers/industryProvider";
 import { useMint } from "@/src/providers/mintProvider";
-import QuestRow from "@/components/molecules/QuestRow";
-import { QuestFiltersNew } from "./components/QuestFiltersNew";
+import { QuestFiltersNew, QuestRow } from "./components";
 
 export const BOUNTY_USER_RELATIONSHIP = [
   "Creator",
@@ -26,7 +22,7 @@ const stateMap = {
   voting_to_cancel: "Voting to Cancel",
   new: "New",
   canceled: "Canceled",
-}
+};
 
 const QuestTable: React.FC<{}> = () => {
   const { allBounties } = useBounty();
@@ -49,9 +45,16 @@ const QuestTable: React.FC<{}> = () => {
   const { allIndustries } = useIndustry();
   const { allMints } = useMint();
 
+  function snakeToTitleCase(snakeCaseStr: string) {
+    return snakeCaseStr
+      .split("_")
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(" ");
+  }
+
   useEffect(() => {
     const filteredBounties = allBounties?.filter((bounty) => {
-      if (!currentUser.isLancerDev && bounty.isTest) {
+      if ((!currentUser || !currentUser.isLancerDev) && bounty.isTest) {
         return false;
       }
       if (!bounty.escrow.publicKey || !bounty.escrow.mint) {
@@ -99,7 +102,7 @@ const QuestTable: React.FC<{}> = () => {
       return true;
     });
     setFilteredBounties(filteredBounties);
-  }, [filters]);
+  }, [filters, allBounties, currentUser]);
 
   useEffect(() => {
     // Get the meta-info off all bounties that are used for filters. Specifically
@@ -147,23 +150,22 @@ const QuestTable: React.FC<{}> = () => {
   }, [allBounties, allIndustries]);
 
   return (
-
-    <div className="w-full flex flex-col gap-5 w-[65%] border-solid border-[1px] border-[#E6F2EF]">
-
+    <div className="w-full flex flex-col gap-5 border border-neutral200">
       {!allBounties && (
         <div className="w-full flex flex-col items-center">
           <LoadingBar title="Loading Quests" />
         </div>
       )}
-      <div className="w-full flex flex-col bg-white rounded-[8px] gap-[4px]">
-
+      <div className="w-full flex flex-col bg-white rounded-md gap-2">
         <AnimatePresence>
           {!!allBounties && (
             <QuestFiltersNew
               mints={allMints}
               industries={allIndustries}
               tags={tags}
-              count={filteredBounties ? filteredBounties.length : allBounties.length}
+              count={
+                filteredBounties ? filteredBounties.length : allBounties.length
+              }
               priceBounds={bounds}
               filters={filters}
               setFilters={setFilters}
@@ -171,10 +173,8 @@ const QuestTable: React.FC<{}> = () => {
           )}
         </AnimatePresence>
 
-        <div className="w-full flex flex-col bg-white rounded-[4px] py-[16px] px-[24px]">
-
-          {
-            filteredBounties?.length > 0 &&
+        <div className="w-full flex flex-col bg-white rounded-md py-4 px-6">
+          {filteredBounties?.length > 0 &&
             (() => {
               // Create an object to store bounties grouped by state
               const bountyGroups = {};
@@ -191,17 +191,16 @@ const QuestTable: React.FC<{}> = () => {
               // Iterate through the groups and render headers and bounties
               return Object.keys(bountyGroups).map((state) => (
                 <div key={state}>
-                  <h2 className="text-black text-[14px] mt-[5px]">{stateMap[state] || state}</h2>
+                  <h2 className="text-black text-sm mt-[5px]">
+                    {stateMap[state] || snakeToTitleCase(state)}
+                  </h2>
                   {bountyGroups[state].map((bounty, index) => (
                     <QuestRow bounty={bounty} key={index} />
                   ))}
                 </div>
               ));
-            })()
-          }
-
+            })()}
         </div>
-
       </div>
     </div>
   );

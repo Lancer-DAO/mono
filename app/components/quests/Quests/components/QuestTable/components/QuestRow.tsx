@@ -23,29 +23,15 @@ export interface BountyCardProps extends SVGAttributes<SVGSVGElement> {
   linked?: boolean;
 }
 
-const QuestRow: FC<BountyCardProps> = ({
+export const QuestRow: FC<BountyCardProps> = ({
   bounty,
   formData,
   linked = true,
 }) => {
-
-  const { currentUser } = useUserWallet();
   const { currentBounty } = useBounty();
   const { allIndustries } = useIndustry();
 
   const [selectedIndustry, setSelectedIndustry] = useState<Industry>();
-
-  const bountyCardAnimation = linked
-    ? { ...fastEnterAnimation, ...midClickAnimation }
-    : null;
-
-  const displayedTags = bounty
-    ? bounty.tags.slice(0, 4).map((tag) => tag.name)
-    : formData.tags.slice(0, 4).map((tag) => tag);
-
-  const tagOverflow = bounty
-    ? bounty.tags.filter((tag) => tag.name !== "").length > 4
-    : formData.tags.filter((tag) => tag !== "").length > 4;
 
   const handleBountyLink = () => {
     if (!linked) return null;
@@ -55,14 +41,6 @@ const QuestRow: FC<BountyCardProps> = ({
       return `/quests/${bounty?.id}`;
     }
   };
-
-  const handlePrice = useCallback(() => {
-    if (bounty) {
-      return Number(bounty?.escrow?.amount);
-    } else {
-      return Number(formData.issuePrice);
-    }
-  }, [bounty, formData]);
 
   const previewMarkup = () => {
     const markdown = marked.parse(
@@ -84,18 +62,22 @@ const QuestRow: FC<BountyCardProps> = ({
   if (!bounty && !formData) return null;
 
   return (
-
     <div
-      style={{ borderBottom: "1px solid #EDF2F1", opacity: bounty.state == "complete" ? "80%" : "100%" }}
-      className="items-center bg-white gap-[10px] rounded-5 flex py-[20px] px-[10px] flex-col justify-start h-[110px] rounded-[5px] hover:bg-[#F7FAF9]">
-
-
+      style={{
+        borderBottom: "1px solid #EDF2F1",
+        opacity: bounty.state == "complete" ? "80%" : "100%",
+      }}
+      className="items-center bg-white gap-2.5 rounded-md flex py-5 px-2.5 flex-col justify-start h-[110px] hover:bg-neutral100"
+    >
       <div className="w-full flex justify-between">
-
-        <div className="flex h-full items-center justify-center gap-[10px]">
+        <div className="flex h-full items-center justify-center gap-2.5">
           {bounty?.creator?.user?.picture ? (
             <Image
-              src={bounty?.creator?.user.picture ? bounty?.creator?.user.picture : ``}
+              src={
+                bounty?.creator?.user.picture
+                  ? bounty?.creator?.user.picture
+                  : ``
+              }
               width={28}
               height={28}
               alt={bounty?.creator?.user.name}
@@ -106,41 +88,55 @@ const QuestRow: FC<BountyCardProps> = ({
           )}
 
           <div className="flex flex-col">
-            <p className="text-[14px] text-[#2E3332] font-bold">{bounty?.creator?.user.name}</p>
-            <p className="text-[12px]">{bounty.title}</p>
+            <p className="text-sm text-neutral600 font-bold">
+              {bounty?.creator?.user.name}
+            </p>
+            <p className="text-xs">{bounty.title}</p>
           </div>
         </div>
 
         <div className="flex justify-center items-center gap-5">
-
           <div className="flex flex-col items-end justify-center">
-            <div className="flex items-center justify-center gap-[10px]">
-              {bounty && Number(bounty?.escrow.amount) ? <LockIcon width="20px" height="20px" opacity="70%"/> : null}
-              <p className="text-[14px] text-[#2E3332]">${bounty && Number(bounty?.escrow.amount) ? Number(bounty?.escrow.amount).toLocaleString() : "N/A"}</p>
-            </div>
+            {bounty && Number(bounty?.escrow.amount) ? (
+              <div className="flex items-center justify-center gap-1">
+                <LockIcon
+                  width="14px"
+                  height="14px"
+                  className="fill-primary200"
+                />
+                <p className="text-sm text-neutral600">
+                  ${Number(bounty?.escrow.amount).toLocaleString()}
+                </p>
+              </div>
+            ) : (
+              <p className="text-sm text-neutral600">Requesting Quotes</p>
+            )}
 
-            <p className="text-[12px] text-[#73807C]">Created on {getFormattedDate(bounty)}</p>
+            <p className="text-xs text-neutral500">
+              Created on {getFormattedDate(bounty)}
+            </p>
           </div>
-          <a target="_blank" rel="noreferrer" href={handleBountyLink()} className="rounded-[6px] py-[8px] px-[16px] font-[800] text-[#2E3332] text-[14px] border-[1px] border-solid border-[#EDF2F1]">Details</a>
+          <a
+            target="_blank"
+            rel="noreferrer"
+            href={handleBountyLink()}
+            className="rounded-md py-2 px-4 text-neutral600 text-sm border border-neutral200"
+          >
+            Details
+          </a>
         </div>
-
-
       </div>
 
-
-      <div className="flex flex-wrap gap-[10px] w-full">
+      <div className="flex flex-wrap gap-2.5 w-full">
         {bounty.tags.map((tag) => (
           <div
-            className="px-[7px] bg-[#F7FAF9] text-[#2E3332] text-[12px] rounded-[8px] border-[1px] border-solid border-[#EDF2F1]"
-            key={tag.name}>{tag.name}</div>
+            className="px-[7px] bg-neutral100 text-neutral600 text-xs rounded-md border border-neutral200"
+            key={tag.name}
+          >
+            {tag.name}
+          </div>
         ))}
       </div>
     </div>
-
-
-
   );
-
 };
-
-export default QuestRow;
