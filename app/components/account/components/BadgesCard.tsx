@@ -105,15 +105,15 @@ export const BadgesCard: FC = () => {
   }, [wallets]);
 
   return (
-    <div className="w-full md:w-[460px] max-h-[320px] rounded-xl bg-bgLancerSecondary/[8%] p-6">
-      <p className="font-bold text-2xl text-textGreen pb-2">Badges</p>
+    <div className="w-full pt-0 p-5">
+      <p className="title-text text-neutral600">Badges</p>
       {loading ? (
         <div className="w-full flex items-center justify-center">
           <LoadingBar title={null} />
         </div>
       ) : null}
       {badges?.length > 0 && !loading ? (
-        <div className="grid grid-cols-6 gap-2">
+        <div className="flex flex-wrap gap-3">
           {badges.map((badge) => (
             <Badge badge={badge} key={badge.id} />
           ))}

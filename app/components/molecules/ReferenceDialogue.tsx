@@ -13,7 +13,7 @@ import { api } from "@/src/utils";
 import { UploadDropzone } from "@/src/utils/uploadthing";
 import * as DialogPrimitive from "@radix-ui/react-dialog";
 import { motion } from "framer-motion";
-import { Plus, PlusCircle, X } from "lucide-react";
+import { PlusCircle, X } from "lucide-react";
 import Image from "next/image";
 import { useState } from "react";
 import { toast } from "react-hot-toast";

@@ -26,7 +26,7 @@ const AccountHeaderOptions = () => {
     setShowOptions(false);
   });
 
-  // if (!currentUser) return null;
+  if (!currentUser) return null;
 
   return (
     <div className="relative">
