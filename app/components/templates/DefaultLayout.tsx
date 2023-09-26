@@ -1,4 +1,4 @@
-import { ReactNode } from "react";
+import { ReactNode, useEffect, useState } from "react";
 import Image from "next/image";
 import { Header, JoyrideWrapper } from "@/components";
 import { useUserWallet } from "@/src/providers";
@@ -7,13 +7,22 @@ import { useWindowSize } from "@/src/hooks";
 
 const DefaultLayout: React.FC<{ children: ReactNode }> = ({ children }) => {
   const { currentUser } = useUserWallet();
-
+  const [isMounted, setIsMounted] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
   const [width] = useWindowSize();
 
-  const isMobile = width <= 830;
-  if (isMobile) {
-    return <MobilePlaceholder />;
-  }
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  useEffect(() => {
+    const mobileView = width <= 830;
+    setIsMobile(mobileView);
+  }, [width]);
+
+  if (!isMounted || !width) return null;
+
+  if (isMobile) return <MobilePlaceholder />;
 
   return (
     <div className="relative flex">
