@@ -10,7 +10,7 @@ const DefaultLayout: React.FC<{ children: ReactNode }> = ({ children }) => {
 
   const [width] = useWindowSize();
 
-  const isMobile = width <= 820;
+  const isMobile = width <= 830;
   if (isMobile) {
     return <MobilePlaceholder />;
   }
