@@ -8,10 +8,8 @@ export const createBounty = protectedProcedure
     z.object({
       email: z.string(),
       industryIds: z.array(z.number()),
-      disciplineIds: z.array(z.number()),
       title: z.string(),
       description: z.string(),
-      price: z.optional(z.number()),
       tags: z.array(z.string()),
       links: z.array(z.string()),
       media: z.array(
@@ -21,16 +19,13 @@ export const createBounty = protectedProcedure
           description: z.string(),
         })
       ),
-      estimatedTime: z.number(),
       isPrivate: z.boolean(),
       isTest: z.boolean(),
       publicKey: z.string(),
       escrowKey: z.string(),
       transactionSignature: z.string(),
       timestamp: z.string(),
-      chainName: z.string(),
       mint: z.number(),
-      network: z.string(),
     })
   )
   .mutation(
@@ -38,32 +33,25 @@ export const createBounty = protectedProcedure
       input: {
         email,
         industryIds,
-        disciplineIds,
         title,
         description,
-        price,
         tags,
         links,
         media,
-        estimatedTime,
         isPrivate,
         isTest,
         publicKey,
         escrowKey,
         transactionSignature,
         timestamp,
-        chainName,
-        network,
         mint,
       },
     }) => {
       const user = await queries.user.getByEmail(email);
       const wallet = await queries.wallet.getOrCreate(user, publicKey);
-      const chain = await queries.chain.getOrCreate(chainName, network);
       const escrow = await queries.escrow.create(
         timestamp,
         escrowKey,
-        chain,
         user,
         mint
       );
@@ -72,7 +60,6 @@ export const createBounty = protectedProcedure
         transactionSignature,
         "create-escrow",
         wallet,
-        chain,
         escrow
       );
       const _tags = await Promise.all(
@@ -80,9 +67,6 @@ export const createBounty = protectedProcedure
       );
       const industries = await Promise.all(
         industryIds.map((id) => queries.industry.get(id))
-      );
-      const disciplines = await Promise.all(
-        disciplineIds.map((id) => queries.discipline.get(id))
       );
       const medias = await Promise.all(
         media.map(
@@ -93,7 +77,6 @@ export const createBounty = protectedProcedure
       const bounty = await queries.bounty.create(
         timestamp,
         description,
-        estimatedTime,
         isPrivate,
         isTest,
         title,
@@ -103,9 +86,7 @@ export const createBounty = protectedProcedure
         user,
         wallet,
         industries,
-        disciplines,
-        medias,
-        price
+        medias
       );
       const bountyInfo = await queries.bounty.get(bounty.id, user.id);
       HostedHooksClient.sendWebhook(bountyInfo, "bounty.created", timestamp);
