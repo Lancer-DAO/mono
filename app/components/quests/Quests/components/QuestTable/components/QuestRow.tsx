@@ -1,21 +1,10 @@
-import {
-  BountyCardFrame,
-  ContributorInfo,
-  PriceTag,
-  // StarIcon,
-  LockIcon,
-  Logo,
-} from "@/components";
-import { useUserWallet } from "@/providers";
-import { fastEnterAnimation, midClickAnimation } from "@/src/constants";
+import { FC, SVGAttributes } from "react";
+import { LockIcon, Logo } from "@/components";
 import { useBounty } from "@/src/providers/bountyProvider";
-import { useIndustry } from "@/src/providers/industryProvider";
 import { BountyPreview, QuestFormData, Industry } from "@/types/";
-import { api, getFormattedDate } from "@/utils";
-import { motion } from "framer-motion";
+import { getFormattedDate } from "@/utils";
 import { marked } from "marked";
 import Image from "next/image";
-import { FC, SVGAttributes, useCallback, useEffect, useState } from "react";
 
 export interface BountyCardProps extends SVGAttributes<SVGSVGElement> {
   bounty?: BountyPreview;
@@ -29,9 +18,6 @@ export const QuestRow: FC<BountyCardProps> = ({
   linked = true,
 }) => {
   const { currentBounty } = useBounty();
-  const { allIndustries } = useIndustry();
-
-  const [selectedIndustry, setSelectedIndustry] = useState<Industry>();
 
   const handleBountyLink = () => {
     if (!linked) return null;
@@ -50,14 +36,13 @@ export const QuestRow: FC<BountyCardProps> = ({
     return { __html: markdown };
   };
 
-  useEffect(() => {
-    if (formData) {
-      const industry = allIndustries?.find(
-        (industry) => industry?.id === formData?.industryId
-      );
-      setSelectedIndustry(industry);
-    }
-  }, [formData?.industryId]);
+  const displayedTags = bounty
+    ? bounty.tags.slice(0, 4).map((tag) => tag.name)
+    : formData.tags.slice(0, 4).map((tag) => tag);
+
+  const tagOverflow = bounty
+    ? bounty.tags.filter((tag) => tag.name !== "").length > 4
+    : formData.tags.filter((tag) => tag !== "").length > 4;
 
   if (!bounty && !formData) return null;
 
@@ -128,14 +113,20 @@ export const QuestRow: FC<BountyCardProps> = ({
       </div>
 
       <div className="flex flex-wrap gap-2.5 w-full">
-        {bounty.tags.map((tag) => (
-          <div
-            className="px-[7px] bg-neutral100 text-neutral600 text-xs rounded-md border border-neutral200"
-            key={tag.name}
-          >
-            {tag.name}
-          </div>
-        ))}
+        {displayedTags.filter((tag) => tag !== "").length > 0 &&
+          displayedTags[0] !== "" &&
+          displayedTags.map((tag) => {
+            if (tag === "") return null;
+            return (
+              <div
+                className="px-[7px] bg-neutral100 text-neutral600 text-xs rounded-md border border-neutral200"
+                key={tag}
+              >
+                {tag}
+              </div>
+            );
+          })}
+        {tagOverflow && <p className="text-xs">+ more</p>}
       </div>
     </div>
   );

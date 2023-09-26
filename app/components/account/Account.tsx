@@ -137,7 +137,7 @@ export const Account: FC<Props> = ({ self }) => {
         {account && currentUser ? (
           <div className="w-full flex gap-5 justify-center">
             {/* left column */}
-            <div className="flex flex-col gap-5 w-full max-w-[600px]">
+            <div className="w-full max-w-[600px]">
               <ProfileCard
                 picture={account.picture}
                 githubId={account.githubId}
@@ -145,9 +145,6 @@ export const Account: FC<Props> = ({ self }) => {
                 self={self}
                 id={account.id}
               />
-              {account.id === currentUser.id && currentUser.hasBeenApproved && (
-                <ReferCard />
-              )}
             </div>
             {/* right column */}
             <div className="flex flex-col gap-5 w-full">

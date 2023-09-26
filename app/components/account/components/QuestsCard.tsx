@@ -6,6 +6,7 @@ import { Button, CopyLinkField } from "@/components";
 import { useReferral } from "@/src/providers/referralProvider";
 import { IS_CUSTODIAL } from "@/src/constants";
 import { Copy } from "lucide-react";
+import { useUserWallet } from "@/src/providers";
 
 interface Props {
   user: User;
@@ -13,6 +14,7 @@ interface Props {
 
 export const QuestsCard: FC<Props> = ({ user }) => {
   const { referralId, initialized, createReferralMember } = useReferral();
+  const { currentUser } = useUserWallet();
 
   const [isCopied, setIsCopied] = useState(false);
 
@@ -44,43 +46,48 @@ export const QuestsCard: FC<Props> = ({ user }) => {
 
   return (
     <div className="bg-white w-full border border-neutral200 rounded-md overflow-hidden p-5">
-      <AlertCard
-        type="positive"
-        title="Share and earn 1% of each quest completed your referred profiles. Forever."
-        description={null}
-      >
-        {referralId && initialized ? (
-          <div className="flex items-center gap-1 mt-1">
-            <p className="text-[#6BB274] text-xs">{`${SITE_URL}${referralId}`}</p>
-            <button
-              className="relative"
-              onClick={() => handleCopyClick(`${SITE_URL}${referralId}`)}
-            >
-              <Copy size={12} className="text-[#6BB274]" />
-              <div
-                className={`absolute text-sm right-0 -bottom-10 transition-opacity text-neutral600
+      {user.id === currentUser.id && currentUser.hasBeenApproved && (
+        <>
+          <AlertCard
+            type="positive"
+            title="Share and earn 1% of each quest completed your referred profiles. Forever."
+            description={null}
+          >
+            {referralId && initialized ? (
+              <div className="flex items-center gap-1 mt-1">
+                <p className="text-[#6BB274] text-xs">{`${SITE_URL}${referralId}`}</p>
+                <button
+                  className="relative"
+                  onClick={() => handleCopyClick(`${SITE_URL}${referralId}`)}
+                >
+                  <Copy size={12} className="text-[#6BB274]" />
+                  <div
+                    className={`absolute text-sm right-0 -bottom-10 transition-opacity text-neutral600
                 duration-500 bg-neutral100 border border-neutral200 rounded-md py-1 px-2 ${
                   isCopied ? "opacity-100" : "opacity-0"
                 }`}
-              >
-                {"Copied!"}
+                  >
+                    {"Copied!"}
+                  </div>
+                </button>
               </div>
-            </button>
-          </div>
-        ) : (
-          <div>
-            <div className="flex items-center px-4 py-4 bg-white border border-primaryBtnBorder uppercase rounded-md gap-2">
-              <Button
-                className="text-[#6BB274] title-text flex items-center p-2 bg-neutral100 border border-neutral200 rounded-md"
-                onClick={handleCreateLink}
-              >
-                Generate Referral Link
-              </Button>
-            </div>
-          </div>
-        )}
-      </AlertCard>
-      <p className="title-text text-neutral600 mt-4">Completed Quests</p>
+            ) : (
+              <div>
+                <div className="flex items-center px-4 py-4 bg-white border border-primaryBtnBorder uppercase rounded-md gap-2">
+                  <Button
+                    className="text-[#6BB274] title-text flex items-center p-2 bg-neutral100 border border-neutral200 rounded-md"
+                    onClick={handleCreateLink}
+                  >
+                    Generate Referral Link
+                  </Button>
+                </div>
+              </div>
+            )}
+          </AlertCard>
+          <div className="mb-4" />
+        </>
+      )}
+      <p className="title-text text-neutral600">Completed Quests</p>
       <QuestTable type="profile" user={user} />
     </div>
   );
