@@ -1,4 +1,4 @@
-import { LoadingBar, ProgressBar } from "@/components";
+import { FC, useEffect, useState } from "react";
 import { IS_CUSTODIAL } from "@/src/constants";
 import {
   BOUNTY_ACTIONS_TUTORIAL_II_INITIAL_STATE,
@@ -10,14 +10,12 @@ import { useTutorial } from "@/src/providers/tutorialProvider";
 import { api } from "@/src/utils";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
-import { FC, useEffect, useState } from "react";
+import { LoadingBar, ProgressBar } from "@/components";
 import {
   CompleteProfileModal,
   PortfolioCard,
   ProfileCard,
   QuestsCard,
-  ReferCard,
-  ResumeCard,
 } from "./components";
 
 dayjs.extend(relativeTime);

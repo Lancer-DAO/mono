@@ -141,8 +141,11 @@ const QuestTable: React.FC<Props> = ({ type, user }) => {
         return true;
       });
     }
-
-    setFilteredBounties(filteredBounties);
+    if (type === "quests") {
+      setFilteredBounties(filteredBounties);
+    } else {
+      setFilteredBounties(filteredBounties.splice(0, 6));
+    }
   }, [filters, allBounties, currentUser, type]);
 
   useEffect(() => {
