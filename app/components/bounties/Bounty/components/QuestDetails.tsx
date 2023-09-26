@@ -68,11 +68,6 @@ const QuestDetails = () => {
           <p className="text text-neutral500">{`${currentBounty.estimatedTime.toString()} ${
             Number(currentBounty.estimatedTime) > 1 ? "hours" : "hour"
           }`}</p> */}
-          <Divider />
-          <div className="flex items-center gap-1.5">
-            <p className="text text-neutral500">{`$${formatPrice(
-              Number(currentBounty?.escrow?.amount)
-            )}`}</p>
             {/* <Link
               href={getSolscanAddress(
                 new PublicKey(currentBounty?.escrow?.publicKey)
@@ -80,6 +75,11 @@ const QuestDetails = () => {
               target="true"
             > */}
             {currentBounty?.escrow && (
+              <div className="flex items-center gap-1.5">
+              <Divider />
+              <p className="text text-neutral500">{`$${formatPrice(
+                Number(currentBounty?.escrow?.amount)
+              )}`}</p>
               <Link
                 href={getSolscanAddress(
                   new PublicKey(currentBounty?.escrow?.publicKey)
@@ -92,8 +92,8 @@ const QuestDetails = () => {
                   height={12}
                 />
               </Link>
+              </div>
             )}
-          </div>
         </div>
         <div className="flex px-5 gap-2">
           {currentBounty.tags.length > 0 && (
@@ -118,17 +118,17 @@ const QuestDetails = () => {
           >
             {formatString(currentBounty.state)}
           </div>
+          {currentBounty.isExternal && (
+            <div>
+              <Link href={currentBounty.links} passHref>
+                <button className="bg-errorBg text-xs text-center w-fit px-2 py-1 rounded-lg border">
+                  Go To Quest
+                </button>
+              </Link>
+            </div>
+          )}
         </div>
         
-        {currentBounty.isExternal && (
-          <div className="flex py-2 px-5">
-            <Link href={currentBounty.links} passHref>
-              <button className="bg-red-500 text-white px-4 py-2 rounded-lg border font-bold">
-                Go to Quest
-              </button>
-            </Link>
-          </div>
-        )}
       </div>
       <div className="h-[1px] w-full bg-neutral200" />
       {/* quest content */}
