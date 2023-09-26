@@ -123,7 +123,10 @@ export const Header = () => {
               return (
                 <LinkButton
                   href={href}
-                  active={router.pathname.includes(href)}
+                  active={
+                    router.pathname === href ||
+                    router.pathname.startsWith(`${href}/`)
+                  }
                   className="text-sm text-neutral-500"
                   key={href}
                   disabled={
