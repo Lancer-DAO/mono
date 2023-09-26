@@ -30,7 +30,7 @@ const CheckpointView: FC<Props> = ({ index, checkpoint, setQuoteData }) => {
   const deleteCheckpoint = () => {
     setQuoteData((prevData) => {
       const updatedData = { ...prevData };
-      updatedData.checkpoints.splice(index, 1);
+      updatedData.checkpoints = updatedData.checkpoints.filter((_, i) => i !== index);
       updatedData.estimatedTime = updatedData.checkpoints.reduce(
         (total, checkpoint) => total + checkpoint.estimatedTime,
         0
