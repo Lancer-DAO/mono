@@ -12,7 +12,7 @@ import { api, updateList } from "@/src/utils";
 import { BOUNTY_USER_RELATIONSHIP, BountyState } from "@/types";
 import toast from "react-hot-toast";
 import { QuestActionView } from "./QuestActions";
-import { addSubmitterFFA, cancelFFA, voteToCancelFFA } from "@/escrow/adapters";
+import { cancelFFA, voteToCancelFFA } from "@/escrow/adapters";
 import { PublicKey } from "@solana/web3.js";
 import { ChatButton, FundQuestModal } from "@/components";
 import { useReferral } from "@/src/providers/referralProvider";
@@ -136,7 +136,7 @@ const ApplicantsView: FC<Props> = ({
       setCurrentBounty(updatedBounty);
       toast.success("Successfully voted to cancel", { id: toastId });
     } catch (error) {
-      console.log(error)
+      console.log(error);
       if (
         (error.message as string).includes(
           "Wallet is registered to another user"
