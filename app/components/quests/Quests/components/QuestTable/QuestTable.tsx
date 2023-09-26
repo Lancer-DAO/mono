@@ -36,7 +36,6 @@ interface Props {
 }
 
 const QuestTable: React.FC<Props> = ({ type, user }) => {
-  const { allBounties } = useBounty();
   // state
   const [tags, setTags] = useState<string[]>([]);
   const [bounds, setPriceBounds] = useState<[number, number]>([5, 10000]);
@@ -52,6 +51,7 @@ const QuestTable: React.FC<Props> = ({ type, user }) => {
   });
 
   // api + context
+  const { allBounties } = useBounty();
   const { currentUser } = useUserWallet();
   const { allIndustries } = useIndustry();
   const { allMints } = useMint();
@@ -64,6 +64,7 @@ const QuestTable: React.FC<Props> = ({ type, user }) => {
   }
 
   useEffect(() => {
+    if (!allBounties || !currentUser || !allIndustries) return;
     var filteredBounties = [];
     if (type === "profile") {
       filteredBounties = allBounties?.filter((bounty) => {
