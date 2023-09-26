@@ -42,6 +42,15 @@ export interface LancerApplyData {
   details: string;
 }
 
+export interface LancerQuoteData {
+  title: string;
+  description: string;
+  estimatedTime: number;
+  price: number;
+  state: QuestProgressState;
+  checkpoints: Checkpoint[];
+}
+
 interface Media {
   imageUrl: string;
   title: string;
@@ -62,4 +71,11 @@ export interface LancerUpdateData {
   description: string;
   media: Media[];
   state: QuestProgressState;
+}
+
+export interface Checkpoint {
+  title: string;
+  price: number;
+  description: string;
+  estimatedTime: number;
 }

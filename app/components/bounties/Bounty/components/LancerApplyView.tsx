@@ -4,7 +4,7 @@ import { useUserWallet } from "@/src/providers";
 import { useBounty } from "@/src/providers/bountyProvider";
 import { useReferral } from "@/src/providers/referralProvider";
 import { api, updateList } from "@/src/utils";
-import { BOUNTY_USER_RELATIONSHIP, LancerApplyData } from "@/types";
+import { BOUNTY_USER_RELATIONSHIP, LancerApplyData, LancerQuoteData } from "@/types";
 import { PublicKey } from "@solana/web3.js";
 import { motion } from "framer-motion";
 import { Image } from "lucide-react";
@@ -17,15 +17,17 @@ import { QuestActionView } from "./QuestActions";
 interface Props {
   applyData: LancerApplyData,
   setApplyData: Dispatch<SetStateAction<LancerApplyData>>,
+  quoteData: LancerQuoteData,
   setCurrentActionView: Dispatch<SetStateAction<QuestActionView>>,
 }
 
-const LancerApplyView: FC<Props> = ({ applyData, setApplyData, setCurrentActionView }) => {
+const LancerApplyView: FC<Props> = ({ applyData, setApplyData, quoteData, setCurrentActionView }) => {
   const { currentBounty, setCurrentBounty } = useBounty();
   const { currentUser, currentWallet } = useUserWallet();
   const { createReferralMember } = useReferral();
   const { mutateAsync: updateBountyUsers } =
     api.bountyUsers.update.useMutation();
+  const { mutateAsync: createQuote } = api.quote.createQuote.useMutation();
 
   const [hasApplied, setHasApplied] = useState(false);
 
@@ -33,9 +35,9 @@ const LancerApplyView: FC<Props> = ({ applyData, setApplyData, setCurrentActionV
     // Request to submit. Does not interact on chain
     const toastId = toast.loading("Sending application...");
     try {
-      await createReferralMember(
-        new PublicKey(currentBounty.escrow.mint.publicKey)
-      );
+      // await createReferralMember(
+      //   new PublicKey(currentBounty.escrow.mint.publicKey)
+      // );
       const newRelations = updateList(
         currentBounty.currentUserRelationsList ?? [],
         [],
@@ -51,6 +53,15 @@ const LancerApplyView: FC<Props> = ({ applyData, setApplyData, setCurrentActionV
         label: "request-to-submit",
         signature: "n/a",
         applicationText: applyData.details,
+      });
+      await createQuote({
+        bountyId: currentBounty.id,
+        title: quoteData.title,
+        description: quoteData.description,
+        estimatedTime: quoteData.estimatedTime,
+        price: quoteData.price,
+        state: quoteData.state,
+        checkpoints: quoteData.checkpoints,
       });
 
       setCurrentBounty(updatedBounty);

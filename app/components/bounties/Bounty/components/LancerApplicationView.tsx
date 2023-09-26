@@ -1,17 +1,11 @@
 import { useUserWallet } from "@/src/providers";
-import { LancerApplyData, QuestProgressState } from "@/types";
+import { useBounty } from "@/src/providers/bountyProvider";
+import { Checkpoint, LancerApplyData, LancerQuoteData, QuestProgressState } from "@/types";
+import { Quote } from "@prisma/client";
 import { Dispatch, FC, SetStateAction, useState } from "react";
 import LancerApplyView from "./LancerApplyView";
 import LancerSubmitQuoteView from "./LancerSubmitQuoteView";
 import { QuestActionView } from "./QuestActions";
-
-export interface Checkpoint {
-  title: string;
-  price: number;
-  description: string;
-  estimatedTime: number;
-}
-
 interface Props {
   currentActionView: QuestActionView;
   setCurrentActionView: Dispatch<SetStateAction<QuestActionView>>;
@@ -28,20 +22,14 @@ const LancerApplicationView: FC<Props> = ({ currentActionView, setCurrentActionV
     details: "",
   });
 
-  const [quoteData, setQuoteData] = useState<Checkpoint[]>([
-    {
-      title: "Sketches and early ideas",
-      price: 400,
-      description: "",
-      estimatedTime: 4,
-    },
-    {
-      title: "Wireframes and iterations",
-      price: 400,
-      description: "",
-      estimatedTime: 4,
-    }
-  ]);
+  const [quoteData, setQuoteData] = useState<LancerQuoteData>({
+    title: "",
+    description: "",
+    estimatedTime: 0,
+    price: 0,
+    state: QuestProgressState.NEW,
+    checkpoints: [],
+  });
 
   return (
     <>
@@ -49,6 +37,7 @@ const LancerApplicationView: FC<Props> = ({ currentActionView, setCurrentActionV
         <LancerApplyView
           applyData={applyData}
           setApplyData={setApplyData}  
+          quoteData={quoteData}
           setCurrentActionView={setCurrentActionView}
         />
       )}

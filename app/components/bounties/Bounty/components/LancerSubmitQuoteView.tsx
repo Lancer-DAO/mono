@@ -4,18 +4,17 @@ import { smallClickAnimation } from "@/src/constants";
 import { useUserWallet } from "@/src/providers";
 import { useBounty } from "@/src/providers/bountyProvider";
 import { api } from "@/src/utils";
-import { QuestProgressState } from "@/types";
+import { Checkpoint, LancerQuoteData, QuestProgressState } from "@/types";
 import { motion } from "framer-motion";
 import { Dispatch, FC, SetStateAction, useState } from "react";
 import { toast } from "react-hot-toast";
 import ActionsCardBanner from "./ActionsCardBanner";
 import { default as CheckpointView, default as MilestoneView } from "./CheckpointView";
-import { Checkpoint } from "./LancerApplicationView";
 import { QuestActionView } from "./QuestActions";
 
 interface Props {
-  quoteData: Checkpoint[],
-  setQuoteData: Dispatch<SetStateAction<Checkpoint[]>>,
+  quoteData: LancerQuoteData,
+  setQuoteData: Dispatch<SetStateAction<LancerQuoteData>>,
   setCurrentActionView: Dispatch<SetStateAction<QuestActionView>>,
 }
 
@@ -23,15 +22,15 @@ const LancerSubmitQuoteView: FC<Props> = ({ quoteData, setQuoteData, setCurrentA
   const { currentBounty, setCurrentBounty } = useBounty();
   const { currentUser, currentWallet } = useUserWallet();
 
-  const addMilestone = () => {
-    const newMilestone = {
+  const addCheckpoint = () => {
+    const newCheckpoint = {
       title: "",
       price: 0,
       description: "",
       estimatedTime: 0,
     };
 
-    setQuoteData([...quoteData, newMilestone]);
+    setQuoteData({ ...quoteData, checkpoints: [...quoteData.checkpoints, newCheckpoint]});
   };
 
   if (!currentBounty || !currentUser) return null;
@@ -40,8 +39,8 @@ const LancerSubmitQuoteView: FC<Props> = ({ quoteData, setQuoteData, setCurrentA
     <div className="flex flex-col">
       <ActionsCardBanner
         title={`Quote to ${currentBounty.creator.user.name}`}
-        subtitle={`${quoteData.length || 0} ${
-          (quoteData.length || 0) === 1 ? "quote" : "quotes"
+        subtitle={`${quoteData.checkpoints.length || 0} ${
+          (quoteData.checkpoints.length || 0) === 1 ? "quote" : "quotes"
         } have been sent to them already`}
       ></ActionsCardBanner>
       <div className="px-6 py-4">
@@ -50,11 +49,11 @@ const LancerSubmitQuoteView: FC<Props> = ({ quoteData, setQuoteData, setCurrentA
             <RedFire />
             <div className="title-text text-neutral600">Quote Price</div>
             <div className="w-[1px] h-5 bg-neutral200" />
-            <div className="text-mini text-neutral400">{`${quoteData.reduce((total, checkpoint) => total + checkpoint.estimatedTime, 0)}h`}</div>
+            <div className="text-mini text-neutral400">{`${quoteData.estimatedTime}h`}</div>
           </div>
-          <div className="flex items-center title-text text-primary200">{`$${quoteData.reduce((total, milestone) => total + milestone.price, 0 ) }`}</div>
+          <div className="flex items-center title-text text-primary200">{`$${quoteData.price}`}</div>
         </div>
-        {quoteData.map((checkpoint, index) => (
+        {quoteData.checkpoints.map((checkpoint, index) => (
           <CheckpointView
             checkpoint={checkpoint} 
             setQuoteData={setQuoteData} 
@@ -62,11 +61,11 @@ const LancerSubmitQuoteView: FC<Props> = ({ quoteData, setQuoteData, setCurrentA
             key={index} 
           />
         ))}
-        {quoteData.length < 5 && (
+        {quoteData.checkpoints.length < 5 && (
           <div className="py-4">
             <button 
               className="py-1 px-2 flex gap-1 justify-center items-center rounded-md border border-neutral200 text-mini text-neutral500"
-              onClick={() => addMilestone()}
+              onClick={() => addCheckpoint()}
             >
               <Plus /> 
               Add a Milestone

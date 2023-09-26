@@ -1,13 +1,13 @@
 import Edit from "@/components/@icons/Edit";
 import Fire from "@/components/@icons/Fire";
 import Trash from "@/components/@icons/Trash";
+import { Checkpoint, LancerQuoteData } from "@/types";
 import { Dispatch, FC, SetStateAction, useState } from "react";
 import { ChevronDown, ChevronUp } from "react-feather";
-import { Checkpoint } from "./LancerApplicationView";
 
 interface Props {
   checkpoint: Checkpoint,
-  setQuoteData: Dispatch<SetStateAction<Checkpoint[]>>,
+  setQuoteData: Dispatch<SetStateAction<LancerQuoteData>>,
   index: number,
 }
 
@@ -18,14 +18,30 @@ const CheckpointView: FC<Props> = ({ index, checkpoint, setQuoteData }) => {
 
   const editCheckpoint = () => {
     setQuoteData((prevData) => {
-      const updatedData = [...prevData];
-      updatedData[index] = tempCheckpoint;
+      const updatedData = {...prevData};
+      updatedData.checkpoints[index] = tempCheckpoint;
+      updatedData.estimatedTime = updatedData.checkpoints.reduce((total, checkpoint) => total + checkpoint.estimatedTime, 0)
+      updatedData.price = updatedData.checkpoints.reduce((total, checkpoint) => total + checkpoint.price, 0);
+      
       return updatedData;
     });
   };
 
   const deleteCheckpoint = () => {
-    setQuoteData((prevData) => prevData.filter((_, i) => i != index));
+    setQuoteData((prevData) => {
+      const updatedData = { ...prevData };
+      updatedData.checkpoints.splice(index, 1);
+      updatedData.estimatedTime = updatedData.checkpoints.reduce(
+        (total, checkpoint) => total + checkpoint.estimatedTime,
+        0
+      );
+      updatedData.price = updatedData.checkpoints.reduce(
+        (total, checkpoint) => total + checkpoint.price,
+        0
+      );
+  
+      return updatedData;
+    });
   };
 
   return (
