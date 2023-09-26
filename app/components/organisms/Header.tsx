@@ -46,12 +46,12 @@ export const Header = () => {
 
   const router = useRouter();
 
-  const wrapperRef = useRef(null);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [selectedQuest, setSelectedQuest] = useState<BountyPreview | null>(
     null
   );
 
+  const wrapperRef = useRef(null);
   const toggleDropdown = () => setDropdownOpen(!dropdownOpen);
 
   useOutsideAlerter(wrapperRef, () => {

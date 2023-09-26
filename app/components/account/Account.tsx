@@ -133,11 +133,11 @@ export const Account: FC<Props> = ({ self }) => {
 
   return (
     <>
-      <div className="w-full md:w-[95%] items-center justify-center flex flex-col mx-auto px-4 md:px-0 py-24">
+      <div className="w-full md:w-[95%] max-w-[1600px] items-center justify-center flex flex-col mx-auto px-4 md:px-0 py-24">
         {account && currentUser ? (
           <div className="w-full flex gap-5 justify-center">
             {/* left column */}
-            <div className="flex flex-col gap-5 w-full max-w-[550px]">
+            <div className="flex flex-col gap-5 w-full max-w-[600px]">
               <ProfileCard
                 picture={account.picture}
                 githubId={account.githubId}

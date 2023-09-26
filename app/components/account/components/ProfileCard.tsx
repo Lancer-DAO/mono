@@ -20,10 +20,12 @@ import { PublicKey, Transaction } from "@solana/web3.js";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Check, Edit, X } from "react-feather";
 import LinksCard from "./LinksCard";
 import { BadgesCard } from "./BadgesCard";
+import { useOutsideAlerter } from "@/src/hooks";
+import { ChevronsUpDown } from "lucide-react";
 
 dayjs.extend(relativeTime);
 
@@ -56,6 +58,14 @@ export const ProfileCard = ({
   const [amount, setAmount] = useState(0);
   const [charCount, setCharCount] = useState(0);
   const [sendToPublicKey, setSentToPublicKey] = useState("");
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+
+  const wrapperRef = useRef(null);
+  const toggleDropdown = () => setDropdownOpen(!dropdownOpen);
+
+  useOutsideAlerter(wrapperRef, () => {
+    setDropdownOpen(false);
+  });
 
   // context + api
   const { connection } = useConnection();
@@ -195,7 +205,22 @@ export const ProfileCard = ({
             className="rounded-full overflow-hidden"
           />
           <div className="flex flex-col gap-1">
-            <h1 className="text-neutral600">{user.name}</h1>
+            <div className="flex items-center gap-2">
+              <h1 className="text-neutral600">{user.name}</h1>
+              {self && !nameEdit.editing && (
+                <button
+                  onClick={() =>
+                    setNameEdit({
+                      editing: true,
+                      name: user.name,
+                    })
+                  }
+                  className="rounded-md uppercase font-bold text-neutral500"
+                >
+                  <Edit className="w-4" />
+                </button>
+              )}
+            </div>
             <div className="flex gap-3 items-center">
               <div className="px-2 py-1 rounded-md bg-neutral100 border border-neutral200">
                 <p className="text-neutral500 text-sm">
@@ -245,6 +270,99 @@ export const ProfileCard = ({
       <div className="h-[1px] w-full bg-neutral200" />
       <div className="w-full p-5">
         <div className="w-full flex items-center gap-2 mb-3">
+          {nameEdit.editing || industryEdit.editing ? (
+            <>
+              {/* name input field */}
+              <div className="w-full flex items-center gap-2">
+                <p className="text-neutral600 w-14 text-sm">Name</p>
+                <input
+                  type="text"
+                  value={nameEdit.name}
+                  onChange={(e) =>
+                    setNameEdit({ ...nameEdit, name: e.target.value })
+                  }
+                  className="placeholder:text-neutral400 w-40 
+                  p-2 bg-neutral100 border border-neutral200 
+                  rounded-md gap-2 text-neutral500 text-sm"
+                  placeholder="Anatoly Yakovenko"
+                />
+              </div>
+              {/* industry input field */}
+              <div className="w-full flex items-center gap-2">
+                <p className="text-neutral600 w-14 text-sm">Industry</p>
+                <div className="relative" ref={wrapperRef}>
+                  <div
+                    className="rounded-md border border-neutral200 bg-neutral100 
+                    px-3 py-2 h-9 w-40 flex items-center justify-between gap-2 cursor-pointer"
+                    onClick={toggleDropdown}
+                  >
+                    <p className="text-neutral500 w-full truncate text-mini">
+                      {industryEdit.industry.name}
+                    </p>
+                    <div className="w-3">
+                      <ChevronsUpDown height={12} width={12} />
+                    </div>
+                  </div>
+                  {dropdownOpen && (
+                    <div className="absolute top-full left-0 z-10 bg-secondary200 p-[5px] rounded-md text-mini text-white w-full">
+                      {allIndustries.map((i) => (
+                        <div
+                          key={i.id}
+                          className="p-2 truncate cursor-pointer"
+                          onClick={() => {
+                            if (industryEdit.industry?.id !== i.id) {
+                              setIndustryEdit({ ...industryEdit, industry: i });
+                              setDropdownOpen(false);
+                            }
+                          }}
+                        >
+                          {i.name}
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </div>
+              <div className="flex items-center gap-1">
+                <button
+                  onClick={() => {
+                    updateName({ name: nameEdit.name });
+                    updateIndustry({
+                      newIndustryId: industryEdit.industry.id,
+                      oldIndustryId: user.industries[0].id,
+                    });
+                    setNameEdit({ ...nameEdit, editing: false });
+                    setIndustryEdit({ ...industryEdit, editing: false });
+                    setAccount({
+                      ...account,
+                      name: nameEdit.name,
+                      industries: [industryEdit.industry],
+                    });
+                  }}
+                  className="rounded-md uppercase font-bold text-success"
+                >
+                  <Check />
+                </button>
+                <button
+                  onClick={() => {
+                    setNameEdit({
+                      editing: false,
+                      name: user.name,
+                    });
+                    setIndustryEdit({
+                      editing: false,
+                      industry: user.industries[0],
+                    });
+                  }}
+                  className="rounded-md uppercase font-bold text-error"
+                >
+                  <X />
+                </button>
+              </div>
+            </>
+          ) : null}
+        </div>
+        <div className="w-full flex items-center gap-2 mb-3">
           <p className="text-neutral600 title-text">Bio</p>
           {self && !bioEdit.editing && (
             <button
@@ -254,7 +372,7 @@ export const ProfileCard = ({
                   bio: user.bio,
                 })
               }
-              className="rounded-md uppercase font-bold text-neutral600"
+              className="rounded-md uppercase font-bold text-neutral500"
             >
               <Edit className="w-4" />
             </button>
