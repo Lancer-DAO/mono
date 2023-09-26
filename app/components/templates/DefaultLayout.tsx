@@ -40,7 +40,7 @@ const MobilePlaceholder = () => {
             alt="mobile-placeholder"
           />
           <h1>Welcome, Lancer.</h1>
-          <p className="text-center mt-2 px-10">
+          <p className="text-center mt-2 px-10 text-sm">
             Please view our freelance marketplace on a desktop for the best
             experience. Mobile coming soon :&#41;
           </p>
