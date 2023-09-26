@@ -6,15 +6,16 @@ interface Props {
   type: "positive" | "negative" | "neutral";
   title: string;
   description: string;
+  children?: React.ReactNode;
 }
 
-const AlertCard: FC<Props> = ({ type, title, description }) => {
+const AlertCard: FC<Props> = ({ type, title, description, children }) => {
   return (
     <div
-      className={`w-[92%] mx-auto rounded-md p-4 pl-12 mt-4 flex flex-col justify-evenly
+      className={`w-full mx-auto rounded-md p-4 pl-12 flex flex-col justify-evenly
     ${
       type === "positive"
-        ? "bg-successBg text-[#10966D]"
+        ? "bg-successBg text-[#6BB274]"
         : type === "negative"
         ? "bg-errorBg text-error"
         : "bg-neutral100 text-neutral-500"
@@ -28,7 +29,7 @@ const AlertCard: FC<Props> = ({ type, title, description }) => {
             style={{
               stroke:
                 type === "positive"
-                  ? "#10966D"
+                  ? "#6BB274"
                   : type === "negative"
                   ? "#F5364F"
                   : "#73807C",
@@ -37,6 +38,7 @@ const AlertCard: FC<Props> = ({ type, title, description }) => {
         </div>
       </div>
       <p className="text">{description}</p>
+      {children}
     </div>
   );
 };
