@@ -83,7 +83,35 @@ const bountyQuery = async (id: number) => {
   });
 };
 
-const bountyQueryMany = async (userId?: number) => {
+const bountyQueryMany = async (page: number, userId?: number) => {
+  const questsPerPage = 25;
+  const totalQuests = await prisma.bounty.count({
+    where: {
+      OR: [
+        {
+          users: {
+            some: {
+              userid: userId,
+            },
+          },
+          // delete me if local and testing quests page
+          isTest: false,
+        },
+        {
+          users: {
+            none: {
+              userid: userId,
+            },
+          },
+          isPrivate: false,
+          isTest: false,
+          state: {
+            in: ["accepting_applications", "new"],
+          },
+        },
+      ],
+    },
+  });
   const bounties = await prisma.bounty.findMany({
     where: {
       OR: [
@@ -114,9 +142,11 @@ const bountyQueryMany = async (userId?: number) => {
       createdAt: "desc",
     },
     select: BOUNTY_MANY_SELECT,
+    skip: page * questsPerPage,
+    take: questsPerPage,
   });
 
-  return bounties;
+  return { bounties, totalQuests };
 };
 
 const bountyQueryMine = async (userId?: number) => {
@@ -160,7 +190,8 @@ export type BountyType = UnwrapPromise<ReturnType<typeof get>>;
 export type BountyPreviewType = UnwrapArray<
   UnwrapPromise<ReturnType<typeof getMany>>
 >;
-export type UserPreviewType = BountyPreviewType["users"][0]["user"];
+export type UserPreviewType =
+  BountyPreviewType["allBounties"][0]["users"][0]["user"];
 export type BountyQueryType = UnwrapPromise<ReturnType<typeof bountyQuery>>;
 export type BountyPreviewQueryType = UnwrapPromise<
   ReturnType<typeof bountyQueryMany>
@@ -194,16 +225,16 @@ export const get = async (id: number, currentUserId: number) => {
   };
 };
 
-export const getMany = async (currentUserId?: number) => {
-  const bounties = await bountyQueryMany(currentUserId);
+export const getMany = async (page: number, currentUserId?: number) => {
+  const { bounties, totalQuests } = await bountyQueryMany(page, currentUserId);
 
-  const mappedBounties = bounties.map((bounty) => {
+  const allBounties = bounties.map((bounty) => {
     const userRelations = bounty.users;
     const creator = getBountyCreator(userRelations);
     return { ...bounty, creator };
   });
 
-  return mappedBounties;
+  return { allBounties, totalQuests };
 };
 
 export const getMine = async (currentUserId: number) => {

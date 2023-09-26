@@ -9,19 +9,23 @@ import {
 export interface IBountyContext {
   currentBounty: Bounty;
   allBounties: BountyPreview[];
+  totalQuests: number;
   myQuests: BountyPreview[];
   setCurrentBounty: (bounty: Bounty) => void;
   setAllBounties: (bounty: BountyPreview[]) => void;
   setMyQuests: (bounty: BountyPreview[]) => void;
+  setTotalQuests: (totalQuests: number) => void;
 }
 
 export const BountyContext = createContext<IBountyContext>({
   currentBounty: null,
   allBounties: [],
+  totalQuests: null,
   myQuests: [],
   setCurrentBounty: () => null,
   setAllBounties: () => null,
   setMyQuests: () => null,
+  setTotalQuests: () => null,
 });
 
 export function useBounty(): IBountyContext {
@@ -41,6 +45,7 @@ const BountyProvider: FunctionComponent<IBountyState> = ({
   const [currentBounty, setCurrentBounty] = useState<Bounty | null>(null);
   const [allBounties, setAllBounties] = useState<BountyPreview[] | null>(null);
   const [myQuests, setMyQuests] = useState<BountyPreview[] | null>(null);
+  const [totalQuests, setTotalQuests] = useState<number | null>(null);
 
   const contextProvider = {
     currentBounty,
@@ -49,6 +54,8 @@ const BountyProvider: FunctionComponent<IBountyState> = ({
     setAllBounties,
     myQuests,
     setMyQuests,
+    totalQuests,
+    setTotalQuests,
   };
   return (
     <BountyContext.Provider value={contextProvider}>

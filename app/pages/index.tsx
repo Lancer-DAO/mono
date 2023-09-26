@@ -11,22 +11,25 @@ export const Index: React.FC<{
   bounties: string;
   mints: string;
   industries: string;
-}> = ({ bounties, mints, industries }) => {
+  totalQuestsCount: string;
+}> = ({ bounties, mints, industries, totalQuestsCount }) => {
   const { setAllMints, allMints } = useMint();
   const { setAllIndustries, allIndustries } = useIndustry();
-  const { setAllBounties, allBounties } = useBounty();
+  const { setAllBounties, allBounties, totalQuests, setTotalQuests } =
+    useBounty();
 
   if (!allBounties && bounties) {
     setAllBounties(JSON.parse(bounties));
   }
-
   if (!allMints && mints) {
     setAllMints(JSON.parse(mints));
   }
   if (!allIndustries && industries) {
     setAllIndustries(JSON.parse(industries));
   }
-
+  if (!totalQuests && totalQuestsCount) {
+    setTotalQuests(parseInt(JSON.parse(totalQuestsCount)));
+  }
   return (
     <>
       <NextSeo title="Lancer | Quests" description="Lancer Quests" />
@@ -48,7 +51,10 @@ export async function getServerSideProps(
       const { email } = metadata.user;
 
       const user = await queries.user.getByEmail(email);
-      const allBounties = await queries.bounty.getMany(user.id);
+      const { allBounties, totalQuests } = await queries.bounty.getMany(
+        0,
+        user.id
+      );
 
       const allMints = await queries.mint.getAll();
       const allIndustries = await queries.industry.getMany();
@@ -56,6 +62,8 @@ export async function getServerSideProps(
         props: {
           currentUser: JSON.stringify(user),
           bounties: JSON.stringify(allBounties),
+          allQuests: JSON.stringify(allBounties),
+          totalQuestsCount: JSON.stringify(totalQuests),
 
           mints: JSON.stringify(allMints),
           industries: JSON.stringify(allIndustries),
@@ -71,7 +79,7 @@ export async function getServerSideProps(
     }
   } else {
     try {
-      const allBounties = await queries.bounty.getMany();
+      const { allBounties, totalQuests } = await queries.bounty.getMany(0);
       const allMints = await queries.mint.getAll();
       const allIndustries = await queries.industry.getMany();
       return {
@@ -80,6 +88,8 @@ export async function getServerSideProps(
           bounties: JSON.stringify(allBounties),
           mints: JSON.stringify(allMints),
           industries: JSON.stringify(allIndustries),
+          allQuests: JSON.stringify(allBounties),
+          totalQuestsCount: JSON.stringify(totalQuests),
         },
       };
     } catch (e) {

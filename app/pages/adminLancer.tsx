@@ -64,20 +64,21 @@ export async function getServerSideProps(
       },
     };
   }
-  const allBounties = await queries.bounty.getMany(user.id);
-  
-  return { props: {
-    currentUser: JSON.stringify(user),
-    bounties: JSON.stringify(allBounties), // NB
+  const { allBounties } = await queries.bounty.getMany(0, user.id);
 
-  } };
+  return {
+    props: {
+      currentUser: JSON.stringify(user),
+      bounties: JSON.stringify(allBounties), // NB
+    },
+  };
 }
 
 // const App: NextPage<AppProps> = ({ Component, pageProps }) => {
-  const App: React.FC<{
-    bounties: string;
-  }> = ({ bounties }) => {
-    // Can be set to 'devnet', 'testnet', or 'mainnet-beta'
+const App: React.FC<{
+  bounties: string;
+}> = ({ bounties }) => {
+  // Can be set to 'devnet', 'testnet', or 'mainnet-beta'
   const network = MAINNET_RPC;
 
   // You can also provide a custom RPC endpoint
@@ -87,7 +88,6 @@ export async function getServerSideProps(
   if (!allBounties && bounties) {
     setAllBounties(JSON.parse(bounties));
   }
-
 
   const wallets = useMemo(
     () => [
@@ -109,7 +109,7 @@ export async function getServerSideProps(
     [network]
   );
 
-  return <AdminLancer />
+  return <AdminLancer />;
   // return (
   //   wallets && (
   //     <ConnectionProvider endpoint={endpoint}>
