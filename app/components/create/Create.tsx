@@ -1,23 +1,6 @@
-import { useEffect, useState } from "react";
-import { BountyCard, PreviewCardBase } from "@/components";
-import { useUserWallet } from "@/src/providers";
-import { api } from "@/src/utils";
-import { FORM_SECTION, QuestFormData } from "@/types/forms";
-import { Mint } from "@prisma/client";
-import { PublicKey } from "@solana/web3.js";
-import {
-  AdditionalInfoForm,
-  CreateBountyForm,
-  PreviewForm,
-  SuccessForm,
-} from "./components";
-import { useMint } from "@/src/providers/mintProvider";
-
-interface Media {
-  imageUrl: string;
-  title: string;
-  description: string;
-}
+import { useState } from "react";
+import { QuestFormData } from "@/types/forms";
+import { CreateBountyForm } from "./components";
 
 export const Create = () => {
   const [formData, setFormData] = useState<QuestFormData>({

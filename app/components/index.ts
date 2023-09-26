@@ -45,12 +45,17 @@ const CoinflowFund = dynamic(() => import("./molecules/CoinflowFund"));
 const CopyLinkField = dynamic(() => import("./molecules/CopyLinkField"));
 const ImageUpload = dynamic(() => import("./molecules/ImageUpload"));
 const IndustryDropdown = dynamic(() => import("./molecules/IndustryDropdown"));
+const IndustryOptions = dynamic(() => import("./molecules/IndustryOptions"));
 const MintsDropdown = dynamic(() => import("./molecules/MintsDropdown"));
 const Modal = dynamic(() => import("./molecules/Modal"));
 const MultiSelectDropdown = dynamic(
   () => import("./molecules/MultiSelectDropdown")
 );
 const RangeSlider = dynamic(() => import("./molecules/RangeSlider"));
+const ReferenceDialogue = dynamic(
+  () => import("./molecules/ReferenceDialogue")
+);
+const SelectOptions = dynamic(() => import("./molecules/SelectOptions"));
 const SidePanel = dynamic(() => import("./molecules/sidebar/index"));
 const TutorialsModal = dynamic(() => import("./molecules/TutorialsModal"));
 const WalletInfo = dynamic(() => import("./molecules/WalletInfo"));
@@ -108,10 +113,13 @@ export {
   CopyLinkField,
   ImageUpload,
   IndustryDropdown,
+  IndustryOptions,
   MintsDropdown,
   Modal,
   MultiSelectDropdown,
   RangeSlider,
+  ReferenceDialogue,
+  SelectOptions,
   SidePanel,
   TutorialsModal,
   WalletInfo,

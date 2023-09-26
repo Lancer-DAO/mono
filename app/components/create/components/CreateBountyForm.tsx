@@ -1,19 +1,21 @@
 import { useState, Dispatch, FC, SetStateAction, useEffect } from "react";
-import { IndustryDropdown, Logo, Toggle } from "@/components";
-import { IS_MAINNET, smallClickAnimation, USDC_MINT } from "@/src/constants";
-import { FORM_SECTION, QuestFormData } from "@/types/forms";
+import {
+  IndustryOptions,
+  Logo,
+  ReferenceDialogue,
+  SelectOptions,
+} from "@/components";
+import { smallClickAnimation, USDC_MINT } from "@/src/constants";
+import { QuestFormData } from "@/types/forms";
 import { motion } from "framer-motion";
 import { toast } from "react-hot-toast";
 import { Bounty, IAsyncResult, Industry } from "@/types";
 import { api } from "@/src/utils";
 import { useIndustry } from "@/src/providers/industryProvider";
 import { useUserWallet } from "@/src/providers";
-import Tags from "./AdditionalInfo/tags";
+import Tags from "./Tags";
 import Image from "next/image";
-import ReferenceDialogue from "@/components/molecules/ReferenceDialogue";
 import { Trash, X } from "lucide-react";
-import IndustryOptions from "@/components/molecules/IndustryOptions";
-import SelectOptions from "@/components/molecules/SelectOptions";
 import { Option } from "@/components/molecules/SelectOptions";
 import { PublicKey } from "@solana/web3.js";
 import { createFFA } from "@/escrow/adapters";

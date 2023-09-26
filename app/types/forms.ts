@@ -1,7 +1,5 @@
 import { Industry } from "@/types";
 
-export type FORM_SECTION = "CREATE" | "MEDIA" | "FUND" | "PREVIEW" | "SUCCESS";
-
 export interface QuestFormData {
   issueTitle: string;
   issueDescription: string;
