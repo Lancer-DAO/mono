@@ -1,5 +1,5 @@
 import { Industry } from "@prisma/client";
-import React, { useState } from "react";
+import { FC } from "react";
 
 interface Props {
   options: Industry[];
@@ -7,14 +7,14 @@ interface Props {
   onChange: (selected: Industry) => void;
 }
 
-const IndustryOptions: React.FC<Props> = ({ options, selected, onChange }) => {
+const IndustryOptions: FC<Props> = ({ options, selected, onChange }) => {
   return (
     options && (
-      <div className="flex ">
+      <div className="flex items-center gap-3">
         {options.map((option) => (
           <div
             key={option.name}
-            className="flex items-center cursor-pointer mb-2 mr-6 text-sm"
+            className="flex items-center cursor-pointer text-sm"
             onClick={() => onChange(option)}
           >
             <div
@@ -22,7 +22,7 @@ const IndustryOptions: React.FC<Props> = ({ options, selected, onChange }) => {
             `}
             >
               <div
-                className={`w-2.5 h-2.5  rounded-full ${
+                className={`w-2.5 h-2.5 rounded-full ${
                   selected.id === option.id ? "bg-primary200" : "bg-white"
                 }`}
               />
