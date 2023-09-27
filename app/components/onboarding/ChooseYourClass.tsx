@@ -1,4 +1,4 @@
-import { FC, useState } from "react";
+import { FC } from "react";
 import { Logo } from "@/components";
 import { smallClickAnimation } from "@/src/constants";
 import { motion } from "framer-motion";
@@ -17,7 +17,7 @@ const Highlight: React.FC<{ label: string }> = ({ label }) => {
         className={`flex items-center justify-center w-5 h-5 border rounded-full bg-neutral-200
             `}
       >
-        <div className={`w-2 h-2  rounded-full bg-neutral-300`} />
+        <div className={`w-2 h-2  rounded-full bg-neutral-400`} />
       </div>
     </div>
   );
@@ -37,10 +37,11 @@ const LANCER_HEIGHLIGHTS = [
   "Variety of projects",
 ];
 
-export const ChooseYourClass: FC<{ setPage: (page: number) => void }> = ({
-  setPage,
-}) => {
-  const [selectedClass, setSelectedClass] = useState<Class>("Noble");
+export const ChooseYourClass: FC<{
+  setPage: (page: number) => void;
+  selectedClass: Class;
+  setSelectedClass: (selectedClass: Class) => void;
+}> = ({ setPage, selectedClass, setSelectedClass }) => {
   const [isInsideNoble, nobleRef] = useCursorInside();
   const [isInsideLancer, lancerRef] = useCursorInside();
   return (

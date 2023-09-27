@@ -7,12 +7,14 @@ interface Props {
   options: Option[];
   selected: Option[];
   onChange: (selected: Option[]) => void;
+  version?: "default" | "white";
 }
 
 const MultiSelectDropdown: React.FC<Props> = ({
   options,
   selected,
   onChange,
+  version,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
 
@@ -69,6 +71,36 @@ const MultiSelectDropdown: React.FC<Props> = ({
       );
     });
   };
+  console.log("version", version);
+
+  if (version === "white") {
+    return (
+      <div className="relative w-full h-[34px]" ref={menuRef}>
+        <div
+          className="h-full w-full flex justify-between bg-transparent border border-neutral-200 text-neutral500 
+        items-center cursor-pointer px-4 rounded-lg"
+          onClick={toggleOpen}
+        >
+          <div className="text-[14px] text-neutral-500 overflow-hidden whitespace-nowrap overflow-ellipsis">
+            {selected?.length === 0
+              ? "Select"
+              : selected?.map((item) => item.label).join(", ")}
+          </div>
+          <div className={`text-xl ${isOpen ? "transform rotate-180" : ""}`}>
+            ▾
+          </div>
+        </div>
+        {isOpen && (
+          <div
+            className="absolute top-full left-0 z-10 flex flex-col max-h-[200px] overflow-y-auto 
+          bg-neutralBtn border border-neutralBtnBorder rounded-lg shadow-md w-full"
+          >
+            {renderOptions()}
+          </div>
+        )}
+      </div>
+    );
+  }
 
   return (
     <div className="relative max-w-[220px] h-[40px]" ref={menuRef}>
