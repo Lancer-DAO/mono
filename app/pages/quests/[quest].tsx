@@ -42,7 +42,6 @@ export async function getServerSideProps(
         },
       };
     }
-    console.log("user passed");
     const quest = await queries.bounty.get(questId, user.id);
 
     const allMints = await queries.mint.getAll();
