@@ -6,6 +6,7 @@ import { CreateYourProfile } from "@/components/onboarding/CreateYourProfile";
 import { GetServerSidePropsContext } from "next";
 import * as queries from "@/prisma/queries";
 import { GoodToGo } from "@/components/onboarding/GoodToGo";
+import { useState } from "react";
 
 export async function getServerSideProps(
   context: GetServerSidePropsContext<{ id: string; req; res }>
@@ -51,12 +52,17 @@ export async function getServerSideProps(
 }
 
 const BountiesPage: React.FC = () => {
+  const [page, setPage] = useState(0);
   return (
     <div className="w-full max-w-[1200px] mx-auto flex md:justify-evenly mt-4 py-24 ">
       <NextSeo title="Lancer | Bounties" description="Lancer Bounties" />
-      {/* <ChooseYourClass /> */}
-      {/* <CreateYourProfile /> */}
-      <GoodToGo />
+      {
+        [
+          <ChooseYourClass key={0} setPage={setPage} />,
+          <CreateYourProfile key={1} setPage={setPage} />,
+          <GoodToGo key={2} setPage={setPage} />,
+        ][page]
+      }
     </div>
   );
 };

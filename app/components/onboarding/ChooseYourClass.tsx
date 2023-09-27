@@ -37,7 +37,9 @@ const LANCER_HEIGHLIGHTS = [
   "Variety of projects",
 ];
 
-export const ChooseYourClass: FC = () => {
+export const ChooseYourClass: FC<{ setPage: (page: number) => void }> = ({
+  setPage,
+}) => {
   const [selectedClass, setSelectedClass] = useState<Class>("Noble");
   const [isInsideNoble, nobleRef] = useCursorInside();
   const [isInsideLancer, lancerRef] = useCursorInside();
@@ -47,102 +49,111 @@ export const ChooseYourClass: FC = () => {
         <Logo width="27px" height="27px" />
       </div>
       <h1 className="font-bold text-neutral-600 mt-2">Choose Your Class</h1>
-      <div className="flex relative">
-        <div className="relative h-[500px] w-[500px] z-0">
-          <div className="absolute h-[900px] w-[900px] top-[-200px] left-[-150px]">
-            {selectedClass === "Noble" ? (
-              <NobleOnboardingHelmet width="900px" height="900px" />
-            ) : (
-              <LancerOnboardingHelmet width="900px" height="900px" />
-            )}
-          </div>
-        </div>
-        <div className="flex flex-col justify-center items-start h-[500px] min-w-[450px] z-10">
-          <div className="flex flex-row gap-10 justify-center  items-center">
-            <div
-              className="hover:cursor-pointer "
-              onClick={() => {
-                setSelectedClass("Noble");
-              }}
-              ref={nobleRef}
-            >
-              <NobleOnboardingEmblem
-                height={"140px"}
-                width={"106px"}
-                type={
-                  selectedClass === "Noble" || isInsideNoble
-                    ? "selected"
-                    : "unselected"
-                }
-              />
-            </div>
-            <div
-              ref={lancerRef}
-              className="hover:cursor-pointer "
-              onClick={() => {
-                setSelectedClass("Lancer");
-              }}
-            >
-              <LancerOnboardingEmblem
-                height={"140px"}
-                width={"106px"}
-                type={
-                  selectedClass === "Lancer" || isInsideLancer
-                    ? "selected"
-                    : "unselected"
-                }
-              />
-            </div>
-          </div>
 
-          <div
-            className={`h-[2px] w-16 mt-8 ${
-              selectedClass === "Noble" ? "bg-noble100" : "bg-primary200"
-            }`}
-          />
-          <div className="flex flex-row gap-1 mt-4">
-            <div className="text-neutral-600 font-bold">
-              {selectedClass === "Noble" ? "Client" : "Freelancer"}
+      <div className="text-sm text-neutral-500  mt-1">
+        Choose how your adventure begins.
+      </div>
+      <div className="flex flex-col h-[550px] items-center justify-center">
+        <div className="flex relative">
+          <div className="relative h-[500px] w-[500px] z-0">
+            <div className="absolute h-[900px] w-[900px] top-[-200px] left-[-150px]">
+              {selectedClass === "Noble" ? (
+                <NobleOnboardingHelmet width="900px" height="900px" />
+              ) : (
+                <LancerOnboardingHelmet width="900px" height="900px" />
+              )}
             </div>
-            <div className="text-neutral-500 font-bold">{`(${selectedClass})`}</div>
           </div>
+          <div className="flex flex-col justify-center items-start h-[500px] min-w-[450px] z-10">
+            <div className="flex flex-row gap-10 justify-center  items-center">
+              <div
+                className="hover:cursor-pointer "
+                onClick={() => {
+                  setSelectedClass("Noble");
+                }}
+                ref={nobleRef}
+              >
+                <NobleOnboardingEmblem
+                  height={"140px"}
+                  width={"106px"}
+                  type={
+                    selectedClass === "Noble" || isInsideNoble
+                      ? "selected"
+                      : "unselected"
+                  }
+                />
+              </div>
+              <div
+                ref={lancerRef}
+                className="hover:cursor-pointer "
+                onClick={() => {
+                  setSelectedClass("Lancer");
+                }}
+              >
+                <LancerOnboardingEmblem
+                  height={"140px"}
+                  width={"106px"}
+                  type={
+                    selectedClass === "Lancer" || isInsideLancer
+                      ? "selected"
+                      : "unselected"
+                  }
+                />
+              </div>
+            </div>
 
-          <div
-            className={`mt-2 text-sm ${
-              selectedClass === "Noble" ? "text-noble100" : "text-primary200"
-            }`}
-          >
-            {selectedClass === "Noble"
-              ? "I'm looking to hire talent on Lancer."
-              : "I'm looking for work on Lancer."}
-          </div>
-          <div className="mt-4 text-sm">
-            {selectedClass === "Noble"
-              ? "The Noble is a disciplined and proud leader."
-              : "The Lancer is a skilled and ambitious contributor."}
-          </div>
-          <div className="flex mt-4 gap-2 max-w-[450px] flex-wrap">
-            {selectedClass === "Noble"
-              ? NOBLE_HEIGHLIGHTS.map((highlight) => (
-                  <Highlight key={highlight} label={highlight} />
-                ))
-              : LANCER_HEIGHLIGHTS.map((highlight) => (
-                  <Highlight key={highlight} label={highlight} />
-                ))}
+            <div
+              className={`h-[2px] w-16 mt-8 ${
+                selectedClass === "Noble" ? "bg-noble100" : "bg-primary200"
+              }`}
+            />
+            <div className="flex flex-row gap-1 mt-4">
+              <div className="text-neutral-600 font-bold">
+                {selectedClass === "Noble" ? "Client" : "Freelancer"}
+              </div>
+              <div className="text-neutral-500 font-bold">{`(${selectedClass})`}</div>
+            </div>
+
+            <div
+              className={`mt-2 text-sm ${
+                selectedClass === "Noble" ? "text-noble100" : "text-primary200"
+              }`}
+            >
+              {selectedClass === "Noble"
+                ? "I'm looking to hire talent on Lancer."
+                : "I'm looking for work on Lancer."}
+            </div>
+            <div className="mt-4 text-sm">
+              {selectedClass === "Noble"
+                ? "The Noble is a disciplined and proud leader."
+                : "The Lancer is a skilled and ambitious contributor."}
+            </div>
+            <div className="flex mt-4 gap-2 max-w-[450px] flex-wrap">
+              {selectedClass === "Noble"
+                ? NOBLE_HEIGHLIGHTS.map((highlight) => (
+                    <Highlight key={highlight} label={highlight} />
+                  ))
+                : LANCER_HEIGHLIGHTS.map((highlight) => (
+                    <Highlight key={highlight} label={highlight} />
+                  ))}
+            </div>
           </div>
         </div>
       </div>
       <motion.button
         {...smallClickAnimation}
-        className={`h-[50px] mt-5 w-full rounded-md text-base ${
+        className={`h-[50px] mt-5 w-full rounded-md text-base z-10 ${
           selectedClass === "Noble" ? "bg-noble100" : "bg-primary200"
         } text-white 
         } `}
+        onClick={() => {
+          setPage(1);
+        }}
       >
         {`Continue as ${selectedClass}`}
       </motion.button>
       <div className="flex gap-4 mt-8">
-        <div className="bg-neutral-300 h-2 w-2 rounded-full" />
+        <div className="bg-neutral-400 h-2 w-2 rounded-full" />
         <div className="bg-neutral-200 h-2 w-2 rounded-full" />
         <div className="bg-neutral-200 h-2 w-2 rounded-full" />
       </div>
