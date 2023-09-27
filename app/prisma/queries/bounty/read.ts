@@ -50,6 +50,7 @@ const BOUNTY_MANY_SELECT = {
   createdAt: true,
   isTest: true,
   price: true,
+  isExternal: true,
 };
 
 const bountyQuery = async (id: number) => {

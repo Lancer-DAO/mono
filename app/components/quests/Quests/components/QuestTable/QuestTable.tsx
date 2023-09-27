@@ -94,7 +94,10 @@ const QuestTable: React.FC<Props> = ({ type, user }) => {
         if ((!currentUser || !currentUser.isLancerDev) && bounty.isTest) {
           return false;
         }
-        if (!bounty.escrow.publicKey || !bounty.escrow.mint) {
+        if (
+          !bounty.isExternal &&
+          (!bounty.escrow?.publicKey || !bounty.escrow.mint)
+        ) {
           return false;
         }
         if (

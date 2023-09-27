@@ -51,86 +51,92 @@ const QuestDetails = () => {
       border border-neutral200 rounded-lg"
     >
       {/* quest header */}
-      <div className="flex flex-col items-start px-4 py-6">
-        {/* back arrow */}
-        <div className="flex items-center pb-1 gap-2">
-          <Link href="/quests">
-            <ArrowLeft className="text-neutral400" width={16} height={16} />
-          </Link>
-          <h2 className="text-neutral600 font-bold">{currentBounty?.title}</h2>
-        </div>
-        {/* quest info */}
-        <div className="flex items-center pb-[10px] px-6">
-          <p className="text text-neutral500">{`Created on ${dayjs
-            .unix(parseInt(currentBounty.createdAt) / 1000)
-            .format("D MMM YYYY")}`}</p>
-          {/* TODO: either add back estimated time or remove from design */}
-          {/* <Divider />
+      <div className="flex w-full justify-between items-center">
+        <div className="flex flex-col items-start px-4 py-6">
+          {/* back arrow */}
+          <div className="flex items-center pb-1 gap-2">
+            <Link href="/quests">
+              <ArrowLeft className="text-neutral400" width={16} height={16} />
+            </Link>
+            <h2 className="text-neutral600 font-bold">
+              {currentBounty?.title}
+            </h2>
+          </div>
+          {/* quest info */}
+          <div className="flex items-center pb-[10px] px-6">
+            <p className="text text-neutral500">{`Created on ${dayjs
+              .unix(parseInt(currentBounty.createdAt) / 1000)
+              .format("D MMM YYYY")}`}</p>
+            {/* TODO: either add back estimated time or remove from design */}
+            {/* <Divider />
           <p className="text text-neutral500">{`${currentBounty.estimatedTime.toString()} ${
             Number(currentBounty.estimatedTime) > 1 ? "hours" : "hour"
           }`}</p> */}
-          {/* <Link
+            {/* <Link
               href={getSolscanAddress(
                 new PublicKey(currentBounty?.escrow?.publicKey)
               )}
               target="true"
             > */}
-          {currentBounty?.escrow && (
-            <div className="flex items-center gap-1.5">
-              <Divider />
-              <p className="text text-neutral500">{`$${formatPrice(
-                Number(currentBounty?.escrow?.amount)
-              )}`}</p>
-              <Link
-                href={getSolscanAddress(
-                  new PublicKey(currentBounty?.escrow?.publicKey)
-                )}
-                target="_blank"
-              >
-                <ExternalLink
-                  className="text-neutral500"
-                  width={12}
-                  height={12}
-                />
-              </Link>
-            </div>
-          )}
-          <ArchiveBounty />
-        </div>
-        <div className="flex px-5 gap-2">
-          {currentBounty.tags.length > 0 && (
-            <div className="flex flex-wrap gap-2">
-              {currentBounty.tags
-                .filter((tag) => tag.name !== "")
-                .map((tag) => (
-                  <div
-                    className="text-neutral600 text-center text-mini bg-neutral100 w-fit px-2 py-1 rounded-lg border border-neutral200"
-                    key={tag.name}
-                  >
-                    {tag.name}
-                  </div>
-                ))}
-            </div>
-          )}
-          <div
-            className={cn(
-              "text-xs text-center w-fit px-2 py-1 rounded-lg border",
-              bountyStateColor(currentBounty.state)
+            {currentBounty?.escrow && (
+              <div className="flex items-center gap-1.5">
+                <Divider />
+                <p className="text text-neutral500">{`$${formatPrice(
+                  Number(currentBounty?.escrow?.amount)
+                )}`}</p>
+                <Link
+                  href={getSolscanAddress(
+                    new PublicKey(currentBounty?.escrow?.publicKey)
+                  )}
+                  target="_blank"
+                >
+                  <ExternalLink
+                    className="text-neutral500"
+                    width={12}
+                    height={12}
+                  />
+                </Link>
+              </div>
             )}
-          >
-            {formatString(currentBounty.state)}
+            <ArchiveBounty />
           </div>
-          {currentBounty.isExternal && (
-            <div>
-              <Link href={currentBounty.links} passHref>
-                <button className="bg-errorBg text-xs text-center w-fit px-2 py-1 rounded-lg border">
-                  Go To Quest
-                </button>
-              </Link>
+          <div className="flex px-5 gap-2">
+            {currentBounty.tags.length > 0 && (
+              <div className="flex flex-wrap gap-2">
+                {currentBounty.tags
+                  .filter((tag) => tag.name !== "")
+                  .map((tag) => (
+                    <div
+                      className="text-neutral600 text-center text-mini bg-neutral100 w-fit px-2 py-1 rounded-lg border border-neutral200"
+                      key={tag.name}
+                    >
+                      {tag.name}
+                    </div>
+                  ))}
+              </div>
+            )}
+            <div
+              className={cn(
+                "text-xs text-center w-fit px-2 py-1 rounded-lg border",
+                bountyStateColor(currentBounty.state)
+              )}
+            >
+              {formatString(currentBounty.state)}
             </div>
-          )}
+          </div>
         </div>
+        {currentBounty.isExternal && (
+          <div>
+            <Link href={currentBounty.links} passHref>
+              <button className="bg-primary200 mr-8 text-white text-xl  text-center w-fit px-2 py-1 rounded-lg border flex items-center gap-1">
+                Go To Quest{" "}
+                <ExternalLink className="text-white" width={20} height={20} />
+              </button>
+            </Link>
+          </div>
+        )}
       </div>
+
       <div className="h-[1px] w-full bg-neutral200" />
       {/* quest content */}
       <div className="px-10 py-4">
