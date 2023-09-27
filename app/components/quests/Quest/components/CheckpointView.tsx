@@ -2,6 +2,7 @@ import Edit from "@/components/@icons/Edit";
 import Fire from "@/components/@icons/Fire";
 import Trash from "@/components/@icons/Trash";
 import { Checkpoint, LancerQuoteData } from "@/types";
+import { marked } from "marked";
 import { Dispatch, FC, SetStateAction, useState } from "react";
 import { ChevronDown, ChevronUp } from "react-feather";
 
@@ -30,6 +31,8 @@ const CheckpointView: FC<Props> = ({
       updatedData.checkpoints[index] = tempCheckpoint;
       updatedData.estimatedTime = updatedData.checkpoints.reduce((total, checkpoint) => total + checkpoint.estimatedTime, 0)
       updatedData.price = updatedData.checkpoints.reduce((total, checkpoint) => total + checkpoint.price, 0);
+      updatedData.checkpoints[index].canEdit = false;
+      updatedData.checkpoints[index].detailsOpen = false;
       
       return updatedData;
     });
@@ -50,6 +53,14 @@ const CheckpointView: FC<Props> = ({
   
       return updatedData;
     });
+  };
+
+  const previewMarkup = () => {
+    const markdown = marked.parse(
+      checkpoint.description,
+      { breaks: true }
+    );
+    return { __html: markdown };
   };
 
   return (
@@ -142,12 +153,18 @@ const CheckpointView: FC<Props> = ({
           </div>
           <div className="flex flex-col gap-4">
             <div className="text text-black">Add few bullet points about the process (try to be as clear as possible):</div>
-            <textarea 
-              className="px-2 py-3 h-[162px] text-mini text-neutral600 rouned-md border border-[#E8F8F3] bg-[#FAFCFC] outline-none resize-none" placeholder="Type your message here..." 
-              value={tempCheckpoint.description}
-              onChange={(e) => setTempCheckpoint({ ...tempCheckpoint, description: e.target.value})}
-              disabled={!checkpoint.canEdit}
-            />
+            {checkpoint.canEdit ? (
+              <textarea 
+                className="px-2 py-3 h-[162px] text-mini text-neutral600 rounded-md border border-[#E8F8F3] bg-[#FAFCFC] outline-none resize-none" placeholder="Type your message here..." 
+                value={tempCheckpoint.description}
+                onChange={(e) => setTempCheckpoint({ ...tempCheckpoint, description: e.target.value})}
+                disabled={!checkpoint.canEdit}
+              />
+            ) : (
+              <div className="px-2 py-3 h-[162px] text-mini text-neutral600 rounded-md border border-[#E8F8F3] bg-[#FAFCFC] outline-none resize-none">
+                <div dangerouslySetInnerHTML={previewMarkup()} />
+              </div>
+            )}
           </div>
           {checkpoint.canEdit && (
             <div className="flex justify-end items-center gap-2">
@@ -172,7 +189,6 @@ const CheckpointView: FC<Props> = ({
                 className="px-4 py-2 rounded-md border border-neutral300 text-neutral600 title-text"
                 onClick={() => {
                   editCheckpoint();
-                  closeDetailsAndEdit(index);
                 }}
               >
                 Save Changes
