@@ -16,6 +16,7 @@ export interface Milestone {
   price: number;
   time: number;
   description: string;
+  addedWen: number;
 }
 
 interface Props {
@@ -31,12 +32,14 @@ const LancerSubmitQuoteView: FC<Props> = ({ setCurrentActionView }) => {
       price: 400,
       time: 4,
       description: "",
+      addedWen: +new Date(),
     },
     {
       name: "Wireframes and iterations",
       price: 400,
-      time: 4,
+      time: 3,
       description: "",
+      addedWen: +new Date(),
     }
   ]);
 
@@ -46,6 +49,7 @@ const LancerSubmitQuoteView: FC<Props> = ({ setCurrentActionView }) => {
       price: 0,
       time: 0,
       description: "",
+      addedWen: +new Date(),
     };
 
     setQuoteData([...quoteData, newMilestone]);
@@ -72,11 +76,11 @@ const LancerSubmitQuoteView: FC<Props> = ({ setCurrentActionView }) => {
           <div className="flex items-center title-text text-primary200">{`$${quoteData.reduce((total, milestone) => total + milestone.price, 0 ) }`}</div>
         </div>
         {quoteData.map((milestone, index) => (
-          <MilestoneView 
+          <MilestoneView
             milestone={milestone} 
             setQuoteData={setQuoteData} 
             index={index}
-            key={index} 
+            key={milestone.addedWen} 
           />
         ))}
         {quoteData.length < 5 && (
