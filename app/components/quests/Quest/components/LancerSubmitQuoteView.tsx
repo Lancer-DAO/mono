@@ -31,6 +31,7 @@ const LancerSubmitQuoteView: FC<Props> = ({ quoteData, setQuoteData, setCurrentA
       estimatedTime: 0,
       detailsOpen: true,
       canEdit: true,
+      addedWen: +new Date(),
     };
     
     setQuoteData({
@@ -95,7 +96,7 @@ const LancerSubmitQuoteView: FC<Props> = ({ quoteData, setQuoteData, setCurrentA
             closeAllExceptOne={closeAllExceptOne}
             closeDetailsAndEdit={closeDetailsAndEdit}
             setDetails={setDetails}
-            key={index} 
+            key={checkpoint.addedWen} 
           />
         ))}
         {quoteData.checkpoints.length < 5 && (

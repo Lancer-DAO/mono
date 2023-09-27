@@ -70,4 +70,5 @@ export interface Checkpoint {
   estimatedTime: number;
   detailsOpen: boolean;
   canEdit: boolean;
+  addedWen: number;
 }
