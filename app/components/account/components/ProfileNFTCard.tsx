@@ -1,5 +1,5 @@
 import { CashoutModal } from "@/components";
-import { BountyActionsButton } from "@/components/bounties/Bounty/components";
+import { QuestActionsButton } from "@/components/quests/Quest/components";
 import { IS_CUSTODIAL, USDC_MINT } from "@/src/constants";
 import { useUserWallet } from "@/src/providers";
 import { useAccount } from "@/src/providers/accountProvider";
@@ -183,11 +183,7 @@ export const ProfileNFTCard = ({
           <div className="flex flex-col gap-4 text-lg">
             {(picture || githubId) && (
               <Image
-                src={
-                  picture
-                    ? picture
-                    : "/assets/images/Lancer-Green-No-Background-p-800.png"
-                }
+                src={picture ? picture : "/assets/images/lancer_logo_flat.png"}
                 width={58}
                 height={58}
                 alt={user?.name.split("for ")[1]}
@@ -203,7 +199,7 @@ export const ProfileNFTCard = ({
           <div className="flex flex-col gap-4 text-lg text-textPrimary w-full">
             <div className="flex">
               {currentUser.hasBeenApproved && !self ? (
-                <BountyActionsButton
+                <QuestActionsButton
                   onClick={async () => {
                     const url = await createDM([
                       String(currentUser.id),
@@ -217,7 +213,7 @@ export const ProfileNFTCard = ({
                   extraClasses="w-fit mb-[6px]"
                 />
               ) : self ? (
-                <BountyActionsButton
+                <QuestActionsButton
                   onClick={async () => {
                     setShowCashout(true);
                   }}
@@ -229,9 +225,9 @@ export const ProfileNFTCard = ({
                 <div className="h-[56px]"></div>
               )}
               {currentUser.isAdmin && !self && !user.hasBeenApproved && (
-                <BountyActionsButton
+                <QuestActionsButton
                   onClick={async () => {
-                    approveUser({ id: user.id });
+                    approveUser({ email: user.email });
                     setApprovalText("Approved");
                   }}
                   type="green"

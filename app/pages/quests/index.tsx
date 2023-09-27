@@ -3,15 +3,13 @@ import {
   getSession,
   withPageAuthRequired,
 } from "@auth0/nextjs-auth0";
-import { Bounties } from "@/components/bounties/Bounties/Bounties";
+import { Bounties } from "@/components/quests/Quests/Quests";
 import { NextSeo } from "next-seo";
 import { GetServerSidePropsContext } from "next";
-import { prisma } from "@/server/db";
 import * as queries from "@/prisma/queries";
 import { useBounty } from "@/src/providers/bountyProvider";
 import { useMint } from "@/src/providers/mintProvider";
 import { useIndustry } from "@/src/providers/industryProvider";
-import { industries } from "@/server/api/routers/industries";
 
 export async function getServerSideProps(
   context: GetServerSidePropsContext<{ id: string; req; res }>

@@ -8,12 +8,10 @@ import { useUserWallet } from "@/src/providers";
 import { useAccount } from "@/src/providers/accountProvider";
 import { useTutorial } from "@/src/providers/tutorialProvider";
 import { api } from "@/src/utils";
-import { ProfileNFT } from "@/types/";
 import { createUnderdogClient } from "@underdog-protocol/js";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
-import { useRouter } from "next/router";
-import { FC, useCallback, useEffect, useState } from "react";
+import { FC, useEffect, useState } from "react";
 import {
   BadgesCard,
   CompleteProfileModal,
@@ -33,8 +31,6 @@ interface Props {
 }
 
 export const Account: FC<Props> = ({ self }) => {
-  const router = useRouter();
-
   // api + context
   const { currentUser, currentWallet } = useUserWallet();
   const { currentTutorialState, setCurrentTutorialState } = useTutorial();
