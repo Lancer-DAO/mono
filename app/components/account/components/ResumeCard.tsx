@@ -1,13 +1,8 @@
-import { useUserWallet } from "@/src/providers";
-import { useAccount } from "@/src/providers/accountProvider";
+import { useState } from "react";
 import { api } from "@/src/utils";
 import { UploadButton } from "@/src/utils/uploadthing";
-import { User } from "@/types";
 import "@uploadthing/react/styles.css";
-import { Trash } from "lucide-react";
-import Link from "next/link";
-import { useRouter } from "next/router";
-import { useState } from "react";
+import { Image as ImageIcon, Trash2 } from "lucide-react";
 import toast from "react-hot-toast";
 
 export const ResumeCard: React.FC<{
@@ -40,7 +35,7 @@ export const ResumeCard: React.FC<{
       const toastId = toast(
         (t) => (
           <div>
-            Are you sure you want to cancel the Quest?
+            Are you sure you want to delete your resume?
             <div className="mt-2 flex items-center gap-4 justify-center">
               <button
                 onClick={handleYes}
@@ -85,45 +80,35 @@ export const ResumeCard: React.FC<{
   };
 
   return (
-    <div
-      className={`relative rounded-xl bg-bgLancerSecondary/[8%] overflow-hidden p-6 pt-8 pb-10 ${
-        preview
-          ? "w-[400px] items-center justify-center"
-          : "w-full md:w-[658px] justify-start items-start"
-      }`}
-    >
-      <p
-        className={`font-bold text-2xl text-textGreen mb-4 ${
-          preview ? "text-center" : ""
-        }`}
-      >
-        Resume
-      </p>
-      {resumeUrl ? (
-        <div className="flex">
-          <Link
-            href={resumeUrl}
-            target="_blank"
-            className="inline-block px-4 py-4 bg-white border border-primaryBtnBorder uppercase rounded-md gap-2 
-            text-textGreen text-xs whitespace-nowrap overflow-hidden hover:underline"
-          >
-            View Your Resume
-          </Link>
+    <>
+      {resumeUrl !== "" ? (
+        <div className="flex items-center gap-2">
+          {setResumeUrl !== null && (
+            <button
+              disabled={isAwaitingResponse}
+              onClick={() => handleResumeDelete()}
+            >
+              <Trash2 color="#A1B2AD" size={18} />
+            </button>
+          )}
           <button
-            className="ml-2 px-3 py-3 my-1 bg-secondaryBtn border border-secondaryBtnBorder rounded-md disabled:cursor-not-allowed"
-            onClick={handleResumeDelete}
+            className="rounded-md bg-white border border-neutral200 flex items-center justify-center gap-2 h-8 px-2"
+            onClick={() => {
+              window.open(resumeUrl, "_blank", "noopener noreferrer");
+            }}
             disabled={isAwaitingResponse}
           >
-            <Trash size={18} strokeWidth={1.25} />
+            <ImageIcon color="#A1B2AD" size={18} />
+            <p className="text-xs text-neutral400 truncate">resume.pdf</p>
           </button>
         </div>
       ) : (
         <UploadButton
           appearance={{
             button:
-              "bg-[#D4FFD7] text-[#638463] ut-uploading:cursor-not-allowed after:bg-secondaryBtn",
+              "bg-neutral100 border border-neutral200 text-neutral500 ut-uploading:cursor-not-allowed px-2",
             allowedContent: {
-              color: "#638463",
+              color: "#14BB88",
               textTransform: "uppercase",
             },
           }}
@@ -137,6 +122,6 @@ export const ResumeCard: React.FC<{
           }}
         />
       )}
-    </div>
+    </>
   );
 };

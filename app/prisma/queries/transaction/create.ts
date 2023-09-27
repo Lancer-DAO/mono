@@ -6,7 +6,6 @@ export const create = async (
   signature: string,
   label: string,
   wallet: Prisma.Wallet,
-  chain: Prisma.Chain,
   escrow: Prisma.Escrow
 ): Promise<Prisma.Transaction> => {
   const transaction = await prisma.transaction.create({
@@ -16,7 +15,7 @@ export const create = async (
       label,
       chain: {
         connect: {
-          id: chain.id,
+          id: 1,
         },
       },
       escrow: {

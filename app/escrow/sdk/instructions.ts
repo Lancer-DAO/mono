@@ -10,6 +10,7 @@ import {
 } from "@solana/spl-token";
 
 import {
+  AccountMeta,
   ComputeBudgetProgram,
   Connection,
   Keypair,
@@ -182,6 +183,7 @@ export const addApprovedSubmittersV1Instruction = async (
   creator: PublicKey,
   referrer: PublicKey,
   submitter: PublicKey,
+  remainingAccounts: AccountMeta[],
   program: Program<MonoProgram>
 ): Promise<TransactionInstruction> => {
   const [feature_data_account] = await findFeatureAccount(
@@ -204,6 +206,7 @@ export const addApprovedSubmittersV1Instruction = async (
       referralDataAccount: referral_data_account,
       featureDataAccount: feature_data_account,
     })
+    .remainingAccounts(remainingAccounts)
     .instruction();
 };
 

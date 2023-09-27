@@ -3,7 +3,7 @@ export * from "./CompleteProfileModal";
 export * from "./EditLinks";
 export * from "./LinksCard";
 export * from "./PortfolioCard";
-export * from "./ProfileNFTCard";
+export * from "./ProfileCard";
 export * from "./QuestsCard";
 export * from "./ReferCard";
 export * from "./ResumeCard";

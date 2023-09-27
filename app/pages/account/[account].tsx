@@ -1,16 +1,12 @@
 import Head from "next/head";
 import { Account } from "@/components/account/Account";
-import {
-  getAccessToken,
-  getSession,
-  withPageAuthRequired,
-} from "@auth0/nextjs-auth0";
+import { getSession, withPageAuthRequired } from "@auth0/nextjs-auth0";
 import { GetServerSidePropsContext } from "next";
-import { prisma } from "@/server/db";
 import * as queries from "@/prisma/queries";
 import { useMint } from "@/src/providers/mintProvider";
 import { useIndustry } from "@/src/providers/industryProvider";
 import { useAccount } from "@/src/providers/accountProvider";
+import { useBounty } from "@/src/providers/bountyProvider";
 
 export async function getServerSideProps(
   context: GetServerSidePropsContext<{ id: string; req; res }>
@@ -31,7 +27,7 @@ export async function getServerSideProps(
 
     const currentUser = await queries.user.getByEmail(email);
 
-    if (!currentUser || !currentUser || !currentUser.hasFinishedOnboarding) {
+    if (!currentUser || !currentUser.hasFinishedOnboarding) {
       return {
         redirect: {
           destination: "/welcome",
@@ -50,6 +46,7 @@ export async function getServerSideProps(
     }
     const userId = parseInt(context.query.account as string);
 
+    const allBounties = await queries.bounty.getMany();
     const user = await queries.user.getById(userId);
     const allMints = await queries.mint.getAll();
     const allIndustries = await queries.industry.getMany();
@@ -60,6 +57,7 @@ export async function getServerSideProps(
         user: JSON.stringify(user),
         mints: JSON.stringify(allMints),
         industries: JSON.stringify(allIndustries),
+        allQuests: JSON.stringify(allBounties),
       },
     };
   } catch (e) {
@@ -72,16 +70,19 @@ export async function getServerSideProps(
   }
 }
 
-const Home: React.FC<{ user: string; mints: string; industries: string }> = ({
-  user,
-  mints,
-  industries,
-}) => {
+const Home: React.FC<{
+  user: string;
+  mints: string;
+  industries: string;
+  allQuests: string;
+}> = ({ user, mints, industries, allQuests }) => {
   const parsedUser = JSON.parse(user);
 
   const { setAllMints, allMints } = useMint();
   const { setAllIndustries, allIndustries } = useIndustry();
   const { setAccount, account } = useAccount();
+  const { setAllBounties, allBounties } = useBounty();
+
   if (!allMints && mints) {
     setAllMints(JSON.parse(mints));
   }
@@ -90,6 +91,10 @@ const Home: React.FC<{ user: string; mints: string; industries: string }> = ({
   }
   if (!account && user) {
     setAccount(JSON.parse(user));
+  }
+
+  if (!allBounties && allQuests) {
+    setAllBounties(JSON.parse(allQuests));
   }
 
   return (
