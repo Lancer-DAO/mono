@@ -11,6 +11,7 @@ import { useMint } from "@/src/providers/mintProvider";
 import { useIndustry } from "@/src/providers/industryProvider";
 import { useAccount } from "@/src/providers/accountProvider";
 import { useBounty } from "@/src/providers/bountyProvider";
+import { QUESTS_PER_PAGE } from "@/src/constants";
 
 export async function getServerSideProps(
   context: GetServerSidePropsContext<{ id: string; req; res }>
@@ -89,7 +90,7 @@ const Home: React.FC<{
   }
   if (!maxPages && totalQuestsCount) {
     const totalQuests = parseInt(JSON.parse(totalQuestsCount));
-    setMaxPages(Math.ceil(totalQuests / 10));
+    setMaxPages(Math.ceil(totalQuests / QUESTS_PER_PAGE));
   }
   return (
     <>

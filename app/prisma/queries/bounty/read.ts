@@ -1,4 +1,5 @@
 import { prisma } from "@/server/db";
+import { QUESTS_PER_PAGE } from "@/src/constants";
 import {
   BOUNTY_USER_RELATIONSHIP,
   BountyUserRelations,
@@ -84,7 +85,6 @@ const bountyQuery = async (id: number) => {
 };
 
 const bountyQueryMany = async (page: number, userId?: number) => {
-  const questsPerPage = 25;
   const bounties = await prisma.bounty.findMany({
     where: {
       OR: [
@@ -115,8 +115,8 @@ const bountyQueryMany = async (page: number, userId?: number) => {
       createdAt: "desc",
     },
     select: BOUNTY_MANY_SELECT,
-    skip: page * questsPerPage,
-    take: questsPerPage,
+    skip: page * QUESTS_PER_PAGE,
+    take: QUESTS_PER_PAGE,
   });
 
   return bounties;

@@ -103,9 +103,6 @@ const QuestTable: React.FC<Props> = ({ type, user }) => {
         if ((!currentUser || !currentUser.isLancerDev) && bounty.isTest) {
           return false;
         }
-        if (!bounty.escrow.publicKey || !bounty.escrow.mint) {
-          return false;
-        }
         if (
           filters.isMyBounties &&
           !bounty.users.some((user) => user.userid === currentUser?.id)
@@ -191,14 +188,16 @@ const QuestTable: React.FC<Props> = ({ type, user }) => {
         maxPrice === minPrice ? maxPrice + 1 : maxPrice,
       ];
       setPriceBounds(priceBounds);
-      setFilters({
-        tags: allTags,
-        industries: mappedInds,
-        estimatedPriceBounds: priceBounds,
-        states: TABLE_BOUNTY_STATES,
-        relationships: BOUNTY_USER_RELATIONSHIP,
-        isMyBounties: filters.isMyBounties,
-      });
+      if (questsPage === 0) {
+        setFilters({
+          tags: allTags,
+          industries: mappedInds,
+          estimatedPriceBounds: priceBounds,
+          states: filters.states,
+          relationships: BOUNTY_USER_RELATIONSHIP,
+          isMyBounties: filters.isMyBounties,
+        });
+      }
     }
   }, [allBounties, allIndustries]);
 
@@ -260,26 +259,26 @@ const QuestTable: React.FC<Props> = ({ type, user }) => {
                 </div>
               ));
             })()}
-          {questsPage - 1 >= 0 && (
+          <div className="flex items-center justify-center gap-5">
             <button
               onClick={() => {
                 setQuestsPage(questsPage - 1);
               }}
-              className="text-blue text-sm font-bold mt-4"
+              className={`text-blue text-sm font-bold mt-4 disabled:opacity-60 disabled:cursor-not-allowed`}
+              disabled={questsPage - 1 < 0}
             >
               Prev Page
             </button>
-          )}
-          {questsPage + 1 <= maxPages && (
             <button
               onClick={() => {
                 setQuestsPage(questsPage + 1);
               }}
-              className="text-blue text-sm font-bold mt-4"
+              className={`text-blue text-sm font-bold mt-4 disabled:opacity-60 disabled:cursor-not-allowed`}
+              disabled={questsPage + 1 > maxPages - 1}
             >
               Next Page
             </button>
-          )}
+          </div>
         </div>
       </div>
     </div>

@@ -2,7 +2,7 @@ import { Bounties } from "@/components/quests/Quests/Quests";
 import { useBounty } from "@/src/providers/bountyProvider";
 import { useIndustry } from "@/src/providers/industryProvider";
 import { useMint } from "@/src/providers/mintProvider";
-import { getSession, withPageAuthRequired } from "@auth0/nextjs-auth0";
+import { getSession } from "@auth0/nextjs-auth0";
 import { GetServerSidePropsContext } from "next";
 import { NextSeo } from "next-seo";
 import * as queries from "@/prisma/queries";
@@ -28,7 +28,7 @@ export const Index: React.FC<{
   }
   if (!maxPages && totalQuestsCount) {
     const totalQuests = parseInt(JSON.parse(totalQuestsCount));
-    setMaxPages(Math.ceil(totalQuests / 10));
+    setMaxPages(Math.ceil(totalQuests / 5));
   }
   return (
     <>
