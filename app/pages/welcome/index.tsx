@@ -1,5 +1,3 @@
-import Onboard from "@/components/onboarding/Onboard";
-import { prisma } from "@/server/db";
 import { getSession, withPageAuthRequired } from "@auth0/nextjs-auth0";
 import { GetServerSidePropsContext } from "next";
 import { NextSeo } from "next-seo";
