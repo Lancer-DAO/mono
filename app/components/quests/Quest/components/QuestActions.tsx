@@ -53,7 +53,7 @@ const QuestActions: FC = () => {
     }
   }, [currentUser, currentBounty]);
 
-  if (!currentUser || !currentBounty) return null;
+  if (!currentUser || !currentBounty || currentBounty.isExternal) return null;
 
   return (
     <div className="bg-white w-full min-w-[610px] border border-neutral200 rounded-lg overflow-hidden">
