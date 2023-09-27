@@ -15,8 +15,7 @@ export const Index: React.FC<{
 }> = ({ bounties, mints, industries, totalQuestsCount }) => {
   const { setAllMints, allMints } = useMint();
   const { setAllIndustries, allIndustries } = useIndustry();
-  const { setAllBounties, allBounties, totalQuests, setTotalQuests } =
-    useBounty();
+  const { setAllBounties, allBounties, maxPages, setMaxPages } = useBounty();
 
   if (!allBounties && bounties) {
     setAllBounties(JSON.parse(bounties));
@@ -27,8 +26,9 @@ export const Index: React.FC<{
   if (!allIndustries && industries) {
     setAllIndustries(JSON.parse(industries));
   }
-  if (!totalQuests && totalQuestsCount) {
-    setTotalQuests(parseInt(JSON.parse(totalQuestsCount)));
+  if (!maxPages && totalQuestsCount) {
+    const totalQuests = parseInt(JSON.parse(totalQuestsCount));
+    setMaxPages(Math.ceil(totalQuests / 10));
   }
   return (
     <>
@@ -51,11 +51,8 @@ export async function getServerSideProps(
       const { email } = metadata.user;
 
       const user = await queries.user.getByEmail(email);
-      const { allBounties, totalQuests } = await queries.bounty.getMany(
-        0,
-        user.id
-      );
-
+      const allBounties = await queries.bounty.getMany(0, user.id);
+      const totalQuests = await queries.bounty.getTotalQuests();
       const allMints = await queries.mint.getAll();
       const allIndustries = await queries.industry.getMany();
       return {
@@ -64,7 +61,6 @@ export async function getServerSideProps(
           bounties: JSON.stringify(allBounties),
           allQuests: JSON.stringify(allBounties),
           totalQuestsCount: JSON.stringify(totalQuests),
-
           mints: JSON.stringify(allMints),
           industries: JSON.stringify(allIndustries),
         },
@@ -79,9 +75,10 @@ export async function getServerSideProps(
     }
   } else {
     try {
-      const { allBounties, totalQuests } = await queries.bounty.getMany(0);
+      const allBounties = await queries.bounty.getMany(0);
       const allMints = await queries.mint.getAll();
       const allIndustries = await queries.industry.getMany();
+      const totalQuests = await queries.bounty.getTotalQuests();
       return {
         props: {
           currentUser: null,

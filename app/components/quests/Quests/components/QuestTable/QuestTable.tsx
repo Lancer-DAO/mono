@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { getUniqueItems } from "@/src/utils";
+import { api, getUniqueItems } from "@/src/utils";
 import { useUserWallet } from "@/src/providers";
 import { LoadingBar } from "@/components";
 import {
@@ -51,10 +51,19 @@ const QuestTable: React.FC<Props> = ({ type, user }) => {
   });
 
   // api + context
-  const { allBounties } = useBounty();
+  const { questsPage, setQuestsPage, maxPages } = useBounty();
   const { currentUser } = useUserWallet();
   const { allIndustries } = useIndustry();
   const { allMints } = useMint();
+  const { data: allBounties } = api.bounties.getAllBounties.useQuery(
+    {
+      currentUserId: currentUser?.id,
+      page: questsPage,
+    },
+    {
+      enabled: !!currentUser,
+    }
+  );
 
   function snakeToTitleCase(snakeCaseStr: string) {
     return snakeCaseStr
@@ -193,6 +202,10 @@ const QuestTable: React.FC<Props> = ({ type, user }) => {
     }
   }, [allBounties, allIndustries]);
 
+  useEffect(() => {
+    console.log("allBounties", allBounties, maxPages, questsPage);
+  }, [allBounties, maxPages, questsPage]);
+
   return (
     <div
       className={`${
@@ -247,6 +260,26 @@ const QuestTable: React.FC<Props> = ({ type, user }) => {
                 </div>
               ));
             })()}
+          {questsPage - 1 >= 0 && (
+            <button
+              onClick={() => {
+                setQuestsPage(questsPage - 1);
+              }}
+              className="text-blue text-sm font-bold mt-4"
+            >
+              Prev Page
+            </button>
+          )}
+          {questsPage + 1 <= maxPages && (
+            <button
+              onClick={() => {
+                setQuestsPage(questsPage + 1);
+              }}
+              className="text-blue text-sm font-bold mt-4"
+            >
+              Next Page
+            </button>
+          )}
         </div>
       </div>
     </div>

@@ -64,7 +64,7 @@ export async function getServerSideProps(
       },
     };
   }
-  const { allBounties } = await queries.bounty.getMany(0, user.id);
+  const allBounties = await queries.bounty.getMany(0, user.id);
 
   return {
     props: {

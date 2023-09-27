@@ -38,10 +38,9 @@ export async function getServerSideProps(
         },
       };
     }
-    const { allBounties, totalQuests } = await queries.bounty.getMany(
-      0,
-      user.id
-    );
+    const allBounties = await queries.bounty.getMany(0, user.id);
+
+    const totalQuests = await queries.bounty.getTotalQuests();
 
     const allMints = await queries.mint.getAll();
     const allIndustries = await queries.industry.getMany();
@@ -71,12 +70,9 @@ const BountiesPage: React.FC<{
   industries: string;
   totalQuestsCount: string;
 }> = ({ bounties, mints, industries, totalQuestsCount }) => {
-  console.log("setting bounties", bounties);
-
   const { setAllMints, allMints } = useMint();
   const { setAllIndustries, allIndustries } = useIndustry();
-  const { setAllBounties, allBounties, totalQuests, setTotalQuests } =
-    useBounty();
+  const { setAllBounties, allBounties, maxPages, setMaxPages } = useBounty();
   if (!allBounties && bounties) {
     setAllBounties(JSON.parse(bounties));
   }
@@ -87,8 +83,9 @@ const BountiesPage: React.FC<{
   if (!allIndustries && industries) {
     setAllIndustries(JSON.parse(industries));
   }
-  if (!totalQuests && totalQuestsCount) {
-    setTotalQuests(parseInt(JSON.parse(totalQuestsCount)));
+  if (!maxPages && totalQuestsCount) {
+    const totalQuests = parseInt(JSON.parse(totalQuestsCount));
+    setMaxPages(Math.ceil(totalQuests / 10));
   }
   return (
     <>
