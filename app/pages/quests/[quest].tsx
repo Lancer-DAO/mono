@@ -56,7 +56,7 @@ export async function getServerSideProps(
       },
     };
   } catch (e) {
-    console.log("error", e);
+    console.error("error", e);
     return {
       redirect: {
         destination: "/welcome",
