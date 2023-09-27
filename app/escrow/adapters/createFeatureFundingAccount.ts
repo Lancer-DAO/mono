@@ -41,14 +41,10 @@ export const createFFA = async (
     program
   );
 
-  const referralAccountIx = await createCustodialReferralDataAccountInstruction(
-    new PublicKey(wallet.publicKey),
-    new PublicKey("pyrSoEahjKGKZpLWEYwCJ8zQAsYZckZH8ZqJ7yGd1ha"),
-    feature_account,
-    program
-  );
 
-  const res = await sendGaslessTx([ix, referralAccountIx]);
+  const res = await sendGaslessTx([ix]);
+  console.log("Sending out second tx")
+
   return {
     timestamp,
     signature: res.signature,
