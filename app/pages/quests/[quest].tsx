@@ -21,7 +21,6 @@ export async function getServerSideProps(
   withPageAuthRequired();
   const { req, res } = context;
   const metadata = await getSession(req, res);
-  console.log("metadata", metadata);
   if (!metadata?.user) {
     return {
       redirect: {
