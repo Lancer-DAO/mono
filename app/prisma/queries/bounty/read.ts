@@ -50,6 +50,7 @@ const BOUNTY_MANY_SELECT = {
   createdAt: true,
   isTest: true,
   price: true,
+  isExternal: true,
 };
 
 const bountyQuery = async (id: number) => {
@@ -116,6 +117,18 @@ const bountyQueryMany = async (userId?: number) => {
   return bounties;
 };
 
+const externalBountyQuery = async () => {
+  const bounties = await prisma.bounty.findMany({
+    where: {
+      isExternal: true,
+    },
+    select: {
+      links: true,
+    },
+  });
+
+  return bounties;
+};
 const bountyQueryMine = async (userId?: number) => {
   if (!userId) {
     throw new Error("A userId must be provided.");
@@ -193,6 +206,7 @@ export const get = async (id: number, currentUserId: number) => {
 
 export const getMany = async (currentUserId?: number) => {
   const bounties = await bountyQueryMany(currentUserId);
+  console.log("query", bounties);
 
   const mappedBounties = bounties.map((bounty) => {
     const userRelations = bounty.users;
@@ -203,6 +217,10 @@ export const getMany = async (currentUserId?: number) => {
   return mappedBounties;
 };
 
+export const getExternal = async () => {
+  const bounties = await externalBountyQuery();
+  return bounties;
+};
 export const getMine = async (currentUserId: number) => {
   const bounties = await bountyQueryMine(currentUserId);
 
@@ -221,7 +239,7 @@ export const convertBountyUserToUser = (user: UserRelation) => {
     relations: user.relations
       .replace(/[\[\]]/g, "")
       .split(",") as BOUNTY_USER_RELATIONSHIP[],
-    publicKey: user.wallet.publicKey,
+    publicKey: user.wallet?.publicKey,
   };
 };
 
