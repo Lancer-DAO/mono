@@ -42,7 +42,7 @@ const CheckpointView: FC<Props> = ({
     setQuoteData((prevData) => {
       const updatedData = { ...prevData };
       updatedData.checkpoints = updatedData.checkpoints.filter((_, i) => i !== index);
-      updatedData.estimatedTime = updatedData.checkpoints.reduce(
+        updatedData.estimatedTime = updatedData.checkpoints.reduce(
         (total, checkpoint) => total + checkpoint.estimatedTime,
         0
       );
@@ -91,8 +91,6 @@ const CheckpointView: FC<Props> = ({
           <div className="flex items-center gap-6">
             <div className="flex gap-2 items-center">
               <button onClick={() => {
-                // setDetailsOpen(true);
-                // setCanEdit(true);
                 closeAllExceptOne(index);
               }}>
                 <Edit />
