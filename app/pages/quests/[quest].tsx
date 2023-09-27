@@ -29,7 +29,6 @@ export async function getServerSideProps(
       },
     };
   }
-  console.log("metadata passed");
   try {
     const questId = parseInt(context.query.quest as string);
     const { email } = metadata.user;
