@@ -9,6 +9,9 @@ import { GoodToGo } from "@/components/onboarding/GoodToGo";
 import { useState } from "react";
 import { Class } from "@/types";
 import { Option } from "@/types";
+import { api } from "@/src/utils";
+import toast from "react-hot-toast";
+import { useRouter } from "next/router";
 
 export async function getServerSideProps(
   context: GetServerSidePropsContext<{ id: string; req; res }>
@@ -60,7 +63,9 @@ const BountiesPage: React.FC<{
 }> = ({ allIndustries }) => {
   const [page, setPage] = useState(0);
   const [selectedClass, setSelectedClass] = useState<Class>("Noble");
-
+  const router = useRouter();
+  const { mutateAsync: registerOnboardingInfo } =
+    api.users.addOnboardingInformation.useMutation();
   const [name, setName] = useState("");
   const [company, setCompany] = useState("");
   const [description, setDescription] = useState("");
@@ -75,6 +80,27 @@ const BountiesPage: React.FC<{
       value: industry.name,
     };
   });
+
+  const handleUpdateProfile = async () => {
+    const toastId = toast.loading("Creating your profile...");
+    try {
+      await registerOnboardingInfo({
+        industryId: industries.find((i) => i.name === industry.value).id,
+        name,
+        company,
+        companyDescription: description,
+        bio: description,
+        selectedClass,
+      });
+
+      toast.success("Profile created successfully!", { id: toastId });
+      router.push("/");
+    } catch (e) {
+      console.log("error updating profile: ", e);
+      toast.error("Error updating profile", { id: toastId });
+    }
+  };
+
   return (
     <div className="w-full max-w-[1200px] mx-auto flex md:justify-evenly mt-4 py-24 ">
       <NextSeo title="Lancer | Bounties" description="Lancer Bounties" />
@@ -100,7 +126,11 @@ const BountiesPage: React.FC<{
             setIndustry={setIndustry}
             industryOptions={industryOptions}
           />,
-          <GoodToGo key={2} selectedClass={selectedClass} />,
+          <GoodToGo
+            key={2}
+            selectedClass={selectedClass}
+            updateProfile={handleUpdateProfile}
+          />,
         ][page]
       }
     </div>

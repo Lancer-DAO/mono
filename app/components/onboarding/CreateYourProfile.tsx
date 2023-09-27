@@ -88,7 +88,7 @@ export const CreateYourProfile: FC<{
           <div className="relative flex items-center ">
             <div
               className={`mr-4 text-sm ${
-                selectedClass === "Noble" ? "w-[140px]" : "w-[136px]"
+                selectedClass === "Noble" ? "w-[140px]" : "w-[134px]"
               }`}
             >
               {selectedClass === "Noble" ? "Company Name" : "Specialization"}

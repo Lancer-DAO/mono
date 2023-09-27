@@ -430,6 +430,7 @@ model User {
   hasBeenApproved       Boolean? @default(false)
   class                 String   @default("lancer") @db.VarChar(24)
   experience            Int?     @default(0)
+  companyDescription    String?  @db.VarChar(2000)
 
   // Relations
   wallets      Wallet[]

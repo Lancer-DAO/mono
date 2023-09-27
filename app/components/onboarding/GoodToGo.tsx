@@ -10,7 +10,8 @@ import OnboardingFlowNoble from "../@icons/OnboardingFlowNoble";
 
 export const GoodToGo: FC<{
   selectedClass: Class;
-}> = ({ selectedClass }) => {
+  updateProfile: () => void;
+}> = ({ selectedClass, updateProfile }) => {
   return (
     <div className="w-[500px] px-10 lg:px-0 flex flex-col items-center justify-center">
       <div className="flex items-center justify-center rounded-full bg-neutral-200 h-[32px] w-[32px]">
@@ -107,6 +108,9 @@ export const GoodToGo: FC<{
           selectedClass === "Noble" ? "bg-noble100" : "bg-primary200"
         } text-white 
         } `}
+        onClick={() => {
+          updateProfile();
+        }}
       >
         {`Start your Journey`}
       </motion.button>

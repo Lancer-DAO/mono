@@ -46,10 +46,14 @@ export const ProfileCard = ({
   const [showCashout, setShowCashout] = useState(false);
   const [approvalText, setApprovalText] = useState("Approve");
   const [nameEdit, setNameEdit] = useState({ editing: false, name: user.name });
-  const [industryEdit, setIndustryEdit] = useState({
-    editing: false,
-    industry: user.industries[0],
-  });
+  const [industryEdit, setIndustryEdit] = useState(
+    user?.industries.length > 0
+      ? {
+          editing: false,
+          industry: user.industries[0],
+        }
+      : null
+  );
   const [bioEdit, setBioEdit] = useState({ editing: false, bio: user.bio });
   const [balance, setBalance] = useState<IAsyncResult<number>>({
     isLoading: true,
@@ -222,12 +226,16 @@ export const ProfileCard = ({
               )}
             </div>
             <div className="flex gap-3 items-center">
-              <div className="px-2 py-1 rounded-md bg-neutral100 border border-neutral200">
-                <p className="text-neutral500 text-sm">
-                  {user.industries[0].name}
-                </p>
-              </div>
-              <div className="w-[1px] h-7 bg-neutral200" />
+              {industryEdit && (
+                <>
+                  <div className="px-2 py-1 rounded-md bg-neutral100 border border-neutral200">
+                    <p className="text-neutral500 text-sm">
+                      {user.industries[0].name}
+                    </p>
+                  </div>
+                  <div className="w-[1px] h-7 bg-neutral200" />
+                </>
+              )}
               <p className="text-neutral500">{`${user.experience} XP`}</p>
             </div>
           </div>
@@ -270,7 +278,7 @@ export const ProfileCard = ({
       <div className="h-[1px] w-full bg-neutral200" />
       <div className="w-full p-5">
         <div className="w-full flex items-center gap-2 mb-3">
-          {nameEdit.editing || industryEdit.editing ? (
+          {nameEdit.editing || industryEdit?.editing ? (
             <>
               {/* name input field */}
               <div className="w-full flex items-center gap-2">
@@ -327,17 +335,21 @@ export const ProfileCard = ({
                 <button
                   onClick={() => {
                     updateName({ name: nameEdit.name });
-                    updateIndustry({
-                      newIndustryId: industryEdit.industry.id,
-                      oldIndustryId: user.industries[0].id,
-                    });
                     setNameEdit({ ...nameEdit, editing: false });
-                    setIndustryEdit({ ...industryEdit, editing: false });
-                    setAccount({
-                      ...account,
-                      name: nameEdit.name,
-                      industries: [industryEdit.industry],
-                    });
+                    if (industryEdit) {
+                      updateIndustry({
+                        newIndustryId: industryEdit.industry.id,
+                        oldIndustryId: user.industries[0].id,
+                      });
+                      setIndustryEdit({ ...industryEdit, editing: false });
+                      setAccount({
+                        ...account,
+                        name: nameEdit.name,
+                        industries: [industryEdit.industry],
+                      });
+                    } else {
+                      setAccount({ ...account, name: nameEdit.name });
+                    }
                   }}
                   className="rounded-md uppercase font-bold text-success"
                 >
@@ -349,10 +361,12 @@ export const ProfileCard = ({
                       editing: false,
                       name: user.name,
                     });
-                    setIndustryEdit({
-                      editing: false,
-                      industry: user.industries[0],
-                    });
+                    if (industryEdit) {
+                      setIndustryEdit({
+                        editing: false,
+                        industry: user.industries[0],
+                      });
+                    }
                   }}
                   className="rounded-md uppercase font-bold text-error"
                 >
