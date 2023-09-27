@@ -108,7 +108,7 @@ export const ChooseYourClass: FC = () => {
           </div>
 
           <div
-            className={`mt-2 ${
+            className={`mt-2 text-sm ${
               selectedClass === "Noble" ? "text-noble100" : "text-primary200"
             }`}
           >
@@ -116,7 +116,7 @@ export const ChooseYourClass: FC = () => {
               ? "I'm looking to hire talent on Lancer."
               : "I'm looking for work on Lancer."}
           </div>
-          <div className="mt-4">
+          <div className="mt-4 text-sm">
             {selectedClass === "Noble"
               ? "The Noble is a disciplined and proud leader."
               : "The Lancer is a skilled and ambitious contributor."}
