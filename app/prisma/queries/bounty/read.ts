@@ -6,7 +6,6 @@ import {
 } from "@/types/";
 import { UnwrapArray, UnwrapPromise } from "@/types/Bounties";
 import * as Prisma from "@prisma/client";
-import { trimEnd } from "lodash";
 
 const BOUNTY_MANY_SELECT = {
   escrow: {
@@ -59,7 +58,6 @@ const bountyQuery = async (id: number) => {
       id,
     },
     include: {
-      repository: true,
       escrow: {
         include: {
           transactions: {
@@ -76,15 +74,13 @@ const bountyQuery = async (id: number) => {
           wallet: true,
         },
       },
-      issue: true,
       tags: true,
-      pullRequests: true,
       industries: true,
     },
   });
 };
 
-const bountyQueryMany = async (userId?: number, excludePrivate?: boolean) => {
+const bountyQueryMany = async (userId?: number) => {
   const bounties = await prisma.bounty.findMany({
     where: {
       OR: [
@@ -108,6 +104,43 @@ const bountyQueryMany = async (userId?: number, excludePrivate?: boolean) => {
           state: {
             in: ["accepting_applications", "new"],
           },
+        },
+      ],
+    },
+    orderBy: {
+      createdAt: "desc",
+    },
+    select: BOUNTY_MANY_SELECT,
+  });
+
+  return bounties;
+};
+
+const bountyQueryMine = async (userId?: number) => {
+  if (!userId) {
+    throw new Error("A userId must be provided.");
+  }
+
+  const bounties = await prisma.bounty.findMany({
+    where: {
+      AND: [
+        {
+          users: {
+            some: {
+              userid: userId,
+            },
+          },
+          isTest: false,
+        },
+        {
+          OR: [
+            {
+              isPrivate: false,
+              state: {
+                in: ["accepting_applications", "new"],
+              },
+            },
+          ],
         },
       ],
     },
@@ -158,8 +191,20 @@ export const get = async (id: number, currentUserId: number) => {
   };
 };
 
-export const getMany = async (currentUserId: number) => {
+export const getMany = async (currentUserId?: number) => {
   const bounties = await bountyQueryMany(currentUserId);
+
+  const mappedBounties = bounties.map((bounty) => {
+    const userRelations = bounty.users;
+    const creator = getBountyCreator(userRelations);
+    return { ...bounty, creator };
+  });
+
+  return mappedBounties;
+};
+
+export const getMine = async (currentUserId: number) => {
+  const bounties = await bountyQueryMine(currentUserId);
 
   const mappedBounties = bounties.map((bounty) => {
     const userRelations = bounty.users;

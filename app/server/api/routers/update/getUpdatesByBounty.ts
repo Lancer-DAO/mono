@@ -8,7 +8,7 @@ export const getUpdatesByBounty = protectedProcedure
       id: z.number(),
     })
   )
-  .query(
+.query(
     async ({ input: { id } }) => {
       return await queries.update.getUpdatesByBounty(id);
     }

@@ -219,10 +219,10 @@ export const updateHasCompletedProfile = async (
   });
 };
 
-export const approveUser = async (id: number): Promise<Prisma.User> => {
+export const approveUser = async (email: string): Promise<Prisma.User> => {
   return await prisma.user.update({
     where: {
-      id: id,
+      email,
     },
     data: {
       hasBeenApproved: true,

@@ -14,15 +14,17 @@ const LockIcon = dynamic(() => import("./@icons/LockIcon"));
 const Logo = dynamic(() => import("./@icons/Logo"));
 const NextArrow = dynamic(() => import("./@icons/NextArrow"));
 const PhantomLogo = dynamic(() => import("./@icons/PhantomLogo"));
+const Rocket = dynamic(() => import("./@icons/Rocket"));
 const StarIcon = dynamic(() => import("./@icons/StarIcon"));
 const USDC = dynamic(() => import("./@icons/USDC"));
 
 // atoms
 const BountyCardFrame = dynamic(() => import("./atoms/BountyCardFrame"));
 const Button = dynamic(() => import("./atoms/Button"));
-const LinkButton = dynamic(() => import("./atoms/LinkButton"));
+const ChatButton = dynamic(() => import("./atoms/ChatButton"));
 const CoinflowOfframp = dynamic(() => import("./atoms/CoinflowOfframp"));
 const ContributorInfo = dynamic(() => import("./atoms/ContributorInfo"));
+const LinkButton = dynamic(() => import("./atoms/LinkButton"));
 const LoadingBar = dynamic(() => import("./atoms/LoadingBar"));
 const PreviewCardBase = dynamic(() => import("./atoms/PreviewCardBase"));
 const PriceTag = dynamic(() => import("./atoms/PriceTag"));
@@ -43,19 +45,24 @@ const CoinflowFund = dynamic(() => import("./molecules/CoinflowFund"));
 const CopyLinkField = dynamic(() => import("./molecules/CopyLinkField"));
 const ImageUpload = dynamic(() => import("./molecules/ImageUpload"));
 const IndustryDropdown = dynamic(() => import("./molecules/IndustryDropdown"));
+const IndustryOptions = dynamic(() => import("./molecules/IndustryOptions"));
 const MintsDropdown = dynamic(() => import("./molecules/MintsDropdown"));
 const Modal = dynamic(() => import("./molecules/Modal"));
 const MultiSelectDropdown = dynamic(
   () => import("./molecules/MultiSelectDropdown")
 );
 const RangeSlider = dynamic(() => import("./molecules/RangeSlider"));
+const ReferenceDialogue = dynamic(
+  () => import("./molecules/ReferenceDialogue")
+);
+const SelectOptions = dynamic(() => import("./molecules/SelectOptions"));
 const SidePanel = dynamic(() => import("./molecules/sidebar/index"));
 const TutorialsModal = dynamic(() => import("./molecules/TutorialsModal"));
 const WalletInfo = dynamic(() => import("./molecules/WalletInfo"));
 
 // organisms
 const CashoutModal = dynamic(() => import("./organisms/CashoutModal"));
-const FundBountyModal = dynamic(() => import("./organisms/FundBountyModal"));
+const FundQuestModal = dynamic(() => import("./organisms/FundQuestModal"));
 const Header = dynamic(() => import("./organisms/Header"));
 const JoyrideWrapper = dynamic(() => import("./organisms/JoyrideWrapper"));
 
@@ -77,12 +84,14 @@ export {
   Logo,
   NextArrow,
   PhantomLogo,
+  Rocket,
   StarIcon,
   USDC,
 
   // atoms
   BountyCardFrame,
   Button,
+  ChatButton,
   CoinflowOfframp,
   ContributorInfo,
   LinkButton,
@@ -104,17 +113,20 @@ export {
   CopyLinkField,
   ImageUpload,
   IndustryDropdown,
+  IndustryOptions,
   MintsDropdown,
   Modal,
   MultiSelectDropdown,
   RangeSlider,
+  ReferenceDialogue,
+  SelectOptions,
   SidePanel,
   TutorialsModal,
   WalletInfo,
 
   // organisms
   CashoutModal,
-  FundBountyModal,
+  FundQuestModal,
   Header,
   JoyrideWrapper,
 

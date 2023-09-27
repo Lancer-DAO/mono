@@ -6,7 +6,6 @@ import {
 import { BountyType } from "@/prisma/queries/bounty";
 import { UserType, UserSearchType } from "@/prisma/queries/user";
 import { WalletType } from "@/prisma/queries/wallet";
-import { DisciplineType } from "@/prisma/queries/discipline";
 import { IndustryType } from "@/prisma/queries/industry";
 import { MediaType } from "@/prisma/queries/media";
 import { MintType } from "@/prisma/queries/mint";
@@ -33,6 +32,8 @@ export enum BOUNTY_USER_RELATIONSHIP {
   VotingCancel = "voting_cancel",
   Canceler = "canceler",
 }
+export const RELATIONS = Object.values(BOUNTY_USER_RELATIONSHIP);
+
 export interface CurrentUserBountyInclusions {
   isCreator?: boolean;
   isRequestedLancer?: boolean;
@@ -79,7 +80,6 @@ export type User = UserType;
 export type UserPreview = UserPreviewType;
 export type UserSearch = UserSearchType;
 export type Wallet = WalletType;
-export type Discipline = DisciplineType;
 export type Industry = IndustryType;
 export type Media = MediaType;
 export type Mint = MintType;

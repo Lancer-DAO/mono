@@ -6,6 +6,7 @@ import { approveUser } from "./approveUser";
 import { currentUser } from "./currentUser";
 import { deleteResume } from "./deleteResume";
 import { getUser } from "./get";
+import { getWallets } from "./getWallets";
 import { login } from "./login";
 import { maybeInitAccount } from "./maybeInitAccount";
 import { registerProfileNFT } from "./registerProfileNFT";
@@ -25,6 +26,7 @@ export const users = createTRPCRouter({
   currentUser,
   deleteResume,
   getUser,
+  getWallets,
   login,
   maybeInitAccount,
   registerProfileNFT,

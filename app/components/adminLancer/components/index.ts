@@ -1,1 +1,1 @@
-export * from "./SendSOLToRandomAddress";
+export * from "./WithdrawToTreasury";

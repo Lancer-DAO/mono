@@ -11,7 +11,7 @@ const Logo = ({ height, width }: { height: string; width: string }) => {
       viewBox="0 0 3000 3000"
     >
       <path
-        fill="#77CF6D"
+        fill="#14bb88"
         opacity="1.000000"
         stroke="none"
         d="
