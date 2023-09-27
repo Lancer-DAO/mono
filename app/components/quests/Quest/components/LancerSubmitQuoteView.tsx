@@ -18,8 +18,7 @@ interface Props {
 const LancerSubmitQuoteView: FC<Props> = ({ quoteData, setQuoteData, setCurrentActionView }) => {
   const { currentBounty } = useBounty();
   const { currentUser } = useUserWallet();
-  // TODO Not sure how necessary this part is at the moment with the flow. Maybe should just update according to local checkpoints
-  const { data: checkpoints } = api.checkpoint.getCheckpointsByBounty.useQuery(
+  const { data: quotes } = api.quote.getQuotesByBounty.useQuery(
     { id: currentBounty.id },
     { enabled: !!currentBounty }
   );
@@ -74,8 +73,8 @@ const LancerSubmitQuoteView: FC<Props> = ({ quoteData, setQuoteData, setCurrentA
     <div className="flex flex-col">
       <ActionsCardBanner
         title={`Quote to ${currentBounty.creator.user.name}`}
-        subtitle={`${checkpoints?.length || 0} ${
-          (checkpoints?.length || 0) === 1 ? "quote" : "quotes"
+        subtitle={`${quotes?.length || 0} ${
+          (quotes?.length || 0) === 1 ? "quote" : "quotes"
         } have been sent to them already`}
       ></ActionsCardBanner>
       <div className="px-6 py-4">
