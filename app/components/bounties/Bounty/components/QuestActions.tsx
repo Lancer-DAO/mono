@@ -38,7 +38,7 @@ const QuestActions: FC = () => {
         setCurrentActionView(QuestActionView.Chat);
       } else {
         // lancer needs to apply or is waiting for approval
-        setCurrentActionView(QuestActionView.Apply);
+        setCurrentActionView(QuestActionView.SubmitQuote);
       }
     } else if (!!currentUser && currentBounty.isCreator) {
       // is the creator

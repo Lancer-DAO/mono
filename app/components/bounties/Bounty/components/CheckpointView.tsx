@@ -9,16 +9,24 @@ interface Props {
   checkpoint: Checkpoint,
   setQuoteData: Dispatch<SetStateAction<LancerQuoteData>>,
   index: number,
+  closeAllExceptOne: (index: number) => void,
+  closeDetailsAndEdit: (index: number) => void,
+  setDetails: (index: number) => void,
 }
 
-const CheckpointView: FC<Props> = ({ index, checkpoint, setQuoteData }) => {
-  const [detailsOpen, setDetailsOpen] = useState(false);
-  const [canEdit, setCanEdit] = useState(false);
+const CheckpointView: FC<Props> = ({ 
+  index, 
+  checkpoint,
+  setQuoteData, 
+  closeAllExceptOne,
+  closeDetailsAndEdit,
+  setDetails,
+ }) => {
   const [tempCheckpoint, setTempCheckpoint] = useState<Checkpoint>(checkpoint);
 
   const editCheckpoint = () => {
     setQuoteData((prevData) => {
-      const updatedData = {...prevData};
+      const updatedData = { ...prevData };
       updatedData.checkpoints[index] = tempCheckpoint;
       updatedData.estimatedTime = updatedData.checkpoints.reduce((total, checkpoint) => total + checkpoint.estimatedTime, 0)
       updatedData.price = updatedData.checkpoints.reduce((total, checkpoint) => total + checkpoint.price, 0);
@@ -46,15 +54,15 @@ const CheckpointView: FC<Props> = ({ index, checkpoint, setQuoteData }) => {
 
   return (
     <div className="flex flex-col">
-      {!canEdit && (
+      {!checkpoint.canEdit && (
         <div className="flex py-4 justify-between border-b border-neutral200">
           <div className="flex items-center gap-2">
             <Fire />
             <div className="text text-neutral600">{checkpoint.title}</div>
             <div className="w-[1px] h-5 bg-neutral200" />
             <div className="text-mini text-neutral400">{`${checkpoint.estimatedTime}h`}</div>
-            <button onClick={() => setDetailsOpen(!detailsOpen)}>
-              {detailsOpen ? (
+            <button onClick={() => setDetails(index)}>
+              {checkpoint.detailsOpen ? (
                 <ChevronUp
                   width={12} 
                   height={12}
@@ -72,8 +80,9 @@ const CheckpointView: FC<Props> = ({ index, checkpoint, setQuoteData }) => {
           <div className="flex items-center gap-6">
             <div className="flex gap-2 items-center">
               <button onClick={() => {
-                setDetailsOpen(true);
-                setCanEdit(true);
+                // setDetailsOpen(true);
+                // setCanEdit(true);
+                closeAllExceptOne(index);
               }}>
                 <Edit />
               </button>
@@ -87,54 +96,60 @@ const CheckpointView: FC<Props> = ({ index, checkpoint, setQuoteData }) => {
           </div>
         </div>
       )}
-      {detailsOpen && (
+      {checkpoint.detailsOpen && (
         <div className="flex flex-col pt-4 gap-6">
           <div className="flex gap-4 items-center">
             <div className="text text-neutral600">Checkpoint name</div>
             <input 
               className="bg-neutral100 text text-neutral600 px-3 py-2 rounded-md border border-neutral200 outline-none"
               value={tempCheckpoint.title}
-              onChange={(e) => setTempCheckpoint  ({ ...tempCheckpoint, title: e.target.value})}
+              onChange={(e) => setTempCheckpoint({ ...tempCheckpoint, title: e.target.value})}
               placeholder="Specify a clear objective and title"
-              disabled={!canEdit}
+              disabled={!checkpoint.canEdit}
             />
           </div>
           <div className="flex gap-6 items-center">
             <div className="flex gap-4 items-center">
               <div className="text text-neutral600">Price</div>
-              <input 
-                className="flex gap-2 bg-neutral100 text text-neutral600 px-3 py-2 rounded-md border border-neutral200 outline-none"
-                value={tempCheckpoint.price}
-                onChange={(e) => setTempCheckpoint  ({ ...tempCheckpoint, price: Number(e.target.value)})}
-                placeholder="0"
-                disabled={!canEdit}
-              >
-                {/* <div className="text text-neutral400">$</div> */}
-              </input>
+              <div className="flex items-center gap-2 bg-neutral100 text text-neutral600 px-3 py-2 rounded-md border border-neutral200 outline-none">
+                <input 
+                  className="bg-neutral100 text text-neutral600 outline-none"
+                  type="number"
+                  min={0}
+                  value={tempCheckpoint.price}
+                  onChange={(e) => setTempCheckpoint({ ...tempCheckpoint, price: Number(e.target.value)})}
+                  placeholder="0"
+                  disabled={!checkpoint.canEdit}
+                />
+                <div className="text text-neutral400">$</div>
+              </div>
             </div>
             <div className="flex gap-4 items-center">
               <div className="text text-neutral600">Time to spend</div>
-              <input 
-                className="flex gap-2 bg-neutral100 text text-neutral600 px-3 py-2 rounded-md border border-neutral200 outline-none" 
-                value={tempCheckpoint.estimatedTime}
-                onChange={(e) => setTempCheckpoint  ({ ...tempCheckpoint, estimatedTime: Number(e.target.value)})}
-                  placeholder="0"
-                  disabled={!canEdit}
-              >
-                {/* <div className="text text-neutral400">$</div> */}
-              </input>
+              <div className="flex items-center gap-2 bg-neutral100 text text-neutral600 px-3 py-2 rounded-md border border-neutral200 outline-none">
+                <input 
+                  className="bg-neutral100 text text-neutral600 outline-none" 
+                  type="number"
+                  min={0}
+                  value={tempCheckpoint.estimatedTime}
+                  onChange={(e) => setTempCheckpoint({ ...tempCheckpoint, estimatedTime: Number(e.target.value)})}
+                    placeholder="0"
+                    disabled={!checkpoint.canEdit}
+                />
+                <div className="text text-neutral400">Hours</div>
+              </div>
             </div>
           </div>
           <div className="flex flex-col gap-4">
             <div className="text text-black">Add few bullet points about the process (try to be as clear as possible):</div>
             <textarea 
               className="px-2 py-3 h-[162px] text-mini text-neutral600 rouned-md border border-[#E8F8F3] bg-[#FAFCFC] outline-none resize-none" placeholder="Type your message here..." 
-              value={tempCheckpoint .description}
+              value={tempCheckpoint.description}
               onChange={(e) => setTempCheckpoint({ ...tempCheckpoint, description: e.target.value})}
-              disabled={!canEdit}
+              disabled={!checkpoint.canEdit}
             />
           </div>
-          {canEdit && (
+          {checkpoint.canEdit && (
             <div className="flex justify-end items-center gap-2">
               {/* <button className="px-4 py-2 text-neutral600 title-text rounded-md border border-neutral300">
                 Add Checkpoint
@@ -142,9 +157,13 @@ const CheckpointView: FC<Props> = ({ index, checkpoint, setQuoteData }) => {
               <button 
                 className="px-4 py-2 rounded-md border border-neutral300 text-error title-text"
                 onClick={() => { 
-                  setTempCheckpoint(checkpoint);
-                  setCanEdit(false);
-                  setDetailsOpen(false);
+                  if(
+                    tempCheckpoint.title === "" && tempCheckpoint.description === "" && tempCheckpoint.price === 0 && tempCheckpoint.estimatedTime === 0
+                  ) {
+                    deleteCheckpoint();
+                  } else { 
+                    closeDetailsAndEdit(index);
+                  }
                 }}
               >
                 Cancel
@@ -153,8 +172,7 @@ const CheckpointView: FC<Props> = ({ index, checkpoint, setQuoteData }) => {
                 className="px-4 py-2 rounded-md border border-neutral300 text-neutral600 title-text"
                 onClick={() => {
                   editCheckpoint();
-                  setCanEdit(false);
-                  setDetailsOpen(false);
+                  closeDetailsAndEdit(index);
                 }}
               >
                 Save Changes

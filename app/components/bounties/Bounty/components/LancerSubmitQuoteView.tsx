@@ -1,13 +1,10 @@
 import Plus from "@/components/@icons/Plus";
 import RedFire from "@/components/@icons/RedFire";
-import { smallClickAnimation } from "@/src/constants";
 import { useUserWallet } from "@/src/providers";
 import { useBounty } from "@/src/providers/bountyProvider";
 import { api } from "@/src/utils";
 import { Checkpoint, LancerQuoteData, QuestProgressState } from "@/types";
-import { motion } from "framer-motion";
 import { Dispatch, FC, SetStateAction, useState } from "react";
-import { toast } from "react-hot-toast";
 import ActionsCardBanner from "./ActionsCardBanner";
 import { default as CheckpointView, default as MilestoneView } from "./CheckpointView";
 import { QuestActionView } from "./QuestActions";
@@ -19,8 +16,13 @@ interface Props {
 }
 
 const LancerSubmitQuoteView: FC<Props> = ({ quoteData, setQuoteData, setCurrentActionView }) => {
-  const { currentBounty, setCurrentBounty } = useBounty();
-  const { currentUser, currentWallet } = useUserWallet();
+  const { currentBounty } = useBounty();
+  const { currentUser } = useUserWallet();
+  // TODO Not sure how necessary this part is at the moment with the flow. Maybe should just update according to local checkpoints
+  const { data: checkpoints } = api.checkpoint.getCheckpointsByBounty.useQuery(
+    { id: currentBounty.id },
+    { enabled: !!currentBounty }
+  );
 
   const addCheckpoint = () => {
     const newCheckpoint = {
@@ -28,9 +30,42 @@ const LancerSubmitQuoteView: FC<Props> = ({ quoteData, setQuoteData, setCurrentA
       price: 0,
       description: "",
       estimatedTime: 0,
+      detailsOpen: true,
+      canEdit: true,
     };
+    
+    setQuoteData({
+      ...quoteData, 
+      checkpoints: [...quoteData.checkpoints.map((checkpoint, i) => {
+        const changedCheckpoint = checkpoint;
+        changedCheckpoint.detailsOpen = false;
+        changedCheckpoint.canEdit = false;
+        return changedCheckpoint;
+      }), newCheckpoint]
+    });
+  };
 
-    setQuoteData({ ...quoteData, checkpoints: [...quoteData.checkpoints, newCheckpoint]});
+  const closeAllExceptOne = (index: number) => {
+    const newCheckpoints = quoteData.checkpoints.map((checkpoint, i) => {
+      if (i === index) {
+        return { ...checkpoint, detailsOpen: true, canEdit: true };
+      } else {
+        return { ...checkpoint, detailsOpen: false, canEdit: false };
+      }
+    });
+    setQuoteData({ ...quoteData, checkpoints: newCheckpoints });
+  };
+
+  const closeDetailsAndEdit = (index: number) => {
+    const newCheckpoints = quoteData.checkpoints;
+    newCheckpoints[index] = { ...newCheckpoints[index], detailsOpen: false, canEdit: false };
+    setQuoteData({ ...quoteData, checkpoints: newCheckpoints });
+  };
+
+  const setDetails = (index: number) => {
+    const newCheckpoints = [...quoteData.checkpoints];
+    newCheckpoints[index] = { ...newCheckpoints[index], detailsOpen: !newCheckpoints[index].detailsOpen };
+    setQuoteData({ ...quoteData, checkpoints: newCheckpoints });
   };
 
   if (!currentBounty || !currentUser) return null;
@@ -39,8 +74,8 @@ const LancerSubmitQuoteView: FC<Props> = ({ quoteData, setQuoteData, setCurrentA
     <div className="flex flex-col">
       <ActionsCardBanner
         title={`Quote to ${currentBounty.creator.user.name}`}
-        subtitle={`${quoteData.checkpoints.length || 0} ${
-          (quoteData.checkpoints.length || 0) === 1 ? "quote" : "quotes"
+        subtitle={`${checkpoints?.length || 0} ${
+          (checkpoints?.length || 0) === 1 ? "quote" : "quotes"
         } have been sent to them already`}
       ></ActionsCardBanner>
       <div className="px-6 py-4">
@@ -58,6 +93,9 @@ const LancerSubmitQuoteView: FC<Props> = ({ quoteData, setQuoteData, setCurrentA
             checkpoint={checkpoint} 
             setQuoteData={setQuoteData} 
             index={index}
+            closeAllExceptOne={closeAllExceptOne}
+            closeDetailsAndEdit={closeDetailsAndEdit}
+            setDetails={setDetails}
             key={index} 
           />
         ))}
@@ -68,7 +106,7 @@ const LancerSubmitQuoteView: FC<Props> = ({ quoteData, setQuoteData, setCurrentA
               onClick={() => addCheckpoint()}
             >
               <Plus /> 
-              Add a Milestone
+              Add a Checkpoint
             </button>
           </div>
 

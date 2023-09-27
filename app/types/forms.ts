@@ -78,4 +78,6 @@ export interface Checkpoint {
   price: number;
   description: string;
   estimatedTime: number;
+  detailsOpen: boolean;
+  canEdit: boolean;
 }

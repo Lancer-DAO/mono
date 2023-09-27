@@ -1,5 +1,6 @@
 import { bounties } from "@/server/api/routers/bounties/index";
 import { bountyUsers } from "@/server/api/routers/bountyUser/index";
+import { checkpoint } from "@/server/api/routers/checkpoint/index";
 import { industries } from "@/server/api/routers/industries/index";
 import { leaderboard } from '@/server/api/routers/leaderboard/index';
 import { media } from "@/server/api/routers/media/index";
@@ -18,6 +19,7 @@ export const appRouter = createTRPCRouter({
   users,
   bounties,
   bountyUsers,
+  checkpoint,
   industries,
   leaderboard,
   media,
