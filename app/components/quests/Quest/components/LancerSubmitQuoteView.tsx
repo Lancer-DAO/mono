@@ -3,10 +3,10 @@ import RedFire from "@/components/@icons/RedFire";
 import { useUserWallet } from "@/src/providers";
 import { useBounty } from "@/src/providers/bountyProvider";
 import { api } from "@/src/utils";
-import { Checkpoint, LancerQuoteData, QuestProgressState } from "@/types";
+import { LancerQuoteData } from "@/types";
 import { Dispatch, FC, SetStateAction, useState } from "react";
 import ActionsCardBanner from "./ActionsCardBanner";
-import { default as CheckpointView, default as MilestoneView } from "./CheckpointView";
+import CheckpointEdit from "./CheckpointEdit";
 import { QuestActionView } from "./QuestActions";
 
 interface Props {
@@ -89,7 +89,7 @@ const LancerSubmitQuoteView: FC<Props> = ({ quoteData, setQuoteData, setCurrentA
           <div className="flex items-center title-text text-primary200">{`$${quoteData.price}`}</div>
         </div>
         {quoteData.checkpoints.map((checkpoint, index) => (
-          <CheckpointView
+          <CheckpointEdit
             checkpoint={checkpoint} 
             setQuoteData={setQuoteData} 
             index={index}
