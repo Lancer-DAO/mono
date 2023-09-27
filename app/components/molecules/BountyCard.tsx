@@ -55,11 +55,7 @@ const BountyCard: FC<BountyCardProps> = ({
   };
 
   const handlePrice = useCallback(() => {
-    if (bounty) {
-      return Number(bounty?.escrow?.amount);
-    } else {
-      return Number(formData.issuePrice);
-    }
+    return Number(bounty?.escrow?.amount);
   }, [bounty, formData]);
 
   const previewMarkup = () => {
@@ -82,11 +78,7 @@ const BountyCard: FC<BountyCardProps> = ({
   if (!bounty && !formData) return null;
 
   const handlePriceIcon = () => {
-    if (bounty) {
-      return bounty?.escrow?.mint?.logo;
-    } else {
-      return formData.issuePriceIcon;
-    }
+    return bounty?.escrow?.mint?.logo;
   };
 
   return (

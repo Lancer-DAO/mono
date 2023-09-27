@@ -3,16 +3,10 @@ import { AnchorError, IdlTypes, Program } from "@project-serum/anchor";
 import { MonoProgram } from "./types/mono_program";
 
 import {
-  createAssociatedTokenAccountInstruction,
-  getAccount,
-  createMint,
-  mintToChecked,
   getAssociatedTokenAddress,
   TOKEN_PROGRAM_ID,
   NATIVE_MINT,
-  createSyncNativeInstruction,
   ASSOCIATED_TOKEN_PROGRAM_ID,
-  amountToUiAmount,
 } from "@solana/spl-token";
 
 import {
@@ -31,6 +25,7 @@ import {
   TransactionInstruction,
 } from "@solana/web3.js";
 import {
+  findDisputeAccount,
   findFeatureAccount,
   findFeatureTokenAccount,
   findLancerCompanyTokens,
@@ -42,13 +37,18 @@ import {
   findReferralDataAccount,
 } from "./pda";
 import { LANCER_ADMIN } from "./constants";
+import { min } from "bn.js";
+import { program } from "@project-serum/anchor/dist/cjs/native/system";
 
 export const createFeatureFundingAccountInstruction = async (
   mint: PublicKey,
   creator: PublicKey,
-  program: Program<MonoProgram>,
-  timestamp: string
+  program: Program<MonoProgram>
 ): Promise<TransactionInstruction> => {
+  console.log("Mint: ", mint.toBase58());
+
+  const timestamp = Date.now().toString();
+  console.log("timestamp = ", timestamp);
   const [feature_account] = await findFeatureAccount(
     timestamp,
     creator,
@@ -67,6 +67,45 @@ export const createFeatureFundingAccountInstruction = async (
     .createFeatureFundingAccount(timestamp)
     .accounts({
       creator: creator,
+      fundsMint: mint,
+      featureDataAccount: feature_account,
+      featureTokenAccount: feature_token_account,
+      programAuthority: program_authority,
+      tokenProgram: TOKEN_PROGRAM_ID,
+      rent: SYSVAR_RENT_PUBKEY,
+      associatedProgram: ASSOCIATED_TOKEN_PROGRAM_ID,
+      systemProgram: SystemProgram.programId,
+    })
+    .instruction();
+};
+
+export const createCustodialFeatureFundingAccountInstruction = async (
+  mint: PublicKey,
+  custodial_fee_payer: PublicKey,
+  creator: PublicKey,
+  program: Program<MonoProgram>
+): Promise<TransactionInstruction> => {
+  const timestamp = Date.now().toString();
+  console.log("timestamp = ", timestamp);
+  const [feature_account] = await findFeatureAccount(
+    timestamp,
+    creator,
+    program
+  );
+  const [feature_token_account] = await findFeatureTokenAccount(
+    timestamp,
+    creator,
+    mint,
+    program
+  );
+
+  const [program_authority] = await findProgramAuthority(program);
+
+  return await program.methods
+    .createCustodialFeatureFundingAccount(timestamp)
+    .accounts({
+      creator: creator,
+      custodialFeePayer: custodial_fee_payer,
       fundsMint: mint,
       featureDataAccount: feature_account,
       featureTokenAccount: feature_token_account,
@@ -162,10 +201,10 @@ export const addApprovedSubmittersV1Instruction = async (
     .addApprovedSubmittersV1()
     .accounts({
       creator: creator,
-      referrer: referrer,
       submitter: submitter,
-      featureDataAccount: feature_data_account,
+      referrer: referrer,
       referralDataAccount: referral_data_account,
+      featureDataAccount: feature_data_account,
     })
     .remainingAccounts(remainingAccounts)
     .instruction();
@@ -322,7 +361,6 @@ export const approveRequestWithReferralInstruction = async (
   creator: PublicKey,
   submitter: PublicKey,
   submitter_token_account: PublicKey,
-  buddylinkProgramId: PublicKey,
   mint: PublicKey,
   program: Program<MonoProgram>
 ): Promise<TransactionInstruction> => {
@@ -351,50 +389,6 @@ export const approveRequestWithReferralInstruction = async (
     program
   );
 
-  const [lancer_token_program_authority] = await findLancerProgramAuthority(
-    program
-  );
-
-  const referralAccount = await program.account.referralDataAccount.fetch(
-    referral_data_account
-  );
-
-  console.log(
-    "creator referrer, completer refferrer",
-    referralAccount.creatorReferrer.toString(),
-    referralAccount.approvedReferrers[0].toString()
-  );
-
-  const creatorReferrer =
-    referralAccount.creatorReferrer.toString() === PublicKey.default.toString()
-      ? []
-      : [
-          {
-            pubkey: referralAccount.creatorReferrer,
-            isWritable: true,
-            isSigner: false,
-          },
-          {
-            pubkey: referralAccount.creatorMember,
-            isWritable: true,
-            isSigner: false,
-          },
-        ];
-
-  const remainingAccounts = [
-    { pubkey: buddylinkProgramId, isWritable: false, isSigner: false },
-    { pubkey: mint, isWritable: false, isSigner: false },
-    ...referralAccount.approvedReferrers
-      .filter(
-        (referrer) => referrer.toString() !== PublicKey.default.toString()
-      )
-      .map((referrer) => ({
-        pubkey: referrer,
-        isWritable: true,
-        isSigner: false,
-      })),
-    ...creatorReferrer,
-  ];
   return await program.methods
     .approveRequestWithReferral()
     .accounts({
@@ -406,10 +400,8 @@ export const approveRequestWithReferralInstruction = async (
       programAuthority: program_authority,
       referralDataAccount: referral_data_account,
       lancerDaoTokenAccount: lancer_dao_token_account,
-      lancerTokenProgramAuthority: lancer_token_program_authority,
       tokenProgram: TOKEN_PROGRAM_ID,
     })
-    .remainingAccounts(remainingAccounts)
     .instruction();
 };
 
@@ -637,8 +629,6 @@ export const setShareMultipleSubmittersInstruction = async (
 export const createReferralDataAccountInstruction = async (
   creator: PublicKey,
   feature_data_account: PublicKey,
-  referrer: PublicKey,
-  remainingAccounts: AccountMeta[],
   program: Program<MonoProgram>
 ): Promise<TransactionInstruction> => {
   let [referral_data_account] = await findReferralDataAccount(
@@ -650,14 +640,46 @@ export const createReferralDataAccountInstruction = async (
   return await program.methods
     .createReferralDataAccount()
     .accounts({
+      // temp
+      referrer: new Keypair().publicKey,
       creator: creator,
       featureDataAccount: feature_data_account,
       referralDataAccount: referral_data_account,
-      referrer: referrer,
       rent: SYSVAR_RENT_PUBKEY,
       systemProgram: SystemProgram.programId,
     })
-    .remainingAccounts(remainingAccounts)
+    .instruction();
+};
+
+export const createCustodialReferralDataAccountInstruction = async (
+  creator: PublicKey,
+  custodial_fee_payer: PublicKey,
+  feature_data_account: PublicKey,
+  program: Program<MonoProgram>,
+  referrer?: PublicKey
+): Promise<TransactionInstruction> => {
+  let [referral_data_account] = await findReferralDataAccount(
+    creator,
+    feature_data_account,
+    program
+  );
+
+  if (!referrer) {
+    referrer = PublicKey.default;
+  }
+  console.log("FDA", feature_data_account.toBase58());
+
+  return await program.methods
+    .createCustodialReferralDataAccount()
+    .accounts({
+      creator: creator,
+      custodialFeePayer: custodial_fee_payer,
+      featureDataAccount: feature_data_account,
+      referrer: referrer,
+      referralDataAccount: referral_data_account,
+      rent: SYSVAR_RENT_PUBKEY,
+      systemProgram: SystemProgram.programId,
+    })
     .instruction();
 };
 
@@ -699,6 +721,7 @@ export const approveRequestMultipleTransaction = async (
   let submitter4 = PublicKey.default;
   let submitter5 = PublicKey.default;
 
+  // @ts-ignore
   let fetch_submitters = await program.account.featureDataAccount.fetch(
     feature_data_account
   );
@@ -917,7 +940,6 @@ export const rejectInvoiceInstruction = async (
   timestamp: string,
   creator: PublicKey,
   invoice_acceptor: PublicKey,
-
   mint: PublicKey,
   program: Program<MonoProgram>
 ): Promise<TransactionInstruction> => {
@@ -969,6 +991,183 @@ export const closeInvoiceInstruction = async (
       featureTokenAccount: feature_token_account,
       tokenProgram: TOKEN_PROGRAM_ID,
       associatedProgram: ASSOCIATED_TOKEN_PROGRAM_ID,
+      systemProgram: SystemProgram.programId,
+    })
+    .instruction();
+};
+
+export const achFundFeatureInstruction = async (
+  amount: number,
+  timestamp: string,
+  funder: PublicKey,
+  creator: PublicKey,
+  mint: PublicKey,
+  program: Program<MonoProgram>
+): Promise<TransactionInstruction> => {
+  const [feature_data_account] = await findFeatureAccount(
+    timestamp,
+    creator,
+    program
+  );
+  const [feature_token_account] = await findFeatureTokenAccount(
+    timestamp,
+    creator,
+    mint,
+    program
+  );
+
+  const [program_authority] = await findProgramAuthority(program);
+
+  const funder_token_account = await getAssociatedTokenAddress(mint, funder);
+
+  return await program.methods
+    .achFundFeature(new anchor.BN(amount))
+    .accounts({
+      creator: creator,
+      externalFunder: funder,
+      externalFunderTokenAccount: funder_token_account,
+      fundsMint: mint,
+      featureDataAccount: feature_data_account,
+      featureTokenAccount: feature_token_account,
+      programAuthority: program_authority,
+      tokenProgram: TOKEN_PROGRAM_ID,
+      systemProgram: SystemProgram.programId,
+    })
+    .instruction();
+};
+
+export const adminCloseBountyInstruction = async (
+  timestamp: string,
+  creator: PublicKey,
+  creator_token_account: PublicKey,
+  mint: PublicKey,
+  program: Program<MonoProgram>
+) => {
+  const [program_authority] = await findProgramAuthority(program);
+
+  const [feature_data_account] = await findFeatureAccount(
+    timestamp,
+    creator,
+    program
+  );
+  const [feature_token_account] = await findFeatureTokenAccount(
+    timestamp,
+    creator,
+    mint,
+    program
+  );
+
+  return await program.methods
+    .adminCloseBounty()
+    .accounts({
+      lancerAdmin: LANCER_ADMIN,
+      creator: creator,
+      creatorTokenAccount: creator_token_account,
+      featureDataAccount: feature_data_account,
+      featureTokenAccount: feature_token_account,
+      programAuthority: program_authority,
+      tokenProgram: TOKEN_PROGRAM_ID,
+    })
+    .instruction();
+};
+
+export const createDisputeInstruction = async (
+  timestamp,
+  dispute_admin: PublicKey,
+  creator: PublicKey,
+  mint: PublicKey,
+  program: Program<MonoProgram>
+) => {
+  const [feature_data_account] = await findFeatureAccount(
+    timestamp,
+    creator,
+    program
+  );
+  const [feature_token_account] = await findFeatureTokenAccount(
+    timestamp,
+    creator,
+    mint,
+    program
+  );
+
+  const [program_authority] = await findProgramAuthority(program);
+
+  const [dispute_account] = await findDisputeAccount(
+    timestamp,
+    creator,
+    mint,
+    program
+  );
+
+  return await program.methods
+    .createDispute()
+    .accounts({
+      creator: creator,
+      featureDataAccount: feature_data_account,
+      featureTokenAccount: feature_token_account,
+      programAuthority: program_authority,
+      disputeAdmin: dispute_admin,
+      disputeAccount: dispute_account,
+      tokenProgram: TOKEN_PROGRAM_ID,
+      systemProgram: SystemProgram.programId,
+    })
+    .instruction();
+};
+
+// TODO - make sure no instruction creates Token Accounts or make sure all instructions do
+export const settleDisputeInstruction = async (
+  timestamp,
+  dispute_admin: PublicKey,
+  creator: PublicKey,
+  submitter: PublicKey,
+  mint: PublicKey,
+  amount: number,
+  program: Program<MonoProgram>
+) => {
+  const [feature_token_account] = await findFeatureTokenAccount(
+    timestamp,
+    creator,
+    mint,
+    program
+  );
+
+  const [program_authority] = await findProgramAuthority(program);
+
+  const [dispute_account] = await findDisputeAccount(
+    timestamp,
+    creator,
+    mint,
+    program
+  );
+  const [lancer_dao_token_account] = await findLancerTokenAccount(
+    mint,
+    program
+  );
+
+  const [lancer_token_program_authority] = await findLancerProgramAuthority(
+    program
+  );
+
+  const creator_token_account = await getAssociatedTokenAddress(mint, creator);
+  const submitter_token_account = await getAssociatedTokenAddress(
+    mint,
+    submitter
+  );
+
+  return await program.methods
+    .settleDispute(new anchor.BN(amount))
+    .accounts({
+      disputeAdmin: dispute_admin,
+      creator: creator,
+      creatorTokenAccount: creator_token_account,
+      submitter: submitter,
+      submitterTokenAccount: submitter_token_account,
+      lancerDaoTokenAccount: lancer_dao_token_account,
+      lancerTokenProgramAuthority: lancer_token_program_authority,
+      disputeAccount: dispute_account,
+      featureTokenAccount: feature_token_account,
+      programAuthority: program_authority,
+      tokenProgram: TOKEN_PROGRAM_ID,
       systemProgram: SystemProgram.programId,
     })
     .instruction();

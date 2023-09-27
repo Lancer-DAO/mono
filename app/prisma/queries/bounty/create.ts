@@ -6,7 +6,6 @@ import * as queries from "../";
 export const create = async (
   createdAt: string,
   description: string,
-  estimatedTime: number,
   isPrivate: boolean,
   isTest: boolean,
   title: string,
@@ -16,29 +15,18 @@ export const create = async (
   user: Prisma.User,
   wallet: Prisma.Wallet,
   industries: Prisma.Industry[],
-  disciplines: Prisma.Discipline[],
-  media: Prisma.Media[],
-  price?: number
+  media: Prisma.Media[]
 ): Promise<Prisma.Bounty> => {
   const bounty = await prisma.bounty.create({
     data: {
       createdAt,
       description,
-      price,
-      estimatedTime,
       isPrivate,
       isTest,
       industries: {
         connect: industries.map((industry) => {
           return {
             id: industry.id,
-          };
-        }),
-      },
-      disciplines: {
-        connect: disciplines.map((discipline) => {
-          return {
-            id: discipline.id,
           };
         }),
       },

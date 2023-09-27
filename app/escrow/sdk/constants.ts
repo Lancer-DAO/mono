@@ -5,6 +5,7 @@ export const MONO_MAINNET = "LNCRQTZfeLMFHsSggvVc9kQWb1A98PEqHxVzBraWpQs";
 
 export const MONO_DATA = "mono";
 export const LANCER_DAO = "LANCER_DAO";
+export const DISPUTE = "dispute";
 
 export const USDC_ADDRESS = "";
 export const USDT_ADDRESS = "";

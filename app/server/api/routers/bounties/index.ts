@@ -2,11 +2,11 @@ import { createTRPCRouter } from "../../trpc";
 
 import { createBounty } from "./create";
 import { getBounty } from "./get";
-import { getAllBounties } from "./getAllBounties";
 import { fundBounty } from "./fund";
+import { getAllBounties } from "./getAllBounties";
 import { deleteMedia } from "./deleteMedia";
-
 import { tags } from "./tags";
+import { updateBountyToPrivate } from "./updateIsPrivate";
 
 export const bounties = createTRPCRouter({
   createBounty,
@@ -14,5 +14,6 @@ export const bounties = createTRPCRouter({
   fundBounty,
   getAllBounties,
   deleteMedia,
+  updateBountyToPrivate,
   tags,
 });
