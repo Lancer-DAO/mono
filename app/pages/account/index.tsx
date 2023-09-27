@@ -41,6 +41,7 @@ export async function getServerSideProps(
     }
 
     const myQuests = await queries.bounty.getMine(user.id);
+    const totalQuests = await queries.bounty.getTotalQuests();
     const allMints = await queries.mint.getAll();
     const allIndustries = await queries.industry.getMany();
     return {
@@ -50,6 +51,7 @@ export async function getServerSideProps(
         mints: JSON.stringify(allMints),
         industries: JSON.stringify(allIndustries),
         myQuests: JSON.stringify(myQuests),
+        totalQuestsCount: JSON.stringify(totalQuests),
       },
     };
   } catch (e) {
@@ -66,18 +68,12 @@ const Home: React.FC<{
   mints: string;
   industries: string;
   questsMine: string;
-}> = ({ user, mints, industries, questsMine }) => {
+  totalQuestsCount: string;
+}> = ({ user, mints, industries, questsMine, totalQuestsCount }) => {
   const { setAllMints, allMints } = useMint();
   const { setAllIndustries, allIndustries } = useIndustry();
   const { setAccount, account } = useAccount();
-  const {
-    setAllBounties,
-    allBounties,
-    totalQuests,
-    setTotalQuests,
-    myQuests,
-    setMyQuests,
-  } = useBounty();
+  const { maxPages, setMaxPages, myQuests, setMyQuests } = useBounty();
 
   if (!allMints && mints) {
     setAllMints(JSON.parse(mints));
@@ -90,6 +86,10 @@ const Home: React.FC<{
   }
   if (!myQuests && questsMine) {
     setMyQuests(JSON.parse(questsMine));
+  }
+  if (!maxPages && totalQuestsCount) {
+    const totalQuests = parseInt(JSON.parse(totalQuestsCount));
+    setMaxPages(Math.ceil(totalQuests / 10));
   }
   return (
     <>

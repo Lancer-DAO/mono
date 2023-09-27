@@ -39,9 +39,7 @@ export async function getServerSideProps(
       };
     }
     const allBounties = await queries.bounty.getMany(0, user.id);
-
     const totalQuests = await queries.bounty.getTotalQuests();
-
     const allMints = await queries.mint.getAll();
     const allIndustries = await queries.industry.getMany();
     return {
@@ -49,7 +47,6 @@ export async function getServerSideProps(
         currentUser: JSON.stringify(user),
         bounties: JSON.stringify(allBounties),
         totalQuestsCount: JSON.stringify(totalQuests),
-
         mints: JSON.stringify(allMints),
         industries: JSON.stringify(allIndustries),
       },
@@ -76,7 +73,6 @@ const BountiesPage: React.FC<{
   if (!allBounties && bounties) {
     setAllBounties(JSON.parse(bounties));
   }
-
   if (!allMints && mints) {
     setAllMints(JSON.parse(mints));
   }
