@@ -14,6 +14,7 @@ import { useBounty } from "@/src/providers/bountyProvider";
 import { useIndustry } from "@/src/providers/industryProvider";
 import { useMint } from "@/src/providers/mintProvider";
 import { QuestFilters, QuestRow } from "./components";
+import { QUESTS_PER_PAGE } from "@/src/constants";
 
 export const BOUNTY_USER_RELATIONSHIP = [
   "Creator",
@@ -57,7 +58,7 @@ const QuestTable: React.FC<Props> = ({ type, user }) => {
   const { allMints } = useMint();
   const { data: allBounties } = api.bounties.getAllBounties.useQuery(
     {
-      currentUserId: currentUser?.id,
+      currentUserId: self ? currentUser.id : user?.id,
       page: questsPage,
     },
     {
@@ -73,16 +74,12 @@ const QuestTable: React.FC<Props> = ({ type, user }) => {
   }
 
   useEffect(() => {
-    if (!allBounties || !currentUser || !allIndustries) return;
+    if (!allBounties || !allIndustries) return;
     var filteredBounties = [];
     if (type === "profile") {
       filteredBounties = allBounties?.filter((bounty) => {
         // filter out test quests unless user is a Lancer dev
         if ((!currentUser || !currentUser.isLancerDev) && bounty.isTest) {
-          return false;
-        }
-        // filter out quests that don't have an escrow account
-        if (!bounty.escrow.publicKey || !bounty.escrow.mint) {
           return false;
         }
         // filter out quests that don't include the user
@@ -147,11 +144,7 @@ const QuestTable: React.FC<Props> = ({ type, user }) => {
         return true;
       });
     }
-    if (type === "quests") {
-      setFilteredBounties(filteredBounties);
-    } else {
-      setFilteredBounties(filteredBounties.splice(0, 6));
-    }
+    setFilteredBounties(filteredBounties);
   }, [filters, allBounties, currentUser, type]);
 
   useEffect(() => {
@@ -161,7 +154,6 @@ const QuestTable: React.FC<Props> = ({ type, user }) => {
     // - all payout mints
     // - upper and lower bounds of price
 
-    if (!allBounties || !allIndustries || type === "profile") return;
     if (allBounties && allBounties?.length !== 0) {
       const allTags = allBounties
         ?.map((bounty) => bounty.tags.map((tag) => tag.name))
@@ -200,10 +192,6 @@ const QuestTable: React.FC<Props> = ({ type, user }) => {
       }
     }
   }, [allBounties, allIndustries]);
-
-  useEffect(() => {
-    console.log("allBounties", allBounties, maxPages, questsPage);
-  }, [allBounties, maxPages, questsPage]);
 
   return (
     <div
@@ -259,6 +247,13 @@ const QuestTable: React.FC<Props> = ({ type, user }) => {
                 </div>
               ));
             })()}
+          {filteredBounties?.length === 0 && (
+            <div className="w-full flex flex-col items-center justify-center gap-2">
+              <p className="text-neutral600 text-sm mt-[5px]">
+                No Quests Found!
+              </p>
+            </div>
+          )}
           <div className="flex items-center justify-center gap-5">
             <button
               onClick={() => {
@@ -274,7 +269,10 @@ const QuestTable: React.FC<Props> = ({ type, user }) => {
                 setQuestsPage(questsPage + 1);
               }}
               className={`text-blue text-sm font-bold mt-4 disabled:opacity-60 disabled:cursor-not-allowed`}
-              disabled={questsPage + 1 > maxPages - 1}
+              disabled={
+                questsPage + 1 > maxPages - 1 ||
+                filteredBounties?.length < QUESTS_PER_PAGE
+              }
             >
               Next Page
             </button>
