@@ -54,7 +54,7 @@ const Tags = ({
       <div className="flex">
         {formData.tags.map((tag, key) => (
           <div
-            className="bg-neutralBtn border flex border-neutralBtnBorder hover:bg-neutral-50 cursor-pointer rounded-full px-3 pr-2 h-8 items-center gap-x-1.5 mr-2 mb-2 text-textGreen/70"
+            className="bg-neutral-100 border flex border-neutral-200 hover:bg-neutral-50 cursor-pointer rounded-lg px-4 py-2 pr-2  items-center gap-x-1.5 mr-2 mb-2 text-neutral-500 text-sm"
             key={key}
             onClick={() => removeTag(tag)}
           >
@@ -78,7 +78,7 @@ const Tags = ({
         ))}
       </div>
       <input
-        className="placeholder:text-textGreen/70 border bg-neutralBtn border-neutralBtnBorder w-full h-[50px] rounded-lg px-3"
+        className="placeholder:text-neutral-500 text-sm border bg-neutral-100 border-neutral-200 w-full  rounded-lg px-4 py-2"
         placeholder="Enter tags"
         value={query ? query : ""}
         onChange={handleInput}

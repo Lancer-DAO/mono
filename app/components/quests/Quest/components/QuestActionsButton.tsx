@@ -22,11 +22,11 @@ export const QuestActionsButton: React.FC<QuestActionsButtonProps> = ({
     {...smallClickAnimation}
     disabled={disabled}
     className={`flex justify-center items-center disabled:opacity-80 
-    disabled:cursor-not-allowed rounded-lg 
-    ${type === "green" && "bg-primaryBtn border-primaryBtnBorder"}
-    ${type === "neutral" && "bg-neutralBtn border-neutralBtnBorder"}
-    ${type === "red" && "bg-secondaryBtn border-secondaryBtnBorder"}
-    border h-[50px] px-3 text-textPrimary ${extraClasses}`}
+    disabled:cursor-not-allowed rounded-md 
+    ${type === "green" && "bg-primary200 text-white font-bold"}
+    ${type === "neutral" && "bg-neutral100 border-neutral200 text-neutral600"}
+    ${type === "red" && "bg-primary300 text-white"}
+    border py-2 px-4 text-textPrimary ${extraClasses}`}
     onClick={onClick}
   >
     {isLoading ? "Loading..." : text}

@@ -24,6 +24,7 @@ export const addSubmitterFFA = async (
     new PublicKey(wallet.publicKey),
     referrer,
     submitter,
+    remainingAccounts,
     program
   );
 
@@ -58,6 +59,6 @@ export const addSubmitterFFAOld = async (
     program
   );
 
-  const res = await sendGaslessTx([approveSubmitterIx], true, wallet)
+  const res = await sendGaslessTx([approveSubmitterIx], true, wallet);
   return res.signature;
 };
