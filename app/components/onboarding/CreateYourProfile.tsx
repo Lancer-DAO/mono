@@ -49,6 +49,10 @@ export const CreateYourProfile: FC = () => {
       <h1 className="font-bold text-neutral-600 mt-2">
         Now, create your Profile.
       </h1>
+      <div className="text-sm text-neutral-500 w-[520px] mt-1">
+        Give some love to your profile and earn the Level 1 badge to be able to
+        post quests.
+      </div>
       <div className="flex relative">
         <div className="relative h-[150px] w-[500px] z-0">
           <div className="absolute top-[-270px] left-[-192px]">
