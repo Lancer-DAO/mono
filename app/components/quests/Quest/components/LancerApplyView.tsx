@@ -19,21 +19,23 @@ interface Props {
   setApplyData: Dispatch<SetStateAction<LancerApplyData>>,
   quoteData: LancerQuoteData,
   setCurrentActionView: Dispatch<SetStateAction<QuestActionView>>,
+  hasApplied: boolean,
+  setHasApplied: Dispatch<SetStateAction<boolean>>,
 }
 
 const LancerApplyView: FC<Props> = ({ 
   applyData, 
   setApplyData,
   quoteData,
-  setCurrentActionView 
+  setCurrentActionView,
+  hasApplied,
+  setHasApplied,
 }) => {
   const { currentBounty, setCurrentBounty } = useBounty();
   const { currentUser, currentWallet } = useUserWallet();
   const { mutateAsync: updateBountyUsers } =
     api.bountyUsers.update.useMutation();
   const { mutateAsync: createQuote } = api.quote.createQuote.useMutation();
-
-  const [hasApplied, setHasApplied] = useState(false);
 
   const onClick = async () => {
     // Request to submit. Does not interact on chain
@@ -80,15 +82,6 @@ const LancerApplyView: FC<Props> = ({
       }
     }
   };
-
-  // check if user has applied
-  useEffect(() => {
-    if (!currentBounty || !currentUser) return;
-    const hasApplied = currentBounty.currentUserRelationsList?.some(
-      (relation) => relation === BOUNTY_USER_RELATIONSHIP.RequestedLancer
-    );
-    setHasApplied(hasApplied);
-  }, [currentBounty, currentUser]);
 
   if (!currentBounty || !currentUser) return null;
 

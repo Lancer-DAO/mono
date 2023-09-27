@@ -255,8 +255,8 @@ const IndividualApplicantView: FC<Props> = ({
       <div className="w-full flex flex-col">
         {/* banner */}
         <div
-          className="w-full h-[68px] bg-white flex items-center 
-            justify-between px-6 border-b border-neutral200"
+          className="w-full px-6 py-4 bg-white flex items-center 
+            justify-between border-b border-neutral200"
         >
           <div className="flex items-center gap-2">
             <Image

@@ -1,8 +1,7 @@
 import { useUserWallet } from "@/src/providers";
 import { useBounty } from "@/src/providers/bountyProvider";
-import { Checkpoint, LancerApplyData, LancerQuoteData, QuestProgressState } from "@/types";
-import { Quote } from "@prisma/client";
-import { Dispatch, FC, SetStateAction, useState } from "react";
+import { BOUNTY_USER_RELATIONSHIP, LancerApplyData, LancerQuoteData, QuestProgressState } from "@/types";
+import { Dispatch, FC, SetStateAction, useEffect, useState } from "react";
 import LancerApplyView from "./LancerApplyView";
 import LancerSubmitQuoteView from "./LancerSubmitQuoteView";
 import { QuestActionView } from "./QuestActions";
@@ -12,7 +11,10 @@ interface Props {
 }
 
 const LancerApplicationView: FC<Props> = ({ currentActionView, setCurrentActionView }) => {
+  const { currentBounty } = useBounty();
   const { currentUser } = useUserWallet();
+
+  const [hasApplied, setHasApplied] = useState(false);
 
   const [applyData, setApplyData] = useState<LancerApplyData>({
     portfolio: currentUser.website,
@@ -31,6 +33,18 @@ const LancerApplicationView: FC<Props> = ({ currentActionView, setCurrentActionV
     checkpoints: [],
   });
 
+  // check if user has applied
+  useEffect(() => {
+    if (!currentBounty || !currentUser) return;
+    const hasApplied = currentBounty.currentUserRelationsList?.some(
+      (relation) => relation === BOUNTY_USER_RELATIONSHIP.RequestedLancer
+    );
+    setHasApplied(hasApplied);
+    if(hasApplied) {
+      setCurrentActionView(QuestActionView.Apply);
+    }   
+  }, [currentBounty, currentUser, setCurrentActionView]);
+
   return (
     <>
       {currentActionView === QuestActionView.Apply && (
@@ -39,6 +53,8 @@ const LancerApplicationView: FC<Props> = ({ currentActionView, setCurrentActionV
           setApplyData={setApplyData}  
           quoteData={quoteData}
           setCurrentActionView={setCurrentActionView}
+          hasApplied={hasApplied}
+          setHasApplied={setHasApplied}
         />
       )}
       {currentActionView === QuestActionView.SubmitQuote && (

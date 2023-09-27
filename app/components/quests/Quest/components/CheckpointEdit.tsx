@@ -120,7 +120,7 @@ const CheckpointEdit: FC<Props> = ({
           <div className="flex gap-6 items-center">
             <div className="flex gap-4 items-center">
               <div className="text text-neutral600">Price</div>
-              <div className="flex items-center gap-2 bg-neutral100 text text-neutral600 px-3 py-2 rounded-md border border-neutral200 outline-none">
+              <div className="flex items-center gap-2 bg-neutral100 px-3 py-2 rounded-md border border-neutral200">
                 <input 
                   className="bg-neutral100 text text-neutral600 outline-none"
                   type="number"
@@ -135,7 +135,7 @@ const CheckpointEdit: FC<Props> = ({
             </div>
             <div className="flex gap-4 items-center">
               <div className="text text-neutral600">Time to spend</div>
-              <div className="flex items-center gap-2 bg-neutral100 text text-neutral600 px-3 py-2 rounded-md border border-neutral200 outline-none">
+              <div className="flex items-center gap-2 bg-neutral100 px-3 py-2 rounded-md border border-neutral200">
                 <input 
                   className="bg-neutral100 text text-neutral600 outline-none" 
                   type="number"
