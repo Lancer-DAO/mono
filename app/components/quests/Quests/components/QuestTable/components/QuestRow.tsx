@@ -82,7 +82,7 @@ export const QuestRow: FC<BountyCardProps> = ({
 
         <div className="flex justify-center items-center gap-5">
           <div className="flex flex-col items-end justify-center">
-            {bounty && Number(bounty?.escrow.amount) ? (
+            {bounty && !bounty.isExternal && Number(bounty?.escrow.amount) ? (
               <div className="flex items-center justify-center gap-1">
                 <LockIcon
                   width="14px"
