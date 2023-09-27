@@ -20,7 +20,6 @@ import { LancerWallet } from "@/types/";
 import base58 from "bs58";
 import { sendGaslessTx } from "../gasless";
 
-
 export const createFFA = async (
   wallet: LancerWallet,
   program: Program<MonoProgram>,
@@ -42,21 +41,10 @@ export const createFFA = async (
     program
   );
 
-  const referralAccountIx = await createCustodialReferralDataAccountInstruction(
-    new PublicKey(wallet.publicKey),
-    new PublicKey("pyrSoEahjKGKZpLWEYwCJ8zQAsYZckZH8ZqJ7yGd1ha"),
-    feature_account,
-    program
-  );
-
-  console.log("Just before gasless")
 
   const res = await sendGaslessTx([ix]);
-  console.log("Sent first transaction")
-  // Distributing in two tx so there's some time for the feature_account to be created and second tx doesnt show 0xbc4
-  await new Promise(r => setTimeout(r, 15000));
-  console.log("Sending second")
-  const res2 = await sendGaslessTx([referralAccountIx]);
+  console.log("Sending out second tx")
+
   return {
     timestamp,
     signature: res.signature,
