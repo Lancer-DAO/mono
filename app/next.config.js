@@ -20,7 +20,7 @@ const nextConfig = {
     // },
     webpack: (config) => {
         config.watchOptions = {
-            poll: 10000,
+            poll: 1000,
             aggregateTimeout: 300,
         };
         config.resolve.fallback = {

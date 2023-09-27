@@ -384,17 +384,17 @@ model Transaction {
 }
 
 model Update {
-   id Int @id @default(autoincrement())
+  id Int @id @default(autoincrement())
 
-   // Fields
-   name String @db.VarChar(128)
-   type String @db.VarChar(24)
-   description String @db.VarChar(5000)
-   links String @db.VarChar(256)
-   
-   // Relations
-   media       Media[]
-   bounty      Bounty[]
+  // Fields
+  name        String @db.VarChar(128)
+  type        String @db.VarChar(24)
+  description String @db.VarChar(5000)
+  links       String @db.VarChar(256)
+
+  // Relations
+  media  Media[]
+  bounty Bounty[]
 }
 
 model User {
@@ -428,6 +428,7 @@ model User {
   hasFinishedOnboarding Boolean? @default(false)
   hasCompletedProfile   Boolean? @default(false)
   hasBeenApproved       Boolean? @default(false)
+  class                 String   @default("lancer") @db.VarChar(24)
   experience            Int?     @default(0)
 
   // Relations
