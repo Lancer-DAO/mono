@@ -37,8 +37,6 @@ export async function getServerSideProps(
   );
 
   if (user && user.hasFinishedOnboarding) {
-    console.log("redirecting from welcome");
-
     return {
       redirect: {
         destination: "/",

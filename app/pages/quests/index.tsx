@@ -53,9 +53,10 @@ export async function getServerSideProps(
       },
     };
   } catch (e) {
+    console.error(e);
     return {
       redirect: {
-        destination: "/welcome",
+        destination: "/",
         permanent: false,
       },
     };

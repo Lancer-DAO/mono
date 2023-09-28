@@ -181,29 +181,6 @@ export const Header = () => {
             </div>
           )}
         </div>
-        {/* <button
-            onClick={() => {
-              setShowTutorialModal(true);
-            }}
-            onMouseEnter={() => setIsTutorialButtonHovered(true)}
-            onMouseLeave={() => setIsTutorialButtonHovered(false)}
-            id="start-tutorial-link"
-            className="flex rounded-full h-[48px] w-[48px] gap-[10px] py-[6px] 
-            items-center justify-center"
-          >
-            <HelpCircle
-              height={48}
-              width={48}
-              strokeWidth={1.25}
-              color={isTutorialButtonHovered ? "#fff" : "#C5FFBA"}
-            />
-          </button> */}
-        {isRouterReady && (
-          <TutorialsModal
-            setShowModal={setShowTutorialModal}
-            showModal={showTutorialModal}
-          />
-        )}
       </div>
     </div>
   );

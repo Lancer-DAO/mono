@@ -53,6 +53,14 @@ export async function getServerSideProps(
       const { email } = metadata.user;
 
       const user = await queries.user.getByEmail(email);
+      if (!user.hasFinishedOnboarding) {
+        return {
+          redirect: {
+            destination: "/welcome",
+            permanent: false,
+          },
+        };
+      }
       const allBounties = await queries.bounty.getMany(0, user.id);
       const totalQuests = await queries.bounty.getTotalQuests(user.id);
       const allMints = await queries.mint.getAll();
@@ -68,12 +76,7 @@ export async function getServerSideProps(
         },
       };
     } catch (e) {
-      return {
-        redirect: {
-          destination: "/welcome",
-          permanent: false,
-        },
-      };
+      console.error(e);
     }
   } else {
     try {
@@ -92,12 +95,7 @@ export async function getServerSideProps(
         },
       };
     } catch (e) {
-      return {
-        redirect: {
-          destination: "/welcome",
-          permanent: false,
-        },
-      };
+      console.error(e);
     }
   }
 }

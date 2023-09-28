@@ -29,13 +29,10 @@ export async function getServerSideProps(
   }
   try {
     const { email } = metadata.user;
-    console.log("email", email);
 
     const user = await queries.user.getByEmail(email);
-    console.log("user", user);
 
     if (!user || !user.hasFinishedOnboarding) {
-      console.log("redirecting from account");
       return {
         redirect: {
           destination: "/welcome",
@@ -43,21 +40,11 @@ export async function getServerSideProps(
         },
       };
     }
-<<<<<<< HEAD
-    console.log(0);
-    const allBounties = await queries.bounty.getMany();
-    console.log(1);
-    const myQuests = await queries.bounty.getMine(user.id);
-    console.log(2);
-=======
 
     const myQuests = await queries.bounty.getMine(user.id);
     const totalQuests = await queries.bounty.getTotalQuests(user.id, true);
->>>>>>> release-2
     const allMints = await queries.mint.getAll();
-    console.log(3);
     const allIndustries = await queries.industry.getMany();
-    console.log(4);
     return {
       props: {
         currentUser: JSON.stringify(user),

@@ -40,7 +40,7 @@ export async function getServerSideProps(
     if (!currentUser.hasBeenApproved) {
       return {
         redirect: {
-          destination: "/account",
+          destination: "/",
           permanent: false,
         },
       };
@@ -64,9 +64,10 @@ export async function getServerSideProps(
       },
     };
   } catch (e) {
+    console.error(e);
     return {
       redirect: {
-        destination: "/welcome",
+        destination: "/",
         permanent: false,
       },
     };
