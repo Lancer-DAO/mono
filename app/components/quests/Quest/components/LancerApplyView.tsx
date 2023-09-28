@@ -11,19 +11,21 @@ import AlertCard from "./AlertCard";
 import { QuestApplicationView } from "./LancerApplicationView";
 
 interface Props {
-  applyData: LancerApplyData,
-  setApplyData: Dispatch<SetStateAction<LancerApplyData>>,
-  setCurrentApplicationView: Dispatch<SetStateAction<QuestApplicationView>>,
-  hasApplied: boolean,
-  onClick: () => Promise<void>,
+  applyData: LancerApplyData;
+  setApplyData: Dispatch<SetStateAction<LancerApplyData>>;
+  setCurrentApplicationView: Dispatch<SetStateAction<QuestApplicationView>>;
+  hasApplied: boolean;
+  onClick: () => Promise<void>;
+  isAwaitingResponse: boolean;
 }
 
-const LancerApplyView: FC<Props> = ({ 
-  applyData, 
+const LancerApplyView: FC<Props> = ({
+  applyData,
   setApplyData,
   setCurrentApplicationView,
   hasApplied,
   onClick,
+  isAwaitingResponse,
 }) => {
   const { currentBounty } = useBounty();
   const { currentUser } = useUserWallet();
@@ -124,23 +126,26 @@ const LancerApplyView: FC<Props> = ({
           }
         />
       </div>
-        <div className="flex items-center justify-end gap-4 px-6 py-4">
-          <button 
-            className="title-text text-neutral600 px-4 py-2 rounded-md border border-neutral300"
-            onClick={() => setCurrentApplicationView(QuestApplicationView.SubmitQuote)}
-            >
-            Back to Quote
-          </button>
-          {!hasApplied && (
-            <motion.button
-              {...smallClickAnimation}
-              className="bg-primary200 text-white h-9 w-fit px-4 py-2 title-text rounded-md"
-              onClick={onClick}
-            >
-              Submit Application
-            </motion.button>
-          )}
-        </div>
+      <div className="flex items-center justify-end gap-4 px-6 py-4">
+        <button
+          className="title-text text-neutral600 px-4 py-2 rounded-md border border-neutral300"
+          onClick={() =>
+            setCurrentApplicationView(QuestApplicationView.SubmitQuote)
+          }
+        >
+          Back to Quote
+        </button>
+        {!hasApplied && (
+          <motion.button
+            {...smallClickAnimation}
+            className="bg-primary200 text-white h-9 w-fit px-4 py-2 title-text rounded-md"
+            onClick={onClick}
+            disabled={isAwaitingResponse}
+          >
+            Submit Application
+          </motion.button>
+        )}
+      </div>
     </div>
   );
 };

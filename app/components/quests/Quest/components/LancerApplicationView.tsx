@@ -1,7 +1,12 @@
 import { useUserWallet } from "@/src/providers";
 import { useBounty } from "@/src/providers/bountyProvider";
 import { api, updateList } from "@/src/utils";
-import { BOUNTY_USER_RELATIONSHIP, LancerApplyData, LancerQuoteData, QuestProgressState } from "@/types";
+import {
+  BOUNTY_USER_RELATIONSHIP,
+  LancerApplyData,
+  LancerQuoteData,
+  QuestProgressState,
+} from "@/types";
 import { FC, useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
 import LancerApplyView from "./LancerApplyView";
@@ -16,28 +21,39 @@ const LancerApplicationView: FC = () => {
   const { currentBounty, setCurrentBounty } = useBounty();
   const { currentUser, currentWallet } = useUserWallet();
 
-  const [currentApplicationView, setCurrentApplicationView] = useState<QuestApplicationView>(QuestApplicationView.SubmitQuote);
+  const [currentApplicationView, setCurrentApplicationView] =
+    useState<QuestApplicationView>(QuestApplicationView.SubmitQuote);
   const [hasApplied, setHasApplied] = useState(false);
   const [isAwaitingResponse, setIsAwaitingResponse] = useState(false);
   const { mutateAsync: updateBountyUsers } =
     api.bountyUsers.update.useMutation();
   const { mutateAsync: createQuote } = api.quote.createQuote.useMutation();
 
-  const [applyData, setApplyData] = useState<LancerApplyData>({
-    portfolio: currentUser.website,
-    linkedin: currentUser.linkedin,
-    about: currentUser.bio,
-    resume: currentUser.resume,
-    details: "",
+  const [applyData, setApplyData] = useState<LancerApplyData>(() => {
+    const savedApplyData = localStorage.getItem("applyData");
+    if (savedApplyData) return JSON.parse(savedApplyData);
+
+    return {
+      portfolio: currentUser.website,
+      linkedin: currentUser.linkedin,
+      about: currentUser.bio,
+      resume: currentUser.resume,
+      details: "",
+    };
   });
 
-  const [quoteData, setQuoteData] = useState<LancerQuoteData>({
-    title: "",
-    description: "",
-    estimatedTime: 0,
-    price: 0,
-    state: QuestProgressState.NEW,
-    checkpoints: [],
+  const [quoteData, setQuoteData] = useState<LancerQuoteData>(() => {
+    const savedQuoteData = localStorage.getItem("quoteData");
+    if (savedQuoteData) return JSON.parse(savedQuoteData);
+
+    return {
+      title: "",
+      description: "",
+      estimatedTime: 0,
+      price: 0,
+      state: QuestProgressState.NEW,
+      checkpoints: [],
+    };
   });
 
   const confirmAction = (): Promise<void> => {
@@ -86,7 +102,7 @@ const LancerApplicationView: FC = () => {
   };
 
   const onClick = async () => {
-    if(quoteData.checkpoints.length === 0) {
+    if (quoteData.checkpoints.length === 0) {
       toast.error("Please create at least one milestone.");
       return;
     }
@@ -123,6 +139,8 @@ const LancerApplicationView: FC = () => {
       setCurrentBounty(updatedBounty);
       setHasApplied(true);
       toast.success("Application sent", { id: toastId });
+      localStorage.removeItem("applyData");
+      localStorage.removeItem("quoteData");
     } catch (error) {
       if (
         (error.message as string).includes(
@@ -145,28 +163,38 @@ const LancerApplicationView: FC = () => {
     setHasApplied(hasApplied);
   }, [currentBounty, currentUser]);
 
+  // useEffects to update local storage whenever application data changes
+  useEffect(() => {
+    localStorage.setItem("quoteData", JSON.stringify(quoteData));
+  }, [quoteData]);
+  useEffect(() => {
+    localStorage.setItem("applyData", JSON.stringify(applyData));
+  }, [applyData]);
+
   return (
     <>
       {currentApplicationView === QuestApplicationView.ProfileInfo && (
         <LancerApplyView
           applyData={applyData}
-          setApplyData={setApplyData}  
+          setApplyData={setApplyData}
           setCurrentApplicationView={setCurrentApplicationView}
           hasApplied={hasApplied}
           onClick={onClick}
+          isAwaitingResponse={isAwaitingResponse}
         />
       )}
       {currentApplicationView === QuestApplicationView.SubmitQuote && (
-        <LancerSubmitQuoteView 
+        <LancerSubmitQuoteView
           quoteData={quoteData}
           setQuoteData={setQuoteData}
           setCurrentApplicationView={setCurrentApplicationView}
           hasApplied={hasApplied}
           onClick={onClick}
+          isAwaitingResponse={isAwaitingResponse}
         />
-      )}  
+      )}
     </>
-  )
-}
+  );
+};
 
 export default LancerApplicationView;

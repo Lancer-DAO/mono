@@ -13,28 +13,30 @@ import CheckpointEdit from "./CheckpointEdit";
 import CheckpointView from "./CheckpointView";
 import { QuestApplicationView } from "./LancerApplicationView";
 interface Props {
-  quoteData: LancerQuoteData,
-  setQuoteData: Dispatch<SetStateAction<LancerQuoteData>>,
-  setCurrentApplicationView: Dispatch<SetStateAction<QuestApplicationView>>,
-  hasApplied: boolean,
-  onClick: () => Promise<void>,
+  quoteData: LancerQuoteData;
+  setQuoteData: Dispatch<SetStateAction<LancerQuoteData>>;
+  setCurrentApplicationView: Dispatch<SetStateAction<QuestApplicationView>>;
+  hasApplied: boolean;
+  onClick: () => Promise<void>;
+  isAwaitingResponse: boolean;
 }
 
-const LancerSubmitQuoteView: FC<Props> = ({ 
-  quoteData, 
-  setQuoteData, 
-  setCurrentApplicationView, 
-  hasApplied, 
-  onClick 
+const LancerSubmitQuoteView: FC<Props> = ({
+  quoteData,
+  setQuoteData,
+  setCurrentApplicationView,
+  hasApplied,
+  onClick,
+  isAwaitingResponse,
 }) => {
   const { currentBounty } = useBounty();
   const { currentUser } = useUserWallet();
   const { data: quotes } = api.quote.getQuotesByBounty.useQuery(
     { id: currentBounty.id },
-    { enabled: !!currentBounty },
-  )
+    { enabled: !!currentBounty }
+  );
   const { data: quote } = api.quote.getQuoteByBountyAndUser.useQuery(
-    { 
+    {
       bountyId: currentBounty.id,
       userId: currentUser.id,
     },
@@ -46,20 +48,25 @@ const LancerSubmitQuoteView: FC<Props> = ({
   );
 
   useEffect(() => {
-    if(!!quote && !!checkpoints) {
-      setQuoteData({ ...quoteData, price: Number(quote.price), estimatedTime: Number(quote.estimatedTime), checkpoints: checkpoints.map((checkpoint) => { return {
-        title: checkpoint.title,
-        description: checkpoint.description,
-        price: Number(checkpoint.price),
-        estimatedTime: Number(checkpoint.estimatedTime),
-        detailsOpen: false,
-        canEdit: false,
-        addedWen: 0
-      }}) })
+    if (!!quote && !!checkpoints) {
+      setQuoteData({
+        ...quoteData,
+        price: Number(quote.price),
+        estimatedTime: Number(quote.estimatedTime),
+        checkpoints: checkpoints.map((checkpoint) => {
+          return {
+            title: checkpoint.title,
+            description: checkpoint.description,
+            price: Number(checkpoint.price),
+            estimatedTime: Number(checkpoint.estimatedTime),
+            detailsOpen: false,
+            canEdit: false,
+            addedWen: 0,
+          };
+        }),
+      });
     }
-    
-  }, [quoteData, setQuoteData, quote, checkpoints])
-  
+  }, [quoteData, setQuoteData, quote, checkpoints]);
 
   const addCheckpoint = () => {
     const newCheckpoint = {
@@ -71,15 +78,18 @@ const LancerSubmitQuoteView: FC<Props> = ({
       canEdit: true,
       addedWen: +new Date(),
     };
-    
+
     setQuoteData({
-      ...quoteData, 
-      checkpoints: [...quoteData.checkpoints.map((checkpoint, i) => {
-        const changedCheckpoint = checkpoint;
-        changedCheckpoint.detailsOpen = false;
-        changedCheckpoint.canEdit = false;
-        return changedCheckpoint;
-      }), newCheckpoint]
+      ...quoteData,
+      checkpoints: [
+        ...quoteData.checkpoints.map((checkpoint, i) => {
+          const changedCheckpoint = checkpoint;
+          changedCheckpoint.detailsOpen = false;
+          changedCheckpoint.canEdit = false;
+          return changedCheckpoint;
+        }),
+        newCheckpoint,
+      ],
     });
   };
 
@@ -96,13 +106,20 @@ const LancerSubmitQuoteView: FC<Props> = ({
 
   const closeDetailsAndEdit = (index: number) => {
     const newCheckpoints = quoteData.checkpoints;
-    newCheckpoints[index] = { ...newCheckpoints[index], detailsOpen: false, canEdit: false };
+    newCheckpoints[index] = {
+      ...newCheckpoints[index],
+      detailsOpen: false,
+      canEdit: false,
+    };
     setQuoteData({ ...quoteData, checkpoints: newCheckpoints });
   };
 
   const setDetails = (index: number) => {
     const newCheckpoints = [...quoteData.checkpoints];
-    newCheckpoints[index] = { ...newCheckpoints[index], detailsOpen: !newCheckpoints[index].detailsOpen };
+    newCheckpoints[index] = {
+      ...newCheckpoints[index],
+      detailsOpen: !newCheckpoints[index].detailsOpen,
+    };
     setQuoteData({ ...quoteData, checkpoints: newCheckpoints });
   };
 
@@ -140,39 +157,40 @@ const LancerSubmitQuoteView: FC<Props> = ({
           <>
             {!hasApplied ? (
               <CheckpointEdit
-                checkpoint={checkpoint} 
-                setQuoteData={setQuoteData} 
+                checkpoint={checkpoint}
+                setQuoteData={setQuoteData}
                 index={index}
                 closeAllExceptOne={closeAllExceptOne}
                 closeDetailsAndEdit={closeDetailsAndEdit}
                 setDetails={setDetails}
-                key={checkpoint.addedWen} 
+                key={checkpoint.addedWen}
               />
             ) : (
               <CheckpointView
                 checkpoint={checkpoint}
                 key={checkpoint.addedWen}
               />
-            )} 
+            )}
           </>
         ))}
-        {(quoteData.checkpoints.length < 5 && !hasApplied) && (
+        {quoteData.checkpoints.length < 5 && !hasApplied && (
           <div className="py-4">
-            <button 
+            <button
               className="py-1 px-2 flex gap-1 justify-center items-center rounded-md border border-neutral200 text-mini text-neutral500"
               onClick={() => addCheckpoint()}
             >
-              <Plus /> 
+              <Plus />
               Add a Checkpoint
             </button>
           </div>
-
         )}
       </div>
       <div className="flex py-4 px-6 justify-end items-center gap-4 self-stretch opacity-100">
-        <button 
+        <button
           className="title-text text-neutral600 px-4 py-2 rounded-md border border-neutral300"
-          onClick={() => setCurrentApplicationView(QuestApplicationView.ProfileInfo)}
+          onClick={() =>
+            setCurrentApplicationView(QuestApplicationView.ProfileInfo)
+          }
         >
           Review Profile
         </button>
@@ -181,6 +199,7 @@ const LancerSubmitQuoteView: FC<Props> = ({
             {...smallClickAnimation}
             className="bg-primary200 text-white h-9 w-fit px-4 py-2 title-text rounded-md"
             onClick={onClick}
+            disabled={isAwaitingResponse}
           >
             Submit Application
           </motion.button>
