@@ -71,7 +71,6 @@ const MultiSelectDropdown: React.FC<Props> = ({
       );
     });
   };
-  console.log("version", version);
 
   if (version === "white") {
     return (
