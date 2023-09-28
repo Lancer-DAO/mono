@@ -1,10 +1,10 @@
-import { FC, SVGAttributes } from "react";
 import { LockIcon, Logo } from "@/components";
 import { useBounty } from "@/src/providers/bountyProvider";
-import { BountyPreview, QuestFormData, Industry } from "@/types/";
+import { BountyPreview, Industry, QuestFormData } from "@/types/";
 import { getFormattedDate } from "@/utils";
 import { marked } from "marked";
 import Image from "next/image";
+import { FC, SVGAttributes } from "react";
 
 export interface BountyCardProps extends SVGAttributes<SVGSVGElement> {
   bounty?: BountyPreview;
@@ -102,8 +102,6 @@ export const QuestRow: FC<BountyCardProps> = ({
             </p>
           </div>
           <a
-            target="_blank"
-            rel="noreferrer"
             href={handleBountyLink()}
             className="rounded-md py-2 px-4 text-neutral600 text-sm border border-neutral200"
           >

@@ -5,14 +5,13 @@ import * as Prisma from "@prisma/client";
 export const create = async (
   userId: number,
   bountyId: number,
-  name: string,
-  type: string,
+  title: string,
   description: string,
-  media: Prisma.Media[],
-  links: string,
-  state: QuestProgressState
-): Promise<Prisma.QuestUpdate> => {
-  return await prisma.questUpdate.create({
+  estimatedTime: number,
+  price: number,
+  state: QuestProgressState,
+): Promise<Prisma.Quote> => {
+  return await prisma.quote.create({
     data: {
       user: {
         connect: {
@@ -24,19 +23,12 @@ export const create = async (
           id: bountyId,
         },
       },
-      name,
-      type,
+      title,
       description,
+      estimatedTime,
+      price,
       createdAt: Date.now().toString(),
-      media: {
-        connect: media.map((med) => {
-          return {
-            id: med.id,
-          };
-        }),
-      },
-      links,
       state,
     },
   });
-};
+}

@@ -8,12 +8,15 @@ import { marked } from "marked";
 import Link from "next/link";
 import { ArrowLeft, ChevronDown, ChevronUp, ExternalLink } from "react-feather";
 import { ArchiveBounty } from ".";
+import { useRouter } from "next/router";
 
 const Divider = () => <div className="h-[20px] w-[1px] mx-4 bg-slate-200" />;
 
 const QuestDetails = () => {
   const [dropdownOpen, setDropdownOpen] = useState(true);
   const { currentBounty } = useBounty();
+
+  const router = useRouter();
 
   const formatString = (str: string) => {
     return str
@@ -52,32 +55,26 @@ const QuestDetails = () => {
     >
       {/* quest header */}
       <div className="flex w-full justify-between items-center">
-        <div className="flex flex-col items-start px-4 py-6">
+        <div className="flex w-full flex-col items-start px-4 py-6">
           {/* back arrow */}
           <div className="flex items-center pb-1 gap-2">
-            <Link href="/quests">
-              <ArrowLeft className="text-neutral400" width={16} height={16} />
-            </Link>
+            <ArrowLeft
+              className="text-neutral400 cursor-pointer"
+              width={16}
+              height={16}
+              onClick={() => router.push("/")}
+            />
             <h2 className="text-neutral600 font-bold">
               {currentBounty?.title}
             </h2>
           </div>
           {/* quest info */}
-          <div className="flex items-center pb-[10px] px-6">
-            <p className="text text-neutral500">{`Created on ${dayjs
-              .unix(parseInt(currentBounty.createdAt) / 1000)
-              .format("D MMM YYYY")}`}</p>
-            {/* TODO: either add back estimated time or remove from design */}
-            {/* <Divider />
-          <p className="text text-neutral500">{`${currentBounty.estimatedTime.toString()} ${
-            Number(currentBounty.estimatedTime) > 1 ? "hours" : "hour"
-          }`}</p> */}
-            {/* <Link
-              href={getSolscanAddress(
-                new PublicKey(currentBounty?.escrow?.publicKey)
-              )}
-              target="true"
-            > */}
+          <div className="w-full flex items-center pb-2.5 px-6">
+            <p className="text text-neutral500">
+              {`Created on ${dayjs
+                .unix(parseInt(currentBounty.createdAt) / 1000)
+                .format("D MMM YYYY")}`}
+            </p>
             {currentBounty?.escrow && (
               <div className="flex items-center gap-1.5">
                 <Divider />
@@ -98,7 +95,9 @@ const QuestDetails = () => {
                 </Link>
               </div>
             )}
-            <ArchiveBounty />
+            <div className="ml-auto">
+              <ArchiveBounty />
+            </div>
           </div>
           <div className="flex px-5 gap-2">
             {currentBounty.tags.length > 0 && (

@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
-import { api, getUniqueItems } from "@/src/utils";
 import { useUserWallet } from "@/src/providers";
-import { LoadingBar } from "@/components";
+import { useBounty } from "@/src/providers/bountyProvider";
+import { useIndustry } from "@/src/providers/industryProvider";
+import { getUniqueItems } from "@/src/utils";
 import {
   BountyPreview,
   BountyState,
@@ -10,11 +11,7 @@ import {
   User,
 } from "@/types";
 import { AnimatePresence } from "framer-motion";
-import { useBounty } from "@/src/providers/bountyProvider";
-import { useIndustry } from "@/src/providers/industryProvider";
-import { useMint } from "@/src/providers/mintProvider";
 import { QuestFilters, QuestRow } from "./components";
-import { QUESTS_PER_PAGE } from "@/src/constants";
 
 export const BOUNTY_USER_RELATIONSHIP = [
   "Creator",

@@ -1,15 +1,15 @@
 import {
   BountyCardFrame,
   ContributorInfo,
-  PriceTag,
   // StarIcon,
   LockIcon,
+  PriceTag,
 } from "@/components";
 import { useUserWallet } from "@/providers";
 import { fastEnterAnimation, midClickAnimation } from "@/src/constants";
 import { useBounty } from "@/src/providers/bountyProvider";
 import { useIndustry } from "@/src/providers/industryProvider";
-import { BountyPreview, QuestFormData, Industry } from "@/types/";
+import { BountyPreview, Industry, QuestFormData } from "@/types/";
 import { api, getFormattedDate } from "@/utils";
 import { motion } from "framer-motion";
 import { marked } from "marked";

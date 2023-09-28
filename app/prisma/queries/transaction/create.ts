@@ -13,11 +13,6 @@ export const create = async (
       timestamp,
       signature,
       label,
-      chain: {
-        connect: {
-          id: 1,
-        },
-      },
       escrow: {
         connect: {
           id: escrow.id,

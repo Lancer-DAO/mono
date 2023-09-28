@@ -11,11 +11,6 @@ export const create = async (
     data: {
       timestamp: timestamp,
       publicKey: escrowKey,
-      chain: {
-        connect: {
-          id: 1,
-        },
-      },
       mint: {
         connect: {
           id: mint,
