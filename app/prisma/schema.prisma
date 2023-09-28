@@ -28,8 +28,8 @@ model Bounty {
   links         String   @default("") @db.VarChar(1024)
 
   // Relations
-  escrow     Escrow        @relation(fields: [escrowid], references: [id])
-  escrowid   Int           @unique
+  escrow     Escrow?        @relation(fields: [escrowid], references: [id])
+  escrowid   Int?           @unique
   tags       Tag[]
   users      BountyUser[]
   industries Industry[]
