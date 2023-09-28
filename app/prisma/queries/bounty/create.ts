@@ -64,3 +64,42 @@ export const create = async (
   });
   return bounty;
 };
+
+export const createExternal = async (
+  createdAt: string,
+  description: string,
+  title: string,
+  link: string,
+  industries: Array<string>,
+  userName: string,
+  userPicture: string,
+  price?: number
+): Promise<Prisma.Bounty> => {
+  const user = await queries.user.getOrCreateByName(userName, userPicture);
+  const bounty = await prisma.bounty.create({
+    data: {
+      createdAt,
+      description,
+      price,
+      industries: {
+        connect: industries.map((industry) => {
+          return {
+            name: industry,
+          };
+        })
+      },
+      isPrivate: false,
+      isExternal: true,
+      state: BountyState.ACCEPTING_APPLICATIONS,
+      title,
+      links: link,
+      users: {
+        create: {
+          userid: user.id,
+          relations: "creator",
+        },
+      },
+    },
+  });
+  return bounty;
+};
