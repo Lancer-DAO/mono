@@ -687,9 +687,9 @@ const QuestUpdatesTable: React.FC = () => {
         {allUpdates?.map((update) => {
           return <UpdateTableItem {...update} key={update.key} />;
         })}
-        {/* {showDisputeModal && (
+        {showDisputeModal && (
           <DisputeModal setShowModal={setShowDisputeModal} />
-        )} */}
+        )}
 
         <div className="px-8 py-4 text-black"></div>
       </div>

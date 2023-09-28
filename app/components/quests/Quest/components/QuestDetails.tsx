@@ -95,6 +95,14 @@ const QuestDetails = () => {
                 </Link>
               </div>
             )}
+            {currentBounty?.isExternal && currentBounty.price && (
+              <div className="flex items-center gap-1.5">
+                <Divider />
+                <p className="text text-neutral500">{`$${formatPrice(
+                  Number(currentBounty?.price)
+                )}`}</p>
+              </div>
+            )}
             <div className="ml-auto">
               <ArchiveBounty />
             </div>
@@ -126,8 +134,13 @@ const QuestDetails = () => {
         </div>
         {currentBounty.isExternal && (
           <div>
-            <Link href={currentBounty.links} passHref>
-              <button className="bg-primary200 mr-8 text-white text-xl  text-center w-fit px-2 py-1 rounded-lg border flex items-center gap-1">
+            <Link
+              href={currentBounty.links}
+              passHref
+              target="_blank"
+              rel="noreferrer noopener"
+            >
+              <button className="whitespace-nowrap p-3 bg-primary200 mr-8 text-white text-xl  text-center rounded-lg border flex items-center justify-between gap-1">
                 Go To Quest{" "}
                 <ExternalLink className="text-white" width={20} height={20} />
               </button>

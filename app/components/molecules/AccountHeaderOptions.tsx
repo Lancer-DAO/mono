@@ -98,23 +98,12 @@ const AccountHeaderOptions = () => {
           >
             Discord
           </Link>
-          <Link
-            href={
-              "https://lancerworks.notion.site/Lancer-Documentation-ed924cd3b28e44e3bf90fb5db1dc46d3?pvs=4"
-            }
-            id="documentation-link"
-            target="_blank"
-            className="flex h-[48px] border-b-gray-400 border-b-[1px] py-[6px] items-center justify-center
-            hover:bg-bgLancer text-gray-800 transition-colors duration-300 ease-in-out"
-          >
-            Documentation
-          </Link>
 
           {!IS_CUSTODIAL && currentUser && (
             <Link
               href={"/api/auth/logout"}
               id="logout-link"
-              className="flex h-[48px] py-[6px] items-center justify-center border-b-gray-400
+              className="flex h-[48px] py-[6px] items-center justify-center border-b-gray-400 border-b-[1px]
               hover:bg-bgLancer text-gray-800 transition-colors duration-300 ease-in-out"
             >
               Logout
@@ -136,7 +125,7 @@ const AccountHeaderOptions = () => {
 
           <Button
             className={classNames(
-              "flex w-full h-[48px]rounded-b-[20px] hover:bg-bgLancer py-[8px] items-center justify-center transition-colors duration-300 ease-in-out",
+              "flex w-full h-[48px]  rounded-b-[20px] hover:bg-bgLancer py-[8px] items-center justify-center transition-colors duration-300 ease-in-out",
               isDebugMode
                 ? "text-white bg-bgLancerSecondary"
                 : "hover:bg-turquoise-500 text-gray-800 "

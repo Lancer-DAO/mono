@@ -2,6 +2,7 @@ import { LockIcon, Logo } from "@/components";
 import { useBounty } from "@/src/providers/bountyProvider";
 import { BountyPreview, Industry, QuestFormData } from "@/types/";
 import { getFormattedDate } from "@/utils";
+import { ExternalLink } from "lucide-react";
 import { marked } from "marked";
 import Image from "next/image";
 import { FC, SVGAttributes } from "react";
@@ -91,6 +92,17 @@ export const QuestRow: FC<BountyCardProps> = ({
                 />
                 <p className="text-sm text-neutral600">
                   ${Number(bounty?.escrow.amount).toLocaleString()}
+                </p>
+              </div>
+            ) : bounty.isExternal && bounty.price ? (
+              <div className="flex items-center justify-center gap-1">
+                <ExternalLink
+                  width="14px"
+                  height="14px"
+                  className="text-primary200"
+                />
+                <p className="text-sm text-neutral600">
+                  ${Number(bounty?.price).toLocaleString()}
                 </p>
               </div>
             ) : (
