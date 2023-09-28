@@ -75,7 +75,7 @@ const ReferenceDialogue = ({ onReferenceAdded }) => {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <button className="flex justify-center items-center border border-neutral-200 text-neutral-400 rounded-md min-h-[64px] hover:bg-gray-200">
+        <button className="flex w-full justify-center items-center border border-neutral-200 text-neutral-400 rounded-md min-h-[64px] hover:bg-gray-200">
           <PlusCircle size={16} />
         </button>
       </DialogTrigger>

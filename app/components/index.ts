@@ -10,9 +10,21 @@ const QuestCompleted = dynamic(() => import("./@animations/QuestCompleted"));
 const Close = dynamic(() => import("./@icons/Close"));
 const Coins = dynamic(() => import("./@icons/Coins"));
 const ExternalLinkIcon = dynamic(() => import("./@icons/ExternalLinkIcon"));
+const LancerOnboardingEmblem = dynamic(
+  () => import("./@icons/LancerOnboardingEmblem")
+);
+const LancerOnboardingHelmet = dynamic(
+  () => import("./@icons/LancerOnboardingHelmet")
+);
 const LockIcon = dynamic(() => import("./@icons/LockIcon"));
 const Logo = dynamic(() => import("./@icons/Logo"));
 const NextArrow = dynamic(() => import("./@icons/NextArrow"));
+const NobleOnboardingEmblem = dynamic(
+  () => import("./@icons/NobleOnboardingEmblem")
+);
+const NobleOnboardingHelmet = dynamic(
+  () => import("./@icons/NobleOnboardingHelmet")
+);
 const PhantomLogo = dynamic(() => import("./@icons/PhantomLogo"));
 const Rocket = dynamic(() => import("./@icons/Rocket"));
 const StarIcon = dynamic(() => import("./@icons/StarIcon"));
@@ -80,9 +92,13 @@ export {
   Close,
   Coins,
   ExternalLinkIcon,
+  LancerOnboardingEmblem,
+  LancerOnboardingHelmet,
   LockIcon,
   Logo,
   NextArrow,
+  NobleOnboardingEmblem,
+  NobleOnboardingHelmet,
   PhantomLogo,
   Rocket,
   StarIcon,

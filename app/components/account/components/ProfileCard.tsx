@@ -46,17 +46,26 @@ export const ProfileCard = ({
   const [showCashout, setShowCashout] = useState(false);
   const [approvalText, setApprovalText] = useState("Approve");
   const [nameEdit, setNameEdit] = useState({ editing: false, name: user.name });
-  const [industryEdit, setIndustryEdit] = useState({
-    editing: false,
-    industry: user.industries[0],
-  });
+  const [industryEdit, setIndustryEdit] = useState(
+    user?.industries.length > 0
+      ? {
+          editing: false,
+          industry: user.industries[0],
+        }
+      : null
+  );
   const [bioEdit, setBioEdit] = useState({ editing: false, bio: user.bio });
+  const [companyDescriptionEdit, setCompanyDescriptionEdit] = useState({
+    editing: false,
+    companyDescription: user.companyDescription,
+  });
   const [balance, setBalance] = useState<IAsyncResult<number>>({
     isLoading: true,
     loadingPrompt: "Loading Balance",
   });
   const [amount, setAmount] = useState(0);
   const [charCount, setCharCount] = useState(0);
+  const [charCountCompany, setCharCountCompany] = useState(0);
   const [sendToPublicKey, setSentToPublicKey] = useState("");
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
@@ -73,6 +82,8 @@ export const ProfileCard = ({
   const { allIndustries } = useIndustry();
   const { mutateAsync: updateName } = api.users.updateName.useMutation();
   const { mutateAsync: updateBio } = api.users.updateBio.useMutation();
+  const { mutateAsync: updateCompanyDescription } =
+    api.users.updateCompanyDescription.useMutation();
   const { mutateAsync: updateIndustry } =
     api.users.updateIndustry.useMutation();
   const { mutateAsync: approveUser } = api.users.approveUser.useMutation();
@@ -113,8 +124,14 @@ export const ProfileCard = ({
   }, [currentWallet?.publicKey]);
 
   useEffect(() => {
-    if (!!user) {
+    if (!!user && user.bio) {
       setCharCount(user.bio.length);
+    }
+  }, [user]);
+
+  useEffect(() => {
+    if (!!user && user.companyDescription) {
+      setCharCountCompany(user.companyDescription.length);
     }
   }, [user]);
 
@@ -222,12 +239,16 @@ export const ProfileCard = ({
               )}
             </div>
             <div className="flex gap-3 items-center">
-              <div className="px-2 py-1 rounded-md bg-neutral100 border border-neutral200">
-                <p className="text-neutral500 text-sm">
-                  {user.industries[0].name}
-                </p>
-              </div>
-              <div className="w-[1px] h-7 bg-neutral200" />
+              {industryEdit && (
+                <>
+                  <div className="px-2 py-1 rounded-md bg-neutral100 border border-neutral200">
+                    <p className="text-neutral500 text-sm">
+                      {user.industries[0].name}
+                    </p>
+                  </div>
+                  <div className="w-[1px] h-7 bg-neutral200" />
+                </>
+              )}
               <p className="text-neutral500">{`${user.experience} XP`}</p>
             </div>
           </div>
@@ -270,7 +291,7 @@ export const ProfileCard = ({
       <div className="h-[1px] w-full bg-neutral200" />
       <div className="w-full p-5">
         <div className="w-full flex items-center gap-2 mb-3">
-          {nameEdit.editing || industryEdit.editing ? (
+          {nameEdit.editing || industryEdit?.editing ? (
             <>
               {/* name input field */}
               <div className="w-full flex items-center gap-2">
@@ -327,17 +348,21 @@ export const ProfileCard = ({
                 <button
                   onClick={() => {
                     updateName({ name: nameEdit.name });
-                    updateIndustry({
-                      newIndustryId: industryEdit.industry.id,
-                      oldIndustryId: user.industries[0].id,
-                    });
                     setNameEdit({ ...nameEdit, editing: false });
-                    setIndustryEdit({ ...industryEdit, editing: false });
-                    setAccount({
-                      ...account,
-                      name: nameEdit.name,
-                      industries: [industryEdit.industry],
-                    });
+                    if (industryEdit) {
+                      updateIndustry({
+                        newIndustryId: industryEdit.industry.id,
+                        oldIndustryId: user.industries[0].id,
+                      });
+                      setIndustryEdit({ ...industryEdit, editing: false });
+                      setAccount({
+                        ...account,
+                        name: nameEdit.name,
+                        industries: [industryEdit.industry],
+                      });
+                    } else {
+                      setAccount({ ...account, name: nameEdit.name });
+                    }
                   }}
                   className="rounded-md uppercase font-bold text-success"
                 >
@@ -349,10 +374,12 @@ export const ProfileCard = ({
                       editing: false,
                       name: user.name,
                     });
-                    setIndustryEdit({
-                      editing: false,
-                      industry: user.industries[0],
-                    });
+                    if (industryEdit) {
+                      setIndustryEdit({
+                        editing: false,
+                        industry: user.industries[0],
+                      });
+                    }
                   }}
                   className="rounded-md uppercase font-bold text-error"
                 >
@@ -429,9 +456,104 @@ export const ProfileCard = ({
         ) : (
           <div className="border border-neutral200 bg-neutral100 min-h-[50px] w-full rounded-md p-3">
             <p className="text-neutral600">
-              {bioEdit.bio !== "" ? bioEdit.bio : "Add a short bio here"}
+              {!!bioEdit.bio && bioEdit.bio !== ""
+                ? bioEdit.bio
+                : "Add a short bio here"}
             </p>
           </div>
+        )}
+        {user.class === "Noble" && (
+          <>
+            <div className="w-full flex items-center gap-2 mb-3 mt-2">
+              <p className="text-neutral600 title-text">Company Description</p>
+              {self && !companyDescriptionEdit.editing && (
+                <button
+                  onClick={() =>
+                    setCompanyDescriptionEdit({
+                      editing: true,
+                      companyDescription: user.companyDescription,
+                    })
+                  }
+                  className="rounded-md uppercase font-bold text-neutral500"
+                >
+                  <Edit className="w-4" />
+                </button>
+              )}
+            </div>
+            {companyDescriptionEdit.editing ? (
+              <>
+                <textarea
+                  className="placeholder:text-neutral400/80 border border-neutral200 bg-neutral100
+              min-h-[50px] w-full h-[150px] rounded-md p-3 resize-y"
+                  name="bio"
+                  placeholder="Add bio"
+                  id="profile-bio"
+                  maxLength={500}
+                  value={companyDescriptionEdit.companyDescription}
+                  onChange={(e) => {
+                    setCharCountCompany(e.target.value.length);
+                    setCompanyDescriptionEdit({
+                      ...companyDescriptionEdit,
+                      companyDescription: e.target.value,
+                    });
+                  }}
+                />
+                <div className="w-full flex justify-between items-center">
+                  <p
+                    className={`text-sm ${
+                      charCountCompany > 450
+                        ? "text-red-500"
+                        : "text-neutral500"
+                    }`}
+                  >
+                    {charCountCompany}/500
+                  </p>
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={() => {
+                        updateCompanyDescription({
+                          companyDescription:
+                            companyDescriptionEdit.companyDescription,
+                        });
+                        setCompanyDescriptionEdit({
+                          ...companyDescriptionEdit,
+                          editing: false,
+                        });
+                        setAccount({
+                          ...account,
+                          companyDescription:
+                            companyDescriptionEdit.companyDescription,
+                        });
+                      }}
+                      className="rounded-md uppercase font-bold text-success mr-2"
+                    >
+                      <Check />
+                    </button>
+                    <button
+                      onClick={() =>
+                        setCompanyDescriptionEdit({
+                          editing: false,
+                          companyDescription: user.companyDescription,
+                        })
+                      }
+                      className="rounded-md uppercase font-bold text-error"
+                    >
+                      <X />
+                    </button>
+                  </div>
+                </div>
+              </>
+            ) : (
+              <div className="border border-neutral200 bg-neutral100 min-h-[50px] w-full rounded-md p-3">
+                <p className="text-neutral600">
+                  {!!companyDescriptionEdit.companyDescription &&
+                  companyDescriptionEdit.companyDescription !== ""
+                    ? companyDescriptionEdit.companyDescription
+                    : "Add a short bio here"}
+                </p>
+              </div>
+            )}
+          </>
         )}
       </div>
       <LinksCard />

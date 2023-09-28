@@ -28,8 +28,8 @@ model Bounty {
   links         String   @default("") @db.VarChar(1024)
 
   // Relations
-  escrow     Escrow?        @relation(fields: [escrowid], references: [id])
-  escrowid   Int?           @unique
+  escrow     Escrow?       @relation(fields: [escrowid], references: [id])
+  escrowid   Int?          @unique
   tags       Tag[]
   users      BountyUser[]
   industries Industry[]
@@ -229,7 +229,9 @@ model User {
   hasFinishedOnboarding Boolean? @default(false)
   hasCompletedProfile   Boolean? @default(false)
   hasBeenApproved       Boolean? @default(false)
+  class                 String   @default("lancer") @db.VarChar(24)
   experience            Int?     @default(0)
+  companyDescription    String?  @db.VarChar(2000)
 
   // Relations
   wallets    Wallet[]

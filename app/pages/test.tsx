@@ -1,136 +1,139 @@
-import { withPageAuthRequired } from "@auth0/nextjs-auth0";
-import { Bounties } from "@/components/quests/Quests/Quests";
+import { getSession, withPageAuthRequired } from "@auth0/nextjs-auth0";
 import { NextSeo } from "next-seo";
-import { useUserWallet } from "@/src/providers";
-import {
-  createFFA,
-  sendInvoice,
-  acceptInvoice,
-  rejectInvoice,
-  closeInvoice,
-  addSubmitterFFAOld,
-  submitRequestFFA,
-  approveRequestFFAOld,
-} from "@/escrow/adapters";
-import { PublicKey } from "@solana/web3.js";
-import { USDC_MINT } from "@/src/constants";
-import { Escrow } from "@/types";
 
-export const getServerSideProps = withPageAuthRequired();
+import { ChooseYourClass } from "@/components/onboarding/ChooseYourClass";
+import { CreateYourProfile } from "@/components/onboarding/CreateYourProfile";
+import { GetServerSidePropsContext } from "next";
+import * as queries from "@/prisma/queries";
+import { GoodToGo } from "@/components/onboarding/GoodToGo";
+import { useState } from "react";
+import { Class } from "@/types";
+import { Option } from "@/types";
+import { api } from "@/src/utils";
+import toast from "react-hot-toast";
+import { useRouter } from "next/router";
 
-const TIMESTAMP = "1691549508859";
+export async function getServerSideProps(
+  context: GetServerSidePropsContext<{ id: string; req; res }>
+) {
+  withPageAuthRequired();
+  const { req, res } = context;
+  const metadata = await getSession(req, res);
+  if (!metadata?.user) {
+    return {
+      redirect: {
+        destination: "/api/auth/login",
+        permanent: false,
+      },
+    };
+  }
+  try {
+    const { email } = metadata.user;
 
-const CLIENT_WALLET = new PublicKey(
-  "BuxU7uwwkoobF8p4Py7nRoTgxWRJfni8fc4U3YKGEXKs"
-);
-const LANCER_WALLET = new PublicKey(
-  "WbmLPptTGZTFK5ZSks7oaa4Qx69qS3jFXMrAsbWz1or"
-);
+    const user = await queries.user.getByEmail(email);
 
-const FUND_AMOUNT = 0.001;
+    if (!user || !user.hasFinishedOnboarding) {
+      return {
+        redirect: {
+          destination: "/welcome",
+          permanent: false,
+        },
+      };
+    }
+    const allIndustries = await queries.industry.getMany();
 
-const BountiesPage: React.FC = () => {
-  const { currentWallet, program, provider } = useUserWallet();
+    return {
+      props: {
+        currentUser: JSON.stringify(user),
+        allIndustries: JSON.stringify(allIndustries),
+      },
+    };
+  } catch (e) {
+    return {
+      redirect: {
+        destination: "/welcome",
+        permanent: false,
+      },
+    };
+  }
+}
 
-  const createFFAClick = async () => {
-    const { timestamp, signature, escrowKey } = await createFFA(
-      currentWallet,
-      program,
-      provider,
-      new PublicKey(USDC_MINT)
-    );
-  };
+const BountiesPage: React.FC<{
+  allIndustries: string;
+}> = ({ allIndustries }) => {
+  const [page, setPage] = useState(0);
+  const [selectedClass, setSelectedClass] = useState<Class>("Noble");
+  const router = useRouter();
+  const { mutateAsync: registerOnboardingInfo } =
+    api.users.addOnboardingInformation.useMutation();
+  const [name, setName] = useState("");
+  const [company, setCompany] = useState("");
+  const [description, setDescription] = useState("");
+  const [industry, setIndustry] = useState<Option>({
+    label: "Engineering",
+    value: "Engineering",
+  });
+  const industries = allIndustries ? JSON.parse(allIndustries) : [];
+  const industryOptions = industries.map((industry) => {
+    return {
+      label: industry.name,
+      value: industry.name,
+    };
+  });
 
-  const sendInvoiceClick = async () => {
-    const signature = await sendInvoice(
-      CLIENT_WALLET,
-      { timestamp: TIMESTAMP } as Escrow,
-      currentWallet,
-      program,
-      provider,
-      FUND_AMOUNT
-    );
-    console.log("timestamp", signature);
-  };
+  const handleUpdateProfile = async () => {
+    const toastId = toast.loading("Creating your profile...");
+    try {
+      await registerOnboardingInfo({
+        industryId: industries.find((i) => i.name === industry.value).id,
+        name,
+        company,
+        companyDescription: description,
+        bio: description,
+        selectedClass,
+      });
 
-  const acceptInvoiceClick = async () => {
-    const signature = await acceptInvoice(
-      LANCER_WALLET,
-      { timestamp: TIMESTAMP } as Escrow,
-      currentWallet,
-      program,
-      provider
-    );
-    console.log("timestamp", signature);
-  };
-
-  const addApprovedSubmitterClick = async () => {
-    const signature = await addSubmitterFFAOld(
-      LANCER_WALLET,
-      { timestamp: TIMESTAMP } as Escrow,
-      currentWallet,
-      program,
-      provider
-    );
-    console.log("timestamp", signature);
-  };
-
-  const submitClick = async () => {
-    const signature = await submitRequestFFA(
-      CLIENT_WALLET,
-      LANCER_WALLET,
-      { timestamp: TIMESTAMP, mint: { publicKey: USDC_MINT } } as Escrow,
-      currentWallet,
-      program,
-      provider
-    );
-    console.log("timestamp", signature);
-  };
-
-  const approveClick = async () => {
-    const signature = await approveRequestFFAOld(
-      LANCER_WALLET,
-      { timestamp: TIMESTAMP, mint: { publicKey: USDC_MINT } } as Escrow,
-      currentWallet,
-      program,
-      provider
-    );
-    console.log("timestamp", signature);
-  };
-
-  const rejectInvoiceClick = async () => {
-    const signature = await rejectInvoice(
-      LANCER_WALLET,
-      { timestamp: TIMESTAMP } as Escrow,
-      currentWallet,
-      program,
-      provider
-    );
-    console.log("timestamp", signature);
-  };
-
-  const closeInvoiceClick = async () => {
-    const signature = await closeInvoice(
-      { timestamp: TIMESTAMP } as Escrow,
-      currentWallet,
-      program,
-      provider
-    );
-    console.log("timestamp", signature);
+      toast.success("Profile created successfully!", { id: toastId });
+      router.push("/");
+    } catch (e) {
+      console.log("error updating profile: ", e);
+      toast.error("Error updating profile", { id: toastId });
+    }
   };
 
   return (
-    <>
+    <div className="w-full max-w-[1200px] mx-auto flex md:justify-evenly mt-4 py-24 ">
       <NextSeo title="Lancer | Bounties" description="Lancer Bounties" />
-      <div onClick={createFFAClick}>Create FFA</div>
-      <div onClick={sendInvoiceClick}>Send Invoice</div>
-      <div onClick={acceptInvoiceClick}>Accept Invoice</div>
-      <div onClick={addApprovedSubmitterClick}>Approve Submitter</div>
-      <div onClick={submitClick}>Submit Request</div>
-      <div onClick={approveClick}>Approve Request</div>
-      <div onClick={rejectInvoiceClick}>Reject Invoice</div>
-      <div onClick={closeInvoiceClick}>Close Invoice</div>
-    </>
+      {
+        [
+          <ChooseYourClass
+            key={0}
+            setPage={setPage}
+            selectedClass={selectedClass}
+            setSelectedClass={setSelectedClass}
+          />,
+          <CreateYourProfile
+            key={1}
+            setPage={setPage}
+            selectedClass={selectedClass}
+            name={name}
+            setName={setName}
+            company={company}
+            setCompany={setCompany}
+            description={description}
+            setDescription={setDescription}
+            industry={industry}
+            setIndustry={setIndustry}
+            industryOptions={industryOptions}
+          />,
+          <GoodToGo
+            key={2}
+            selectedClass={selectedClass}
+            updateProfile={handleUpdateProfile}
+          />,
+        ][page]
+      }
+    </div>
   );
 };
 

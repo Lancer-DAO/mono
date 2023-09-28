@@ -29,6 +29,7 @@ export async function getServerSideProps(
       },
     };
   }
+
   try {
     const questId = parseInt(context.query.quest as string);
     const { email } = metadata.user;
@@ -58,7 +59,7 @@ export async function getServerSideProps(
     console.error("error", e);
     return {
       redirect: {
-        destination: "/welcome",
+        destination: "/",
         permanent: false,
       },
     };
