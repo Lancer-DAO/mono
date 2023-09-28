@@ -1,15 +1,15 @@
 import {
   BountyCardFrame,
   ContributorInfo,
-  PriceTag,
   // StarIcon,
   LockIcon,
+  PriceTag,
 } from "@/components";
 import { useUserWallet } from "@/providers";
 import { fastEnterAnimation, midClickAnimation } from "@/src/constants";
 import { useBounty } from "@/src/providers/bountyProvider";
 import { useIndustry } from "@/src/providers/industryProvider";
-import { BountyPreview, QuestFormData, Industry } from "@/types/";
+import { BountyPreview, Industry, QuestFormData } from "@/types/";
 import { api, getFormattedDate } from "@/utils";
 import { motion } from "framer-motion";
 import { marked } from "marked";
@@ -56,11 +56,7 @@ const BountyCard: FC<BountyCardProps> = ({
   };
 
   const handlePrice = useCallback(() => {
-    if (bounty) {
-      return Number(bounty?.escrow?.amount);
-    } else {
-      return Number(formData.issuePrice);
-    }
+    return Number(bounty?.escrow?.amount);
   }, [bounty, formData]);
 
   const previewMarkup = () => {
@@ -83,11 +79,7 @@ const BountyCard: FC<BountyCardProps> = ({
   if (!bounty && !formData) return null;
 
   const handlePriceIcon = () => {
-    if (bounty) {
-      return bounty?.escrow?.mint?.logo;
-    } else {
-      return formData.issuePriceIcon;
-    }
+    return bounty?.escrow?.mint?.logo;
   };
 
   return (
@@ -122,7 +114,7 @@ const BountyCard: FC<BountyCardProps> = ({
           <PriceTag
             price={handlePrice()}
             icon={handlePriceIcon()}
-            funded={bounty ? Number(bounty?.escrow.amount) > 0 : false}
+            funded={bounty ? Number(bounty?.escrow?.amount) > 0 : false}
           />
           <p className="text-xs font-bold mr-2">
             <span className="text-textPrimary text-[11px] font-base">

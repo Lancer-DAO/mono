@@ -14,9 +14,11 @@ import {
   getSession,
   withPageAuthRequired,
 } from "@auth0/nextjs-auth0";
+import * as queries from "@/prisma/queries";
 import { AdminLancer } from "../components/adminLancer/AdminLancer";
 import { GetServerSideProps, GetServerSidePropsContext, NextPage } from "next";
 import { prisma } from "@/server/db";
+import { useBounty } from "@/src/providers/bountyProvider";
 
 export async function getServerSideProps(
   context: GetServerSidePropsContext<{ id: string; req; res }>
@@ -34,16 +36,17 @@ export async function getServerSideProps(
   }
   const { email } = metadata.user;
 
-  const user = await prisma.user.findUnique({
-    where: {
-      email,
-    },
-    select: {
-      id: true,
-      isAdmin: true,
-      hasFinishedOnboarding: true,
-    },
-  });
+  const user = await queries.user.getByEmail(email);
+  // const user = await prisma.user.findUnique({
+  //   where: {
+  //     email,
+  //   },
+  //   select: {
+  //     id: true,
+  //     isAdmin: true,
+  //     hasFinishedOnboarding: true,
+  //   },
+  // });
 
   if (!user || !user.hasFinishedOnboarding) {
     return {
@@ -61,15 +64,30 @@ export async function getServerSideProps(
       },
     };
   }
-  return { props: {} };
+  const allBounties = await queries.bounty.getMany(0, user.id);
+
+  return {
+    props: {
+      currentUser: JSON.stringify(user),
+      bounties: JSON.stringify(allBounties), // NB
+    },
+  };
 }
 
-const App: NextPage<AppProps> = ({ Component, pageProps }) => {
+// const App: NextPage<AppProps> = ({ Component, pageProps }) => {
+const App: React.FC<{
+  bounties: string;
+}> = ({ bounties }) => {
   // Can be set to 'devnet', 'testnet', or 'mainnet-beta'
   const network = MAINNET_RPC;
 
   // You can also provide a custom RPC endpoint
   const endpoint = useMemo(() => network, [network]);
+
+  const { setAllBounties, allBounties } = useBounty();
+  if (!allBounties && bounties) {
+    setAllBounties(JSON.parse(bounties));
+  }
 
   const wallets = useMemo(
     () => [
@@ -91,17 +109,18 @@ const App: NextPage<AppProps> = ({ Component, pageProps }) => {
     [network]
   );
 
-  return (
-    wallets && (
-      <ConnectionProvider endpoint={endpoint}>
-        <WalletProvider wallets={wallets} autoConnect>
-          <WalletModalProvider>
-            <AdminLancer />
-          </WalletModalProvider>
-        </WalletProvider>
-      </ConnectionProvider>
-    )
-  );
+  return <AdminLancer />;
+  // return (
+  //   wallets && (
+  //     <ConnectionProvider endpoint={endpoint}>
+  //       <WalletProvider wallets={wallets} autoConnect>
+  //         <WalletModalProvider>
+  //           <AdminLancer />
+  //         </WalletModalProvider>
+  //       </WalletProvider>
+  //     </ConnectionProvider>
+  //   )
+  // );
 };
 
 export default App;

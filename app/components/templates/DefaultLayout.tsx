@@ -1,7 +1,6 @@
 import { Header, JoyrideWrapper } from "@/components";
 import { useUserWallet } from "@/src/providers";
-import { ReactNode, useState } from "react";
-import SidePanel from "../molecules/sidebar";
+import { ReactNode } from "react";
 
 const DefaultLayout: React.FC<{ children: ReactNode }> = ({ children }) => {
   const { currentUser } = useUserWallet();
@@ -13,8 +12,6 @@ const DefaultLayout: React.FC<{ children: ReactNode }> = ({ children }) => {
         {currentUser && <JoyrideWrapper />}
         <main>{children}</main>
       </div>
-
-      <SidePanel />
     </div>
   );
 };

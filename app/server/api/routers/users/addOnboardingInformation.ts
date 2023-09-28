@@ -7,15 +7,12 @@ import { updateHasFinishedOnboarding } from "@/prisma/queries/user";
 export const addOnboardingInformation = protectedProcedure
   .input(
     z.object({
-      industryId: z.number(),
+      industryId: z.optional(z.number()),
       name: z.string(),
-      company: z.string(),
-      position: z.string(),
-      bio: z.string(),
-      linkedin: z.string(),
-      twitter: z.string(),
-      github: z.string(),
-      website: z.string(),
+      company: z.optional(z.string()),
+      bio: z.optional(z.string()),
+      selectedClass: z.string(),
+      companyDescription: z.optional(z.string()),
     })
   )
   .mutation(
@@ -25,35 +22,26 @@ export const addOnboardingInformation = protectedProcedure
         industryId,
         name,
         company,
-        position,
         bio,
-        linkedin,
-        twitter,
-        github,
-        website,
+        selectedClass,
+        companyDescription,
       },
     }) => {
-      const { email, id } = ctx.user;
+      const { id } = ctx.user;
 
-      const industry = await prisma.industry.findFirstOrThrow({
-        where: { id: industryId },
-      });
-
-      await queries.user.onboardingUpdate(
-        id,
-        industry,
-        name,
-        email,
-        company,
-        position,
-        bio,
-        linkedin,
-        twitter,
-        github,
-        website
-      );
-
-      await updateHasFinishedOnboarding(id);
+      if (selectedClass === "Noble") {
+        await queries.user.onboardingUpdateNoble(
+          id,
+          name,
+          company,
+          companyDescription
+        );
+      } else {
+        const industry = await prisma.industry.findFirstOrThrow({
+          where: { id: industryId },
+        });
+        await queries.user.onboardingUpdateLancer(id, name, bio, industry);
+      }
 
       return { success: true };
     }

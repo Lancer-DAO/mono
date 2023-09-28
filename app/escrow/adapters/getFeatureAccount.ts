@@ -6,6 +6,7 @@ import { MonoProgram } from "@/escrow/sdk/types/mono_program";
 
 
 export const getFeatureFundingAccount = async (featureAccount: PublicKey, program: Program<MonoProgram>) => {
+      // @ts-ignore
       const acc = await program.account.featureDataAccount.fetch(featureAccount);
       return acc;
   };

@@ -11,12 +11,8 @@ import { MediaType } from "@/prisma/queries/media";
 import { MintType } from "@/prisma/queries/mint";
 
 export type Filters = {
-  industries: string[];
   tags: string[];
   states: string[];
-  estimatedPriceBounds: [number, number];
-  relationships: string[];
-  isMyBounties: boolean;
 };
 
 export enum BOUNTY_USER_RELATIONSHIP {
@@ -32,6 +28,8 @@ export enum BOUNTY_USER_RELATIONSHIP {
   VotingCancel = "voting_cancel",
   Canceler = "canceler",
 }
+export const RELATIONS = Object.values(BOUNTY_USER_RELATIONSHIP);
+
 export interface CurrentUserBountyInclusions {
   isCreator?: boolean;
   isRequestedLancer?: boolean;
@@ -70,7 +68,7 @@ export enum BountyState {
 }
 
 export const BOUNTY_STATES = Object.values(BountyState);
-export const TABLE_BOUNTY_STATES = Object.values(BountyState).slice(2);
+export const TABLE_BOUNTY_STATES = Object.values(BountyState);
 
 export type Bounty = BountyType;
 export type BountyPreview = BountyPreviewType;
@@ -86,3 +84,4 @@ export type UnwrapPromise<T> = T extends Promise<infer U> ? U : T;
 export type UnwrapArray<T> = T extends Array<infer U> ? U : T;
 export type UserSearchIndividual = UnwrapArray<UserSearch>;
 export type Escrow = Bounty["escrow"];
+export type Class = "Noble" | "Lancer";

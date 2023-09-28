@@ -10,7 +10,12 @@ import {
   useState,
 } from "react";
 import { Client, Member, Organization, Treasury } from "@ladderlabs/buddy-sdk";
-import { PublicKey, Transaction } from "@solana/web3.js";
+import {
+  Keypair,
+  PublicKey,
+  Transaction,
+  sendAndConfirmTransaction,
+} from "@solana/web3.js";
 import { IReferralContext } from "./types";
 import { getAssociatedTokenAddressSync } from "@solana/spl-token";
 import { IS_MAINNET, USDC_MINT } from "@/src/constants";
@@ -46,8 +51,6 @@ export interface Claimable {
   amount: number;
   treasury: Treasury;
 }
-
-const DEVNET_PROGRAM_ID = "9zE4EQ5tJbEeMYwtS2w8KrSHTtTW4UPqwfbBSEkUrNCA";
 
 const ReferralProvider: FunctionComponent<IReferralProps> = ({ children }) => {
   const { currentWallet, currentUser } = useUserWallet();
@@ -95,7 +98,7 @@ const ReferralProvider: FunctionComponent<IReferralProps> = ({ children }) => {
         setTreasuries(treasuries);
       }
     } catch (e) {
-      console.log(e);
+      console.log("Buddy Error: ", e);
       throw new Error("Failed to create buddy account");
     } finally {
       setProgramId(client.getProgramId());
@@ -163,7 +166,10 @@ const ReferralProvider: FunctionComponent<IReferralProps> = ({ children }) => {
               );
             }
 
-            if (member.account.referrer.toString() !== PublicKey.default.toString()) {
+            if (
+              member.account.referrer.toString() !==
+              PublicKey.default.toString()
+            ) {
               const treasuryReferrer = await client.treasury.getByPDA(
                 member.account.referrer
               );
@@ -234,7 +240,7 @@ const ReferralProvider: FunctionComponent<IReferralProps> = ({ children }) => {
 
         return { txId: signature, memberPDA };
       } catch (e) {
-        console.error(e);
+        console.log("Buddy Error: ", e);
         throw new Error(`Failed to create buddy member account`, e);
       }
     },
@@ -418,11 +424,11 @@ const ReferralProvider: FunctionComponent<IReferralProps> = ({ children }) => {
 
   useEffect(() => {
     if (publicKey && connection) {
-      if (IS_MAINNET) {
-        setClient(new Client(connection, publicKey));
-      } else {
-        setClient(new Client(connection, publicKey, DEVNET_PROGRAM_ID));
-      }
+      // if (IS_MAINNET) {
+      setClient(new Client(connection, publicKey));
+      // } else {
+      // setClient(new Client(connection, publicKey, DEVNET_PROGRAM_ID));
+      // }
     }
   }, [publicKey, connection]);
 

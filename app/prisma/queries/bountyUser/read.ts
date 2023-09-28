@@ -97,7 +97,7 @@ export const getBountyUpdatesLancer = async (
           type: {
             in: [
               "add-to-shortlist",
-              "selected",
+              "add-approved-submitter",
               "deny-submitter",
               "remove-from-shortlist",
             ],

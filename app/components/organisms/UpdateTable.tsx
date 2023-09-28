@@ -85,6 +85,7 @@ const AllUpdatesTable: React.FC = () => {
               time: dayjs(action.timestamp),
               extraProps: {
                 questName: application.bounty.title,
+                questId: application.bounty.id,
               },
               key: action.timestamp,
             });
@@ -100,6 +101,7 @@ const AllUpdatesTable: React.FC = () => {
               time: dayjs(action.timestamp),
               extraProps: {
                 questName: application.bounty.title,
+                questId: application.bounty.id,
               },
               key: action.timestamp,
             });
@@ -115,6 +117,7 @@ const AllUpdatesTable: React.FC = () => {
               time: dayjs(action.timestamp),
               extraProps: {
                 questName: cancelVote.bounty.title,
+                questId: cancelVote.bounty.id,
               },
               key: action.timestamp,
             });
@@ -129,6 +132,7 @@ const AllUpdatesTable: React.FC = () => {
             time: dayjs(clientUpdate.createdAt),
             extraProps: {
               questName: clientUpdate.bounty.title,
+              questId: clientUpdate.bounty.id,
               description: clientUpdate.description,
             },
             key: clientUpdate.createdAt,
@@ -142,6 +146,7 @@ const AllUpdatesTable: React.FC = () => {
             time: dayjs(lancerUpdate.reviewedAt),
             extraProps: {
               questName: lancerUpdate.bounty.title,
+              questId: lancerUpdate.bounty.id,
               description: lancerUpdate.review,
               updateName: lancerUpdate.name,
             },

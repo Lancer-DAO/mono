@@ -11,7 +11,6 @@ import { useMint } from "@/src/providers/mintProvider";
 const SITE_URL = `https://${IS_CUSTODIAL ? "app" : "pro"}.lancer.so/account?r=`;
 
 export const ReferCard = () => {
-  const [showCoinflow, setShowCoinflow] = useState(false);
   const [invites, setInvites] = useState(1);
   const { referralId, initialized, createReferralMember, claimables, claim } =
     useReferral();
