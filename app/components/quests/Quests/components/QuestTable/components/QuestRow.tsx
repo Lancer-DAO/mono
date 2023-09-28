@@ -102,8 +102,6 @@ export const QuestRow: FC<BountyCardProps> = ({
             </p>
           </div>
           <a
-            target="_blank"
-            rel="noreferrer"
             href={handleBountyLink()}
             className="rounded-md py-2 px-4 text-neutral600 text-sm border border-neutral200"
           >
