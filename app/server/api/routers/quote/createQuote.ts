@@ -33,7 +33,7 @@ export const createQuote = protectedProcedure
         price,
         state,
         checkpoints,
-      }
+      },
     }) => {
       const { id: userId } = ctx.user;
 
@@ -44,18 +44,23 @@ export const createQuote = protectedProcedure
         description,
         estimatedTime,
         price,
-        state,
-      )
+        state
+      );
 
       await Promise.all(
         checkpoints.map(
           async (checkpoint, index) =>
-          await queries.checkpoint.create(
-            checkpoint.title, checkpoint.price, checkpoint.description, checkpoint.estimatedTime, index, quote
-          )
+            await queries.checkpoint.create(
+              checkpoint.title,
+              checkpoint.price,
+              checkpoint.description,
+              checkpoint.estimatedTime,
+              index,
+              quote
+            )
         )
       );
 
       return quote;
     }
-  )
+  );

@@ -15,6 +15,7 @@ import { motion } from "framer-motion";
 import { marked } from "marked";
 import Image from "next/image";
 import { FC, SVGAttributes, useCallback, useEffect, useState } from "react";
+import UpdateTableItem from "./UpdateTableItem";
 
 export interface BountyCardProps extends SVGAttributes<SVGSVGElement> {
   bounty?: BountyPreview;
@@ -168,7 +169,7 @@ const BountyCard: FC<BountyCardProps> = ({
               if (tag === "") return null;
               return (
                 <div
-                  className="border border-neutralBtnBorder rounded-full 
+                  className="border border-neutralBtnBorder rounded-full
                   px-3 py-1 flex items-center justify-center"
                   key={tag}
                 >

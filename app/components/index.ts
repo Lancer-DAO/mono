@@ -7,9 +7,11 @@ const QuestCreated = dynamic(() => import("./@animations/QuestCreated"));
 const QuestCompleted = dynamic(() => import("./@animations/QuestCompleted"));
 
 // @icons
+const Alert = dynamic(() => import("./@icons/Alert"));
 const Close = dynamic(() => import("./@icons/Close"));
 const Coins = dynamic(() => import("./@icons/Coins"));
 const ExternalLinkIcon = dynamic(() => import("./@icons/ExternalLinkIcon"));
+const Flame = dynamic(() => import("./@icons/Flame"));
 const LancerOnboardingEmblem = dynamic(
   () => import("./@icons/LancerOnboardingEmblem")
 );
@@ -18,6 +20,8 @@ const LancerOnboardingHelmet = dynamic(
 );
 const LockIcon = dynamic(() => import("./@icons/LockIcon"));
 const Logo = dynamic(() => import("./@icons/Logo"));
+const Mail = dynamic(() => import("./@icons/Mail"));
+const Message = dynamic(() => import("./@icons/Message"));
 const NextArrow = dynamic(() => import("./@icons/NextArrow"));
 const NobleOnboardingEmblem = dynamic(
   () => import("./@icons/NobleOnboardingEmblem")
@@ -26,6 +30,7 @@ const NobleOnboardingHelmet = dynamic(
   () => import("./@icons/NobleOnboardingHelmet")
 );
 const PhantomLogo = dynamic(() => import("./@icons/PhantomLogo"));
+const ServiceBell = dynamic(() => import("./@icons/ServiceBell"));
 const Rocket = dynamic(() => import("./@icons/Rocket"));
 const StarIcon = dynamic(() => import("./@icons/StarIcon"));
 const USDC = dynamic(() => import("./@icons/USDC"));
@@ -70,6 +75,7 @@ const ReferenceDialogue = dynamic(
 const SelectOptions = dynamic(() => import("./molecules/SelectOptions"));
 const SidePanel = dynamic(() => import("./molecules/sidebar/index"));
 const TutorialsModal = dynamic(() => import("./molecules/TutorialsModal"));
+const UpdateTableItem = dynamic(() => import("./molecules/UpdateTableItem"));
 const WalletInfo = dynamic(() => import("./molecules/WalletInfo"));
 
 // organisms
@@ -77,6 +83,7 @@ const CashoutModal = dynamic(() => import("./organisms/CashoutModal"));
 const FundQuestModal = dynamic(() => import("./organisms/FundQuestModal"));
 const Header = dynamic(() => import("./organisms/Header"));
 const JoyrideWrapper = dynamic(() => import("./organisms/JoyrideWrapper"));
+const UpdateTable = dynamic(() => import("./organisms/UpdateTable"));
 
 // templates
 const DefaultLayout = dynamic(() => import("./templates/DefaultLayout"));
@@ -89,17 +96,22 @@ export {
   QuestCompleted,
 
   // @icons
+  Alert,
   Close,
   Coins,
   ExternalLinkIcon,
+  Flame,
   LancerOnboardingEmblem,
   LancerOnboardingHelmet,
   LockIcon,
   Logo,
+  Mail,
+  Message,
   NextArrow,
   NobleOnboardingEmblem,
   NobleOnboardingHelmet,
   PhantomLogo,
+  ServiceBell,
   Rocket,
   StarIcon,
   USDC,
@@ -138,6 +150,7 @@ export {
   SelectOptions,
   SidePanel,
   TutorialsModal,
+  UpdateTableItem,
   WalletInfo,
 
   // organisms
@@ -145,6 +158,7 @@ export {
   FundQuestModal,
   Header,
   JoyrideWrapper,
+  UpdateTable,
 
   // templates
   DefaultLayout,

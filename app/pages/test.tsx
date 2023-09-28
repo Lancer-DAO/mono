@@ -1,17 +1,7 @@
+import React from "react";
 import { getSession, withPageAuthRequired } from "@auth0/nextjs-auth0";
-import { NextSeo } from "next-seo";
-
-import { ChooseYourClass } from "@/components/onboarding/ChooseYourClass";
-import { CreateYourProfile } from "@/components/onboarding/CreateYourProfile";
 import { GetServerSidePropsContext } from "next";
 import * as queries from "@/prisma/queries";
-import { GoodToGo } from "@/components/onboarding/GoodToGo";
-import { useState } from "react";
-import { Class } from "@/types";
-import { Option } from "@/types";
-import { api } from "@/src/utils";
-import toast from "react-hot-toast";
-import { useRouter } from "next/router";
 
 export async function getServerSideProps(
   context: GetServerSidePropsContext<{ id: string; req; res }>
@@ -27,28 +17,11 @@ export async function getServerSideProps(
       },
     };
   }
-  try {
-    const { email } = metadata.user;
+  const { email } = metadata.user;
 
-    const user = await queries.user.getByEmail(email);
+  const user = await queries.user.getByEmail(email);
 
-    if (!user || !user.hasFinishedOnboarding) {
-      return {
-        redirect: {
-          destination: "/welcome",
-          permanent: false,
-        },
-      };
-    }
-    const allIndustries = await queries.industry.getMany();
-
-    return {
-      props: {
-        currentUser: JSON.stringify(user),
-        allIndustries: JSON.stringify(allIndustries),
-      },
-    };
-  } catch (e) {
+  if (!user || !user.hasFinishedOnboarding) {
     return {
       redirect: {
         destination: "/welcome",
@@ -56,83 +29,26 @@ export async function getServerSideProps(
       },
     };
   }
-}
-
-const BountiesPage: React.FC<{
-  allIndustries: string;
-}> = ({ allIndustries }) => {
-  const [page, setPage] = useState(0);
-  const [selectedClass, setSelectedClass] = useState<Class>("Noble");
-  const router = useRouter();
-  const { mutateAsync: registerOnboardingInfo } =
-    api.users.addOnboardingInformation.useMutation();
-  const [name, setName] = useState("");
-  const [company, setCompany] = useState("");
-  const [description, setDescription] = useState("");
-  const [industry, setIndustry] = useState<Option>({
-    label: "Engineering",
-    value: "Engineering",
-  });
-  const industries = allIndustries ? JSON.parse(allIndustries) : [];
-  const industryOptions = industries.map((industry) => {
+  if (!user.isLancerDev) {
     return {
-      label: industry.name,
-      value: industry.name,
+      redirect: {
+        destination: "/account",
+        permanent: false,
+      },
     };
-  });
-
-  const handleUpdateProfile = async () => {
-    const toastId = toast.loading("Creating your profile...");
-    try {
-      await registerOnboardingInfo({
-        industryId: industries.find((i) => i.name === industry.value).id,
-        name,
-        company,
-        companyDescription: description,
-        bio: description,
-        selectedClass,
-      });
-
-      toast.success("Profile created successfully!", { id: toastId });
-      router.push("/");
-    } catch (e) {
-      console.log("error updating profile: ", e);
-      toast.error("Error updating profile", { id: toastId });
-    }
+  }
+  return {
+    props: {
+      currentUser: JSON.stringify(user),
+    },
   };
+}
+import { UpdateTable } from "@/components";
 
+const BountiesPage: React.FC = () => {
   return (
-    <div className="w-full max-w-[1200px] mx-auto flex md:justify-evenly mt-4 py-24 ">
-      <NextSeo title="Lancer | Bounties" description="Lancer Bounties" />
-      {
-        [
-          <ChooseYourClass
-            key={0}
-            setPage={setPage}
-            selectedClass={selectedClass}
-            setSelectedClass={setSelectedClass}
-          />,
-          <CreateYourProfile
-            key={1}
-            setPage={setPage}
-            selectedClass={selectedClass}
-            name={name}
-            setName={setName}
-            company={company}
-            setCompany={setCompany}
-            description={description}
-            setDescription={setDescription}
-            industry={industry}
-            setIndustry={setIndustry}
-            industryOptions={industryOptions}
-          />,
-          <GoodToGo
-            key={2}
-            selectedClass={selectedClass}
-            updateProfile={handleUpdateProfile}
-          />,
-        ][page]
-      }
+    <div className="w-full flex items-center justify-center mt-5 gap-5 py-24">
+      <UpdateTable allUpdates={true} />
     </div>
   );
 };
