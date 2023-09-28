@@ -601,7 +601,8 @@ const QuestUpdatesTable: React.FC = () => {
 
           {currentBounty.isCreator &&
             currentBounty.state !== BountyState.VOTING_TO_CANCEL &&
-            currentBounty.state !== BountyState.DISPUTE_STARTED && (
+            currentBounty.state !== BountyState.DISPUTE_STARTED &&
+            currentBounty.state !== BountyState.DISPUTE_SETTLED && (
               <motion.button
                 {...smallClickAnimation}
                 className="bg-white border border-neutral200 ml-auto mr-8 h-9 w-fit px-4 py-2

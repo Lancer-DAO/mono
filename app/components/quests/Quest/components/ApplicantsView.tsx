@@ -359,22 +359,7 @@ const ApplicantsView: FC<Props> = ({
                 Cancel Quest
               </motion.button>
             ) : null}
-            {(currentBounty.state !== BountyState.VOTING_TO_CANCEL &&
-              currentBounty.state !== BountyState.CANCELED) ||
-            (currentBounty.state === BountyState.VOTING_TO_CANCEL &&
-              !currentBounty.needsToVote
-                .map((user) => user.userid)
-                .includes(currentUser.id)) ? (
-              <motion.button
-                {...smallClickAnimation}
-                className="bg-white border border-neutral200 h-9 w-fit px-4 py-2
-                title-text rounded-md text-error disabled:cursor-not-allowed disabled:opacity-80"
-                onClick={handleVoteToCancel}
-                disabled={isLoading || isAwaitingResponse}
-              >
-                Vote to Cancel
-              </motion.button>
-            ) : null}
+
             {currentBounty.state === BountyState.CANCELED ? (
               <motion.button
                 {...smallClickAnimation}

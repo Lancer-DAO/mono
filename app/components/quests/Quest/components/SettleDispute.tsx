@@ -17,7 +17,7 @@ export const SettleDispute = () => {
   const { currentTutorialState, setCurrentTutorialState } = useTutorial();
   const { mutateAsync } = api.bountyUsers.update.useMutation();
   const [disputePayoutValue, setDisputePayoutValue] = useState(
-    decimalToNumber(currentBounty.price)
+    decimalToNumber(currentBounty.escrow.amount)
   );
 
   const [isLoading, setIsLoading] = useState(false);
@@ -100,7 +100,9 @@ export const SettleDispute = () => {
         text={isLoading ? "Loading ..." : "Settle Dispute"}
         onClick={onClick}
         isLoading={isLoading}
-        disabled={disputePayoutValue > decimalToNumber(currentBounty.price)}
+        disabled={
+          disputePayoutValue > decimalToNumber(currentBounty.escrow.amount)
+        }
       />
     </>
   );
