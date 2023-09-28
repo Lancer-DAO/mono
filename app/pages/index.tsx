@@ -6,6 +6,7 @@ import { getSession } from "@auth0/nextjs-auth0";
 import { GetServerSidePropsContext } from "next";
 import { NextSeo } from "next-seo";
 import * as queries from "@/prisma/queries";
+import { QUESTS_PER_PAGE } from "@/src/constants";
 
 export const Index: React.FC<{
   bounties: string;
@@ -28,7 +29,8 @@ export const Index: React.FC<{
   }
   if (!maxPages && totalQuestsCount) {
     const totalQuests = parseInt(JSON.parse(totalQuestsCount));
-    setMaxPages(Math.ceil(totalQuests / 5));
+    console.log("totalQuests", totalQuests);
+    setMaxPages(Math.ceil(totalQuests / QUESTS_PER_PAGE));
   }
   return (
     <>
@@ -52,7 +54,7 @@ export async function getServerSideProps(
 
       const user = await queries.user.getByEmail(email);
       const allBounties = await queries.bounty.getMany(0, user.id);
-      const totalQuests = await queries.bounty.getTotalQuests();
+      const totalQuests = await queries.bounty.getTotalQuests(user.id);
       const allMints = await queries.mint.getAll();
       const allIndustries = await queries.industry.getMany();
       return {

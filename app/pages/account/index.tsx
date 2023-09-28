@@ -42,7 +42,7 @@ export async function getServerSideProps(
     }
 
     const myQuests = await queries.bounty.getMine(user.id);
-    const totalQuests = await queries.bounty.getTotalQuests();
+    const totalQuests = await queries.bounty.getTotalQuests(user.id, true);
     const allMints = await queries.mint.getAll();
     const allIndustries = await queries.industry.getMany();
     return {

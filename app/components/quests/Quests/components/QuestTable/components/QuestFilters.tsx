@@ -10,22 +10,16 @@ import { Mint } from "@prisma/client";
 import { useUserWallet } from "@/src/providers";
 
 interface QuestFiltersProps {
-  mints: Mint[];
-  industries: Industry[];
   tags: string[];
   // orgs: string[];
-  priceBounds: [number, number];
   filters: Filters;
   setFilters: Dispatch<SetStateAction<Filters>>;
   count: number;
 }
 
 export const QuestFilters = ({
-  mints,
-  industries,
   tags,
   // orgs,
-  priceBounds,
   filters,
   setFilters,
   count,

@@ -47,8 +47,8 @@ export async function getServerSideProps(
     }
     const userId = parseInt(context.query.account as string);
 
-    const allBounties = await queries.bounty.getMany(0);
-    const totalQuests = await queries.bounty.getTotalQuests();
+    const allBounties = await queries.bounty.getMany(0, userId);
+    const totalQuests = await queries.bounty.getTotalQuests(userId, true);
     const user = await queries.user.getById(userId);
     const allMints = await queries.mint.getAll();
     const allIndustries = await queries.industry.getMany();

@@ -34,37 +34,24 @@ const stateMap = {
 interface Props {
   type: "profile" | "quests";
   user: User;
+  allBounties: BountyPreview[];
 }
 
-const QuestTable: React.FC<Props> = ({ type, user }) => {
+const QuestTable: React.FC<Props> = ({ type, user, allBounties }) => {
   // state
   const [tags, setTags] = useState<string[]>([]);
   const [bounds, setPriceBounds] = useState<[number, number]>([5, 10000]);
   const [industriesFilter, setIndustriesFilter] = useState<string[]>([]);
   const [filteredBounties, setFilteredBounties] = useState<BountyPreview[]>();
   const [filters, setFilters] = useState<Filters>({
-    industries: industriesFilter,
     tags: tags,
-    estimatedPriceBounds: bounds,
     states: TABLE_BOUNTY_STATES,
-    relationships: BOUNTY_USER_RELATIONSHIP,
-    isMyBounties: false,
   });
 
   // api + context
   const { questsPage, setQuestsPage, maxPages } = useBounty();
   const { currentUser } = useUserWallet();
   const { allIndustries } = useIndustry();
-  const { allMints } = useMint();
-  const { data: allBounties } = api.bounties.getAllBounties.useQuery(
-    {
-      currentUserId: self ? currentUser.id : user?.id,
-      page: questsPage,
-    },
-    {
-      enabled: !!currentUser,
-    }
-  );
 
   function snakeToTitleCase(snakeCaseStr: string) {
     return snakeCaseStr
@@ -100,22 +87,6 @@ const QuestTable: React.FC<Props> = ({ type, user }) => {
         if ((!currentUser || !currentUser.isLancerDev) && bounty.isTest) {
           return false;
         }
-        if (
-          filters.isMyBounties &&
-          !bounty.users.some((user) => user.userid === currentUser?.id)
-        ) {
-          return false;
-        }
-
-        // check if any of the bounty's industries is
-        // included in the filters.industries list
-        if (
-          !bounty.industries.some((industry) =>
-            filters.industries.includes(industry.name)
-          )
-        ) {
-          return false;
-        }
 
         const bountyTags: string[] = bounty.tags.map((tag) => tag.name) || [];
         const commonTags = bountyTags.filter((tag) =>
@@ -132,14 +103,6 @@ const QuestTable: React.FC<Props> = ({ type, user }) => {
         if (!filters.states.includes(bounty.state)) {
           return false;
         }
-
-        // if (
-        //   bounty.price &&
-        //   (Number(bounty.price) < filters.estimatedPriceBounds[0] ||
-        //     Number(bounty.price) > filters.estimatedPriceBounds[1])
-        // ) {
-        //   return false;
-        // }
 
         return true;
       });
@@ -180,16 +143,10 @@ const QuestTable: React.FC<Props> = ({ type, user }) => {
         maxPrice === minPrice ? maxPrice + 1 : maxPrice,
       ];
       setPriceBounds(priceBounds);
-      if (questsPage === 0) {
-        setFilters({
-          tags: allTags,
-          industries: mappedInds,
-          estimatedPriceBounds: priceBounds,
-          states: filters.states,
-          relationships: BOUNTY_USER_RELATIONSHIP,
-          isMyBounties: filters.isMyBounties,
-        });
-      }
+      setFilters({
+        ...filters,
+        tags: allTags,
+      });
     }
   }, [allBounties, allIndustries]);
 
@@ -203,13 +160,10 @@ const QuestTable: React.FC<Props> = ({ type, user }) => {
         <AnimatePresence>
           {!!allBounties && type === "quests" && (
             <QuestFilters
-              mints={allMints}
-              industries={allIndustries}
               tags={tags}
               count={
                 filteredBounties ? filteredBounties.length : allBounties.length
               }
-              priceBounds={bounds}
               filters={filters}
               setFilters={setFilters}
             />
@@ -269,10 +223,7 @@ const QuestTable: React.FC<Props> = ({ type, user }) => {
                 setQuestsPage(questsPage + 1);
               }}
               className={`text-blue text-sm font-bold mt-4 disabled:opacity-60 disabled:cursor-not-allowed`}
-              disabled={
-                questsPage + 1 > maxPages - 1 ||
-                filteredBounties?.length < QUESTS_PER_PAGE
-              }
+              disabled={questsPage + 1 > maxPages - 1}
             >
               Next Page
             </button>
