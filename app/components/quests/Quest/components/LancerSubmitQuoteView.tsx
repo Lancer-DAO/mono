@@ -130,9 +130,9 @@ const LancerSubmitQuoteView: FC<Props> = ({
       <ActionsCardBanner
         title={`Quote to ${currentBounty.creator.user.name}`}
         subtitle={`${quotes?.length || 0} ${
-          (quotes?.length || 0) === 1 ? "quote" : "quotes"
-        } have been sent to them already`}
-      ></ActionsCardBanner>
+          (quotes?.length || 0) === 1 ? "quote has" : "quotes have"
+        } been sent to them already`}
+      />
       {/* TODO: add check for if user application has been approved or denied. if not, show this: */}
       {hasApplied && (
         <div className="px-5 pt-5">

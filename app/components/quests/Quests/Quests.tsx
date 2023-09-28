@@ -11,7 +11,7 @@ export const Bounties = () => {
 
   const { data: allBounties } = api.bounties.getAllBounties.useQuery(
     {
-      currentUserId: currentUser.id,
+      currentUserId: currentUser ? currentUser.id : null,
       page: questsPage,
     },
     {
