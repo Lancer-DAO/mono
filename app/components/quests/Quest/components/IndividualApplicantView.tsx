@@ -1,19 +1,21 @@
-import { Dispatch, FC, SetStateAction } from "react";
-import Image from "next/image";
-import { motion } from "framer-motion";
-import { X } from "lucide-react";
-import { EApplicantsView } from "./ApplicantsView";
-import { MAX_SHORTLIST, smallClickAnimation } from "@/src/constants";
-import { BOUNTY_USER_RELATIONSHIP, BountyState } from "@/types";
 import { ChatButton } from "@/components";
+import RedFire from "@/components/@icons/RedFire";
 import { addSubmitterFFA } from "@/escrow/adapters";
+import { BountyUserType } from "@/prisma/queries/bounty";
+import { MAX_SHORTLIST, smallClickAnimation } from "@/src/constants";
 import { useUserWallet } from "@/src/providers";
 import { useBounty } from "@/src/providers/bountyProvider";
 import { useReferral } from "@/src/providers/referralProvider";
 import { api, updateList } from "@/src/utils";
+import { BOUNTY_USER_RELATIONSHIP, BountyState } from "@/types";
 import { PublicKey } from "@solana/web3.js";
+import { motion } from "framer-motion";
+import { X } from "lucide-react";
+import Image from "next/image";
+import { Dispatch, FC, SetStateAction } from "react";
 import toast from "react-hot-toast";
-import { BountyUserType } from "@/prisma/queries/bounty";
+import { EApplicantsView } from "./ApplicantsView";
+import CheckpointView from "./CheckpointView";
 import { QuestActionView } from "./QuestActions";
 
 interface Props {
@@ -41,6 +43,17 @@ const IndividualApplicantView: FC<Props> = ({
   const { currentBounty, setCurrentBounty } = useBounty();
   const { mutateAsync: updateBounty } = api.bountyUsers.update.useMutation();
   const { getRemainingAccounts, getSubmitterReferrer } = useReferral();
+  const { data: quote } = api.quote.getQuoteByBountyAndUser.useQuery(
+    {
+      bountyId: currentBounty.id,
+      userId: selectedSubmitter.userid,
+    },
+    { enabled: !!currentBounty }
+  );
+  const { data: checkpoints } = api.checkpoint.getCheckpointsByQuote.useQuery(
+    { id: quote?.id },
+    { enabled: !!quote }
+  );
 
   const confirmAction = (action: string): Promise<void> => {
     setIsAwaitingResponse(true);
@@ -242,8 +255,8 @@ const IndividualApplicantView: FC<Props> = ({
       <div className="w-full flex flex-col">
         {/* banner */}
         <div
-          className="w-full h-[68px] bg-white flex items-center 
-            justify-between px-6 border-b border-neutral200"
+          className="w-full px-6 py-4 bg-white flex items-center 
+            justify-between border-b border-neutral200"
         >
           <div className="flex items-center gap-2">
             <Image
@@ -271,13 +284,20 @@ const IndividualApplicantView: FC<Props> = ({
           </motion.button>
         </div>
       </div>
-      <div className="flex flex-col gap-6 px-6 py-4">
-        <div className="flex flex-col gap-5">
-          <p className="text-xs text-neutral600">Previously worked with</p>
-          <p className="text-xs text-neutral600">Notable skills</p>
-        </div>
-        <div className="w-full h-[100px] bg-neutral100 rounded-md p-6">
-          Quote goes here
+      <div className="flex flex-col gap-8 px-8 py-2">
+        <div className="flex flex-col">
+          <div className="flex py-4 justify-between border-b border-neutral200">
+            <div className="flex items-center gap-2">
+              <RedFire />
+              <div className="title-text text-neutral600">Quote Price</div>
+              <div className="w-[1px] h-5 bg-neutral200" />
+              <div className="text-mini text-neutral400">{`${quote?.estimatedTime}h`}</div>
+            </div>
+            <div className="flex items-center title-text text-primary200">{`$${quote?.price}`}</div>
+          </div>
+          {checkpoints?.map((checkpoint, index) => (
+            <CheckpointView checkpoint={checkpoint} key={index} />
+          ))}
         </div>
         <div className="flex flex-col gap-2.5">
           <p className="text-neutral600 title-text">{`About ${selectedSubmitter.user.name}`}</p>
@@ -291,7 +311,7 @@ const IndividualApplicantView: FC<Props> = ({
         {selectedSubmitter.relations.includes(
           BOUNTY_USER_RELATIONSHIP.RequestedLancer
         ) ? (
-          <div className="w-full flex items-center justify-end gap-4">
+          <div className="w-full flex items-center justify-end gap-4 pb-4">
             <motion.button
               {...smallClickAnimation}
               className="bg-white border border-neutral200 h-9 w-fit px-4 py-2
@@ -337,44 +357,48 @@ const IndividualApplicantView: FC<Props> = ({
           </div>
         ) : null}
         {/* applicant is shortlisted and client has funded escrow with deposit */}
-        <div className="w-full flex items-center justify-end gap-4">
-          {(selectedSubmitter.relations.includes(
-            BOUNTY_USER_RELATIONSHIP.ShortlistedLancer
-          ) ||
-            selectedSubmitter.relations.includes(
-              BOUNTY_USER_RELATIONSHIP.ApprovedSubmitter
-            )) &&
-          Number(currentBounty.escrow.amount) > 0 ? (
-            <ChatButton
-              setCurrentActionView={setCurrentActionView}
-              disabled={isLoading || isAwaitingResponse}
-            />
-          ) : null}
-          {selectedSubmitter.relations.includes(
-            BOUNTY_USER_RELATIONSHIP.ShortlistedLancer
-          ) && Number(currentBounty.escrow.amount) > 0 ? (
-            <>
-              <motion.button
-                {...smallClickAnimation}
-                className="bg-white border border-neutral300 h-9 w-fit px-4 py-2
-                title-text rounded-md text-neutral600 disabled:cursor-not-allowed disabled:opacity-80"
-                // onClick={() => handleManageShortlist("remove")}
+        {selectedSubmitter.relations.includes(
+          BOUNTY_USER_RELATIONSHIP.ShortlistedLancer
+        ) && (
+          <div className="w-full flex items-center justify-end gap-4">
+            {(selectedSubmitter.relations.includes(
+              BOUNTY_USER_RELATIONSHIP.ShortlistedLancer
+            ) ||
+              selectedSubmitter.relations.includes(
+                BOUNTY_USER_RELATIONSHIP.ApprovedSubmitter
+              )) &&
+            Number(currentBounty.escrow.amount) > 0 ? (
+              <ChatButton
+                setCurrentActionView={setCurrentActionView}
                 disabled={isLoading || isAwaitingResponse}
-              >
-                Reject for the Quest
-              </motion.button>
-              <motion.button
-                {...smallClickAnimation}
-                className="bg-success h-9 w-fit px-4 py-2
-                title-text rounded-md text-white disabled:cursor-not-allowed disabled:opacity-80"
-                onClick={() => handleApproveForQuest()}
-                disabled={isLoading || isAwaitingResponse}
-              >
-                Select for the Quest
-              </motion.button>
-            </>
-          ) : null}
-        </div>
+              />
+            ) : null}
+            {selectedSubmitter.relations.includes(
+              BOUNTY_USER_RELATIONSHIP.ShortlistedLancer
+            ) && Number(currentBounty.escrow.amount) > 0 ? (
+              <>
+                <motion.button
+                  {...smallClickAnimation}
+                  className="bg-white border border-neutral300 h-9 w-fit px-4 py-2
+                  title-text rounded-md text-neutral600 disabled:cursor-not-allowed disabled:opacity-80"
+                  // onClick={() => handleManageShortlist("remove")}
+                  disabled={isLoading || isAwaitingResponse}
+                >
+                  Reject for the Quest
+                </motion.button>
+                <motion.button
+                  {...smallClickAnimation}
+                  className="bg-success h-9 w-fit px-4 py-2
+                  title-text rounded-md text-white disabled:cursor-not-allowed disabled:opacity-80"
+                  onClick={() => handleApproveForQuest()}
+                  disabled={isLoading || isAwaitingResponse}
+                >
+                  Select for the Quest
+                </motion.button>
+              </>
+            ) : null}
+          </div>
+        )}
       </div>
     </div>
   );

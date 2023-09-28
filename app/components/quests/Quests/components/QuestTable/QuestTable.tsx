@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
-import { getUniqueItems } from "@/src/utils";
 import { useUserWallet } from "@/src/providers";
-import { LoadingBar } from "@/components";
+import { useBounty } from "@/src/providers/bountyProvider";
+import { useIndustry } from "@/src/providers/industryProvider";
+import { getUniqueItems } from "@/src/utils";
 import {
   BountyPreview,
   BountyState,
@@ -10,9 +11,6 @@ import {
   User,
 } from "@/types";
 import { AnimatePresence } from "framer-motion";
-import { useBounty } from "@/src/providers/bountyProvider";
-import { useIndustry } from "@/src/providers/industryProvider";
-import { useMint } from "@/src/providers/mintProvider";
 import { QuestFilters, QuestRow } from "./components";
 
 export const BOUNTY_USER_RELATIONSHIP = [
@@ -33,28 +31,24 @@ const stateMap = {
 interface Props {
   type: "profile" | "quests";
   user: User;
+  allBounties: BountyPreview[];
 }
 
-const QuestTable: React.FC<Props> = ({ type, user }) => {
+const QuestTable: React.FC<Props> = ({ type, user, allBounties }) => {
   // state
   const [tags, setTags] = useState<string[]>([]);
   const [bounds, setPriceBounds] = useState<[number, number]>([5, 10000]);
   const [industriesFilter, setIndustriesFilter] = useState<string[]>([]);
   const [filteredBounties, setFilteredBounties] = useState<BountyPreview[]>();
   const [filters, setFilters] = useState<Filters>({
-    industries: industriesFilter,
     tags: tags,
-    estimatedPriceBounds: bounds,
     states: TABLE_BOUNTY_STATES,
-    relationships: BOUNTY_USER_RELATIONSHIP,
-    isMyBounties: false,
   });
 
   // api + context
-  const { allBounties } = useBounty();
+  const { questsPage, setQuestsPage, maxPages } = useBounty();
   const { currentUser } = useUserWallet();
   const { allIndustries } = useIndustry();
-  const { allMints } = useMint();
 
   function snakeToTitleCase(snakeCaseStr: string) {
     return snakeCaseStr
@@ -64,16 +58,12 @@ const QuestTable: React.FC<Props> = ({ type, user }) => {
   }
 
   useEffect(() => {
-    if (!allBounties || !currentUser || !allIndustries) return;
+    if (!allBounties || !allIndustries) return;
     var filteredBounties = [];
     if (type === "profile") {
       filteredBounties = allBounties?.filter((bounty) => {
         // filter out test quests unless user is a Lancer dev
         if ((!currentUser || !currentUser.isLancerDev) && bounty.isTest) {
-          return false;
-        }
-        // filter out quests that don't have an escrow account
-        if (!bounty.escrow.publicKey || !bounty.escrow.mint) {
           return false;
         }
         // filter out quests that don't include the user
@@ -94,25 +84,6 @@ const QuestTable: React.FC<Props> = ({ type, user }) => {
         if ((!currentUser || !currentUser.isLancerDev) && bounty.isTest) {
           return false;
         }
-        if (!bounty.escrow.publicKey || !bounty.escrow.mint) {
-          return false;
-        }
-        if (
-          filters.isMyBounties &&
-          !bounty.users.some((user) => user.userid === currentUser?.id)
-        ) {
-          return false;
-        }
-
-        // check if any of the bounty's industries is
-        // included in the filters.industries list
-        if (
-          !bounty.industries.some((industry) =>
-            filters.industries.includes(industry.name)
-          )
-        ) {
-          return false;
-        }
 
         const bountyTags: string[] = bounty.tags.map((tag) => tag.name) || [];
         const commonTags = bountyTags.filter((tag) =>
@@ -130,22 +101,10 @@ const QuestTable: React.FC<Props> = ({ type, user }) => {
           return false;
         }
 
-        // if (
-        //   bounty.price &&
-        //   (Number(bounty.price) < filters.estimatedPriceBounds[0] ||
-        //     Number(bounty.price) > filters.estimatedPriceBounds[1])
-        // ) {
-        //   return false;
-        // }
-
         return true;
       });
     }
-    if (type === "quests") {
-      setFilteredBounties(filteredBounties);
-    } else {
-      setFilteredBounties(filteredBounties.splice(0, 6));
-    }
+    setFilteredBounties(filteredBounties);
   }, [filters, allBounties, currentUser, type]);
 
   useEffect(() => {
@@ -155,7 +114,6 @@ const QuestTable: React.FC<Props> = ({ type, user }) => {
     // - all payout mints
     // - upper and lower bounds of price
 
-    if (!allBounties || !allIndustries || type === "profile") return;
     if (allBounties && allBounties?.length !== 0) {
       const allTags = allBounties
         ?.map((bounty) => bounty.tags.map((tag) => tag.name))
@@ -183,12 +141,8 @@ const QuestTable: React.FC<Props> = ({ type, user }) => {
       ];
       setPriceBounds(priceBounds);
       setFilters({
+        ...filters,
         tags: allTags,
-        industries: mappedInds,
-        estimatedPriceBounds: priceBounds,
-        states: TABLE_BOUNTY_STATES,
-        relationships: BOUNTY_USER_RELATIONSHIP,
-        isMyBounties: filters.isMyBounties,
       });
     }
   }, [allBounties, allIndustries]);
@@ -203,13 +157,10 @@ const QuestTable: React.FC<Props> = ({ type, user }) => {
         <AnimatePresence>
           {!!allBounties && type === "quests" && (
             <QuestFilters
-              mints={allMints}
-              industries={allIndustries}
               tags={tags}
               count={
                 filteredBounties ? filteredBounties.length : allBounties.length
               }
-              priceBounds={bounds}
               filters={filters}
               setFilters={setFilters}
             />
@@ -247,6 +198,33 @@ const QuestTable: React.FC<Props> = ({ type, user }) => {
                 </div>
               ));
             })()}
+          {filteredBounties?.length === 0 && (
+            <div className="w-full flex flex-col items-center justify-center gap-2">
+              <p className="text-neutral600 text-sm mt-[5px]">
+                No Quests Found!
+              </p>
+            </div>
+          )}
+          <div className="flex items-center justify-center gap-5">
+            <button
+              onClick={() => {
+                setQuestsPage(questsPage - 1);
+              }}
+              className={`text-blue text-sm font-bold mt-4 disabled:opacity-60 disabled:cursor-not-allowed`}
+              disabled={questsPage - 1 < 0}
+            >
+              Prev Page
+            </button>
+            <button
+              onClick={() => {
+                setQuestsPage(questsPage + 1);
+              }}
+              className={`text-blue text-sm font-bold mt-4 disabled:opacity-60 disabled:cursor-not-allowed`}
+              disabled={questsPage + 1 > maxPages - 1}
+            >
+              Next Page
+            </button>
+          </div>
         </div>
       </div>
     </div>

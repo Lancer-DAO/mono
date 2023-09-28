@@ -1,12 +1,12 @@
-import { Dispatch, FC, SetStateAction } from "react";
-import { motion } from "framer-motion";
 import { BountyUserType } from "@/prisma/queries/bounty";
-import ActionsCardBanner from "./ActionsCardBanner";
-import { useBounty } from "@/src/providers/bountyProvider";
 import { smallClickAnimation } from "@/src/constants";
-import { X } from "lucide-react";
-import { QuestActionView } from "./QuestActions";
+import { useBounty } from "@/src/providers/bountyProvider";
 import { BountyState } from "@/types";
+import { motion } from "framer-motion";
+import { X } from "lucide-react";
+import { Dispatch, FC, SetStateAction } from "react";
+import ActionsCardBanner from "./ActionsCardBanner";
+import { QuestActionView } from "./QuestActions";
 
 interface Props {
   selectedSubmitter: BountyUserType | null;
@@ -32,7 +32,7 @@ const ChatView: FC<Props> = ({ selectedSubmitter, setCurrentActionView }) => {
               if (currentBounty.isCreator) {
                 setCurrentActionView(QuestActionView.ViewApplicants);
               } else {
-                setCurrentActionView(QuestActionView.Apply);
+                setCurrentActionView(QuestActionView.SubmitApplication);
               }
             }}
             {...smallClickAnimation}

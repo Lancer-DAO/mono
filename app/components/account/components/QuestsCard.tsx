@@ -7,6 +7,8 @@ import { useReferral } from "@/src/providers/referralProvider";
 import { IS_CUSTODIAL } from "@/src/constants";
 import { Copy } from "lucide-react";
 import { useUserWallet } from "@/src/providers";
+import { useBounty } from "@/src/providers/bountyProvider";
+import { api } from "@/src/utils";
 
 interface Props {
   user: User;
@@ -15,6 +17,18 @@ interface Props {
 export const QuestsCard: FC<Props> = ({ user }) => {
   const { referralId, initialized, createReferralMember } = useReferral();
   const { currentUser } = useUserWallet();
+  const { questsPage } = useBounty();
+
+  const { data: allBounties } =
+    api.bounties.getCompletedBountiesForUser.useQuery(
+      {
+        userId: user.id,
+        page: questsPage,
+      },
+      {
+        enabled: !!currentUser,
+      }
+    );
 
   const [isCopied, setIsCopied] = useState(false);
 
@@ -88,7 +102,7 @@ export const QuestsCard: FC<Props> = ({ user }) => {
         </>
       )}
       <p className="title-text text-neutral600">Completed Quests</p>
-      <QuestTable type="profile" user={user} />
+      <QuestTable type="profile" user={user} allBounties={allBounties} />
     </div>
   );
 };

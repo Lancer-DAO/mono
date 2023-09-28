@@ -7,6 +7,7 @@ import { useMint } from "@/src/providers/mintProvider";
 import { useIndustry } from "@/src/providers/industryProvider";
 import { useAccount } from "@/src/providers/accountProvider";
 import { useBounty } from "@/src/providers/bountyProvider";
+import { QUESTS_PER_PAGE } from "@/src/constants";
 
 export async function getServerSideProps(
   context: GetServerSidePropsContext<{ id: string; req; res }>
@@ -46,7 +47,8 @@ export async function getServerSideProps(
     }
     const userId = parseInt(context.query.account as string);
 
-    const allBounties = await queries.bounty.getMany();
+    const allBounties = await queries.bounty.getMany(0, userId);
+    const totalQuests = await queries.bounty.getTotalQuests(userId, true);
     const user = await queries.user.getById(userId);
     const allMints = await queries.mint.getAll();
     const allIndustries = await queries.industry.getMany();
@@ -58,6 +60,7 @@ export async function getServerSideProps(
         mints: JSON.stringify(allMints),
         industries: JSON.stringify(allIndustries),
         allQuests: JSON.stringify(allBounties),
+        totalQuestsCount: JSON.stringify(totalQuests),
       },
     };
   } catch (e) {
@@ -75,13 +78,14 @@ const Home: React.FC<{
   mints: string;
   industries: string;
   allQuests: string;
-}> = ({ user, mints, industries, allQuests }) => {
+  totalQuestsCount: string;
+}> = ({ user, mints, industries, allQuests, totalQuestsCount }) => {
   const parsedUser = JSON.parse(user);
 
   const { setAllMints, allMints } = useMint();
   const { setAllIndustries, allIndustries } = useIndustry();
   const { setAccount, account } = useAccount();
-  const { setAllBounties, allBounties } = useBounty();
+  const { setAllBounties, allBounties, maxPages, setMaxPages } = useBounty();
 
   if (!allMints && mints) {
     setAllMints(JSON.parse(mints));
@@ -95,6 +99,11 @@ const Home: React.FC<{
 
   if (!allBounties && allQuests) {
     setAllBounties(JSON.parse(allQuests));
+  }
+
+  if (!maxPages && totalQuestsCount) {
+    const totalQuests = parseInt(JSON.parse(totalQuestsCount));
+    setMaxPages(Math.ceil(totalQuests / QUESTS_PER_PAGE));
   }
 
   return (

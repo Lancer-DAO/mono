@@ -6,9 +6,9 @@ export const getAllBounties = protectedProcedure
   .input(
     z.object({
       currentUserId: z.number(),
-      onlyMyBounties: z.boolean(),
+      page: z.number(),
     })
   )
-  .query(async ({ input: { currentUserId } }) => {
-    return await queries.bounty.getMany(currentUserId);
+  .query(async ({ input: { currentUserId, page } }) => {
+    return await queries.bounty.getMany(page, currentUserId);
   });

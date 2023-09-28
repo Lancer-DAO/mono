@@ -22,6 +22,9 @@ import { createFFA } from "@/escrow/adapters";
 import { useReferral } from "@/src/providers/referralProvider";
 import { useBounty } from "@/src/providers/bountyProvider";
 import { useRouter } from "next/router";
+import { createCustodialReferralDataAccountInstruction } from "@/escrow/sdk/instructions";
+import { sendGaslessTx } from "@/escrow/gasless";
+import { findFeatureAccount } from "@/escrow/sdk/pda";
 
 interface Props {
   formData: QuestFormData;
@@ -115,6 +118,21 @@ export const CreateBountyForm: FC<Props> = ({
       setCreateQuestState({ isLoading: false, result: "Quest Created" });
       setCurrentBounty(bounty);
       router.push(`/quests/${bounty.id}`);
+
+      const [feature_account] = await findFeatureAccount(
+        timestamp,
+        new PublicKey(currentWallet.publicKey),
+        program
+      );
+      const referralAccountIx = await createCustodialReferralDataAccountInstruction(
+        new PublicKey(currentWallet.publicKey),
+        new PublicKey("pyrSoEahjKGKZpLWEYwCJ8zQAsYZckZH8ZqJ7yGd1ha"),
+        feature_account,
+        program
+      );
+      const res2 = await sendGaslessTx([referralAccountIx], undefined, undefined, 20000);
+      console.log("Second gasless tx res: ", res2)
+
     } catch (error) {
       console.log("Quest Error: ", error);
       setCreateQuestState({ error });
@@ -289,9 +307,8 @@ export const CreateBountyForm: FC<Props> = ({
                   onClick={() => removeLink(index)}
                   {...smallClickAnimation}
                   key={index}
-                  className={`${
-                    index === 0 && "invisible"
-                  } bg-neutral-100 border border-neutral-200 
+                  className={`${index === 0 && "invisible"
+                    } bg-neutral-100 border border-neutral-200 
                     text-neutral-500 w-12 px-4 py-1.5 rounded-md flex items-center justify-center`}
                 >
                   <Trash />
@@ -349,19 +366,18 @@ export const CreateBountyForm: FC<Props> = ({
       <motion.button
         {...smallClickAnimation}
         onClick={() => createBounty()}
-        className={`h-[50px] mt-5 w-full rounded-md text-base ${
-          createQuestState.error
-            ? "bg-error text-white"
-            : "bg-primary200 text-white"
-        } `}
+        className={`h-[50px] mt-5 w-full rounded-md text-base ${createQuestState.error
+          ? "bg-error text-white"
+          : "bg-primary200 text-white"
+          } `}
       >
         {createQuestState.error
           ? "Failed to Create Quest"
           : createQuestState.isLoading
-          ? createQuestState.loadingPrompt
-          : createQuestState.result
-          ? createQuestState.result
-          : "Create Quest"}
+            ? createQuestState.loadingPrompt
+            : createQuestState.result
+              ? createQuestState.result
+              : "Create Quest"}
       </motion.button>
     </div>
   );

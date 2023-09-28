@@ -11,9 +11,17 @@ export default async function handler(
 ) {
 
 
+  const { delay } = req.query
+
+
+  if (delay) {
+    await new Promise(r => setTimeout(r, Number(delay)));
+  }
+
   const connection = new Connection(process.env.NEXT_PUBLIC_IS_MAINNET
     ? "https://winter-necessary-smoke.solana-mainnet.discover.quiknode.pro"
-    : "https://solana-devnet.g.alchemy.com/v2/uUAHkqkfrVERwRHXnj8PEixT8792zETN"
+    : "https://solana-devnet.g.alchemy.com/v2/uUAHkqkfrVERwRHXnj8PEixT8792zETN",
+    "finalized"
   );
 
   const serialized = req.body?.transaction;
@@ -26,7 +34,7 @@ export default async function handler(
   const nums = secret.split(",");
   const secretArray = nums.map((val) => parseInt(val));
   const secretKey = Uint8Array.from(secretArray);
-  const feePayer =  Keypair.fromSecretKey(secretKey);
+  const feePayer = Keypair.fromSecretKey(secretKey);
 
   let transaction: Transaction;
   try {
@@ -82,8 +90,9 @@ export default async function handler(
 
 
   const txid = await connection.sendRawTransaction(
-    transaction.serialize()
-    );
+    transaction.serialize(),
+  );
 
+  console.log("Tx Id: ", txid)
   res.status(200).json({ status: 'ok', txid });
 }
