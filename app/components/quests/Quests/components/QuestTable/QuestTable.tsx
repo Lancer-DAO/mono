@@ -1,7 +1,9 @@
-import { useState, useEffect } from "react";
-import { getUniqueItems } from "@/src/utils";
-import { useUserWallet } from "@/src/providers";
 import { LoadingBar } from "@/components";
+import { useUserWallet } from "@/src/providers";
+import { useBounty } from "@/src/providers/bountyProvider";
+import { useIndustry } from "@/src/providers/industryProvider";
+import { useMint } from "@/src/providers/mintProvider";
+import { getUniqueItems } from "@/src/utils";
 import {
   BountyPreview,
   BountyState,
@@ -10,9 +12,7 @@ import {
   User,
 } from "@/types";
 import { AnimatePresence } from "framer-motion";
-import { useBounty } from "@/src/providers/bountyProvider";
-import { useIndustry } from "@/src/providers/industryProvider";
-import { useMint } from "@/src/providers/mintProvider";
+import { useEffect, useState } from "react";
 import { QuestFilters, QuestRow } from "./components";
 
 export const BOUNTY_USER_RELATIONSHIP = [
@@ -94,7 +94,7 @@ const QuestTable: React.FC<Props> = ({ type, user }) => {
         if ((!currentUser || !currentUser.isLancerDev) && bounty.isTest) {
           return false;
         }
-        if (!bounty.escrow.publicKey || !bounty.escrow.mint) {
+        if (!bounty.escrow?.publicKey || !bounty.escrow.mint) {
           return false;
         }
         if (

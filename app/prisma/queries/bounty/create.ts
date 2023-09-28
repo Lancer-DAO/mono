@@ -1,5 +1,7 @@
 import { prisma } from "@/server/db";
+import { BountyState } from "@/types";
 import * as Prisma from "@prisma/client";
+import * as queries from "../";
 
 export const create = async (
   createdAt: string,
@@ -54,7 +56,7 @@ export const create = async (
       users: {
         create: {
           userid: user.id,
-          relations: "[creator]",
+          relations: "creator",
           walletid: wallet.id,
         },
       },
