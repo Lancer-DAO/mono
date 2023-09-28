@@ -1,22 +1,12 @@
 import { Industry } from "@/types";
 
-export type FORM_SECTION = "CREATE" | "MEDIA" | "FUND" | "PREVIEW" | "SUCCESS";
-
 export interface QuestFormData {
-  requestQuote: boolean;
-  issuePrice: string;
-  issuePriceIcon?: string;
   issueTitle: string;
   issueDescription: string;
   industryId: number | null;
-  displineIds?: number[];
   tags: string[];
   links: string[];
   media: Media[];
-  comment?: string;
-  organizationName?: string;
-  repositoryName?: string;
-  estimatedTime?: string;
   isPrivate: boolean;
   isTest?: boolean;
 }
@@ -42,6 +32,15 @@ export interface LancerApplyData {
   details: string;
 }
 
+export interface LancerQuoteData {
+  title: string;
+  description: string;
+  estimatedTime: number;
+  price: number;
+  state: QuestProgressState;
+  checkpoints: Checkpoint[];
+}
+
 interface Media {
   imageUrl: string;
   title: string;
@@ -62,4 +61,14 @@ export interface LancerUpdateData {
   description: string;
   media: Media[];
   state: QuestProgressState;
+}
+
+export interface Checkpoint {
+  title: string;
+  price: number;
+  description: string;
+  estimatedTime: number;
+  detailsOpen: boolean;
+  canEdit: boolean;
+  addedWen: number;
 }

@@ -4,6 +4,7 @@ import { MonoProgram } from "@/escrow/sdk/types/mono_program";
 import { voteToCancelInstruction } from "@/escrow/sdk/instructions";
 import { LancerWallet } from "@/types/";
 import { Escrow } from "@/types/";
+import { sendGaslessTx } from "../gasless";
 
 export const voteToCancelFFA = async (
   creator: PublicKey,
@@ -21,18 +22,6 @@ export const voteToCancelFFA = async (
     program
   );
 
-  const { blockhash, lastValidBlockHeight } =
-    await provider.connection.getLatestBlockhash();
-  const txInfo = {
-    /** The transaction fee payer */
-    feePayer: voter,
-    /** A recent blockhash */
-    blockhash: blockhash,
-    /** the last block chain can advance to before tx is exportd expired */
-    lastValidBlockHeight: lastValidBlockHeight,
-  };
-  const tx = await wallet.signAndSendTransaction(
-    new Transaction(txInfo).add(approveSubmitterIx)
-  );
-  return tx;
+  const res = await sendGaslessTx([approveSubmitterIx], true, wallet)
+  return res.signature;
 };

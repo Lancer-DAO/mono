@@ -7,6 +7,7 @@ import { Image } from "lucide-react";
 
 import { motion } from "framer-motion";
 import { smallClickAnimation } from "@/src/constants";
+import { useRouter } from "next/router";
 export type UpdateType = "submission" | "message" | "application" | "cancel";
 export type SubmissionType =
   //   This submission was accepted
@@ -69,6 +70,7 @@ export type UpdateItemProps =
         questName: string;
         description: string;
         updateName?: string;
+        questId: number;
       };
     })
   | (CommonProps & {
@@ -76,6 +78,7 @@ export type UpdateItemProps =
       subType: ApplicationType;
       extraProps: {
         questName: string;
+        questId: number;
       };
     })
   | (CommonProps & {
@@ -83,6 +86,7 @@ export type UpdateItemProps =
       subType: CancelType;
       extraProps: {
         questName: string;
+        questId: number;
       };
     })
   | (CommonProps & {
@@ -100,6 +104,7 @@ const UpdateTableItem: React.FC<UpdateItemProps> = ({
   time,
   extraProps,
 }) => {
+  const router = useRouter();
   switch (type) {
     case "message":
       return (
@@ -117,7 +122,12 @@ const UpdateTableItem: React.FC<UpdateItemProps> = ({
       switch (subType) {
         case "new":
           return (
-            <div className="flex flex-col px-8 py-4 items-start justify-center w-full border-solid border-y  border-neutralBorder500">
+            <div
+              onClick={() => {
+                router.push(`/quests/${extraProps.questId}`);
+              }}
+              className="flex flex-col px-8 py-4 items-start justify-center w-full border-solid border-y  border-neutralBorder500 hover:cursor-pointer"
+            >
               <div className="flex justify-start items-center w-full">
                 <ServiceBell height="28px" width="28px" />
                 <div className="text-sm ml-1.5 text-neutral-500 mr-2">
@@ -134,7 +144,12 @@ const UpdateTableItem: React.FC<UpdateItemProps> = ({
           );
         case "rejected":
           return (
-            <div className="flex flex-col px-8 py-4 items-start justify-center w-full border-solid border-y  border-neutralBorder500">
+            <div
+              onClick={() => {
+                router.push(`/quests/${extraProps.questId}`);
+              }}
+              className="hover:cursor-pointer flex flex-col px-8 py-4 items-start justify-center w-full border-solid border-y  border-neutralBorder500"
+            >
               <div className="flex justify-start items-center w-full">
                 <Flame height="28px" width="28px" version="orange" />
                 <div className="text-sm ml-1.5 text-neutral-500 mr-2">
@@ -151,7 +166,12 @@ const UpdateTableItem: React.FC<UpdateItemProps> = ({
           );
         case "accepted":
           return (
-            <div className="flex flex-col px-8 py-4 items-start justify-center w-full border-solid border-y  border-neutralBorder500">
+            <div
+              onClick={() => {
+                router.push(`/quests/${extraProps.questId}`);
+              }}
+              className="hover:cursor-pointer flex flex-col px-8 py-4 items-start justify-center w-full border-solid border-y  border-neutralBorder500"
+            >
               <div className="flex justify-start items-center w-full">
                 <Flame height="28px" width="28px" version="green" />
                 <div className="text-sm ml-1.5 text-neutral-500 mr-2">
@@ -171,7 +191,12 @@ const UpdateTableItem: React.FC<UpdateItemProps> = ({
       switch (subType) {
         case "vote-to-cancel":
           return (
-            <div className="flex flex-col px-8 py-4 items-start justify-center w-full border-solid border-y  border-neutralBorder500">
+            <div
+              onClick={() => {
+                router.push(`/quests/${extraProps.questId}`);
+              }}
+              className="hover:cursor-pointer flex flex-col px-8 py-4 items-start justify-center w-full border-solid border-y  border-neutralBorder500"
+            >
               <div className="flex justify-start items-center w-full">
                 <Alert height="28px" width="28px" />
                 <div className="text-sm ml-1.5 text-warning mr-2">
@@ -184,7 +209,12 @@ const UpdateTableItem: React.FC<UpdateItemProps> = ({
           );
         case "cancel-escrow":
           return (
-            <div className="flex flex-col px-8 py-4 items-start justify-center w-full border-solid border-y  border-neutralBorder500">
+            <div
+              onClick={() => {
+                router.push(`/quests/${extraProps.questId}`);
+              }}
+              className="hover:cursor-pointer flex flex-col px-8 py-4 items-start justify-center w-full border-solid border-y  border-neutralBorder500"
+            >
               <div className="flex justify-start items-center w-full">
                 <Alert height="28px" width="28px" />
                 <div className="text-sm ml-1.5 text-warning mr-2">
@@ -197,7 +227,12 @@ const UpdateTableItem: React.FC<UpdateItemProps> = ({
           );
         case "start-dispute":
           return (
-            <div className="flex flex-col px-8 py-4 items-start justify-center w-full border-solid border-y  border-neutralBorder500">
+            <div
+              onClick={() => {
+                router.push(`/quests/${extraProps.questId}`);
+              }}
+              className="hover:cursor-pointer flex flex-col px-8 py-4 items-start justify-center w-full border-solid border-y  border-neutralBorder500"
+            >
               <div className="flex justify-start items-center w-full">
                 <Alert height="28px" width="28px" />
                 <div className="text-sm ml-1.5 text-warning mr-2">
@@ -210,7 +245,12 @@ const UpdateTableItem: React.FC<UpdateItemProps> = ({
           );
         case "settle-dispute":
           return (
-            <div className="flex flex-col px-8 py-4 items-start justify-center w-full border-solid border-y  border-neutralBorder500">
+            <div
+              onClick={() => {
+                router.push(`/quests/${extraProps.questId}`);
+              }}
+              className="hover:cursor-pointer flex flex-col px-8 py-4 items-start justify-center w-full border-solid border-y  border-neutralBorder500"
+            >
               <div className="flex justify-start items-center w-full">
                 <Alert height="28px" width="28px" />
                 <div className="text-sm ml-1.5 text-warning mr-2">
@@ -227,7 +267,12 @@ const UpdateTableItem: React.FC<UpdateItemProps> = ({
       switch (subType) {
         case "applied":
           return (
-            <div className="flex flex-col px-8 py-4 items-start justify-center w-full border-solid border-y  border-neutralBorder500">
+            <div
+              onClick={() => {
+                router.push(`/quests/${extraProps.questId}`);
+              }}
+              className="hover:cursor-pointer flex flex-col px-8 py-4 items-start justify-center w-full border-solid border-y  border-neutralBorder500"
+            >
               <div className="flex justify-start items-center w-full">
                 <Mail height="28px" width="28px" version="blue" />
                 <div className="text-sm ml-1.5 text-neutral-500 mr-2">
@@ -240,7 +285,12 @@ const UpdateTableItem: React.FC<UpdateItemProps> = ({
           );
         case "shortlisted":
           return (
-            <div className="flex flex-col px-8 py-4 items-start justify-center w-full border-solid border-y  border-neutralBorder500">
+            <div
+              onClick={() => {
+                router.push(`/quests/${extraProps.questId}`);
+              }}
+              className="hover:cursor-pointer flex flex-col px-8 py-4 items-start justify-center w-full border-solid border-y  border-neutralBorder500"
+            >
               <div className="flex justify-start items-center w-full">
                 <Mail height="28px" width="28px" version="purple" />
                 <div className="text-sm ml-1.5 text-neutral-500 mr-2">
@@ -253,7 +303,12 @@ const UpdateTableItem: React.FC<UpdateItemProps> = ({
           );
         case "accepted":
           return (
-            <div className="flex flex-col px-8 py-4 items-start justify-center w-full border-solid border-y  border-neutralBorder500">
+            <div
+              onClick={() => {
+                router.push(`/quests/${extraProps.questId}`);
+              }}
+              className="hover:cursor-pointer flex flex-col px-8 py-4 items-start justify-center w-full border-solid border-y  border-neutralBorder500"
+            >
               <div className="flex justify-start items-center w-full">
                 <Mail height="28px" width="28px" version="green" />
                 <div className="text-sm ml-1.5 text-success mr-2">
@@ -266,7 +321,12 @@ const UpdateTableItem: React.FC<UpdateItemProps> = ({
           );
         case "denied":
           return (
-            <div className="flex flex-col px-8 py-4 items-start justify-center w-full border-solid border-y  border-neutralBorder500">
+            <div
+              onClick={() => {
+                router.push(`/quests/${extraProps.questId}`);
+              }}
+              className="hover:cursor-pointer flex flex-col px-8 py-4 items-start justify-center w-full border-solid border-y  border-neutralBorder500"
+            >
               <div className="flex justify-start items-center w-full">
                 <Mail height="28px" width="28px" version="orange" />
                 <div className="text-sm ml-1.5 text-warning mr-2">
@@ -279,7 +339,12 @@ const UpdateTableItem: React.FC<UpdateItemProps> = ({
           );
         case "removed-shortlisted":
           return (
-            <div className="flex flex-col px-8 py-4 items-start justify-center w-full border-solid border-y  border-neutralBorder500">
+            <div
+              onClick={() => {
+                router.push(`/quests/${extraProps.questId}`);
+              }}
+              className="hover:cursor-pointer flex flex-col px-8 py-4 items-start justify-center w-full border-solid border-y  border-neutralBorder500"
+            >
               <div className="flex justify-start items-center w-full">
                 <Mail height="28px" width="28px" version="orange" />
                 <div className="text-sm ml-1.5 text-warning mr-2">

@@ -25,3 +25,17 @@ export const getQuotesByBounty = async (
 
   return bounty.quotes;
 };
+
+export const getQuoteByBountyAndUser = async (
+  bountyId: number,
+  userId: number,
+): Promise<Prisma.Quote> => {
+  const quote = await prisma.quote.findFirst({
+    where: {
+      bountyid: bountyId,
+      userid: userId,
+    }
+  });
+
+  return quote;
+}

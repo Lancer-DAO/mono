@@ -96,6 +96,7 @@ const AllUpdatesTable: React.FC = () => {
               time: dayjs(action.timestamp),
               extraProps: {
                 questName: application.bounty.title,
+                questId: application.bounty.id,
               },
               key: action.timestamp,
             });
@@ -111,6 +112,7 @@ const AllUpdatesTable: React.FC = () => {
               time: dayjs(action.timestamp),
               extraProps: {
                 questName: application.bounty.title,
+                questId: application.bounty.id,
               },
               key: action.timestamp,
             });
@@ -126,6 +128,7 @@ const AllUpdatesTable: React.FC = () => {
               time: dayjs(action.timestamp),
               extraProps: {
                 questName: cancelVote.bounty.title,
+                questId: cancelVote.bounty.id,
               },
               key: action.timestamp,
             });
@@ -155,6 +158,7 @@ const AllUpdatesTable: React.FC = () => {
             time: dayjs(clientUpdate.createdAt),
             extraProps: {
               questName: clientUpdate.bounty.title,
+              questId: clientUpdate.bounty.id,
               description: clientUpdate.description,
             },
             key: clientUpdate.createdAt,
@@ -168,6 +172,7 @@ const AllUpdatesTable: React.FC = () => {
             time: dayjs(lancerUpdate.reviewedAt),
             extraProps: {
               questName: lancerUpdate.bounty.title,
+              questId: lancerUpdate.bounty.id,
               description: lancerUpdate.review,
               updateName: lancerUpdate.name,
             },
@@ -596,7 +601,8 @@ const QuestUpdatesTable: React.FC = () => {
 
           {currentBounty.isCreator &&
             currentBounty.state !== BountyState.VOTING_TO_CANCEL &&
-            currentBounty.state !== BountyState.DISPUTE_STARTED && (
+            currentBounty.state !== BountyState.DISPUTE_STARTED &&
+            currentBounty.state !== BountyState.DISPUTE_SETTLED && (
               <motion.button
                 {...smallClickAnimation}
                 className="bg-white border border-neutral200 ml-auto mr-8 h-9 w-fit px-4 py-2

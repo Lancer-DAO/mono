@@ -123,7 +123,9 @@
           "name": "creator",
           "isMut": false,
           "isSigner": false,
-          "docs": ["Check: Web3 auth can't allow 2 signers"]
+          "docs": [
+            "Check: Web3 auth can't allow 2 signers"
+          ]
         },
         {
           "name": "fundsMint",
@@ -1497,6 +1499,90 @@
       "args": []
     },
     {
+      "name": "createCustodialReferralDataAccount",
+      "accounts": [
+        {
+          "name": "custodialFeePayer",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "creator",
+          "isMut": false,
+          "isSigner": false,
+          "docs": [
+            "Check: Web3 auth can't allow 2 signers"
+          ]
+        },
+        {
+          "name": "featureDataAccount",
+          "isMut": true,
+          "isSigner": false,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "type": "string",
+                "value": "mono"
+              },
+              {
+                "kind": "account",
+                "type": "string",
+                "account": "FeatureDataAccount",
+                "path": "feature_data_account.unix_timestamp"
+              },
+              {
+                "kind": "account",
+                "type": "publicKey",
+                "path": "creator"
+              }
+            ]
+          }
+        },
+        {
+          "name": "referralDataAccount",
+          "isMut": true,
+          "isSigner": false,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "type": "string",
+                "value": "referrer"
+              },
+              {
+                "kind": "account",
+                "type": "publicKey",
+                "account": "FeatureDataAccount",
+                "path": "feature_data_account"
+              },
+              {
+                "kind": "account",
+                "type": "publicKey",
+                "path": "creator"
+              }
+            ]
+          }
+        },
+        {
+          "name": "referrer",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "rent",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": []
+    },
+    {
       "name": "addApprovedSubmittersV1",
       "accounts": [
         {
@@ -2783,13 +2869,19 @@
           {
             "name": "approvedSubmitters",
             "type": {
-              "array": ["publicKey", 5]
+              "array": [
+                "publicKey",
+                5
+              ]
             }
           },
           {
             "name": "approvedSubmittersShares",
             "type": {
-              "array": ["f32", 5]
+              "array": [
+                "f32",
+                5
+              ]
             }
           },
           {
@@ -2851,7 +2943,10 @@
           {
             "name": "approvedReferrers",
             "type": {
-              "array": ["publicKey", 10]
+              "array": [
+                "publicKey",
+                10
+              ]
             }
           },
           {
@@ -2881,7 +2976,10 @@
           {
             "name": "approvedReferrers",
             "type": {
-              "array": ["publicKey", 5]
+              "array": [
+                "publicKey",
+                5
+              ]
             }
           },
           {
@@ -3008,8 +3106,5 @@
       "name": "CannotDispute",
       "msg": "Cannot Dispute Bounty"
     }
-  ],
-  "metadata": {
-    "address": "LNCRQTZfeLMFHsSggvVc9kQWb1A98PEqHxVzBraWpQs"
-  }
+  ]
 }

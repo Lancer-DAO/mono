@@ -5,6 +5,7 @@ import { getBountyUpdatesLancer } from "./getUpdatesLancer";
 import { getCancelVotesLancer } from "./getCancelVotesLancer";
 import { getDisputesClient } from "./getDisputesClient";
 import { update } from "./update";
+import { updateRelations } from "./updateRelations";
 
 export const bountyUsers = createTRPCRouter({
   getBountyUpdatesCreator,
@@ -12,4 +13,5 @@ export const bountyUsers = createTRPCRouter({
   getCancelVotesLancer,
   getDisputesClient,
   update,
+  updateRelations
 });

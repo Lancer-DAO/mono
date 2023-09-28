@@ -1,7 +1,7 @@
 import { Dispatch, FC, SetStateAction, useState } from "react";
 import { motion } from "framer-motion";
 import { smallClickAnimation } from "@/src/constants";
-import { FundBountyModal, Coins } from "@/components";
+import { FundQuestModal, Coins } from "@/components";
 import { useBounty } from "@/src/providers/bountyProvider";
 import { BountyState } from "@/types";
 
@@ -39,12 +39,7 @@ const FundCTA: FC<Props> = ({ setIsFunded }) => {
         </div>
       )}
 
-      {showModal && (
-        <FundBountyModal
-          setIsFunded={setIsFunded}
-          setShowModal={setShowModal}
-        />
-      )}
+      {showModal && <FundQuestModal setShowModal={setShowModal} />}
     </>
   );
 };

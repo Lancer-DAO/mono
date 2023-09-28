@@ -10,8 +10,7 @@ export const create = async (
   description: string,
   estimatedTime: number,
   price: number,
-  state: QuestProgressState,
-  checkpoints: Prisma.Checkpoint[]
+  state: QuestProgressState
 ): Promise<Prisma.Quote> => {
   return await prisma.quote.create({
     data: {
@@ -30,13 +29,6 @@ export const create = async (
       estimatedTime,
       price,
       createdAt: dayjs().toISOString(),
-      checkpoints: {
-        connect: checkpoints.map((checkpoint) => {
-          return {
-            id: checkpoint.id,
-          };
-        }),
-      },
       state,
     },
   });

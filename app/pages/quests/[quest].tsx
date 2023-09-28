@@ -6,7 +6,7 @@ import {
   getSession,
   withPageAuthRequired,
 } from "@auth0/nextjs-auth0";
-import { Quest } from "../../components/bounties/Bounty/Quest";
+import { Quest } from "../../components/quests/Quest/Quest";
 import { NextSeo } from "next-seo";
 import { GetServerSidePropsContext } from "next";
 import { prisma } from "@/server/db";
@@ -29,12 +29,12 @@ export async function getServerSideProps(
       },
     };
   }
+
   try {
     const questId = parseInt(context.query.quest as string);
     const { email } = metadata.user;
 
     const user = await queries.user.getByEmail(email);
-
     if (!user || !user.hasFinishedOnboarding) {
       return {
         redirect: {
@@ -56,9 +56,10 @@ export async function getServerSideProps(
       },
     };
   } catch (e) {
+    console.error("error", e);
     return {
       redirect: {
-        destination: "/welcome",
+        destination: "/",
         permanent: false,
       },
     };

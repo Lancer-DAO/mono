@@ -7,6 +7,7 @@ export const create = async (
   description: string,
   estimatedTime: number,
   order: number,
+  quote: Prisma.Quote,
 ): Promise<Prisma.Checkpoint> => {
   return await prisma.checkpoint.create({
     data: {
@@ -15,6 +16,11 @@ export const create = async (
       description,
       estimatedTime,
       order,
+      quote: {
+        connect: {
+          id: quote.id,
+        }
+      }
     },
   });
 }

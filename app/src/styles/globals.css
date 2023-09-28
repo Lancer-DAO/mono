@@ -35,7 +35,7 @@
 }
 
 html {
-  @apply text-[#526660] bg-bgLancer;
+  @apply text-[#526660] bg-[#F7F7FB];
 }
 
 h1 {
@@ -79,4 +79,12 @@ h4 {
   top: 0;
   left: 0;
   z-index: -1;
+}
+
+@layer base {
+  input[type="number"]::-webkit-inner-spin-button,
+  input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
 }

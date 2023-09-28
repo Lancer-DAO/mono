@@ -19,7 +19,7 @@ import {
 } from "@solana/spl-token";
 import { useConnection } from "@solana/wallet-adapter-react";
 import { formatPrice, formatTwoDecimals } from "@/src/utils";
-import { CreateDispute, SettleDispute } from "../bounties/Bounty/components";
+import { CreateDispute, SettleDispute } from "../quests/Quest/components";
 
 interface Props {
   setShowModal: Dispatch<SetStateAction<boolean>>;
@@ -28,7 +28,6 @@ interface Props {
 const DisputeModal: FC<Props> = ({ setShowModal }) => {
   const { currentBounty } = useBounty();
   const [hasCreatedDispute, setHasCreatedDispute] = useState(false);
-  console.log("disputer", currentBounty.disputer);
 
   return (
     <Modal setShowModal={setShowModal} className="py-20">
@@ -36,7 +35,7 @@ const DisputeModal: FC<Props> = ({ setShowModal }) => {
         <div className="w-full flex items-start justify-center gap-20">
           <div className="w-full flex flex-col gap-5 max-w-[400px]">
             <h1>Handle Dispute</h1>
-            <p>{`Quest Value: ${currentBounty.price}`}</p>
+            <p>{`Quest Value: ${currentBounty.escrow.amount}`}</p>
           </div>
         </div>
         <CreateDispute setHasCreatedDispute={setHasCreatedDispute} />
