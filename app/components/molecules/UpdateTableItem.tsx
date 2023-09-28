@@ -33,7 +33,11 @@ export type CancelType =
   //   (client side) A person sent an application
   | "vote-to-cancel"
   //   The person was accepted to the shortlist
-  | "cancel-escrow";
+  | "cancel-escrow"
+  //   The person was accepted to the shortlist
+  | "start-dispute"
+  //   The person was accepted to the shortlist
+  | "settle-dispute";
 
 export const getApplicationTypeFromLabel = (label: string): ApplicationType => {
   switch (label) {
@@ -215,6 +219,42 @@ const UpdateTableItem: React.FC<UpdateItemProps> = ({
                 <Alert height="28px" width="28px" />
                 <div className="text-sm ml-1.5 text-warning mr-2">
                   {`Client Cancelled ${extraProps.questName}`}
+                </div>
+                <div className="h-5 w-[1px] bg-neutral-200"></div>
+                <div className="text-sm ml-2 text-neutral-400 mr-auto">{`${time.fromNow()}`}</div>
+              </div>
+            </div>
+          );
+        case "start-dispute":
+          return (
+            <div
+              onClick={() => {
+                router.push(`/quests/${extraProps.questId}`);
+              }}
+              className="hover:cursor-pointer flex flex-col px-8 py-4 items-start justify-center w-full border-solid border-y  border-neutralBorder500"
+            >
+              <div className="flex justify-start items-center w-full">
+                <Alert height="28px" width="28px" />
+                <div className="text-sm ml-1.5 text-warning mr-2">
+                  {`Lancer Initiated Dispute for ${extraProps.questName}`}
+                </div>
+                <div className="h-5 w-[1px] bg-neutral-200"></div>
+                <div className="text-sm ml-2 text-neutral-400 mr-auto">{`${time.fromNow()}`}</div>
+              </div>
+            </div>
+          );
+        case "settle-dispute":
+          return (
+            <div
+              onClick={() => {
+                router.push(`/quests/${extraProps.questId}`);
+              }}
+              className="hover:cursor-pointer flex flex-col px-8 py-4 items-start justify-center w-full border-solid border-y  border-neutralBorder500"
+            >
+              <div className="flex justify-start items-center w-full">
+                <Alert height="28px" width="28px" />
+                <div className="text-sm ml-1.5 text-warning mr-2">
+                  {`Lancer Admin Settled the Dispute for ${extraProps.questName}`}
                 </div>
                 <div className="h-5 w-[1px] bg-neutral-200"></div>
                 <div className="text-sm ml-2 text-neutral-400 mr-auto">{`${time.fromNow()}`}</div>

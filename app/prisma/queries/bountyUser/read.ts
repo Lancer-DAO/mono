@@ -117,7 +117,7 @@ export const getBountyUpdatesLancer = async (
   });
 };
 
-export const getBountyUpdatesCancel = async (
+export const getCancelVotesLancer = async (
   userid: number,
   bountyids?: number[]
 ) => {
@@ -132,7 +132,7 @@ export const getBountyUpdatesCancel = async (
     AND BountyUser.relations not like '%denied%'
     AND BountyUser.relations not like '%requested%'
     AND BountyUser.relations not like '%creator%'
-    AND Bounty.state IN ('voting_to_cancel', 'canceled');
+    AND Bounty.state IN ('voting_to_cancel', 'canceled', 'dispute_settled');
   `) as [{ id: number }]
     ).map((bounty) => bounty.id);
   return prisma.bountyUser.findMany({
@@ -155,7 +155,57 @@ export const getBountyUpdatesCancel = async (
       actions: {
         where: {
           type: {
-            in: ["vote-to-cancel", "cancel-escrow"],
+            in: ["vote-to-cancel", "cancel-escrow", "settle-dispute"],
+          },
+        },
+        select: {
+          userid: true,
+          type: true,
+          timestamp: true,
+        },
+      },
+    },
+    orderBy: {
+      bountyid: "desc",
+    },
+    take: 5,
+  });
+};
+
+export const getDisputesClient = async (
+  userid: number,
+  bountyids?: number[]
+) => {
+  const ids =
+    bountyids ||
+    (
+      (await prisma.$queryRaw`
+    SELECT Bounty.id
+    FROM Bounty
+    JOIN BountyUser ON Bounty.id = BountyUser.bountyid
+    WHERE BountyUser.userid = ${userid}
+    AND BountyUser.relations like '%creator%'
+    AND Bounty.state IN ('dispute_started', 'dispute_settled');
+  `) as [{ id: number }]
+    ).map((bounty) => bounty.id);
+  return prisma.bountyUser.findMany({
+    where: {
+      bountyid: {
+        in: ids,
+      },
+    },
+    select: {
+      bounty: {
+        select: {
+          id: true,
+          title: true,
+          createdAt: true,
+        },
+      },
+      actions: {
+        where: {
+          type: {
+            in: ["start-dispute", "settle-dispute"],
           },
         },
         select: {

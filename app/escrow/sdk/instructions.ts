@@ -84,7 +84,10 @@ export const createCustodialFeatureFundingAccountInstruction = async (
   custodial_fee_payer: PublicKey,
   creator: PublicKey,
   program: Program<MonoProgram>
-): Promise<TransactionInstruction> => {
+): Promise<{
+  ix: TransactionInstruction;
+  account: PublicKey;
+}> => {
   const timestamp = Date.now().toString();
   console.log("timestamp = ", timestamp);
   const [feature_account] = await findFeatureAccount(
@@ -101,21 +104,24 @@ export const createCustodialFeatureFundingAccountInstruction = async (
 
   const [program_authority] = await findProgramAuthority(program);
 
-  return await program.methods
-    .createCustodialFeatureFundingAccount(timestamp)
-    .accounts({
-      creator: creator,
-      custodialFeePayer: custodial_fee_payer,
-      fundsMint: mint,
-      featureDataAccount: feature_account,
-      featureTokenAccount: feature_token_account,
-      programAuthority: program_authority,
-      tokenProgram: TOKEN_PROGRAM_ID,
-      rent: SYSVAR_RENT_PUBKEY,
-      associatedProgram: ASSOCIATED_TOKEN_PROGRAM_ID,
-      systemProgram: SystemProgram.programId,
-    })
-    .instruction();
+  return {
+    ix: await program.methods
+      .createCustodialFeatureFundingAccount(timestamp)
+      .accounts({
+        creator: creator,
+        custodialFeePayer: custodial_fee_payer,
+        fundsMint: mint,
+        featureDataAccount: feature_account,
+        featureTokenAccount: feature_token_account,
+        programAuthority: program_authority,
+        tokenProgram: TOKEN_PROGRAM_ID,
+        rent: SYSVAR_RENT_PUBKEY,
+        associatedProgram: ASSOCIATED_TOKEN_PROGRAM_ID,
+        systemProgram: SystemProgram.programId,
+      })
+      .instruction(),
+    account: feature_account,
+  };
 };
 
 export const fundFeatureInstruction = async (

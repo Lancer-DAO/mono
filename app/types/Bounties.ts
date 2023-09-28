@@ -26,6 +26,8 @@ export enum BOUNTY_USER_RELATIONSHIP {
   ChangesRequestedSubmitter = "changes_requested_submitter",
   Completer = "completer",
   VotingCancel = "voting_cancel",
+  Disputer = "disputer",
+  DisputeHandler = "dispute_handler",
   Canceler = "canceler",
 }
 export const RELATIONS = Object.values(BOUNTY_USER_RELATIONSHIP);
@@ -55,6 +57,7 @@ export interface BountyUserRelations {
   completer?: BountyUserType;
   needsToVote?: BountyUserType[];
   votingToCancel?: BountyUserType[];
+  disputer?: BountyUserType;
 }
 
 export enum BountyState {
@@ -65,6 +68,8 @@ export enum BountyState {
   IN_PROGRESS = "in_progress",
   AWAITING_REVIEW = "awaiting_review",
   VOTING_TO_CANCEL = "voting_to_cancel",
+  DISPUTE_STARTED = "dispute_started",
+  DISPUTE_SETTLED = "dispute_settled",
 }
 
 export const BOUNTY_STATES = Object.values(BountyState);

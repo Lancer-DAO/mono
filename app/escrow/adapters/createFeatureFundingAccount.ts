@@ -29,26 +29,20 @@ export const createFFA = async (
   mint?: PublicKey
 ) => {
   const timestamp = Date.now().toString();
-  const ix = await createCustodialFeatureFundingAccountInstruction(
+  const { ix, account } = await createCustodialFeatureFundingAccountInstruction(
     new PublicKey(USDC_MINT),
     new PublicKey("pyrSoEahjKGKZpLWEYwCJ8zQAsYZckZH8ZqJ7yGd1ha"),
     new PublicKey(wallet.publicKey),
     program
   );
-  const [feature_account] = await findFeatureAccount(
-    timestamp,
-    new PublicKey(wallet.publicKey),
-    program
-  );
-
 
   const res = await sendGaslessTx([ix]);
-  console.log("Sending out second tx")
+  console.log("Sending out second tx");
 
   return {
     timestamp,
     signature: res.signature,
     creator: new PublicKey(wallet.publicKey),
-    escrowKey: feature_account,
+    escrowKey: account,
   };
 };

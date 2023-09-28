@@ -80,6 +80,7 @@ const WalletInfo = dynamic(() => import("./molecules/WalletInfo"));
 
 // organisms
 const CashoutModal = dynamic(() => import("./organisms/CashoutModal"));
+const DisputeModal = dynamic(() => import("./organisms/DisputeModal"));
 const FundQuestModal = dynamic(() => import("./organisms/FundQuestModal"));
 const Header = dynamic(() => import("./organisms/Header"));
 const JoyrideWrapper = dynamic(() => import("./organisms/JoyrideWrapper"));
@@ -155,6 +156,7 @@ export {
 
   // organisms
   CashoutModal,
+  DisputeModal,
   FundQuestModal,
   Header,
   JoyrideWrapper,

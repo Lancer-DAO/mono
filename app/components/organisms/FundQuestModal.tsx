@@ -17,15 +17,10 @@ import Image from "next/image";
 
 interface Props {
   setShowModal: Dispatch<SetStateAction<boolean>>;
-  setShowFundModal: Dispatch<SetStateAction<boolean>>;
   amount?: number;
 }
 
-const FundQuestModal: FC<Props> = ({
-  setShowModal,
-  setShowFundModal,
-  amount,
-}) => {
+const FundQuestModal: FC<Props> = ({ setShowModal, amount }) => {
   const { currentWallet, program, provider } = useUserWallet();
   const { currentBounty, setCurrentBounty } = useBounty();
   const { currentTutorialState, setCurrentTutorialState } = useTutorial();
@@ -73,7 +68,6 @@ const FundQuestModal: FC<Props> = ({
       toast.success("Quest funded!", { id: toastId });
       setCurrentBounty(bounty);
       setShowModal(false);
-      setShowFundModal(false);
     } catch (error) {
       console.log("error funding Quest: ", error);
       toast.error("Error funding Quest", { id: toastId });
