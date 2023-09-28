@@ -64,12 +64,21 @@ export enum BountyState {
   CANCELED = "canceled",
   COMPLETE = "complete",
   NEW = "new",
+  ACH_PENDING = "ach_pending",
   ACCEPTING_APPLICATIONS = "accepting_applications",
   IN_PROGRESS = "in_progress",
   AWAITING_REVIEW = "awaiting_review",
   VOTING_TO_CANCEL = "voting_to_cancel",
   DISPUTE_STARTED = "dispute_started",
   DISPUTE_SETTLED = "dispute_settled",
+}
+
+export enum ACHState {
+  PRE_INITATION = "PRE_INITATION",
+  INITIATED = "INITIATED",
+  SUCCESS = "SETTLED",
+  RETURNED = "RETURNED",
+  FAILED = "FAILED",
 }
 
 export const BOUNTY_STATES = Object.values(BountyState);

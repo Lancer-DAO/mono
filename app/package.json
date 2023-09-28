@@ -25,7 +25,7 @@
   },
   "dependencies": {
     "@auth0/nextjs-auth0": "2.6.0",
-    "@coinflowlabs/react": "1.2.0",
+    "@coinflowlabs/react": "2.5.1",
     "@hotjar/browser": "^1.0.7",
     "@ladderlabs/buddy-sdk": "0.2.9",
     "@loomhq/loom-embed": "^1.5.0",

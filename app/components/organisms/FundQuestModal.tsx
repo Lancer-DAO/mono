@@ -116,7 +116,7 @@ const FundQuestModal: FC<Props> = ({ setShowModal, amount }) => {
   return (
     <Modal setShowModal={setShowModal} className="pt-10">
       <div className="relative w-full p-5">
-        <div className="w-full flex items-start justify-center gap-10">
+        <div className="w-[900] flex items-start justify-center gap-10">
           <div className="w-full flex flex-col gap-5 max-w-[400px]">
             <h1>Funding Details</h1>
             <p>
@@ -150,7 +150,7 @@ const FundQuestModal: FC<Props> = ({ setShowModal, amount }) => {
                   }`}
                   onClick={() => setFundingType("card")}
                 >
-                  Pay with Credit Card
+                  Pay with Fiat
                 </motion.button>
               </div>
             )}

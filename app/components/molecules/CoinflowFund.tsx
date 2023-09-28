@@ -1,12 +1,13 @@
-import { getFundFFATX } from "@/escrow/adapters";
+import { getACHTransaction } from "@/escrow/adapters";
 import { useEffect, useState } from "react";
 import { useUserWallet } from "@/src/providers/userWalletProvider";
 import { LancerWallet } from "@/types/";
 import { Connection, Transaction } from "@solana/web3.js";
 import { api } from "@/src/utils/api";
 import { useRouter } from "next/router";
-import { CoinflowPurchase } from "@coinflowlabs/react";
+import { CoinflowPurchase, SolanaWallet } from "@coinflowlabs/react";
 import { useBounty } from "@/src/providers/bountyProvider";
+import axios from "axios";
 
 const FundBounty: React.FC<{ amount: number }> = ({
   amount,
@@ -22,7 +23,7 @@ const FundBounty: React.FC<{ amount: number }> = ({
   useEffect(() => {
     const getFundTransaction = async () => {
       // console.log("coinflow amount", amount);
-      const transaction = await getFundFFATX(
+      const transaction = await getACHTransaction(
         amount,
         currentBounty?.escrow,
         currentWallet,
@@ -34,11 +35,17 @@ const FundBounty: React.FC<{ amount: number }> = ({
     getFundTransaction();
   }, [amount]);
 
-  const onSuccess = () => {
+  const onSuccess = async (args) => {
+    console.log("onSuccess", args);
+    console.log("parsed", JSON.parse(args));
+    const {
+      info: { paymentId },
+    } = JSON.parse(args);
     fundB({
       bountyId: currentBounty?.id,
       escrowId: currentBounty?.escrow.id,
       amount,
+      paymentId,
     });
     router.push(`/quests/${currentBounty?.id}`);
   };
@@ -61,13 +68,13 @@ export default FundBounty;
 
 const Coinflow: React.FC<{
   transaction: Transaction;
-  onSuccess: () => void;
+  onSuccess: (params: string) => void;
   amount: number;
   connection: Connection;
   wallet: LancerWallet;
 }> = ({ transaction, onSuccess, amount, connection, wallet }) => {
   return (
-    <div className="h-[600px]">
+    <div className="h-[600px] w-[600px]">
       <CoinflowPurchase
         wallet={wallet}
         merchantId="lancer"

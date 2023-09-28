@@ -65,7 +65,6 @@ const solanaProvider = (provider: SafeEventEmitterProvider): WalletActions => {
   };
 
   return {
-    signMessage,
     sendTransaction: signAndSendTransaction,
     signTransaction,
     signAllTransactions,
