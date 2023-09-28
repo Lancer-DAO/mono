@@ -84,7 +84,7 @@ const AllUpdatesTable: React.FC = () => {
   }, [currentUser, unreadMessages]);
 
   useEffect(() => {
-    if (currentUser && !!unreadMessages) {
+    if (currentUser) {
       const getChannels = async () => {
         const newApplicationUpdates = [];
         newApplications?.forEach((application) => {
@@ -179,8 +179,9 @@ const AllUpdatesTable: React.FC = () => {
             key: lancerUpdate.reviewedAt,
           });
         });
+        const messageUpdates = unreadMessages ? unreadMessages : [];
         const allUpdates: UpdateItemProps[] = [
-          ...unreadMessages,
+          ...messageUpdates,
           ...newApplicationUpdates,
           ...newApplicationReviewsUpdates,
           ...cancelVotesUpdates,
@@ -191,6 +192,7 @@ const AllUpdatesTable: React.FC = () => {
         allUpdates.sort((a, b) => {
           return b.time.unix() - a.time.unix();
         });
+        console.log("allUpdates", allUpdates);
         setAllUpdates(allUpdates);
       };
       getChannels();

@@ -23,17 +23,7 @@ const AccountHeaderOptions = () => {
     setShowOptions(false);
   });
 
-  return !currentUser ? (
-    <Link
-      href={"/api/auth/login"}
-      id="logib-link"
-      className="flex h-[48px] rounded-t-[20px] py-[6px] items-center justify-center
-      hover:bg-bgLancer text-gray-800 transition-colors duration-300 ease-in-out
-      "
-    >
-      Login
-    </Link>
-  ) : (
+  return (
     <div className="relative">
       <div
         className="cursor-pointer"
@@ -63,7 +53,7 @@ const AccountHeaderOptions = () => {
           top-[50px] bg-white w-[220px] rounded-[20px] shadow-md`}
           ref={wrapperRef}
         >
-          {currentUser && (
+          {currentUser ? (
             <Link
               href={"/account"}
               id="account-link"
@@ -87,6 +77,15 @@ const AccountHeaderOptions = () => {
               transition-colors duration-300 ease-in-out"
             >
               Account
+            </Link>
+          ) : (
+            <Link
+              href={"/api/auth/login"}
+              id="logout-link"
+              className="flex h-[48px] py-[6px] items-center justify-center border-b border-gray-400
+              hover:bg-bgLancer text-gray-800 transition-colors duration-300 ease-in-out"
+            >
+              Login
             </Link>
           )}
 

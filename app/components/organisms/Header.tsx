@@ -70,7 +70,7 @@ export const Header = () => {
 
   return (
     <div className="py-4 fixed w-full top-0 z-40 bg-white">
-      <div className="flex items-center gap-8 mx-auto w-[95%] justify-between">
+      <div className="flex items-center gap-8 mx-auto w-full pl-10 pr-[71px] justify-between">
         <div className="flex items-center gap-12">
           <Link href="/" className="flex items-center gap-1">
             <Image
