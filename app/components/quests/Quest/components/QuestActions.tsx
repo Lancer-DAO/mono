@@ -5,13 +5,10 @@ import { FC, useEffect, useState } from "react";
 import ApplicantsView from "./ApplicantsView";
 import ChatView from "./ChatView";
 import LancerApplicationView from "./LancerApplicationView";
-import LancerApplyView from "./LancerApplyView";
-import LancerSubmitQuoteView from "./LancerSubmitQuoteView";
 import LancerSubmitUpdateView from "./LancerSubmitUpdateView";
 
 export enum QuestActionView {
-  Apply = "apply", // one-way (Lancer)
-  SubmitQuote = "submit-quote", // one-way (Lancer)
+  SubmitApplication = "submit-application", // one-way (Lancer) - contains apply & quote
   ViewApplicants = "view-applicants", // one-way (client)
   Chat = "chat", // two-way (client, Lancer)
   SubmitUpdate = "submit-update", // one-way (Lancer)
@@ -39,7 +36,7 @@ const QuestActions: FC = () => {
         setCurrentActionView(QuestActionView.Chat);
       } else {
         // lancer needs to apply or is waiting for approval
-        setCurrentActionView(QuestActionView.SubmitQuote);
+        setCurrentActionView(QuestActionView.SubmitApplication);
       }
     } else if (!!currentUser && currentBounty.isCreator) {
       // is the creator
@@ -57,11 +54,8 @@ const QuestActions: FC = () => {
 
   return (
     <div className="bg-white w-full min-w-[610px] border border-neutral200 rounded-lg overflow-hidden">
-      {(currentActionView === QuestActionView.Apply || currentActionView === QuestActionView.SubmitQuote) && (
-        <LancerApplicationView
-          currentActionView={currentActionView}
-          setCurrentActionView={setCurrentActionView}
-        />
+      {(currentActionView === QuestActionView.SubmitApplication) && (
+        <LancerApplicationView />
       )}
       {currentActionView === QuestActionView.ViewApplicants && (
         <ApplicantsView

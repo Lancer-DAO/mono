@@ -1,11 +1,12 @@
 import Fire from "@/components/@icons/Fire";
+import { Checkpoint as FormCheckpoint } from "@/types";
 import { Checkpoint } from "@prisma/client";
 import { marked } from "marked";
-import { Dispatch, FC, SetStateAction, useState } from "react";
+import { FC, useState } from "react";
 import { ChevronDown, ChevronUp } from "react-feather";
 
 interface Props {
-  checkpoint: Checkpoint,
+  checkpoint: Checkpoint | FormCheckpoint,
 }
 
 const CheckpointView: FC<Props> = ({ 

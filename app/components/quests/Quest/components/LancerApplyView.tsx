@@ -2,86 +2,31 @@ import { ContributorInfo } from "@/components";
 import { smallClickAnimation } from "@/src/constants";
 import { useUserWallet } from "@/src/providers";
 import { useBounty } from "@/src/providers/bountyProvider";
-import { useReferral } from "@/src/providers/referralProvider";
-import { api, updateList } from "@/src/utils";
-import { BOUNTY_USER_RELATIONSHIP, LancerApplyData, LancerQuoteData } from "@/types";
-import { PublicKey } from "@solana/web3.js";
+import { LancerApplyData } from "@/types";
 import { motion } from "framer-motion";
 import { Image } from "lucide-react";
-import { Dispatch, FC, SetStateAction, useEffect, useState } from "react";
-import toast from "react-hot-toast";
+import { Dispatch, FC, SetStateAction } from "react";
 import ActionsCardBanner from "./ActionsCardBanner";
 import AlertCard from "./AlertCard";
-import { QuestActionView } from "./QuestActions";
+import { QuestApplicationView } from "./LancerApplicationView";
 
 interface Props {
   applyData: LancerApplyData,
   setApplyData: Dispatch<SetStateAction<LancerApplyData>>,
-  quoteData: LancerQuoteData,
-  setCurrentActionView: Dispatch<SetStateAction<QuestActionView>>,
+  setCurrentApplicationView: Dispatch<SetStateAction<QuestApplicationView>>,
   hasApplied: boolean,
-  setHasApplied: Dispatch<SetStateAction<boolean>>,
+  onClick: () => Promise<void>,
 }
 
 const LancerApplyView: FC<Props> = ({ 
   applyData, 
   setApplyData,
-  quoteData,
-  setCurrentActionView,
+  setCurrentApplicationView,
   hasApplied,
-  setHasApplied,
+  onClick,
 }) => {
-  const { currentBounty, setCurrentBounty } = useBounty();
-  const { currentUser, currentWallet } = useUserWallet();
-  const { mutateAsync: updateBountyUsers } =
-    api.bountyUsers.update.useMutation();
-  const { mutateAsync: createQuote } = api.quote.createQuote.useMutation();
-
-  const onClick = async () => {
-    // Request to submit. Does not interact on chain
-    const toastId = toast.loading("Sending application...");
-    try {
-      const newRelations = updateList(
-        currentBounty.currentUserRelationsList ?? [],
-        [],
-        [BOUNTY_USER_RELATIONSHIP.RequestedLancer]
-      );
-      const updatedBounty = await updateBountyUsers({
-        currentUserId: currentUser.id,
-        bountyId: currentBounty.id,
-        userId: currentUser.id,
-        relations: newRelations,
-        publicKey: currentWallet.publicKey.toString(),
-        escrowId: currentBounty.escrowid,
-        label: "request-to-submit",
-        signature: "n/a",
-        applicationText: applyData.details,
-      });
-      await createQuote({
-        bountyId: currentBounty.id,
-        title: quoteData.title,
-        description: quoteData.description,
-        estimatedTime: quoteData.estimatedTime,
-        price: quoteData.price,
-        state: quoteData.state,
-        checkpoints: quoteData.checkpoints,
-      });
-
-      setCurrentBounty(updatedBounty);
-      setHasApplied(true);
-      toast.success("Application sent", { id: toastId });
-    } catch (error) {
-      if (
-        (error.message as string).includes(
-          "Wallet is registered to another user"
-        )
-      ) {
-        toast.error("Wallet is registered to another user", { id: toastId });
-      } else {
-        toast.error("Error submitting application", { id: toastId });
-      }
-    }
-  };
+  const { currentBounty } = useBounty();
+  const { currentUser } = useUserWallet();
 
   if (!currentBounty || !currentUser) return null;
 
@@ -92,11 +37,13 @@ const LancerApplyView: FC<Props> = ({
       </ActionsCardBanner>
       {/* TODO: add check for if user application has been approved or denied. if not, show this: */}
       {hasApplied && (
-        <AlertCard
-          type="positive"
-          title="Nice!"
-          description="Your application has been sent. Fingers crossed! You will hear an answer from the client within 48 hours."
-        />
+        <div className="px-5 pt-5">
+          <AlertCard
+            type="positive"
+            title="Nice!"
+            description="Your application has been sent. Fingers crossed! You will hear an answer from the client within 48 hours."
+          />
+        </div>
       )}
       <div className="w-full p-6 flex items-center justify-between gap-5">
         <div className="flex items-center gap-4">
@@ -177,23 +124,23 @@ const LancerApplyView: FC<Props> = ({
           }
         />
       </div>
-      {!hasApplied && (
         <div className="flex items-center justify-end gap-4 px-6 py-4">
           <button 
             className="title-text text-neutral600 px-4 py-2 rounded-md border border-neutral300"
-            onClick={() => setCurrentActionView(QuestActionView.SubmitQuote)}
-          >
+            onClick={() => setCurrentApplicationView(QuestApplicationView.SubmitQuote)}
+            >
             Back to Quote
           </button>
-          <motion.button
-            {...smallClickAnimation}
-            className="bg-primary200 text-white h-9 w-fit px-4 py-2 title-text rounded-md"
-            onClick={onClick}
-          >
-            Submit Application
-          </motion.button>
+          {!hasApplied && (
+            <motion.button
+              {...smallClickAnimation}
+              className="bg-primary200 text-white h-9 w-fit px-4 py-2 title-text rounded-md"
+              onClick={onClick}
+            >
+              Submit Application
+            </motion.button>
+          )}
         </div>
-      )}
     </div>
   );
 };

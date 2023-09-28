@@ -37,5 +37,5 @@ export const getQuoteByBountyAndUser = async (
     }
   });
 
-  return quote
+  return quote;
 }

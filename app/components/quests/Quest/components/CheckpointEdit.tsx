@@ -117,12 +117,12 @@ const CheckpointEdit: FC<Props> = ({
               disabled={!checkpoint.canEdit}
             />
           </div>
-          <div className="flex gap-6 items-center">
+          <div className="flex gap-6 items-center w-full">
             <div className="flex gap-4 items-center">
               <div className="text text-neutral600">Price</div>
               <div className="flex items-center gap-2 bg-neutral100 px-3 py-2 rounded-md border border-neutral200">
                 <input 
-                  className="bg-neutral100 text text-neutral600 outline-none"
+                  className="w-12 bg-neutral100 text text-neutral600 outline-none"
                   type="number"
                   min={0}
                   value={tempCheckpoint.price}
@@ -134,10 +134,10 @@ const CheckpointEdit: FC<Props> = ({
               </div>
             </div>
             <div className="flex gap-4 items-center">
-              <div className="text text-neutral600">Time to spend</div>
+              <div className="text text-neutral600 whitespace-nowrap">Time to spend</div>
               <div className="flex items-center gap-2 bg-neutral100 px-3 py-2 rounded-md border border-neutral200">
                 <input 
-                  className="bg-neutral100 text text-neutral600 outline-none" 
+                  className="w-8 bg-neutral100 text text-neutral600 outline-none" 
                   type="number"
                   min={0}
                   value={tempCheckpoint.estimatedTime}
