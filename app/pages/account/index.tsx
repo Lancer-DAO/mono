@@ -6,12 +6,12 @@ import {
   withPageAuthRequired,
 } from "@auth0/nextjs-auth0";
 import { GetServerSidePropsContext } from "next";
-import { prisma } from "@/server/db";
 import * as queries from "@/prisma/queries";
-import { User } from "@/types";
 import { useMint } from "@/src/providers/mintProvider";
 import { useIndustry } from "@/src/providers/industryProvider";
 import { useAccount } from "@/src/providers/accountProvider";
+import { useBounty } from "@/src/providers/bountyProvider";
+import { QUESTS_PER_PAGE } from "@/src/constants";
 
 export async function getServerSideProps(
   context: GetServerSidePropsContext<{ id: string; req; res }>
@@ -32,7 +32,7 @@ export async function getServerSideProps(
 
     const user = await queries.user.getByEmail(email);
 
-    if (!user || !user || !user.hasFinishedOnboarding) {
+    if (!user || !user.hasFinishedOnboarding) {
       return {
         redirect: {
           destination: "/welcome",
@@ -41,6 +41,8 @@ export async function getServerSideProps(
       };
     }
 
+    const myQuests = await queries.bounty.getMine(user.id);
+    const totalQuests = await queries.bounty.getTotalQuests(user.id, true);
     const allMints = await queries.mint.getAll();
     const allIndustries = await queries.industry.getMany();
     return {
@@ -49,25 +51,31 @@ export async function getServerSideProps(
         user: JSON.stringify(user),
         mints: JSON.stringify(allMints),
         industries: JSON.stringify(allIndustries),
+        myQuests: JSON.stringify(myQuests),
+        totalQuestsCount: JSON.stringify(totalQuests),
       },
     };
   } catch (e) {
+    console.error(e);
     return {
       redirect: {
-        destination: "/welcome",
+        destination: "/",
         permanent: false,
       },
     };
   }
 }
-const Home: React.FC<{ user: string; mints: string; industries: string }> = ({
-  user,
-  mints,
-  industries,
-}) => {
+const Home: React.FC<{
+  user: string;
+  mints: string;
+  industries: string;
+  questsMine: string;
+  totalQuestsCount: string;
+}> = ({ user, mints, industries, questsMine, totalQuestsCount }) => {
   const { setAllMints, allMints } = useMint();
   const { setAllIndustries, allIndustries } = useIndustry();
   const { setAccount, account } = useAccount();
+  const { maxPages, setMaxPages, myQuests, setMyQuests } = useBounty();
 
   if (!allMints && mints) {
     setAllMints(JSON.parse(mints));
@@ -78,7 +86,13 @@ const Home: React.FC<{ user: string; mints: string; industries: string }> = ({
   if (!account && user) {
     setAccount(JSON.parse(user));
   }
-
+  if (!myQuests && questsMine) {
+    setMyQuests(JSON.parse(questsMine));
+  }
+  if (!maxPages && totalQuestsCount) {
+    const totalQuests = parseInt(JSON.parse(totalQuestsCount));
+    setMaxPages(Math.ceil(totalQuests / QUESTS_PER_PAGE));
+  }
   return (
     <>
       <Head>

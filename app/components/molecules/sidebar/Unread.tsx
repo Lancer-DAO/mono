@@ -1,7 +1,6 @@
 import { useUserWallet } from "@/src/providers";
-import { useAccount } from "@/src/providers/accountProvider";
 import { useChat } from "@/src/providers/chatProvider";
-import { getUnreadMessageCount, getUnreadChannels } from "@/src/utils/sendbird";
+import { getUnreadMessageCount } from "@/src/utils/sendbird";
 import { useEffect, useState } from "react";
 
 const Unread = () => {

@@ -12,6 +12,7 @@ import { maybeInitAccount } from "./maybeInitAccount";
 import { registerProfileNFT } from "./registerProfileNFT";
 import { search } from "./search";
 import { updateBio } from "./updateBio";
+import { updateCompanyDescription } from "./updateCompanyDescription";
 import { updateHasCompletedProfile } from "./updateHasCompletedProfile";
 import { updateIndustry } from "./updateIndustry";
 import { updateLinks } from "./updateLinks";
@@ -32,6 +33,7 @@ export const users = createTRPCRouter({
   registerProfileNFT,
   search,
   updateBio,
+  updateCompanyDescription,
   updateHasCompletedProfile,
   updateIndustry,
   updateLinks,

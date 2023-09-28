@@ -19,7 +19,7 @@ import {
 } from "@solana/spl-token";
 import { useConnection } from "@solana/wallet-adapter-react";
 import { formatPrice, formatTwoDecimals } from "@/src/utils";
-import { CreateDispute, SettleDispute } from "../bounties/Bounty/components";
+import { CreateDispute, SettleDispute } from "../quests/Quest/components";
 
 interface Props {
   setShowModal: Dispatch<SetStateAction<boolean>>;

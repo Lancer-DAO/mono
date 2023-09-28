@@ -1,30 +1,7 @@
 import * as anchor from "@project-serum/anchor";
-import { AnchorError, IdlTypes, Program } from "@project-serum/anchor";
+import { Program } from "@project-serum/anchor";
 import { MonoProgram } from "./types/mono_program";
 
-import {
-  createAssociatedTokenAccountInstruction,
-  getAccount,
-  createMint,
-  mintToChecked,
-  getAssociatedTokenAddress,
-  getOrCreateAssociatedTokenAccount,
-  TOKEN_PROGRAM_ID,
-  NATIVE_MINT,
-  createSyncNativeInstruction,
-} from "@solana/spl-token";
-
-import {
-  Keypair,
-  LAMPORTS_PER_SOL,
-  PublicKey,
-  sendAndConfirmTransaction,
-  Struct,
-  SystemProgram,
-  SYSVAR_RENT_PUBKEY,
-  Transaction,
-  TransactionInstruction,
-} from "@solana/web3.js";
 import {
   DISPUTE,
   LANCER_ADMIN,
@@ -35,7 +12,8 @@ import {
   MONO_DATA,
   REFERRER,
 } from "./constants";
-import { program } from "@project-serum/anchor/dist/cjs/native/system";
+
+import { PublicKey } from "@solana/web3.js";
 
 // TODO write docs on sdk functions
 
@@ -133,6 +111,11 @@ export const findLancerCompleterTokens = async (
   );
 };
 
+/**
+ *
+ * @param program
+ * @returns
+ */
 export const findLancerCompanyTokens = async (
   program: Program<MonoProgram>
 ): Promise<[anchor.web3.PublicKey, number]> => {

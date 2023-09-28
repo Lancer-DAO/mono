@@ -8,10 +8,8 @@ export const createBounty = protectedProcedure
     z.object({
       email: z.string(),
       industryIds: z.array(z.number()),
-      disciplineIds: z.array(z.number()),
       title: z.string(),
       description: z.string(),
-      price: z.optional(z.number()),
       tags: z.array(z.string()),
       links: z.array(z.string()),
       media: z.array(
@@ -21,16 +19,13 @@ export const createBounty = protectedProcedure
           description: z.string(),
         })
       ),
-      estimatedTime: z.number(),
       isPrivate: z.boolean(),
       isTest: z.boolean(),
       publicKey: z.string(),
       escrowKey: z.string(),
       transactionSignature: z.string(),
       timestamp: z.string(),
-      chainName: z.string(),
       mint: z.number(),
-      network: z.string(),
     })
   )
   .mutation(
@@ -38,22 +33,17 @@ export const createBounty = protectedProcedure
       input: {
         email,
         industryIds,
-        disciplineIds,
         title,
         description,
-        price,
         tags,
         links,
         media,
-        estimatedTime,
         isPrivate,
         isTest,
         publicKey,
         escrowKey,
         transactionSignature,
         timestamp,
-        chainName,
-        network,
         mint,
       },
     }) => {
@@ -87,7 +77,6 @@ export const createBounty = protectedProcedure
       const bounty = await queries.bounty.create(
         timestamp,
         description,
-        estimatedTime,
         isPrivate,
         isTest,
         title,
@@ -97,8 +86,7 @@ export const createBounty = protectedProcedure
         user,
         wallet,
         industries,
-        medias,
-        price
+        medias
       );
       const bountyInfo = await queries.bounty.get(bounty.id, user.id);
       HostedHooksClient.sendWebhook(bountyInfo, "bounty.created", timestamp);
