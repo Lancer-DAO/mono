@@ -3,42 +3,38 @@ import { motion } from "framer-motion";
 import { useUserWallet } from "@/src/providers/userWalletProvider";
 import { PublicKey } from "@solana/web3.js";
 import { api } from "@/src/utils/api";
-import { addSubmitterFFA, fundFFATXGasless } from "@/escrow/adapters";
+import { fundFFATXGasless } from "@/escrow/adapters";
 import { IS_CUSTODIAL, smallClickAnimation } from "@/src/constants";
 import { CoinflowFund, USDC } from "@/components";
 import { CREATE_BOUNTY_TUTORIAL_INITIAL_STATE } from "@/src/constants/tutorials";
 import { useBounty } from "@/src/providers/bountyProvider";
 import { useTutorial } from "@/src/providers/tutorialProvider";
-import { BOUNTY_USER_RELATIONSHIP, BountyState, IAsyncResult } from "@/types";
+import { IAsyncResult } from "@/types";
 import toast from "react-hot-toast";
 import { Modal } from "@/components";
 import { useMint } from "@/src/providers/mintProvider";
 import Image from "next/image";
 import { BountyUserType } from "@/prisma/queries/bounty";
-import { useReferral } from "@/src/providers/referralProvider";
-import { updateList } from "@/src/utils";
 
 interface Props {
   setShowModal: Dispatch<SetStateAction<boolean>>;
   setShowFundModal: Dispatch<SetStateAction<boolean>>;
+  handleApproveForQuest?: () => Promise<void>;
   amount?: number;
   approving?: boolean;
-  selectedSubmitter?: BountyUserType;
 }
 
 const FundQuestModal: FC<Props> = ({
   setShowModal,
   setShowFundModal,
+  handleApproveForQuest,
   amount,
   approving = false,
-  selectedSubmitter = null,
 }) => {
-  const { currentWallet, program, provider, currentUser } = useUserWallet();
+  const { currentWallet, program, provider } = useUserWallet();
   const { currentBounty, setCurrentBounty } = useBounty();
   const { currentTutorialState, setCurrentTutorialState } = useTutorial();
   const { mutateAsync: fundB } = api.bounties.fundBounty.useMutation();
-  const { getRemainingAccounts, getSubmitterReferrer } = useReferral();
-  const { mutateAsync: updateBounty } = api.bountyUsers.update.useMutation();
   const { allMints } = useMint();
 
   const [fundQuestState, setFundQuestState] = useState<IAsyncResult<string>>({
@@ -47,64 +43,6 @@ const FundQuestModal: FC<Props> = ({
   const [fundingType, setFundingType] = useState<"wallet" | "card">(
     IS_CUSTODIAL ? "card" : "wallet"
   );
-
-  const handleApproveForQuest = async () => {
-    if (!currentBounty || !selectedSubmitter) return;
-    const toastId = toast.loading("Approving Your Lancer...");
-
-    try {
-      const submitterWallet = new PublicKey(selectedSubmitter.publicKey);
-      const remainingAccounts = await getRemainingAccounts(
-        submitterWallet,
-        new PublicKey(currentBounty?.escrow.mint.publicKey)
-      );
-      const refferer = await getSubmitterReferrer(
-        submitterWallet,
-        new PublicKey(currentBounty?.escrow.mint.publicKey)
-      );
-      console.log("refferer", refferer.toBase58());
-      const signature = await addSubmitterFFA(
-        submitterWallet,
-        currentBounty?.escrow,
-        currentWallet,
-        refferer,
-        remainingAccounts,
-        program,
-        provider
-      );
-      const newRelations = updateList(
-        selectedSubmitter.userid === currentUser.id
-          ? currentBounty?.currentUserRelationsList
-          : [],
-        [BOUNTY_USER_RELATIONSHIP.RequestedLancer],
-        [BOUNTY_USER_RELATIONSHIP.ApprovedSubmitter]
-      );
-      const updatedBounty = await updateBounty({
-        bountyId: currentBounty?.id,
-        userId: selectedSubmitter.userid,
-        currentUserId: currentUser.id,
-        relations: newRelations,
-        state: BountyState.IN_PROGRESS,
-        publicKey: selectedSubmitter.publicKey,
-        escrowId: currentBounty?.escrowid,
-        signature,
-        label: "add-approved-submitter",
-      });
-
-      setCurrentBounty(updatedBounty);
-      toast.success("Successfully approved submitter", { id: toastId });
-    } catch (error) {
-      if (
-        (error.message as string).includes(
-          "Wallet is registered to another user"
-        )
-      ) {
-        toast.error("Wallet is registered to another user", { id: toastId });
-      } else {
-        toast.error("Error approving submitter", { id: toastId });
-      }
-    }
-  };
 
   const onClick = async () => {
     const toastId = toast.loading("Funding Quest...");
