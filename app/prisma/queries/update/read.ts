@@ -1,4 +1,5 @@
 import { prisma } from "@/server/db";
+import { QuestProgressState } from "@/types";
 import * as Prisma from "@prisma/client";
 
 export const read = async (id: number): Promise<Prisma.QuestUpdate> => {
@@ -24,6 +25,19 @@ export const getUpdatesByBounty = async (
 
   return bounty.updates;
 };
+
+export const getNewUpdateByBounty = async (
+  id: number
+): Promise<Prisma.QuestUpdate> => {
+  const update = await prisma.questUpdate.findFirst({
+    where: {
+      bountyid: id,
+      state: QuestProgressState.NEW,
+    },
+  });
+
+  return update;
+}
 
 export const getQuestUpdatesClient = async (
   userid: number,

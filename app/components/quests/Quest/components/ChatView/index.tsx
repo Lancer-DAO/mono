@@ -1,18 +1,14 @@
 import { BountyUserType } from "@/prisma/queries/bounty";
 import { smallClickAnimation } from "@/src/constants";
 import { useBounty } from "@/src/providers/bountyProvider";
+import { api } from "@/src/utils";
 import { BountyState } from "@/types";
 import { motion } from "framer-motion";
 import { X } from "lucide-react";
-import { Dispatch, FC, SetStateAction, useEffect, useState } from "react";
-import ActionsCardBanner from "../ActionsCardBanner";
-import { QuestActionView } from "../QuestActions";
-import { createDM } from "@/src/utils/sendbird";
-import { useAccount } from "@/src/providers/accountProvider";
-import { ChannelProvider } from "@sendbird/uikit-react/Channel/context";
-import ChatList from "./ChatList";
-import SendMessage from "./SendMessage";
-import { useUserWallet } from "@/src/providers";
+import { Dispatch, FC, SetStateAction } from "react";
+import ActionsCardBanner from "./ActionsCardBanner";
+import AlertCard from "./AlertCard";
+import { QuestActionView } from "./QuestActions";
 
 interface Props {
   selectedSubmitter: BountyUserType | null;
@@ -26,19 +22,10 @@ const ChatView: FC<Props> = ({ selectedSubmitter, setCurrentActionView }) => {
 
   const { currentBounty } = useBounty();
 
-  useEffect(() => {
-    (async () => {
-      const _url = await createDM([
-        String(currentBounty.creator.userid),
-        String(selectedSubmitter.userid),
-      ]);
-
-      setChannel(_url);
-    })();
-  }, [selectedSubmitter]);
-
-  console.log(channel);
-
+  const { data: update } = api.update.getNewUpdateByBounty.useQuery(
+    { id: currentBounty.id },
+    { enabled: !!currentBounty }
+  );
   return (
     <div className="flex h-full max-h-[24.5rem] flex-col relative overflow-hidden">
       <ActionsCardBanner
@@ -64,8 +51,7 @@ const ChatView: FC<Props> = ({ selectedSubmitter, setCurrentActionView }) => {
             <X height={24} width={24} className="text-white" />
           </motion.button>
         )}
-
-        {currentBounty.isApprovedSubmitter && (
+        {(currentBounty.isApprovedSubmitter && !!update) && (
           <motion.button
             {...smallClickAnimation}
             className="bg-secondary200 text-white title-text px-4 py-2 rounded-md"
@@ -75,15 +61,26 @@ const ChatView: FC<Props> = ({ selectedSubmitter, setCurrentActionView }) => {
           </motion.button>
         )}
       </ActionsCardBanner>
-
-      <ChannelProvider channelUrl={channel}>
-        <div className="w-full h-[calc(24.5rem-68px)] flex flex-col justify-between">
-          <div id="chat" className="flex-grow overflow-y-auto">
-            <ChatList />
-          </div>
-          <SendMessage />
-        </div>
-      </ChannelProvider>
+      <div className="px-5 pt-5">
+        {(update && currentBounty.isCreator) && (
+          <AlertCard
+            type="positive"
+            title="Nice!"
+            description="You have received an update!"
+          >
+            <button className="bg-white px-4 py-2" onClick={() => setCurrentActionView(QuestActionView.ViewUpdate)}>
+              View Update
+            </button>
+          </AlertCard>
+        )} 
+        {(update && currentBounty.isApprovedSubmitter) && (
+          <AlertCard
+            type="positive"
+            title="Nice!"
+            description="Your update has been sent!"
+          />
+        )}
+      </div>
     </div>
   );
 };
