@@ -1,3 +1,4 @@
+import { Dispatch, FC, SetStateAction, useState } from "react";
 import { BountyUserType } from "@/prisma/queries/bounty";
 import { smallClickAnimation } from "@/src/constants";
 import { useBounty } from "@/src/providers/bountyProvider";
@@ -5,10 +6,9 @@ import { api } from "@/src/utils";
 import { BountyState } from "@/types";
 import { motion } from "framer-motion";
 import { X } from "lucide-react";
-import { Dispatch, FC, SetStateAction } from "react";
-import ActionsCardBanner from "./ActionsCardBanner";
-import AlertCard from "./AlertCard";
-import { QuestActionView } from "./QuestActions";
+import ActionsCardBanner from "../ActionsCardBanner";
+import AlertCard from "../AlertCard";
+import { QuestActionView } from "../QuestActions";
 
 interface Props {
   selectedSubmitter: BountyUserType | null;
@@ -51,7 +51,7 @@ const ChatView: FC<Props> = ({ selectedSubmitter, setCurrentActionView }) => {
             <X height={24} width={24} className="text-white" />
           </motion.button>
         )}
-        {(currentBounty.isApprovedSubmitter && !!update) && (
+        {currentBounty.isApprovedSubmitter && !!update && (
           <motion.button
             {...smallClickAnimation}
             className="bg-secondary200 text-white title-text px-4 py-2 rounded-md"
@@ -62,18 +62,21 @@ const ChatView: FC<Props> = ({ selectedSubmitter, setCurrentActionView }) => {
         )}
       </ActionsCardBanner>
       <div className="px-5 pt-5">
-        {(update && currentBounty.isCreator) && (
+        {update && currentBounty.isCreator && (
           <AlertCard
             type="positive"
             title="Nice!"
             description="You have received an update!"
           >
-            <button className="bg-white px-4 py-2" onClick={() => setCurrentActionView(QuestActionView.ViewUpdate)}>
+            <button
+              className="bg-white px-4 py-2"
+              onClick={() => setCurrentActionView(QuestActionView.ViewUpdate)}
+            >
               View Update
             </button>
           </AlertCard>
-        )} 
-        {(update && currentBounty.isApprovedSubmitter) && (
+        )}
+        {update && currentBounty.isApprovedSubmitter && (
           <AlertCard
             type="positive"
             title="Nice!"

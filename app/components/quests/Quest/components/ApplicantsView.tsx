@@ -49,7 +49,7 @@ const ApplicantsView: FC<Props> = ({
   // TODO: add logic to determine deposit amount
   // 5% of highest quote
   const depositAmount = () => {
-    return 1;
+    return 0.05;
   };
 
   const createdAtDate = new Date(
