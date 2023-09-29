@@ -6,6 +6,7 @@ import ApplicantsView from "./ApplicantsView";
 import ChatView from "./ChatView";
 import LancerApplicationView from "./LancerApplicationView";
 import LancerSubmitUpdateView from "./LancerSubmitUpdateView";
+import UpdateView from "./UpdateView";
 
 export enum QuestActionView {
   SubmitApplication = "submit-application", // one-way (Lancer) - contains apply & quote
@@ -72,6 +73,12 @@ const QuestActions: FC = () => {
       )}
       {currentActionView === QuestActionView.SubmitUpdate && (
         <LancerSubmitUpdateView />
+      )}
+      {currentActionView === QuestActionView.ViewUpdate && (
+        <UpdateView 
+          selectedSubmitter={selectedSubmitter}
+          setCurrentActionView={setCurrentActionView}
+        />
       )}
     </div>
   );
