@@ -1,7 +1,7 @@
-import { useUserWallet } from "@/src/providers";
-import { useBounty } from "@/src/providers/bountyProvider";
-import { useChannelContext } from "@sendbird/uikit-react/Channel/context";
 import { useEffect } from "react";
+import { useUserWallet } from "@/src/providers";
+import { useChannelContext } from "@sendbird/uikit-react/Channel/context";
+import Image from "next/image";
 
 const ChatList = () => {
   const channelState = useChannelContext();
@@ -18,20 +18,24 @@ const ChatList = () => {
         const isSender = message.sender.userId === String(currentUser.id);
 
         return (
-          <div className={`flex ${isSender ? "justify-end" : "justify-start"}`}>
+          <div
+            className={`flex ${isSender ? "justify-end" : "justify-start"}`}
+            key={key}
+          >
             <div className={`flex gap-x-2 ${isSender && "flex-row-reverse"}`}>
               {
                 // if theres 2 consiqutive messages from the same sender, only show profile pic on the last one
-
                 channelState.allMessages[key + 1] &&
                 channelState.allMessages[key + 1].sender.userId ===
                   message.sender.userId ? (
                   <div className="w-8 h-8"></div>
                 ) : (
-                  <img
+                  <Image
                     src={message.sender.plainProfileUrl}
-                    alt=""
-                    className="w-8 h-8 rounded-full"
+                    alt="chat user"
+                    width={32}
+                    height={32}
+                    className="rounded-full overflow-hidden"
                   />
                 )
               }
