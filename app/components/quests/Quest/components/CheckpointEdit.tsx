@@ -1,6 +1,7 @@
 import Edit from "@/components/@icons/Edit";
 import Fire from "@/components/@icons/Fire";
 import Trash from "@/components/@icons/Trash";
+import { useBounty } from "@/src/providers/bountyProvider";
 import { Checkpoint, LancerQuoteData } from "@/types";
 import { marked } from "marked";
 import { Dispatch, FC, SetStateAction, useEffect, useState } from "react";
@@ -23,14 +24,17 @@ const CheckpointEdit: FC<Props> = ({
   closeDetailsAndEdit,
   setDetails,
 }) => {
-  const [tempCheckpoint, setTempCheckpoint] = useState<Checkpoint>(() => {
-    const savedCheckpointData = localStorage.getItem("checkpointTempData");
-    if (savedCheckpointData) return JSON.parse(savedCheckpointData);
+  const { currentBounty } = useBounty();
 
-    return checkpoint;
+  const [tempCheckpoint, setTempCheckpoint] = useState<Checkpoint>(() => {
+    const storedForms =
+      JSON.parse(localStorage.getItem("checkpointTempData")) || {};
+    return storedForms[currentBounty.id]?.checkpointTemp || checkpoint;
   });
+  const [shouldStore, setShouldStore] = useState(true);
 
   const editCheckpoint = () => {
+    setShouldStore(false);
     setQuoteData((prevData) => {
       const updatedData = { ...prevData };
       updatedData.checkpoints[index] = tempCheckpoint;
@@ -47,7 +51,12 @@ const CheckpointEdit: FC<Props> = ({
 
       return updatedData;
     });
-    localStorage.removeItem("checkpointTempData");
+
+    // delete from local storage
+    let storedFormsData =
+      JSON.parse(localStorage.getItem("checkpointTempData")) ?? {};
+    delete storedFormsData[currentBounty.id];
+    localStorage.setItem("checkpointTempData", JSON.stringify(storedFormsData));
   };
 
   const deleteCheckpoint = () => {
@@ -74,9 +83,22 @@ const CheckpointEdit: FC<Props> = ({
     return { __html: markdown };
   };
 
+  // useEffect to update local storage whenever application data changes
   useEffect(() => {
-    localStorage.setItem("checkpointTempData", JSON.stringify(tempCheckpoint));
-  }, [tempCheckpoint]);
+    if (!shouldStore) {
+      setShouldStore(true); // reset for next time
+      return; // exit effect to avoid overwriting storage
+    }
+    console.log("RUNNING!!!");
+    let storedFormsData =
+      JSON.parse(localStorage.getItem("checkpointTempData")) ?? {};
+
+    storedFormsData[currentBounty.id] = {
+      checkpointTemp: tempCheckpoint,
+    };
+
+    localStorage.setItem("checkpointTempData", JSON.stringify(storedFormsData));
+  }, [currentBounty.id, tempCheckpoint, shouldStore]);
 
   return (
     <div className="flex flex-col">
@@ -200,9 +222,6 @@ const CheckpointEdit: FC<Props> = ({
           </div>
           {checkpoint.canEdit && (
             <div className="flex justify-end items-center gap-2">
-              {/* <button className="px-4 py-2 text-neutral600 title-text rounded-md border border-neutral300">
-                Add Checkpoint
-              </button> */}
               <button
                 className="px-4 py-2 rounded-md border border-neutral300 text-error title-text"
                 onClick={() => {
