@@ -47,7 +47,7 @@ const ChatView: FC<Props> = ({ selectedSubmitter, setCurrentActionView }) => {
             <X height={24} width={24} className="text-white" />
           </motion.button>
         )}
-        {currentBounty.isApprovedSubmitter && (
+        {(currentBounty.isApprovedSubmitter && !!update) && (
           <motion.button
             {...smallClickAnimation}
             className="bg-secondary200 text-white title-text px-4 py-2 rounded-md"

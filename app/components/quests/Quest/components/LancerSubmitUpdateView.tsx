@@ -153,7 +153,7 @@ const LancerSubmitUpdateView: FC = () => {
             />
           </div>
           {validate.isLoomUrl(updateData.links) === false && (
-            <div className="flex jutify-center items-center rounded-md border px-[151px] py-[33px] h-[228px]">
+            <div className="flex justify-center items-center rounded-md border px-[151px] py-[33px] h-[228px]">
               <div className="py-[10px] flex flex-col items-center gap-2">
                 <Crown />
                 <div className="text-mini text-neutral400 text-center">
