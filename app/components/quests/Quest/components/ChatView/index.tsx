@@ -78,7 +78,7 @@ const ChatView: FC<Props> = ({ selectedSubmitter, setCurrentActionView }) => {
 
       <ChannelProvider channelUrl={channel}>
         <div className="w-full h-full flex flex-col">
-          <div className="max-h-[18rem] h-full overflow-y-auto">
+          <div id="chat" className="max-h-[12rem] h-full overflow-y-auto my-4">
             <ChatList />
           </div>
           <SendMessage />

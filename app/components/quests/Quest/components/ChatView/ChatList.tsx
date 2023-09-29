@@ -1,5 +1,6 @@
 import { useBounty } from "@/src/providers/bountyProvider";
 import { useChannelContext } from "@sendbird/uikit-react/Channel/context";
+import { useEffect } from "react";
 
 const ChatList = () => {
   const channelState = useChannelContext();
@@ -7,8 +8,13 @@ const ChatList = () => {
 
   const { currentBounty } = useBounty();
 
+  useEffect(() => {
+    const elem = document.getElementById("chat");
+    elem.scrollTop = elem.scrollHeight;
+  }, [channelState]);
+
   return (
-    <div className="w-full h-full p-4 flex-grow flex flex-col gap-y-1.5">
+    <div className="w-full h-full px-4 flex-grow flex flex-col gap-y-1.5">
       {channelState.allMessages.map((message, key) => {
         const isSender =
           message.sender.userId === String(currentBounty.creator.userid);
