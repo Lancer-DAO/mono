@@ -57,36 +57,42 @@ export const createTRPCContext = async (_opts: CreateNextContextOptions) => {
 
   try {
     const metadata = await getSession(req, res);
-    console.log(metadata);
-    const token = process.env.NEXT_PUBLIC_IS_CUSTODIAL
-      ? metadata.token
-      : (await getAccessToken(req, res))?.accessToken;
+    if (!!metadata) {
+      console.log(metadata);
+      const token = process.env.NEXT_PUBLIC_IS_CUSTODIAL
+        ? metadata?.token
+        : (await getAccessToken(req, res))?.accessToken;
 
-    const { email, sub, nickname, picture } = metadata.user;
+      const { email, sub, nickname, picture } = metadata?.user;
 
-    const user = await prisma.user.findUnique({
-      where: {
-        email,
-      },
-      select: {
-        id: true,
-      },
-    });
-
-    if (!user) {
-      return createInnerTRPCContext({
-        user: { id: null, email, token, sub, nickname, picture },
+      const user = await prisma.user.findUnique({
+        where: {
+          email,
+        },
+        select: {
+          id: true,
+        },
       });
+
+      if (!user) {
+        return createInnerTRPCContext({
+          user: { id: null, email, token, sub, nickname, picture },
+        });
+      } else {
+        return createInnerTRPCContext({
+          user: {
+            id: user.id,
+            email,
+            token,
+            sub,
+            nickname,
+            picture,
+          },
+        });
+      }
     } else {
       return createInnerTRPCContext({
-        user: {
-          id: user.id,
-          email,
-          token,
-          sub,
-          nickname,
-          picture,
-        },
+        user: null,
       });
     }
   } catch (e) {
