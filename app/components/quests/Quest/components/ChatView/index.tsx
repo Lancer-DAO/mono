@@ -4,9 +4,14 @@ import { useBounty } from "@/src/providers/bountyProvider";
 import { BountyState } from "@/types";
 import { motion } from "framer-motion";
 import { X } from "lucide-react";
-import { Dispatch, FC, SetStateAction } from "react";
-import ActionsCardBanner from "./ActionsCardBanner";
-import { QuestActionView } from "./QuestActions";
+import { Dispatch, FC, SetStateAction, useEffect, useState } from "react";
+import ActionsCardBanner from "../ActionsCardBanner";
+import { QuestActionView } from "../QuestActions";
+import { createDM } from "@/src/utils/sendbird";
+import { useAccount } from "@/src/providers/accountProvider";
+import { ChannelProvider } from "@sendbird/uikit-react/Channel/context";
+import ChatList from "./ChatList";
+import SendMessage from "./SendMessage";
 
 interface Props {
   selectedSubmitter: BountyUserType | null;
@@ -14,9 +19,28 @@ interface Props {
 }
 
 const ChatView: FC<Props> = ({ selectedSubmitter, setCurrentActionView }) => {
+  const [channel, setChannel] = useState<string>(
+    "sendbird_group_channel_285084156_0b7fc17ca999c4eccd1bc09829866ef026473658"
+  );
+
+  const { account } = useAccount();
   const { currentBounty } = useBounty();
+
+  useEffect(() => {
+    (async () => {
+      const _url = await createDM([
+        String(currentBounty.creator.userid),
+        String(selectedSubmitter.userid),
+      ]);
+
+      setChannel(_url);
+    })();
+  }, [selectedSubmitter]);
+
+  console.log(channel);
+
   return (
-    <div className="flex flex-col">
+    <div className="flex h-full overflow-hidden flex-col">
       <ActionsCardBanner
         title={`Conversation with ${
           currentBounty.isCreator
@@ -40,6 +64,7 @@ const ChatView: FC<Props> = ({ selectedSubmitter, setCurrentActionView }) => {
             <X height={24} width={24} className="text-white" />
           </motion.button>
         )}
+
         {currentBounty.isApprovedSubmitter && (
           <motion.button
             {...smallClickAnimation}
@@ -50,6 +75,15 @@ const ChatView: FC<Props> = ({ selectedSubmitter, setCurrentActionView }) => {
           </motion.button>
         )}
       </ActionsCardBanner>
+
+      <ChannelProvider channelUrl={channel}>
+        <div className="w-full h-full flex flex-col">
+          <div className="max-h-[18rem] h-full overflow-y-auto">
+            <ChatList />
+          </div>
+          <SendMessage />
+        </div>
+      </ChannelProvider>
     </div>
   );
 };
