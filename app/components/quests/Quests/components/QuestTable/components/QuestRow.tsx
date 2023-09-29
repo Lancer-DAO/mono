@@ -7,17 +7,13 @@ import { marked } from "marked";
 import Image from "next/image";
 import { FC, SVGAttributes } from "react";
 
-export interface BountyCardProps extends SVGAttributes<SVGSVGElement> {
+interface Props extends SVGAttributes<SVGSVGElement> {
   bounty?: BountyPreview;
   formData?: QuestFormData;
   linked?: boolean;
 }
 
-export const QuestRow: FC<BountyCardProps> = ({
-  bounty,
-  formData,
-  linked = true,
-}) => {
+export const QuestRow: FC<Props> = ({ bounty, formData, linked = true }) => {
   const { currentBounty } = useBounty();
 
   const handleBountyLink = () => {
