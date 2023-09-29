@@ -1,5 +1,4 @@
 import Crown from "@/components/@icons/Crown";
-import { updateMedia } from "@/server/api/routers/media/updateMedia";
 import { smallClickAnimation } from "@/src/constants";
 import { useUserWallet } from "@/src/providers";
 import { useBounty } from "@/src/providers/bountyProvider";
@@ -16,9 +15,15 @@ import { FC, useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
 import ActionsCardBanner from "./ActionsCardBanner";
 
+export enum UPDATE_TYPES {
+  Loom = "Loom recording",
+  Text = "Text",
+  FileUpload = "File Upload",
+}
+
 const LancerSubmitUpdateView: FC = () => {
-  const { currentBounty, setCurrentBounty } = useBounty();
-  const { currentUser, currentWallet } = useUserWallet();
+  const { currentBounty } = useBounty();
+  const { currentUser } = useUserWallet();
 
   const [hasApplied, setHasApplied] = useState(false);
   const [selectedType, setSelectedType] = useState("Loom recording");
@@ -40,11 +45,6 @@ const LancerSubmitUpdateView: FC = () => {
   const { mutateAsync: deleteMedia } = api.bounties.deleteMedia.useMutation();
   const [videoHTML, setVideoHTML] = useState("");
 
-  enum UPDATE_TYPES {
-    Loom = "Loom recording",
-    Text = "Text",
-    FileUpload = "File Upload",
-  }
   
   const types = [UPDATE_TYPES.Loom, UPDATE_TYPES.FileUpload, UPDATE_TYPES.Text]
   
@@ -212,7 +212,7 @@ const LancerSubmitUpdateView: FC = () => {
         </p>
         <textarea
           className="text border border-neutral200 placeholder:text-neutral500/80 resize-none h-[232px]
-          bg-neutral100 text-neutral500 w-full rounded-md px-3 p-2 disabled:opacity-80"
+          bg-neutral100 text-neutral500 w-full rounded-md px-3 py-2 disabled:opacity-80"
           placeholder="Type your message here..."
           disabled={hasApplied}
           value={updateData.description}
