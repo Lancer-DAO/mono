@@ -19,24 +19,16 @@ interface Props {
   setCurrentActionView: Dispatch<SetStateAction<QuestActionView>>;
 }
 
-interface Review {
-  review: string;
-  state: QuestProgressState;
-}
-
 const UpdateView: FC<Props> = ({ selectedSubmitter, setCurrentActionView }) => {
   const { currentBounty } = useBounty();
 
   const [videoHTML, setVideoHTML] = useState("");
-  const [review, setReview] = useState<Review>(() => {
+  const [review, setReview] = useState(() => {
     const savedReviewData = localStorage.getItem("reviewData");
     if (savedReviewData) return JSON.parse(savedReviewData)
 
-    return {
-      review: "",
-      state: QuestProgressState.NEW
-    }
-  });
+    return "";
+  })
   const [hasSent, setHasSent] = useState(false);
   const [isAwaitingResponse, setIsAwaitingResponse] = useState(false);
 
@@ -67,7 +59,6 @@ const UpdateView: FC<Props> = ({ selectedSubmitter, setCurrentActionView }) => {
       const handleNo = () => {
         toast.dismiss(toastId);
         setIsAwaitingResponse(false);
-        setReview({ ...review, state: QuestProgressState.NEW });
         reject();
       };
 
@@ -100,23 +91,22 @@ const UpdateView: FC<Props> = ({ selectedSubmitter, setCurrentActionView }) => {
     });
   };
 
-  const onClick = async (e) => {
-    setReview({ ...review, state: e.target.value });
-    if(review.review === "") {
+  const onClick = async (updateState: QuestProgressState) => {
+    if(review === "") {
       toast.error("Please provide some feedback.");
       return;
     }
-    await confirmAction(review.state);
-    const toastId = toast.loading(`${review.state === QuestProgressState.ACCEPTED ? 'Approving' : 'Rejecting'} update...`);
+    await confirmAction(updateState);
+    const toastId = toast.loading(`${updateState === QuestProgressState.ACCEPTED ? 'Approving' : 'Rejecting'} update...`);
     try {
       await submitReview({
         id: update?.id,
-        review: review.review,
-        state: review.state,
+        review: review,
+        state: updateState,
       });
 
       setHasSent(true);
-      toast.success(`Update has been ${review.state === QuestProgressState.ACCEPTED ? 'approved' : 'rejected'}`, { id: toastId });
+      toast.success(`Update has been ${updateState === QuestProgressState.ACCEPTED ? 'approved' : 'rejected'}`, { id: toastId });
       localStorage.removeItem("reviewData");
     } catch (error) {
       toast.error("Error sending feedback", { id: toastId });
@@ -168,11 +158,11 @@ const UpdateView: FC<Props> = ({ selectedSubmitter, setCurrentActionView }) => {
               >{update?.links}</div>
             </div>
             {validate.isLoomUrl(update?.links) === false && (
-              <div className="flex jutify-center items-center rounded-md border px-[151px] py-[33px] h-[228px]">
+              <div className="flex justify-center items-center rounded-md border px-[151px] py-[33px] h-[228px]">
                 <div className="py-[10px] flex flex-col items-center gap-2">
                   <Crown />
                   <div className="text-mini text-neutral400 text-center">
-                    Lancer sent an invalid Loom link.
+                    The Lancer sent an invalid Loom link.
                   </div>
                 </div>
               </div>
@@ -211,17 +201,17 @@ const UpdateView: FC<Props> = ({ selectedSubmitter, setCurrentActionView }) => {
             <p className="whitespace-nowrap text-neutral600 text">Description</p>
             <div
                 className="flex text border border-neutral200 placeholder:text-neutral500/60 
-                bg-neutral100 text-neutral500 min-h-[132px] rounded-md px-3 py-2 overflow-hidden"
+                bg-neutral100 text-neutral500 rounded-md px-3 py-2 overflow-hidden"
               >{update?.description}</div>
           </div>
         </div>
         <div className="flex flex-col gap-4">
           <div className="text text-neutral600">Leave actionable feedback please. It will save time!</div>
           <textarea 
-            className="p-4 rounded-md border border-neutral200 bg-neutral100 text placeholder:text-neutral300 resize-none outline-none" 
+            className="p-4 min-h-[132px] rounded-md border border-neutral200 bg-neutral100 text placeholder:text-neutral300 resize-none outline-none" 
             placeholder="Type here..."
-            value={review.review}
-            onChange={(e) => setReview({ ...review, review: e.target.value })}
+            value={review}
+            onChange={(e) => setReview(e.target.value)}
           />
         </div>
       </div>
@@ -230,8 +220,7 @@ const UpdateView: FC<Props> = ({ selectedSubmitter, setCurrentActionView }) => {
           <motion.button
             {...smallClickAnimation} 
             className="bg-white px-4 py-2 rounded-md border border-neutral200 title-text text-neutral600"
-            value={QuestProgressState.REJECTED}
-            onClick={onClick}
+            onClick={() => onClick(QuestProgressState.REJECTED)}
             disabled={isAwaitingResponse}
           >
             Request to change
@@ -240,7 +229,7 @@ const UpdateView: FC<Props> = ({ selectedSubmitter, setCurrentActionView }) => {
             {...smallClickAnimation}
             className="bg-primary200 px-4 py-2 rounded-md text-white title-text" 
             value={QuestProgressState.ACCEPTED}
-            onClick={onClick}
+            onClick={() => onClick(QuestProgressState.ACCEPTED)}
             disabled={isAwaitingResponse}
           >
             Approve
