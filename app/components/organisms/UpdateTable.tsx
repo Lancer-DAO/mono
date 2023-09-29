@@ -203,7 +203,10 @@ const AllUpdatesTable: React.FC = () => {
 
   return (
     <div className="flex flex-col w-full border-solid border bg-white border-neutralBorder500 rounded-lg">
-      <div className="px-8 py-4 text-black">Updates History</div>
+      <div className="px-8 py-4 text-neutral600 font-bold text-lg">
+        Updates History
+      </div>
+      <div className="h-[1px] w-full bg-neutral100" />
       {currentUser ? (
         allUpdates?.map((update) => {
           return <UpdateTableItem {...update} key={update.key} />;
@@ -218,7 +221,7 @@ const AllUpdatesTable: React.FC = () => {
         />
       )}
 
-      <div className="px-8 py-4 text-black"></div>
+      <div className="px-8 py-4 text-neutral600"></div>
     </div>
   );
 };
@@ -600,8 +603,10 @@ const QuestUpdatesTable: React.FC = () => {
     currentUser && (
       <div className="flex flex-col w-full border-solid border bg-white border-neutralBorder500 rounded-lg">
         <div className="flex items-center">
-          <div className="px-8 py-4 text-black">Updates History</div>
-
+          <div className="px-8 py-4 text-neutral600 font-bold text-lg">
+            Updates History
+          </div>
+          <div className="h-[1px] w-full bg-neutral100" />
           {currentBounty.isCreator &&
             currentBounty.state !== BountyState.VOTING_TO_CANCEL &&
             currentBounty.state !== BountyState.DISPUTE_STARTED &&
@@ -609,7 +614,7 @@ const QuestUpdatesTable: React.FC = () => {
               <motion.button
                 {...smallClickAnimation}
                 className="bg-white border border-neutral200 ml-auto mr-8 h-9 w-fit px-4 py-2
-              title-text rounded-md text-error disabled:cursor-not-allowed disabled:opacity-80"
+                title-text rounded-md text-error disabled:cursor-not-allowed disabled:opacity-80"
                 onClick={handleVoteToCancel}
                 disabled={isLoading || isAwaitingResponse}
               >
@@ -625,7 +630,7 @@ const QuestUpdatesTable: React.FC = () => {
                 <motion.button
                   {...smallClickAnimation}
                   className="bg-white border border-neutral200 ml-auto mr-4 h-9 w-fit px-4 py-2
-              title-text rounded-md text-error disabled:cursor-not-allowed disabled:opacity-80"
+                  title-text rounded-md text-error disabled:cursor-not-allowed disabled:opacity-80"
                   onClick={handleVoteToCancel}
                   disabled={isLoading || isAwaitingResponse}
                 >
@@ -634,7 +639,7 @@ const QuestUpdatesTable: React.FC = () => {
                 <motion.button
                   {...smallClickAnimation}
                   className="bg-white border border-neutral200 mr-8 h-9 w-fit px-4 py-2
-              title-text rounded-md text-error disabled:cursor-not-allowed disabled:opacity-80"
+                  title-text rounded-md text-error disabled:cursor-not-allowed disabled:opacity-80"
                   onClick={handleStartDispute}
                   disabled={isLoading || isAwaitingResponse}
                 >
@@ -647,7 +652,7 @@ const QuestUpdatesTable: React.FC = () => {
               <motion.button
                 {...smallClickAnimation}
                 className="ml-auto text-white bg-[#B26B9B] border-[#A66390] mr-8 h-9 w-fit px-4 py-2
-              title-text rounded-md  disabled:cursor-not-allowed disabled:opacity-80"
+                title-text rounded-md  disabled:cursor-not-allowed disabled:opacity-80"
                 onClick={() => {}}
                 disabled={true}
               >
@@ -692,7 +697,7 @@ const QuestUpdatesTable: React.FC = () => {
           <DisputeModal setShowModal={setShowDisputeModal} />
         )}
 
-        <div className="px-8 py-4 text-black"></div>
+        <div className="px-8 py-4 text-neutral600"></div>
       </div>
     )
   );

@@ -30,10 +30,9 @@ const stateMap = {
 
 interface Props {
   type: "profile" | "quests";
-  allBounties: BountyPreview[];
 }
 
-const QuestTable: React.FC<Props> = ({ type, allBounties }) => {
+const QuestTable: React.FC<Props> = ({ type }) => {
   // state
   const [tags, setTags] = useState<string[]>([]);
   const [bounds, setPriceBounds] = useState<[number, number]>([5, 10000]);
@@ -45,7 +44,7 @@ const QuestTable: React.FC<Props> = ({ type, allBounties }) => {
   });
 
   // api + context
-  const { questsPage, setQuestsPage, maxPages } = useBounty();
+  const { questsPage, setQuestsPage, maxPages, allBounties } = useBounty();
   const { currentUser } = useUserWallet();
   const { allIndustries } = useIndustry();
 
