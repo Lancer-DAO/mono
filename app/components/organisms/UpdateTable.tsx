@@ -21,6 +21,7 @@ import { motion } from "framer-motion";
 import toast from "react-hot-toast";
 import { PublicKey } from "@solana/web3.js";
 import { cancelFFA, voteToCancelFFA } from "@/escrow/adapters";
+import EmptyUpdatesHistory from "../@icons/EmptyUpdatesHistory";
 
 const AllUpdatesTable: React.FC = () => {
   const { currentUser } = useUserWallet();
@@ -207,6 +208,11 @@ const AllUpdatesTable: React.FC = () => {
     lancerUpdates,
     disputes,
   ]);
+  console.log('ALL UPDATES')
+  console.log(allUpdates);
+  if (!allUpdates) {
+    return <EmptyUpdatesHistory width='612px' height='423px'/>;
+  } 
 
   return (
     currentUser && (
@@ -418,6 +424,11 @@ const QuestUpdatesTable: React.FC = () => {
     lancerUpdates,
     disputes,
   ]);
+  console.log('ALL UPDATES')
+  console.log(allUpdates);
+  if (!allUpdates) {
+    return <EmptyUpdatesHistory width='612px' height='423px' />;
+  }
 
   const confirmAction = (confirmText: string): Promise<void> => {
     setIsAwaitingResponse(true);

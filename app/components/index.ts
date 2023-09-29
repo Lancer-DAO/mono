@@ -18,6 +18,11 @@ const LancerOnboardingEmblem = dynamic(
 const LancerOnboardingHelmet = dynamic(
   () => import("./@icons/LancerOnboardingHelmet")
 );
+/*
+const EmptyUpdatesHistory = dynamic(
+  () => import("./@icons/EmptyUpdatesHistory")
+);
+*/
 const LockIcon = dynamic(() => import("./@icons/LockIcon"));
 const Logo = dynamic(() => import("./@icons/Logo"));
 const Mail = dynamic(() => import("./@icons/Mail"));
@@ -104,6 +109,7 @@ export {
   Flame,
   LancerOnboardingEmblem,
   LancerOnboardingHelmet,
+  //EmptyUpdatesHistory,
   LockIcon,
   Logo,
   Mail,
