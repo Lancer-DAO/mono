@@ -218,6 +218,7 @@ const ApplicantsView: FC<Props> = ({
         setIsLoading={setIsLoading}
         isAwaitingResponse={isAwaitingResponse}
         setIsAwaitingResponse={setIsAwaitingResponse}
+        depositAmount={depositAmount}
       />
     );
 
@@ -380,6 +381,9 @@ const ApplicantsView: FC<Props> = ({
           </div>
           {showModal && (
             <DepositCTAModal
+              prompt="This unlocks the ability to chat with your shortlisted applicants.
+              Once you decide which candidate you want to work with, we will ask you
+              to deposit 100% of the funds into escrow to kick things off."
               setShowModal={setShowModal}
               setShowFundModal={setShowFundModal}
               amount={depositAmount}
@@ -390,7 +394,9 @@ const ApplicantsView: FC<Props> = ({
       {showFundModal && (
         <FundQuestModal
           setShowModal={setShowFundModal}
+          setShowFundModal={setShowFundModal}
           amount={depositAmount}
+          approving={false}
         />
       )}
     </>
