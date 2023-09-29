@@ -66,6 +66,7 @@ export const AdminRelationsManagerSection: React.FC<
       <div className="items-center ml-2 flex justify-center">
         <>
           <MultiSelectDropdown
+            version="white"
             options={RELATIONS.map((state) => {
               return {
                 value: state,

@@ -1,5 +1,6 @@
 import Plus from "@/components/@icons/Plus";
 import RedFire from "@/components/@icons/RedFire";
+import { user } from "@/prisma/queries";
 import { smallClickAnimation } from "@/src/constants";
 import { useUserWallet } from "@/src/providers";
 import { useBounty } from "@/src/providers/bountyProvider";
@@ -126,7 +127,12 @@ const LancerSubmitQuoteView: FC<Props> = ({
   if (!currentBounty || !currentUser) return null;
 
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col relative">
+      {!currentUser.hasBeenApproved && (
+        <div className="absolute w-full h-full bg-white bg-opacity-50 text-xl text-tertiary300 flex justify-center items-center">
+          You Must Be Approved to Apply to Quests
+        </div>
+      )}
       <ActionsCardBanner
         title={`Quote to ${currentBounty.creator.user.name}`}
         subtitle={`${quotes?.length || 0} ${
