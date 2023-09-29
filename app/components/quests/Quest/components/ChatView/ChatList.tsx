@@ -1,12 +1,11 @@
+import { useUserWallet } from "@/src/providers";
 import { useBounty } from "@/src/providers/bountyProvider";
 import { useChannelContext } from "@sendbird/uikit-react/Channel/context";
 import { useEffect } from "react";
 
 const ChatList = () => {
   const channelState = useChannelContext();
-  console.log(channelState);
-
-  const { currentBounty } = useBounty();
+  const { currentUser } = useUserWallet();
 
   useEffect(() => {
     const elem = document.getElementById("chat");
@@ -14,16 +13,9 @@ const ChatList = () => {
   }, [channelState]);
 
   return (
-    <div className="w-full h-full px-4 flex-grow flex flex-col gap-y-1.5">
+    <div className="w-full p-4 flex-grow flex flex-col gap-y-1.5">
       {channelState.allMessages.map((message, key) => {
-        const isSender =
-          message.sender.userId === String(currentBounty.creator.userid);
-
-        console.log(
-          message.sender.userId,
-          currentBounty.creator.userid,
-          isSender
-        );
+        const isSender = message.sender.userId === String(currentUser.id);
 
         return (
           <div className={`flex ${isSender ? "justify-end" : "justify-start"}`}>
@@ -44,8 +36,8 @@ const ChatList = () => {
                 )
               }
               <div
-                className={`p-2.5 py-1.5 rounded text-white ${
-                  isSender ? "bg-secondary200" : "bg-secondary300"
+                className={`p-2.5 py-1.5 rounded text-black ${
+                  isSender ? "bg-secondary100" : "bg-neutral100"
                 }`}
               >
                 {message.message}

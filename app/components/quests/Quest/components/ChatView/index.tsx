@@ -12,6 +12,7 @@ import { useAccount } from "@/src/providers/accountProvider";
 import { ChannelProvider } from "@sendbird/uikit-react/Channel/context";
 import ChatList from "./ChatList";
 import SendMessage from "./SendMessage";
+import { useUserWallet } from "@/src/providers";
 
 interface Props {
   selectedSubmitter: BountyUserType | null;
@@ -23,7 +24,6 @@ const ChatView: FC<Props> = ({ selectedSubmitter, setCurrentActionView }) => {
     "sendbird_group_channel_285084156_0b7fc17ca999c4eccd1bc09829866ef026473658"
   );
 
-  const { account } = useAccount();
   const { currentBounty } = useBounty();
 
   useEffect(() => {
@@ -40,7 +40,7 @@ const ChatView: FC<Props> = ({ selectedSubmitter, setCurrentActionView }) => {
   console.log(channel);
 
   return (
-    <div className="flex h-full overflow-hidden flex-col">
+    <div className="flex h-full max-h-[24.5rem] flex-col relative overflow-hidden">
       <ActionsCardBanner
         title={`Conversation with ${
           currentBounty.isCreator
@@ -77,8 +77,8 @@ const ChatView: FC<Props> = ({ selectedSubmitter, setCurrentActionView }) => {
       </ActionsCardBanner>
 
       <ChannelProvider channelUrl={channel}>
-        <div className="w-full h-full flex flex-col">
-          <div id="chat" className="max-h-[12rem] h-full overflow-y-auto my-4">
+        <div className="w-full h-[calc(24.5rem-68px)] flex flex-col justify-between">
+          <div id="chat" className="flex-grow overflow-y-auto">
             <ChatList />
           </div>
           <SendMessage />
