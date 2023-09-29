@@ -10,6 +10,7 @@ import { getWallets } from "./getWallets";
 import { login } from "./login";
 import { maybeInitAccount } from "./maybeInitAccount";
 import { registerProfileNFT } from "./registerProfileNFT";
+import { registerOnboardingBadge } from "./registerOnboardingBadge";
 import { search } from "./search";
 import { updateBio } from "./updateBio";
 import { updateCompanyDescription } from "./updateCompanyDescription";
@@ -30,6 +31,7 @@ export const users = createTRPCRouter({
   getWallets,
   login,
   maybeInitAccount,
+  registerOnboardingBadge,
   registerProfileNFT,
   search,
   updateBio,

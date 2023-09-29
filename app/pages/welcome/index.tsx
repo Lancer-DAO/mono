@@ -11,7 +11,11 @@ import toast from "react-hot-toast";
 import { ChooseYourClass } from "@/components/onboarding/ChooseYourClass";
 import { CreateYourProfile } from "@/components/onboarding/CreateYourProfile";
 import { GoodToGo } from "@/components/onboarding/GoodToGo";
-
+import { useUserWallet } from "@/src/providers";
+import { BADGES_PROJECT_PARAMS } from "@/src/constants";
+import dayjs from "dayjs";
+import { createUnderdogClient } from "@underdog-protocol/js";
+const underdogClient = createUnderdogClient({});
 export async function getServerSideProps(
   context: GetServerSidePropsContext<{ id: string; req; res }>
 ) {
@@ -60,9 +64,13 @@ const WelcomePage: React.FC<{
 }> = ({ allIndustries }) => {
   const [page, setPage] = useState(0);
   const [selectedClass, setSelectedClass] = useState<Class>("Noble");
+  const { currentUser, currentWallet } = useUserWallet();
   const router = useRouter();
   const { mutateAsync: registerOnboardingInfo } =
     api.users.addOnboardingInformation.useMutation();
+
+  const { mutateAsync: registerOnboardingBadge } =
+    api.users.registerOnboardingBadge.useMutation();
   const [name, setName] = useState("");
   const [company, setCompany] = useState("");
   const [description, setDescription] = useState("");
@@ -91,6 +99,25 @@ const WelcomePage: React.FC<{
       });
 
       toast.success("Profile created successfully!", { id: toastId });
+      if (currentWallet?.publicKey) {
+        await underdogClient.createNft({
+          params: BADGES_PROJECT_PARAMS,
+          body: {
+            name: `Onboarded as ${selectedClass}`,
+            image:
+              selectedClass === "Noble"
+                ? "https://utfs.io/f/11550d3d-02d0-4c11-954d-70708786d0db-ejso1z.png"
+                : "https://utfs.io/f/f0b4011d-763e-486a-bc38-9866ed10affd-ejso3p.png",
+            description: `${name} has onboarded as a ${selectedClass}!}`,
+            attributes: {
+              completed: dayjs().toISOString(),
+            },
+            upsert: false,
+            receiverAddress: currentWallet.publicKey.toString(),
+          },
+        });
+        await registerOnboardingBadge();
+      }
       router.push("/");
     } catch (e) {
       console.log("error updating profile: ", e);
