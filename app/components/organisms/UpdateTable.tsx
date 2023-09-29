@@ -20,7 +20,12 @@ import { ADMIN_WALLETS, smallClickAnimation } from "@/src/constants";
 import { motion } from "framer-motion";
 import toast from "react-hot-toast";
 import { PublicKey } from "@solana/web3.js";
-import { cancelFFA, voteToCancelFFA } from "@/escrow/adapters";
+import {
+  approveRequestFFA,
+  cancelFFA,
+  submitRequestFFA,
+  voteToCancelFFA,
+} from "@/escrow/adapters";
 
 const AllUpdatesTable: React.FC = () => {
   const { currentUser } = useUserWallet();
@@ -512,6 +517,101 @@ const QuestUpdatesTable: React.FC = () => {
       setIsLoading(false);
     }
   };
+  const handlePayoutQuest = async () => {
+    await confirmAction(
+      "Are you sure you want to payout this Quest in its entirety?"
+    );
+    const toastId = toast.loading("Paying out Quest...");
+    try {
+      setIsLoading(true);
+      let signature = "";
+      if (currentBounty?.isCreator && currentBounty.currentSubmitter) {
+        signature = await approveRequestFFA(
+          new PublicKey(currentWallet.publicKey),
+          currentBounty?.escrow,
+          currentWallet,
+          program,
+          provider
+        );
+      }
+      const newRelations = updateList(
+        currentBounty.currentSubmitter.relations,
+        [],
+        [BOUNTY_USER_RELATIONSHIP.Completer]
+      );
+      const updatedBounty = await updateBounty({
+        bountyId: currentBounty?.id,
+        currentUserId: currentUser.id,
+        userId: currentBounty.currentSubmitter.userid,
+        relations: newRelations,
+        state: BountyState.COMPLETE,
+        publicKey: currentBounty.currentSubmitter.wallet.publicKey,
+        escrowId: currentBounty?.escrowid,
+        signature,
+        label: "complete-bounty",
+      });
+      setCurrentBounty(updatedBounty);
+      toast.success("Successfully paid out", { id: toastId });
+    } catch (error) {
+      if (
+        (error.message as string).includes(
+          "Wallet is registered to another user"
+        )
+      ) {
+        toast.error("Wallet is registered to another user", { id: toastId });
+      } else {
+        toast.error("Error paying out bounty", { id: toastId });
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleSubmit = async () => {
+    await confirmAction("Are you sure you want to cancel this quest?");
+    const toastId = toast.loading("Cancelling Quest...");
+    try {
+      setIsLoading(true);
+      const signature = await submitRequestFFA(
+        new PublicKey(currentBounty.creator.publicKey),
+        new PublicKey(currentWallet.publicKey),
+        currentBounty.escrow,
+        currentWallet,
+        program,
+        provider
+      );
+      const newRelation = updateList(
+        currentBounty.currentUserRelationsList,
+        [],
+        [BOUNTY_USER_RELATIONSHIP.CurrentSubmitter]
+      );
+      const updatedBounty = await updateBounty({
+        bountyId: currentBounty.id,
+        currentUserId: currentUser.id,
+        userId: currentUser.id,
+        relations: newRelation,
+        state: BountyState.AWAITING_REVIEW,
+        publicKey: currentWallet.publicKey.toString(),
+        escrowId: currentBounty.escrowid,
+        signature,
+        label: "submission",
+      });
+
+      setCurrentBounty(updatedBounty);
+      setIsLoading(false);
+      toast.success("Quest submitted", { id: toastId });
+    } catch (error) {
+      if (
+        (error.message as string).includes(
+          "Wallet is registered to another user"
+        )
+      ) {
+        toast.error("Wallet is registered to another user", { id: toastId });
+      } else {
+        toast.error("Error cancelling Quest", { id: toastId });
+      }
+    }
+  };
 
   const handleCancel = async () => {
     await confirmAction("Are you sure you want to cancel this quest?");
@@ -613,6 +713,29 @@ const QuestUpdatesTable: React.FC = () => {
                 disabled={isLoading || isAwaitingResponse}
               >
                 Vote to Cancel
+              </motion.button>
+            )}
+          <motion.button
+            {...smallClickAnimation}
+            className="bg-white border border-neutral200 ml-auto mr-8 h-9 w-fit px-4 py-2
+              title-text rounded-md text-error disabled:cursor-not-allowed disabled:opacity-80"
+            onClick={handleSubmit}
+            disabled={isLoading || isAwaitingResponse}
+          >
+            Submit
+          </motion.button>
+          {currentBounty.isCreator &&
+            [BountyState.AWAITING_REVIEW].includes(
+              currentBounty.state as BountyState
+            ) && (
+              <motion.button
+                {...smallClickAnimation}
+                className="bg-white border border-neutral200 ml-auto mr-8 h-9 w-fit px-4 py-2
+              title-text rounded-md text-error disabled:cursor-not-allowed disabled:opacity-80"
+                onClick={handlePayoutQuest}
+                disabled={isLoading || isAwaitingResponse}
+              >
+                Payout Quest
               </motion.button>
             )}
           {!currentBounty.isCreator &&

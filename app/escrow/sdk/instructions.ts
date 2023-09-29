@@ -87,6 +87,7 @@ export const createCustodialFeatureFundingAccountInstruction = async (
 ): Promise<{
   ix: TransactionInstruction;
   account: PublicKey;
+  timestamp: string;
 }> => {
   const timestamp = Date.now().toString();
   console.log("timestamp = ", timestamp);
@@ -121,6 +122,7 @@ export const createCustodialFeatureFundingAccountInstruction = async (
       })
       .instruction(),
     account: feature_account,
+    timestamp: timestamp,
   };
 };
 
