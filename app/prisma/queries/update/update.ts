@@ -1,6 +1,7 @@
 import { prisma } from "@/server/db";
 import { QuestProgressState } from "@/types";
 import * as Prisma from "@prisma/client";
+import dayjs from "dayjs";
 
 export const submitReview = async (
   id: number,
@@ -14,6 +15,7 @@ export const submitReview = async (
     data: {
       review: review,
       state: state,
+      reviewedAt: dayjs().toISOString(),
     },
   });
 };
