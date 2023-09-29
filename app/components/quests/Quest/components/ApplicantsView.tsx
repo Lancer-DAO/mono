@@ -38,6 +38,18 @@ const ApplicantsView: FC<Props> = ({
   const { currentUser, currentWallet, program, provider } = useUserWallet();
   const { currentBounty, setCurrentBounty } = useBounty();
   const { mutateAsync: updateBounty } = api.bountyUsers.update.useMutation();
+  api.quote.getHighestQuoteByBounty.useQuery(
+    {
+      bountyId: currentBounty.id,
+    },
+    {
+      enabled: !!currentBounty,
+      onSuccess: (data) => {
+        const tempDepositAmount = data * 0.05;
+        setDepositAmount(Math.floor(tempDepositAmount * 100) / 100);
+      },
+    }
+  );
 
   const [currentApplicantsView, setCurrentApplicantsView] =
     useState<EApplicantsView>(EApplicantsView.All);
@@ -45,12 +57,7 @@ const ApplicantsView: FC<Props> = ({
   const [isAwaitingResponse, setIsAwaitingResponse] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [showFundModal, setShowFundModal] = useState(false);
-
-  // TODO: add logic to determine deposit amount
-  // 5% of highest quote
-  const depositAmount = () => {
-    return 1;
-  };
+  const [depositAmount, setDepositAmount] = useState(0);
 
   const createdAtDate = new Date(
     Number(currentBounty?.createdAt)
@@ -375,7 +382,7 @@ const ApplicantsView: FC<Props> = ({
             <DepositCTAModal
               setShowModal={setShowModal}
               setShowFundModal={setShowFundModal}
-              amount={depositAmount()}
+              amount={depositAmount}
             />
           )}
         </div>
@@ -383,7 +390,7 @@ const ApplicantsView: FC<Props> = ({
       {showFundModal && (
         <FundQuestModal
           setShowModal={setShowFundModal}
-          amount={depositAmount()}
+          amount={depositAmount}
         />
       )}
     </>
