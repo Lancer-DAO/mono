@@ -26,15 +26,16 @@ const CheckpointEdit: FC<Props> = ({
 }) => {
   const { currentBounty } = useBounty();
 
-  const [tempCheckpoint, setTempCheckpoint] = useState<Checkpoint>(() => {
-    const storedForms =
-      JSON.parse(localStorage.getItem("checkpointTempData")) || {};
-    return storedForms[currentBounty.id]?.checkpointTemp || checkpoint;
-  });
-  const [shouldStore, setShouldStore] = useState(true);
+  const [tempCheckpoint, setTempCheckpoint] = useState<Checkpoint | null>(
+    () => {
+      const savedData = localStorage.getItem(
+        `tempCheckpointData-${currentBounty.id}`
+      );
+      return savedData ? JSON.parse(savedData) : checkpoint;
+    }
+  );
 
   const editCheckpoint = () => {
-    setShouldStore(false);
     setQuoteData((prevData) => {
       const updatedData = { ...prevData };
       updatedData.checkpoints[index] = tempCheckpoint;
@@ -52,11 +53,7 @@ const CheckpointEdit: FC<Props> = ({
       return updatedData;
     });
 
-    // delete from local storage
-    let storedFormsData =
-      JSON.parse(localStorage.getItem("checkpointTempData")) ?? {};
-    delete storedFormsData[currentBounty.id];
-    localStorage.setItem("checkpointTempData", JSON.stringify(storedFormsData));
+    localStorage.removeItem(`tempCheckpointData-${currentBounty.id}`);
   };
 
   const deleteCheckpoint = () => {
@@ -83,22 +80,13 @@ const CheckpointEdit: FC<Props> = ({
     return { __html: markdown };
   };
 
-  // useEffect to update local storage whenever application data changes
   useEffect(() => {
-    if (!shouldStore) {
-      setShouldStore(true); // reset for next time
-      return; // exit effect to avoid overwriting storage
-    }
-    console.log("RUNNING!!!");
-    let storedFormsData =
-      JSON.parse(localStorage.getItem("checkpointTempData")) ?? {};
-
-    storedFormsData[currentBounty.id] = {
-      checkpointTemp: tempCheckpoint,
-    };
-
-    localStorage.setItem("checkpointTempData", JSON.stringify(storedFormsData));
-  }, [currentBounty.id, tempCheckpoint, shouldStore]);
+    console.log("runningggg");
+    localStorage.setItem(
+      `tempCheckpointData-${currentBounty.id}`,
+      JSON.stringify(tempCheckpoint)
+    );
+  }, [tempCheckpoint, currentBounty.id]);
 
   return (
     <div className="flex flex-col">

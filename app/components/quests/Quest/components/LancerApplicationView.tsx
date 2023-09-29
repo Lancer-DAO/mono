@@ -30,30 +30,30 @@ const LancerApplicationView: FC = () => {
   const { mutateAsync: createQuote } = api.quote.createQuote.useMutation();
 
   const [quoteData, setQuoteData] = useState(() => {
-    const storedForms = JSON.parse(localStorage.getItem("formsData")) || {};
-    return (
-      storedForms[currentBounty.id]?.quoteData || {
-        title: "",
-        description: "",
-        estimatedTime: 0,
-        price: 0,
-        state: QuestProgressState.NEW,
-        checkpoints: [],
-      }
-    );
+    const savedData = localStorage.getItem(`quoteData-${currentBounty.id}`);
+    return savedData
+      ? JSON.parse(savedData)
+      : {
+          title: "",
+          description: "",
+          estimatedTime: 0,
+          price: 0,
+          state: QuestProgressState.NEW,
+          checkpoints: [],
+        };
   });
 
   const [applyData, setApplyData] = useState(() => {
-    const storedForms = JSON.parse(localStorage.getItem("formsData")) || {};
-    return (
-      storedForms[currentBounty.id]?.applyData || {
-        portfolio: currentUser.website,
-        linkedin: currentUser.linkedin,
-        about: currentUser.bio,
-        resume: currentUser.resume,
-        details: "",
-      }
-    );
+    const savedData = localStorage.getItem(`applyData-${currentBounty.id}`);
+    return savedData
+      ? JSON.parse(savedData)
+      : {
+          portfolio: currentUser.website,
+          linkedin: currentUser.linkedin,
+          about: currentUser.bio,
+          resume: currentUser.resume,
+          details: "",
+        };
   });
 
   const confirmAction = (): Promise<void> => {
@@ -141,9 +141,8 @@ const LancerApplicationView: FC = () => {
       toast.success("Application sent", { id: toastId });
 
       // remove locally stored form data
-      let storedForms = JSON.parse(localStorage.getItem("formsData")) || {};
-      delete storedForms[currentBounty.id];
-      localStorage.setItem("formsData", JSON.stringify(storedForms));
+      localStorage.removeItem(`quoteData-${currentBounty.id}`);
+      localStorage.removeItem(`applyData-${currentBounty.id}`);
     } catch (error) {
       if (
         (error.message as string).includes(
@@ -166,17 +165,19 @@ const LancerApplicationView: FC = () => {
     setHasApplied(hasApplied);
   }, [currentBounty, currentUser]);
 
-  // useEffect to update local storage whenever application data changes
   useEffect(() => {
-    let storedFormsData = JSON.parse(localStorage.getItem("formsData")) ?? {};
+    localStorage.setItem(
+      `quoteData-${currentBounty.id}`,
+      JSON.stringify(quoteData)
+    );
+  }, [quoteData, currentBounty.id]);
 
-    storedFormsData[currentBounty.id] = {
-      quoteData: quoteData,
-      applyData: applyData,
-    };
-
-    localStorage.setItem("formsData", JSON.stringify(storedFormsData));
-  }, [quoteData, currentBounty.id, applyData]);
+  useEffect(() => {
+    localStorage.setItem(
+      `applyData-${currentBounty.id}`,
+      JSON.stringify(applyData)
+    );
+  }, [applyData, currentBounty.id]);
 
   return (
     <>
