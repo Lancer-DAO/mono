@@ -23,10 +23,10 @@ export const GoodToGo: FC<{
           ? "Create a quest on Lancer to see how the future works."
           : "Apply to a quest on Lancer to see how the future works."}
       </div>
-      <div className="flex flex-col h-[550px] items-center justify-center">
+      <div className="flex flex-col h-[430px] items-center justify-center">
         <div className="flex relative">
-          <div className="relative h-[8px] w-[500px] z-0">
-            <div className="absolute  left-[-96px] top-[-100px]">
+          <div className="relative h-[80px] w-[500px] z-0">
+            <div className="absolute  left-[-96px] top-[-20px]">
               <DotsGrid
                 width="692px"
                 height="244px"
@@ -34,7 +34,7 @@ export const GoodToGo: FC<{
               />
             </div>
 
-            <div className="absolute  left-[-390px] top-[-140px]">
+            <div className="absolute  left-[-390px] top-[-40px]">
               {selectedClass === "Noble" ? (
                 <OnboardingFlowNoble width="1279" height="182" />
               ) : (
@@ -104,7 +104,7 @@ export const GoodToGo: FC<{
       </div>
       <motion.button
         {...smallClickAnimation}
-        className={`h-[50px] mt-5 w-full rounded-md text-base ${
+        className={`h-[50px]  w-full rounded-md text-base ${
           selectedClass === "Noble" ? "bg-noble100" : "bg-primary200"
         } text-white 
         } `}
@@ -114,7 +114,7 @@ export const GoodToGo: FC<{
       >
         {`Start your Journey`}
       </motion.button>
-      <div className="flex gap-4 mt-8">
+      <div className="flex gap-4 mt-4">
         <div className="bg-neutral-200 h-2 w-2 rounded-full" />
         <div className="bg-neutral-200 h-2 w-2 rounded-full" />
         <div className="bg-neutral-400 h-2 w-2 rounded-full" />
