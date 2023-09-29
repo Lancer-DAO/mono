@@ -32,7 +32,7 @@ const ApplicantProfileCard: FC<Props> = ({
       bountyId: currentBounty.id,
       userId: user.userid,
     },
-    { enabled: !!currentBounty}
+    { enabled: !!currentBounty }
   );
 
   if (!currentBounty) return null;
@@ -71,7 +71,7 @@ const ApplicantProfileCard: FC<Props> = ({
             text-neutral600 title-text px-4 py-2 
             disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            <Flame width={16} height={16} className="text-tertiary200" /> 
+            <Flame width={16} height={16} className="text-tertiary200" />{" "}
             {`$${quote?.price} Quote`}
           </motion.button>
         )}
@@ -92,7 +92,7 @@ const ApplicantProfileCard: FC<Props> = ({
               disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <Flame width={16} height={16} className="text-tertiary200" />{" "}
-              $1500 Quote
+              {`$${quote?.price} Quote`}
             </motion.button>
             {Number(currentBounty.escrow.amount) > 0 && (
               <motion.button
