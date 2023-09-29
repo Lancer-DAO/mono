@@ -26,6 +26,7 @@ model Bounty {
   title         String   @db.VarChar(256)
   type          String?  @db.VarChar(24)
   links         String   @default("") @db.VarChar(1024)
+  chatUrl       String?
 
   // Relations
   escrow     Escrow?       @relation(fields: [escrowid], references: [id])

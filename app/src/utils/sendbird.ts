@@ -35,6 +35,8 @@ export const createGroupChannel = async ({
     invitedUserIds: lancers,
     isDistinct: false,
   });
+
+  return channel.url;
 };
 
 export const createDM = async (ids: string[]) => {
