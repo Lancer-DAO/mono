@@ -30,11 +30,10 @@ const stateMap = {
 
 interface Props {
   type: "profile" | "quests";
-  user: User;
   allBounties: BountyPreview[];
 }
 
-const QuestTable: React.FC<Props> = ({ type, user, allBounties }) => {
+const QuestTable: React.FC<Props> = ({ type, allBounties }) => {
   // state
   const [tags, setTags] = useState<string[]>([]);
   const [bounds, setPriceBounds] = useState<[number, number]>([5, 10000]);
@@ -68,7 +67,9 @@ const QuestTable: React.FC<Props> = ({ type, user, allBounties }) => {
         }
         // filter out quests that don't include the user
         if (
-          !bounty.users.some((bountyUser) => bountyUser.userid === user?.id)
+          !bounty.users.some(
+            (bountyUser) => bountyUser.userid === currentUser?.id
+          )
         ) {
           return false;
         }
@@ -105,7 +106,7 @@ const QuestTable: React.FC<Props> = ({ type, user, allBounties }) => {
       });
     }
     setFilteredBounties(filteredBounties);
-  }, [filters, allBounties, currentUser, type]);
+  }, [filters, allBounties, currentUser, type, allIndustries, tags?.length]);
 
   useEffect(() => {
     // Get the meta-info off all bounties that are used for filters. Specifically
@@ -145,7 +146,7 @@ const QuestTable: React.FC<Props> = ({ type, user, allBounties }) => {
         tags: allTags,
       });
     }
-  }, [allBounties, allIndustries]);
+  }, [allBounties, allIndustries, filters]);
 
   return (
     <div

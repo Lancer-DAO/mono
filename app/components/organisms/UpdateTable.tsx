@@ -1,18 +1,12 @@
+import { useEffect, useState } from "react";
 import { useUserWallet } from "@/src/providers";
 import dayjs from "dayjs";
 import { DisputeModal, UpdateTableItem } from "..";
-
-import {
-  getUnreadMessageCount,
-  getUnreadChannels,
-  UnreadMessage,
-} from "@/src/utils/sendbird";
-import { useEffect, useState } from "react";
+import { getUnreadChannels } from "@/src/utils/sendbird";
 import { api, updateList } from "@/src/utils";
 import {
   getApplicationTypeFromLabel,
   UpdateItemProps,
-  UpdateType,
 } from "../molecules/UpdateTableItem";
 import { useBounty } from "@/src/providers/bountyProvider";
 import { BountyState, BOUNTY_USER_RELATIONSHIP } from "@/types";
@@ -21,6 +15,7 @@ import { motion } from "framer-motion";
 import toast from "react-hot-toast";
 import { PublicKey } from "@solana/web3.js";
 import { cancelFFA, voteToCancelFFA } from "@/escrow/adapters";
+import Image from "next/image";
 
 const AllUpdatesTable: React.FC = () => {
   const { currentUser } = useUserWallet();
@@ -34,7 +29,6 @@ const AllUpdatesTable: React.FC = () => {
     api.bountyUsers.getBountyUpdatesLancer.useQuery(undefined, {
       enabled: !!currentUser,
     });
-
   const { data: cancelVotes } = api.bountyUsers.getCancelVotesLancer.useQuery(
     undefined,
     {
@@ -53,7 +47,6 @@ const AllUpdatesTable: React.FC = () => {
       enabled: !!currentUser,
     }
   );
-
   const { data: lancerUpdates } = api.update.getQuestUpdatesLancer.useQuery(
     undefined,
     {
@@ -209,16 +202,24 @@ const AllUpdatesTable: React.FC = () => {
   ]);
 
   return (
-    currentUser && (
-      <div className="flex flex-col w-full border-solid border bg-white border-neutralBorder500 rounded-lg">
-        <div className="px-8 py-4 text-black">Updates History</div>
-        {allUpdates?.map((update) => {
+    <div className="flex flex-col w-full border-solid border bg-white border-neutralBorder500 rounded-lg">
+      <div className="px-8 py-4 text-black">Updates History</div>
+      {currentUser ? (
+        allUpdates?.map((update) => {
           return <UpdateTableItem {...update} key={update.key} />;
-        })}
+        })
+      ) : (
+        <Image
+          src="/assets/images/placeholder.png"
+          width={200}
+          height={200}
+          alt="no updates"
+          className="mx-auto py-5"
+        />
+      )}
 
-        <div className="px-8 py-4 text-black"></div>
-      </div>
-    )
+      <div className="px-8 py-4 text-black"></div>
+    </div>
   );
 };
 
