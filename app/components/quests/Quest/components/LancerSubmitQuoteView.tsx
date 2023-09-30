@@ -145,13 +145,13 @@ const LancerSubmitQuoteView: FC<Props> = ({
         </div>
       )}
       {!currentUser.hasBeenApproved && (
-        <>
+        <div className="px-5 pt-5">
           <AlertCard
             type="negative"
             title="Not Approved"
             description="You Must Be Approved to Apply to Quests"
           />
-        </>
+        </div>
       )}
       <div className="relative">
         {!currentUser.hasBeenApproved && (

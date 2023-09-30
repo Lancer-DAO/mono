@@ -28,7 +28,6 @@ interface Props {
   setIsLoading: Dispatch<SetStateAction<boolean>>;
   isAwaitingResponse: boolean;
   setIsAwaitingResponse: Dispatch<SetStateAction<boolean>>;
-  depositAmount: number;
 }
 
 const IndividualApplicantView: FC<Props> = ({
@@ -40,7 +39,6 @@ const IndividualApplicantView: FC<Props> = ({
   setIsLoading,
   isAwaitingResponse,
   setIsAwaitingResponse,
-  depositAmount,
 }) => {
   const { currentUser, currentWallet, program, provider } = useUserWallet();
   const { currentBounty, setCurrentBounty } = useBounty();
@@ -56,6 +54,14 @@ const IndividualApplicantView: FC<Props> = ({
   const { data: checkpoints } = api.checkpoint.getCheckpointsByQuote.useQuery(
     { id: quote?.id },
     { enabled: !!quote }
+  );
+  const { data: highestQuote } = api.quote.getHighestQuoteByBounty.useQuery(
+    {
+      bountyId: currentBounty.id,
+    },
+    {
+      enabled: !!currentBounty,
+    }
   );
 
   const [showModal, setShowModal] = useState(false);
@@ -375,7 +381,7 @@ const IndividualApplicantView: FC<Props> = ({
               prompt="Now that you have selected a Lancer for your Quest, you will need to deposit the remaining amount of the quote into escrow. This will be released to the submitter once you have approved their work. These funds are fully refundable if the Quest is cancelled or the submitter is unable to complete the Quest."
               setShowModal={setShowModal}
               setShowFundModal={setShowFundModal}
-              amount={Number(quote.price) - Number(currentBounty.escrow.amount)}
+              amount={Number(quote.price) - Number(highestQuote * 0.05)}
             />
           )}
         </div>
@@ -384,8 +390,7 @@ const IndividualApplicantView: FC<Props> = ({
         <FundQuestModal
           setShowModal={setShowFundModal}
           setShowFundModal={setShowFundModal}
-          amount={Number(quote.price) - Number(currentBounty.escrow.amount)}
-          // amount={0.02}
+          amount={Number(quote.price) - Number(highestQuote * 0.05)}
           handleApproveForQuest={handleApproveForQuest}
           approving={true}
         />
