@@ -8,7 +8,6 @@ import {
   BountyState,
   Filters,
   TABLE_BOUNTY_STATES,
-  User,
 } from "@/types";
 import { AnimatePresence } from "framer-motion";
 import { QuestFilters, QuestRow } from "./components";
@@ -42,10 +41,10 @@ const QuestTable: React.FC<Props> = ({ type }) => {
   // api + context
   const { questsPage, setQuestsPage, maxPages, allBounties } = useBounty();
   const { currentUser } = useUserWallet();
-  const { allIndustries } = useIndustry();
+  const { allIndustries, userIndustries } = useIndustry();
 
   const [filters, setFilters] = useState<Filters>({
-    industries: industryNames,
+    industries: userIndustries?.map((industry) => industry.name) || [],
     tags: tags,
     states: TABLE_BOUNTY_STATES,
   });
@@ -143,8 +142,8 @@ const QuestTable: React.FC<Props> = ({ type }) => {
   }, [allBounties, allIndustries]);
 
   useEffect(() => {
-    if (industryNames.length === 0) return;
-    if (allBounties && allBounties?.length !== 0) {
+    if (!userIndustries || !allBounties) return;
+    if (allBounties?.length !== 0) {
       const allTags = allBounties
         ?.map((bounty) => bounty.tags.map((tag) => tag.name))
         ?.reduce(
@@ -159,10 +158,10 @@ const QuestTable: React.FC<Props> = ({ type }) => {
       setFilters({
         ...filters,
         tags: allTags,
-        industries: industryNames,
+        industries: userIndustries?.map((industry) => industry.name) || [],
       });
     }
-  }, [allBounties, industryNames]);
+  }, [allBounties, userIndustries]);
 
   return (
     <div
@@ -178,7 +177,7 @@ const QuestTable: React.FC<Props> = ({ type }) => {
               count={
                 filteredBounties ? filteredBounties.length : allBounties.length
               }
-              industries={industryNames}
+              industries={allIndustries.map((industry) => industry.name)}
               filters={filters}
               setFilters={setFilters}
             />
