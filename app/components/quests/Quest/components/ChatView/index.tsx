@@ -5,10 +5,14 @@ import { api } from "@/src/utils";
 import { BountyState } from "@/types";
 import { motion } from "framer-motion";
 import { X } from "lucide-react";
-import { Dispatch, FC, SetStateAction, useState } from "react";
+import { Dispatch, FC, SetStateAction, useEffect, useState } from "react";
 import ActionsCardBanner from "../ActionsCardBanner";
 import AlertCard from "../AlertCard";
 import { QuestActionView } from "../QuestActions";
+import { createDM } from "@/src/utils/sendbird";
+import { ChannelProvider } from "@sendbird/uikit-react/Channel/context";
+import ChatList from "./ChatList";
+import SendMessage from "./SendMessage";
 
 interface Props {
   selectedSubmitter: BountyUserType | null;
@@ -26,6 +30,18 @@ const ChatView: FC<Props> = ({ selectedSubmitter, setCurrentActionView }) => {
     { id: currentBounty.id },
     { enabled: !!currentBounty }
   );
+
+  useEffect(() => {
+    (async () => {
+      const _url = await createDM([
+        String(currentBounty.creator.userid),
+        String(selectedSubmitter.userid),
+      ]);
+
+      setChannel(_url);
+    })();
+  }, [selectedSubmitter]);
+
   return (
     <div className="flex h-full max-h-[24.5rem] flex-col relative overflow-hidden">
       <ActionsCardBanner
@@ -51,7 +67,7 @@ const ChatView: FC<Props> = ({ selectedSubmitter, setCurrentActionView }) => {
             <X height={24} width={24} className="text-white" />
           </motion.button>
         )}
-        {(currentBounty.isApprovedSubmitter && !!update === false) && (
+        {currentBounty.isApprovedSubmitter && !!update === false && (
           <motion.button
             {...smallClickAnimation}
             className="bg-secondary200 text-white title-text px-4 py-2 rounded-md"
@@ -61,7 +77,7 @@ const ChatView: FC<Props> = ({ selectedSubmitter, setCurrentActionView }) => {
           </motion.button>
         )}
       </ActionsCardBanner>
-      <div className="px-5 pt-5">
+      <div className="">
         {update && currentBounty.isCreator && (
           <AlertCard
             type="positive"
@@ -83,6 +99,15 @@ const ChatView: FC<Props> = ({ selectedSubmitter, setCurrentActionView }) => {
             description="Your update has been sent!"
           />
         )}
+
+        <ChannelProvider channelUrl={channel}>
+          <div className="w-full h-[calc(24.5rem-68px)] flex flex-col justify-between">
+            <div id="chat" className="flex-grow overflow-y-auto">
+              <ChatList />
+            </div>
+            <SendMessage />
+          </div>
+        </ChannelProvider>
       </div>
     </div>
   );

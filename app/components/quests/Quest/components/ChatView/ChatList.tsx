@@ -23,22 +23,22 @@ const ChatList = () => {
             key={key}
           >
             <div className={`flex gap-x-2 ${isSender && "flex-row-reverse"}`}>
-              {
-                // if theres 2 consiqutive messages from the same sender, only show profile pic on the last one
-                channelState.allMessages[key + 1] &&
-                channelState.allMessages[key + 1].sender.userId ===
-                  message.sender.userId ? (
-                  <div className="w-8 h-8"></div>
-                ) : (
-                  <Image
-                    src={message.sender.plainProfileUrl}
-                    alt="chat user"
-                    width={32}
-                    height={32}
-                    className="rounded-full overflow-hidden"
-                  />
-                )
-              }
+              <div className="w-8 h-8 relative">
+                {
+                  // if theres 2 consiqutive messages from the same sender, only show profile pic on the last one
+                  channelState.allMessages[key + 1] &&
+                    channelState.allMessages[key + 1].sender.userId ===
+                      message.sender.userId ? null : (
+                      <Image
+                        src={message.sender.plainProfileUrl}
+                        alt="chat user"
+                        width={32}
+                        height={32}
+                        className="rounded-full overflow-hidden flex-shrink-0"
+                      />
+                    )
+                }
+              </div>
               <div
                 className={`p-2.5 py-1.5 rounded text-black ${
                   isSender ? "bg-secondary100" : "bg-neutral100"
