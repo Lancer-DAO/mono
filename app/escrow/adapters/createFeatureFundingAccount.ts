@@ -35,10 +35,16 @@ export const createFFA = async (
   const res = await sendGaslessTx([ix]);
   console.log("Sending out second tx");
 
-  return {
-    timestamp,
-    signature: res.signature,
-    creator: new PublicKey(wallet.publicKey),
-    escrowKey: account,
-  };
+  if (res.status == "error") {
+    return {
+      error: res.message,
+    };
+  } else {
+    return {
+      timestamp,
+      signature: res.signature,
+      creator: new PublicKey(wallet.publicKey),
+      escrowKey: account,
+    };
+  }
 };

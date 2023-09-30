@@ -93,8 +93,14 @@ export default async function handler(
     Buffer.from(base58.decode(signature))
   );
 
-  const txid = await connection.sendRawTransaction(transaction.serialize());
+  try {
+    const txid = await connection.sendRawTransaction(transaction.serialize());
 
-  console.log("Tx Id: ", txid);
-  res.status(200).json({ status: "ok", txid });
+    console.log("Tx Id: ", txid);
+    res.status(200).json({ status: "ok", txid });
+  }
+  catch (e) {
+    res.status(200).json({ status: "error", message: e.toString() })
+
+  }
 }

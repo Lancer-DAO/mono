@@ -32,5 +32,7 @@ export const sendGaslessTx = async (instructions: TransactionInstruction[], sign
     const json = await res.json()
     return {
         signature: json.txid,
+        status: json.status,
+        message: json.message,
     };
 }
