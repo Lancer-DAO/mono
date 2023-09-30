@@ -528,7 +528,6 @@ const QuestUpdatesTable: React.FC = () => {
     try {
       setIsLoading(true);
       let signature = "";
-      debugger;
       if (currentBounty?.isCreator && currentBounty.currentSubmitter) {
         signature = await approveRequestFFA(
           new PublicKey(currentBounty.currentSubmitter.publicKey),
