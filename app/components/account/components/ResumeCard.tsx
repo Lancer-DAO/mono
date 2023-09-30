@@ -2,25 +2,28 @@ import { Spinner } from "@/components/molecules/Spinner";
 import { api } from "@/src/utils";
 import { useUploadThing } from "@/src/utils/uploadthing";
 import "@uploadthing/react/styles.css";
-import { Image as ImageIcon, Trash2, UploadCloudIcon } from "lucide-react";
-import { useState } from "react";
+import { Image as ImageIcon, Trash2 } from "lucide-react";
+import { Dispatch, SetStateAction, useState } from "react";
 import { UploadCloud } from "react-feather";
 import toast from "react-hot-toast";
-import { generateMimeTypes, generatePermittedFileTypes } from "uploadthing/client";
+import {
+  generateMimeTypes,
+  generatePermittedFileTypes,
+} from "uploadthing/client";
 
 export const ResumeCard: React.FC<{
   resumeUrl: string;
-  setResumeUrl: (value: string) => void;
-  preview?: boolean;
+  setResumeUrl: Dispatch<SetStateAction<string>>;
   setShowModal?: (value: boolean) => void;
-}> = ({ preview, setShowModal, setResumeUrl, resumeUrl }) => {
+  editing?: boolean;
+}> = ({ setShowModal, setResumeUrl, resumeUrl, editing }) => {
   const { mutateAsync: updateResume } = api.users.updateResume.useMutation();
   const { mutateAsync: deleteResume } = api.users.deleteResume.useMutation();
-  
+
   const [isAwaitingResponse, setIsAwaitingResponse] = useState(false);
 
   const hasResume = (resume: string) => {
-    return (resume !== "" && resume !== null);
+    return resume !== "" && resume !== null;
   };
 
   const { startUpload, isUploading, permittedFileInfo } = useUploadThing(
@@ -34,11 +37,9 @@ export const ResumeCard: React.FC<{
         toast.error(`Error uploading resume: ${error.message}`);
       },
     }
-  )
-
-  const { fileTypes } = generatePermittedFileTypes(
-    permittedFileInfo?.config,
   );
+
+  const { fileTypes } = generatePermittedFileTypes(permittedFileInfo?.config);
 
   const confirmAction = (): Promise<void> => {
     setIsAwaitingResponse(true);
@@ -85,7 +86,7 @@ export const ResumeCard: React.FC<{
     });
   };
 
-  const handleResumeUpload = async (url) => {
+  const handleResumeUpload = async (url: string) => {
     const { resume } = await updateResume({ resume: url });
     setResumeUrl(resume);
     setShowModal && setShowModal(false);
@@ -97,6 +98,7 @@ export const ResumeCard: React.FC<{
       await updateResume({ resume: "" });
       await deleteResume({ fileUrl: resumeUrl });
       setResumeUrl("");
+      toast.success("Resume deleted successfully");
     } catch (error) {
       console.log(error);
       toast.error(`Error deleting resume: ${error.message}`);
@@ -107,7 +109,7 @@ export const ResumeCard: React.FC<{
     <>
       {hasResume(resumeUrl) && (
         <div className="flex items-center gap-2">
-          {(setResumeUrl !== null) && (
+          {editing && (
             <button
               disabled={isAwaitingResponse}
               onClick={() => handleResumeDelete()}
@@ -127,7 +129,7 @@ export const ResumeCard: React.FC<{
           </button>
         </div>
       )}
-      {!hasResume(resumeUrl) && setResumeUrl && (
+      {!hasResume(resumeUrl) && editing && (
         <label className="min-w-[105px] rounded-md bg-white border border-neutral200 flex items-center justify-center gap-2 h-8 px-2 cursor-pointer">
           <input
             className="hidden"
@@ -139,7 +141,7 @@ export const ResumeCard: React.FC<{
             }}
             disabled={isAwaitingResponse}
           />
-          {isUploading? (
+          {isUploading ? (
             <Spinner />
           ) : (
             <>

@@ -87,7 +87,11 @@ const ViewLinks = ({
             </div>
           )}
         </div>
-        <ResumeCard resumeUrl={resumeUrl} setResumeUrl={null} />
+        <ResumeCard
+          resumeUrl={resumeUrl}
+          setResumeUrl={() => null}
+          editing={false}
+        />
       </div>
     </>
   );
