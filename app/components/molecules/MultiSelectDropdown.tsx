@@ -8,6 +8,7 @@ interface Props {
   selected: Option[];
   onChange: (selected: Option[]) => void;
   version?: "default" | "white";
+  extraClasses?: string;
 }
 
 const MultiSelectDropdown: React.FC<Props> = ({
@@ -15,6 +16,7 @@ const MultiSelectDropdown: React.FC<Props> = ({
   selected,
   onChange,
   version,
+  extraClasses = "",
 }) => {
   const [isOpen, setIsOpen] = useState(false);
 
@@ -74,10 +76,10 @@ const MultiSelectDropdown: React.FC<Props> = ({
 
   if (version === "white") {
     return (
-      <div className="relative w-full h-[34px]" ref={menuRef}>
+      <div className={`relative w-full h-[34px] ${extraClasses}`} ref={menuRef}>
         <div
           className="h-full w-full flex justify-between bg-transparent border border-neutral-200 text-neutral500 
-        items-center cursor-pointer px-4 rounded-lg"
+          items-center cursor-pointer px-4 rounded-lg"
           onClick={toggleOpen}
         >
           <div className="text-[14px] text-neutral-500 overflow-hidden whitespace-nowrap overflow-ellipsis">
@@ -102,7 +104,10 @@ const MultiSelectDropdown: React.FC<Props> = ({
   }
 
   return (
-    <div className="relative max-w-[220px] h-[40px]" ref={menuRef}>
+    <div
+      className={`relative max-w-[220px] h-[40px] ${extraClasses}`}
+      ref={menuRef}
+    >
       <div
         className="h-full flex justify-between bg-transparent border border-[#6B7699] text-white 
         items-center cursor-pointer px-4 rounded-lg"

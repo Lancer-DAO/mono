@@ -11,6 +11,7 @@ import { MediaType } from "@/prisma/queries/media";
 import { MintType } from "@/prisma/queries/mint";
 
 export type Filters = {
+  industries: string[];
   tags: string[];
   states: string[];
 };

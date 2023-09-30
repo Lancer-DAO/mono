@@ -9,6 +9,7 @@ import { useUserWallet } from "@/src/providers";
 interface QuestFiltersProps {
   tags: string[];
   // orgs: string[];
+  industries: string[];
   filters: Filters;
   setFilters: Dispatch<SetStateAction<Filters>>;
   count: number;
@@ -18,6 +19,7 @@ export const QuestFilters = ({
   tags,
   // orgs,
   filters,
+  industries,
   setFilters,
   count,
 }: QuestFiltersProps) => {
@@ -31,7 +33,31 @@ export const QuestFilters = ({
       </div>
 
       <div className="flex gap-3">
+        {/* industries */}
         <MultiSelectDropdown
+          extraClasses="w-[150px]"
+          options={industries.map((industry) => {
+            return {
+              value: industry,
+              label: capitalize(industry),
+            };
+          })}
+          selected={filters.industries.map((industry) => {
+            return {
+              value: industry,
+              label: capitalize(industry),
+            };
+          })}
+          onChange={(options) => {
+            setFilters({
+              ...filters,
+              industries: options.map((option) => option.value as string),
+            });
+          }}
+        />
+        {/* tags */}
+        <MultiSelectDropdown
+          extraClasses="w-[200px]"
           options={tags.map((tag) => {
             return {
               value: tag,
@@ -51,7 +77,9 @@ export const QuestFilters = ({
             });
           }}
         />
+        {/* states */}
         <MultiSelectDropdown
+          extraClasses="w-[200px]"
           options={BOUNTY_STATES.map((state) => {
             return {
               value: state,

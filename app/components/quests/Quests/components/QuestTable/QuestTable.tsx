@@ -35,18 +35,20 @@ interface Props {
 const QuestTable: React.FC<Props> = ({ type }) => {
   // state
   const [tags, setTags] = useState<string[]>([]);
-  const [bounds, setPriceBounds] = useState<[number, number]>([5, 10000]);
-  const [industriesFilter, setIndustriesFilter] = useState<string[]>([]);
+  const [priceBounds, setPriceBounds] = useState<[number, number]>([5, 10000]);
+  const [industryNames, setIndustryNames] = useState<string[]>([]);
   const [filteredBounties, setFilteredBounties] = useState<BountyPreview[]>();
-  const [filters, setFilters] = useState<Filters>({
-    tags: tags,
-    states: TABLE_BOUNTY_STATES,
-  });
 
   // api + context
   const { questsPage, setQuestsPage, maxPages, allBounties } = useBounty();
   const { currentUser } = useUserWallet();
   const { allIndustries } = useIndustry();
+
+  const [filters, setFilters] = useState<Filters>({
+    industries: industryNames,
+    tags: tags,
+    states: TABLE_BOUNTY_STATES,
+  });
 
   function snakeToTitleCase(snakeCaseStr: string) {
     return snakeCaseStr
@@ -81,6 +83,7 @@ const QuestTable: React.FC<Props> = ({ type }) => {
       });
     } else {
       filteredBounties = allBounties?.filter((bounty) => {
+        // filter out test quests unless user is a Lancer dev
         if ((!currentUser || !currentUser.isLancerDev) && bounty.isTest) {
           return false;
         }
@@ -93,6 +96,14 @@ const QuestTable: React.FC<Props> = ({ type }) => {
           bountyTags.length !== 0 &&
           commonTags?.length === 0 &&
           tags?.length !== 0
+        ) {
+          return false;
+        }
+
+        if (
+          !bounty.industries.some((industry) =>
+            filters.industries.includes(industry.name)
+          )
         ) {
           return false;
         }
@@ -127,7 +138,7 @@ const QuestTable: React.FC<Props> = ({ type }) => {
       const uniqueTags = getUniqueItems(allTags);
       const mappedInds = allIndustries.map((industry) => industry.name);
 
-      setIndustriesFilter(mappedInds);
+      setIndustryNames(mappedInds);
 
       setTags(uniqueTags);
       const allPrices = allBounties.map((bounty) =>
@@ -161,6 +172,7 @@ const QuestTable: React.FC<Props> = ({ type }) => {
               count={
                 filteredBounties ? filteredBounties.length : allBounties.length
               }
+              industries={industryNames}
               filters={filters}
               setFilters={setFilters}
             />
