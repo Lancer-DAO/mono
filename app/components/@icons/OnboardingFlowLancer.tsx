@@ -16,7 +16,7 @@ const OnboardingFlowLancer = ({
       <path
         d="M0 177.77H153.279C157.009 177.77 160.032 174.746 160.032 171.017V107.752C160.032 104.023 163.055 101 166.784 101H273.978C275.604 101 277.176 100.413 278.405 99.3466L320.095 63.1534C321.324 62.0871 322.896 61.5 324.522 61.5H613.248C616.977 61.5 620 58.4769 620 54.7476V36.7524C620 33.0232 623.023 30 626.752 30H883.248C886.977 30 890 33.0231 890 36.7524V107.748C890 111.477 893.023 114.5 896.752 114.5H1279"
         stroke="#EDF2F1"
-        stroke-width="6.75239"
+        strokeWidth="6.75239"
       />
       <g filter="url(#filter0_d_1182_27182)">
         <rect
@@ -45,7 +45,7 @@ const OnboardingFlowLancer = ({
           height="41.8648"
           rx="19.9196"
           stroke="url(#paint0_linear_1182_27182)"
-          stroke-width="0.675239"
+          strokeWidth="0.675239"
         />
       </g>
       <g filter="url(#filter1_bd_1182_27182)">
@@ -77,7 +77,7 @@ const OnboardingFlowLancer = ({
           height="39.3248"
           rx="19.6624"
           stroke="url(#paint1_linear_1182_27182)"
-          stroke-width="0.675239"
+          strokeWidth="0.675239"
           shape-rendering="crispEdges"
         />
       </g>
@@ -110,7 +110,7 @@ const OnboardingFlowLancer = ({
           height="39.3248"
           rx="19.6624"
           stroke="url(#paint2_linear_1182_27182)"
-          stroke-width="0.675239"
+          strokeWidth="0.675239"
           shape-rendering="crispEdges"
         />
       </g>
@@ -145,23 +145,23 @@ const OnboardingFlowLancer = ({
         height="44.9324"
         rx="19.9196"
         stroke="#B4F1DE"
-        stroke-width="0.675239"
+        strokeWidth="0.675239"
       />
       <circle cx="820.157" cy="26.3356" r="10.1286" fill="#14BB88" />
       <g clip-path="url(#clip0_1182_27182)">
         <path
           d="M823.534 22.9609L817.345 29.1506L814.531 26.3371"
           stroke="white"
-          stroke-width="1.1254"
-          stroke-linecap="round"
-          stroke-linejoin="round"
+          strokeWidth="1.1254"
+          strokeLinecap="round"
+          strokeLinejoin="round"
         />
         <path
           d="M825.785 25.2148L821.565 29.4351L820.721 28.591"
           stroke="white"
-          stroke-width="1.1254"
-          stroke-linecap="round"
-          stroke-linejoin="round"
+          strokeWidth="1.1254"
+          strokeLinecap="round"
+          strokeLinejoin="round"
         />
       </g>
       <defs>

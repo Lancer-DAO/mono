@@ -31,3 +31,16 @@ export const getMany = async () => {
   });
   return industries;
 };
+
+export const getIndustriesByUserId = async (userId: number) => {
+  const industries = await prisma.industry.findMany({
+    where: {
+      users: {
+        some: {
+          id: userId,
+        },
+      },
+    },
+  });
+  return industries;
+};

@@ -48,19 +48,19 @@ export const CreateYourProfile: FC<{
         {` Give some love to your profile and earn the Level 1 badge to be able to
         ${selectedClass === "Noble" ? "post" : "view"} quests.`}
       </div>
-      <div className="flex flex-col h-[550px] items-center justify-center">
+      <div className="flex flex-col h-[430px] items-center justify-center">
         <div className="flex relative">
-          <div className="relative h-[150px] w-[500px] z-0">
-            <div className="absolute top-[-316px] left-[-192px]">
+          <div className="relative h-[50px] w-[500px] z-0">
+            <div className="absolute left-[140px] top-[-60px]">
               <Level1Badge
-                height="900px"
-                width="900px"
+                height="222px"
+                width="221px"
                 color={selectedClass === "Noble" ? "purple" : "green"}
               />
             </div>
           </div>
         </div>
-        <div className="flex flex-col bg-white rounded-md p-8 mt-6 z-10 w-[500px]">
+        <div className="flex flex-col bg-white rounded-md px-8 py-4 mt-6 z-10 w-[500px]">
           <div className="relative flex items-center mb-7">
             {currentUser && (
               <Image
@@ -120,9 +120,8 @@ export const CreateYourProfile: FC<{
               />
             )}
           </div>
-          <div className="w-full h-[1px] bg-neutral-200 my-7" />
 
-          <div className="w-full text-sm flex flex-col gap-1 mb-4">
+          <div className="w-full text-sm flex flex-col gap-1 mt-4">
             <p>{selectedClass === "Noble" ? "Company Description" : "Bio"}</p>
             <textarea
               className="placeholder:text-neutral-500 border bg-neutral-100 text-sm min-h-[100px] 
@@ -140,7 +139,7 @@ export const CreateYourProfile: FC<{
       </div>
       <motion.button
         {...smallClickAnimation}
-        className={`h-[50px] mt-5 w-full rounded-md text-base z-10 ${
+        className={`h-[50px]  w-full rounded-md text-base z-10 ${
           disabled
             ? "bg-error"
             : selectedClass === "Noble"
@@ -155,7 +154,7 @@ export const CreateYourProfile: FC<{
       >
         {disabled ? "Please complete all fields" : `Continue as ${name}`}
       </motion.button>
-      <div className="flex gap-4 mt-8">
+      <div className="flex gap-4 mt-4">
         <div className="bg-neutral-200 h-2 w-2 rounded-full" />
         <div className="bg-neutral-400 h-2 w-2 rounded-full" />
         <div className="bg-neutral-200 h-2 w-2 rounded-full" />

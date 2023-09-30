@@ -5,7 +5,7 @@ import * as queries from "@/prisma/queries";
 export const getAllBounties = protectedProcedure
   .input(
     z.object({
-      currentUserId: z.number(),
+      currentUserId: z.number().optional(),
       page: z.number(),
     })
   )

@@ -1,6 +1,6 @@
 import { CashoutModal } from "@/components";
 import { QuestActionsButton } from "@/components/quests/Quest/components";
-import { USDC_MINT } from "@/src/constants";
+import { BADGES_PROJECT_PARAMS, USDC_MINT } from "@/src/constants";
 import { useUserWallet } from "@/src/providers";
 import { useAccount } from "@/src/providers/accountProvider";
 import { useChat } from "@/src/providers/chatProvider";
@@ -27,6 +27,9 @@ import { BadgesCard } from "./BadgesCard";
 import { useOutsideAlerter } from "@/src/hooks";
 import { ChevronsUpDown } from "lucide-react";
 
+import { createUnderdogClient } from "@underdog-protocol/js";
+import toast from "react-hot-toast";
+const underdogClient = createUnderdogClient({});
 dayjs.extend(relativeTime);
 
 export const ProfileCard = ({
@@ -66,6 +69,7 @@ export const ProfileCard = ({
   const [amount, setAmount] = useState(0);
   const [charCount, setCharCount] = useState(0);
   const [charCountCompany, setCharCountCompany] = useState(0);
+  const [onboardingBadgeClaimed, setOnboardingBadgeClaimed] = useState(false);
   const [sendToPublicKey, setSentToPublicKey] = useState("");
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
@@ -82,6 +86,8 @@ export const ProfileCard = ({
   const { allIndustries } = useIndustry();
   const { mutateAsync: updateName } = api.users.updateName.useMutation();
   const { mutateAsync: updateBio } = api.users.updateBio.useMutation();
+  const { mutateAsync: registerOnboardingBadge } =
+    api.users.registerOnboardingBadge.useMutation();
   const { mutateAsync: updateCompanyDescription } =
     api.users.updateCompanyDescription.useMutation();
   const { mutateAsync: updateIndustry } =
@@ -134,6 +140,30 @@ export const ProfileCard = ({
       setCharCountCompany(user.companyDescription.length);
     }
   }, [user]);
+
+  const claimOnboardingBadge = async () => {
+    const toastId = toast.loading("Claiming Onboarding Badge...");
+
+    await underdogClient.createNft({
+      params: BADGES_PROJECT_PARAMS,
+      body: {
+        name: `Onboarded as ${currentUser.class}`,
+        image:
+          currentUser.class === "Noble"
+            ? "https://utfs.io/f/11550d3d-02d0-4c11-954d-70708786d0db-ejso1z.png"
+            : "https://utfs.io/f/f0b4011d-763e-486a-bc38-9866ed10affd-ejso3p.png",
+        description: `${name} has onboarded as a ${currentUser.class}!}`,
+        attributes: {
+          completed: dayjs().toISOString(),
+        },
+        upsert: false,
+        receiverAddress: currentWallet.publicKey.toString(),
+      },
+    });
+    await registerOnboardingBadge();
+    setOnboardingBadgeClaimed(true);
+    toast.success("Onboarding Badge claimed successfully!", { id: toastId });
+  };
 
   const handleMessageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSentToPublicKey(event.target.value);
@@ -265,14 +295,28 @@ export const ProfileCard = ({
             extraClasses="w-fit mb-[6px]"
           />
         ) : self ? (
-          <QuestActionsButton
-            onClick={async () => {
-              setShowCashout(true);
-            }}
-            type="green"
-            text="Cash Out"
-            extraClasses="w-fit"
-          />
+          <div className="flex flex-col items-end justify-end gap-2">
+            <QuestActionsButton
+              onClick={async () => {
+                setShowCashout(true);
+              }}
+              type="green"
+              text="Cash Out"
+              extraClasses="w-fit"
+            />
+            {!currentUser.hasOnboardingBadge &&
+              !!currentWallet &&
+              !onboardingBadgeClaimed && (
+                <QuestActionsButton
+                  onClick={async () => {
+                    await claimOnboardingBadge();
+                  }}
+                  type="green"
+                  text="Claim Onboarding Badge"
+                  extraClasses="w-fit"
+                />
+              )}
+          </div>
         ) : (
           <div className="h-[56px]"></div>
         )}

@@ -1,6 +1,12 @@
 import { useState } from "react";
 import { useBounty } from "@/src/providers/bountyProvider";
-import { cn, formatPrice, getSolscanAddress } from "@/src/utils";
+import {
+  bountyIndustryColor,
+  cn,
+  formatPrice,
+  formatString,
+  getSolscanAddress,
+} from "@/src/utils";
 import { BountyState } from "@/types";
 import { PublicKey } from "@solana/web3.js";
 import dayjs from "dayjs";
@@ -15,16 +21,9 @@ const Divider = () => <div className="h-[20px] w-[1px] mx-4 bg-slate-200" />;
 const QuestDetails = () => {
   const [dropdownOpen, setDropdownOpen] = useState(true);
   const { currentBounty } = useBounty();
+  const industryColor = bountyIndustryColor(currentBounty.industries[0].name);
 
   const router = useRouter();
-
-  const formatString = (str: string) => {
-    return str
-      .replaceAll("_", " ")
-      .split(" ")
-      .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
-      .join(" ");
-  };
 
   const previewMarkup = () => {
     const markdown = marked.parse(currentBounty.description, { breaks: true });
@@ -129,6 +128,14 @@ const QuestDetails = () => {
               )}
             >
               {formatString(currentBounty.state)}
+            </div>
+            <div
+              className={cn(
+                "text-xs text-center w-fit px-2 py-1 rounded-lg border",
+                industryColor
+              )}
+            >
+              {formatString(currentBounty.industries[0].name)}
             </div>
           </div>
         </div>

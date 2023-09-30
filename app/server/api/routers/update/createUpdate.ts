@@ -1,5 +1,9 @@
 import * as queries from "@/prisma/queries";
-import { QuestProgressState } from "@/types";
+import {
+  BountyState,
+  BOUNTY_USER_RELATIONSHIP,
+  QuestProgressState,
+} from "@/types";
 import { z } from "zod";
 import { protectedProcedure } from "../../trpc";
 
@@ -24,19 +28,17 @@ export const createUpdate = protectedProcedure
   .mutation(
     async ({
       ctx,
-      input: {
-        bountyId,
-        name,
-        type,
-        description,
-        media,
-        links,
-        state,
-      }
+      input: { bountyId, name, type, description, media, links, state },
     }) => {
       const { id: userId } = ctx.user;
-
-       const medias = await Promise.all(
+      await queries.bounty.updateState(bountyId, BountyState.AWAITING_REVIEW);
+      const user = await queries.user.getById(userId);
+      await queries.bountyUser.updateRelations(
+        bountyId,
+        [BOUNTY_USER_RELATIONSHIP.CurrentSubmitter],
+        user
+      );
+      const medias = await Promise.all(
         media.map(
           async (med) =>
             await queries.media.create(med.imageUrl, med.description, med.title)
@@ -50,7 +52,7 @@ export const createUpdate = protectedProcedure
         description,
         medias,
         links,
-        state,
-      )
+        state
+      );
     }
-  )
+  );

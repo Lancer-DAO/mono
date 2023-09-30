@@ -9,17 +9,25 @@ import * as queries from "@/prisma/queries";
 import { QUESTS_PER_PAGE } from "@/src/constants";
 
 export const Index: React.FC<{
-  bounties: string;
+  allQuests: string;
   mints: string;
   industries: string;
+  allUserIndustries: string;
   totalQuestsCount: string;
-}> = ({ bounties, mints, industries, totalQuestsCount }) => {
+}> = ({
+  allQuests,
+  mints,
+  industries,
+  allUserIndustries,
+  totalQuestsCount,
+}) => {
   const { setAllMints, allMints } = useMint();
-  const { setAllIndustries, allIndustries } = useIndustry();
+  const { setAllIndustries, allIndustries, userIndustries, setUserIndustries } =
+    useIndustry();
   const { setAllBounties, allBounties, maxPages, setMaxPages } = useBounty();
 
-  if (!allBounties && bounties) {
-    setAllBounties(JSON.parse(bounties));
+  if (!allBounties && allQuests) {
+    setAllBounties(JSON.parse(allQuests));
   }
   if (!allMints && mints) {
     setAllMints(JSON.parse(mints));
@@ -27,9 +35,11 @@ export const Index: React.FC<{
   if (!allIndustries && industries) {
     setAllIndustries(JSON.parse(industries));
   }
+  if (!userIndustries && allUserIndustries) {
+    setUserIndustries(JSON.parse(allUserIndustries));
+  }
   if (!maxPages && totalQuestsCount) {
     const totalQuests = parseInt(JSON.parse(totalQuestsCount));
-    console.log("totalQuests", totalQuests);
     setMaxPages(Math.ceil(totalQuests / QUESTS_PER_PAGE));
   }
   return (
@@ -65,51 +75,64 @@ export async function getServerSideProps(
       const totalQuests = await queries.bounty.getTotalQuests(user.id);
       const allMints = await queries.mint.getAll();
       const allIndustries = await queries.industry.getMany();
+      const allUserIndustries = await queries.industry.getIndustriesByUserId(
+        user.id
+      );
       return {
         props: {
           currentUser: JSON.stringify(user),
-          bounties: JSON.stringify(allBounties),
           allQuests: JSON.stringify(allBounties),
-          totalQuestsCount: JSON.stringify(totalQuests),
           mints: JSON.stringify(allMints),
           industries: JSON.stringify(allIndustries),
+          allUserIndustries: JSON.stringify(allUserIndustries),
+          totalQuestsCount: JSON.stringify(totalQuests),
         },
       };
     } catch (e) {
       console.error(e);
-      const allBounties = await queries.bounty.getMany(0);
+      const allBounties = await queries.bounty.getMany(0, undefined);
       const allMints = await queries.mint.getAll();
       const allIndustries = await queries.industry.getMany();
       const totalQuests = await queries.bounty.getTotalQuests();
       return {
         props: {
           currentUser: null,
-          bounties: JSON.stringify(allBounties),
+          allQuests: JSON.stringify(allBounties),
           mints: JSON.stringify(allMints),
           industries: JSON.stringify(allIndustries),
-          allQuests: JSON.stringify(allBounties),
+          allUserIndustries: null,
           totalQuestsCount: JSON.stringify(totalQuests),
         },
       };
     }
   } else {
     try {
-      const allBounties = await queries.bounty.getMany(0);
+      const allBounties = await queries.bounty.getMany(0, undefined);
       const allMints = await queries.mint.getAll();
       const allIndustries = await queries.industry.getMany();
       const totalQuests = await queries.bounty.getTotalQuests();
       return {
         props: {
           currentUser: null,
-          bounties: JSON.stringify(allBounties),
+          allQuests: JSON.stringify(allBounties),
           mints: JSON.stringify(allMints),
           industries: JSON.stringify(allIndustries),
-          allQuests: JSON.stringify(allBounties),
+          allUserIndustries: null,
           totalQuestsCount: JSON.stringify(totalQuests),
         },
       };
     } catch (e) {
       console.error(e);
+      return {
+        props: {
+          currentUser: null,
+          allQuests: null,
+          mints: null,
+          industries: null,
+          allUserIndustries: null,
+          totalQuestsCount: null,
+        },
+      };
     }
   }
 }

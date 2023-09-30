@@ -21,3 +21,16 @@ export const getMediaByUser = async (id: number): Promise<Prisma.Media[]> => {
   });
   return user.media;
 } 
+
+export const getMediaByUpdate = async (id: number): Promise<Prisma.Media[]> => {
+  const media = await prisma.media.findMany({
+    where: {
+      updates: {
+        some: {
+          id: id,
+        },
+      },
+    },
+  });
+  return media;
+}

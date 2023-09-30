@@ -108,7 +108,7 @@ const UpdateTableItem: React.FC<UpdateItemProps> = ({
   switch (type) {
     case "message":
       return (
-        <div className="flex px-8 py-4 items-center justify-start w-full border-solid border-y bg-primary100 border-neutralBorder500">
+        <div className="flex px-8 py-4 items-center justify-start w-full border-solid border-b bg-primary100 border-neutralBorder500">
           <Message height="28px" width="28px" />
           <div className="text-sm ml-1.5 text-black mr-4">{`${
             extraProps.messageCount
@@ -126,7 +126,7 @@ const UpdateTableItem: React.FC<UpdateItemProps> = ({
               onClick={() => {
                 router.push(`/quests/${extraProps.questId}`);
               }}
-              className="flex flex-col px-8 py-4 items-start justify-center w-full border-solid border-y  border-neutralBorder500 hover:cursor-pointer"
+              className="flex flex-col px-8 py-4 items-start justify-center w-full border-solid border-b  border-neutralBorder500 hover:cursor-pointer"
             >
               <div className="flex justify-start items-center w-full">
                 <ServiceBell height="28px" width="28px" />
@@ -148,7 +148,7 @@ const UpdateTableItem: React.FC<UpdateItemProps> = ({
               onClick={() => {
                 router.push(`/quests/${extraProps.questId}`);
               }}
-              className="hover:cursor-pointer flex flex-col px-8 py-4 items-start justify-center w-full border-solid border-y  border-neutralBorder500"
+              className="hover:cursor-pointer flex flex-col px-8 py-4 items-start justify-center w-full border-solid border-b  border-neutralBorder500"
             >
               <div className="flex justify-start items-center w-full">
                 <Flame height="28px" width="28px" version="orange" />
@@ -170,7 +170,7 @@ const UpdateTableItem: React.FC<UpdateItemProps> = ({
               onClick={() => {
                 router.push(`/quests/${extraProps.questId}`);
               }}
-              className="hover:cursor-pointer flex flex-col px-8 py-4 items-start justify-center w-full border-solid border-y  border-neutralBorder500"
+              className="hover:cursor-pointer flex flex-col px-8 py-4 items-start justify-center w-full border-solid border-b  border-neutralBorder500"
             >
               <div className="flex justify-start items-center w-full">
                 <Flame height="28px" width="28px" version="green" />
@@ -195,7 +195,7 @@ const UpdateTableItem: React.FC<UpdateItemProps> = ({
               onClick={() => {
                 router.push(`/quests/${extraProps.questId}`);
               }}
-              className="hover:cursor-pointer flex flex-col px-8 py-4 items-start justify-center w-full border-solid border-y  border-neutralBorder500"
+              className="hover:cursor-pointer flex flex-col px-8 py-4 items-start justify-center w-full border-solid border-b  border-neutralBorder500"
             >
               <div className="flex justify-start items-center w-full">
                 <Alert height="28px" width="28px" />
@@ -213,7 +213,7 @@ const UpdateTableItem: React.FC<UpdateItemProps> = ({
               onClick={() => {
                 router.push(`/quests/${extraProps.questId}`);
               }}
-              className="hover:cursor-pointer flex flex-col px-8 py-4 items-start justify-center w-full border-solid border-y  border-neutralBorder500"
+              className="hover:cursor-pointer flex flex-col px-8 py-4 items-start justify-center w-full border-solid border-b  border-neutralBorder500"
             >
               <div className="flex justify-start items-center w-full">
                 <Alert height="28px" width="28px" />
@@ -231,7 +231,7 @@ const UpdateTableItem: React.FC<UpdateItemProps> = ({
               onClick={() => {
                 router.push(`/quests/${extraProps.questId}`);
               }}
-              className="hover:cursor-pointer flex flex-col px-8 py-4 items-start justify-center w-full border-solid border-y  border-neutralBorder500"
+              className="hover:cursor-pointer flex flex-col px-8 py-4 items-start justify-center w-full border-solid border-b  border-neutralBorder500"
             >
               <div className="flex justify-start items-center w-full">
                 <Alert height="28px" width="28px" />
@@ -249,7 +249,7 @@ const UpdateTableItem: React.FC<UpdateItemProps> = ({
               onClick={() => {
                 router.push(`/quests/${extraProps.questId}`);
               }}
-              className="hover:cursor-pointer flex flex-col px-8 py-4 items-start justify-center w-full border-solid border-y  border-neutralBorder500"
+              className="hover:cursor-pointer flex flex-col px-8 py-4 items-start justify-center w-full border-solid border-b  border-neutralBorder500"
             >
               <div className="flex justify-start items-center w-full">
                 <Alert height="28px" width="28px" />
@@ -271,7 +271,7 @@ const UpdateTableItem: React.FC<UpdateItemProps> = ({
               onClick={() => {
                 router.push(`/quests/${extraProps.questId}`);
               }}
-              className="hover:cursor-pointer flex flex-col px-8 py-4 items-start justify-center w-full border-solid border-y  border-neutralBorder500"
+              className="hover:cursor-pointer flex flex-col px-8 py-4 items-start justify-center w-full border-solid border-b  border-neutralBorder500"
             >
               <div className="flex justify-start items-center w-full">
                 <Mail height="28px" width="28px" version="blue" />
@@ -289,7 +289,7 @@ const UpdateTableItem: React.FC<UpdateItemProps> = ({
               onClick={() => {
                 router.push(`/quests/${extraProps.questId}`);
               }}
-              className="hover:cursor-pointer flex flex-col px-8 py-4 items-start justify-center w-full border-solid border-y  border-neutralBorder500"
+              className="hover:cursor-pointer flex flex-col px-8 py-4 items-start justify-center w-full border-solid border-b  border-neutralBorder500"
             >
               <div className="flex justify-start items-center w-full">
                 <Mail height="28px" width="28px" version="purple" />
@@ -307,7 +307,7 @@ const UpdateTableItem: React.FC<UpdateItemProps> = ({
               onClick={() => {
                 router.push(`/quests/${extraProps.questId}`);
               }}
-              className="hover:cursor-pointer flex flex-col px-8 py-4 items-start justify-center w-full border-solid border-y  border-neutralBorder500"
+              className="hover:cursor-pointer flex flex-col px-8 py-4 items-start justify-center w-full border-solid border-b  border-neutralBorder500"
             >
               <div className="flex justify-start items-center w-full">
                 <Mail height="28px" width="28px" version="green" />
@@ -325,7 +325,7 @@ const UpdateTableItem: React.FC<UpdateItemProps> = ({
               onClick={() => {
                 router.push(`/quests/${extraProps.questId}`);
               }}
-              className="hover:cursor-pointer flex flex-col px-8 py-4 items-start justify-center w-full border-solid border-y  border-neutralBorder500"
+              className="hover:cursor-pointer flex flex-col px-8 py-4 items-start justify-center w-full border-solid border-b  border-neutralBorder500"
             >
               <div className="flex justify-start items-center w-full">
                 <Mail height="28px" width="28px" version="orange" />
@@ -343,7 +343,7 @@ const UpdateTableItem: React.FC<UpdateItemProps> = ({
               onClick={() => {
                 router.push(`/quests/${extraProps.questId}`);
               }}
-              className="hover:cursor-pointer flex flex-col px-8 py-4 items-start justify-center w-full border-solid border-y  border-neutralBorder500"
+              className="hover:cursor-pointer flex flex-col px-8 py-4 items-start justify-center w-full border-solid border-b  border-neutralBorder500"
             >
               <div className="flex justify-start items-center w-full">
                 <Mail height="28px" width="28px" version="orange" />
