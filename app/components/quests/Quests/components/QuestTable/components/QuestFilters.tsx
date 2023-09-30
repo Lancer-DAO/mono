@@ -57,7 +57,7 @@ export const QuestFilters = ({
         />
         {/* tags */}
         <MultiSelectDropdown
-          extraClasses="w-[200px]"
+          extraClasses="w-[160px]"
           options={tags.map((tag) => {
             return {
               value: tag,
