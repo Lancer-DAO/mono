@@ -87,20 +87,20 @@ export const update = protectedProcedure
           name: bounty.title,
         });
 
-        const url = await createGroupChannel({
-          admin: client,
-          lancers: approvedSubmitters,
-          name: bounty.title,
-        });
+        // const url = await createGroupChannel({
+        //   admin: client,
+        //   lancers: approvedSubmitters,
+        //   name: bounty.title,
+        // });
 
-        await prisma.bounty.update({
-          where: {
-            id: bountyId,
-          },
-          data: {
-            chatUrl: url,
-          },
-        });
+        // await prisma.bounty.update({
+        //   where: {
+        //     id: bountyId,
+        //   },
+        //   data: {
+        //     chatUrl: url,
+        //   },
+        // });
       }
 
       const updatedBounty = await queries.bounty.get(bountyId, currentUserId);

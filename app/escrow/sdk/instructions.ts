@@ -87,6 +87,7 @@ export const createCustodialFeatureFundingAccountInstruction = async (
 ): Promise<{
   ix: TransactionInstruction;
   account: PublicKey;
+  timestamp: string;
 }> => {
   const timestamp = Date.now().toString();
   const [feature_account] = await findFeatureAccount(
@@ -120,6 +121,7 @@ export const createCustodialFeatureFundingAccountInstruction = async (
       })
       .instruction(),
     account: feature_account,
+    timestamp: timestamp,
   };
 };
 

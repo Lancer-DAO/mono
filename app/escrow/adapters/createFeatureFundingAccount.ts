@@ -24,13 +24,13 @@ export const createFFA = async (
   wallet: LancerWallet,
   program: Program<MonoProgram>
 ) => {
-  const timestamp = Date.now().toString();
-  const { ix, account } = await createCustodialFeatureFundingAccountInstruction(
-    new PublicKey(USDC_MINT),
-    new PublicKey("pyrSoEahjKGKZpLWEYwCJ8zQAsYZckZH8ZqJ7yGd1ha"),
-    new PublicKey(wallet.publicKey),
-    program
-  );
+  const { ix, account, timestamp } =
+    await createCustodialFeatureFundingAccountInstruction(
+      new PublicKey(USDC_MINT),
+      new PublicKey("pyrSoEahjKGKZpLWEYwCJ8zQAsYZckZH8ZqJ7yGd1ha"),
+      new PublicKey(wallet.publicKey),
+      program
+    );
 
   const res = await sendGaslessTx([ix]);
   console.log("Sending out second tx");
