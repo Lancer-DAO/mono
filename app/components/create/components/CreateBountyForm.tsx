@@ -145,18 +145,18 @@ export const CreateBountyForm: FC<Props> = ({
         new Transaction(txInfo).add(referralAccountIx)
       );
       // const referralAccountIx =
-      // await createCustodialReferralDataAccountInstruction(
-      //   new PublicKey(currentWallet.publicKey),
-      //   new PublicKey("pyrSoEahjKGKZpLWEYwCJ8zQAsYZckZH8ZqJ7yGd1ha"),
-      //   feature_account,
-      //   program,
-      //   await getSubmitterReferrer(currentWallet.publicKey, mintKey),
-      //   remainingAccounts
-      // );
+      //   await createCustodialReferralDataAccountInstruction(
+      //     new PublicKey(currentWallet.publicKey),
+      //     new PublicKey("pyrSoEahjKGKZpLWEYwCJ8zQAsYZckZH8ZqJ7yGd1ha"),
+      //     feature_account,
+      //     program,
+      //     await getSubmitterReferrer(currentWallet.publicKey, mintKey),
+      //     remainingAccounts
+      //   );
       // const res2 = await sendGaslessTx(
       //   [referralAccountIx],
-      //   undefined,
-      //   undefined,
+      //   true,
+      //   currentWallet,
       //   20000
       // );
       // console.log("Second gasless tx res: ", res2);

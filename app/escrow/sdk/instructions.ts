@@ -737,6 +737,7 @@ export const createCustodialReferralDataAccountInstruction = async (
       rent: SYSVAR_RENT_PUBKEY,
       systemProgram: SystemProgram.programId,
     })
+    .remainingAccounts(remainingAccounts)
     .instruction();
 };
 
