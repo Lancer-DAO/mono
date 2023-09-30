@@ -295,7 +295,7 @@ export const ProfileCard = ({
             extraClasses="w-fit mb-[6px]"
           />
         ) : self ? (
-          <>
+          <div className="flex flex-col items-end justify-end gap-2">
             <QuestActionsButton
               onClick={async () => {
                 setShowCashout(true);
@@ -316,7 +316,7 @@ export const ProfileCard = ({
                   extraClasses="w-fit"
                 />
               )}
-          </>
+          </div>
         ) : (
           <div className="h-[56px]"></div>
         )}
