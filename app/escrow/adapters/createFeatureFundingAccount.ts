@@ -22,11 +22,7 @@ import { sendGaslessTx } from "../gasless";
 
 export const createFFA = async (
   wallet: LancerWallet,
-  program: Program<MonoProgram>,
-  provider: AnchorProvider,
-  referrer: PublicKey,
-  remainingAccounts: AccountMeta[],
-  mint?: PublicKey
+  program: Program<MonoProgram>
 ) => {
   const timestamp = Date.now().toString();
   const { ix, account } = await createCustodialFeatureFundingAccountInstruction(
