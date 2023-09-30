@@ -45,7 +45,10 @@ const DepositCTAModal: FC<Props> = ({
             {...smallClickAnimation}
             className="bg-secondary200 h-9 w-fit px-4 py-2
             title-text rounded-md text-white disabled:cursor-not-allowed disabled:opacity-80"
-            onClick={() => setShowFundModal(true)}
+            onClick={() => {
+              setShowFundModal(true);
+              setShowModal(false);
+            }}
           >
             {`Deposit $${amount} into escrow`}
           </motion.button>
