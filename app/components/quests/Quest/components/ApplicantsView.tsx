@@ -355,19 +355,6 @@ const ApplicantsView: FC<Props> = ({
             </>
           ) : null}
           <div className="w-full flex items-center justify-end">
-            {currentBounty.state === BountyState.VOTING_TO_CANCEL &&
-            currentBounty.isCreator ? (
-              <motion.button
-                {...smallClickAnimation}
-                className="bg-white border border-neutral200 h-9 w-fit px-4 py-2
-                title-text rounded-md text-error disabled:cursor-not-allowed disabled:opacity-80"
-                onClick={handleCancel}
-                disabled={isLoading || isAwaitingResponse}
-              >
-                Cancel Quest
-              </motion.button>
-            ) : null}
-
             {currentBounty.state === BountyState.CANCELED ? (
               <motion.button
                 {...smallClickAnimation}

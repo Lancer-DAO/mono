@@ -1,13 +1,13 @@
 import Crown from "@/components/@icons/Crown";
+import { submitRequestFFA } from "@/escrow/adapters";
 import { smallClickAnimation } from "@/src/constants";
 import { useUserWallet } from "@/src/providers";
 import { useBounty } from "@/src/providers/bountyProvider";
 import { api } from "@/src/utils";
 import { UploadDropzone } from "@/src/utils/uploadthing";
-import {
-  LancerUpdateData, QuestProgressState,
-} from "@/types";
+import { LancerUpdateData, QuestProgressState } from "@/types";
 import { oembed, validate } from "@loomhq/loom-embed";
+import { PublicKey } from "@solana/web3.js";
 import { motion } from "framer-motion";
 import { ChevronsUpDown } from "lucide-react";
 import Image from "next/image";
@@ -23,7 +23,7 @@ export enum UPDATE_TYPES {
 
 const LancerSubmitUpdateView: FC = () => {
   const { currentBounty } = useBounty();
-  const { currentUser } = useUserWallet();
+  const { currentUser, currentWallet, program, provider } = useUserWallet();
 
   const [hasApplied, setHasApplied] = useState(false);
   const [selectedType, setSelectedType] = useState("Loom recording");
@@ -38,21 +38,30 @@ const LancerSubmitUpdateView: FC = () => {
     state: QuestProgressState.NEW,
   });
   const { data: updates, refetch } = api.update.getUpdatesByBounty.useQuery(
-    { id: currentBounty.id }, 
+    { id: currentBounty.id },
     { enabled: !!currentBounty }
   );
   const { mutateAsync: createUpdate } = api.update.createUpdate.useMutation();
   const { mutateAsync: deleteMedia } = api.bounties.deleteMedia.useMutation();
   const [videoHTML, setVideoHTML] = useState("");
 
-  
-  const types = [UPDATE_TYPES.Loom, UPDATE_TYPES.FileUpload, UPDATE_TYPES.Text]
-  
+  const types = [UPDATE_TYPES.Loom, UPDATE_TYPES.FileUpload, UPDATE_TYPES.Text];
+
   const toggleDropdown = () => setDropdownOpen(!dropdownOpen);
 
   const handleSubmitUpdate = async () => {
     const toastId = toast.loading("Sending update...");
     try {
+      if (!currentBounty.isCurrentSubmitter) {
+        await submitRequestFFA(
+          new PublicKey(currentBounty.creator.publicKey),
+          currentWallet.publicKey,
+          currentBounty.escrow,
+          currentWallet,
+          program,
+          provider
+        );
+      }
       await createUpdate(updateData);
       refetch();
       setHasApplied(true);
@@ -63,7 +72,11 @@ const LancerSubmitUpdateView: FC = () => {
   };
 
   const handleDropdownChange = async (type: string) => {
-    if(selectedType === UPDATE_TYPES.FileUpload && updateData.media.length && !hasApplied) {
+    if (
+      selectedType === UPDATE_TYPES.FileUpload &&
+      updateData.media.length &&
+      !hasApplied
+    ) {
       await deleteMedia({ imageUrl: updateData.media[0]?.imageUrl });
       setUpdateData({ ...updateData, type, media: [] });
     } else {
@@ -71,22 +84,22 @@ const LancerSubmitUpdateView: FC = () => {
     }
     setSelectedType(type);
     toggleDropdown();
-  }
+  };
 
   const isVideo = (url: string) => {
     return url.includes(".mp4") || url.includes(".mov");
-  }
-  
+  };
+
   useEffect(() => {
     async function setupLoom() {
       const { html } = await oembed(updateData.links);
       setVideoHTML(html);
     }
 
-    if(validate.isLoomUrl(updateData.links)) {
+    if (validate.isLoomUrl(updateData.links)) {
       setupLoom();
     }
-  }, [updateData.links])
+  }, [updateData.links]);
 
   if (!currentBounty || !currentUser) return null;
 
@@ -148,7 +161,10 @@ const LancerSubmitUpdateView: FC = () => {
               disabled={hasApplied}
               value={updateData.links}
               onChange={(e) => {
-                setUpdateData({ ...updateData, links: e.target.value.split('?')[0] });
+                setUpdateData({
+                  ...updateData,
+                  links: e.target.value.split("?")[0],
+                });
               }}
             />
           </div>
@@ -176,29 +192,38 @@ const LancerSubmitUpdateView: FC = () => {
                 <video width={610} height={228} controls>
                   <source src={updateData.media[0].imageUrl} />
                 </video>
-                ) : (
-                <Image src={updateData.media[0]?.imageUrl} alt={`${updateData.name} image`} width={610} height={228} />
+              ) : (
+                <Image
+                  src={updateData.media[0]?.imageUrl}
+                  alt={`${updateData.name} image`}
+                  width={610}
+                  height={228}
+                />
               )}
             </>
           ) : (
             <UploadDropzone
               endpoint="imageAndVideoUploader"
               onClientUploadComplete={(res) => {
-                setUpdateData({ ...updateData, 
-                  media: [{
-                    imageUrl: res.at(0).url,
-                    title: "",
-                    description: "",
-                  }] 
+                setUpdateData({
+                  ...updateData,
+                  media: [
+                    {
+                      imageUrl: res.at(0).url,
+                      title: "",
+                      description: "",
+                    },
+                  ],
                 });
               }}
               onUploadError={(error: Error) => {
                 console.log(error);
-                toast.error(`Error uploading: ${error.message}`)
+                toast.error(`Error uploading: ${error.message}`);
               }}
               config={{ mode: "auto" }}
               appearance={{
-                button: "w-28 px-4 py-2 rounded-md bg-transparent ut-uploading:cursor-not-allowed ut-uploading:bg-neutral300"
+                button:
+                  "w-28 px-4 py-2 rounded-md bg-transparent ut-uploading:cursor-not-allowed ut-uploading:bg-neutral300",
               }}
               className="rounded-md border px-[151px] py-[33px] h-[228px] text-mini text-neutral300 ut-label:text-mini ut-label:text-neutral300 ut-upload-icon:h-4 ut-upload-icon:w-4 ut-label:mt-1"
             />

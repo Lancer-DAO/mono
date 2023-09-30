@@ -450,14 +450,14 @@ const QuestUpdatesTable: React.FC = () => {
             <div className="mt-2 flex items-center gap-4 justify-center">
               <button
                 onClick={handleYes}
-                className="bg-white border border-neutral300 text-error flex title-text
+                className=" bg-primary200 flex text-white title-text title-text
                 items-center justify-center rounded-md px-3 py-1"
               >
                 Yes
               </button>
               <button
                 onClick={handleNo}
-                className="bg-primary200 flex text-white title-text
+                className="bg-white border border-neutral300 text-error
                 items-center justify-center rounded-md px-3 py-1"
               >
                 No
@@ -528,9 +528,10 @@ const QuestUpdatesTable: React.FC = () => {
     try {
       setIsLoading(true);
       let signature = "";
+      debugger;
       if (currentBounty?.isCreator && currentBounty.currentSubmitter) {
         signature = await approveRequestFFA(
-          new PublicKey(currentWallet.publicKey),
+          new PublicKey(currentBounty.currentSubmitter.publicKey),
           currentBounty?.escrow,
           currentWallet,
           program,
@@ -548,7 +549,7 @@ const QuestUpdatesTable: React.FC = () => {
         userId: currentBounty.currentSubmitter.userid,
         relations: newRelations,
         state: BountyState.COMPLETE,
-        publicKey: currentBounty.currentSubmitter.wallet.publicKey,
+        publicKey: currentBounty.currentSubmitter.publicKey,
         escrowId: currentBounty?.escrowid,
         signature,
         label: "complete-bounty",
@@ -563,6 +564,7 @@ const QuestUpdatesTable: React.FC = () => {
       ) {
         toast.error("Wallet is registered to another user", { id: toastId });
       } else {
+        console.error(error);
         toast.error("Error paying out bounty", { id: toastId });
       }
     } finally {
@@ -656,7 +658,7 @@ const QuestUpdatesTable: React.FC = () => {
     currentUser && (
       <div className="flex flex-col w-full border-solid border bg-white border-neutralBorder500 rounded-lg">
         <div className="flex items-center">
-          <div className="px-8 py-4 text-neutral600 font-bold text-lg">
+          <div className="px-8 py-4 text-neutral600 font-bold text-lg whitespace-nowrap">
             Updates History
           </div>
           <div className="h-[1px] w-full bg-neutral100" />
@@ -667,7 +669,7 @@ const QuestUpdatesTable: React.FC = () => {
               <motion.button
                 {...smallClickAnimation}
                 className="bg-white border border-neutral200 ml-auto mr-8 h-9 w-fit px-4 py-2
-                title-text rounded-md text-error disabled:cursor-not-allowed disabled:opacity-80"
+                title-text rounded-md text-error disabled:cursor-not-allowed disabled:opacity-80 whitespace-nowrap"
                 onClick={handleVoteToCancel}
                 disabled={isLoading || isAwaitingResponse}
               >
@@ -681,7 +683,7 @@ const QuestUpdatesTable: React.FC = () => {
               <motion.button
                 {...smallClickAnimation}
                 className="bg-white border border-neutral200 ml-auto mr-8 h-9 w-fit px-4 py-2
-              title-text rounded-md text-error disabled:cursor-not-allowed disabled:opacity-80"
+              title-text rounded-md text-success disabled:cursor-not-allowed disabled:opacity-80 whitespace-nowrap"
                 onClick={handlePayoutQuest}
                 disabled={isLoading || isAwaitingResponse}
               >
@@ -697,7 +699,7 @@ const QuestUpdatesTable: React.FC = () => {
                 <motion.button
                   {...smallClickAnimation}
                   className="bg-white border border-neutral200 ml-auto mr-4 h-9 w-fit px-4 py-2
-                  title-text rounded-md text-error disabled:cursor-not-allowed disabled:opacity-80"
+                  title-text rounded-md text-error disabled:cursor-not-allowed disabled:opacity-80 whitespace-nowrap"
                   onClick={handleVoteToCancel}
                   disabled={isLoading || isAwaitingResponse}
                 >
@@ -706,7 +708,7 @@ const QuestUpdatesTable: React.FC = () => {
                 <motion.button
                   {...smallClickAnimation}
                   className="bg-white border border-neutral200 mr-8 h-9 w-fit px-4 py-2
-                  title-text rounded-md text-error disabled:cursor-not-allowed disabled:opacity-80"
+                  title-text rounded-md text-error disabled:cursor-not-allowed disabled:opacity-80 whitespace-nowrap"
                   onClick={handleStartDispute}
                   disabled={isLoading || isAwaitingResponse}
                 >
@@ -719,7 +721,7 @@ const QuestUpdatesTable: React.FC = () => {
               <motion.button
                 {...smallClickAnimation}
                 className="ml-auto text-white bg-[#B26B9B] border-[#A66390] mr-8 h-9 w-fit px-4 py-2
-                title-text rounded-md  disabled:cursor-not-allowed disabled:opacity-80"
+                title-text rounded-md  disabled:cursor-not-allowed disabled:opacity-80 whitespace-nowrap"
                 onClick={() => {}}
                 disabled={true}
               >
@@ -733,7 +735,7 @@ const QuestUpdatesTable: React.FC = () => {
               <motion.button
                 {...smallClickAnimation}
                 className="bg-white border border-neutral200 h-9 w-fit px-4 py-2
-                title-text rounded-md text-error disabled:cursor-not-allowed disabled:opacity-80"
+                title-text rounded-md text-error disabled:cursor-not-allowed disabled:opacity-80 whitespace-nowrap mr-4"
                 onClick={handleCancel}
                 disabled={isLoading || isAwaitingResponse}
               >
@@ -747,7 +749,7 @@ const QuestUpdatesTable: React.FC = () => {
               <motion.button
                 {...smallClickAnimation}
                 className="bg-white border border-neutral200 h-9 w-fit px-4 py-2 mr-8
-                title-text rounded-md text-error disabled:cursor-not-allowed disabled:opacity-80"
+                title-text rounded-md text-error disabled:cursor-not-allowed disabled:opacity-80 whitespace-nowrap"
                 onClick={() => {
                   setShowDisputeModal(true);
                 }}
