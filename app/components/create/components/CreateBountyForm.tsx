@@ -93,11 +93,7 @@ export const CreateBountyForm: FC<Props> = ({
 
       const { timestamp, signature, escrowKey } = await createFFA(
         currentWallet,
-        program,
-        provider,
-        await getSubmitterReferrer(currentWallet.publicKey, mintKey),
-        remainingAccounts,
-        mintKey
+        program
       );
       const bounty: Bounty = await mutateAsync({
         email: currentUser.email,

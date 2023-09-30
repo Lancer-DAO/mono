@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 import { useUserWallet } from "@/src/providers/userWalletProvider";
 import { PublicKey } from "@solana/web3.js";
 import { api } from "@/src/utils/api";
-import { fundFFA, fundFFATXGasless } from "@/escrow/adapters";
+import { fundFFATXGasless } from "@/escrow/adapters";
 import { IS_CUSTODIAL, smallClickAnimation } from "@/src/constants";
 import { CoinflowFund, USDC } from "@/components";
 import { CREATE_BOUNTY_TUTORIAL_INITIAL_STATE } from "@/src/constants/tutorials";
@@ -14,18 +14,29 @@ import toast from "react-hot-toast";
 import { Modal } from "@/components";
 import { useMint } from "@/src/providers/mintProvider";
 import Image from "next/image";
+import { BountyUserType } from "@/prisma/queries/bounty";
 
 interface Props {
   setShowModal: Dispatch<SetStateAction<boolean>>;
+  setShowFundModal: Dispatch<SetStateAction<boolean>>;
+  handleApproveForQuest?: () => Promise<void>;
   amount?: number;
+  approving?: boolean;
 }
 
-const FundQuestModal: FC<Props> = ({ setShowModal, amount }) => {
+const FundQuestModal: FC<Props> = ({
+  setShowModal,
+  setShowFundModal,
+  handleApproveForQuest,
+  amount,
+  approving = false,
+}) => {
   const { currentWallet, program, provider } = useUserWallet();
   const { currentBounty, setCurrentBounty } = useBounty();
   const { currentTutorialState, setCurrentTutorialState } = useTutorial();
   const { mutateAsync: fundB } = api.bounties.fundBounty.useMutation();
   const { allMints } = useMint();
+
   const [fundQuestState, setFundQuestState] = useState<IAsyncResult<string>>({
     isLoading: false,
   });
@@ -68,6 +79,19 @@ const FundQuestModal: FC<Props> = ({ setShowModal, amount }) => {
       toast.success("Quest funded!", { id: toastId });
       setCurrentBounty(bounty);
       setShowModal(false);
+      setShowFundModal(false);
+
+      if (approving) {
+        setFundQuestState({
+          isLoading: true,
+          loadingPrompt: "Approving Lancer",
+        });
+        await handleApproveForQuest();
+        setFundQuestState({
+          isLoading: false,
+          loadingPrompt: "",
+        });
+      }
     } catch (error) {
       console.log("error funding Quest: ", error);
       toast.error("Error funding Quest", { id: toastId });
@@ -120,8 +144,8 @@ const FundQuestModal: FC<Props> = ({ setShowModal, amount }) => {
           <div className="w-full flex flex-col gap-5 max-w-[400px]">
             <h1>Funding Details</h1>
             <p>
-              This initial deposit shows your commitment to the Quest and will
-              be held in escrow until the Quest is completed or canceled.
+              This deposit shows your commitment to the Quest and will be held
+              in escrow until the Quest is completed or canceled.
             </p>
             <p>
               By proceeding you are agreeing to Lancer&apos;s Terms of Service.
@@ -134,7 +158,7 @@ const FundQuestModal: FC<Props> = ({ setShowModal, amount }) => {
                   {...smallClickAnimation}
                   className={`w-full flex items-center justify-center ${
                     fundingType === "wallet"
-                      ? "font-bold text-textLancerGreen"
+                      ? "font-bold text-success"
                       : "font-base"
                   }`}
                   onClick={() => setFundingType("wallet")}
@@ -145,7 +169,7 @@ const FundQuestModal: FC<Props> = ({ setShowModal, amount }) => {
                   {...smallClickAnimation}
                   className={`w-full flex items-center justify-center ${
                     fundingType === "card"
-                      ? "font-bold text-textLancerGreen"
+                      ? "font-bold text-success"
                       : "font-base"
                   }`}
                   onClick={() => setFundingType("card")}
@@ -181,8 +205,8 @@ const FundQuestModal: FC<Props> = ({ setShowModal, amount }) => {
                   <div className="relative">
                     <input
                       type="number"
-                      className="placeholder:text-textGreen/70 border bg-neutralBtn
-                      border-neutralBtnBorder w-full h-[50px] rounded-lg px-3
+                      className="placeholder:text-neutral400 border bg-neutral100
+                      border-neutral200 w-full h-[50px] rounded-lg px-3
                       disabled:opacity-50 disabled:cursor-not-allowed text-center"
                       name="issuePrice"
                       disabled={!allMints}
@@ -219,8 +243,8 @@ const FundQuestModal: FC<Props> = ({ setShowModal, amount }) => {
                   {...smallClickAnimation}
                   disabled={!amount}
                   onClick={() => onClick()}
-                  className={`bg-secondary200 h-9 w-full px-4 py-2
-                  title-text rounded-md text-white disabled:cursor-not-allowed disabled:opacity-80
+                  className={`bg-secondary200 w-full px-4 py-2 border border-neutral200 rounded-md
+                  title-text text-white disabled:cursor-not-allowed disabled:opacity-80
                   ${fundQuestState.error ? " bg-neutral100 text-error" : ""} `}
                 >
                   {fundQuestState.error

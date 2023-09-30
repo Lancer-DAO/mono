@@ -77,7 +77,7 @@ export async function getServerSideProps(
       };
     } catch (e) {
       console.error(e);
-      const allBounties = await queries.bounty.getMany(0);
+      const allBounties = await queries.bounty.getMany(0, undefined);
       const allMints = await queries.mint.getAll();
       const allIndustries = await queries.industry.getMany();
       const totalQuests = await queries.bounty.getTotalQuests();
@@ -94,7 +94,7 @@ export async function getServerSideProps(
     }
   } else {
     try {
-      const allBounties = await queries.bounty.getMany(0);
+      const allBounties = await queries.bounty.getMany(0, undefined);
       const allMints = await queries.mint.getAll();
       const allIndustries = await queries.industry.getMany();
       const totalQuests = await queries.bounty.getTotalQuests();
@@ -110,6 +110,16 @@ export async function getServerSideProps(
       };
     } catch (e) {
       console.error(e);
+      return {
+        props: {
+          currentUser: null,
+          bounties: null,
+          mints: null,
+          industries: null,
+          allQuests: null,
+          totalQuestsCount: null,
+        },
+      };
     }
   }
 }

@@ -1,3 +1,4 @@
+import { IS_CUSTODIAL } from "@/src/constants";
 import { useUserWallet } from "@/src/providers";
 import { useBounty } from "@/src/providers/bountyProvider";
 import { api, updateList } from "@/src/utils";
@@ -7,6 +8,7 @@ import {
   LancerQuoteData,
   QuestProgressState,
 } from "@/types";
+import { useWallet } from "@solana/wallet-adapter-react";
 import { FC, useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
 import LancerApplyView from "./LancerApplyView";
@@ -20,6 +22,7 @@ export enum QuestApplicationView {
 const LancerApplicationView: FC = () => {
   const { currentBounty, setCurrentBounty } = useBounty();
   const { currentUser, currentWallet } = useUserWallet();
+  const { connected } = useWallet();
 
   const [currentApplicationView, setCurrentApplicationView] =
     useState<QuestApplicationView>(QuestApplicationView.SubmitQuote);
@@ -106,6 +109,12 @@ const LancerApplicationView: FC = () => {
       toast.error("Please create at least one milestone.");
       return;
     }
+
+    if(!connected && !IS_CUSTODIAL) {
+      toast.error("Please connect your wallet.");
+      return;
+    }
+
     await confirmAction();
     // Request to submit. Does not interact on chain
     const toastId = toast.loading("Sending application...");
