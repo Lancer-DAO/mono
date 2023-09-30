@@ -17,12 +17,15 @@ import Tags from "./Tags";
 import Image from "next/image";
 import { Trash, X } from "lucide-react";
 import { Option } from "@/components/molecules/SelectOptions";
-import { PublicKey } from "@solana/web3.js";
+import { PublicKey, Transaction } from "@solana/web3.js";
 import { createFFA } from "@/escrow/adapters";
 import { useReferral } from "@/src/providers/referralProvider";
 import { useBounty } from "@/src/providers/bountyProvider";
 import { useRouter } from "next/router";
-import { createCustodialReferralDataAccountInstruction } from "@/escrow/sdk/instructions";
+import {
+  createCustodialReferralDataAccountInstruction,
+  createReferralDataAccountInstruction,
+} from "@/escrow/sdk/instructions";
 import { sendGaslessTx } from "@/escrow/gasless";
 import { findFeatureAccount } from "@/escrow/sdk/pda";
 
@@ -120,20 +123,43 @@ export const CreateBountyForm: FC<Props> = ({
         new PublicKey(currentWallet.publicKey),
         program
       );
-      const referralAccountIx =
-        await createCustodialReferralDataAccountInstruction(
-          new PublicKey(currentWallet.publicKey),
-          new PublicKey("pyrSoEahjKGKZpLWEYwCJ8zQAsYZckZH8ZqJ7yGd1ha"),
-          feature_account,
-          program
-        );
-      const res2 = await sendGaslessTx(
-        [referralAccountIx],
-        undefined,
-        undefined,
-        20000
+
+      const referralAccountIx = await createReferralDataAccountInstruction(
+        new PublicKey(currentWallet.publicKey),
+        feature_account,
+        await getSubmitterReferrer(currentWallet.publicKey, mintKey),
+        remainingAccounts,
+        program
       );
-      console.log("Second gasless tx res: ", res2);
+      const { blockhash, lastValidBlockHeight } =
+        await provider.connection.getLatestBlockhash();
+      const txInfo = {
+        /** The transaction fee payer */
+        feePayer: new PublicKey(currentWallet.publicKey),
+        /** A recent blockhash */
+        blockhash: blockhash,
+        /** the last block chain can advance to before tx is exportd expired */
+        lastValidBlockHeight: lastValidBlockHeight,
+      };
+      const signature2 = await currentWallet.signAndSendTransaction(
+        new Transaction(txInfo).add(referralAccountIx)
+      );
+      // const referralAccountIx =
+      // await createCustodialReferralDataAccountInstruction(
+      //   new PublicKey(currentWallet.publicKey),
+      //   new PublicKey("pyrSoEahjKGKZpLWEYwCJ8zQAsYZckZH8ZqJ7yGd1ha"),
+      //   feature_account,
+      //   program,
+      //   await getSubmitterReferrer(currentWallet.publicKey, mintKey),
+      //   remainingAccounts
+      // );
+      // const res2 = await sendGaslessTx(
+      //   [referralAccountIx],
+      //   undefined,
+      //   undefined,
+      //   20000
+      // );
+      // console.log("Second gasless tx res: ", res2);
     } catch (error) {
       console.log("Quest Error: ", error);
       setCreateQuestState({ error });
