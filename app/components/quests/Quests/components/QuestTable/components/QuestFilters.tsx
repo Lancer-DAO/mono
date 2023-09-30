@@ -71,7 +71,6 @@ export const QuestFilters = ({
             };
           })}
           onChange={(options) => {
-            console.log(options);
             setFilters({
               ...filters,
               tags: options.map((option) => option.value as string),

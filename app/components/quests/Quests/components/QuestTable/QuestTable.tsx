@@ -156,7 +156,6 @@ const QuestTable: React.FC<Props> = ({ type }) => {
         );
       const uniqueTags = getUniqueItems(allTags);
       setTags(uniqueTags);
-      console.log("AYO", industryNames);
       setFilters({
         ...filters,
         tags: allTags,
