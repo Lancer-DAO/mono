@@ -35,7 +35,7 @@ export const QuestFilters = ({
       <div className="flex gap-3">
         {/* industries */}
         <MultiSelectDropdown
-          extraClasses="w-[150px]"
+          extraClasses="w-[140px]"
           options={industries.map((industry) => {
             return {
               value: industry,
@@ -71,6 +71,7 @@ export const QuestFilters = ({
             };
           })}
           onChange={(options) => {
+            console.log(options);
             setFilters({
               ...filters,
               tags: options.map((option) => option.value as string),
@@ -79,7 +80,7 @@ export const QuestFilters = ({
         />
         {/* states */}
         <MultiSelectDropdown
-          extraClasses="w-[200px]"
+          extraClasses="w-[140px]"
           options={BOUNTY_STATES.map((state) => {
             return {
               value: state,

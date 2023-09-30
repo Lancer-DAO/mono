@@ -49,7 +49,7 @@ const MultiSelectDropdown: React.FC<Props> = ({
       return (
         <label
           key={option.value}
-          className="bg-neutralBtn w-full flex items-center py-2 px-4 text-xl cursor-pointer"
+          className="bg-neutralBtn w-full flex items-center py-2 px-4 text-lg cursor-pointer"
         >
           <input
             type="checkbox"
@@ -58,7 +58,7 @@ const MultiSelectDropdown: React.FC<Props> = ({
             onChange={() => handleCheckboxChange(option)}
             className="mr-[10px]"
           />
-          <div className="flex items-center gap-2 text-sm">
+          <div className="flex items-center gap-2 text-xs">
             {option.icon && (
               <Image
                 src={option?.icon}

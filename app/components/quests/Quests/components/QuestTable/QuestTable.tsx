@@ -126,21 +126,9 @@ const QuestTable: React.FC<Props> = ({ type }) => {
     // - upper and lower bounds of price
 
     if (allBounties && allBounties?.length !== 0) {
-      const allTags = allBounties
-        ?.map((bounty) => bounty.tags.map((tag) => tag.name))
-        ?.reduce(
-          (accumulator, currentValue) => [
-            ...accumulator,
-            ...(currentValue ? currentValue : []),
-          ],
-          []
-        );
-      const uniqueTags = getUniqueItems(allTags);
       const mappedInds = allIndustries.map((industry) => industry.name);
-
       setIndustryNames(mappedInds);
 
-      setTags(uniqueTags);
       const allPrices = allBounties.map((bounty) =>
         bounty.price ? parseFloat(bounty.price.toString()) : 0
       );
@@ -151,12 +139,28 @@ const QuestTable: React.FC<Props> = ({ type }) => {
         maxPrice === minPrice ? maxPrice + 1 : maxPrice,
       ];
       setPriceBounds(priceBounds);
+    }
+  }, [allBounties, allIndustries]);
+
+  useEffect(() => {
+    if (allBounties && allBounties?.length !== 0) {
+      const allTags = allBounties
+        ?.map((bounty) => bounty.tags.map((tag) => tag.name))
+        ?.reduce(
+          (accumulator, currentValue) => [
+            ...accumulator,
+            ...(currentValue ? currentValue : []),
+          ],
+          []
+        );
+      const uniqueTags = getUniqueItems(allTags);
+      setTags(uniqueTags);
       setFilters({
         ...filters,
         tags: allTags,
       });
     }
-  }, [allBounties, allIndustries, filters]);
+  }, [allBounties]);
 
   return (
     <div
