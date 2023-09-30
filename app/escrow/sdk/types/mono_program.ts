@@ -1,3113 +1,6189 @@
 export type MonoProgram = {
-  "version": "0.1.0",
-  "name": "mono_program",
-  "instructions": [
+  version: "0.1.0";
+  name: "mono_program";
+  instructions: [
     {
-      "name": "createFeatureFundingAccount",
-      "accounts": [
+      name: "createFeatureFundingAccount";
+      accounts: [
         {
-          "name": "creator",
-          "isMut": true,
-          "isSigner": true
+          name: "creator";
+          isMut: true;
+          isSigner: true;
         },
         {
-          "name": "fundsMint",
-          "isMut": false,
-          "isSigner": false
+          name: "fundsMint";
+          isMut: false;
+          isSigner: false;
         },
         {
-          "name": "featureDataAccount",
-          "isMut": true,
-          "isSigner": false,
-          "pda": {
-            "seeds": [
+          name: "featureDataAccount";
+          isMut: true;
+          isSigner: false;
+          pda: {
+            seeds: [
               {
-                "kind": "const",
-                "type": "string",
-                "value": "mono"
+                kind: "const";
+                type: "string";
+                value: "mono";
               },
               {
-                "kind": "arg",
-                "type": "string",
-                "path": "unix_timestamp"
+                kind: "arg";
+                type: "string";
+                path: "unix_timestamp";
               },
               {
-                "kind": "account",
-                "type": "publicKey",
-                "path": "creator"
+                kind: "account";
+                type: "publicKey";
+                path: "creator";
               }
-            ]
-          }
+            ];
+          };
         },
         {
-          "name": "featureTokenAccount",
-          "isMut": true,
-          "isSigner": false,
-          "pda": {
-            "seeds": [
+          name: "featureTokenAccount";
+          isMut: true;
+          isSigner: false;
+          pda: {
+            seeds: [
               {
-                "kind": "const",
-                "type": "string",
-                "value": "mono"
+                kind: "const";
+                type: "string";
+                value: "mono";
               },
               {
-                "kind": "arg",
-                "type": "string",
-                "path": "unix_timestamp"
+                kind: "arg";
+                type: "string";
+                path: "unix_timestamp";
               },
               {
-                "kind": "account",
-                "type": "publicKey",
-                "path": "creator"
+                kind: "account";
+                type: "publicKey";
+                path: "creator";
               },
               {
-                "kind": "account",
-                "type": "publicKey",
-                "account": "Mint",
-                "path": "funds_mint"
+                kind: "account";
+                type: "publicKey";
+                account: "Mint";
+                path: "funds_mint";
               }
-            ]
-          }
+            ];
+          };
         },
         {
-          "name": "programAuthority",
-          "isMut": false,
-          "isSigner": false,
-          "pda": {
-            "seeds": [
+          name: "programAuthority";
+          isMut: false;
+          isSigner: false;
+          pda: {
+            seeds: [
               {
-                "kind": "const",
-                "type": "string",
-                "value": "mono"
+                kind: "const";
+                type: "string";
+                value: "mono";
               }
-            ]
-          }
+            ];
+          };
         },
         {
-          "name": "tokenProgram",
-          "isMut": false,
-          "isSigner": false
+          name: "tokenProgram";
+          isMut: false;
+          isSigner: false;
         },
         {
-          "name": "rent",
-          "isMut": false,
-          "isSigner": false
+          name: "rent";
+          isMut: false;
+          isSigner: false;
         },
         {
-          "name": "associatedProgram",
-          "isMut": false,
-          "isSigner": false
+          name: "associatedProgram";
+          isMut: false;
+          isSigner: false;
         },
         {
-          "name": "systemProgram",
-          "isMut": false,
-          "isSigner": false
+          name: "systemProgram";
+          isMut: false;
+          isSigner: false;
         }
-      ],
-      "args": [
+      ];
+      args: [
         {
-          "name": "unixTimestamp",
-          "type": "string"
+          name: "unixTimestamp";
+          type: "string";
         }
-      ]
+      ];
     },
     {
-      "name": "createCustodialFeatureFundingAccount",
-      "accounts": [
+      name: "createCustodialFeatureFundingAccount";
+      accounts: [
         {
-          "name": "custodialFeePayer",
-          "isMut": true,
-          "isSigner": true
+          name: "custodialFeePayer";
+          isMut: true;
+          isSigner: true;
         },
         {
-          "name": "creator",
-          "isMut": false,
-          "isSigner": false,
-          "docs": [
-            "Check: Web3 auth can't allow 2 signers"
-          ]
+          name: "creator";
+          isMut: false;
+          isSigner: false;
+          docs: ["Check: Web3 auth can't allow 2 signers"];
         },
         {
-          "name": "fundsMint",
-          "isMut": false,
-          "isSigner": false
+          name: "fundsMint";
+          isMut: false;
+          isSigner: false;
         },
         {
-          "name": "featureDataAccount",
-          "isMut": true,
-          "isSigner": false,
-          "pda": {
-            "seeds": [
+          name: "featureDataAccount";
+          isMut: true;
+          isSigner: false;
+          pda: {
+            seeds: [
               {
-                "kind": "const",
-                "type": "string",
-                "value": "mono"
+                kind: "const";
+                type: "string";
+                value: "mono";
               },
               {
-                "kind": "arg",
-                "type": "string",
-                "path": "unix_timestamp"
+                kind: "arg";
+                type: "string";
+                path: "unix_timestamp";
               },
               {
-                "kind": "account",
-                "type": "publicKey",
-                "path": "creator"
+                kind: "account";
+                type: "publicKey";
+                path: "creator";
               }
-            ]
-          }
+            ];
+          };
         },
         {
-          "name": "featureTokenAccount",
-          "isMut": true,
-          "isSigner": false,
-          "pda": {
-            "seeds": [
+          name: "featureTokenAccount";
+          isMut: true;
+          isSigner: false;
+          pda: {
+            seeds: [
               {
-                "kind": "const",
-                "type": "string",
-                "value": "mono"
+                kind: "const";
+                type: "string";
+                value: "mono";
               },
               {
-                "kind": "arg",
-                "type": "string",
-                "path": "unix_timestamp"
+                kind: "arg";
+                type: "string";
+                path: "unix_timestamp";
               },
               {
-                "kind": "account",
-                "type": "publicKey",
-                "path": "creator"
+                kind: "account";
+                type: "publicKey";
+                path: "creator";
               },
               {
-                "kind": "account",
-                "type": "publicKey",
-                "account": "Mint",
-                "path": "funds_mint"
+                kind: "account";
+                type: "publicKey";
+                account: "Mint";
+                path: "funds_mint";
               }
-            ]
-          }
+            ];
+          };
         },
         {
-          "name": "programAuthority",
-          "isMut": false,
-          "isSigner": false,
-          "pda": {
-            "seeds": [
+          name: "programAuthority";
+          isMut: false;
+          isSigner: false;
+          pda: {
+            seeds: [
               {
-                "kind": "const",
-                "type": "string",
-                "value": "mono"
+                kind: "const";
+                type: "string";
+                value: "mono";
               }
-            ]
-          }
+            ];
+          };
         },
         {
-          "name": "tokenProgram",
-          "isMut": false,
-          "isSigner": false
+          name: "tokenProgram";
+          isMut: false;
+          isSigner: false;
         },
         {
-          "name": "rent",
-          "isMut": false,
-          "isSigner": false
+          name: "rent";
+          isMut: false;
+          isSigner: false;
         },
         {
-          "name": "associatedProgram",
-          "isMut": false,
-          "isSigner": false
+          name: "associatedProgram";
+          isMut: false;
+          isSigner: false;
         },
         {
-          "name": "systemProgram",
-          "isMut": false,
-          "isSigner": false
+          name: "systemProgram";
+          isMut: false;
+          isSigner: false;
         }
-      ],
-      "args": [
+      ];
+      args: [
         {
-          "name": "unixTimestamp",
-          "type": "string"
+          name: "unixTimestamp";
+          type: "string";
         }
-      ]
+      ];
     },
     {
-      "name": "fundFeature",
-      "accounts": [
+      name: "fundFeature";
+      accounts: [
         {
-          "name": "creator",
-          "isMut": true,
-          "isSigner": true
+          name: "creator";
+          isMut: true;
+          isSigner: true;
         },
         {
-          "name": "creatorTokenAccount",
-          "isMut": true,
-          "isSigner": false
+          name: "creatorTokenAccount";
+          isMut: true;
+          isSigner: false;
         },
         {
-          "name": "fundsMint",
-          "isMut": false,
-          "isSigner": false
+          name: "fundsMint";
+          isMut: false;
+          isSigner: false;
         },
         {
-          "name": "featureDataAccount",
-          "isMut": true,
-          "isSigner": false,
-          "pda": {
-            "seeds": [
+          name: "featureDataAccount";
+          isMut: true;
+          isSigner: false;
+          pda: {
+            seeds: [
               {
-                "kind": "const",
-                "type": "string",
-                "value": "mono"
+                kind: "const";
+                type: "string";
+                value: "mono";
               },
               {
-                "kind": "account",
-                "type": "string",
-                "account": "FeatureDataAccount",
-                "path": "feature_data_account.unix_timestamp"
+                kind: "account";
+                type: "string";
+                account: "FeatureDataAccount";
+                path: "feature_data_account.unix_timestamp";
               },
               {
-                "kind": "account",
-                "type": "publicKey",
-                "path": "creator"
+                kind: "account";
+                type: "publicKey";
+                path: "creator";
               }
-            ]
-          }
+            ];
+          };
         },
         {
-          "name": "featureTokenAccount",
-          "isMut": true,
-          "isSigner": false,
-          "pda": {
-            "seeds": [
+          name: "featureTokenAccount";
+          isMut: true;
+          isSigner: false;
+          pda: {
+            seeds: [
               {
-                "kind": "const",
-                "type": "string",
-                "value": "mono"
+                kind: "const";
+                type: "string";
+                value: "mono";
               },
               {
-                "kind": "account",
-                "type": "string",
-                "account": "FeatureDataAccount",
-                "path": "feature_data_account.unix_timestamp"
+                kind: "account";
+                type: "string";
+                account: "FeatureDataAccount";
+                path: "feature_data_account.unix_timestamp";
               },
               {
-                "kind": "account",
-                "type": "publicKey",
-                "path": "creator"
+                kind: "account";
+                type: "publicKey";
+                path: "creator";
               },
               {
-                "kind": "account",
-                "type": "publicKey",
-                "account": "Mint",
-                "path": "funds_mint"
+                kind: "account";
+                type: "publicKey";
+                account: "Mint";
+                path: "funds_mint";
               }
-            ]
-          }
+            ];
+          };
         },
         {
-          "name": "programAuthority",
-          "isMut": false,
-          "isSigner": false,
-          "pda": {
-            "seeds": [
+          name: "programAuthority";
+          isMut: false;
+          isSigner: false;
+          pda: {
+            seeds: [
               {
-                "kind": "const",
-                "type": "string",
-                "value": "mono"
+                kind: "const";
+                type: "string";
+                value: "mono";
               }
-            ]
-          }
+            ];
+          };
         },
         {
-          "name": "tokenProgram",
-          "isMut": false,
-          "isSigner": false
+          name: "tokenProgram";
+          isMut: false;
+          isSigner: false;
         },
         {
-          "name": "systemProgram",
-          "isMut": false,
-          "isSigner": false
+          name: "systemProgram";
+          isMut: false;
+          isSigner: false;
         }
-      ],
-      "args": [
+      ];
+      args: [
         {
-          "name": "amount",
-          "type": "u64"
+          name: "amount";
+          type: "u64";
         }
-      ]
+      ];
     },
     {
-      "name": "achFundFeature",
-      "accounts": [
+      name: "achFundFeature";
+      accounts: [
         {
-          "name": "externalFunder",
-          "isMut": true,
-          "isSigner": true
+          name: "externalFunder";
+          isMut: true;
+          isSigner: true;
         },
         {
-          "name": "creator",
-          "isMut": true,
-          "isSigner": false
+          name: "creator";
+          isMut: true;
+          isSigner: false;
         },
         {
-          "name": "externalFunderTokenAccount",
-          "isMut": true,
-          "isSigner": false
+          name: "externalFunderTokenAccount";
+          isMut: true;
+          isSigner: false;
         },
         {
-          "name": "fundsMint",
-          "isMut": false,
-          "isSigner": false
+          name: "fundsMint";
+          isMut: false;
+          isSigner: false;
         },
         {
-          "name": "featureDataAccount",
-          "isMut": true,
-          "isSigner": false,
-          "pda": {
-            "seeds": [
+          name: "featureDataAccount";
+          isMut: true;
+          isSigner: false;
+          pda: {
+            seeds: [
               {
-                "kind": "const",
-                "type": "string",
-                "value": "mono"
+                kind: "const";
+                type: "string";
+                value: "mono";
               },
               {
-                "kind": "account",
-                "type": "string",
-                "account": "FeatureDataAccount",
-                "path": "feature_data_account.unix_timestamp"
+                kind: "account";
+                type: "string";
+                account: "FeatureDataAccount";
+                path: "feature_data_account.unix_timestamp";
               },
               {
-                "kind": "account",
-                "type": "publicKey",
-                "path": "creator"
+                kind: "account";
+                type: "publicKey";
+                path: "creator";
               }
-            ]
-          }
+            ];
+          };
         },
         {
-          "name": "featureTokenAccount",
-          "isMut": true,
-          "isSigner": false,
-          "pda": {
-            "seeds": [
+          name: "featureTokenAccount";
+          isMut: true;
+          isSigner: false;
+          pda: {
+            seeds: [
               {
-                "kind": "const",
-                "type": "string",
-                "value": "mono"
+                kind: "const";
+                type: "string";
+                value: "mono";
               },
               {
-                "kind": "account",
-                "type": "string",
-                "account": "FeatureDataAccount",
-                "path": "feature_data_account.unix_timestamp"
+                kind: "account";
+                type: "string";
+                account: "FeatureDataAccount";
+                path: "feature_data_account.unix_timestamp";
               },
               {
-                "kind": "account",
-                "type": "publicKey",
-                "path": "creator"
+                kind: "account";
+                type: "publicKey";
+                path: "creator";
               },
               {
-                "kind": "account",
-                "type": "publicKey",
-                "account": "Mint",
-                "path": "funds_mint"
+                kind: "account";
+                type: "publicKey";
+                account: "Mint";
+                path: "funds_mint";
               }
-            ]
-          }
+            ];
+          };
         },
         {
-          "name": "programAuthority",
-          "isMut": false,
-          "isSigner": false,
-          "pda": {
-            "seeds": [
+          name: "programAuthority";
+          isMut: false;
+          isSigner: false;
+          pda: {
+            seeds: [
               {
-                "kind": "const",
-                "type": "string",
-                "value": "mono"
+                kind: "const";
+                type: "string";
+                value: "mono";
               }
-            ]
-          }
+            ];
+          };
         },
         {
-          "name": "tokenProgram",
-          "isMut": false,
-          "isSigner": false
+          name: "tokenProgram";
+          isMut: false;
+          isSigner: false;
         },
         {
-          "name": "systemProgram",
-          "isMut": false,
-          "isSigner": false
+          name: "systemProgram";
+          isMut: false;
+          isSigner: false;
         }
-      ],
-      "args": [
+      ];
+      args: [
         {
-          "name": "amount",
-          "type": "u64"
+          name: "amount";
+          type: "u64";
         }
-      ]
+      ];
     },
     {
-      "name": "addApprovedSubmitters",
-      "accounts": [
+      name: "addApprovedSubmitters";
+      accounts: [
         {
-          "name": "creator",
-          "isMut": true,
-          "isSigner": true
+          name: "creator";
+          isMut: true;
+          isSigner: true;
         },
         {
-          "name": "submitter",
-          "isMut": false,
-          "isSigner": false
+          name: "submitter";
+          isMut: false;
+          isSigner: false;
         },
         {
-          "name": "featureDataAccount",
-          "isMut": true,
-          "isSigner": false,
-          "pda": {
-            "seeds": [
+          name: "featureDataAccount";
+          isMut: true;
+          isSigner: false;
+          pda: {
+            seeds: [
               {
-                "kind": "const",
-                "type": "string",
-                "value": "mono"
+                kind: "const";
+                type: "string";
+                value: "mono";
               },
               {
-                "kind": "account",
-                "type": "string",
-                "account": "FeatureDataAccount",
-                "path": "feature_data_account.unix_timestamp"
+                kind: "account";
+                type: "string";
+                account: "FeatureDataAccount";
+                path: "feature_data_account.unix_timestamp";
               },
               {
-                "kind": "account",
-                "type": "publicKey",
-                "path": "creator"
+                kind: "account";
+                type: "publicKey";
+                path: "creator";
               }
-            ]
-          }
+            ];
+          };
         }
-      ],
-      "args": []
+      ];
+      args: [];
     },
     {
-      "name": "submitRequest",
-      "accounts": [
+      name: "submitRequest";
+      accounts: [
         {
-          "name": "creator",
-          "isMut": true,
-          "isSigner": false
+          name: "creator";
+          isMut: true;
+          isSigner: false;
         },
         {
-          "name": "submitter",
-          "isMut": false,
-          "isSigner": true
+          name: "submitter";
+          isMut: false;
+          isSigner: true;
         },
         {
-          "name": "payoutAccount",
-          "isMut": false,
-          "isSigner": false
+          name: "payoutAccount";
+          isMut: false;
+          isSigner: false;
         },
         {
-          "name": "featureDataAccount",
-          "isMut": true,
-          "isSigner": false,
-          "pda": {
-            "seeds": [
+          name: "featureDataAccount";
+          isMut: true;
+          isSigner: false;
+          pda: {
+            seeds: [
               {
-                "kind": "const",
-                "type": "string",
-                "value": "mono"
+                kind: "const";
+                type: "string";
+                value: "mono";
               },
               {
-                "kind": "account",
-                "type": "string",
-                "account": "FeatureDataAccount",
-                "path": "feature_data_account.unix_timestamp"
+                kind: "account";
+                type: "string";
+                account: "FeatureDataAccount";
+                path: "feature_data_account.unix_timestamp";
               },
               {
-                "kind": "account",
-                "type": "publicKey",
-                "path": "creator"
+                kind: "account";
+                type: "publicKey";
+                path: "creator";
               }
-            ]
-          }
+            ];
+          };
         }
-      ],
-      "args": []
+      ];
+      args: [];
     },
     {
-      "name": "approveRequest",
-      "accounts": [
+      name: "approveRequest";
+      accounts: [
         {
-          "name": "creator",
-          "isMut": true,
-          "isSigner": true
+          name: "creator";
+          isMut: true;
+          isSigner: true;
         },
         {
-          "name": "submitter",
-          "isMut": true,
-          "isSigner": false
+          name: "submitter";
+          isMut: true;
+          isSigner: false;
         },
         {
-          "name": "payoutAccount",
-          "isMut": true,
-          "isSigner": false
+          name: "payoutAccount";
+          isMut: true;
+          isSigner: false;
         },
         {
-          "name": "featureDataAccount",
-          "isMut": true,
-          "isSigner": false,
-          "pda": {
-            "seeds": [
+          name: "featureDataAccount";
+          isMut: true;
+          isSigner: false;
+          pda: {
+            seeds: [
               {
-                "kind": "const",
-                "type": "string",
-                "value": "mono"
+                kind: "const";
+                type: "string";
+                value: "mono";
               },
               {
-                "kind": "account",
-                "type": "string",
-                "account": "FeatureDataAccount",
-                "path": "feature_data_account.unix_timestamp"
+                kind: "account";
+                type: "string";
+                account: "FeatureDataAccount";
+                path: "feature_data_account.unix_timestamp";
               },
               {
-                "kind": "account",
-                "type": "publicKey",
-                "path": "creator"
+                kind: "account";
+                type: "publicKey";
+                path: "creator";
               }
-            ]
-          }
+            ];
+          };
         },
         {
-          "name": "featureTokenAccount",
-          "isMut": true,
-          "isSigner": false,
-          "pda": {
-            "seeds": [
+          name: "featureTokenAccount";
+          isMut: true;
+          isSigner: false;
+          pda: {
+            seeds: [
               {
-                "kind": "const",
-                "type": "string",
-                "value": "mono"
+                kind: "const";
+                type: "string";
+                value: "mono";
               },
               {
-                "kind": "account",
-                "type": "string",
-                "account": "FeatureDataAccount",
-                "path": "feature_data_account.unix_timestamp"
+                kind: "account";
+                type: "string";
+                account: "FeatureDataAccount";
+                path: "feature_data_account.unix_timestamp";
               },
               {
-                "kind": "account",
-                "type": "publicKey",
-                "path": "creator"
+                kind: "account";
+                type: "publicKey";
+                path: "creator";
               },
               {
-                "kind": "account",
-                "type": "publicKey",
-                "account": "FeatureDataAccount",
-                "path": "feature_data_account.funds_mint"
+                kind: "account";
+                type: "publicKey";
+                account: "FeatureDataAccount";
+                path: "feature_data_account.funds_mint";
               }
-            ]
-          }
+            ];
+          };
         },
         {
-          "name": "lancerDaoTokenAccount",
-          "isMut": true,
-          "isSigner": false,
-          "pda": {
-            "seeds": [
+          name: "lancerDaoTokenAccount";
+          isMut: true;
+          isSigner: false;
+          pda: {
+            seeds: [
               {
-                "kind": "const",
-                "type": "string",
-                "value": "mono"
+                kind: "const";
+                type: "string";
+                value: "mono";
               },
               {
-                "kind": "const",
-                "type": "string",
-                "value": "LANCER_DAO"
+                kind: "const";
+                type: "string";
+                value: "LANCER_DAO";
               },
               {
-                "kind": "account",
-                "type": "publicKey",
-                "account": "TokenAccount",
-                "path": "feature_token_account.mint"
+                kind: "account";
+                type: "publicKey";
+                account: "TokenAccount";
+                path: "feature_token_account.mint";
               }
-            ]
-          }
+            ];
+          };
         },
         {
-          "name": "lancerTokenProgramAuthority",
-          "isMut": false,
-          "isSigner": false,
-          "pda": {
-            "seeds": [
+          name: "lancerTokenProgramAuthority";
+          isMut: false;
+          isSigner: false;
+          pda: {
+            seeds: [
               {
-                "kind": "const",
-                "type": "string",
-                "value": "LANCER_DAO"
+                kind: "const";
+                type: "string";
+                value: "LANCER_DAO";
               }
-            ]
-          }
+            ];
+          };
         },
         {
-          "name": "programAuthority",
-          "isMut": false,
-          "isSigner": false,
-          "pda": {
-            "seeds": [
+          name: "programAuthority";
+          isMut: false;
+          isSigner: false;
+          pda: {
+            seeds: [
               {
-                "kind": "const",
-                "type": "string",
-                "value": "mono"
+                kind: "const";
+                type: "string";
+                value: "mono";
               }
-            ]
-          }
+            ];
+          };
         },
         {
-          "name": "tokenProgram",
-          "isMut": false,
-          "isSigner": false
+          name: "tokenProgram";
+          isMut: false;
+          isSigner: false;
         }
-      ],
-      "args": []
+      ];
+      args: [];
     },
     {
-      "name": "denyRequest",
-      "accounts": [
+      name: "denyRequest";
+      accounts: [
         {
-          "name": "creator",
-          "isMut": true,
-          "isSigner": true
+          name: "creator";
+          isMut: true;
+          isSigner: true;
         },
         {
-          "name": "submitter",
-          "isMut": true,
-          "isSigner": false
+          name: "submitter";
+          isMut: true;
+          isSigner: false;
         },
         {
-          "name": "featureDataAccount",
-          "isMut": true,
-          "isSigner": false,
-          "pda": {
-            "seeds": [
+          name: "featureDataAccount";
+          isMut: true;
+          isSigner: false;
+          pda: {
+            seeds: [
               {
-                "kind": "const",
-                "type": "string",
-                "value": "mono"
+                kind: "const";
+                type: "string";
+                value: "mono";
               },
               {
-                "kind": "account",
-                "type": "string",
-                "account": "FeatureDataAccount",
-                "path": "feature_data_account.unix_timestamp"
+                kind: "account";
+                type: "string";
+                account: "FeatureDataAccount";
+                path: "feature_data_account.unix_timestamp";
               },
               {
-                "kind": "account",
-                "type": "publicKey",
-                "path": "creator"
+                kind: "account";
+                type: "publicKey";
+                path: "creator";
               }
-            ]
-          }
+            ];
+          };
         }
-      ],
-      "args": []
+      ];
+      args: [];
     },
     {
-      "name": "voteToCancel",
-      "accounts": [
+      name: "voteToCancel";
+      accounts: [
         {
-          "name": "creator",
-          "isMut": true,
-          "isSigner": false
+          name: "creator";
+          isMut: true;
+          isSigner: false;
         },
         {
-          "name": "voter",
-          "isMut": true,
-          "isSigner": true
+          name: "voter";
+          isMut: true;
+          isSigner: true;
         },
         {
-          "name": "featureDataAccount",
-          "isMut": true,
-          "isSigner": false,
-          "pda": {
-            "seeds": [
+          name: "featureDataAccount";
+          isMut: true;
+          isSigner: false;
+          pda: {
+            seeds: [
               {
-                "kind": "const",
-                "type": "string",
-                "value": "mono"
+                kind: "const";
+                type: "string";
+                value: "mono";
               },
               {
-                "kind": "account",
-                "type": "string",
-                "account": "FeatureDataAccount",
-                "path": "feature_data_account.unix_timestamp"
+                kind: "account";
+                type: "string";
+                account: "FeatureDataAccount";
+                path: "feature_data_account.unix_timestamp";
               },
               {
-                "kind": "account",
-                "type": "publicKey",
-                "path": "creator"
+                kind: "account";
+                type: "publicKey";
+                path: "creator";
               }
-            ]
-          }
+            ];
+          };
         }
-      ],
-      "args": [
+      ];
+      args: [
         {
-          "name": "isCancel",
-          "type": "bool"
+          name: "isCancel";
+          type: "bool";
         }
-      ]
+      ];
     },
     {
-      "name": "cancelFeature",
-      "accounts": [
+      name: "cancelFeature";
+      accounts: [
         {
-          "name": "creator",
-          "isMut": true,
-          "isSigner": true
+          name: "creator";
+          isMut: true;
+          isSigner: true;
         },
         {
-          "name": "creatorTokenAccount",
-          "isMut": true,
-          "isSigner": false
+          name: "creatorTokenAccount";
+          isMut: true;
+          isSigner: false;
         },
         {
-          "name": "featureDataAccount",
-          "isMut": true,
-          "isSigner": false,
-          "pda": {
-            "seeds": [
+          name: "featureDataAccount";
+          isMut: true;
+          isSigner: false;
+          pda: {
+            seeds: [
               {
-                "kind": "const",
-                "type": "string",
-                "value": "mono"
+                kind: "const";
+                type: "string";
+                value: "mono";
               },
               {
-                "kind": "account",
-                "type": "string",
-                "account": "FeatureDataAccount",
-                "path": "feature_data_account.unix_timestamp"
+                kind: "account";
+                type: "string";
+                account: "FeatureDataAccount";
+                path: "feature_data_account.unix_timestamp";
               },
               {
-                "kind": "account",
-                "type": "publicKey",
-                "path": "creator"
+                kind: "account";
+                type: "publicKey";
+                path: "creator";
               }
-            ]
-          }
+            ];
+          };
         },
         {
-          "name": "featureTokenAccount",
-          "isMut": true,
-          "isSigner": false,
-          "pda": {
-            "seeds": [
+          name: "featureTokenAccount";
+          isMut: true;
+          isSigner: false;
+          pda: {
+            seeds: [
               {
-                "kind": "const",
-                "type": "string",
-                "value": "mono"
+                kind: "const";
+                type: "string";
+                value: "mono";
               },
               {
-                "kind": "account",
-                "type": "string",
-                "account": "FeatureDataAccount",
-                "path": "feature_data_account.unix_timestamp"
+                kind: "account";
+                type: "string";
+                account: "FeatureDataAccount";
+                path: "feature_data_account.unix_timestamp";
               },
               {
-                "kind": "account",
-                "type": "publicKey",
-                "path": "creator"
+                kind: "account";
+                type: "publicKey";
+                path: "creator";
               },
               {
-                "kind": "account",
-                "type": "publicKey",
-                "account": "FeatureDataAccount",
-                "path": "feature_data_account.funds_mint"
+                kind: "account";
+                type: "publicKey";
+                account: "FeatureDataAccount";
+                path: "feature_data_account.funds_mint";
               }
-            ]
-          }
+            ];
+          };
         },
         {
-          "name": "programAuthority",
-          "isMut": false,
-          "isSigner": false,
-          "pda": {
-            "seeds": [
+          name: "programAuthority";
+          isMut: false;
+          isSigner: false;
+          pda: {
+            seeds: [
               {
-                "kind": "const",
-                "type": "string",
-                "value": "mono"
+                kind: "const";
+                type: "string";
+                value: "mono";
               }
-            ]
-          }
+            ];
+          };
         },
         {
-          "name": "tokenProgram",
-          "isMut": false,
-          "isSigner": false
+          name: "tokenProgram";
+          isMut: false;
+          isSigner: false;
         }
-      ],
-      "args": []
+      ];
+      args: [];
     },
     {
-      "name": "removeApprovedSubmitters",
-      "accounts": [
+      name: "removeApprovedSubmitters";
+      accounts: [
         {
-          "name": "creator",
-          "isMut": true,
-          "isSigner": true
+          name: "creator";
+          isMut: true;
+          isSigner: true;
         },
         {
-          "name": "submitter",
-          "isMut": false,
-          "isSigner": false
+          name: "submitter";
+          isMut: false;
+          isSigner: false;
         },
         {
-          "name": "featureDataAccount",
-          "isMut": true,
-          "isSigner": false,
-          "pda": {
-            "seeds": [
+          name: "featureDataAccount";
+          isMut: true;
+          isSigner: false;
+          pda: {
+            seeds: [
               {
-                "kind": "const",
-                "type": "string",
-                "value": "mono"
+                kind: "const";
+                type: "string";
+                value: "mono";
               },
               {
-                "kind": "account",
-                "type": "string",
-                "account": "FeatureDataAccount",
-                "path": "feature_data_account.unix_timestamp"
+                kind: "account";
+                type: "string";
+                account: "FeatureDataAccount";
+                path: "feature_data_account.unix_timestamp";
               },
               {
-                "kind": "account",
-                "type": "publicKey",
-                "path": "creator"
+                kind: "account";
+                type: "publicKey";
+                path: "creator";
               }
-            ]
-          }
+            ];
+          };
         }
-      ],
-      "args": []
+      ];
+      args: [];
     },
     {
-      "name": "createLancerTokenAccount",
-      "accounts": [
+      name: "createLancerTokenAccount";
+      accounts: [
         {
-          "name": "lancerAdmin",
-          "isMut": true,
-          "isSigner": true
+          name: "lancerAdmin";
+          isMut: true;
+          isSigner: true;
         },
         {
-          "name": "fundsMint",
-          "isMut": false,
-          "isSigner": false
+          name: "fundsMint";
+          isMut: false;
+          isSigner: false;
         },
         {
-          "name": "lancerDaoTokenAccount",
-          "isMut": true,
-          "isSigner": false,
-          "pda": {
-            "seeds": [
+          name: "lancerDaoTokenAccount";
+          isMut: true;
+          isSigner: false;
+          pda: {
+            seeds: [
               {
-                "kind": "const",
-                "type": "string",
-                "value": "mono"
+                kind: "const";
+                type: "string";
+                value: "mono";
               },
               {
-                "kind": "const",
-                "type": "string",
-                "value": "LANCER_DAO"
+                kind: "const";
+                type: "string";
+                value: "LANCER_DAO";
               },
               {
-                "kind": "account",
-                "type": "publicKey",
-                "account": "Mint",
-                "path": "funds_mint"
+                kind: "account";
+                type: "publicKey";
+                account: "Mint";
+                path: "funds_mint";
               }
-            ]
-          }
+            ];
+          };
         },
         {
-          "name": "programAuthority",
-          "isMut": false,
-          "isSigner": false,
-          "pda": {
-            "seeds": [
+          name: "programAuthority";
+          isMut: false;
+          isSigner: false;
+          pda: {
+            seeds: [
               {
-                "kind": "const",
-                "type": "string",
-                "value": "LANCER_DAO"
+                kind: "const";
+                type: "string";
+                value: "LANCER_DAO";
               }
-            ]
-          }
+            ];
+          };
         },
         {
-          "name": "systemProgram",
-          "isMut": false,
-          "isSigner": false
+          name: "systemProgram";
+          isMut: false;
+          isSigner: false;
         },
         {
-          "name": "tokenProgram",
-          "isMut": false,
-          "isSigner": false
+          name: "tokenProgram";
+          isMut: false;
+          isSigner: false;
         }
-      ],
-      "args": []
+      ];
+      args: [];
     },
     {
-      "name": "withdrawTokens",
-      "accounts": [
+      name: "withdrawTokens";
+      accounts: [
         {
-          "name": "lancerAdmin",
-          "isMut": true,
-          "isSigner": true
+          name: "lancerAdmin";
+          isMut: true;
+          isSigner: true;
         },
         {
-          "name": "withdrawer",
-          "isMut": false,
-          "isSigner": false
+          name: "withdrawer";
+          isMut: false;
+          isSigner: false;
         },
         {
-          "name": "withdrawerTokenAccount",
-          "isMut": true,
-          "isSigner": false
+          name: "withdrawerTokenAccount";
+          isMut: true;
+          isSigner: false;
         },
         {
-          "name": "mint",
-          "isMut": false,
-          "isSigner": false
+          name: "mint";
+          isMut: false;
+          isSigner: false;
         },
         {
-          "name": "lancerDaoTokenAccount",
-          "isMut": true,
-          "isSigner": false,
-          "pda": {
-            "seeds": [
+          name: "lancerDaoTokenAccount";
+          isMut: true;
+          isSigner: false;
+          pda: {
+            seeds: [
               {
-                "kind": "const",
-                "type": "string",
-                "value": "mono"
+                kind: "const";
+                type: "string";
+                value: "mono";
               },
               {
-                "kind": "const",
-                "type": "string",
-                "value": "LANCER_DAO"
+                kind: "const";
+                type: "string";
+                value: "LANCER_DAO";
               },
               {
-                "kind": "account",
-                "type": "publicKey",
-                "account": "Mint",
-                "path": "mint"
+                kind: "account";
+                type: "publicKey";
+                account: "Mint";
+                path: "mint";
               }
-            ]
-          }
+            ];
+          };
         },
         {
-          "name": "lancerTokenProgramAuthority",
-          "isMut": false,
-          "isSigner": false,
-          "pda": {
-            "seeds": [
+          name: "lancerTokenProgramAuthority";
+          isMut: false;
+          isSigner: false;
+          pda: {
+            seeds: [
               {
-                "kind": "const",
-                "type": "string",
-                "value": "LANCER_DAO"
+                kind: "const";
+                type: "string";
+                value: "LANCER_DAO";
               }
-            ]
-          }
+            ];
+          };
         },
         {
-          "name": "tokenProgram",
-          "isMut": false,
-          "isSigner": false
+          name: "tokenProgram";
+          isMut: false;
+          isSigner: false;
         }
-      ],
-      "args": [
+      ];
+      args: [
         {
-          "name": "amount",
-          "type": "u64"
+          name: "amount";
+          type: "u64";
         },
         {
-          "name": "withdrawBump",
-          "type": "u8"
+          name: "withdrawBump";
+          type: "u8";
         }
-      ]
+      ];
     },
     {
-      "name": "enableMultipleSubmitters",
-      "accounts": [
+      name: "enableMultipleSubmitters";
+      accounts: [
         {
-          "name": "creator",
-          "isMut": true,
-          "isSigner": true
+          name: "creator";
+          isMut: true;
+          isSigner: true;
         },
         {
-          "name": "featureDataAccount",
-          "isMut": true,
-          "isSigner": false,
-          "pda": {
-            "seeds": [
+          name: "featureDataAccount";
+          isMut: true;
+          isSigner: false;
+          pda: {
+            seeds: [
               {
-                "kind": "const",
-                "type": "string",
-                "value": "mono"
+                kind: "const";
+                type: "string";
+                value: "mono";
               },
               {
-                "kind": "account",
-                "type": "string",
-                "account": "FeatureDataAccount",
-                "path": "feature_data_account.unix_timestamp"
+                kind: "account";
+                type: "string";
+                account: "FeatureDataAccount";
+                path: "feature_data_account.unix_timestamp";
               },
               {
-                "kind": "account",
-                "type": "publicKey",
-                "path": "creator"
+                kind: "account";
+                type: "publicKey";
+                path: "creator";
               }
-            ]
-          }
+            ];
+          };
         }
-      ],
-      "args": []
+      ];
+      args: [];
     },
     {
-      "name": "submitRequestMultiple",
-      "accounts": [
+      name: "submitRequestMultiple";
+      accounts: [
         {
-          "name": "creator",
-          "isMut": true,
-          "isSigner": false
+          name: "creator";
+          isMut: true;
+          isSigner: false;
         },
         {
-          "name": "submitter",
-          "isMut": false,
-          "isSigner": true
+          name: "submitter";
+          isMut: false;
+          isSigner: true;
         },
         {
-          "name": "featureDataAccount",
-          "isMut": true,
-          "isSigner": false,
-          "pda": {
-            "seeds": [
+          name: "featureDataAccount";
+          isMut: true;
+          isSigner: false;
+          pda: {
+            seeds: [
               {
-                "kind": "const",
-                "type": "string",
-                "value": "mono"
+                kind: "const";
+                type: "string";
+                value: "mono";
               },
               {
-                "kind": "account",
-                "type": "string",
-                "account": "FeatureDataAccount",
-                "path": "feature_data_account.unix_timestamp"
+                kind: "account";
+                type: "string";
+                account: "FeatureDataAccount";
+                path: "feature_data_account.unix_timestamp";
               },
               {
-                "kind": "account",
-                "type": "publicKey",
-                "path": "creator"
+                kind: "account";
+                type: "publicKey";
+                path: "creator";
               }
-            ]
-          }
+            ];
+          };
         }
-      ],
-      "args": []
+      ];
+      args: [];
     },
     {
-      "name": "setShareMultipleSubmitters",
-      "accounts": [
+      name: "setShareMultipleSubmitters";
+      accounts: [
         {
-          "name": "creator",
-          "isMut": true,
-          "isSigner": true
+          name: "creator";
+          isMut: true;
+          isSigner: true;
         },
         {
-          "name": "featureDataAccount",
-          "isMut": true,
-          "isSigner": false,
-          "pda": {
-            "seeds": [
+          name: "featureDataAccount";
+          isMut: true;
+          isSigner: false;
+          pda: {
+            seeds: [
               {
-                "kind": "const",
-                "type": "string",
-                "value": "mono"
+                kind: "const";
+                type: "string";
+                value: "mono";
               },
               {
-                "kind": "account",
-                "type": "string",
-                "account": "FeatureDataAccount",
-                "path": "feature_data_account.unix_timestamp"
+                kind: "account";
+                type: "string";
+                account: "FeatureDataAccount";
+                path: "feature_data_account.unix_timestamp";
               },
               {
-                "kind": "account",
-                "type": "publicKey",
-                "path": "creator"
+                kind: "account";
+                type: "publicKey";
+                path: "creator";
               }
-            ]
-          }
+            ];
+          };
         }
-      ],
-      "args": [
+      ];
+      args: [
         {
-          "name": "submitter",
-          "type": "publicKey"
+          name: "submitter";
+          type: "publicKey";
         },
         {
-          "name": "submitterShare",
-          "type": "f32"
+          name: "submitterShare";
+          type: "f32";
         }
-      ]
+      ];
     },
     {
-      "name": "approveRequestMultiple",
-      "accounts": [
+      name: "approveRequestMultiple";
+      accounts: [
         {
-          "name": "creator",
-          "isMut": true,
-          "isSigner": true
+          name: "creator";
+          isMut: true;
+          isSigner: true;
         },
         {
-          "name": "featureDataAccount",
-          "isMut": true,
-          "isSigner": false,
-          "pda": {
-            "seeds": [
+          name: "featureDataAccount";
+          isMut: true;
+          isSigner: false;
+          pda: {
+            seeds: [
               {
-                "kind": "const",
-                "type": "string",
-                "value": "mono"
+                kind: "const";
+                type: "string";
+                value: "mono";
               },
               {
-                "kind": "account",
-                "type": "string",
-                "account": "FeatureDataAccount",
-                "path": "feature_data_account.unix_timestamp"
+                kind: "account";
+                type: "string";
+                account: "FeatureDataAccount";
+                path: "feature_data_account.unix_timestamp";
               },
               {
-                "kind": "account",
-                "type": "publicKey",
-                "path": "creator"
+                kind: "account";
+                type: "publicKey";
+                path: "creator";
               }
-            ]
-          }
+            ];
+          };
         },
         {
-          "name": "featureTokenAccount",
-          "isMut": true,
-          "isSigner": false,
-          "pda": {
-            "seeds": [
+          name: "featureTokenAccount";
+          isMut: true;
+          isSigner: false;
+          pda: {
+            seeds: [
               {
-                "kind": "const",
-                "type": "string",
-                "value": "mono"
+                kind: "const";
+                type: "string";
+                value: "mono";
               },
               {
-                "kind": "account",
-                "type": "string",
-                "account": "FeatureDataAccount",
-                "path": "feature_data_account.unix_timestamp"
+                kind: "account";
+                type: "string";
+                account: "FeatureDataAccount";
+                path: "feature_data_account.unix_timestamp";
               },
               {
-                "kind": "account",
-                "type": "publicKey",
-                "path": "creator"
+                kind: "account";
+                type: "publicKey";
+                path: "creator";
               },
               {
-                "kind": "account",
-                "type": "publicKey",
-                "account": "FeatureDataAccount",
-                "path": "feature_data_account.funds_mint"
+                kind: "account";
+                type: "publicKey";
+                account: "FeatureDataAccount";
+                path: "feature_data_account.funds_mint";
               }
-            ]
-          }
+            ];
+          };
         },
         {
-          "name": "lancerDaoTokenAccount",
-          "isMut": true,
-          "isSigner": false,
-          "pda": {
-            "seeds": [
+          name: "lancerDaoTokenAccount";
+          isMut: true;
+          isSigner: false;
+          pda: {
+            seeds: [
               {
-                "kind": "const",
-                "type": "string",
-                "value": "mono"
+                kind: "const";
+                type: "string";
+                value: "mono";
               },
               {
-                "kind": "const",
-                "type": "string",
-                "value": "LANCER_DAO"
+                kind: "const";
+                type: "string";
+                value: "LANCER_DAO";
               },
               {
-                "kind": "account",
-                "type": "publicKey",
-                "account": "TokenAccount",
-                "path": "feature_token_account.mint"
+                kind: "account";
+                type: "publicKey";
+                account: "TokenAccount";
+                path: "feature_token_account.mint";
               }
-            ]
-          }
+            ];
+          };
         },
         {
-          "name": "lancerTokenProgramAuthority",
-          "isMut": false,
-          "isSigner": false,
-          "pda": {
-            "seeds": [
+          name: "lancerTokenProgramAuthority";
+          isMut: false;
+          isSigner: false;
+          pda: {
+            seeds: [
               {
-                "kind": "const",
-                "type": "string",
-                "value": "LANCER_DAO"
+                kind: "const";
+                type: "string";
+                value: "LANCER_DAO";
               }
-            ]
-          }
+            ];
+          };
         },
         {
-          "name": "programAuthority",
-          "isMut": false,
-          "isSigner": false,
-          "pda": {
-            "seeds": [
+          name: "programAuthority";
+          isMut: false;
+          isSigner: false;
+          pda: {
+            seeds: [
               {
-                "kind": "const",
-                "type": "string",
-                "value": "mono"
+                kind: "const";
+                type: "string";
+                value: "mono";
               }
-            ]
-          }
+            ];
+          };
         },
         {
-          "name": "tokenProgram",
-          "isMut": false,
-          "isSigner": false
+          name: "tokenProgram";
+          isMut: false;
+          isSigner: false;
         },
         {
-          "name": "systemProgram",
-          "isMut": false,
-          "isSigner": false
+          name: "systemProgram";
+          isMut: false;
+          isSigner: false;
         }
-      ],
-      "args": []
+      ];
+      args: [];
     },
     {
-      "name": "approveRequestPartial",
-      "accounts": [
+      name: "approveRequestPartial";
+      accounts: [
         {
-          "name": "creator",
-          "isMut": true,
-          "isSigner": true
+          name: "creator";
+          isMut: true;
+          isSigner: true;
         },
         {
-          "name": "submitter",
-          "isMut": true,
-          "isSigner": false
+          name: "submitter";
+          isMut: true;
+          isSigner: false;
         },
         {
-          "name": "payoutAccount",
-          "isMut": true,
-          "isSigner": false
+          name: "payoutAccount";
+          isMut: true;
+          isSigner: false;
         },
         {
-          "name": "featureDataAccount",
-          "isMut": true,
-          "isSigner": false,
-          "pda": {
-            "seeds": [
+          name: "featureDataAccount";
+          isMut: true;
+          isSigner: false;
+          pda: {
+            seeds: [
               {
-                "kind": "const",
-                "type": "string",
-                "value": "mono"
+                kind: "const";
+                type: "string";
+                value: "mono";
               },
               {
-                "kind": "account",
-                "type": "string",
-                "account": "FeatureDataAccount",
-                "path": "feature_data_account.unix_timestamp"
+                kind: "account";
+                type: "string";
+                account: "FeatureDataAccount";
+                path: "feature_data_account.unix_timestamp";
               },
               {
-                "kind": "account",
-                "type": "publicKey",
-                "path": "creator"
+                kind: "account";
+                type: "publicKey";
+                path: "creator";
               }
-            ]
-          }
+            ];
+          };
         },
         {
-          "name": "featureTokenAccount",
-          "isMut": true,
-          "isSigner": false,
-          "pda": {
-            "seeds": [
+          name: "featureTokenAccount";
+          isMut: true;
+          isSigner: false;
+          pda: {
+            seeds: [
               {
-                "kind": "const",
-                "type": "string",
-                "value": "mono"
+                kind: "const";
+                type: "string";
+                value: "mono";
               },
               {
-                "kind": "account",
-                "type": "string",
-                "account": "FeatureDataAccount",
-                "path": "feature_data_account.unix_timestamp"
+                kind: "account";
+                type: "string";
+                account: "FeatureDataAccount";
+                path: "feature_data_account.unix_timestamp";
               },
               {
-                "kind": "account",
-                "type": "publicKey",
-                "path": "creator"
+                kind: "account";
+                type: "publicKey";
+                path: "creator";
               },
               {
-                "kind": "account",
-                "type": "publicKey",
-                "account": "FeatureDataAccount",
-                "path": "feature_data_account.funds_mint"
+                kind: "account";
+                type: "publicKey";
+                account: "FeatureDataAccount";
+                path: "feature_data_account.funds_mint";
               }
-            ]
-          }
+            ];
+          };
         },
         {
-          "name": "lancerDaoTokenAccount",
-          "isMut": true,
-          "isSigner": false,
-          "pda": {
-            "seeds": [
+          name: "lancerDaoTokenAccount";
+          isMut: true;
+          isSigner: false;
+          pda: {
+            seeds: [
               {
-                "kind": "const",
-                "type": "string",
-                "value": "mono"
+                kind: "const";
+                type: "string";
+                value: "mono";
               },
               {
-                "kind": "const",
-                "type": "string",
-                "value": "LANCER_DAO"
+                kind: "const";
+                type: "string";
+                value: "LANCER_DAO";
               },
               {
-                "kind": "account",
-                "type": "publicKey",
-                "account": "TokenAccount",
-                "path": "feature_token_account.mint"
+                kind: "account";
+                type: "publicKey";
+                account: "TokenAccount";
+                path: "feature_token_account.mint";
               }
-            ]
-          }
+            ];
+          };
         },
         {
-          "name": "lancerTokenProgramAuthority",
-          "isMut": false,
-          "isSigner": false,
-          "pda": {
-            "seeds": [
+          name: "lancerTokenProgramAuthority";
+          isMut: false;
+          isSigner: false;
+          pda: {
+            seeds: [
               {
-                "kind": "const",
-                "type": "string",
-                "value": "LANCER_DAO"
+                kind: "const";
+                type: "string";
+                value: "LANCER_DAO";
               }
-            ]
-          }
+            ];
+          };
         },
         {
-          "name": "programAuthority",
-          "isMut": false,
-          "isSigner": false,
-          "pda": {
-            "seeds": [
+          name: "programAuthority";
+          isMut: false;
+          isSigner: false;
+          pda: {
+            seeds: [
               {
-                "kind": "const",
-                "type": "string",
-                "value": "mono"
+                kind: "const";
+                type: "string";
+                value: "mono";
               }
-            ]
-          }
+            ];
+          };
         },
         {
-          "name": "tokenProgram",
-          "isMut": false,
-          "isSigner": false
+          name: "tokenProgram";
+          isMut: false;
+          isSigner: false;
         }
-      ],
-      "args": [
+      ];
+      args: [
         {
-          "name": "amount",
-          "type": "u64"
+          name: "amount";
+          type: "u64";
         }
-      ]
+      ];
     },
     {
-      "name": "createReferralDataAccount",
-      "accounts": [
+      name: "createReferralDataAccount";
+      accounts: [
         {
-          "name": "creator",
-          "isMut": true,
-          "isSigner": true
+          name: "creator";
+          isMut: true;
+          isSigner: true;
         },
         {
-          "name": "featureDataAccount",
-          "isMut": true,
-          "isSigner": false,
-          "pda": {
-            "seeds": [
+          name: "featureDataAccount";
+          isMut: true;
+          isSigner: false;
+          pda: {
+            seeds: [
               {
-                "kind": "const",
-                "type": "string",
-                "value": "mono"
+                kind: "const";
+                type: "string";
+                value: "mono";
               },
               {
-                "kind": "account",
-                "type": "string",
-                "account": "FeatureDataAccount",
-                "path": "feature_data_account.unix_timestamp"
+                kind: "account";
+                type: "string";
+                account: "FeatureDataAccount";
+                path: "feature_data_account.unix_timestamp";
               },
               {
-                "kind": "account",
-                "type": "publicKey",
-                "path": "creator"
+                kind: "account";
+                type: "publicKey";
+                path: "creator";
               }
-            ]
-          }
+            ];
+          };
         },
         {
-          "name": "referralDataAccount",
-          "isMut": true,
-          "isSigner": false,
-          "pda": {
-            "seeds": [
+          name: "referralDataAccount";
+          isMut: true;
+          isSigner: false;
+          pda: {
+            seeds: [
               {
-                "kind": "const",
-                "type": "string",
-                "value": "referrer"
+                kind: "const";
+                type: "string";
+                value: "referrer";
               },
               {
-                "kind": "account",
-                "type": "publicKey",
-                "account": "FeatureDataAccount",
-                "path": "feature_data_account"
+                kind: "account";
+                type: "publicKey";
+                account: "FeatureDataAccount";
+                path: "feature_data_account";
               },
               {
-                "kind": "account",
-                "type": "publicKey",
-                "path": "creator"
+                kind: "account";
+                type: "publicKey";
+                path: "creator";
               }
-            ]
-          }
+            ];
+          };
         },
         {
-          "name": "referrer",
-          "isMut": false,
-          "isSigner": false
+          name: "referrer";
+          isMut: false;
+          isSigner: false;
         },
         {
-          "name": "rent",
-          "isMut": false,
-          "isSigner": false
+          name: "rent";
+          isMut: false;
+          isSigner: false;
         },
         {
-          "name": "systemProgram",
-          "isMut": false,
-          "isSigner": false
+          name: "systemProgram";
+          isMut: false;
+          isSigner: false;
         }
-      ],
-      "args": []
+      ];
+      args: [];
     },
     {
-      "name": "createCustodialReferralDataAccount",
-      "accounts": [
+      name: "createCustodialReferralDataAccount";
+      accounts: [
         {
-          "name": "custodialFeePayer",
-          "isMut": true,
-          "isSigner": true
+          name: "custodialFeePayer";
+          isMut: true;
+          isSigner: true;
         },
         {
-          "name": "creator",
-          "isMut": false,
-          "isSigner": false,
-          "docs": [
-            "Check: Web3 auth can't allow 2 signers"
-          ]
+          name: "creator";
+          isMut: false;
+          isSigner: false;
+          docs: ["Check: Web3 auth can't allow 2 signers"];
         },
         {
-          "name": "featureDataAccount",
-          "isMut": true,
-          "isSigner": false,
-          "pda": {
-            "seeds": [
+          name: "featureDataAccount";
+          isMut: true;
+          isSigner: false;
+          pda: {
+            seeds: [
               {
-                "kind": "const",
-                "type": "string",
-                "value": "mono"
+                kind: "const";
+                type: "string";
+                value: "mono";
               },
               {
-                "kind": "account",
-                "type": "string",
-                "account": "FeatureDataAccount",
-                "path": "feature_data_account.unix_timestamp"
+                kind: "account";
+                type: "string";
+                account: "FeatureDataAccount";
+                path: "feature_data_account.unix_timestamp";
               },
               {
-                "kind": "account",
-                "type": "publicKey",
-                "path": "creator"
+                kind: "account";
+                type: "publicKey";
+                path: "creator";
               }
-            ]
-          }
+            ];
+          };
         },
         {
-          "name": "referralDataAccount",
-          "isMut": true,
-          "isSigner": false,
-          "pda": {
-            "seeds": [
+          name: "referralDataAccount";
+          isMut: true;
+          isSigner: false;
+          pda: {
+            seeds: [
               {
-                "kind": "const",
-                "type": "string",
-                "value": "referrer"
+                kind: "const";
+                type: "string";
+                value: "referrer";
               },
               {
-                "kind": "account",
-                "type": "publicKey",
-                "account": "FeatureDataAccount",
-                "path": "feature_data_account"
+                kind: "account";
+                type: "publicKey";
+                account: "FeatureDataAccount";
+                path: "feature_data_account";
               },
               {
-                "kind": "account",
-                "type": "publicKey",
-                "path": "creator"
+                kind: "account";
+                type: "publicKey";
+                path: "creator";
               }
-            ]
-          }
+            ];
+          };
         },
         {
-          "name": "referrer",
-          "isMut": false,
-          "isSigner": false
+          name: "referrer";
+          isMut: false;
+          isSigner: false;
         },
         {
-          "name": "rent",
-          "isMut": false,
-          "isSigner": false
+          name: "rent";
+          isMut: false;
+          isSigner: false;
         },
         {
-          "name": "systemProgram",
-          "isMut": false,
-          "isSigner": false
+          name: "systemProgram";
+          isMut: false;
+          isSigner: false;
         }
-      ],
-      "args": []
+      ];
+      args: [];
     },
     {
-      "name": "addApprovedSubmittersV1",
-      "accounts": [
+      name: "addApprovedSubmittersV1";
+      accounts: [
         {
-          "name": "creator",
-          "isMut": true,
-          "isSigner": true
+          name: "creator";
+          isMut: true;
+          isSigner: true;
         },
         {
-          "name": "referrer",
-          "isMut": false,
-          "isSigner": false
+          name: "referrer";
+          isMut: false;
+          isSigner: false;
         },
         {
-          "name": "submitter",
-          "isMut": false,
-          "isSigner": false
+          name: "submitter";
+          isMut: false;
+          isSigner: false;
         },
         {
-          "name": "featureDataAccount",
-          "isMut": true,
-          "isSigner": false,
-          "pda": {
-            "seeds": [
+          name: "featureDataAccount";
+          isMut: true;
+          isSigner: false;
+          pda: {
+            seeds: [
               {
-                "kind": "const",
-                "type": "string",
-                "value": "mono"
+                kind: "const";
+                type: "string";
+                value: "mono";
               },
               {
-                "kind": "account",
-                "type": "string",
-                "account": "FeatureDataAccount",
-                "path": "feature_data_account.unix_timestamp"
+                kind: "account";
+                type: "string";
+                account: "FeatureDataAccount";
+                path: "feature_data_account.unix_timestamp";
               },
               {
-                "kind": "account",
-                "type": "publicKey",
-                "path": "creator"
+                kind: "account";
+                type: "publicKey";
+                path: "creator";
               }
-            ]
-          }
+            ];
+          };
         },
         {
-          "name": "referralDataAccount",
-          "isMut": true,
-          "isSigner": false,
-          "pda": {
-            "seeds": [
+          name: "referralDataAccount";
+          isMut: true;
+          isSigner: false;
+          pda: {
+            seeds: [
               {
-                "kind": "const",
-                "type": "string",
-                "value": "referrer"
+                kind: "const";
+                type: "string";
+                value: "referrer";
               },
               {
-                "kind": "account",
-                "type": "publicKey",
-                "account": "FeatureDataAccount",
-                "path": "feature_data_account"
+                kind: "account";
+                type: "publicKey";
+                account: "FeatureDataAccount";
+                path: "feature_data_account";
               },
               {
-                "kind": "account",
-                "type": "publicKey",
-                "path": "creator"
+                kind: "account";
+                type: "publicKey";
+                path: "creator";
               }
-            ]
-          }
+            ];
+          };
         }
-      ],
-      "args": []
+      ];
+      args: [];
     },
     {
-      "name": "removeApprovedSubmittersV1",
-      "accounts": [
+      name: "removeApprovedSubmittersV1";
+      accounts: [
         {
-          "name": "creator",
-          "isMut": true,
-          "isSigner": true
+          name: "creator";
+          isMut: true;
+          isSigner: true;
         },
         {
-          "name": "submitter",
-          "isMut": false,
-          "isSigner": false
+          name: "submitter";
+          isMut: false;
+          isSigner: false;
         },
         {
-          "name": "featureDataAccount",
-          "isMut": true,
-          "isSigner": false,
-          "pda": {
-            "seeds": [
+          name: "featureDataAccount";
+          isMut: true;
+          isSigner: false;
+          pda: {
+            seeds: [
               {
-                "kind": "const",
-                "type": "string",
-                "value": "mono"
+                kind: "const";
+                type: "string";
+                value: "mono";
               },
               {
-                "kind": "account",
-                "type": "string",
-                "account": "FeatureDataAccount",
-                "path": "feature_data_account.unix_timestamp"
+                kind: "account";
+                type: "string";
+                account: "FeatureDataAccount";
+                path: "feature_data_account.unix_timestamp";
               },
               {
-                "kind": "account",
-                "type": "publicKey",
-                "path": "creator"
+                kind: "account";
+                type: "publicKey";
+                path: "creator";
               }
-            ]
-          }
+            ];
+          };
         },
         {
-          "name": "referralDataAccount",
-          "isMut": true,
-          "isSigner": false,
-          "pda": {
-            "seeds": [
+          name: "referralDataAccount";
+          isMut: true;
+          isSigner: false;
+          pda: {
+            seeds: [
               {
-                "kind": "const",
-                "type": "string",
-                "value": "referrer"
+                kind: "const";
+                type: "string";
+                value: "referrer";
               },
               {
-                "kind": "account",
-                "type": "publicKey",
-                "account": "FeatureDataAccount",
-                "path": "feature_data_account"
+                kind: "account";
+                type: "publicKey";
+                account: "FeatureDataAccount";
+                path: "feature_data_account";
               },
               {
-                "kind": "account",
-                "type": "publicKey",
-                "path": "creator"
+                kind: "account";
+                type: "publicKey";
+                path: "creator";
               }
-            ]
-          }
+            ];
+          };
         }
-      ],
-      "args": []
+      ];
+      args: [];
     },
     {
-      "name": "approveRequestWithReferral",
-      "accounts": [
+      name: "approveRequestWithReferral";
+      accounts: [
         {
-          "name": "creator",
-          "isMut": true,
-          "isSigner": true
+          name: "creator";
+          isMut: true;
+          isSigner: true;
         },
         {
-          "name": "submitter",
-          "isMut": true,
-          "isSigner": false
+          name: "submitter";
+          isMut: true;
+          isSigner: false;
         },
         {
-          "name": "payoutAccount",
-          "isMut": true,
-          "isSigner": false
+          name: "payoutAccount";
+          isMut: true;
+          isSigner: false;
         },
         {
-          "name": "featureDataAccount",
-          "isMut": true,
-          "isSigner": false,
-          "pda": {
-            "seeds": [
+          name: "featureDataAccount";
+          isMut: true;
+          isSigner: false;
+          pda: {
+            seeds: [
               {
-                "kind": "const",
-                "type": "string",
-                "value": "mono"
+                kind: "const";
+                type: "string";
+                value: "mono";
               },
               {
-                "kind": "account",
-                "type": "string",
-                "account": "FeatureDataAccount",
-                "path": "feature_data_account.unix_timestamp"
+                kind: "account";
+                type: "string";
+                account: "FeatureDataAccount";
+                path: "feature_data_account.unix_timestamp";
               },
               {
-                "kind": "account",
-                "type": "publicKey",
-                "path": "creator"
+                kind: "account";
+                type: "publicKey";
+                path: "creator";
               }
-            ]
-          }
+            ];
+          };
         },
         {
-          "name": "featureTokenAccount",
-          "isMut": true,
-          "isSigner": false,
-          "pda": {
-            "seeds": [
+          name: "featureTokenAccount";
+          isMut: true;
+          isSigner: false;
+          pda: {
+            seeds: [
               {
-                "kind": "const",
-                "type": "string",
-                "value": "mono"
+                kind: "const";
+                type: "string";
+                value: "mono";
               },
               {
-                "kind": "account",
-                "type": "string",
-                "account": "FeatureDataAccount",
-                "path": "feature_data_account.unix_timestamp"
+                kind: "account";
+                type: "string";
+                account: "FeatureDataAccount";
+                path: "feature_data_account.unix_timestamp";
               },
               {
-                "kind": "account",
-                "type": "publicKey",
-                "path": "creator"
+                kind: "account";
+                type: "publicKey";
+                path: "creator";
               },
               {
-                "kind": "account",
-                "type": "publicKey",
-                "account": "FeatureDataAccount",
-                "path": "feature_data_account.funds_mint"
+                kind: "account";
+                type: "publicKey";
+                account: "FeatureDataAccount";
+                path: "feature_data_account.funds_mint";
               }
-            ]
-          }
+            ];
+          };
         },
         {
-          "name": "lancerDaoTokenAccount",
-          "isMut": true,
-          "isSigner": false,
-          "pda": {
-            "seeds": [
+          name: "lancerDaoTokenAccount";
+          isMut: true;
+          isSigner: false;
+          pda: {
+            seeds: [
               {
-                "kind": "const",
-                "type": "string",
-                "value": "mono"
+                kind: "const";
+                type: "string";
+                value: "mono";
               },
               {
-                "kind": "const",
-                "type": "string",
-                "value": "LANCER_DAO"
+                kind: "const";
+                type: "string";
+                value: "LANCER_DAO";
               },
               {
-                "kind": "account",
-                "type": "publicKey",
-                "account": "TokenAccount",
-                "path": "feature_token_account.mint"
+                kind: "account";
+                type: "publicKey";
+                account: "TokenAccount";
+                path: "feature_token_account.mint";
               }
-            ]
-          }
+            ];
+          };
         },
         {
-          "name": "lancerTokenProgramAuthority",
-          "isMut": false,
-          "isSigner": false,
-          "pda": {
-            "seeds": [
+          name: "lancerTokenProgramAuthority";
+          isMut: false;
+          isSigner: false;
+          pda: {
+            seeds: [
               {
-                "kind": "const",
-                "type": "string",
-                "value": "LANCER_DAO"
+                kind: "const";
+                type: "string";
+                value: "LANCER_DAO";
               }
-            ]
-          }
+            ];
+          };
         },
         {
-          "name": "programAuthority",
-          "isMut": true,
-          "isSigner": false,
-          "pda": {
-            "seeds": [
+          name: "programAuthority";
+          isMut: true;
+          isSigner: false;
+          pda: {
+            seeds: [
               {
-                "kind": "const",
-                "type": "string",
-                "value": "mono"
+                kind: "const";
+                type: "string";
+                value: "mono";
               }
-            ]
-          }
+            ];
+          };
         },
         {
-          "name": "tokenProgram",
-          "isMut": false,
-          "isSigner": false
+          name: "tokenProgram";
+          isMut: false;
+          isSigner: false;
         },
         {
-          "name": "referralDataAccount",
-          "isMut": false,
-          "isSigner": false,
-          "pda": {
-            "seeds": [
+          name: "referralDataAccount";
+          isMut: false;
+          isSigner: false;
+          pda: {
+            seeds: [
               {
-                "kind": "const",
-                "type": "string",
-                "value": "referrer"
+                kind: "const";
+                type: "string";
+                value: "referrer";
               },
               {
-                "kind": "account",
-                "type": "publicKey",
-                "account": "FeatureDataAccount",
-                "path": "feature_data_account"
+                kind: "account";
+                type: "publicKey";
+                account: "FeatureDataAccount";
+                path: "feature_data_account";
               },
               {
-                "kind": "account",
-                "type": "publicKey",
-                "path": "creator"
+                kind: "account";
+                type: "publicKey";
+                path: "creator";
               }
-            ]
-          }
+            ];
+          };
         }
-      ],
-      "args": []
+      ];
+      args: [];
     },
     {
-      "name": "approveRequestMultipleWithReferral",
-      "accounts": [
+      name: "approveRequestMultipleWithReferral";
+      accounts: [
         {
-          "name": "creator",
-          "isMut": true,
-          "isSigner": true
+          name: "creator";
+          isMut: true;
+          isSigner: true;
         },
         {
-          "name": "featureDataAccount",
-          "isMut": true,
-          "isSigner": false,
-          "pda": {
-            "seeds": [
+          name: "featureDataAccount";
+          isMut: true;
+          isSigner: false;
+          pda: {
+            seeds: [
               {
-                "kind": "const",
-                "type": "string",
-                "value": "mono"
+                kind: "const";
+                type: "string";
+                value: "mono";
               },
               {
-                "kind": "account",
-                "type": "string",
-                "account": "FeatureDataAccount",
-                "path": "feature_data_account.unix_timestamp"
+                kind: "account";
+                type: "string";
+                account: "FeatureDataAccount";
+                path: "feature_data_account.unix_timestamp";
               },
               {
-                "kind": "account",
-                "type": "publicKey",
-                "path": "creator"
+                kind: "account";
+                type: "publicKey";
+                path: "creator";
               }
-            ]
-          }
+            ];
+          };
         },
         {
-          "name": "featureTokenAccount",
-          "isMut": true,
-          "isSigner": false,
-          "pda": {
-            "seeds": [
+          name: "featureTokenAccount";
+          isMut: true;
+          isSigner: false;
+          pda: {
+            seeds: [
               {
-                "kind": "const",
-                "type": "string",
-                "value": "mono"
+                kind: "const";
+                type: "string";
+                value: "mono";
               },
               {
-                "kind": "account",
-                "type": "string",
-                "account": "FeatureDataAccount",
-                "path": "feature_data_account.unix_timestamp"
+                kind: "account";
+                type: "string";
+                account: "FeatureDataAccount";
+                path: "feature_data_account.unix_timestamp";
               },
               {
-                "kind": "account",
-                "type": "publicKey",
-                "path": "creator"
+                kind: "account";
+                type: "publicKey";
+                path: "creator";
               },
               {
-                "kind": "account",
-                "type": "publicKey",
-                "account": "FeatureDataAccount",
-                "path": "feature_data_account.funds_mint"
+                kind: "account";
+                type: "publicKey";
+                account: "FeatureDataAccount";
+                path: "feature_data_account.funds_mint";
               }
-            ]
-          }
+            ];
+          };
         },
         {
-          "name": "lancerDaoTokenAccount",
-          "isMut": true,
-          "isSigner": false,
-          "pda": {
-            "seeds": [
+          name: "lancerDaoTokenAccount";
+          isMut: true;
+          isSigner: false;
+          pda: {
+            seeds: [
               {
-                "kind": "const",
-                "type": "string",
-                "value": "mono"
+                kind: "const";
+                type: "string";
+                value: "mono";
               },
               {
-                "kind": "const",
-                "type": "string",
-                "value": "LANCER_DAO"
+                kind: "const";
+                type: "string";
+                value: "LANCER_DAO";
               },
               {
-                "kind": "account",
-                "type": "publicKey",
-                "account": "TokenAccount",
-                "path": "feature_token_account.mint"
+                kind: "account";
+                type: "publicKey";
+                account: "TokenAccount";
+                path: "feature_token_account.mint";
               }
-            ]
-          }
+            ];
+          };
         },
         {
-          "name": "lancerTokenProgramAuthority",
-          "isMut": false,
-          "isSigner": false,
-          "pda": {
-            "seeds": [
+          name: "lancerTokenProgramAuthority";
+          isMut: false;
+          isSigner: false;
+          pda: {
+            seeds: [
               {
-                "kind": "const",
-                "type": "string",
-                "value": "LANCER_DAO"
+                kind: "const";
+                type: "string";
+                value: "LANCER_DAO";
               }
-            ]
-          }
+            ];
+          };
         },
         {
-          "name": "programAuthority",
-          "isMut": false,
-          "isSigner": false,
-          "pda": {
-            "seeds": [
+          name: "programAuthority";
+          isMut: false;
+          isSigner: false;
+          pda: {
+            seeds: [
               {
-                "kind": "const",
-                "type": "string",
-                "value": "mono"
+                kind: "const";
+                type: "string";
+                value: "mono";
               }
-            ]
-          }
+            ];
+          };
         },
         {
-          "name": "tokenProgram",
-          "isMut": false,
-          "isSigner": false
+          name: "tokenProgram";
+          isMut: false;
+          isSigner: false;
         },
         {
-          "name": "systemProgram",
-          "isMut": false,
-          "isSigner": false
+          name: "systemProgram";
+          isMut: false;
+          isSigner: false;
         },
         {
-          "name": "referralDataAccount",
-          "isMut": false,
-          "isSigner": false,
-          "pda": {
-            "seeds": [
+          name: "referralDataAccount";
+          isMut: false;
+          isSigner: false;
+          pda: {
+            seeds: [
               {
-                "kind": "const",
-                "type": "string",
-                "value": "referrer"
+                kind: "const";
+                type: "string";
+                value: "referrer";
               },
               {
-                "kind": "account",
-                "type": "publicKey",
-                "account": "FeatureDataAccount",
-                "path": "feature_data_account"
+                kind: "account";
+                type: "publicKey";
+                account: "FeatureDataAccount";
+                path: "feature_data_account";
               },
               {
-                "kind": "account",
-                "type": "publicKey",
-                "path": "creator"
+                kind: "account";
+                type: "publicKey";
+                path: "creator";
               }
-            ]
-          }
+            ];
+          };
         }
-      ],
-      "args": []
+      ];
+      args: [];
     },
     {
-      "name": "sendInvoice",
-      "accounts": [
+      name: "sendInvoice";
+      accounts: [
         {
-          "name": "creator",
-          "isMut": true,
-          "isSigner": true
+          name: "creator";
+          isMut: true;
+          isSigner: true;
         },
         {
-          "name": "newCreator",
-          "isMut": false,
-          "isSigner": false
+          name: "newCreator";
+          isMut: false;
+          isSigner: false;
         },
         {
-          "name": "fundsMint",
-          "isMut": false,
-          "isSigner": false
+          name: "fundsMint";
+          isMut: false;
+          isSigner: false;
         },
         {
-          "name": "featureDataAccount",
-          "isMut": true,
-          "isSigner": false,
-          "pda": {
-            "seeds": [
+          name: "featureDataAccount";
+          isMut: true;
+          isSigner: false;
+          pda: {
+            seeds: [
               {
-                "kind": "const",
-                "type": "string",
-                "value": "mono"
+                kind: "const";
+                type: "string";
+                value: "mono";
               },
               {
-                "kind": "account",
-                "type": "string",
-                "account": "FeatureDataAccount",
-                "path": "feature_data_account.unix_timestamp"
+                kind: "account";
+                type: "string";
+                account: "FeatureDataAccount";
+                path: "feature_data_account.unix_timestamp";
               },
               {
-                "kind": "account",
-                "type": "publicKey",
-                "path": "creator"
+                kind: "account";
+                type: "publicKey";
+                path: "creator";
               }
-            ]
-          }
+            ];
+          };
         },
         {
-          "name": "tokenProgram",
-          "isMut": false,
-          "isSigner": false
+          name: "tokenProgram";
+          isMut: false;
+          isSigner: false;
         },
         {
-          "name": "systemProgram",
-          "isMut": false,
-          "isSigner": false
+          name: "systemProgram";
+          isMut: false;
+          isSigner: false;
         }
-      ],
-      "args": [
+      ];
+      args: [
         {
-          "name": "amount",
-          "type": "u64"
+          name: "amount";
+          type: "u64";
         }
-      ]
+      ];
     },
     {
-      "name": "acceptInvoice",
-      "accounts": [
+      name: "acceptInvoice";
+      accounts: [
         {
-          "name": "newCreator",
-          "isMut": true,
-          "isSigner": true
+          name: "newCreator";
+          isMut: true;
+          isSigner: true;
         },
         {
-          "name": "newCreatorTokenAccount",
-          "isMut": true,
-          "isSigner": false
+          name: "newCreatorTokenAccount";
+          isMut: true;
+          isSigner: false;
         },
         {
-          "name": "fundsMint",
-          "isMut": false,
-          "isSigner": false
+          name: "fundsMint";
+          isMut: false;
+          isSigner: false;
         },
         {
-          "name": "newFeatureDataAccount",
-          "isMut": true,
-          "isSigner": false,
-          "pda": {
-            "seeds": [
+          name: "newFeatureDataAccount";
+          isMut: true;
+          isSigner: false;
+          pda: {
+            seeds: [
               {
-                "kind": "const",
-                "type": "string",
-                "value": "mono"
+                kind: "const";
+                type: "string";
+                value: "mono";
               },
               {
-                "kind": "account",
-                "type": "string",
-                "account": "FeatureDataAccount",
-                "path": "feature_data_account.unix_timestamp"
+                kind: "account";
+                type: "string";
+                account: "FeatureDataAccount";
+                path: "feature_data_account.unix_timestamp";
               },
               {
-                "kind": "account",
-                "type": "publicKey",
-                "path": "new_creator"
+                kind: "account";
+                type: "publicKey";
+                path: "new_creator";
               }
-            ]
-          }
+            ];
+          };
         },
         {
-          "name": "newFeatureTokenAccount",
-          "isMut": true,
-          "isSigner": false,
-          "pda": {
-            "seeds": [
+          name: "newFeatureTokenAccount";
+          isMut: true;
+          isSigner: false;
+          pda: {
+            seeds: [
               {
-                "kind": "const",
-                "type": "string",
-                "value": "mono"
+                kind: "const";
+                type: "string";
+                value: "mono";
               },
               {
-                "kind": "account",
-                "type": "string",
-                "account": "FeatureDataAccount",
-                "path": "feature_data_account.unix_timestamp"
+                kind: "account";
+                type: "string";
+                account: "FeatureDataAccount";
+                path: "feature_data_account.unix_timestamp";
               },
               {
-                "kind": "account",
-                "type": "publicKey",
-                "path": "new_creator"
+                kind: "account";
+                type: "publicKey";
+                path: "new_creator";
               },
               {
-                "kind": "account",
-                "type": "publicKey",
-                "account": "Mint",
-                "path": "funds_mint"
+                kind: "account";
+                type: "publicKey";
+                account: "Mint";
+                path: "funds_mint";
               }
-            ]
-          }
+            ];
+          };
         },
         {
-          "name": "programAuthority",
-          "isMut": false,
-          "isSigner": false,
-          "pda": {
-            "seeds": [
+          name: "programAuthority";
+          isMut: false;
+          isSigner: false;
+          pda: {
+            seeds: [
               {
-                "kind": "const",
-                "type": "string",
-                "value": "mono"
+                kind: "const";
+                type: "string";
+                value: "mono";
               }
-            ]
-          }
+            ];
+          };
         },
         {
-          "name": "creator",
-          "isMut": true,
-          "isSigner": false
+          name: "creator";
+          isMut: true;
+          isSigner: false;
         },
         {
-          "name": "featureDataAccount",
-          "isMut": true,
-          "isSigner": false,
-          "pda": {
-            "seeds": [
+          name: "featureDataAccount";
+          isMut: true;
+          isSigner: false;
+          pda: {
+            seeds: [
               {
-                "kind": "const",
-                "type": "string",
-                "value": "mono"
+                kind: "const";
+                type: "string";
+                value: "mono";
               },
               {
-                "kind": "account",
-                "type": "string",
-                "account": "FeatureDataAccount",
-                "path": "feature_data_account.unix_timestamp"
+                kind: "account";
+                type: "string";
+                account: "FeatureDataAccount";
+                path: "feature_data_account.unix_timestamp";
               },
               {
-                "kind": "account",
-                "type": "publicKey",
-                "path": "creator"
+                kind: "account";
+                type: "publicKey";
+                path: "creator";
               }
-            ]
-          }
+            ];
+          };
         },
         {
-          "name": "featureTokenAccount",
-          "isMut": true,
-          "isSigner": false,
-          "pda": {
-            "seeds": [
+          name: "featureTokenAccount";
+          isMut: true;
+          isSigner: false;
+          pda: {
+            seeds: [
               {
-                "kind": "const",
-                "type": "string",
-                "value": "mono"
+                kind: "const";
+                type: "string";
+                value: "mono";
               },
               {
-                "kind": "account",
-                "type": "string",
-                "account": "FeatureDataAccount",
-                "path": "feature_data_account.unix_timestamp"
+                kind: "account";
+                type: "string";
+                account: "FeatureDataAccount";
+                path: "feature_data_account.unix_timestamp";
               },
               {
-                "kind": "account",
-                "type": "publicKey",
-                "path": "creator"
+                kind: "account";
+                type: "publicKey";
+                path: "creator";
               },
               {
-                "kind": "account",
-                "type": "publicKey",
-                "account": "FeatureDataAccount",
-                "path": "feature_data_account.funds_mint"
+                kind: "account";
+                type: "publicKey";
+                account: "FeatureDataAccount";
+                path: "feature_data_account.funds_mint";
               }
-            ]
-          }
+            ];
+          };
         },
         {
-          "name": "tokenProgram",
-          "isMut": false,
-          "isSigner": false
+          name: "tokenProgram";
+          isMut: false;
+          isSigner: false;
         },
         {
-          "name": "rent",
-          "isMut": false,
-          "isSigner": false
+          name: "rent";
+          isMut: false;
+          isSigner: false;
         },
         {
-          "name": "associatedProgram",
-          "isMut": false,
-          "isSigner": false
+          name: "associatedProgram";
+          isMut: false;
+          isSigner: false;
         },
         {
-          "name": "systemProgram",
-          "isMut": false,
-          "isSigner": false
+          name: "systemProgram";
+          isMut: false;
+          isSigner: false;
         }
-      ],
-      "args": []
+      ];
+      args: [];
     },
     {
-      "name": "rejectInvoice",
-      "accounts": [
+      name: "rejectInvoice";
+      accounts: [
         {
-          "name": "invoiceAcceptor",
-          "isMut": true,
-          "isSigner": true
+          name: "invoiceAcceptor";
+          isMut: true;
+          isSigner: true;
         },
         {
-          "name": "creator",
-          "isMut": false,
-          "isSigner": false
+          name: "creator";
+          isMut: false;
+          isSigner: false;
         },
         {
-          "name": "fundsMint",
-          "isMut": false,
-          "isSigner": false
+          name: "fundsMint";
+          isMut: false;
+          isSigner: false;
         },
         {
-          "name": "featureDataAccount",
-          "isMut": true,
-          "isSigner": false,
-          "pda": {
-            "seeds": [
+          name: "featureDataAccount";
+          isMut: true;
+          isSigner: false;
+          pda: {
+            seeds: [
               {
-                "kind": "const",
-                "type": "string",
-                "value": "mono"
+                kind: "const";
+                type: "string";
+                value: "mono";
               },
               {
-                "kind": "account",
-                "type": "string",
-                "account": "FeatureDataAccount",
-                "path": "feature_data_account.unix_timestamp"
+                kind: "account";
+                type: "string";
+                account: "FeatureDataAccount";
+                path: "feature_data_account.unix_timestamp";
               },
               {
-                "kind": "account",
-                "type": "publicKey",
-                "path": "creator"
+                kind: "account";
+                type: "publicKey";
+                path: "creator";
               }
-            ]
-          }
+            ];
+          };
         },
         {
-          "name": "tokenProgram",
-          "isMut": false,
-          "isSigner": false
+          name: "tokenProgram";
+          isMut: false;
+          isSigner: false;
         },
         {
-          "name": "systemProgram",
-          "isMut": false,
-          "isSigner": false
+          name: "systemProgram";
+          isMut: false;
+          isSigner: false;
         }
-      ],
-      "args": []
+      ];
+      args: [];
     },
     {
-      "name": "closeInvoice",
-      "accounts": [
+      name: "closeInvoice";
+      accounts: [
         {
-          "name": "programAuthority",
-          "isMut": false,
-          "isSigner": false,
-          "pda": {
-            "seeds": [
+          name: "programAuthority";
+          isMut: false;
+          isSigner: false;
+          pda: {
+            seeds: [
               {
-                "kind": "const",
-                "type": "string",
-                "value": "mono"
+                kind: "const";
+                type: "string";
+                value: "mono";
               }
-            ]
-          }
+            ];
+          };
         },
         {
-          "name": "creator",
-          "isMut": true,
-          "isSigner": true
+          name: "creator";
+          isMut: true;
+          isSigner: true;
         },
         {
-          "name": "featureDataAccount",
-          "isMut": true,
-          "isSigner": false,
-          "pda": {
-            "seeds": [
+          name: "featureDataAccount";
+          isMut: true;
+          isSigner: false;
+          pda: {
+            seeds: [
               {
-                "kind": "const",
-                "type": "string",
-                "value": "mono"
+                kind: "const";
+                type: "string";
+                value: "mono";
               },
               {
-                "kind": "account",
-                "type": "string",
-                "account": "FeatureDataAccount",
-                "path": "feature_data_account.unix_timestamp"
+                kind: "account";
+                type: "string";
+                account: "FeatureDataAccount";
+                path: "feature_data_account.unix_timestamp";
               },
               {
-                "kind": "account",
-                "type": "publicKey",
-                "path": "creator"
+                kind: "account";
+                type: "publicKey";
+                path: "creator";
               }
-            ]
-          }
+            ];
+          };
         },
         {
-          "name": "featureTokenAccount",
-          "isMut": true,
-          "isSigner": false,
-          "pda": {
-            "seeds": [
+          name: "featureTokenAccount";
+          isMut: true;
+          isSigner: false;
+          pda: {
+            seeds: [
               {
-                "kind": "const",
-                "type": "string",
-                "value": "mono"
+                kind: "const";
+                type: "string";
+                value: "mono";
               },
               {
-                "kind": "account",
-                "type": "string",
-                "account": "FeatureDataAccount",
-                "path": "feature_data_account.unix_timestamp"
+                kind: "account";
+                type: "string";
+                account: "FeatureDataAccount";
+                path: "feature_data_account.unix_timestamp";
               },
               {
-                "kind": "account",
-                "type": "publicKey",
-                "path": "creator"
+                kind: "account";
+                type: "publicKey";
+                path: "creator";
               },
               {
-                "kind": "account",
-                "type": "publicKey",
-                "account": "FeatureDataAccount",
-                "path": "feature_data_account.funds_mint"
+                kind: "account";
+                type: "publicKey";
+                account: "FeatureDataAccount";
+                path: "feature_data_account.funds_mint";
               }
-            ]
-          }
+            ];
+          };
         },
         {
-          "name": "tokenProgram",
-          "isMut": false,
-          "isSigner": false
+          name: "tokenProgram";
+          isMut: false;
+          isSigner: false;
         },
         {
-          "name": "associatedProgram",
-          "isMut": false,
-          "isSigner": false
+          name: "associatedProgram";
+          isMut: false;
+          isSigner: false;
         },
         {
-          "name": "systemProgram",
-          "isMut": false,
-          "isSigner": false
+          name: "systemProgram";
+          isMut: false;
+          isSigner: false;
         }
-      ],
-      "args": []
+      ];
+      args: [];
     },
     {
-      "name": "adminCloseBounty",
-      "accounts": [
+      name: "adminCloseBounty";
+      accounts: [
         {
-          "name": "lancerAdmin",
-          "isMut": true,
-          "isSigner": true
+          name: "lancerAdmin";
+          isMut: true;
+          isSigner: true;
         },
         {
-          "name": "creator",
-          "isMut": true,
-          "isSigner": false
+          name: "creator";
+          isMut: true;
+          isSigner: false;
         },
         {
-          "name": "creatorTokenAccount",
-          "isMut": true,
-          "isSigner": false
+          name: "creatorTokenAccount";
+          isMut: true;
+          isSigner: false;
         },
         {
-          "name": "featureDataAccount",
-          "isMut": true,
-          "isSigner": false,
-          "pda": {
-            "seeds": [
+          name: "featureDataAccount";
+          isMut: true;
+          isSigner: false;
+          pda: {
+            seeds: [
               {
-                "kind": "const",
-                "type": "string",
-                "value": "mono"
+                kind: "const";
+                type: "string";
+                value: "mono";
               },
               {
-                "kind": "account",
-                "type": "string",
-                "account": "FeatureDataAccount",
-                "path": "feature_data_account.unix_timestamp"
+                kind: "account";
+                type: "string";
+                account: "FeatureDataAccount";
+                path: "feature_data_account.unix_timestamp";
               },
               {
-                "kind": "account",
-                "type": "publicKey",
-                "path": "creator"
+                kind: "account";
+                type: "publicKey";
+                path: "creator";
               }
-            ]
-          }
+            ];
+          };
         },
         {
-          "name": "featureTokenAccount",
-          "isMut": true,
-          "isSigner": false,
-          "pda": {
-            "seeds": [
+          name: "featureTokenAccount";
+          isMut: true;
+          isSigner: false;
+          pda: {
+            seeds: [
               {
-                "kind": "const",
-                "type": "string",
-                "value": "mono"
+                kind: "const";
+                type: "string";
+                value: "mono";
               },
               {
-                "kind": "account",
-                "type": "string",
-                "account": "FeatureDataAccount",
-                "path": "feature_data_account.unix_timestamp"
+                kind: "account";
+                type: "string";
+                account: "FeatureDataAccount";
+                path: "feature_data_account.unix_timestamp";
               },
               {
-                "kind": "account",
-                "type": "publicKey",
-                "path": "creator"
+                kind: "account";
+                type: "publicKey";
+                path: "creator";
               },
               {
-                "kind": "account",
-                "type": "publicKey",
-                "account": "FeatureDataAccount",
-                "path": "feature_data_account.funds_mint"
+                kind: "account";
+                type: "publicKey";
+                account: "FeatureDataAccount";
+                path: "feature_data_account.funds_mint";
               }
-            ]
-          }
+            ];
+          };
         },
         {
-          "name": "programAuthority",
-          "isMut": false,
-          "isSigner": false,
-          "pda": {
-            "seeds": [
+          name: "programAuthority";
+          isMut: false;
+          isSigner: false;
+          pda: {
+            seeds: [
               {
-                "kind": "const",
-                "type": "string",
-                "value": "mono"
+                kind: "const";
+                type: "string";
+                value: "mono";
               }
-            ]
-          }
+            ];
+          };
         },
         {
-          "name": "tokenProgram",
-          "isMut": false,
-          "isSigner": false
+          name: "tokenProgram";
+          isMut: false;
+          isSigner: false;
         }
-      ],
-      "args": []
+      ];
+      args: [];
     },
     {
-      "name": "createDispute",
-      "accounts": [
+      name: "createDispute";
+      accounts: [
         {
-          "name": "disputeAdmin",
-          "isMut": true,
-          "isSigner": true
+          name: "disputeAdmin";
+          isMut: true;
+          isSigner: true;
         },
         {
-          "name": "creator",
-          "isMut": true,
-          "isSigner": false
+          name: "creator";
+          isMut: true;
+          isSigner: false;
         },
         {
-          "name": "disputeAccount",
-          "isMut": true,
-          "isSigner": false,
-          "pda": {
-            "seeds": [
+          name: "disputeAccount";
+          isMut: true;
+          isSigner: false;
+          pda: {
+            seeds: [
               {
-                "kind": "const",
-                "type": "string",
-                "value": "dispute"
+                kind: "const";
+                type: "string";
+                value: "dispute";
               },
               {
-                "kind": "account",
-                "type": "string",
-                "account": "FeatureDataAccount",
-                "path": "feature_data_account.unix_timestamp"
+                kind: "account";
+                type: "string";
+                account: "FeatureDataAccount";
+                path: "feature_data_account.unix_timestamp";
               },
               {
-                "kind": "account",
-                "type": "publicKey",
-                "path": "creator"
+                kind: "account";
+                type: "publicKey";
+                path: "creator";
               },
               {
-                "kind": "account",
-                "type": "publicKey",
-                "account": "FeatureDataAccount",
-                "path": "feature_data_account.funds_mint"
+                kind: "account";
+                type: "publicKey";
+                account: "FeatureDataAccount";
+                path: "feature_data_account.funds_mint";
               }
-            ]
-          }
+            ];
+          };
         },
         {
-          "name": "featureDataAccount",
-          "isMut": true,
-          "isSigner": false,
-          "pda": {
-            "seeds": [
+          name: "featureDataAccount";
+          isMut: true;
+          isSigner: false;
+          pda: {
+            seeds: [
               {
-                "kind": "const",
-                "type": "string",
-                "value": "mono"
+                kind: "const";
+                type: "string";
+                value: "mono";
               },
               {
-                "kind": "account",
-                "type": "string",
-                "account": "FeatureDataAccount",
-                "path": "feature_data_account.unix_timestamp"
+                kind: "account";
+                type: "string";
+                account: "FeatureDataAccount";
+                path: "feature_data_account.unix_timestamp";
               },
               {
-                "kind": "account",
-                "type": "publicKey",
-                "path": "creator"
+                kind: "account";
+                type: "publicKey";
+                path: "creator";
               }
-            ]
-          }
+            ];
+          };
         },
         {
-          "name": "featureTokenAccount",
-          "isMut": true,
-          "isSigner": false,
-          "pda": {
-            "seeds": [
+          name: "featureTokenAccount";
+          isMut: true;
+          isSigner: false;
+          pda: {
+            seeds: [
               {
-                "kind": "const",
-                "type": "string",
-                "value": "mono"
+                kind: "const";
+                type: "string";
+                value: "mono";
               },
               {
-                "kind": "account",
-                "type": "string",
-                "account": "FeatureDataAccount",
-                "path": "feature_data_account.unix_timestamp"
+                kind: "account";
+                type: "string";
+                account: "FeatureDataAccount";
+                path: "feature_data_account.unix_timestamp";
               },
               {
-                "kind": "account",
-                "type": "publicKey",
-                "path": "creator"
+                kind: "account";
+                type: "publicKey";
+                path: "creator";
               },
               {
-                "kind": "account",
-                "type": "publicKey",
-                "account": "FeatureDataAccount",
-                "path": "feature_data_account.funds_mint"
+                kind: "account";
+                type: "publicKey";
+                account: "FeatureDataAccount";
+                path: "feature_data_account.funds_mint";
               }
-            ]
-          }
+            ];
+          };
         },
         {
-          "name": "programAuthority",
-          "isMut": false,
-          "isSigner": false,
-          "pda": {
-            "seeds": [
+          name: "programAuthority";
+          isMut: false;
+          isSigner: false;
+          pda: {
+            seeds: [
               {
-                "kind": "const",
-                "type": "string",
-                "value": "mono"
+                kind: "const";
+                type: "string";
+                value: "mono";
               }
-            ]
-          }
+            ];
+          };
         },
         {
-          "name": "tokenProgram",
-          "isMut": false,
-          "isSigner": false
+          name: "tokenProgram";
+          isMut: false;
+          isSigner: false;
         },
         {
-          "name": "systemProgram",
-          "isMut": false,
-          "isSigner": false
+          name: "systemProgram";
+          isMut: false;
+          isSigner: false;
         }
-      ],
-      "args": []
+      ];
+      args: [];
     },
     {
-      "name": "settleDispute",
-      "accounts": [
+      name: "settleDispute";
+      accounts: [
         {
-          "name": "disputeAdmin",
-          "isMut": true,
-          "isSigner": true
+          name: "disputeAdmin";
+          isMut: true;
+          isSigner: true;
         },
         {
-          "name": "creator",
-          "isMut": true,
-          "isSigner": false
+          name: "creator";
+          isMut: true;
+          isSigner: false;
         },
         {
-          "name": "creatorTokenAccount",
-          "isMut": true,
-          "isSigner": false
+          name: "creatorTokenAccount";
+          isMut: true;
+          isSigner: false;
         },
         {
-          "name": "submitter",
-          "isMut": true,
-          "isSigner": false
+          name: "submitter";
+          isMut: true;
+          isSigner: false;
         },
         {
-          "name": "submitterTokenAccount",
-          "isMut": true,
-          "isSigner": false
+          name: "submitterTokenAccount";
+          isMut: true;
+          isSigner: false;
         },
         {
-          "name": "lancerDaoTokenAccount",
-          "isMut": true,
-          "isSigner": false,
-          "pda": {
-            "seeds": [
+          name: "lancerDaoTokenAccount";
+          isMut: true;
+          isSigner: false;
+          pda: {
+            seeds: [
               {
-                "kind": "const",
-                "type": "string",
-                "value": "mono"
+                kind: "const";
+                type: "string";
+                value: "mono";
               },
               {
-                "kind": "const",
-                "type": "string",
-                "value": "LANCER_DAO"
+                kind: "const";
+                type: "string";
+                value: "LANCER_DAO";
               },
               {
-                "kind": "account",
-                "type": "publicKey",
-                "account": "TokenAccount",
-                "path": "feature_token_account.mint"
+                kind: "account";
+                type: "publicKey";
+                account: "TokenAccount";
+                path: "feature_token_account.mint";
               }
-            ]
-          }
+            ];
+          };
         },
         {
-          "name": "lancerTokenProgramAuthority",
-          "isMut": false,
-          "isSigner": false,
-          "pda": {
-            "seeds": [
+          name: "lancerTokenProgramAuthority";
+          isMut: false;
+          isSigner: false;
+          pda: {
+            seeds: [
               {
-                "kind": "const",
-                "type": "string",
-                "value": "LANCER_DAO"
+                kind: "const";
+                type: "string";
+                value: "LANCER_DAO";
               }
-            ]
-          }
+            ];
+          };
         },
         {
-          "name": "disputeAccount",
-          "isMut": true,
-          "isSigner": false,
-          "pda": {
-            "seeds": [
+          name: "disputeAccount";
+          isMut: true;
+          isSigner: false;
+          pda: {
+            seeds: [
               {
-                "kind": "const",
-                "type": "string",
-                "value": "dispute"
+                kind: "const";
+                type: "string";
+                value: "dispute";
               },
               {
-                "kind": "account",
-                "type": "string",
-                "account": "Dispute",
-                "path": "dispute_account.unix_timestamp"
+                kind: "account";
+                type: "string";
+                account: "Dispute";
+                path: "dispute_account.unix_timestamp";
               },
               {
-                "kind": "account",
-                "type": "publicKey",
-                "path": "creator"
+                kind: "account";
+                type: "publicKey";
+                path: "creator";
               },
               {
-                "kind": "account",
-                "type": "publicKey",
-                "account": "Dispute",
-                "path": "dispute_account.mint"
+                kind: "account";
+                type: "publicKey";
+                account: "Dispute";
+                path: "dispute_account.mint";
               }
-            ]
-          }
+            ];
+          };
         },
         {
-          "name": "featureTokenAccount",
-          "isMut": true,
-          "isSigner": false,
-          "pda": {
-            "seeds": [
+          name: "featureTokenAccount";
+          isMut: true;
+          isSigner: false;
+          pda: {
+            seeds: [
               {
-                "kind": "const",
-                "type": "string",
-                "value": "mono"
+                kind: "const";
+                type: "string";
+                value: "mono";
               },
               {
-                "kind": "account",
-                "type": "string",
-                "account": "Dispute",
-                "path": "dispute_account.unix_timestamp"
+                kind: "account";
+                type: "string";
+                account: "Dispute";
+                path: "dispute_account.unix_timestamp";
               },
               {
-                "kind": "account",
-                "type": "publicKey",
-                "path": "creator"
+                kind: "account";
+                type: "publicKey";
+                path: "creator";
               },
               {
-                "kind": "account",
-                "type": "publicKey",
-                "account": "Dispute",
-                "path": "dispute_account.mint"
+                kind: "account";
+                type: "publicKey";
+                account: "Dispute";
+                path: "dispute_account.mint";
               }
-            ]
-          }
+            ];
+          };
         },
         {
-          "name": "programAuthority",
-          "isMut": false,
-          "isSigner": false,
-          "pda": {
-            "seeds": [
+          name: "programAuthority";
+          isMut: false;
+          isSigner: false;
+          pda: {
+            seeds: [
               {
-                "kind": "const",
-                "type": "string",
-                "value": "mono"
+                kind: "const";
+                type: "string";
+                value: "mono";
               }
-            ]
-          }
+            ];
+          };
         },
         {
-          "name": "tokenProgram",
-          "isMut": false,
-          "isSigner": false
+          name: "tokenProgram";
+          isMut: false;
+          isSigner: false;
         },
         {
-          "name": "systemProgram",
-          "isMut": false,
-          "isSigner": false
+          name: "systemProgram";
+          isMut: false;
+          isSigner: false;
         }
-      ],
-      "args": [
+      ];
+      args: [
         {
-          "name": "submitterAmount",
-          "type": "u64"
+          name: "submitterAmount";
+          type: "u64";
         }
-      ]
+      ];
     }
-  ],
-  "accounts": [
+  ];
+  accounts: [
     {
-      "name": "Dispute",
-      "type": {
-        "kind": "struct",
-        "fields": [
+      name: "dispute";
+      type: {
+        kind: "struct";
+        fields: [
           {
-            "name": "creator",
-            "type": "publicKey"
+            name: "creator";
+            type: "publicKey";
           },
           {
-            "name": "submitter",
-            "type": "publicKey"
+            name: "submitter";
+            type: "publicKey";
           },
           {
-            "name": "unixTimestamp",
-            "type": "string"
+            name: "unixTimestamp";
+            type: "string";
           },
           {
-            "name": "mint",
-            "type": "publicKey"
+            name: "mint";
+            type: "publicKey";
           },
           {
-            "name": "amount",
-            "type": "u64"
+            name: "amount";
+            type: "u64";
           },
           {
-            "name": "disputeAccountBump",
-            "type": "u8"
+            name: "disputeAccountBump";
+            type: "u8";
           },
           {
-            "name": "programAuthorityBump",
-            "type": "u8"
+            name: "programAuthorityBump";
+            type: "u8";
           },
           {
-            "name": "fundsTokenAccountBump",
-            "type": "u8"
+            name: "fundsTokenAccountBump";
+            type: "u8";
           }
-        ]
-      }
+        ];
+      };
     },
     {
-      "name": "FeatureDataAccount",
-      "type": {
-        "kind": "struct",
-        "fields": [
+      name: "featureDataAccount";
+      type: {
+        kind: "struct";
+        fields: [
           {
-            "name": "creator",
-            "type": "publicKey"
+            name: "creator";
+            type: "publicKey";
           },
           {
-            "name": "amount",
-            "type": "u64"
+            name: "amount";
+            type: "u64";
           },
           {
-            "name": "requestSubmitted",
-            "type": "bool"
+            name: "requestSubmitted";
+            type: "bool";
           },
           {
-            "name": "currentSubmitter",
-            "type": "publicKey"
+            name: "currentSubmitter";
+            type: "publicKey";
           },
           {
-            "name": "approvedSubmitters",
-            "type": {
-              "array": [
-                "publicKey",
-                5
-              ]
-            }
+            name: "approvedSubmitters";
+            type: {
+              array: ["publicKey", 5];
+            };
           },
           {
-            "name": "approvedSubmittersShares",
-            "type": {
-              "array": [
-                "f32",
-                5
-              ]
-            }
+            name: "approvedSubmittersShares";
+            type: {
+              array: ["f32", 5];
+            };
           },
           {
-            "name": "fundsMint",
-            "type": "publicKey"
+            name: "fundsMint";
+            type: "publicKey";
           },
           {
-            "name": "fundsTokenAccount",
-            "type": "publicKey"
+            name: "fundsTokenAccount";
+            type: "publicKey";
           },
           {
-            "name": "payoutAccount",
-            "type": "publicKey"
+            name: "payoutAccount";
+            type: "publicKey";
           },
           {
-            "name": "funderCancel",
-            "type": "bool"
+            name: "funderCancel";
+            type: "bool";
           },
           {
-            "name": "payoutCancel",
-            "type": "bool"
+            name: "payoutCancel";
+            type: "bool";
           },
           {
-            "name": "noOfSubmitters",
-            "type": "u8"
+            name: "noOfSubmitters";
+            type: "u8";
           },
           {
-            "name": "isMultipleSubmitters",
-            "type": "bool"
+            name: "isMultipleSubmitters";
+            type: "bool";
           },
           {
-            "name": "fundsTokenAccountBump",
-            "type": "u8"
+            name: "fundsTokenAccountBump";
+            type: "u8";
           },
           {
-            "name": "fundsDataAccountBump",
-            "type": "u8"
+            name: "fundsDataAccountBump";
+            type: "u8";
           },
           {
-            "name": "programAuthorityBump",
-            "type": "u8"
+            name: "programAuthorityBump";
+            type: "u8";
           },
           {
-            "name": "unixTimestamp",
-            "type": "string"
+            name: "unixTimestamp";
+            type: "string";
           }
-        ]
-      }
+        ];
+      };
     },
     {
-      "name": "ReferralDataAccount",
-      "type": {
-        "kind": "struct",
-        "fields": [
+      name: "referralDataAccount";
+      type: {
+        kind: "struct";
+        fields: [
           {
-            "name": "referralDataAccountBump",
-            "type": "u8"
+            name: "referralDataAccountBump";
+            type: "u8";
           },
           {
-            "name": "approvedReferrers",
-            "type": {
-              "array": [
-                "publicKey",
-                10
-              ]
-            }
+            name: "approvedReferrers";
+            type: {
+              array: ["publicKey", 10];
+            };
           },
           {
-            "name": "noOfSubmitters",
-            "type": "u8"
+            name: "noOfSubmitters";
+            type: "u8";
           },
           {
-            "name": "creatorReferrer",
-            "type": "publicKey"
+            name: "creatorReferrer";
+            type: "publicKey";
           },
           {
-            "name": "creatorMember",
-            "type": "publicKey"
+            name: "creatorMember";
+            type: "publicKey";
           }
-        ]
-      }
+        ];
+      };
     },
     {
-      "name": "ReferralDataAccountOld",
-      "type": {
-        "kind": "struct",
-        "fields": [
+      name: "referralDataAccountOld";
+      type: {
+        kind: "struct";
+        fields: [
           {
-            "name": "referralDataAccountBump",
-            "type": "u8"
+            name: "referralDataAccountBump";
+            type: "u8";
           },
           {
-            "name": "approvedReferrers",
-            "type": {
-              "array": [
-                "publicKey",
-                5
-              ]
-            }
+            name: "approvedReferrers";
+            type: {
+              array: ["publicKey", 5];
+            };
           },
           {
-            "name": "noOfSubmitters",
-            "type": "u8"
+            name: "noOfSubmitters";
+            type: "u8";
           }
-        ]
-      }
+        ];
+      };
     }
-  ],
-  "errors": [
+  ];
+  errors: [
     {
-      "code": 6000,
-      "name": "NotTheCreator",
-      "msg": "This Creator is Invalid"
+      code: 6000;
+      name: "NotTheCreator";
+      msg: "This Creator is Invalid";
     },
     {
-      "code": 6001,
-      "name": "InvalidMint",
-      "msg": "This mint is not valid"
+      code: 6001;
+      name: "InvalidMint";
+      msg: "This mint is not valid";
     },
     {
-      "code": 6002,
-      "name": "MaxApprovedSubmitters",
-      "msg": "Max Number of Approved Submitters already reached"
+      code: 6002;
+      name: "MaxApprovedSubmitters";
+      msg: "Max Number of Approved Submitters already reached";
     },
     {
-      "code": 6003,
-      "name": "SubmitterAlreadyPresent",
-      "msg": "Submitter Key Already Present in ApprovedSubmitters List"
+      code: 6003;
+      name: "SubmitterAlreadyPresent";
+      msg: "Submitter Key Already Present in ApprovedSubmitters List";
     },
     {
-      "code": 6004,
-      "name": "MinApprovedSubmitters",
-      "msg": "Min Number of Approved Submitters already reached"
+      code: 6004;
+      name: "MinApprovedSubmitters";
+      msg: "Min Number of Approved Submitters already reached";
     },
     {
-      "code": 6005,
-      "name": "PendingRequestAlreadySubmitted",
-      "msg": "There is an active request already present"
+      code: 6005;
+      name: "PendingRequestAlreadySubmitted";
+      msg: "There is an active request already present";
     },
     {
-      "code": 6006,
-      "name": "NoActiveRequest",
-      "msg": "No Request Submitted yet"
+      code: 6006;
+      name: "NoActiveRequest";
+      msg: "No Request Submitted yet";
     },
     {
-      "code": 6007,
-      "name": "CannotPayFee",
-      "msg": "Insufficient funds to pay lancer fee"
+      code: 6007;
+      name: "CannotPayFee";
+      msg: "Insufficient funds to pay lancer fee";
     },
     {
-      "code": 6008,
-      "name": "CannotCancelFeature",
-      "msg": "Cannot Cancel Feature"
+      code: 6008;
+      name: "CannotCancelFeature";
+      msg: "Cannot Cancel Feature";
     },
     {
-      "code": 6009,
-      "name": "InvalidAdmin",
-      "msg": "You are not the Admin"
+      code: 6009;
+      name: "InvalidAdmin";
+      msg: "You are not the Admin";
     },
     {
-      "code": 6010,
-      "name": "NotApprovedSubmitter",
-      "msg": "You do not have permissions to submit"
+      code: 6010;
+      name: "NotApprovedSubmitter";
+      msg: "You do not have permissions to submit";
     },
     {
-      "code": 6011,
-      "name": "ExpectedSingleSubmitter",
-      "msg": "This Instruction is used for only a single submitter."
+      code: 6011;
+      name: "ExpectedSingleSubmitter";
+      msg: "This Instruction is used for only a single submitter.";
     },
     {
-      "code": 6012,
-      "name": "ExpectedMultipleSubmitters",
-      "msg": "This Instruction is used for only Multiple submitters."
+      code: 6012;
+      name: "ExpectedMultipleSubmitters";
+      msg: "This Instruction is used for only Multiple submitters.";
     },
     {
-      "code": 6013,
-      "name": "MaxShareExceeded",
-      "msg": "Share Cannot Exceed 100"
+      code: 6013;
+      name: "MaxShareExceeded";
+      msg: "Share Cannot Exceed 100";
     },
     {
-      "code": 6014,
-      "name": "ShareMustBe100",
-      "msg": "Share must be 100"
+      code: 6014;
+      name: "ShareMustBe100";
+      msg: "Share must be 100";
     },
     {
-      "code": 6015,
-      "name": "NotOwnedBySplToken",
-      "msg": "Token Error"
+      code: 6015;
+      name: "NotOwnedBySplToken";
+      msg: "Token Error";
     },
     {
-      "code": 6016,
-      "name": "CannotWithdrawPartially",
-      "msg": "Cannot withdraw full funds."
+      code: 6016;
+      name: "CannotWithdrawPartially";
+      msg: "Cannot withdraw full funds.";
     },
     {
-      "code": 6017,
-      "name": "InvalidReferral",
-      "msg": "Invalid referral provided."
+      code: 6017;
+      name: "InvalidReferral";
+      msg: "Invalid referral provided.";
     },
     {
-      "code": 6018,
-      "name": "InsufficientFunds",
-      "msg": "Insufficient funds"
+      code: 6018;
+      name: "InsufficientFunds";
+      msg: "Insufficient funds";
     },
     {
-      "code": 6019,
-      "name": "AdminCannotCloseBounty",
-      "msg": "Admin Cannot Close Bounty, check if there is a current submitter"
+      code: 6019;
+      name: "AdminCannotCloseBounty";
+      msg: "Admin Cannot Close Bounty, check if there is a current submitter";
     },
     {
-      "code": 6020,
-      "name": "CannotVoteToCancel",
-      "msg": "Only Creator or Current Submitter can vote to cancel"
+      code: 6020;
+      name: "CannotVoteToCancel";
+      msg: "Only Creator or Current Submitter can vote to cancel";
     },
     {
-      "code": 6021,
-      "name": "InvalidDisputePubkey",
-      "msg": "This Pubkey is not a Valid Dispute Pubkey"
+      code: 6021;
+      name: "InvalidDisputePubkey";
+      msg: "This Pubkey is not a Valid Dispute Pubkey";
     },
     {
-      "code": 6022,
-      "name": "CannotDispute",
-      "msg": "Cannot Dispute Bounty"
+      code: 6022;
+      name: "CannotDispute";
+      msg: "Cannot Dispute Bounty";
     }
+  ];
+};
+
+export const IDL: MonoProgram = {
+  version: "0.1.0",
+  name: "mono_program",
+  instructions: [
+    {
+      name: "createFeatureFundingAccount",
+      accounts: [
+        {
+          name: "creator",
+          isMut: true,
+          isSigner: true,
+        },
+        {
+          name: "fundsMint",
+          isMut: false,
+          isSigner: false,
+        },
+        {
+          name: "featureDataAccount",
+          isMut: true,
+          isSigner: false,
+          pda: {
+            seeds: [
+              {
+                kind: "const",
+                type: "string",
+                value: "mono",
+              },
+              {
+                kind: "arg",
+                type: "string",
+                path: "unix_timestamp",
+              },
+              {
+                kind: "account",
+                type: "publicKey",
+                path: "creator",
+              },
+            ],
+          },
+        },
+        {
+          name: "featureTokenAccount",
+          isMut: true,
+          isSigner: false,
+          pda: {
+            seeds: [
+              {
+                kind: "const",
+                type: "string",
+                value: "mono",
+              },
+              {
+                kind: "arg",
+                type: "string",
+                path: "unix_timestamp",
+              },
+              {
+                kind: "account",
+                type: "publicKey",
+                path: "creator",
+              },
+              {
+                kind: "account",
+                type: "publicKey",
+                account: "Mint",
+                path: "funds_mint",
+              },
+            ],
+          },
+        },
+        {
+          name: "programAuthority",
+          isMut: false,
+          isSigner: false,
+          pda: {
+            seeds: [
+              {
+                kind: "const",
+                type: "string",
+                value: "mono",
+              },
+            ],
+          },
+        },
+        {
+          name: "tokenProgram",
+          isMut: false,
+          isSigner: false,
+        },
+        {
+          name: "rent",
+          isMut: false,
+          isSigner: false,
+        },
+        {
+          name: "associatedProgram",
+          isMut: false,
+          isSigner: false,
+        },
+        {
+          name: "systemProgram",
+          isMut: false,
+          isSigner: false,
+        },
+      ],
+      args: [
+        {
+          name: "unixTimestamp",
+          type: "string",
+        },
+      ],
+    },
+    {
+      name: "createCustodialFeatureFundingAccount",
+      accounts: [
+        {
+          name: "custodialFeePayer",
+          isMut: true,
+          isSigner: true,
+        },
+        {
+          name: "creator",
+          isMut: false,
+          isSigner: false,
+          docs: ["Check: Web3 auth can't allow 2 signers"],
+        },
+        {
+          name: "fundsMint",
+          isMut: false,
+          isSigner: false,
+        },
+        {
+          name: "featureDataAccount",
+          isMut: true,
+          isSigner: false,
+          pda: {
+            seeds: [
+              {
+                kind: "const",
+                type: "string",
+                value: "mono",
+              },
+              {
+                kind: "arg",
+                type: "string",
+                path: "unix_timestamp",
+              },
+              {
+                kind: "account",
+                type: "publicKey",
+                path: "creator",
+              },
+            ],
+          },
+        },
+        {
+          name: "featureTokenAccount",
+          isMut: true,
+          isSigner: false,
+          pda: {
+            seeds: [
+              {
+                kind: "const",
+                type: "string",
+                value: "mono",
+              },
+              {
+                kind: "arg",
+                type: "string",
+                path: "unix_timestamp",
+              },
+              {
+                kind: "account",
+                type: "publicKey",
+                path: "creator",
+              },
+              {
+                kind: "account",
+                type: "publicKey",
+                account: "Mint",
+                path: "funds_mint",
+              },
+            ],
+          },
+        },
+        {
+          name: "programAuthority",
+          isMut: false,
+          isSigner: false,
+          pda: {
+            seeds: [
+              {
+                kind: "const",
+                type: "string",
+                value: "mono",
+              },
+            ],
+          },
+        },
+        {
+          name: "tokenProgram",
+          isMut: false,
+          isSigner: false,
+        },
+        {
+          name: "rent",
+          isMut: false,
+          isSigner: false,
+        },
+        {
+          name: "associatedProgram",
+          isMut: false,
+          isSigner: false,
+        },
+        {
+          name: "systemProgram",
+          isMut: false,
+          isSigner: false,
+        },
+      ],
+      args: [
+        {
+          name: "unixTimestamp",
+          type: "string",
+        },
+      ],
+    },
+    {
+      name: "fundFeature",
+      accounts: [
+        {
+          name: "creator",
+          isMut: true,
+          isSigner: true,
+        },
+        {
+          name: "creatorTokenAccount",
+          isMut: true,
+          isSigner: false,
+        },
+        {
+          name: "fundsMint",
+          isMut: false,
+          isSigner: false,
+        },
+        {
+          name: "featureDataAccount",
+          isMut: true,
+          isSigner: false,
+          pda: {
+            seeds: [
+              {
+                kind: "const",
+                type: "string",
+                value: "mono",
+              },
+              {
+                kind: "account",
+                type: "string",
+                account: "FeatureDataAccount",
+                path: "feature_data_account.unix_timestamp",
+              },
+              {
+                kind: "account",
+                type: "publicKey",
+                path: "creator",
+              },
+            ],
+          },
+        },
+        {
+          name: "featureTokenAccount",
+          isMut: true,
+          isSigner: false,
+          pda: {
+            seeds: [
+              {
+                kind: "const",
+                type: "string",
+                value: "mono",
+              },
+              {
+                kind: "account",
+                type: "string",
+                account: "FeatureDataAccount",
+                path: "feature_data_account.unix_timestamp",
+              },
+              {
+                kind: "account",
+                type: "publicKey",
+                path: "creator",
+              },
+              {
+                kind: "account",
+                type: "publicKey",
+                account: "Mint",
+                path: "funds_mint",
+              },
+            ],
+          },
+        },
+        {
+          name: "programAuthority",
+          isMut: false,
+          isSigner: false,
+          pda: {
+            seeds: [
+              {
+                kind: "const",
+                type: "string",
+                value: "mono",
+              },
+            ],
+          },
+        },
+        {
+          name: "tokenProgram",
+          isMut: false,
+          isSigner: false,
+        },
+        {
+          name: "systemProgram",
+          isMut: false,
+          isSigner: false,
+        },
+      ],
+      args: [
+        {
+          name: "amount",
+          type: "u64",
+        },
+      ],
+    },
+    {
+      name: "achFundFeature",
+      accounts: [
+        {
+          name: "externalFunder",
+          isMut: true,
+          isSigner: true,
+        },
+        {
+          name: "creator",
+          isMut: true,
+          isSigner: false,
+        },
+        {
+          name: "externalFunderTokenAccount",
+          isMut: true,
+          isSigner: false,
+        },
+        {
+          name: "fundsMint",
+          isMut: false,
+          isSigner: false,
+        },
+        {
+          name: "featureDataAccount",
+          isMut: true,
+          isSigner: false,
+          pda: {
+            seeds: [
+              {
+                kind: "const",
+                type: "string",
+                value: "mono",
+              },
+              {
+                kind: "account",
+                type: "string",
+                account: "FeatureDataAccount",
+                path: "feature_data_account.unix_timestamp",
+              },
+              {
+                kind: "account",
+                type: "publicKey",
+                path: "creator",
+              },
+            ],
+          },
+        },
+        {
+          name: "featureTokenAccount",
+          isMut: true,
+          isSigner: false,
+          pda: {
+            seeds: [
+              {
+                kind: "const",
+                type: "string",
+                value: "mono",
+              },
+              {
+                kind: "account",
+                type: "string",
+                account: "FeatureDataAccount",
+                path: "feature_data_account.unix_timestamp",
+              },
+              {
+                kind: "account",
+                type: "publicKey",
+                path: "creator",
+              },
+              {
+                kind: "account",
+                type: "publicKey",
+                account: "Mint",
+                path: "funds_mint",
+              },
+            ],
+          },
+        },
+        {
+          name: "programAuthority",
+          isMut: false,
+          isSigner: false,
+          pda: {
+            seeds: [
+              {
+                kind: "const",
+                type: "string",
+                value: "mono",
+              },
+            ],
+          },
+        },
+        {
+          name: "tokenProgram",
+          isMut: false,
+          isSigner: false,
+        },
+        {
+          name: "systemProgram",
+          isMut: false,
+          isSigner: false,
+        },
+      ],
+      args: [
+        {
+          name: "amount",
+          type: "u64",
+        },
+      ],
+    },
+    {
+      name: "addApprovedSubmitters",
+      accounts: [
+        {
+          name: "creator",
+          isMut: true,
+          isSigner: true,
+        },
+        {
+          name: "submitter",
+          isMut: false,
+          isSigner: false,
+        },
+        {
+          name: "featureDataAccount",
+          isMut: true,
+          isSigner: false,
+          pda: {
+            seeds: [
+              {
+                kind: "const",
+                type: "string",
+                value: "mono",
+              },
+              {
+                kind: "account",
+                type: "string",
+                account: "FeatureDataAccount",
+                path: "feature_data_account.unix_timestamp",
+              },
+              {
+                kind: "account",
+                type: "publicKey",
+                path: "creator",
+              },
+            ],
+          },
+        },
+      ],
+      args: [],
+    },
+    {
+      name: "submitRequest",
+      accounts: [
+        {
+          name: "creator",
+          isMut: true,
+          isSigner: false,
+        },
+        {
+          name: "submitter",
+          isMut: false,
+          isSigner: true,
+        },
+        {
+          name: "payoutAccount",
+          isMut: false,
+          isSigner: false,
+        },
+        {
+          name: "featureDataAccount",
+          isMut: true,
+          isSigner: false,
+          pda: {
+            seeds: [
+              {
+                kind: "const",
+                type: "string",
+                value: "mono",
+              },
+              {
+                kind: "account",
+                type: "string",
+                account: "FeatureDataAccount",
+                path: "feature_data_account.unix_timestamp",
+              },
+              {
+                kind: "account",
+                type: "publicKey",
+                path: "creator",
+              },
+            ],
+          },
+        },
+      ],
+      args: [],
+    },
+    {
+      name: "approveRequest",
+      accounts: [
+        {
+          name: "creator",
+          isMut: true,
+          isSigner: true,
+        },
+        {
+          name: "submitter",
+          isMut: true,
+          isSigner: false,
+        },
+        {
+          name: "payoutAccount",
+          isMut: true,
+          isSigner: false,
+        },
+        {
+          name: "featureDataAccount",
+          isMut: true,
+          isSigner: false,
+          pda: {
+            seeds: [
+              {
+                kind: "const",
+                type: "string",
+                value: "mono",
+              },
+              {
+                kind: "account",
+                type: "string",
+                account: "FeatureDataAccount",
+                path: "feature_data_account.unix_timestamp",
+              },
+              {
+                kind: "account",
+                type: "publicKey",
+                path: "creator",
+              },
+            ],
+          },
+        },
+        {
+          name: "featureTokenAccount",
+          isMut: true,
+          isSigner: false,
+          pda: {
+            seeds: [
+              {
+                kind: "const",
+                type: "string",
+                value: "mono",
+              },
+              {
+                kind: "account",
+                type: "string",
+                account: "FeatureDataAccount",
+                path: "feature_data_account.unix_timestamp",
+              },
+              {
+                kind: "account",
+                type: "publicKey",
+                path: "creator",
+              },
+              {
+                kind: "account",
+                type: "publicKey",
+                account: "FeatureDataAccount",
+                path: "feature_data_account.funds_mint",
+              },
+            ],
+          },
+        },
+        {
+          name: "lancerDaoTokenAccount",
+          isMut: true,
+          isSigner: false,
+          pda: {
+            seeds: [
+              {
+                kind: "const",
+                type: "string",
+                value: "mono",
+              },
+              {
+                kind: "const",
+                type: "string",
+                value: "LANCER_DAO",
+              },
+              {
+                kind: "account",
+                type: "publicKey",
+                account: "TokenAccount",
+                path: "feature_token_account.mint",
+              },
+            ],
+          },
+        },
+        {
+          name: "lancerTokenProgramAuthority",
+          isMut: false,
+          isSigner: false,
+          pda: {
+            seeds: [
+              {
+                kind: "const",
+                type: "string",
+                value: "LANCER_DAO",
+              },
+            ],
+          },
+        },
+        {
+          name: "programAuthority",
+          isMut: false,
+          isSigner: false,
+          pda: {
+            seeds: [
+              {
+                kind: "const",
+                type: "string",
+                value: "mono",
+              },
+            ],
+          },
+        },
+        {
+          name: "tokenProgram",
+          isMut: false,
+          isSigner: false,
+        },
+      ],
+      args: [],
+    },
+    {
+      name: "denyRequest",
+      accounts: [
+        {
+          name: "creator",
+          isMut: true,
+          isSigner: true,
+        },
+        {
+          name: "submitter",
+          isMut: true,
+          isSigner: false,
+        },
+        {
+          name: "featureDataAccount",
+          isMut: true,
+          isSigner: false,
+          pda: {
+            seeds: [
+              {
+                kind: "const",
+                type: "string",
+                value: "mono",
+              },
+              {
+                kind: "account",
+                type: "string",
+                account: "FeatureDataAccount",
+                path: "feature_data_account.unix_timestamp",
+              },
+              {
+                kind: "account",
+                type: "publicKey",
+                path: "creator",
+              },
+            ],
+          },
+        },
+      ],
+      args: [],
+    },
+    {
+      name: "voteToCancel",
+      accounts: [
+        {
+          name: "creator",
+          isMut: true,
+          isSigner: false,
+        },
+        {
+          name: "voter",
+          isMut: true,
+          isSigner: true,
+        },
+        {
+          name: "featureDataAccount",
+          isMut: true,
+          isSigner: false,
+          pda: {
+            seeds: [
+              {
+                kind: "const",
+                type: "string",
+                value: "mono",
+              },
+              {
+                kind: "account",
+                type: "string",
+                account: "FeatureDataAccount",
+                path: "feature_data_account.unix_timestamp",
+              },
+              {
+                kind: "account",
+                type: "publicKey",
+                path: "creator",
+              },
+            ],
+          },
+        },
+      ],
+      args: [
+        {
+          name: "isCancel",
+          type: "bool",
+        },
+      ],
+    },
+    {
+      name: "cancelFeature",
+      accounts: [
+        {
+          name: "creator",
+          isMut: true,
+          isSigner: true,
+        },
+        {
+          name: "creatorTokenAccount",
+          isMut: true,
+          isSigner: false,
+        },
+        {
+          name: "featureDataAccount",
+          isMut: true,
+          isSigner: false,
+          pda: {
+            seeds: [
+              {
+                kind: "const",
+                type: "string",
+                value: "mono",
+              },
+              {
+                kind: "account",
+                type: "string",
+                account: "FeatureDataAccount",
+                path: "feature_data_account.unix_timestamp",
+              },
+              {
+                kind: "account",
+                type: "publicKey",
+                path: "creator",
+              },
+            ],
+          },
+        },
+        {
+          name: "featureTokenAccount",
+          isMut: true,
+          isSigner: false,
+          pda: {
+            seeds: [
+              {
+                kind: "const",
+                type: "string",
+                value: "mono",
+              },
+              {
+                kind: "account",
+                type: "string",
+                account: "FeatureDataAccount",
+                path: "feature_data_account.unix_timestamp",
+              },
+              {
+                kind: "account",
+                type: "publicKey",
+                path: "creator",
+              },
+              {
+                kind: "account",
+                type: "publicKey",
+                account: "FeatureDataAccount",
+                path: "feature_data_account.funds_mint",
+              },
+            ],
+          },
+        },
+        {
+          name: "programAuthority",
+          isMut: false,
+          isSigner: false,
+          pda: {
+            seeds: [
+              {
+                kind: "const",
+                type: "string",
+                value: "mono",
+              },
+            ],
+          },
+        },
+        {
+          name: "tokenProgram",
+          isMut: false,
+          isSigner: false,
+        },
+      ],
+      args: [],
+    },
+    {
+      name: "removeApprovedSubmitters",
+      accounts: [
+        {
+          name: "creator",
+          isMut: true,
+          isSigner: true,
+        },
+        {
+          name: "submitter",
+          isMut: false,
+          isSigner: false,
+        },
+        {
+          name: "featureDataAccount",
+          isMut: true,
+          isSigner: false,
+          pda: {
+            seeds: [
+              {
+                kind: "const",
+                type: "string",
+                value: "mono",
+              },
+              {
+                kind: "account",
+                type: "string",
+                account: "FeatureDataAccount",
+                path: "feature_data_account.unix_timestamp",
+              },
+              {
+                kind: "account",
+                type: "publicKey",
+                path: "creator",
+              },
+            ],
+          },
+        },
+      ],
+      args: [],
+    },
+    {
+      name: "createLancerTokenAccount",
+      accounts: [
+        {
+          name: "lancerAdmin",
+          isMut: true,
+          isSigner: true,
+        },
+        {
+          name: "fundsMint",
+          isMut: false,
+          isSigner: false,
+        },
+        {
+          name: "lancerDaoTokenAccount",
+          isMut: true,
+          isSigner: false,
+          pda: {
+            seeds: [
+              {
+                kind: "const",
+                type: "string",
+                value: "mono",
+              },
+              {
+                kind: "const",
+                type: "string",
+                value: "LANCER_DAO",
+              },
+              {
+                kind: "account",
+                type: "publicKey",
+                account: "Mint",
+                path: "funds_mint",
+              },
+            ],
+          },
+        },
+        {
+          name: "programAuthority",
+          isMut: false,
+          isSigner: false,
+          pda: {
+            seeds: [
+              {
+                kind: "const",
+                type: "string",
+                value: "LANCER_DAO",
+              },
+            ],
+          },
+        },
+        {
+          name: "systemProgram",
+          isMut: false,
+          isSigner: false,
+        },
+        {
+          name: "tokenProgram",
+          isMut: false,
+          isSigner: false,
+        },
+      ],
+      args: [],
+    },
+    {
+      name: "withdrawTokens",
+      accounts: [
+        {
+          name: "lancerAdmin",
+          isMut: true,
+          isSigner: true,
+        },
+        {
+          name: "withdrawer",
+          isMut: false,
+          isSigner: false,
+        },
+        {
+          name: "withdrawerTokenAccount",
+          isMut: true,
+          isSigner: false,
+        },
+        {
+          name: "mint",
+          isMut: false,
+          isSigner: false,
+        },
+        {
+          name: "lancerDaoTokenAccount",
+          isMut: true,
+          isSigner: false,
+          pda: {
+            seeds: [
+              {
+                kind: "const",
+                type: "string",
+                value: "mono",
+              },
+              {
+                kind: "const",
+                type: "string",
+                value: "LANCER_DAO",
+              },
+              {
+                kind: "account",
+                type: "publicKey",
+                account: "Mint",
+                path: "mint",
+              },
+            ],
+          },
+        },
+        {
+          name: "lancerTokenProgramAuthority",
+          isMut: false,
+          isSigner: false,
+          pda: {
+            seeds: [
+              {
+                kind: "const",
+                type: "string",
+                value: "LANCER_DAO",
+              },
+            ],
+          },
+        },
+        {
+          name: "tokenProgram",
+          isMut: false,
+          isSigner: false,
+        },
+      ],
+      args: [
+        {
+          name: "amount",
+          type: "u64",
+        },
+        {
+          name: "withdrawBump",
+          type: "u8",
+        },
+      ],
+    },
+    {
+      name: "enableMultipleSubmitters",
+      accounts: [
+        {
+          name: "creator",
+          isMut: true,
+          isSigner: true,
+        },
+        {
+          name: "featureDataAccount",
+          isMut: true,
+          isSigner: false,
+          pda: {
+            seeds: [
+              {
+                kind: "const",
+                type: "string",
+                value: "mono",
+              },
+              {
+                kind: "account",
+                type: "string",
+                account: "FeatureDataAccount",
+                path: "feature_data_account.unix_timestamp",
+              },
+              {
+                kind: "account",
+                type: "publicKey",
+                path: "creator",
+              },
+            ],
+          },
+        },
+      ],
+      args: [],
+    },
+    {
+      name: "submitRequestMultiple",
+      accounts: [
+        {
+          name: "creator",
+          isMut: true,
+          isSigner: false,
+        },
+        {
+          name: "submitter",
+          isMut: false,
+          isSigner: true,
+        },
+        {
+          name: "featureDataAccount",
+          isMut: true,
+          isSigner: false,
+          pda: {
+            seeds: [
+              {
+                kind: "const",
+                type: "string",
+                value: "mono",
+              },
+              {
+                kind: "account",
+                type: "string",
+                account: "FeatureDataAccount",
+                path: "feature_data_account.unix_timestamp",
+              },
+              {
+                kind: "account",
+                type: "publicKey",
+                path: "creator",
+              },
+            ],
+          },
+        },
+      ],
+      args: [],
+    },
+    {
+      name: "setShareMultipleSubmitters",
+      accounts: [
+        {
+          name: "creator",
+          isMut: true,
+          isSigner: true,
+        },
+        {
+          name: "featureDataAccount",
+          isMut: true,
+          isSigner: false,
+          pda: {
+            seeds: [
+              {
+                kind: "const",
+                type: "string",
+                value: "mono",
+              },
+              {
+                kind: "account",
+                type: "string",
+                account: "FeatureDataAccount",
+                path: "feature_data_account.unix_timestamp",
+              },
+              {
+                kind: "account",
+                type: "publicKey",
+                path: "creator",
+              },
+            ],
+          },
+        },
+      ],
+      args: [
+        {
+          name: "submitter",
+          type: "publicKey",
+        },
+        {
+          name: "submitterShare",
+          type: "f32",
+        },
+      ],
+    },
+    {
+      name: "approveRequestMultiple",
+      accounts: [
+        {
+          name: "creator",
+          isMut: true,
+          isSigner: true,
+        },
+        {
+          name: "featureDataAccount",
+          isMut: true,
+          isSigner: false,
+          pda: {
+            seeds: [
+              {
+                kind: "const",
+                type: "string",
+                value: "mono",
+              },
+              {
+                kind: "account",
+                type: "string",
+                account: "FeatureDataAccount",
+                path: "feature_data_account.unix_timestamp",
+              },
+              {
+                kind: "account",
+                type: "publicKey",
+                path: "creator",
+              },
+            ],
+          },
+        },
+        {
+          name: "featureTokenAccount",
+          isMut: true,
+          isSigner: false,
+          pda: {
+            seeds: [
+              {
+                kind: "const",
+                type: "string",
+                value: "mono",
+              },
+              {
+                kind: "account",
+                type: "string",
+                account: "FeatureDataAccount",
+                path: "feature_data_account.unix_timestamp",
+              },
+              {
+                kind: "account",
+                type: "publicKey",
+                path: "creator",
+              },
+              {
+                kind: "account",
+                type: "publicKey",
+                account: "FeatureDataAccount",
+                path: "feature_data_account.funds_mint",
+              },
+            ],
+          },
+        },
+        {
+          name: "lancerDaoTokenAccount",
+          isMut: true,
+          isSigner: false,
+          pda: {
+            seeds: [
+              {
+                kind: "const",
+                type: "string",
+                value: "mono",
+              },
+              {
+                kind: "const",
+                type: "string",
+                value: "LANCER_DAO",
+              },
+              {
+                kind: "account",
+                type: "publicKey",
+                account: "TokenAccount",
+                path: "feature_token_account.mint",
+              },
+            ],
+          },
+        },
+        {
+          name: "lancerTokenProgramAuthority",
+          isMut: false,
+          isSigner: false,
+          pda: {
+            seeds: [
+              {
+                kind: "const",
+                type: "string",
+                value: "LANCER_DAO",
+              },
+            ],
+          },
+        },
+        {
+          name: "programAuthority",
+          isMut: false,
+          isSigner: false,
+          pda: {
+            seeds: [
+              {
+                kind: "const",
+                type: "string",
+                value: "mono",
+              },
+            ],
+          },
+        },
+        {
+          name: "tokenProgram",
+          isMut: false,
+          isSigner: false,
+        },
+        {
+          name: "systemProgram",
+          isMut: false,
+          isSigner: false,
+        },
+      ],
+      args: [],
+    },
+    {
+      name: "approveRequestPartial",
+      accounts: [
+        {
+          name: "creator",
+          isMut: true,
+          isSigner: true,
+        },
+        {
+          name: "submitter",
+          isMut: true,
+          isSigner: false,
+        },
+        {
+          name: "payoutAccount",
+          isMut: true,
+          isSigner: false,
+        },
+        {
+          name: "featureDataAccount",
+          isMut: true,
+          isSigner: false,
+          pda: {
+            seeds: [
+              {
+                kind: "const",
+                type: "string",
+                value: "mono",
+              },
+              {
+                kind: "account",
+                type: "string",
+                account: "FeatureDataAccount",
+                path: "feature_data_account.unix_timestamp",
+              },
+              {
+                kind: "account",
+                type: "publicKey",
+                path: "creator",
+              },
+            ],
+          },
+        },
+        {
+          name: "featureTokenAccount",
+          isMut: true,
+          isSigner: false,
+          pda: {
+            seeds: [
+              {
+                kind: "const",
+                type: "string",
+                value: "mono",
+              },
+              {
+                kind: "account",
+                type: "string",
+                account: "FeatureDataAccount",
+                path: "feature_data_account.unix_timestamp",
+              },
+              {
+                kind: "account",
+                type: "publicKey",
+                path: "creator",
+              },
+              {
+                kind: "account",
+                type: "publicKey",
+                account: "FeatureDataAccount",
+                path: "feature_data_account.funds_mint",
+              },
+            ],
+          },
+        },
+        {
+          name: "lancerDaoTokenAccount",
+          isMut: true,
+          isSigner: false,
+          pda: {
+            seeds: [
+              {
+                kind: "const",
+                type: "string",
+                value: "mono",
+              },
+              {
+                kind: "const",
+                type: "string",
+                value: "LANCER_DAO",
+              },
+              {
+                kind: "account",
+                type: "publicKey",
+                account: "TokenAccount",
+                path: "feature_token_account.mint",
+              },
+            ],
+          },
+        },
+        {
+          name: "lancerTokenProgramAuthority",
+          isMut: false,
+          isSigner: false,
+          pda: {
+            seeds: [
+              {
+                kind: "const",
+                type: "string",
+                value: "LANCER_DAO",
+              },
+            ],
+          },
+        },
+        {
+          name: "programAuthority",
+          isMut: false,
+          isSigner: false,
+          pda: {
+            seeds: [
+              {
+                kind: "const",
+                type: "string",
+                value: "mono",
+              },
+            ],
+          },
+        },
+        {
+          name: "tokenProgram",
+          isMut: false,
+          isSigner: false,
+        },
+      ],
+      args: [
+        {
+          name: "amount",
+          type: "u64",
+        },
+      ],
+    },
+    {
+      name: "createReferralDataAccount",
+      accounts: [
+        {
+          name: "creator",
+          isMut: true,
+          isSigner: true,
+        },
+        {
+          name: "featureDataAccount",
+          isMut: true,
+          isSigner: false,
+          pda: {
+            seeds: [
+              {
+                kind: "const",
+                type: "string",
+                value: "mono",
+              },
+              {
+                kind: "account",
+                type: "string",
+                account: "FeatureDataAccount",
+                path: "feature_data_account.unix_timestamp",
+              },
+              {
+                kind: "account",
+                type: "publicKey",
+                path: "creator",
+              },
+            ],
+          },
+        },
+        {
+          name: "referralDataAccount",
+          isMut: true,
+          isSigner: false,
+          pda: {
+            seeds: [
+              {
+                kind: "const",
+                type: "string",
+                value: "referrer",
+              },
+              {
+                kind: "account",
+                type: "publicKey",
+                account: "FeatureDataAccount",
+                path: "feature_data_account",
+              },
+              {
+                kind: "account",
+                type: "publicKey",
+                path: "creator",
+              },
+            ],
+          },
+        },
+        {
+          name: "referrer",
+          isMut: false,
+          isSigner: false,
+        },
+        {
+          name: "rent",
+          isMut: false,
+          isSigner: false,
+        },
+        {
+          name: "systemProgram",
+          isMut: false,
+          isSigner: false,
+        },
+      ],
+      args: [],
+    },
+    {
+      name: "createCustodialReferralDataAccount",
+      accounts: [
+        {
+          name: "custodialFeePayer",
+          isMut: true,
+          isSigner: true,
+        },
+        {
+          name: "creator",
+          isMut: false,
+          isSigner: false,
+          docs: ["Check: Web3 auth can't allow 2 signers"],
+        },
+        {
+          name: "featureDataAccount",
+          isMut: true,
+          isSigner: false,
+          pda: {
+            seeds: [
+              {
+                kind: "const",
+                type: "string",
+                value: "mono",
+              },
+              {
+                kind: "account",
+                type: "string",
+                account: "FeatureDataAccount",
+                path: "feature_data_account.unix_timestamp",
+              },
+              {
+                kind: "account",
+                type: "publicKey",
+                path: "creator",
+              },
+            ],
+          },
+        },
+        {
+          name: "referralDataAccount",
+          isMut: true,
+          isSigner: false,
+          pda: {
+            seeds: [
+              {
+                kind: "const",
+                type: "string",
+                value: "referrer",
+              },
+              {
+                kind: "account",
+                type: "publicKey",
+                account: "FeatureDataAccount",
+                path: "feature_data_account",
+              },
+              {
+                kind: "account",
+                type: "publicKey",
+                path: "creator",
+              },
+            ],
+          },
+        },
+        {
+          name: "referrer",
+          isMut: false,
+          isSigner: false,
+        },
+        {
+          name: "rent",
+          isMut: false,
+          isSigner: false,
+        },
+        {
+          name: "systemProgram",
+          isMut: false,
+          isSigner: false,
+        },
+      ],
+      args: [],
+    },
+    {
+      name: "addApprovedSubmittersV1",
+      accounts: [
+        {
+          name: "creator",
+          isMut: true,
+          isSigner: true,
+        },
+        {
+          name: "referrer",
+          isMut: false,
+          isSigner: false,
+        },
+        {
+          name: "submitter",
+          isMut: false,
+          isSigner: false,
+        },
+        {
+          name: "featureDataAccount",
+          isMut: true,
+          isSigner: false,
+          pda: {
+            seeds: [
+              {
+                kind: "const",
+                type: "string",
+                value: "mono",
+              },
+              {
+                kind: "account",
+                type: "string",
+                account: "FeatureDataAccount",
+                path: "feature_data_account.unix_timestamp",
+              },
+              {
+                kind: "account",
+                type: "publicKey",
+                path: "creator",
+              },
+            ],
+          },
+        },
+        {
+          name: "referralDataAccount",
+          isMut: true,
+          isSigner: false,
+          pda: {
+            seeds: [
+              {
+                kind: "const",
+                type: "string",
+                value: "referrer",
+              },
+              {
+                kind: "account",
+                type: "publicKey",
+                account: "FeatureDataAccount",
+                path: "feature_data_account",
+              },
+              {
+                kind: "account",
+                type: "publicKey",
+                path: "creator",
+              },
+            ],
+          },
+        },
+      ],
+      args: [],
+    },
+    {
+      name: "removeApprovedSubmittersV1",
+      accounts: [
+        {
+          name: "creator",
+          isMut: true,
+          isSigner: true,
+        },
+        {
+          name: "submitter",
+          isMut: false,
+          isSigner: false,
+        },
+        {
+          name: "featureDataAccount",
+          isMut: true,
+          isSigner: false,
+          pda: {
+            seeds: [
+              {
+                kind: "const",
+                type: "string",
+                value: "mono",
+              },
+              {
+                kind: "account",
+                type: "string",
+                account: "FeatureDataAccount",
+                path: "feature_data_account.unix_timestamp",
+              },
+              {
+                kind: "account",
+                type: "publicKey",
+                path: "creator",
+              },
+            ],
+          },
+        },
+        {
+          name: "referralDataAccount",
+          isMut: true,
+          isSigner: false,
+          pda: {
+            seeds: [
+              {
+                kind: "const",
+                type: "string",
+                value: "referrer",
+              },
+              {
+                kind: "account",
+                type: "publicKey",
+                account: "FeatureDataAccount",
+                path: "feature_data_account",
+              },
+              {
+                kind: "account",
+                type: "publicKey",
+                path: "creator",
+              },
+            ],
+          },
+        },
+      ],
+      args: [],
+    },
+    {
+      name: "approveRequestWithReferral",
+      accounts: [
+        {
+          name: "creator",
+          isMut: true,
+          isSigner: true,
+        },
+        {
+          name: "submitter",
+          isMut: true,
+          isSigner: false,
+        },
+        {
+          name: "payoutAccount",
+          isMut: true,
+          isSigner: false,
+        },
+        {
+          name: "featureDataAccount",
+          isMut: true,
+          isSigner: false,
+          pda: {
+            seeds: [
+              {
+                kind: "const",
+                type: "string",
+                value: "mono",
+              },
+              {
+                kind: "account",
+                type: "string",
+                account: "FeatureDataAccount",
+                path: "feature_data_account.unix_timestamp",
+              },
+              {
+                kind: "account",
+                type: "publicKey",
+                path: "creator",
+              },
+            ],
+          },
+        },
+        {
+          name: "featureTokenAccount",
+          isMut: true,
+          isSigner: false,
+          pda: {
+            seeds: [
+              {
+                kind: "const",
+                type: "string",
+                value: "mono",
+              },
+              {
+                kind: "account",
+                type: "string",
+                account: "FeatureDataAccount",
+                path: "feature_data_account.unix_timestamp",
+              },
+              {
+                kind: "account",
+                type: "publicKey",
+                path: "creator",
+              },
+              {
+                kind: "account",
+                type: "publicKey",
+                account: "FeatureDataAccount",
+                path: "feature_data_account.funds_mint",
+              },
+            ],
+          },
+        },
+        {
+          name: "lancerDaoTokenAccount",
+          isMut: true,
+          isSigner: false,
+          pda: {
+            seeds: [
+              {
+                kind: "const",
+                type: "string",
+                value: "mono",
+              },
+              {
+                kind: "const",
+                type: "string",
+                value: "LANCER_DAO",
+              },
+              {
+                kind: "account",
+                type: "publicKey",
+                account: "TokenAccount",
+                path: "feature_token_account.mint",
+              },
+            ],
+          },
+        },
+        {
+          name: "lancerTokenProgramAuthority",
+          isMut: false,
+          isSigner: false,
+          pda: {
+            seeds: [
+              {
+                kind: "const",
+                type: "string",
+                value: "LANCER_DAO",
+              },
+            ],
+          },
+        },
+        {
+          name: "programAuthority",
+          isMut: true,
+          isSigner: false,
+          pda: {
+            seeds: [
+              {
+                kind: "const",
+                type: "string",
+                value: "mono",
+              },
+            ],
+          },
+        },
+        {
+          name: "tokenProgram",
+          isMut: false,
+          isSigner: false,
+        },
+        {
+          name: "referralDataAccount",
+          isMut: false,
+          isSigner: false,
+          pda: {
+            seeds: [
+              {
+                kind: "const",
+                type: "string",
+                value: "referrer",
+              },
+              {
+                kind: "account",
+                type: "publicKey",
+                account: "FeatureDataAccount",
+                path: "feature_data_account",
+              },
+              {
+                kind: "account",
+                type: "publicKey",
+                path: "creator",
+              },
+            ],
+          },
+        },
+      ],
+      args: [],
+    },
+    {
+      name: "approveRequestMultipleWithReferral",
+      accounts: [
+        {
+          name: "creator",
+          isMut: true,
+          isSigner: true,
+        },
+        {
+          name: "featureDataAccount",
+          isMut: true,
+          isSigner: false,
+          pda: {
+            seeds: [
+              {
+                kind: "const",
+                type: "string",
+                value: "mono",
+              },
+              {
+                kind: "account",
+                type: "string",
+                account: "FeatureDataAccount",
+                path: "feature_data_account.unix_timestamp",
+              },
+              {
+                kind: "account",
+                type: "publicKey",
+                path: "creator",
+              },
+            ],
+          },
+        },
+        {
+          name: "featureTokenAccount",
+          isMut: true,
+          isSigner: false,
+          pda: {
+            seeds: [
+              {
+                kind: "const",
+                type: "string",
+                value: "mono",
+              },
+              {
+                kind: "account",
+                type: "string",
+                account: "FeatureDataAccount",
+                path: "feature_data_account.unix_timestamp",
+              },
+              {
+                kind: "account",
+                type: "publicKey",
+                path: "creator",
+              },
+              {
+                kind: "account",
+                type: "publicKey",
+                account: "FeatureDataAccount",
+                path: "feature_data_account.funds_mint",
+              },
+            ],
+          },
+        },
+        {
+          name: "lancerDaoTokenAccount",
+          isMut: true,
+          isSigner: false,
+          pda: {
+            seeds: [
+              {
+                kind: "const",
+                type: "string",
+                value: "mono",
+              },
+              {
+                kind: "const",
+                type: "string",
+                value: "LANCER_DAO",
+              },
+              {
+                kind: "account",
+                type: "publicKey",
+                account: "TokenAccount",
+                path: "feature_token_account.mint",
+              },
+            ],
+          },
+        },
+        {
+          name: "lancerTokenProgramAuthority",
+          isMut: false,
+          isSigner: false,
+          pda: {
+            seeds: [
+              {
+                kind: "const",
+                type: "string",
+                value: "LANCER_DAO",
+              },
+            ],
+          },
+        },
+        {
+          name: "programAuthority",
+          isMut: false,
+          isSigner: false,
+          pda: {
+            seeds: [
+              {
+                kind: "const",
+                type: "string",
+                value: "mono",
+              },
+            ],
+          },
+        },
+        {
+          name: "tokenProgram",
+          isMut: false,
+          isSigner: false,
+        },
+        {
+          name: "systemProgram",
+          isMut: false,
+          isSigner: false,
+        },
+        {
+          name: "referralDataAccount",
+          isMut: false,
+          isSigner: false,
+          pda: {
+            seeds: [
+              {
+                kind: "const",
+                type: "string",
+                value: "referrer",
+              },
+              {
+                kind: "account",
+                type: "publicKey",
+                account: "FeatureDataAccount",
+                path: "feature_data_account",
+              },
+              {
+                kind: "account",
+                type: "publicKey",
+                path: "creator",
+              },
+            ],
+          },
+        },
+      ],
+      args: [],
+    },
+    {
+      name: "sendInvoice",
+      accounts: [
+        {
+          name: "creator",
+          isMut: true,
+          isSigner: true,
+        },
+        {
+          name: "newCreator",
+          isMut: false,
+          isSigner: false,
+        },
+        {
+          name: "fundsMint",
+          isMut: false,
+          isSigner: false,
+        },
+        {
+          name: "featureDataAccount",
+          isMut: true,
+          isSigner: false,
+          pda: {
+            seeds: [
+              {
+                kind: "const",
+                type: "string",
+                value: "mono",
+              },
+              {
+                kind: "account",
+                type: "string",
+                account: "FeatureDataAccount",
+                path: "feature_data_account.unix_timestamp",
+              },
+              {
+                kind: "account",
+                type: "publicKey",
+                path: "creator",
+              },
+            ],
+          },
+        },
+        {
+          name: "tokenProgram",
+          isMut: false,
+          isSigner: false,
+        },
+        {
+          name: "systemProgram",
+          isMut: false,
+          isSigner: false,
+        },
+      ],
+      args: [
+        {
+          name: "amount",
+          type: "u64",
+        },
+      ],
+    },
+    {
+      name: "acceptInvoice",
+      accounts: [
+        {
+          name: "newCreator",
+          isMut: true,
+          isSigner: true,
+        },
+        {
+          name: "newCreatorTokenAccount",
+          isMut: true,
+          isSigner: false,
+        },
+        {
+          name: "fundsMint",
+          isMut: false,
+          isSigner: false,
+        },
+        {
+          name: "newFeatureDataAccount",
+          isMut: true,
+          isSigner: false,
+          pda: {
+            seeds: [
+              {
+                kind: "const",
+                type: "string",
+                value: "mono",
+              },
+              {
+                kind: "account",
+                type: "string",
+                account: "FeatureDataAccount",
+                path: "feature_data_account.unix_timestamp",
+              },
+              {
+                kind: "account",
+                type: "publicKey",
+                path: "new_creator",
+              },
+            ],
+          },
+        },
+        {
+          name: "newFeatureTokenAccount",
+          isMut: true,
+          isSigner: false,
+          pda: {
+            seeds: [
+              {
+                kind: "const",
+                type: "string",
+                value: "mono",
+              },
+              {
+                kind: "account",
+                type: "string",
+                account: "FeatureDataAccount",
+                path: "feature_data_account.unix_timestamp",
+              },
+              {
+                kind: "account",
+                type: "publicKey",
+                path: "new_creator",
+              },
+              {
+                kind: "account",
+                type: "publicKey",
+                account: "Mint",
+                path: "funds_mint",
+              },
+            ],
+          },
+        },
+        {
+          name: "programAuthority",
+          isMut: false,
+          isSigner: false,
+          pda: {
+            seeds: [
+              {
+                kind: "const",
+                type: "string",
+                value: "mono",
+              },
+            ],
+          },
+        },
+        {
+          name: "creator",
+          isMut: true,
+          isSigner: false,
+        },
+        {
+          name: "featureDataAccount",
+          isMut: true,
+          isSigner: false,
+          pda: {
+            seeds: [
+              {
+                kind: "const",
+                type: "string",
+                value: "mono",
+              },
+              {
+                kind: "account",
+                type: "string",
+                account: "FeatureDataAccount",
+                path: "feature_data_account.unix_timestamp",
+              },
+              {
+                kind: "account",
+                type: "publicKey",
+                path: "creator",
+              },
+            ],
+          },
+        },
+        {
+          name: "featureTokenAccount",
+          isMut: true,
+          isSigner: false,
+          pda: {
+            seeds: [
+              {
+                kind: "const",
+                type: "string",
+                value: "mono",
+              },
+              {
+                kind: "account",
+                type: "string",
+                account: "FeatureDataAccount",
+                path: "feature_data_account.unix_timestamp",
+              },
+              {
+                kind: "account",
+                type: "publicKey",
+                path: "creator",
+              },
+              {
+                kind: "account",
+                type: "publicKey",
+                account: "FeatureDataAccount",
+                path: "feature_data_account.funds_mint",
+              },
+            ],
+          },
+        },
+        {
+          name: "tokenProgram",
+          isMut: false,
+          isSigner: false,
+        },
+        {
+          name: "rent",
+          isMut: false,
+          isSigner: false,
+        },
+        {
+          name: "associatedProgram",
+          isMut: false,
+          isSigner: false,
+        },
+        {
+          name: "systemProgram",
+          isMut: false,
+          isSigner: false,
+        },
+      ],
+      args: [],
+    },
+    {
+      name: "rejectInvoice",
+      accounts: [
+        {
+          name: "invoiceAcceptor",
+          isMut: true,
+          isSigner: true,
+        },
+        {
+          name: "creator",
+          isMut: false,
+          isSigner: false,
+        },
+        {
+          name: "fundsMint",
+          isMut: false,
+          isSigner: false,
+        },
+        {
+          name: "featureDataAccount",
+          isMut: true,
+          isSigner: false,
+          pda: {
+            seeds: [
+              {
+                kind: "const",
+                type: "string",
+                value: "mono",
+              },
+              {
+                kind: "account",
+                type: "string",
+                account: "FeatureDataAccount",
+                path: "feature_data_account.unix_timestamp",
+              },
+              {
+                kind: "account",
+                type: "publicKey",
+                path: "creator",
+              },
+            ],
+          },
+        },
+        {
+          name: "tokenProgram",
+          isMut: false,
+          isSigner: false,
+        },
+        {
+          name: "systemProgram",
+          isMut: false,
+          isSigner: false,
+        },
+      ],
+      args: [],
+    },
+    {
+      name: "closeInvoice",
+      accounts: [
+        {
+          name: "programAuthority",
+          isMut: false,
+          isSigner: false,
+          pda: {
+            seeds: [
+              {
+                kind: "const",
+                type: "string",
+                value: "mono",
+              },
+            ],
+          },
+        },
+        {
+          name: "creator",
+          isMut: true,
+          isSigner: true,
+        },
+        {
+          name: "featureDataAccount",
+          isMut: true,
+          isSigner: false,
+          pda: {
+            seeds: [
+              {
+                kind: "const",
+                type: "string",
+                value: "mono",
+              },
+              {
+                kind: "account",
+                type: "string",
+                account: "FeatureDataAccount",
+                path: "feature_data_account.unix_timestamp",
+              },
+              {
+                kind: "account",
+                type: "publicKey",
+                path: "creator",
+              },
+            ],
+          },
+        },
+        {
+          name: "featureTokenAccount",
+          isMut: true,
+          isSigner: false,
+          pda: {
+            seeds: [
+              {
+                kind: "const",
+                type: "string",
+                value: "mono",
+              },
+              {
+                kind: "account",
+                type: "string",
+                account: "FeatureDataAccount",
+                path: "feature_data_account.unix_timestamp",
+              },
+              {
+                kind: "account",
+                type: "publicKey",
+                path: "creator",
+              },
+              {
+                kind: "account",
+                type: "publicKey",
+                account: "FeatureDataAccount",
+                path: "feature_data_account.funds_mint",
+              },
+            ],
+          },
+        },
+        {
+          name: "tokenProgram",
+          isMut: false,
+          isSigner: false,
+        },
+        {
+          name: "associatedProgram",
+          isMut: false,
+          isSigner: false,
+        },
+        {
+          name: "systemProgram",
+          isMut: false,
+          isSigner: false,
+        },
+      ],
+      args: [],
+    },
+    {
+      name: "adminCloseBounty",
+      accounts: [
+        {
+          name: "lancerAdmin",
+          isMut: true,
+          isSigner: true,
+        },
+        {
+          name: "creator",
+          isMut: true,
+          isSigner: false,
+        },
+        {
+          name: "creatorTokenAccount",
+          isMut: true,
+          isSigner: false,
+        },
+        {
+          name: "featureDataAccount",
+          isMut: true,
+          isSigner: false,
+          pda: {
+            seeds: [
+              {
+                kind: "const",
+                type: "string",
+                value: "mono",
+              },
+              {
+                kind: "account",
+                type: "string",
+                account: "FeatureDataAccount",
+                path: "feature_data_account.unix_timestamp",
+              },
+              {
+                kind: "account",
+                type: "publicKey",
+                path: "creator",
+              },
+            ],
+          },
+        },
+        {
+          name: "featureTokenAccount",
+          isMut: true,
+          isSigner: false,
+          pda: {
+            seeds: [
+              {
+                kind: "const",
+                type: "string",
+                value: "mono",
+              },
+              {
+                kind: "account",
+                type: "string",
+                account: "FeatureDataAccount",
+                path: "feature_data_account.unix_timestamp",
+              },
+              {
+                kind: "account",
+                type: "publicKey",
+                path: "creator",
+              },
+              {
+                kind: "account",
+                type: "publicKey",
+                account: "FeatureDataAccount",
+                path: "feature_data_account.funds_mint",
+              },
+            ],
+          },
+        },
+        {
+          name: "programAuthority",
+          isMut: false,
+          isSigner: false,
+          pda: {
+            seeds: [
+              {
+                kind: "const",
+                type: "string",
+                value: "mono",
+              },
+            ],
+          },
+        },
+        {
+          name: "tokenProgram",
+          isMut: false,
+          isSigner: false,
+        },
+      ],
+      args: [],
+    },
+    {
+      name: "createDispute",
+      accounts: [
+        {
+          name: "disputeAdmin",
+          isMut: true,
+          isSigner: true,
+        },
+        {
+          name: "creator",
+          isMut: true,
+          isSigner: false,
+        },
+        {
+          name: "disputeAccount",
+          isMut: true,
+          isSigner: false,
+          pda: {
+            seeds: [
+              {
+                kind: "const",
+                type: "string",
+                value: "dispute",
+              },
+              {
+                kind: "account",
+                type: "string",
+                account: "FeatureDataAccount",
+                path: "feature_data_account.unix_timestamp",
+              },
+              {
+                kind: "account",
+                type: "publicKey",
+                path: "creator",
+              },
+              {
+                kind: "account",
+                type: "publicKey",
+                account: "FeatureDataAccount",
+                path: "feature_data_account.funds_mint",
+              },
+            ],
+          },
+        },
+        {
+          name: "featureDataAccount",
+          isMut: true,
+          isSigner: false,
+          pda: {
+            seeds: [
+              {
+                kind: "const",
+                type: "string",
+                value: "mono",
+              },
+              {
+                kind: "account",
+                type: "string",
+                account: "FeatureDataAccount",
+                path: "feature_data_account.unix_timestamp",
+              },
+              {
+                kind: "account",
+                type: "publicKey",
+                path: "creator",
+              },
+            ],
+          },
+        },
+        {
+          name: "featureTokenAccount",
+          isMut: true,
+          isSigner: false,
+          pda: {
+            seeds: [
+              {
+                kind: "const",
+                type: "string",
+                value: "mono",
+              },
+              {
+                kind: "account",
+                type: "string",
+                account: "FeatureDataAccount",
+                path: "feature_data_account.unix_timestamp",
+              },
+              {
+                kind: "account",
+                type: "publicKey",
+                path: "creator",
+              },
+              {
+                kind: "account",
+                type: "publicKey",
+                account: "FeatureDataAccount",
+                path: "feature_data_account.funds_mint",
+              },
+            ],
+          },
+        },
+        {
+          name: "programAuthority",
+          isMut: false,
+          isSigner: false,
+          pda: {
+            seeds: [
+              {
+                kind: "const",
+                type: "string",
+                value: "mono",
+              },
+            ],
+          },
+        },
+        {
+          name: "tokenProgram",
+          isMut: false,
+          isSigner: false,
+        },
+        {
+          name: "systemProgram",
+          isMut: false,
+          isSigner: false,
+        },
+      ],
+      args: [],
+    },
+    {
+      name: "settleDispute",
+      accounts: [
+        {
+          name: "disputeAdmin",
+          isMut: true,
+          isSigner: true,
+        },
+        {
+          name: "creator",
+          isMut: true,
+          isSigner: false,
+        },
+        {
+          name: "creatorTokenAccount",
+          isMut: true,
+          isSigner: false,
+        },
+        {
+          name: "submitter",
+          isMut: true,
+          isSigner: false,
+        },
+        {
+          name: "submitterTokenAccount",
+          isMut: true,
+          isSigner: false,
+        },
+        {
+          name: "lancerDaoTokenAccount",
+          isMut: true,
+          isSigner: false,
+          pda: {
+            seeds: [
+              {
+                kind: "const",
+                type: "string",
+                value: "mono",
+              },
+              {
+                kind: "const",
+                type: "string",
+                value: "LANCER_DAO",
+              },
+              {
+                kind: "account",
+                type: "publicKey",
+                account: "TokenAccount",
+                path: "feature_token_account.mint",
+              },
+            ],
+          },
+        },
+        {
+          name: "lancerTokenProgramAuthority",
+          isMut: false,
+          isSigner: false,
+          pda: {
+            seeds: [
+              {
+                kind: "const",
+                type: "string",
+                value: "LANCER_DAO",
+              },
+            ],
+          },
+        },
+        {
+          name: "disputeAccount",
+          isMut: true,
+          isSigner: false,
+          pda: {
+            seeds: [
+              {
+                kind: "const",
+                type: "string",
+                value: "dispute",
+              },
+              {
+                kind: "account",
+                type: "string",
+                account: "Dispute",
+                path: "dispute_account.unix_timestamp",
+              },
+              {
+                kind: "account",
+                type: "publicKey",
+                path: "creator",
+              },
+              {
+                kind: "account",
+                type: "publicKey",
+                account: "Dispute",
+                path: "dispute_account.mint",
+              },
+            ],
+          },
+        },
+        {
+          name: "featureTokenAccount",
+          isMut: true,
+          isSigner: false,
+          pda: {
+            seeds: [
+              {
+                kind: "const",
+                type: "string",
+                value: "mono",
+              },
+              {
+                kind: "account",
+                type: "string",
+                account: "Dispute",
+                path: "dispute_account.unix_timestamp",
+              },
+              {
+                kind: "account",
+                type: "publicKey",
+                path: "creator",
+              },
+              {
+                kind: "account",
+                type: "publicKey",
+                account: "Dispute",
+                path: "dispute_account.mint",
+              },
+            ],
+          },
+        },
+        {
+          name: "programAuthority",
+          isMut: false,
+          isSigner: false,
+          pda: {
+            seeds: [
+              {
+                kind: "const",
+                type: "string",
+                value: "mono",
+              },
+            ],
+          },
+        },
+        {
+          name: "tokenProgram",
+          isMut: false,
+          isSigner: false,
+        },
+        {
+          name: "systemProgram",
+          isMut: false,
+          isSigner: false,
+        },
+      ],
+      args: [
+        {
+          name: "submitterAmount",
+          type: "u64",
+        },
+      ],
+    },
   ],
-  "metadata": {
-    "address": "LAnCQFuCsqVgekkfYwZDoKjhZscnK1hbKuWQFNP9DXG"
-  }
-}
+  accounts: [
+    {
+      name: "dispute",
+      type: {
+        kind: "struct",
+        fields: [
+          {
+            name: "creator",
+            type: "publicKey",
+          },
+          {
+            name: "submitter",
+            type: "publicKey",
+          },
+          {
+            name: "unixTimestamp",
+            type: "string",
+          },
+          {
+            name: "mint",
+            type: "publicKey",
+          },
+          {
+            name: "amount",
+            type: "u64",
+          },
+          {
+            name: "disputeAccountBump",
+            type: "u8",
+          },
+          {
+            name: "programAuthorityBump",
+            type: "u8",
+          },
+          {
+            name: "fundsTokenAccountBump",
+            type: "u8",
+          },
+        ],
+      },
+    },
+    {
+      name: "featureDataAccount",
+      type: {
+        kind: "struct",
+        fields: [
+          {
+            name: "creator",
+            type: "publicKey",
+          },
+          {
+            name: "amount",
+            type: "u64",
+          },
+          {
+            name: "requestSubmitted",
+            type: "bool",
+          },
+          {
+            name: "currentSubmitter",
+            type: "publicKey",
+          },
+          {
+            name: "approvedSubmitters",
+            type: {
+              array: ["publicKey", 5],
+            },
+          },
+          {
+            name: "approvedSubmittersShares",
+            type: {
+              array: ["f32", 5],
+            },
+          },
+          {
+            name: "fundsMint",
+            type: "publicKey",
+          },
+          {
+            name: "fundsTokenAccount",
+            type: "publicKey",
+          },
+          {
+            name: "payoutAccount",
+            type: "publicKey",
+          },
+          {
+            name: "funderCancel",
+            type: "bool",
+          },
+          {
+            name: "payoutCancel",
+            type: "bool",
+          },
+          {
+            name: "noOfSubmitters",
+            type: "u8",
+          },
+          {
+            name: "isMultipleSubmitters",
+            type: "bool",
+          },
+          {
+            name: "fundsTokenAccountBump",
+            type: "u8",
+          },
+          {
+            name: "fundsDataAccountBump",
+            type: "u8",
+          },
+          {
+            name: "programAuthorityBump",
+            type: "u8",
+          },
+          {
+            name: "unixTimestamp",
+            type: "string",
+          },
+        ],
+      },
+    },
+    {
+      name: "referralDataAccount",
+      type: {
+        kind: "struct",
+        fields: [
+          {
+            name: "referralDataAccountBump",
+            type: "u8",
+          },
+          {
+            name: "approvedReferrers",
+            type: {
+              array: ["publicKey", 10],
+            },
+          },
+          {
+            name: "noOfSubmitters",
+            type: "u8",
+          },
+          {
+            name: "creatorReferrer",
+            type: "publicKey",
+          },
+          {
+            name: "creatorMember",
+            type: "publicKey",
+          },
+        ],
+      },
+    },
+    {
+      name: "referralDataAccountOld",
+      type: {
+        kind: "struct",
+        fields: [
+          {
+            name: "referralDataAccountBump",
+            type: "u8",
+          },
+          {
+            name: "approvedReferrers",
+            type: {
+              array: ["publicKey", 5],
+            },
+          },
+          {
+            name: "noOfSubmitters",
+            type: "u8",
+          },
+        ],
+      },
+    },
+  ],
+  errors: [
+    {
+      code: 6000,
+      name: "NotTheCreator",
+      msg: "This Creator is Invalid",
+    },
+    {
+      code: 6001,
+      name: "InvalidMint",
+      msg: "This mint is not valid",
+    },
+    {
+      code: 6002,
+      name: "MaxApprovedSubmitters",
+      msg: "Max Number of Approved Submitters already reached",
+    },
+    {
+      code: 6003,
+      name: "SubmitterAlreadyPresent",
+      msg: "Submitter Key Already Present in ApprovedSubmitters List",
+    },
+    {
+      code: 6004,
+      name: "MinApprovedSubmitters",
+      msg: "Min Number of Approved Submitters already reached",
+    },
+    {
+      code: 6005,
+      name: "PendingRequestAlreadySubmitted",
+      msg: "There is an active request already present",
+    },
+    {
+      code: 6006,
+      name: "NoActiveRequest",
+      msg: "No Request Submitted yet",
+    },
+    {
+      code: 6007,
+      name: "CannotPayFee",
+      msg: "Insufficient funds to pay lancer fee",
+    },
+    {
+      code: 6008,
+      name: "CannotCancelFeature",
+      msg: "Cannot Cancel Feature",
+    },
+    {
+      code: 6009,
+      name: "InvalidAdmin",
+      msg: "You are not the Admin",
+    },
+    {
+      code: 6010,
+      name: "NotApprovedSubmitter",
+      msg: "You do not have permissions to submit",
+    },
+    {
+      code: 6011,
+      name: "ExpectedSingleSubmitter",
+      msg: "This Instruction is used for only a single submitter.",
+    },
+    {
+      code: 6012,
+      name: "ExpectedMultipleSubmitters",
+      msg: "This Instruction is used for only Multiple submitters.",
+    },
+    {
+      code: 6013,
+      name: "MaxShareExceeded",
+      msg: "Share Cannot Exceed 100",
+    },
+    {
+      code: 6014,
+      name: "ShareMustBe100",
+      msg: "Share must be 100",
+    },
+    {
+      code: 6015,
+      name: "NotOwnedBySplToken",
+      msg: "Token Error",
+    },
+    {
+      code: 6016,
+      name: "CannotWithdrawPartially",
+      msg: "Cannot withdraw full funds.",
+    },
+    {
+      code: 6017,
+      name: "InvalidReferral",
+      msg: "Invalid referral provided.",
+    },
+    {
+      code: 6018,
+      name: "InsufficientFunds",
+      msg: "Insufficient funds",
+    },
+    {
+      code: 6019,
+      name: "AdminCannotCloseBounty",
+      msg: "Admin Cannot Close Bounty, check if there is a current submitter",
+    },
+    {
+      code: 6020,
+      name: "CannotVoteToCancel",
+      msg: "Only Creator or Current Submitter can vote to cancel",
+    },
+    {
+      code: 6021,
+      name: "InvalidDisputePubkey",
+      msg: "This Pubkey is not a Valid Dispute Pubkey",
+    },
+    {
+      code: 6022,
+      name: "CannotDispute",
+      msg: "Cannot Dispute Bounty",
+    },
+  ],
+};

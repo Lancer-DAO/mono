@@ -141,7 +141,7 @@ export const PortfolioCard: React.FC = () => {
       border-neutral200 rounded-md p-6"
     >
       <p className="text-neutral600 title-text">Portfolio</p>
-      <div className="flex flex-wrap gap-4">
+      <div className="grid grid-cols-5 gap-4">
         {[...Array(maxMedia)].map((_, index) => {
           if (index < portfolio.length) {
             const media = portfolio[index];

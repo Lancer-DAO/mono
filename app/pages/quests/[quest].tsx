@@ -29,12 +29,12 @@ export async function getServerSideProps(
       },
     };
   }
+
   try {
     const questId = parseInt(context.query.quest as string);
     const { email } = metadata.user;
 
     const user = await queries.user.getByEmail(email);
-
     if (!user || !user.hasFinishedOnboarding) {
       return {
         redirect: {
@@ -56,9 +56,10 @@ export async function getServerSideProps(
       },
     };
   } catch (e) {
+    console.error("error", e);
     return {
       redirect: {
-        destination: "/welcome",
+        destination: "/",
         permanent: false,
       },
     };

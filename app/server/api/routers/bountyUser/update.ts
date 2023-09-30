@@ -4,6 +4,7 @@ import * as queries from "@/prisma/queries";
 import { BountyState } from "@/types/";
 import { createGroupChannel } from "@/src/utils/sendbird";
 import { HostedHooksClient } from "../../webhooks";
+import { prisma } from "@/server/db";
 
 export const update = protectedProcedure
   .input(
@@ -72,26 +73,35 @@ export const update = protectedProcedure
         );
       }
 
-      // if (label === "add-approved-submitter") {
-      //   // create a messaging group for this bounty
-      //   const bounty = await queries.bounty.get(bountyId, currentUserId);
-      //   const client = String(bounty.creator.userid);
-      //   const approvedSubmitters = bounty.approvedSubmitters.map((submitter) =>
-      //     String(submitter.userid)
-      //   );
+      if (label === "add-approved-submitter") {
+        // create a messaging group for this bounty
+        const bounty = await queries.bounty.get(bountyId, currentUserId);
+        const client = String(bounty.creator.userid);
+        const approvedSubmitters = bounty.approvedSubmitters.map((submitter) =>
+          String(submitter.userid)
+        );
 
-      //   console.log({
-      //     admin: client,
-      //     lancers: approvedSubmitters,
-      //     name: bounty.title,
-      //   });
+        console.log({
+          admin: client,
+          lancers: approvedSubmitters,
+          name: bounty.title,
+        });
 
-      //   createGroupChannel({
-      //     admin: client,
-      //     lancers: approvedSubmitters,
-      //     name: bounty.title,
-      //   });
-      // }
+        // const url = await createGroupChannel({
+        //   admin: client,
+        //   lancers: approvedSubmitters,
+        //   name: bounty.title,
+        // });
+
+        // await prisma.bounty.update({
+        //   where: {
+        //     id: bountyId,
+        //   },
+        //   data: {
+        //     chatUrl: url,
+        //   },
+        // });
+      }
 
       const updatedBounty = await queries.bounty.get(bountyId, currentUserId);
 

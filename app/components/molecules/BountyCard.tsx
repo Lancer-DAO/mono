@@ -1,20 +1,21 @@
 import {
   BountyCardFrame,
   ContributorInfo,
-  PriceTag,
   // StarIcon,
   LockIcon,
+  PriceTag,
 } from "@/components";
 import { useUserWallet } from "@/providers";
 import { fastEnterAnimation, midClickAnimation } from "@/src/constants";
 import { useBounty } from "@/src/providers/bountyProvider";
 import { useIndustry } from "@/src/providers/industryProvider";
-import { BountyPreview, QuestFormData, Industry } from "@/types/";
+import { BountyPreview, Industry, QuestFormData } from "@/types/";
 import { api, getFormattedDate } from "@/utils";
 import { motion } from "framer-motion";
 import { marked } from "marked";
 import Image from "next/image";
 import { FC, SVGAttributes, useCallback, useEffect, useState } from "react";
+import UpdateTableItem from "./UpdateTableItem";
 
 export interface BountyCardProps extends SVGAttributes<SVGSVGElement> {
   bounty?: BountyPreview;
@@ -113,7 +114,7 @@ const BountyCard: FC<BountyCardProps> = ({
           <PriceTag
             price={handlePrice()}
             icon={handlePriceIcon()}
-            funded={bounty ? Number(bounty?.escrow.amount) > 0 : false}
+            funded={bounty ? Number(bounty?.escrow?.amount) > 0 : false}
           />
           <p className="text-xs font-bold mr-2">
             <span className="text-textPrimary text-[11px] font-base">
@@ -168,7 +169,7 @@ const BountyCard: FC<BountyCardProps> = ({
               if (tag === "") return null;
               return (
                 <div
-                  className="border border-neutralBtnBorder rounded-full 
+                  className="border border-neutralBtnBorder rounded-full
                   px-3 py-1 flex items-center justify-center"
                   key={tag}
                 >

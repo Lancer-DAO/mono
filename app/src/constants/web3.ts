@@ -1,4 +1,5 @@
 import { MONO_DEVNET, MONO_MAINNET } from "@/escrow/sdk/constants";
+import { PublicKey } from "@solana/web3.js";
 
 export const MAINNET_RPC =
   "https://winter-necessary-smoke.solana-mainnet.discover.quiknode.pro";
@@ -13,3 +14,5 @@ export const USDC_MINT = IS_MAINNET ? MAINNET_USDC_MINT : DEVNET_USDC_MINT;
 export const MONO_ADDRESS = IS_MAINNET ? MONO_MAINNET : MONO_DEVNET;
 export const CREATE_COMPLETION_BADGES =
   process.env.NEXT_PUBLIC_CREATE_COMPLETION_BADGES === "true";
+
+export const ADMIN_WALLETS = ["WbmLPptTGZTFK5ZSks7oaa4Qx69qS3jFXMrAsbWz1or"];

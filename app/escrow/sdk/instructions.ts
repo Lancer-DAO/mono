@@ -84,9 +84,12 @@ export const createCustodialFeatureFundingAccountInstruction = async (
   custodial_fee_payer: PublicKey,
   creator: PublicKey,
   program: Program<MonoProgram>
-): Promise<TransactionInstruction> => {
+): Promise<{
+  ix: TransactionInstruction;
+  account: PublicKey;
+  timestamp: string;
+}> => {
   const timestamp = Date.now().toString();
-  console.log("timestamp = ", timestamp);
   const [feature_account] = await findFeatureAccount(
     timestamp,
     creator,
@@ -101,21 +104,25 @@ export const createCustodialFeatureFundingAccountInstruction = async (
 
   const [program_authority] = await findProgramAuthority(program);
 
-  return await program.methods
-    .createCustodialFeatureFundingAccount(timestamp)
-    .accounts({
-      creator: creator,
-      custodialFeePayer: custodial_fee_payer,
-      fundsMint: mint,
-      featureDataAccount: feature_account,
-      featureTokenAccount: feature_token_account,
-      programAuthority: program_authority,
-      tokenProgram: TOKEN_PROGRAM_ID,
-      rent: SYSVAR_RENT_PUBKEY,
-      associatedProgram: ASSOCIATED_TOKEN_PROGRAM_ID,
-      systemProgram: SystemProgram.programId,
-    })
-    .instruction();
+  return {
+    ix: await program.methods
+      .createCustodialFeatureFundingAccount(timestamp)
+      .accounts({
+        creator: creator,
+        custodialFeePayer: custodial_fee_payer,
+        fundsMint: mint,
+        featureDataAccount: feature_account,
+        featureTokenAccount: feature_token_account,
+        programAuthority: program_authority,
+        tokenProgram: TOKEN_PROGRAM_ID,
+        rent: SYSVAR_RENT_PUBKEY,
+        associatedProgram: ASSOCIATED_TOKEN_PROGRAM_ID,
+        systemProgram: SystemProgram.programId,
+      })
+      .instruction(),
+    account: feature_account,
+    timestamp: timestamp,
+  };
 };
 
 export const fundFeatureInstruction = async (
@@ -999,7 +1006,6 @@ export const closeInvoiceInstruction = async (
 export const achFundFeatureInstruction = async (
   amount: number,
   timestamp: string,
-  funder: PublicKey,
   creator: PublicKey,
   mint: PublicKey,
   program: Program<MonoProgram>
@@ -1018,14 +1024,16 @@ export const achFundFeatureInstruction = async (
 
   const [program_authority] = await findProgramAuthority(program);
 
-  const funder_token_account = await getAssociatedTokenAddress(mint, funder);
-
   return await program.methods
     .achFundFeature(new anchor.BN(amount))
     .accounts({
       creator: creator,
-      externalFunder: funder,
-      externalFunderTokenAccount: funder_token_account,
+      externalFunder: new PublicKey(
+        "22222222222222222222222222222222222222222222"
+      ),
+      externalFunderTokenAccount: new PublicKey(
+        "33333333333333333333333333333333333333333333"
+      ),
       fundsMint: mint,
       featureDataAccount: feature_data_account,
       featureTokenAccount: feature_token_account,

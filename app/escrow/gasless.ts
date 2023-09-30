@@ -1,13 +1,13 @@
 import { bs58 } from "@project-serum/anchor/dist/cjs/utils/bytes"
 import { Connection, PublicKey, Transaction, TransactionInstruction } from "@solana/web3.js"
 
-export const sendGaslessTx = async (instructions: TransactionInstruction[], sign?: boolean, wallet?) => {
+export const sendGaslessTx = async (instructions: TransactionInstruction[], sign?: boolean, wallet?, delay?: number) => {
 
     const tx = new Transaction()
 
     const { blockhash } = await new Connection(process.env.NEXT_PUBLIC_IS_MAINNET == "true"
         ? "https://winter-necessary-smoke.solana-mainnet.discover.quiknode.pro"
-        : "https://solana-devnet.g.alchemy.com/v2/uUAHkqkfrVERwRHXnj8PEixT8792zETN"
+        : "https://solana-devnet.g.alchemy.com/v2/uUAHkqkfrVERwRHXnj8PEixT8792zETN",
     ).getLatestBlockhash()
 
     instructions.forEach((ix) => tx.add(ix))
@@ -23,7 +23,7 @@ export const sendGaslessTx = async (instructions: TransactionInstruction[], sign
 
     const serialized = sign ? signed.serialize({ requireAllSignatures: false }) : tx.serialize({ requireAllSignatures: false })
 
-    const res = await fetch("/api/gasless", {
+    const res = await fetch(`/api/gasless?delay=${delay}`, {
         "method": "POST",
         "headers": { "Content-Type": "application/json" },
         "body": JSON.stringify({ "transaction": bs58.encode(serialized) }),

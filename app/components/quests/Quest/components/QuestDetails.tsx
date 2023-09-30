@@ -8,12 +8,15 @@ import { marked } from "marked";
 import Link from "next/link";
 import { ArrowLeft, ChevronDown, ChevronUp, ExternalLink } from "react-feather";
 import { ArchiveBounty } from ".";
+import { useRouter } from "next/router";
 
 const Divider = () => <div className="h-[20px] w-[1px] mx-4 bg-slate-200" />;
 
 const QuestDetails = () => {
   const [dropdownOpen, setDropdownOpen] = useState(true);
   const { currentBounty } = useBounty();
+
+  const router = useRouter();
 
   const formatString = (str: string) => {
     return str
@@ -51,69 +54,101 @@ const QuestDetails = () => {
       border border-neutral200 rounded-lg"
     >
       {/* quest header */}
-      <div className="flex flex-col items-start px-4 py-6">
-        {/* back arrow */}
-        <div className="flex items-center pb-1 gap-2">
-          <Link href="/quests">
-            <ArrowLeft className="text-neutral400" width={16} height={16} />
-          </Link>
-          <h2 className="text-neutral600 font-bold">{currentBounty?.title}</h2>
-        </div>
-        {/* quest info */}
-        <div className="flex items-center pb-[10px] px-6">
-          <p className="text text-neutral500">{`Created on ${dayjs
-            .unix(parseInt(currentBounty.createdAt) / 1000)
-            .format("D MMM YYYY")}`}</p>
-          {/* TODO: either add back estimated time or remove from design */}
-          {/* <Divider />
-          <p className="text text-neutral500">{`${currentBounty.estimatedTime.toString()} ${
-            Number(currentBounty.estimatedTime) > 1 ? "hours" : "hour"
-          }`}</p> */}
-          <Divider />
-          <div className="flex items-center gap-1.5">
-            <p className="text text-neutral500">{`$${formatPrice(
-              Number(currentBounty?.escrow?.amount)
-            )}`}</p>
-            <Link
-              href={getSolscanAddress(
-                new PublicKey(currentBounty?.escrow?.publicKey)
+      <div className="flex w-full justify-between items-center">
+        <div className="flex w-full flex-col items-start px-4 py-6">
+          {/* back arrow */}
+          <div className="flex items-center pb-1 gap-2">
+            <ArrowLeft
+              className="text-neutral400 cursor-pointer"
+              width={16}
+              height={16}
+              onClick={() => router.push("/")}
+            />
+            <h2 className="text-neutral600 font-bold">
+              {currentBounty?.title}
+            </h2>
+          </div>
+          {/* quest info */}
+          <div className="w-full flex items-center pb-2.5 px-6">
+            <p className="text text-neutral500">
+              {`Created on ${dayjs
+                .unix(parseInt(currentBounty.createdAt) / 1000)
+                .format("D MMM YYYY")}`}
+            </p>
+            {currentBounty?.escrow && (
+              <div className="flex items-center gap-1.5">
+                <Divider />
+                <p className="text text-neutral500">{`$${formatPrice(
+                  Number(currentBounty?.escrow?.amount)
+                )}`}</p>
+                <Link
+                  href={getSolscanAddress(
+                    new PublicKey(currentBounty?.escrow?.publicKey)
+                  )}
+                  target="_blank"
+                >
+                  <ExternalLink
+                    className="text-neutral500"
+                    width={12}
+                    height={12}
+                  />
+                </Link>
+              </div>
+            )}
+            {currentBounty?.isExternal && currentBounty.price && (
+              <div className="flex items-center gap-1.5">
+                <Divider />
+                <p className="text text-neutral500">{`$${formatPrice(
+                  Number(currentBounty?.price)
+                )}`}</p>
+              </div>
+            )}
+            <div className="ml-auto">
+              <ArchiveBounty />
+            </div>
+          </div>
+          <div className="flex px-5 gap-2">
+            {currentBounty.tags.length > 0 && (
+              <div className="flex flex-wrap gap-2">
+                {currentBounty.tags
+                  .filter((tag) => tag.name !== "")
+                  .map((tag) => (
+                    <div
+                      className="text-neutral600 text-center text-mini bg-neutral100 w-fit px-2 py-1 rounded-lg border border-neutral200"
+                      key={tag.name}
+                    >
+                      {tag.name}
+                    </div>
+                  ))}
+              </div>
+            )}
+            <div
+              className={cn(
+                "text-xs text-center w-fit px-2 py-1 rounded-lg border",
+                bountyStateColor(currentBounty.state)
               )}
-              target="true"
             >
-              <ExternalLink
-                className="text-neutral500"
-                width={12}
-                height={12}
-              />
+              {formatString(currentBounty.state)}
+            </div>
+          </div>
+        </div>
+        {currentBounty.isExternal && (
+          <div>
+            <Link
+              href={currentBounty.links}
+              passHref
+              target="_blank"
+              rel="noreferrer noopener"
+            >
+              <button className="whitespace-nowrap p-3 bg-primary200 mr-8 text-white text-xl  text-center rounded-lg border flex items-center justify-between gap-1">
+                Go To Quest{" "}
+                <ExternalLink className="text-white" width={20} height={20} />
+              </button>
             </Link>
           </div>
-          <ArchiveBounty />
-        </div>
-        <div className="flex px-5 gap-2">
-          {currentBounty.tags.length > 0 && (
-            <div className="flex flex-wrap gap-2">
-              {currentBounty.tags
-                .filter((tag) => tag.name !== "")
-                .map((tag) => (
-                  <div
-                    className="text-neutral600 text-center text-mini bg-neutral100 w-fit px-2 py-1 rounded-lg border border-neutral200"
-                    key={tag.name}
-                  >
-                    {tag.name}
-                  </div>
-                ))}
-            </div>
-          )}
-          <div
-            className={cn(
-              "text-xs text-center w-fit px-2 py-1 rounded-lg border",
-              bountyStateColor(currentBounty.state)
-            )}
-          >
-            {formatString(currentBounty.state)}
-          </div>
-        </div>
+        )}
       </div>
+
       <div className="h-[1px] w-full bg-neutral200" />
       {/* quest content */}
       <div className="px-10 py-4">

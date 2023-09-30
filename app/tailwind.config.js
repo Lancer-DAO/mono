@@ -22,6 +22,9 @@ module.exports = withUt({
         neutral500: "#73807C",
         neutral600: "#2E3332",
 
+        // neutralBorders
+        neutralBorder500: "#F4F6FA",
+
         // primary
         primary100: "#E1FAF2",
         primary200: "#14BB88",
@@ -48,6 +51,9 @@ module.exports = withUt({
         // error
         error: "#F5364F",
         errorBg: "#F5C4CA",
+
+        // noble
+        noble100: "#7991E8",
 
         bgLancer: "#F7FAF7",
         bgLancerSecondary: "#77CF6D",
@@ -77,6 +83,9 @@ module.exports = withUt({
         bold: ["charter-bold", "Helvetica", "Arial", "sans-serif"],
         italic: ["charter-italic", "Helvetica", "Arial", "sans-serif"],
         boldItalic: ["charter-bold-italic", "Helvetica", "Arial", "sans-serif"],
+      },
+      boxShadow: {
+        'black-100': '0px 0.67524px 1.35048px 0px rgba(0, 0, 0, 0.10)',
       },
     },
   },

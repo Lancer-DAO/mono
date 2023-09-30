@@ -38,6 +38,18 @@ const ApplicantsView: FC<Props> = ({
   const { currentUser, currentWallet, program, provider } = useUserWallet();
   const { currentBounty, setCurrentBounty } = useBounty();
   const { mutateAsync: updateBounty } = api.bountyUsers.update.useMutation();
+  api.quote.getHighestQuoteByBounty.useQuery(
+    {
+      bountyId: currentBounty.id,
+    },
+    {
+      enabled: !!currentBounty,
+      onSuccess: (data) => {
+        const tempDepositAmount = data * 0.05;
+        setDepositAmount(Math.floor(tempDepositAmount * 100) / 100);
+      },
+    }
+  );
 
   const [currentApplicantsView, setCurrentApplicantsView] =
     useState<EApplicantsView>(EApplicantsView.All);
@@ -45,12 +57,7 @@ const ApplicantsView: FC<Props> = ({
   const [isAwaitingResponse, setIsAwaitingResponse] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [showFundModal, setShowFundModal] = useState(false);
-
-  // TODO: add logic to determine deposit amount
-  // 5% of highest quote
-  const depositAmount = () => {
-    return 1;
-  };
+  const [depositAmount, setDepositAmount] = useState(0);
 
   const createdAtDate = new Date(
     Number(currentBounty?.createdAt)
@@ -211,6 +218,7 @@ const ApplicantsView: FC<Props> = ({
         setIsLoading={setIsLoading}
         isAwaitingResponse={isAwaitingResponse}
         setIsAwaitingResponse={setIsAwaitingResponse}
+        depositAmount={depositAmount}
       />
     );
 
@@ -359,22 +367,7 @@ const ApplicantsView: FC<Props> = ({
                 Cancel Quest
               </motion.button>
             ) : null}
-            {(currentBounty.state !== BountyState.VOTING_TO_CANCEL &&
-              currentBounty.state !== BountyState.CANCELED) ||
-            (currentBounty.state === BountyState.VOTING_TO_CANCEL &&
-              !currentBounty.needsToVote
-                .map((user) => user.userid)
-                .includes(currentUser.id)) ? (
-              <motion.button
-                {...smallClickAnimation}
-                className="bg-white border border-neutral200 h-9 w-fit px-4 py-2
-                title-text rounded-md text-error disabled:cursor-not-allowed disabled:opacity-80"
-                onClick={handleVoteToCancel}
-                disabled={isLoading || isAwaitingResponse}
-              >
-                Vote to Cancel
-              </motion.button>
-            ) : null}
+
             {currentBounty.state === BountyState.CANCELED ? (
               <motion.button
                 {...smallClickAnimation}
@@ -388,9 +381,12 @@ const ApplicantsView: FC<Props> = ({
           </div>
           {showModal && (
             <DepositCTAModal
+              prompt="This unlocks the ability to chat with your shortlisted applicants.
+              Once you decide which candidate you want to work with, we will ask you
+              to deposit 100% of the funds into escrow to kick things off."
               setShowModal={setShowModal}
               setShowFundModal={setShowFundModal}
-              amount={depositAmount()}
+              amount={depositAmount}
             />
           )}
         </div>
@@ -399,7 +395,8 @@ const ApplicantsView: FC<Props> = ({
         <FundQuestModal
           setShowModal={setShowFundModal}
           setShowFundModal={setShowFundModal}
-          amount={depositAmount()}
+          amount={depositAmount}
+          approving={false}
         />
       )}
     </>

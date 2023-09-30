@@ -1,20 +1,45 @@
-import { useState } from "react";
+import { Spinner } from "@/components/molecules/Spinner";
 import { api } from "@/src/utils";
-import { UploadButton } from "@/src/utils/uploadthing";
+import { useUploadThing } from "@/src/utils/uploadthing";
 import "@uploadthing/react/styles.css";
 import { Image as ImageIcon, Trash2 } from "lucide-react";
+import { Dispatch, SetStateAction, useState } from "react";
+import { UploadCloud } from "react-feather";
 import toast from "react-hot-toast";
+import {
+  generateMimeTypes,
+  generatePermittedFileTypes,
+} from "uploadthing/client";
 
 export const ResumeCard: React.FC<{
   resumeUrl: string;
-  setResumeUrl: (value: string) => void;
-  preview?: boolean;
+  setResumeUrl: Dispatch<SetStateAction<string>>;
   setShowModal?: (value: boolean) => void;
-}> = ({ preview, setShowModal, setResumeUrl, resumeUrl }) => {
+  editing?: boolean;
+}> = ({ setShowModal, setResumeUrl, resumeUrl, editing }) => {
   const { mutateAsync: updateResume } = api.users.updateResume.useMutation();
   const { mutateAsync: deleteResume } = api.users.deleteResume.useMutation();
 
   const [isAwaitingResponse, setIsAwaitingResponse] = useState(false);
+
+  const hasResume = (resume: string) => {
+    return resume !== "" && resume !== null;
+  };
+
+  const { startUpload, isUploading, permittedFileInfo } = useUploadThing(
+    "pdfUploader",
+    {
+      onClientUploadComplete: (res) => {
+        handleResumeUpload(res.at(0).url);
+      },
+      onUploadError: (error: Error) => {
+        console.log(error);
+        toast.error(`Error uploading resume: ${error.message}`);
+      },
+    }
+  );
+
+  const { fileTypes } = generatePermittedFileTypes(permittedFileInfo?.config);
 
   const confirmAction = (): Promise<void> => {
     setIsAwaitingResponse(true);
@@ -61,7 +86,7 @@ export const ResumeCard: React.FC<{
     });
   };
 
-  const handleResumeUpload = async (url) => {
+  const handleResumeUpload = async (url: string) => {
     const { resume } = await updateResume({ resume: url });
     setResumeUrl(resume);
     setShowModal && setShowModal(false);
@@ -73,6 +98,7 @@ export const ResumeCard: React.FC<{
       await updateResume({ resume: "" });
       await deleteResume({ fileUrl: resumeUrl });
       setResumeUrl("");
+      toast.success("Resume deleted successfully");
     } catch (error) {
       console.log(error);
       toast.error(`Error deleting resume: ${error.message}`);
@@ -81,9 +107,9 @@ export const ResumeCard: React.FC<{
 
   return (
     <>
-      {resumeUrl !== "" ? (
+      {hasResume(resumeUrl) && (
         <div className="flex items-center gap-2">
-          {setResumeUrl !== null && (
+          {editing && (
             <button
               disabled={isAwaitingResponse}
               onClick={() => handleResumeDelete()}
@@ -102,25 +128,28 @@ export const ResumeCard: React.FC<{
             <p className="text-xs text-neutral400 truncate">resume.pdf</p>
           </button>
         </div>
-      ) : (
-        <UploadButton
-          appearance={{
-            button:
-              "bg-neutral100 border border-neutral200 text-neutral500 ut-uploading:cursor-not-allowed px-2",
-            allowedContent: {
-              color: "#14BB88",
-              textTransform: "uppercase",
-            },
-          }}
-          endpoint="pdfUploader"
-          onClientUploadComplete={(res) => {
-            handleResumeUpload(res.at(0).url);
-          }}
-          onUploadError={(error: Error) => {
-            console.log(error);
-            toast.error(`Error uploading resume: ${error.message}`);
-          }}
-        />
+      )}
+      {!hasResume(resumeUrl) && editing && (
+        <label className="min-w-[105px] rounded-md bg-white border border-neutral200 flex items-center justify-center gap-2 h-8 px-2 cursor-pointer">
+          <input
+            className="hidden"
+            type="file"
+            accept={generateMimeTypes(fileTypes ?? [])?.join(", ")}
+            onChange={(e) => {
+              if (!e.target.files) return;
+              void startUpload(Array.from(e.target.files));
+            }}
+            disabled={isAwaitingResponse}
+          />
+          {isUploading ? (
+            <Spinner />
+          ) : (
+            <>
+              <UploadCloud color="#A1B2AD" size={18} />
+              <p className="text-xs text-neutral400 truncate">Upload resume</p>
+            </>
+          )}
+        </label>
       )}
     </>
   );

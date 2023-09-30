@@ -1,136 +1,55 @@
-import { withPageAuthRequired } from "@auth0/nextjs-auth0";
-import { Bounties } from "@/components/quests/Quests/Quests";
-import { NextSeo } from "next-seo";
-import { useUserWallet } from "@/src/providers";
-import {
-  createFFA,
-  sendInvoice,
-  acceptInvoice,
-  rejectInvoice,
-  closeInvoice,
-  addSubmitterFFAOld,
-  submitRequestFFA,
-  approveRequestFFAOld,
-} from "@/escrow/adapters";
-import { PublicKey } from "@solana/web3.js";
-import { USDC_MINT } from "@/src/constants";
-import { Escrow } from "@/types";
+import React from "react";
+import { getSession, withPageAuthRequired } from "@auth0/nextjs-auth0";
+import { GetServerSidePropsContext } from "next";
+import * as queries from "@/prisma/queries";
 
-export const getServerSideProps = withPageAuthRequired();
+export async function getServerSideProps(
+  context: GetServerSidePropsContext<{ id: string; req; res }>
+) {
+  withPageAuthRequired();
+  const { req, res } = context;
+  const metadata = await getSession(req, res);
+  if (!metadata?.user) {
+    return {
+      redirect: {
+        destination: "/api/auth/login",
+        permanent: false,
+      },
+    };
+  }
+  const { email } = metadata.user;
 
-const TIMESTAMP = "1691549508859";
+  const user = await queries.user.getByEmail(email);
 
-const CLIENT_WALLET = new PublicKey(
-  "BuxU7uwwkoobF8p4Py7nRoTgxWRJfni8fc4U3YKGEXKs"
-);
-const LANCER_WALLET = new PublicKey(
-  "WbmLPptTGZTFK5ZSks7oaa4Qx69qS3jFXMrAsbWz1or"
-);
-
-const FUND_AMOUNT = 0.001;
+  if (!user || !user.hasFinishedOnboarding) {
+    return {
+      redirect: {
+        destination: "/welcome",
+        permanent: false,
+      },
+    };
+  }
+  if (!user.isLancerDev) {
+    return {
+      redirect: {
+        destination: "/account",
+        permanent: false,
+      },
+    };
+  }
+  return {
+    props: {
+      currentUser: JSON.stringify(user),
+    },
+  };
+}
+import { UpdateTable } from "@/components";
 
 const BountiesPage: React.FC = () => {
-  const { currentWallet, program, provider } = useUserWallet();
-
-  const createFFAClick = async () => {
-    const { timestamp, signature, escrowKey } = await createFFA(
-      currentWallet,
-      program,
-      provider,
-      new PublicKey(USDC_MINT)
-    );
-  };
-
-  const sendInvoiceClick = async () => {
-    const signature = await sendInvoice(
-      CLIENT_WALLET,
-      { timestamp: TIMESTAMP } as Escrow,
-      currentWallet,
-      program,
-      provider,
-      FUND_AMOUNT
-    );
-    console.log("timestamp", signature);
-  };
-
-  const acceptInvoiceClick = async () => {
-    const signature = await acceptInvoice(
-      LANCER_WALLET,
-      { timestamp: TIMESTAMP } as Escrow,
-      currentWallet,
-      program,
-      provider
-    );
-    console.log("timestamp", signature);
-  };
-
-  const addApprovedSubmitterClick = async () => {
-    const signature = await addSubmitterFFAOld(
-      LANCER_WALLET,
-      { timestamp: TIMESTAMP } as Escrow,
-      currentWallet,
-      program,
-      provider
-    );
-    console.log("timestamp", signature);
-  };
-
-  const submitClick = async () => {
-    const signature = await submitRequestFFA(
-      CLIENT_WALLET,
-      LANCER_WALLET,
-      { timestamp: TIMESTAMP, mint: { publicKey: USDC_MINT } } as Escrow,
-      currentWallet,
-      program,
-      provider
-    );
-    console.log("timestamp", signature);
-  };
-
-  const approveClick = async () => {
-    const signature = await approveRequestFFAOld(
-      LANCER_WALLET,
-      { timestamp: TIMESTAMP, mint: { publicKey: USDC_MINT } } as Escrow,
-      currentWallet,
-      program,
-      provider
-    );
-    console.log("timestamp", signature);
-  };
-
-  const rejectInvoiceClick = async () => {
-    const signature = await rejectInvoice(
-      LANCER_WALLET,
-      { timestamp: TIMESTAMP } as Escrow,
-      currentWallet,
-      program,
-      provider
-    );
-    console.log("timestamp", signature);
-  };
-
-  const closeInvoiceClick = async () => {
-    const signature = await closeInvoice(
-      { timestamp: TIMESTAMP } as Escrow,
-      currentWallet,
-      program,
-      provider
-    );
-    console.log("timestamp", signature);
-  };
-
   return (
-    <>
-      <NextSeo title="Lancer | Bounties" description="Lancer Bounties" />
-      <div onClick={createFFAClick}>Create FFA</div>
-      <div onClick={sendInvoiceClick}>Send Invoice</div>
-      <div onClick={acceptInvoiceClick}>Accept Invoice</div>
-      <div onClick={addApprovedSubmitterClick}>Approve Submitter</div>
-      <div onClick={submitClick}>Submit Request</div>
-      <div onClick={approveClick}>Approve Request</div>
-      <div onClick={rejectInvoiceClick}>Reject Invoice</div>
-      <div onClick={closeInvoiceClick}>Close Invoice</div>
-    </>
+    <div className="w-full flex items-center justify-center mt-5 gap-5 py-24">
+      <UpdateTable allUpdates={true} />
+    </div>
   );
 };
 

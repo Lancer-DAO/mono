@@ -22,6 +22,9 @@ import { createFFA } from "@/escrow/adapters";
 import { useReferral } from "@/src/providers/referralProvider";
 import { useBounty } from "@/src/providers/bountyProvider";
 import { useRouter } from "next/router";
+import { createCustodialReferralDataAccountInstruction } from "@/escrow/sdk/instructions";
+import { sendGaslessTx } from "@/escrow/gasless";
+import { findFeatureAccount } from "@/escrow/sdk/pda";
 
 interface Props {
   formData: QuestFormData;
@@ -90,11 +93,7 @@ export const CreateBountyForm: FC<Props> = ({
 
       const { timestamp, signature, escrowKey } = await createFFA(
         currentWallet,
-        program,
-        provider,
-        await getSubmitterReferrer(currentWallet.publicKey, mintKey),
-        remainingAccounts,
-        mintKey
+        program
       );
       const bounty: Bounty = await mutateAsync({
         email: currentUser.email,
@@ -115,6 +114,26 @@ export const CreateBountyForm: FC<Props> = ({
       setCreateQuestState({ isLoading: false, result: "Quest Created" });
       setCurrentBounty(bounty);
       router.push(`/quests/${bounty.id}`);
+
+      const [feature_account] = await findFeatureAccount(
+        timestamp,
+        new PublicKey(currentWallet.publicKey),
+        program
+      );
+      const referralAccountIx =
+        await createCustodialReferralDataAccountInstruction(
+          new PublicKey(currentWallet.publicKey),
+          new PublicKey("pyrSoEahjKGKZpLWEYwCJ8zQAsYZckZH8ZqJ7yGd1ha"),
+          feature_account,
+          program
+        );
+      const res2 = await sendGaslessTx(
+        [referralAccountIx],
+        undefined,
+        undefined,
+        20000
+      );
+      console.log("Second gasless tx res: ", res2);
     } catch (error) {
       console.log("Quest Error: ", error);
       setCreateQuestState({ error });

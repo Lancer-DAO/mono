@@ -1,13 +1,14 @@
-import { Dispatch, FC, SetStateAction } from "react";
-import Image from "next/image";
 import { BountyUserType } from "@/prisma/queries/bounty";
+import { smallClickAnimation } from "@/src/constants";
+import { useBounty } from "@/src/providers/bountyProvider";
+import { api } from "@/src/utils";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
-import { useBounty } from "@/src/providers/bountyProvider";
-import { EApplicantsView } from "./ApplicantsView";
-import { smallClickAnimation } from "@/src/constants";
 import { motion } from "framer-motion";
 import { Flame } from "lucide-react";
+import Image from "next/image";
+import { Dispatch, FC, SetStateAction } from "react";
+import { EApplicantsView } from "./ApplicantsView";
 import { QuestActionView } from "./QuestActions";
 
 dayjs.extend(relativeTime);
@@ -26,6 +27,13 @@ const ApplicantProfileCard: FC<Props> = ({
   setCurrentActionView,
 }) => {
   const { currentBounty } = useBounty();
+  const { data: quote } = api.quote.getQuoteByBountyAndUser.useQuery(
+    {
+      bountyId: currentBounty.id,
+      userId: user.userid,
+    },
+    { enabled: !!currentBounty }
+  );
 
   if (!currentBounty) return null;
 
@@ -63,8 +71,8 @@ const ApplicantProfileCard: FC<Props> = ({
             text-neutral600 title-text px-4 py-2 
             disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            <Flame width={16} height={16} className="text-tertiary200" /> $1500
-            Quote
+            <Flame width={16} height={16} className="text-tertiary200" />{" "}
+            {`$${quote?.price} Quote`}
           </motion.button>
         )}
 
@@ -84,7 +92,7 @@ const ApplicantProfileCard: FC<Props> = ({
               disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <Flame width={16} height={16} className="text-tertiary200" />{" "}
-              $1500 Quote
+              {`$${quote?.price} Quote`}
             </motion.button>
             {Number(currentBounty.escrow.amount) > 0 && (
               <motion.button

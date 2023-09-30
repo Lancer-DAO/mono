@@ -14,7 +14,6 @@ export const approveRequestFFA = async (
   submitter: PublicKey,
   acc: Escrow,
   wallet: LancerWallet,
-  buddylinkProgramId: PublicKey,
   program: Program<MonoProgram>,
   provider: AnchorProvider
 ) => {

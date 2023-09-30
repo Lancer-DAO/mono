@@ -1,12 +1,11 @@
 import Crown from "@/components/@icons/Crown";
-import { updateMedia } from "@/server/api/routers/media/updateMedia";
 import { smallClickAnimation } from "@/src/constants";
 import { useUserWallet } from "@/src/providers";
 import { useBounty } from "@/src/providers/bountyProvider";
 import { api } from "@/src/utils";
 import { UploadDropzone } from "@/src/utils/uploadthing";
 import {
-  LancerUpdateData,
+  LancerUpdateData, QuestProgressState,
 } from "@/types";
 import { oembed, validate } from "@loomhq/loom-embed";
 import { motion } from "framer-motion";
@@ -16,9 +15,15 @@ import { FC, useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
 import ActionsCardBanner from "./ActionsCardBanner";
 
+export enum UPDATE_TYPES {
+  Loom = "Loom recording",
+  Text = "Text",
+  FileUpload = "File Upload",
+}
+
 const LancerSubmitUpdateView: FC = () => {
-  const { currentBounty, setCurrentBounty } = useBounty();
-  const { currentUser, currentWallet } = useUserWallet();
+  const { currentBounty } = useBounty();
+  const { currentUser } = useUserWallet();
 
   const [hasApplied, setHasApplied] = useState(false);
   const [selectedType, setSelectedType] = useState("Loom recording");
@@ -30,6 +35,7 @@ const LancerSubmitUpdateView: FC = () => {
     description: "",
     links: "",
     media: [],
+    state: QuestProgressState.NEW,
   });
   const { data: updates, refetch } = api.update.getUpdatesByBounty.useQuery(
     { id: currentBounty.id }, 
@@ -39,11 +45,6 @@ const LancerSubmitUpdateView: FC = () => {
   const { mutateAsync: deleteMedia } = api.bounties.deleteMedia.useMutation();
   const [videoHTML, setVideoHTML] = useState("");
 
-  enum UPDATE_TYPES {
-    Loom = "Loom recording",
-    Text = "Text",
-    FileUpload = "File Upload",
-  }
   
   const types = [UPDATE_TYPES.Loom, UPDATE_TYPES.FileUpload, UPDATE_TYPES.Text]
   
@@ -152,7 +153,7 @@ const LancerSubmitUpdateView: FC = () => {
             />
           </div>
           {validate.isLoomUrl(updateData.links) === false && (
-            <div className="flex jutify-center items-center rounded-md border px-[151px] py-[33px] h-[228px]">
+            <div className="flex justify-center items-center rounded-md border px-[151px] py-[33px] h-[228px]">
               <div className="py-[10px] flex flex-col items-center gap-2">
                 <Crown />
                 <div className="text-mini text-neutral400 text-center">
@@ -169,7 +170,6 @@ const LancerSubmitUpdateView: FC = () => {
       )}
       {selectedType === UPDATE_TYPES.FileUpload && (
         <div className="w-full px-6">
-
           {updateData.media.length ? (
             <>
               {isVideo(updateData.media[0].imageUrl) ? (
@@ -211,7 +211,7 @@ const LancerSubmitUpdateView: FC = () => {
         </p>
         <textarea
           className="text border border-neutral200 placeholder:text-neutral500/80 resize-none h-[232px]
-          bg-neutral100 text-neutral500 w-full rounded-md px-3 p-2 disabled:opacity-80"
+          bg-neutral100 text-neutral500 w-full rounded-md px-3 py-2 disabled:opacity-80"
           placeholder="Type your message here..."
           disabled={hasApplied}
           value={updateData.description}

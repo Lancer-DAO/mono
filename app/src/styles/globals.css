@@ -1,7 +1,6 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
 @font-face {
   font-family: charter;
   font-style: normal;
@@ -69,7 +68,8 @@ h4 {
 .multi-line-ellipsis {
   display: -webkit-box;
   -webkit-box-orient: vertical;
-  -webkit-line-clamp: 2; /* Number of lines to show */
+  -webkit-line-clamp: 2;
+  /* Number of lines to show */
   overflow: hidden;
 }
 
@@ -79,4 +79,18 @@ h4 {
   top: 0;
   left: 0;
   z-index: -1;
+}
+
+@layer base {
+  input[type="number"]::-webkit-inner-spin-button,
+  input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+}
+
+#sendbird-message-input-text-field {
+  -ms-overflow-style: none;
+  /* IE and Edge */
+  scrollbar-width: none;
 }

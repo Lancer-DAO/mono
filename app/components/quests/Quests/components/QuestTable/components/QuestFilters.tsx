@@ -1,31 +1,22 @@
 /* eslint-disable @next/next/no-html-link-for-pages */
-import { Dispatch, SetStateAction, useEffect } from "react";
-import { RangeSlider, MultiSelectDropdown } from "@/components";
+import { Dispatch, SetStateAction } from "react";
+import { MultiSelectDropdown } from "@/components";
 import { BOUNTY_STATES } from "@/types";
 import { capitalize } from "lodash";
-import { Filters, Industry, IAsyncResult } from "@/types";
-import { motion } from "framer-motion";
-import IndustrySelection from "./IndustrySelection";
-import { Mint } from "@prisma/client";
+import { Filters } from "@/types";
 import { useUserWallet } from "@/src/providers";
 
 interface QuestFiltersProps {
-  mints: Mint[];
-  industries: Industry[];
   tags: string[];
   // orgs: string[];
-  priceBounds: [number, number];
   filters: Filters;
   setFilters: Dispatch<SetStateAction<Filters>>;
   count: number;
 }
 
 export const QuestFilters = ({
-  mints,
-  industries,
   tags,
   // orgs,
-  priceBounds,
   filters,
   setFilters,
   count,

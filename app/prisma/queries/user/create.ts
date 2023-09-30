@@ -17,3 +17,16 @@ export const create = async (
     },
   });
 };
+
+export const createNameOnly = async (
+  name: string,
+  picture?: string
+): Promise<Prisma.User> => {
+  return await prisma.user.create({
+    data: {
+      name,
+      picture: picture,
+      createdAt: Date.now().toString(),
+    },
+  });
+};

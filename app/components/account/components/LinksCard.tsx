@@ -1,9 +1,9 @@
 import { useUserWallet } from "@/src/providers";
+import { useAccount } from "@/src/providers/accountProvider";
 import { api } from "@/src/utils";
 import { useState } from "react";
 import { Check, Edit, X } from "react-feather";
 import EditLinks from "./EditLinks";
-import { useAccount } from "@/src/providers/accountProvider";
 import ViewLinks from "./ViewLinks";
 
 const LinksCard = () => {
@@ -20,7 +20,7 @@ const LinksCard = () => {
     twitter: account?.twitter || "",
   });
   const [resumeUrl, setResumeUrl] = useState(
-    self ? currentUser?.resume : account?.resume
+    account?.resume
   );
 
   const handleEditLinks = () => {
