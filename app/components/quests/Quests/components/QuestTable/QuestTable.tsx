@@ -143,6 +143,7 @@ const QuestTable: React.FC<Props> = ({ type }) => {
   }, [allBounties, allIndustries]);
 
   useEffect(() => {
+    if (industryNames.length === 0) return;
     if (allBounties && allBounties?.length !== 0) {
       const allTags = allBounties
         ?.map((bounty) => bounty.tags.map((tag) => tag.name))
@@ -155,12 +156,14 @@ const QuestTable: React.FC<Props> = ({ type }) => {
         );
       const uniqueTags = getUniqueItems(allTags);
       setTags(uniqueTags);
+      console.log("AYO", industryNames);
       setFilters({
         ...filters,
         tags: allTags,
+        industries: industryNames,
       });
     }
-  }, [allBounties]);
+  }, [allBounties, industryNames]);
 
   return (
     <div
