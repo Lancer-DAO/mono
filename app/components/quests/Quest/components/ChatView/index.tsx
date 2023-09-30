@@ -1,4 +1,3 @@
-import { Dispatch, FC, SetStateAction, useState } from "react";
 import { BountyUserType } from "@/prisma/queries/bounty";
 import { smallClickAnimation } from "@/src/constants";
 import { useBounty } from "@/src/providers/bountyProvider";
@@ -6,6 +5,7 @@ import { api } from "@/src/utils";
 import { BountyState } from "@/types";
 import { motion } from "framer-motion";
 import { X } from "lucide-react";
+import { Dispatch, FC, SetStateAction, useState } from "react";
 import ActionsCardBanner from "../ActionsCardBanner";
 import AlertCard from "../AlertCard";
 import { QuestActionView } from "../QuestActions";
@@ -51,7 +51,7 @@ const ChatView: FC<Props> = ({ selectedSubmitter, setCurrentActionView }) => {
             <X height={24} width={24} className="text-white" />
           </motion.button>
         )}
-        {currentBounty.isApprovedSubmitter && !!update && (
+        {(currentBounty.isApprovedSubmitter && !!update === false) && (
           <motion.button
             {...smallClickAnimation}
             className="bg-secondary200 text-white title-text px-4 py-2 rounded-md"
