@@ -170,7 +170,6 @@ const LancerSubmitUpdateView: FC = () => {
       )}
       {selectedType === UPDATE_TYPES.FileUpload && (
         <div className="w-full px-6">
-
           {updateData.media.length ? (
             <>
               {isVideo(updateData.media[0].imageUrl) ? (
