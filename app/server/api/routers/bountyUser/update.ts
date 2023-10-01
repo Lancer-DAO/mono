@@ -85,10 +85,26 @@ export const update = protectedProcedure
             user: true,
           },
         });
-        const usersToReject = _usersToReject.map((u) => u.user);
-        usersToReject.forEach(async (user) => {
+        _usersToReject.forEach(async (_user) => {
+          const user = _user.user;
           queries.bountyUser.updateRelations(bountyId, ["rejected"], user);
-          // TODO: send email
+          const webhookUpdate = {
+            ...updatedBounty,
+            updateType: _user.relations.includes("shortlist")
+              ? "remove-from-shortlist"
+              : "deny-submitter",
+            currentUserEmail: currentUser.email,
+            updatedUserEmail: user.email,
+            creatorEmail: updatedBounty.creator.user.email,
+            votingToCancelEmails: updatedBounty.votingToCancel.map(
+              (user) => user.user.email
+            ),
+            needsToVoteEmails: updatedBounty.needsToVote.map(
+              (user) => user.user.email
+            ),
+          };
+
+          HostedHooksClient.sendWebhook(webhookUpdate, "bounty.updated");
         });
       }
 
