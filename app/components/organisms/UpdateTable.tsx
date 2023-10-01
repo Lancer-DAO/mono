@@ -831,9 +831,9 @@ const QuestUpdatesTable: React.FC = () => {
             );
           })
         )}
-        {showDisputeModal && (
+        {showDisputeModal ? (
           <DisputeModal setShowModal={setShowDisputeModal} />
-        )}
+        ) : null}
 
         <div className="px-8 py-4 text-neutral600"></div>
       </div>

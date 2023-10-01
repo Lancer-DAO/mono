@@ -77,7 +77,7 @@ const LancerSubmitQuoteView: FC<Props> = ({
         }),
       });
     }
-  }, [quoteData, setQuoteData, quote, checkpoints]);
+  }, [quote, checkpoints]);
 
   const addCheckpoint = () => {
     const newCheckpoint = {

@@ -24,11 +24,11 @@ export const CompleteProfileModal: FC<Props> = ({ setShowModal }) => {
           Benefits include:
         </p>
         <ol className="text-center">
-          <li className="font-bold">1. Unlock messaging</li>
+          <li className="font-bold">1. Messaging other Users</li>
           <li className="font-bold">
             {currentUser.class === "Lancer"
-              ? "2. Apply to Quests"
-              : "2. Create Quests"}
+              ? "2. Applying to Quests"
+              : "2. Creating Quests"}
           </li>
           <li className="font-bold">
             3. Referral commissions for inviting others
