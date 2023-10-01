@@ -124,26 +124,6 @@ export const CreateBountyForm: FC<Props> = ({
         program
       );
 
-      // const referralAccountIx = await createReferralDataAccountInstruction(
-      //   new PublicKey(currentWallet.publicKey),
-      //   feature_account,
-      //   await getSubmitterReferrer(currentWallet.publicKey, mintKey),
-      //   remainingAccounts,
-      //   program
-      // );
-      // const { blockhash, lastValidBlockHeight } =
-      //   await provider.connection.getLatestBlockhash();
-      // const txInfo = {
-      //   /** The transaction fee payer */
-      //   feePayer: new PublicKey(currentWallet.publicKey),
-      //   /** A recent blockhash */
-      //   blockhash: blockhash,
-      //   /** the last block chain can advance to before tx is exportd expired */
-      //   lastValidBlockHeight: lastValidBlockHeight,
-      // };
-      // const signature2 = await currentWallet.signAndSendTransaction(
-      //   new Transaction(txInfo).add(referralAccountIx)
-      // );
       const referralAccountIx =
         await createCustodialReferralDataAccountInstruction(
           new PublicKey(currentWallet.publicKey),
