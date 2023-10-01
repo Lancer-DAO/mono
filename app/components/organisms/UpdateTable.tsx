@@ -3,14 +3,19 @@ import { useUserWallet } from "@/src/providers";
 import dayjs from "dayjs";
 import { DisputeModal, UpdateTableItem } from "..";
 import { getUnreadChannels } from "@/src/utils/sendbird";
-import { api, updateList } from "@/src/utils";
+import { api, decimalToNumber, updateList } from "@/src/utils";
 import {
   getApplicationTypeFromLabel,
   UpdateItemProps,
 } from "../molecules/UpdateTableItem";
 import { useBounty } from "@/src/providers/bountyProvider";
 import { BountyState, BOUNTY_USER_RELATIONSHIP } from "@/types";
-import { ADMIN_WALLETS, smallClickAnimation } from "@/src/constants";
+import {
+  ADMIN_WALLETS,
+  BADGES_PROJECT_PARAMS,
+  CREATE_COMPLETION_BADGES,
+  smallClickAnimation,
+} from "@/src/constants";
 import { motion } from "framer-motion";
 import toast from "react-hot-toast";
 import { PublicKey } from "@solana/web3.js";
@@ -20,6 +25,9 @@ import {
   voteToCancelFFA,
 } from "@/escrow/adapters";
 import Image from "next/image";
+
+import { createUnderdogClient } from "@underdog-protocol/js";
+const underdogClient = createUnderdogClient({});
 
 const AllUpdatesTable: React.FC = () => {
   const { currentUser } = useUserWallet();
@@ -189,7 +197,7 @@ const AllUpdatesTable: React.FC = () => {
         allUpdates.sort((a, b) => {
           return b.time.unix() - a.time.unix();
         });
-        console.log("allUpdates", allUpdates);
+        // console.log("allUpdates", allUpdates);
         setAllUpdates(allUpdates);
       };
       getChannels();
@@ -554,6 +562,48 @@ const QuestUpdatesTable: React.FC = () => {
         label: "complete-bounty",
       });
       setCurrentBounty(updatedBounty);
+      if (CREATE_COMPLETION_BADGES && !currentBounty?.isTest) {
+        const creatorKey = currentBounty?.creator.publicKey;
+
+        const reputationIncrease =
+          100 * decimalToNumber(currentBounty?.estimatedTime);
+
+        await underdogClient.createNft({
+          params: BADGES_PROJECT_PARAMS,
+          body: {
+            name: `Completer: ${currentBounty?.id}`,
+            image:
+              "https://utfs.io/f/969ce9f5-f272-444a-ac76-5b4a9e2be9d9_quest_completed.png",
+            description: currentBounty?.description,
+            attributes: {
+              reputation: reputationIncrease,
+              completed: dayjs().toISOString(),
+              tags: currentBounty?.tags.map((tag) => tag.name).join(","),
+              role: "completer",
+            },
+            upsert: false,
+            receiverAddress: currentBounty.currentSubmitter.publicKey,
+          },
+        });
+
+        await underdogClient.createNft({
+          params: BADGES_PROJECT_PARAMS,
+          body: {
+            name: `Creator: ${currentBounty?.id}`,
+            image:
+              "https://utfs.io/f/969ce9f5-f272-444a-ac76-5b4a9e2be9d9_quest_completed.png",
+            description: currentBounty?.description,
+            attributes: {
+              reputation: reputationIncrease,
+              completed: dayjs().toISOString(),
+              tags: currentBounty?.tags.map((tag) => tag.name).join(","),
+              role: "creator",
+            },
+            upsert: false,
+            receiverAddress: creatorKey,
+          },
+        });
+      }
       toast.success("Successfully paid out", { id: toastId });
     } catch (error) {
       if (
@@ -759,7 +809,9 @@ const QuestUpdatesTable: React.FC = () => {
             )}
         </div>
         {allUpdates?.map((update) => {
-          return <UpdateTableItem {...update} key={update.key} />;
+          return (
+            <UpdateTableItem {...update} key={update.key} isIndividual={true} />
+          );
         })}
         {showDisputeModal && (
           <DisputeModal setShowModal={setShowDisputeModal} />

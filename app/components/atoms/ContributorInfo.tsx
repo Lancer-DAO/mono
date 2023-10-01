@@ -25,7 +25,7 @@ const ContributorInfo: React.FC<{
         ) : (
           <Logo width="25px" height="25px" />
         )}
-        <div className="mx-[10px]">{user.name}</div>
+        <div className="mx-[10px] text-white">{user.name}</div>
       </div>
     );
 
@@ -50,7 +50,7 @@ const ContributorInfo: React.FC<{
         ) : (
           <Logo width="25px" height="25px" />
         )}
-        <div className="mx-[10px]">{user.name}</div>
+        <div className="mx-[10px] text-white">{user.name}</div>
       </motion.button>
     )
   );

@@ -25,7 +25,7 @@ const LancerSubmitUpdateView: FC = () => {
   const { currentBounty } = useBounty();
   const { currentUser, currentWallet, program, provider } = useUserWallet();
 
-  const [hasApplied, setHasApplied] = useState(false);
+  const [hasSubmittedUpdate, setHasSubmittedUpdate] = useState(false);
   const [selectedType, setSelectedType] = useState("Loom recording");
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [updateData, setUpdateData] = useState<LancerUpdateData>({
@@ -64,7 +64,7 @@ const LancerSubmitUpdateView: FC = () => {
       }
       await createUpdate(updateData);
       refetch();
-      setHasApplied(true);
+      setHasSubmittedUpdate(true);
       toast.success("Update sent", { id: toastId });
     } catch (error) {
       toast.error("Error submitting update", { id: toastId });
@@ -75,7 +75,7 @@ const LancerSubmitUpdateView: FC = () => {
     if (
       selectedType === UPDATE_TYPES.FileUpload &&
       updateData.media.length &&
-      !hasApplied
+      !hasSubmittedUpdate
     ) {
       await deleteMedia({ imageUrl: updateData.media[0]?.imageUrl });
       setUpdateData({ ...updateData, type, media: [] });
@@ -119,7 +119,7 @@ const LancerSubmitUpdateView: FC = () => {
             className="text border border-neutral200 placeholder:text-neutral500/60 
             bg-neutral100 text-neutral500 w-[190px] h-[34px] rounded-md px-3"
             placeholder="Insert name here..."
-            disabled={hasApplied}
+            disabled={hasSubmittedUpdate}
             value={updateData.name}
             onChange={(e) =>
               setUpdateData({ ...updateData, name: e.target.value })
@@ -158,7 +158,7 @@ const LancerSubmitUpdateView: FC = () => {
               className="text border border-neutral200 placeholder:text-neutral500/60 
               bg-neutral100 text-neutral500 w-[190px] h-[34px] rounded-md px-3"
               placeholder="www.loom.com/dkdkdkdkd"
-              disabled={hasApplied}
+              disabled={hasSubmittedUpdate}
               value={updateData.links}
               onChange={(e) => {
                 setUpdateData({
@@ -238,14 +238,14 @@ const LancerSubmitUpdateView: FC = () => {
           className="text border border-neutral200 placeholder:text-neutral500/80 resize-none h-[232px]
           bg-neutral100 text-neutral500 w-full rounded-md px-3 py-2 disabled:opacity-80"
           placeholder="Type your message here..."
-          disabled={hasApplied}
+          disabled={hasSubmittedUpdate}
           value={updateData.description}
           onChange={(e) =>
             setUpdateData({ ...updateData, description: e.target.value })
           }
         />
       </div>
-      {!hasApplied && (
+      {!hasSubmittedUpdate && (
         <div className="flex items-center justify-end px-6 py-4">
           <motion.button
             {...smallClickAnimation}

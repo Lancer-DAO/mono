@@ -94,10 +94,16 @@ export const CreateBountyForm: FC<Props> = ({
         mintKey
       );
 
-      const { timestamp, signature, escrowKey } = await createFFA(
+      const { timestamp, signature, escrowKey, error } = await createFFA(
         currentWallet,
         program
       );
+
+      if (error){
+        setCreateQuestState(error);
+        toast.error(error)
+        return
+      }
       const bounty: Bounty = await mutateAsync({
         email: currentUser.email,
         industryIds: [formData.industryId],
@@ -141,7 +147,6 @@ export const CreateBountyForm: FC<Props> = ({
       );
       console.log("Second gasless tx res: ", res2);
     } catch (error) {
-      console.log("Quest Error: ", error);
       setCreateQuestState({ error });
       if (error.message === "Wallet is registered to another user") {
         toast.error(
