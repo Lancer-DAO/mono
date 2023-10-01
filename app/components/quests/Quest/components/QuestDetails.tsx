@@ -304,18 +304,22 @@ const QuestDetails = () => {
                           style={{ objectFit: "contain" }}
                         />
                       </div>
-                      <div className="w-full flex items-center gap-3 text-sm text-neutral600">
-                        <p className="w-32 text-left">Title</p>
-                        <p className="w-full text-left p-2 bg-neutral100 border border-neutral200 rounded-md">
-                          {med.title}
-                        </p>
-                      </div>
-                      <div className="w-full flex items-center gap-3 text-sm">
-                        <p className="w-32 text-left">Description</p>
-                        <p className="w-full text-left p-2 bg-neutral100 border border-neutral200 rounded-md">
-                          {med.description}
-                        </p>
-                      </div>
+                      {med.title && (
+                        <div className="w-full flex items-center gap-3 text-sm text-neutral600">
+                          <p className="w-32 text-left">Title</p>
+                          <p className="w-full text-left p-2 bg-neutral100 border border-neutral200 rounded-md">
+                            {med.title}
+                          </p>
+                        </div>
+                      )}
+                      {med.description && (
+                        <div className="w-full flex items-center gap-3 text-sm">
+                          <p className="w-32 text-left">Description</p>
+                          <p className="w-full text-left p-2 bg-neutral100 border border-neutral200 rounded-md">
+                            {med.description}
+                          </p>
+                        </div>
+                      )}
                     </DialogContent>
                   </Dialog>
                 );

@@ -71,7 +71,7 @@ export const createBounty = protectedProcedure
       const medias = await Promise.all(
         media.map(
           async (med) =>
-            await queries.media.create(med.imageUrl, med.description, med.title)
+            await queries.media.create(med.imageUrl, med.title, med.description)
         )
       );
       const bounty = await queries.bounty.create(

@@ -213,11 +213,6 @@ const AllUpdatesTable: React.FC = () => {
     lancerUpdates,
     disputes,
   ]);
-  console.log("ALL UPDATES");
-  console.log(allUpdates);
-  if (!allUpdates || allUpdates.length === 0) {
-    return <EmptyUpdatesHistory width="612px" height="423px" />;
-  }
 
   return (
     <div className="flex flex-col w-full border-solid border bg-white border-neutralBorder500 rounded-lg">
@@ -226,9 +221,15 @@ const AllUpdatesTable: React.FC = () => {
       </div>
       <div className="h-[1px] w-full bg-neutral100" />
       {currentUser ? (
-        allUpdates?.map((update) => {
-          return <UpdateTableItem {...update} key={update.key} />;
-        })
+        !allUpdates || allUpdates?.length === 0 ? (
+          <div className="mt-4 flex justify-center">
+            <EmptyUpdatesHistory width="270px" height="143px" />
+          </div>
+        ) : (
+          allUpdates.map((update) => {
+            return <UpdateTableItem {...update} key={update.key} />;
+          })
+        )
       ) : (
         <Image
           src="/assets/images/placeholder.png"
@@ -442,9 +443,6 @@ const QuestUpdatesTable: React.FC = () => {
   ]);
   console.log("ALL UPDATES");
   console.log(allUpdates);
-  if (!allUpdates || allUpdates.length === 0) {
-    return <EmptyUpdatesHistory width="612px" height="423px" />;
-  }
 
   const confirmAction = (confirmText: string): Promise<void> => {
     setIsAwaitingResponse(true);
@@ -721,7 +719,6 @@ const QuestUpdatesTable: React.FC = () => {
           <div className="px-8 py-4 text-neutral600 font-bold text-lg whitespace-nowrap">
             Updates History
           </div>
-          <div className="h-[1px] w-full bg-neutral100" />
           {currentBounty.isCreator &&
             currentBounty.state !== BountyState.VOTING_TO_CANCEL &&
             currentBounty.state !== BountyState.DISPUTE_STARTED &&
@@ -819,11 +816,23 @@ const QuestUpdatesTable: React.FC = () => {
               </motion.button>
             )}
         </div>
-        {allUpdates?.map((update) => {
-          return (
-            <UpdateTableItem {...update} key={update.key} isIndividual={true} />
-          );
-        })}
+        <div className="h-[1px] w-full bg-neutral100" />
+
+        {!allUpdates || allUpdates?.length === 0 ? (
+          <div className="mt-4 flex justify-center">
+            <EmptyUpdatesHistory width="270px" height="143px" />
+          </div>
+        ) : (
+          allUpdates.map((update) => {
+            return (
+              <UpdateTableItem
+                {...update}
+                key={update.key}
+                isIndividual={true}
+              />
+            );
+          })
+        )}
         {showDisputeModal && (
           <DisputeModal setShowModal={setShowDisputeModal} />
         )}
