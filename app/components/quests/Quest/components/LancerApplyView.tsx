@@ -132,7 +132,6 @@ const LancerApplyView: FC<Props> = ({
             setApplyData({ ...applyData, about: e.target.value })
           }
         />
-        {/* TODO: resume upload - link brought from user object, can delete, can reupload */}
         <div className="flex items-center justify-end text text-neutral600">
           <button
             className="rounded-md bg-white border border-neutral200 flex items-center justify-center gap-2 h-8 px-2"
@@ -147,21 +146,6 @@ const LancerApplyView: FC<Props> = ({
         </div>
       </div>
       <div className="h-[1px] w-full bg-neutral200" />
-      {/* <div className="w-full px-6 py-4 flex flex-col gap-4">
-        <p className="text-neutral-600 text">Why am I a good fit?</p>
-        <textarea
-          className="text border border-neutral200 placeholder:text-neutral500/80 resize-none h-[232px]
-          bg-neutral100 text-neutral500 w-full rounded-md px-3 p-2 disabled:opacity-60"
-          name={`details`}
-          placeholder="Type your message here..."
-          id={`details`}
-          disabled={hasApplied || currentBounty.isDeniedLancer}
-          value={applyData.details}
-          onChange={(e) =>
-            setApplyData({ ...applyData, details: e.target.value })
-          }
-        />
-      </div> */}
       <div className="flex items-center justify-end gap-4 px-6 py-4">
         <button
           className="title-text text-neutral600 px-4 py-2 rounded-md border border-neutral300"
