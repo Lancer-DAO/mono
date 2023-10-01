@@ -1,4 +1,5 @@
 import { prisma } from "@/server/db";
+import { BOUNTY_USER_RELATIONSHIP } from "@/types";
 import * as Prisma from "@prisma/client";
 
 export const read = async (id: number): Promise<Prisma.Quote> => {
@@ -26,13 +27,31 @@ export const getQuotesByBounty = async (
   return bounty.quotes;
 };
 
-export const getHighestQuoteByBounty = async (id: number): Promise<number> => {
+export const getHighestQuoteByBounty = async (
+  bountyId: number
+): Promise<number> => {
+  const shortlistedUsers = await prisma.bountyUser.findMany({
+    where: {
+      bountyid: bountyId,
+      relations: {
+        contains: BOUNTY_USER_RELATIONSHIP.ShortlistedLancer,
+      },
+    },
+  });
+
+  const shortlistedIds = shortlistedUsers.map((slUser) => slUser.userid);
+
   const bounty = await prisma.bounty.findUnique({
     where: {
-      id: id,
+      id: bountyId,
     },
     include: {
       quotes: {
+        where: {
+          userid: {
+            in: shortlistedIds,
+          },
+        },
         orderBy: {
           price: "desc",
         },

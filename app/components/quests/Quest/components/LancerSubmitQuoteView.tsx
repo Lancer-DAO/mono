@@ -174,13 +174,13 @@ const LancerSubmitQuoteView: FC<Props> = ({
         )}
       {/* lancer account has not been approved yet */}
       {!currentUser.hasBeenApproved && (
-        <>
+        <div className="px-5 pt-5">
           <AlertCard
             type="negative"
             title="Not Approved"
             description="You Must Be Approved to Apply to Quests"
           />
-        </>
+        </div>
       )}
       <div className="relative">
         <div className="px-6 py-4">
