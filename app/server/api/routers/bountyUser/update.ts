@@ -94,9 +94,7 @@ export const update = protectedProcedure
           );
           const webhookUpdate = {
             ...updatedBounty,
-            updateType: _user.relations.includes("shortlist")
-              ? "remove-from-shortlist"
-              : "deny-submitter",
+            updateType: "deny-submitter",
             currentUserEmail: currentUser.email,
             updatedUserEmail: user.email,
             creatorEmail: updatedBounty.creator.user.email,
