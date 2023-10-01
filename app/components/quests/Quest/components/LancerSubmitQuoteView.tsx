@@ -9,7 +9,7 @@ import { BountyState, LancerQuoteData } from "@/types";
 import { motion } from "framer-motion";
 import { Dispatch, FC, SetStateAction, useEffect } from "react";
 import ActionsCardBanner from "./ActionsCardBanner";
-import AlertCard from "./AlertCard";
+import AlertCards from "./AlertCards";
 import CheckpointEdit from "./CheckpointEdit";
 import CheckpointView from "./CheckpointView";
 import { QuestApplicationView } from "./LancerApplicationView";
@@ -158,54 +158,13 @@ const LancerSubmitQuoteView: FC<Props> = ({
                 Submit Update
               </motion.button>
             )}
-          {hasApplied &&
-            currentBounty.isShortlistedLancer &&
+          {currentBounty.isShortlistedLancer &&
             Number(currentBounty.escrow.amount) > 0 && (
               <ChatButton setCurrentActionView={setCurrentActionView} />
             )}
         </div>
       </ActionsCardBanner>
-      {hasApplied &&
-        (!currentBounty.isShortlistedLancer ||
-          (currentBounty.isShortlistedLancer &&
-            Number(currentBounty.escrow.amount) === 0)) && (
-          <div className="px-5 pt-5">
-            <AlertCard
-              type="positive"
-              title="Nice!"
-              description="Your application has been sent. Fingers crossed! You will hear an answer from the client within 48 hours."
-            />
-          </div>
-        )}
-      {hasApplied &&
-        currentBounty.isShortlistedLancer &&
-        Number(currentBounty.escrow.amount) > 0 && (
-          <div className="px-5 pt-5">
-            <AlertCard
-              type="positive"
-              title="Good news!"
-              description="You have been added to the creator's shortlist. You can now chat with them to see if you're a good fit for each other!"
-            />
-          </div>
-        )}
-      {currentBounty.isDeniedLancer && (
-        <div className="px-5 pt-5">
-          <AlertCard
-            type="negative"
-            title="Not Selected"
-            description="The creator of this Quest has decided to go with another Lancer. You can still apply to other Quests!"
-          />
-        </div>
-      )}
-      {!currentUser.hasBeenApproved && (
-        <div className="px-5 pt-5">
-          <AlertCard
-            type="negative"
-            title="Not Approved"
-            description="You Must Be Approved to Apply to Quests"
-          />
-        </div>
-      )}
+      <AlertCards />
       <div className="relative">
         <div className="px-6 py-4">
           <div className="flex py-4 justify-between border-b border-neutral200">

@@ -3,6 +3,7 @@ export * from "./AdminRelationsManagerList";
 export * from "./AdminRelationsManagerSection";
 export * from "./AlertCard";
 export * from "./AlertCardModal";
+export * from "./AlertCards";
 export * from "./ApplicantProfileCard";
 export * from "./ApplicantsView";
 export * from "./ArchiveBounty";

@@ -178,7 +178,8 @@ const LancerApplicationView: FC<Props> = ({ setCurrentActionView }) => {
     const hasApplied = currentBounty.currentUserRelationsList?.some(
       (relation) =>
         relation === BOUNTY_USER_RELATIONSHIP.RequestedLancer ||
-        relation === BOUNTY_USER_RELATIONSHIP.ShortlistedLancer
+        relation === BOUNTY_USER_RELATIONSHIP.ShortlistedLancer ||
+        relation === BOUNTY_USER_RELATIONSHIP.DeniedLancer
     );
     setHasApplied(hasApplied);
   }, [currentBounty, currentUser]);
