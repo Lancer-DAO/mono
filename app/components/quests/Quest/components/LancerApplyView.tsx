@@ -138,7 +138,7 @@ const LancerApplyView: FC<Props> = ({
         </div>
       </div>
       <div className="h-[1px] w-full bg-neutral200" />
-      <div className="w-full px-6 py-4 flex flex-col gap-4">
+      {/* <div className="w-full px-6 py-4 flex flex-col gap-4">
         <p className="text-neutral-600 text">Why am I a good fit?</p>
         <textarea
           className="text border border-neutral200 placeholder:text-neutral500/80 resize-none h-[232px]
@@ -152,7 +152,7 @@ const LancerApplyView: FC<Props> = ({
             setApplyData({ ...applyData, details: e.target.value })
           }
         />
-      </div>
+      </div> */}
       <div className="flex items-center justify-end gap-4 px-6 py-4">
         <button
           className="title-text text-neutral600 px-4 py-2 rounded-md border border-neutral300"
