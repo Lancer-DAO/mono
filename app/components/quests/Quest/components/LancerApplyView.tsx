@@ -41,9 +41,11 @@ const LancerApplyView: FC<Props> = ({
     <div className="flex flex-col">
       <ActionsCardBanner title="Apply to this Quest">
         {/* <ContributorInfo user={currentBounty.creator.user} /> */}
-        {hasApplied && currentBounty.isShortlistedLancer && (
-          <ChatButton setCurrentActionView={setCurrentActionView} />
-        )}
+        {hasApplied &&
+          currentBounty.isShortlistedLancer &&
+          Number(currentBounty.escrow.amount) > 0 && (
+            <ChatButton setCurrentActionView={setCurrentActionView} />
+          )}
       </ActionsCardBanner>
       {hasApplied && !currentBounty.isShortlistedLancer && (
         <div className="px-5 pt-5">

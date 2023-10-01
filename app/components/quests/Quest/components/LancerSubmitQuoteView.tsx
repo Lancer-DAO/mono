@@ -140,28 +140,39 @@ const LancerSubmitQuoteView: FC<Props> = ({
           (quotes?.length || 0) === 1 ? "quote has" : "quotes have"
         } been sent to them already`}
       >
-        {hasApplied && currentBounty.isShortlistedLancer && (
-          <ChatButton setCurrentActionView={setCurrentActionView} />
-        )}
+        {hasApplied &&
+          currentBounty.isShortlistedLancer &&
+          Number(currentBounty.escrow.amount) > 0 && (
+            <ChatButton setCurrentActionView={setCurrentActionView} />
+          )}
       </ActionsCardBanner>
-      {hasApplied && !currentBounty.isShortlistedLancer && (
-        <div className="px-5 pt-5">
-          <AlertCard
-            type="positive"
-            title="Nice!"
-            description="Your application has been sent. Fingers crossed! You will hear an answer from the client within 48 hours."
-          />
-        </div>
-      )}
-      {hasApplied && currentBounty.isShortlistedLancer && (
-        <div className="px-5 pt-5">
-          <AlertCard
-            type="positive"
-            title="Good news!"
-            description="You have been added to the creator's shortlist. You can now chat with them to see if you're a good fit for each other!"
-          />
-        </div>
-      )}
+      {/* sent application and has not been shortlisted OR has been 
+      shortlisted but creator hasn't submitted deposit yet */}
+      {hasApplied &&
+        (!currentBounty.isShortlistedLancer ||
+          (currentBounty.isShortlistedLancer &&
+            Number(currentBounty.escrow.amount) === 0)) && (
+          <div className="px-5 pt-5">
+            <AlertCard
+              type="positive"
+              title="Nice!"
+              description="Your application has been sent. Fingers crossed! You will hear an answer from the client within 48 hours."
+            />
+          </div>
+        )}
+      {/* sent application and has been shortlisted AND creator deposited $ */}
+      {hasApplied &&
+        currentBounty.isShortlistedLancer &&
+        Number(currentBounty.escrow.amount) > 0 && (
+          <div className="px-5 pt-5">
+            <AlertCard
+              type="positive"
+              title="Good news!"
+              description="You have been added to the creator's shortlist. You can now chat with them to see if you're a good fit for each other!"
+            />
+          </div>
+        )}
+      {/* lancer account has not been approved yet */}
       {!currentUser.hasBeenApproved && (
         <>
           <AlertCard
@@ -205,7 +216,8 @@ const LancerSubmitQuoteView: FC<Props> = ({
           {quoteData.checkpoints.length < 5 && !hasApplied && (
             <div className="py-4">
               <button
-                className="py-1 px-2 flex gap-1 justify-center items-center rounded-md border border-neutral200 text-mini text-neutral500"
+                className="py-1 px-2 flex gap-1 justify-center items-center 
+                rounded-md border border-neutral200 text-mini text-neutral500"
                 onClick={() => addCheckpoint()}
               >
                 <Plus />
@@ -216,7 +228,8 @@ const LancerSubmitQuoteView: FC<Props> = ({
         </div>
         <div className="flex py-4 px-6 justify-end items-center gap-4 self-stretch opacity-100">
           <button
-            className="title-text text-neutral600 px-4 py-2 rounded-md border border-neutral300"
+            className="title-text text-neutral600 px-4 py-2 rounded-md border 
+            border-neutral300"
             onClick={() =>
               setCurrentApplicationView(QuestApplicationView.ProfileInfo)
             }
