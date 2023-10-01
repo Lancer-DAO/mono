@@ -61,29 +61,33 @@ const ChatView: FC<Props> = ({ selectedSubmitter, setCurrentActionView }) => {
             : currentBounty.creator.user.name
         } `}
       >
-        <motion.button
-          onClick={() => {
-            if (currentBounty.isCreator) {
-              setCurrentActionView(QuestActionView.ViewApplicants);
-            } else {
-              setCurrentActionView(QuestActionView.SubmitApplication);
-            }
-          }}
-          {...smallClickAnimation}
-        >
-          <X height={24} width={24} className="text-white" />
-        </motion.button>
-        {currentBounty.isApprovedSubmitter &&
-          !!update === false &&
-          currentBounty.state === BountyState.IN_PROGRESS && (
-            <motion.button
-              {...smallClickAnimation}
-              className="bg-secondary200 text-white title-text px-4 py-2 rounded-md"
-              onClick={() => setCurrentActionView(QuestActionView.SubmitUpdate)}
-            >
-              Submit Update
-            </motion.button>
-          )}
+        <div className="flex items-center gap-3">
+          {currentBounty.isApprovedSubmitter &&
+            !!update === false &&
+            currentBounty.state === BountyState.IN_PROGRESS && (
+              <motion.button
+                {...smallClickAnimation}
+                className="bg-secondary200 text-white title-text px-4 py-2 rounded-md"
+                onClick={() =>
+                  setCurrentActionView(QuestActionView.SubmitUpdate)
+                }
+              >
+                Submit Update
+              </motion.button>
+            )}
+          <motion.button
+            onClick={() => {
+              if (currentBounty.isCreator) {
+                setCurrentActionView(QuestActionView.ViewApplicants);
+              } else {
+                setCurrentActionView(QuestActionView.SubmitApplication);
+              }
+            }}
+            {...smallClickAnimation}
+          >
+            <X height={24} width={24} className="text-white" />
+          </motion.button>
+        </div>
       </ActionsCardBanner>
       <div className="">
         {update && currentBounty.isCreator && (
@@ -101,11 +105,13 @@ const ChatView: FC<Props> = ({ selectedSubmitter, setCurrentActionView }) => {
           </AlertCard>
         )}
         {update && currentBounty.isApprovedSubmitter && (
-          <AlertCard
-            type="positive"
-            title="Nice!"
-            description="Your update has been sent!"
-          />
+          <div className="px-5 pt-5">
+            <AlertCard
+              type="positive"
+              title="Nice!"
+              description="Your update has been sent!"
+            />
+          </div>
         )}
 
         <ChannelProvider channelUrl={channel}>

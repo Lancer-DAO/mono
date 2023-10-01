@@ -5,7 +5,7 @@ import { smallClickAnimation } from "@/src/constants";
 import { useUserWallet } from "@/src/providers";
 import { useBounty } from "@/src/providers/bountyProvider";
 import { api } from "@/src/utils";
-import { LancerQuoteData } from "@/types";
+import { BountyState, LancerQuoteData } from "@/types";
 import { motion } from "framer-motion";
 import { Dispatch, FC, SetStateAction, useEffect } from "react";
 import ActionsCardBanner from "./ActionsCardBanner";
@@ -52,6 +52,10 @@ const LancerSubmitQuoteView: FC<Props> = ({
   const { data: checkpoints } = api.checkpoint.getCheckpointsByQuote.useQuery(
     { id: quote?.id },
     { enabled: !!quote }
+  );
+  const { data: update } = api.update.getNewUpdateByBounty.useQuery(
+    { id: currentBounty.id },
+    { enabled: !!currentBounty }
   );
 
   useEffect(() => {
@@ -140,11 +144,26 @@ const LancerSubmitQuoteView: FC<Props> = ({
           (quotes?.length || 0) === 1 ? "quote has" : "quotes have"
         } been sent to them already`}
       >
-        {hasApplied &&
-          currentBounty.isShortlistedLancer &&
-          Number(currentBounty.escrow.amount) > 0 && (
-            <ChatButton setCurrentActionView={setCurrentActionView} />
-          )}
+        <div className="flex items-center gap-3">
+          {currentBounty.isApprovedSubmitter &&
+            !!update === false &&
+            currentBounty.state === BountyState.IN_PROGRESS && (
+              <motion.button
+                {...smallClickAnimation}
+                className="bg-secondary200 text-white title-text px-4 py-2 rounded-md"
+                onClick={() =>
+                  setCurrentActionView(QuestActionView.SubmitUpdate)
+                }
+              >
+                Submit Update
+              </motion.button>
+            )}
+          {hasApplied &&
+            currentBounty.isShortlistedLancer &&
+            Number(currentBounty.escrow.amount) > 0 && (
+              <ChatButton setCurrentActionView={setCurrentActionView} />
+            )}
+        </div>
       </ActionsCardBanner>
       {/* sent application and has not been shortlisted OR has been 
       shortlisted but creator hasn't submitted deposit yet */}
