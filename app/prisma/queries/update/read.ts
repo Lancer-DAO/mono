@@ -37,7 +37,7 @@ export const getNewUpdateByBounty = async (
   });
 
   return update;
-}
+};
 
 export const getQuestUpdatesClient = async (
   userid: number,
@@ -52,7 +52,7 @@ export const getQuestUpdatesClient = async (
     JOIN BountyUser ON Bounty.id = BountyUser.bountyid
     WHERE BountyUser.userid = ${userid}
     AND BountyUser.relations like '%creator%'
-    AND Bounty.state NOT IN ('new', 'accepting_applications', 'voting_to_cancel', 'canceled')
+    AND Bounty.state NOT IN ('reviewing_shortlist', 'accepting_applications', 'voting_to_cancel', 'canceled')
     AND EXISTS (
       SELECT 1
       FROM QuestUpdate

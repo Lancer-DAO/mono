@@ -77,7 +77,11 @@ const EditLinks = ({
           />
         </div>
       </div>
-      <ResumeCard resumeUrl={resumeUrl} setResumeUrl={setResumeUrl} />
+      <ResumeCard
+        resumeUrl={resumeUrl}
+        setResumeUrl={setResumeUrl}
+        editing={true}
+      />
     </div>
   );
 };

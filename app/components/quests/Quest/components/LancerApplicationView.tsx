@@ -1,25 +1,28 @@
+import { IS_CUSTODIAL } from "@/src/constants";
 import { useUserWallet } from "@/src/providers";
 import { useBounty } from "@/src/providers/bountyProvider";
 import { api, updateList } from "@/src/utils";
-import {
-  BOUNTY_USER_RELATIONSHIP,
-  LancerApplyData,
-  LancerQuoteData,
-  QuestProgressState,
-} from "@/types";
+import { BOUNTY_USER_RELATIONSHIP, QuestProgressState } from "@/types";
+import { useWallet } from "@solana/wallet-adapter-react";
 import { FC, useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
 import LancerApplyView from "./LancerApplyView";
 import LancerSubmitQuoteView from "./LancerSubmitQuoteView";
+import { QuestActionView } from "./QuestActions";
 
 export enum QuestApplicationView {
   ProfileInfo = "profile-info",
   SubmitQuote = "submit-quote",
 }
 
-const LancerApplicationView: FC = () => {
+interface Props {
+  setCurrentActionView: (view: QuestActionView) => void;
+}
+
+const LancerApplicationView: FC<Props> = ({ setCurrentActionView }) => {
   const { currentBounty, setCurrentBounty } = useBounty();
   const { currentUser, currentWallet } = useUserWallet();
+  const { connected } = useWallet();
 
   const [currentApplicationView, setCurrentApplicationView] =
     useState<QuestApplicationView>(QuestApplicationView.SubmitQuote);
@@ -29,32 +32,39 @@ const LancerApplicationView: FC = () => {
     api.bountyUsers.update.useMutation();
   const { mutateAsync: createQuote } = api.quote.createQuote.useMutation();
 
-  const [applyData, setApplyData] = useState<LancerApplyData>(() => {
-    const savedApplyData = localStorage.getItem("applyData");
-    if (savedApplyData) return JSON.parse(savedApplyData);
-
-    return {
-      portfolio: currentUser.website,
-      linkedin: currentUser.linkedin,
-      about: currentUser.bio,
-      resume: currentUser.resume,
-      details: "",
-    };
+  const [quoteData, setQuoteData] = useState(() => {
+    const savedData = localStorage.getItem(`quoteData-${currentBounty.id}`);
+    return savedData
+      ? JSON.parse(savedData)
+      : {
+          title: "",
+          description: "",
+          estimatedTime: 0,
+          price: 0,
+          state: QuestProgressState.NEW,
+          checkpoints: [],
+        };
   });
 
-  const [quoteData, setQuoteData] = useState<LancerQuoteData>(() => {
-    const savedQuoteData = localStorage.getItem("quoteData");
-    if (savedQuoteData) return JSON.parse(savedQuoteData);
-
-    return {
-      title: "",
-      description: "",
-      estimatedTime: 0,
-      price: 0,
-      state: QuestProgressState.NEW,
-      checkpoints: [],
-    };
+  const [applyData, setApplyData] = useState(() => {
+    const savedData = localStorage.getItem(`applyData-${currentBounty.id}`);
+    return savedData
+      ? JSON.parse(savedData)
+      : {
+          portfolio: currentUser.website,
+          linkedin: currentUser.linkedin,
+          about: currentUser.bio,
+          resume: currentUser.resume,
+          details: "",
+        };
   });
+
+  const applicationIsValid =
+    quoteData.checkpoints.length > 0 &&
+    quoteData.checkpoints[0].title !== "" &&
+    quoteData.checkpoints[0].description !== "" &&
+    quoteData.checkpoints[0].price !== 0 &&
+    quoteData.checkpoints[0].estimatedTime !== 0;
 
   const confirmAction = (): Promise<void> => {
     setIsAwaitingResponse(true);
@@ -106,6 +116,12 @@ const LancerApplicationView: FC = () => {
       toast.error("Please create at least one milestone.");
       return;
     }
+
+    if (!connected && !IS_CUSTODIAL) {
+      toast.error("Please connect your wallet.");
+      return;
+    }
+
     await confirmAction();
     // Request to submit. Does not interact on chain
     const toastId = toast.loading("Sending application...");
@@ -139,8 +155,10 @@ const LancerApplicationView: FC = () => {
       setCurrentBounty(updatedBounty);
       setHasApplied(true);
       toast.success("Application sent", { id: toastId });
-      localStorage.removeItem("applyData");
-      localStorage.removeItem("quoteData");
+
+      // remove locally stored form data
+      localStorage.removeItem(`quoteData-${currentBounty.id}`);
+      localStorage.removeItem(`applyData-${currentBounty.id}`);
     } catch (error) {
       if (
         (error.message as string).includes(
@@ -158,18 +176,26 @@ const LancerApplicationView: FC = () => {
   useEffect(() => {
     if (!currentBounty || !currentUser) return;
     const hasApplied = currentBounty.currentUserRelationsList?.some(
-      (relation) => relation === BOUNTY_USER_RELATIONSHIP.RequestedLancer
+      (relation) =>
+        relation === BOUNTY_USER_RELATIONSHIP.RequestedLancer ||
+        relation === BOUNTY_USER_RELATIONSHIP.ShortlistedLancer
     );
     setHasApplied(hasApplied);
   }, [currentBounty, currentUser]);
 
-  // useEffects to update local storage whenever application data changes
   useEffect(() => {
-    localStorage.setItem("quoteData", JSON.stringify(quoteData));
-  }, [quoteData]);
+    localStorage.setItem(
+      `quoteData-${currentBounty.id}`,
+      JSON.stringify(quoteData)
+    );
+  }, [quoteData, currentBounty.id]);
+
   useEffect(() => {
-    localStorage.setItem("applyData", JSON.stringify(applyData));
-  }, [applyData]);
+    localStorage.setItem(
+      `applyData-${currentBounty.id}`,
+      JSON.stringify(applyData)
+    );
+  }, [applyData, currentBounty.id]);
 
   return (
     <>
@@ -178,9 +204,11 @@ const LancerApplicationView: FC = () => {
           applyData={applyData}
           setApplyData={setApplyData}
           setCurrentApplicationView={setCurrentApplicationView}
+          setCurrentActionView={setCurrentActionView}
           hasApplied={hasApplied}
           onClick={onClick}
           isAwaitingResponse={isAwaitingResponse}
+          applicationIsValid={applicationIsValid}
         />
       )}
       {currentApplicationView === QuestApplicationView.SubmitQuote && (
@@ -188,9 +216,11 @@ const LancerApplicationView: FC = () => {
           quoteData={quoteData}
           setQuoteData={setQuoteData}
           setCurrentApplicationView={setCurrentApplicationView}
+          setCurrentActionView={setCurrentActionView}
           hasApplied={hasApplied}
           onClick={onClick}
           isAwaitingResponse={isAwaitingResponse}
+          applicationIsValid={applicationIsValid}
         />
       )}
     </>

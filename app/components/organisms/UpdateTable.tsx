@@ -1,27 +1,34 @@
+import { useEffect, useState } from "react";
 import { useUserWallet } from "@/src/providers";
 import dayjs from "dayjs";
 import { DisputeModal, UpdateTableItem } from "..";
-
-import {
-  getUnreadMessageCount,
-  getUnreadChannels,
-  UnreadMessage,
-} from "@/src/utils/sendbird";
-import { useEffect, useState } from "react";
-import { api, updateList } from "@/src/utils";
+import { getUnreadChannels } from "@/src/utils/sendbird";
+import { api, decimalToNumber, updateList } from "@/src/utils";
 import {
   getApplicationTypeFromLabel,
   UpdateItemProps,
-  UpdateType,
 } from "../molecules/UpdateTableItem";
 import { useBounty } from "@/src/providers/bountyProvider";
 import { BountyState, BOUNTY_USER_RELATIONSHIP } from "@/types";
-import { ADMIN_WALLETS, smallClickAnimation } from "@/src/constants";
+import {
+  ADMIN_WALLETS,
+  BADGES_PROJECT_PARAMS,
+  CREATE_COMPLETION_BADGES,
+  smallClickAnimation,
+} from "@/src/constants";
 import { motion } from "framer-motion";
 import toast from "react-hot-toast";
 import { PublicKey } from "@solana/web3.js";
-import { cancelFFA, voteToCancelFFA } from "@/escrow/adapters";
 import EmptyUpdatesHistory from "../@icons/EmptyUpdatesHistory";
+import {
+  approveRequestFFA,
+  cancelFFA,
+  voteToCancelFFA,
+} from "@/escrow/adapters";
+import Image from "next/image";
+
+import { createUnderdogClient } from "@underdog-protocol/js";
+const underdogClient = createUnderdogClient({});
 
 const AllUpdatesTable: React.FC = () => {
   const { currentUser } = useUserWallet();
@@ -35,7 +42,6 @@ const AllUpdatesTable: React.FC = () => {
     api.bountyUsers.getBountyUpdatesLancer.useQuery(undefined, {
       enabled: !!currentUser,
     });
-
   const { data: cancelVotes } = api.bountyUsers.getCancelVotesLancer.useQuery(
     undefined,
     {
@@ -54,7 +60,6 @@ const AllUpdatesTable: React.FC = () => {
       enabled: !!currentUser,
     }
   );
-
   const { data: lancerUpdates } = api.update.getQuestUpdatesLancer.useQuery(
     undefined,
     {
@@ -193,7 +198,7 @@ const AllUpdatesTable: React.FC = () => {
         allUpdates.sort((a, b) => {
           return b.time.unix() - a.time.unix();
         });
-        console.log("allUpdates", allUpdates);
+        // console.log("allUpdates", allUpdates);
         setAllUpdates(allUpdates);
       };
       getChannels();
@@ -208,23 +213,34 @@ const AllUpdatesTable: React.FC = () => {
     lancerUpdates,
     disputes,
   ]);
-  console.log('ALL UPDATES')
+  console.log("ALL UPDATES");
   console.log(allUpdates);
   if (!allUpdates) {
-    return <EmptyUpdatesHistory width='612px' height='423px'/>;
-  } 
+    return <EmptyUpdatesHistory width="612px" height="423px" />;
+  }
 
   return (
-    currentUser && (
-      <div className="flex flex-col w-full border-solid border bg-white border-neutralBorder500 rounded-lg">
-        <div className="px-8 py-4 text-black">Updates History</div>
-        {allUpdates?.map((update) => {
-          return <UpdateTableItem {...update} key={update.key} />;
-        })}
-
-        <div className="px-8 py-4 text-black"></div>
+    <div className="flex flex-col w-full border-solid border bg-white border-neutralBorder500 rounded-lg">
+      <div className="px-8 py-4 text-neutral600 font-bold text-lg">
+        Updates History
       </div>
-    )
+      <div className="h-[1px] w-full bg-neutral100" />
+      {currentUser ? (
+        allUpdates?.map((update) => {
+          return <UpdateTableItem {...update} key={update.key} />;
+        })
+      ) : (
+        <Image
+          src="/assets/images/placeholder.png"
+          width={200}
+          height={200}
+          alt="no updates"
+          className="mx-auto py-5"
+        />
+      )}
+
+      <div className="px-8 py-4 text-neutral600"></div>
+    </div>
   );
 };
 
@@ -424,10 +440,10 @@ const QuestUpdatesTable: React.FC = () => {
     lancerUpdates,
     disputes,
   ]);
-  console.log('ALL UPDATES')
+  console.log("ALL UPDATES");
   console.log(allUpdates);
   if (!allUpdates) {
-    return <EmptyUpdatesHistory width='612px' height='423px' />;
+    return <EmptyUpdatesHistory width="612px" height="423px" />;
   }
 
   const confirmAction = (confirmText: string): Promise<void> => {
@@ -453,14 +469,14 @@ const QuestUpdatesTable: React.FC = () => {
             <div className="mt-2 flex items-center gap-4 justify-center">
               <button
                 onClick={handleYes}
-                className="bg-white border border-neutral300 text-error flex title-text
+                className=" bg-primary200 flex text-white title-text title-text
                 items-center justify-center rounded-md px-3 py-1"
               >
                 Yes
               </button>
               <button
                 onClick={handleNo}
-                className="bg-primary200 flex text-white title-text
+                className="bg-white border border-neutral300 text-error
                 items-center justify-center rounded-md px-3 py-1"
               >
                 No
@@ -518,6 +534,98 @@ const QuestUpdatesTable: React.FC = () => {
         toast.error("Wallet is registered to another user", { id: toastId });
       } else {
         toast.error("Error submitting application", { id: toastId });
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  };
+  const handlePayoutQuest = async () => {
+    await confirmAction(
+      "Are you sure you want to payout this Quest in its entirety?"
+    );
+    const toastId = toast.loading("Paying out Quest...");
+    try {
+      setIsLoading(true);
+      let signature = "";
+      if (currentBounty?.isCreator && currentBounty.currentSubmitter) {
+        signature = await approveRequestFFA(
+          new PublicKey(currentBounty.currentSubmitter.publicKey),
+          currentBounty?.escrow,
+          currentWallet,
+          program,
+          provider
+        );
+      }
+      const newRelations = updateList(
+        currentBounty.currentSubmitter.relations,
+        [],
+        [BOUNTY_USER_RELATIONSHIP.Completer]
+      );
+      const updatedBounty = await updateBounty({
+        bountyId: currentBounty?.id,
+        currentUserId: currentUser.id,
+        userId: currentBounty.currentSubmitter.userid,
+        relations: newRelations,
+        state: BountyState.COMPLETE,
+        publicKey: currentBounty.currentSubmitter.publicKey,
+        escrowId: currentBounty?.escrowid,
+        signature,
+        label: "complete-bounty",
+      });
+      setCurrentBounty(updatedBounty);
+      if (CREATE_COMPLETION_BADGES && !currentBounty?.isTest) {
+        const creatorKey = currentBounty?.creator.publicKey;
+
+        const reputationIncrease =
+          100 * decimalToNumber(currentBounty?.estimatedTime);
+
+        await underdogClient.createNft({
+          params: BADGES_PROJECT_PARAMS,
+          body: {
+            name: `Completer: ${currentBounty?.id}`,
+            image:
+              "https://utfs.io/f/969ce9f5-f272-444a-ac76-5b4a9e2be9d9_quest_completed.png",
+            description: currentBounty?.description,
+            attributes: {
+              reputation: reputationIncrease,
+              completed: dayjs().toISOString(),
+              tags: currentBounty?.tags.map((tag) => tag.name).join(","),
+              role: "completer",
+            },
+            upsert: false,
+            receiverAddress: currentBounty.currentSubmitter.publicKey,
+          },
+        });
+
+        await underdogClient.createNft({
+          params: BADGES_PROJECT_PARAMS,
+          body: {
+            name: `Creator: ${currentBounty?.id}`,
+            image:
+              "https://utfs.io/f/969ce9f5-f272-444a-ac76-5b4a9e2be9d9_quest_completed.png",
+            description: currentBounty?.description,
+            attributes: {
+              reputation: reputationIncrease,
+              completed: dayjs().toISOString(),
+              tags: currentBounty?.tags.map((tag) => tag.name).join(","),
+              role: "creator",
+            },
+            upsert: false,
+            receiverAddress: creatorKey,
+          },
+        });
+      }
+      toast.success("Successfully paid out", { id: toastId });
+    } catch (error) {
+      if (
+        (error.message as string).includes(
+          "Wallet is registered to another user"
+        )
+      ) {
+        toast.error("Wallet is registered to another user", { id: toastId });
+      } else {
+        console.error(error);
+        toast.error("Error paying out bounty", { id: toastId });
       }
     } finally {
       setIsLoading(false);
@@ -610,8 +718,10 @@ const QuestUpdatesTable: React.FC = () => {
     currentUser && (
       <div className="flex flex-col w-full border-solid border bg-white border-neutralBorder500 rounded-lg">
         <div className="flex items-center">
-          <div className="px-8 py-4 text-black">Updates History</div>
-
+          <div className="px-8 py-4 text-neutral600 font-bold text-lg whitespace-nowrap">
+            Updates History
+          </div>
+          <div className="h-[1px] w-full bg-neutral100" />
           {currentBounty.isCreator &&
             currentBounty.state !== BountyState.VOTING_TO_CANCEL &&
             currentBounty.state !== BountyState.DISPUTE_STARTED &&
@@ -619,11 +729,25 @@ const QuestUpdatesTable: React.FC = () => {
               <motion.button
                 {...smallClickAnimation}
                 className="bg-white border border-neutral200 ml-auto mr-8 h-9 w-fit px-4 py-2
-              title-text rounded-md text-error disabled:cursor-not-allowed disabled:opacity-80"
+                title-text rounded-md text-error disabled:cursor-not-allowed disabled:opacity-80 whitespace-nowrap"
                 onClick={handleVoteToCancel}
                 disabled={isLoading || isAwaitingResponse}
               >
                 Vote to Cancel
+              </motion.button>
+            )}
+          {currentBounty.isCreator &&
+            [BountyState.AWAITING_REVIEW].includes(
+              currentBounty.state as BountyState
+            ) && (
+              <motion.button
+                {...smallClickAnimation}
+                className="bg-white border border-neutral200 ml-auto mr-8 h-9 w-fit px-4 py-2
+              title-text rounded-md text-success disabled:cursor-not-allowed disabled:opacity-80 whitespace-nowrap"
+                onClick={handlePayoutQuest}
+                disabled={isLoading || isAwaitingResponse}
+              >
+                Payout Quest
               </motion.button>
             )}
           {!currentBounty.isCreator &&
@@ -635,7 +759,7 @@ const QuestUpdatesTable: React.FC = () => {
                 <motion.button
                   {...smallClickAnimation}
                   className="bg-white border border-neutral200 ml-auto mr-4 h-9 w-fit px-4 py-2
-              title-text rounded-md text-error disabled:cursor-not-allowed disabled:opacity-80"
+                  title-text rounded-md text-error disabled:cursor-not-allowed disabled:opacity-80 whitespace-nowrap"
                   onClick={handleVoteToCancel}
                   disabled={isLoading || isAwaitingResponse}
                 >
@@ -644,7 +768,7 @@ const QuestUpdatesTable: React.FC = () => {
                 <motion.button
                   {...smallClickAnimation}
                   className="bg-white border border-neutral200 mr-8 h-9 w-fit px-4 py-2
-              title-text rounded-md text-error disabled:cursor-not-allowed disabled:opacity-80"
+                  title-text rounded-md text-error disabled:cursor-not-allowed disabled:opacity-80 whitespace-nowrap"
                   onClick={handleStartDispute}
                   disabled={isLoading || isAwaitingResponse}
                 >
@@ -657,7 +781,7 @@ const QuestUpdatesTable: React.FC = () => {
               <motion.button
                 {...smallClickAnimation}
                 className="ml-auto text-white bg-[#B26B9B] border-[#A66390] mr-8 h-9 w-fit px-4 py-2
-              title-text rounded-md  disabled:cursor-not-allowed disabled:opacity-80"
+                title-text rounded-md  disabled:cursor-not-allowed disabled:opacity-80 whitespace-nowrap"
                 onClick={() => {}}
                 disabled={true}
               >
@@ -671,7 +795,7 @@ const QuestUpdatesTable: React.FC = () => {
               <motion.button
                 {...smallClickAnimation}
                 className="bg-white border border-neutral200 h-9 w-fit px-4 py-2
-                title-text rounded-md text-error disabled:cursor-not-allowed disabled:opacity-80"
+                title-text rounded-md text-error disabled:cursor-not-allowed disabled:opacity-80 whitespace-nowrap mr-4"
                 onClick={handleCancel}
                 disabled={isLoading || isAwaitingResponse}
               >
@@ -685,7 +809,7 @@ const QuestUpdatesTable: React.FC = () => {
               <motion.button
                 {...smallClickAnimation}
                 className="bg-white border border-neutral200 h-9 w-fit px-4 py-2 mr-8
-                title-text rounded-md text-error disabled:cursor-not-allowed disabled:opacity-80"
+                title-text rounded-md text-error disabled:cursor-not-allowed disabled:opacity-80 whitespace-nowrap"
                 onClick={() => {
                   setShowDisputeModal(true);
                 }}
@@ -696,13 +820,15 @@ const QuestUpdatesTable: React.FC = () => {
             )}
         </div>
         {allUpdates?.map((update) => {
-          return <UpdateTableItem {...update} key={update.key} />;
+          return (
+            <UpdateTableItem {...update} key={update.key} isIndividual={true} />
+          );
         })}
         {showDisputeModal && (
           <DisputeModal setShowModal={setShowDisputeModal} />
         )}
 
-        <div className="px-8 py-4 text-black"></div>
+        <div className="px-8 py-4 text-neutral600"></div>
       </div>
     )
   );

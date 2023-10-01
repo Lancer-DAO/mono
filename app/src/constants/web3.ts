@@ -16,3 +16,6 @@ export const CREATE_COMPLETION_BADGES =
   process.env.NEXT_PUBLIC_CREATE_COMPLETION_BADGES === "true";
 
 export const ADMIN_WALLETS = ["WbmLPptTGZTFK5ZSks7oaa4Qx69qS3jFXMrAsbWz1or"];
+export const BUDDY_ADDRESS = IS_MAINNET
+  ? "BUDDYtQp7Di1xfojiCSVDksiYLQx511DPdj2nbtG9Yu5"
+  : "9zE4EQ5tJbEeMYwtS2w8KrSHTtTW4UPqwfbBSEkUrNCA";

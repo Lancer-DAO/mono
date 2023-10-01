@@ -6,7 +6,7 @@ import {
   approveRequestWithReferralInstruction,
   approveRequestInstruction,
 } from "@/escrow/sdk/instructions";
-import { USDC_MINT } from "@/src/constants";
+import { BUDDY_ADDRESS, USDC_MINT } from "@/src/constants";
 import { LancerWallet } from "@/types/";
 import { Escrow } from "@/types/Bounties";
 
@@ -14,7 +14,6 @@ export const approveRequestFFA = async (
   submitter: PublicKey,
   acc: Escrow,
   wallet: LancerWallet,
-  buddylinkProgramId: PublicKey,
   program: Program<MonoProgram>,
   provider: AnchorProvider
 ) => {
@@ -26,6 +25,7 @@ export const approveRequestFFA = async (
     creator,
     submitter,
     tokenAddress,
+    new PublicKey(BUDDY_ADDRESS),
     mint,
     program
   );

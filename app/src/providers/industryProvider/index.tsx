@@ -9,11 +9,15 @@ import {
 export interface IIndustryContext {
   allIndustries: Industry[];
   setAllIndustries: (mints: Industry[]) => void;
+  userIndustries: Industry[];
+  setUserIndustries: (mints: Industry[]) => void;
 }
 
 export const IndustryContext = createContext<IIndustryContext>({
   allIndustries: [],
   setAllIndustries: () => null,
+  userIndustries: [],
+  setUserIndustries: () => null,
 });
 
 export function useIndustry(): IIndustryContext {
@@ -31,10 +35,13 @@ const IndustryProvider: FunctionComponent<IIndustryState> = ({
   children,
 }: IIndustryProps) => {
   const [allIndustries, setAllIndustries] = useState<Industry[] | null>(null);
+  const [userIndustries, setUserIndustries] = useState<Industry[] | null>(null);
 
   const contextProvider = {
     allIndustries,
     setAllIndustries,
+    userIndustries,
+    setUserIndustries,
   };
   return (
     <IndustryContext.Provider value={contextProvider}>

@@ -1,5 +1,4 @@
 import { Rocket } from "@/components";
-import Image from "next/image";
 import { FC } from "react";
 
 interface Props {

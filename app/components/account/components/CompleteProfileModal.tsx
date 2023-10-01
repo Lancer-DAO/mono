@@ -2,10 +2,13 @@ import { FC, Dispatch, SetStateAction } from "react";
 import Image from "next/image";
 import { Modal } from "@/components";
 import { QuestActionsButton } from "../../quests/Quest/components";
+import { useUserWallet } from "@/src/providers";
 
 interface Props {
   setShowModal: Dispatch<SetStateAction<boolean>>;
 }
+
+const { currentUser } = useUserWallet();
 
 export const CompleteProfileModal: FC<Props> = ({ setShowModal }) => {
   return (
@@ -22,7 +25,9 @@ export const CompleteProfileModal: FC<Props> = ({ setShowModal }) => {
         </p>
         <ol className="text-center">
           <li className="font-bold">1. Unlock messaging</li>
-          <li className="font-bold">2. Gain access to all Quests</li>
+          <li className="font-bold">
+            {currentUser.class === "Lancer" ? "2. Apply to Quests" : "2. Create Quests"}
+          </li>
           <li className="font-bold">
             3. Referral commissions for inviting others
           </li>

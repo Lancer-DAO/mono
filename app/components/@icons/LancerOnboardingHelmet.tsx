@@ -18,35 +18,35 @@ const LancerOnboardingHelmet = ({
         cy="425.5"
         r="135.525"
         stroke="#14BB88"
-        stroke-width="1.95"
+        strokeWidth="1.95"
       />
       <circle
         cx="425.5"
         cy="424.5"
         r="182.525"
         stroke="#14BB88"
-        stroke-width="1.95"
+        strokeWidth="1.95"
       />
       <circle
         cx="425"
         cy="424"
         r="238.025"
         stroke="#14BB88"
-        stroke-width="1.95"
+        strokeWidth="1.95"
       />
       <circle
         cx="428.206"
         cy="425.5"
         r="101.522"
         stroke="#14BB88"
-        stroke-width="1.70625"
+        strokeWidth="1.70625"
       />
       <circle
         cx="427.25"
         cy="426.25"
         r="67.3969"
         stroke="#14BB88"
-        stroke-width="1.70625"
+        strokeWidth="1.70625"
       />
       <rect
         x="185"

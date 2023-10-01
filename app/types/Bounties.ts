@@ -11,6 +11,7 @@ import { MediaType } from "@/prisma/queries/media";
 import { MintType } from "@/prisma/queries/mint";
 
 export type Filters = {
+  industries: string[];
   tags: string[];
   states: string[];
 };
@@ -63,9 +64,9 @@ export interface BountyUserRelations {
 export enum BountyState {
   CANCELED = "canceled",
   COMPLETE = "complete",
-  NEW = "new",
   ACH_PENDING = "ach_pending",
   ACCEPTING_APPLICATIONS = "accepting_applications",
+  REVIEWING_SHORTLIST = "reviewing_shortlist",
   IN_PROGRESS = "in_progress",
   AWAITING_REVIEW = "awaiting_review",
   VOTING_TO_CANCEL = "voting_to_cancel",
