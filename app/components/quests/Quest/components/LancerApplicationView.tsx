@@ -175,12 +175,7 @@ const LancerApplicationView: FC<Props> = ({ setCurrentActionView }) => {
   // check if user has applied
   useEffect(() => {
     if (!currentBounty || !currentUser) return;
-    const hasApplied = currentBounty.currentUserRelationsList?.some(
-      (relation) =>
-        relation === BOUNTY_USER_RELATIONSHIP.RequestedLancer ||
-        relation === BOUNTY_USER_RELATIONSHIP.ShortlistedLancer ||
-        relation === BOUNTY_USER_RELATIONSHIP.DeniedLancer
-    );
+    const hasApplied = !!currentBounty.currentUserRelationsList;
     setHasApplied(hasApplied);
   }, [currentBounty, currentUser]);
 
