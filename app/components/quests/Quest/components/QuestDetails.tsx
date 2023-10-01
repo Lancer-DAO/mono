@@ -1,6 +1,8 @@
 import { useState } from "react";
+import Image from "next/image";
 import { useBounty } from "@/src/providers/bountyProvider";
 import {
+  api,
   bountyIndustryColor,
   cn,
   formatPrice,
@@ -21,6 +23,15 @@ const Divider = () => <div className="h-[20px] w-[1px] mx-4 bg-slate-200" />;
 const QuestDetails = () => {
   const [dropdownOpen, setDropdownOpen] = useState(true);
   const { currentBounty } = useBounty();
+  const { data: questMedia } = api.media.getMediaByBounty.useQuery(
+    {
+      bountyId: currentBounty.id,
+    },
+    {
+      enabled: !!currentBounty.id,
+    }
+  );
+
   const industryColor = bountyIndustryColor(currentBounty.industries[0].name);
 
   const router = useRouter();
@@ -180,6 +191,56 @@ const QuestDetails = () => {
           }`}
           dangerouslySetInnerHTML={previewMarkup()}
         />
+      </div>
+      {currentBounty.links !== "" ||
+        (questMedia?.length > 0 && (
+          <div className="h-[1px] w-full bg-neutral200" />
+        ))}
+      <div className="px-10 py-5">
+        {currentBounty.links !== "" && (
+          <>
+            <div className="w-full title-text mb-4">Additional Links</div>
+            <div className="relative w-full flex flex-col gap-2">
+              {currentBounty.links
+                .split(",")
+                .map((link: string, index: number) => (
+                  <a
+                    href={link}
+                    target="_blank"
+                    rel="noreferrer noopener"
+                    className="text-sm border bg-neutral-100 truncate
+                    border-neutral-200 w-full rounded-md px-4 py-2"
+                    key={`link-${index}`}
+                  >
+                    {link}
+                  </a>
+                ))}
+            </div>
+          </>
+        )}
+        {questMedia?.length > 0 && (
+          <>
+            <div className="w-full title-text my-4">Reference Media</div>
+            <div className="grid grid-cols-4 gap-4">
+              {questMedia?.map((med, index) => {
+                return (
+                  <div
+                    className="flex items-center justify-center relative border 
+                    border-neutral-200 rounded-md"
+                    key={index}
+                  >
+                    <Image
+                      src={med.imageUrl}
+                      alt={med.title}
+                      fill
+                      style={{ objectFit: "contain" }}
+                    />
+                  </div>
+                );
+              })}
+            </div>
+          </>
+        )}
       </div>
     </div>
   );
