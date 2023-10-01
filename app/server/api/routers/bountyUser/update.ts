@@ -1,7 +1,7 @@
 import { protectedProcedure } from "../../trpc";
 import { z } from "zod";
 import * as queries from "@/prisma/queries";
-import { BountyState } from "@/types/";
+import { BountyState, BOUNTY_USER_RELATIONSHIP } from "@/types/";
 import { createGroupChannel } from "@/src/utils/sendbird";
 import { HostedHooksClient } from "../../webhooks";
 import { prisma } from "@/server/db";
@@ -87,7 +87,11 @@ export const update = protectedProcedure
         });
         _usersToReject.forEach(async (_user) => {
           const user = _user.user;
-          queries.bountyUser.updateRelations(bountyId, ["rejected"], user);
+          queries.bountyUser.updateRelations(
+            bountyId,
+            [BOUNTY_USER_RELATIONSHIP.DeniedLancer],
+            user
+          );
           const webhookUpdate = {
             ...updatedBounty,
             updateType: _user.relations.includes("shortlist")
