@@ -1,5 +1,4 @@
-import { useState } from "react";
-import Image from "next/image";
+import { Dialog, DialogContent, DialogTrigger } from "@/components/atoms/Modal";
 import { useBounty } from "@/src/providers/bountyProvider";
 import {
   api,
@@ -13,16 +12,19 @@ import { BountyState } from "@/types";
 import { PublicKey } from "@solana/web3.js";
 import dayjs from "dayjs";
 import { marked } from "marked";
+import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/router";
+import { useState } from "react";
 import { ArrowLeft, ChevronDown, ChevronUp, ExternalLink } from "react-feather";
 import { ArchiveBounty } from ".";
-import { useRouter } from "next/router";
-import { Dialog, DialogContent, DialogTrigger } from "@/components/atoms/Modal";
 
 const Divider = () => <div className="h-[20px] w-[1px] mx-4 bg-slate-200" />;
 
 const QuestDetails = () => {
-  const [dropdownOpen, setDropdownOpen] = useState(true);
+  const [dropdownOpenDescription, setDropdownOpenDescription] = useState(true);
+  const [dropdownOpenLinks, setDropdownOpenLinks] = useState(true);
+  const [dropdownOpenReferences, setDropdownOpenReferences] = useState(true);
   const { currentBounty } = useBounty();
   const { data: questMedia } = api.media.getMediaByBounty.useQuery(
     {
@@ -62,7 +64,7 @@ const QuestDetails = () => {
 
   return (
     <div
-      className="flex flex-col bg-white min-w-[610px] w-full h-fit 
+      className="flex flex-col bg-white w-[610px] 2xl:w-[750px] h-fit 
       border border-neutral200 rounded-lg"
     >
       {/* quest header */}
@@ -171,38 +173,64 @@ const QuestDetails = () => {
 
       <div className="h-[1px] w-full bg-neutral200" />
       {/* quest content */}
-      <div className="px-10 py-4">
-        <div
-          className={`flex justify-between ${dropdownOpen ? "pb-[10px]" : ""}`}
-        >
-          <p className="text font-bold text-neutral600">Job Description</p>
-          <button
-            className="h-full"
-            onClick={() => setDropdownOpen(!dropdownOpen)}
+      <div className="px-10 py-4 flex flex-col gap-6">
+        <div>
+          <div
+            className={`flex justify-between ${
+              dropdownOpenDescription ? "pb-[10px]" : ""
+            }`}
           >
-            {dropdownOpen ? (
-              <ChevronUp width={12} height={20} />
-            ) : (
-              <ChevronDown width={12} height={20} />
-            )}
-          </button>
+            <p className="text font-bold text-neutral600">Job Description</p>
+            <button
+              className="h-full"
+              onClick={() =>
+                setDropdownOpenDescription(!dropdownOpenDescription)
+              }
+            >
+              {dropdownOpenDescription ? (
+                <ChevronUp width={12} height={20} />
+              ) : (
+                <ChevronDown width={12} height={20} />
+              )}
+            </button>
+          </div>
+          <p
+            className={`leading-[25.2px] text-sm text-neutral500 ${
+              dropdownOpenDescription ? "" : "hidden"
+            }`}
+            dangerouslySetInnerHTML={previewMarkup()}
+          />
         </div>
-        <p
-          className={`leading-[25.2px] text-sm text-neutral500 ${
-            dropdownOpen ? "" : "hidden"
-          }`}
-          dangerouslySetInnerHTML={previewMarkup()}
-        />
-      </div>
-      {currentBounty.links !== "" ||
-        (questMedia?.length > 0 && (
-          <div className="h-[1px] w-full bg-neutral200" />
-        ))}
-      <div className="px-10 py-5">
+        {currentBounty.links !== "" ||
+          (questMedia?.length > 0 && (
+            <div className="h-[1px] w-full bg-neutral200" />
+          ))}
         {currentBounty.links !== "" && (
-          <>
-            <div className="w-full title-text mb-4">Additional Links</div>
-            <div className="relative w-full flex flex-col gap-2">
+          <div>
+            <div
+              className={`flex justify-between ${
+                dropdownOpenLinks ? "pb-[10px]" : ""
+              }`}
+            >
+              <div className="text font-bold text-neutral600">
+                Additional Links
+              </div>
+              <button
+                className="h-full"
+                onClick={() => setDropdownOpenLinks(!dropdownOpenLinks)}
+              >
+                {dropdownOpenLinks ? (
+                  <ChevronUp width={12} height={20} />
+                ) : (
+                  <ChevronDown width={12} height={20} />
+                )}
+              </button>
+            </div>
+            <div
+              className={`relative w-full flex flex-col gap-2 ${
+                dropdownOpenLinks ? "" : "hidden"
+              }`}
+            >
               {currentBounty.links
                 .split(",")
                 .map((link: string, index: number) => (
@@ -218,12 +246,36 @@ const QuestDetails = () => {
                   </a>
                 ))}
             </div>
-          </>
+          </div>
         )}
         {questMedia?.length > 0 && (
-          <>
-            <div className="w-full title-text my-4">Reference Media</div>
-            <div className="grid grid-cols-3 gap-4">
+          <div>
+            <div
+              className={`flex justify-between ${
+                dropdownOpenReferences ? "pb-[10px]" : ""
+              }`}
+            >
+              <div className="text font-bold text-neutral600">
+                Reference Media
+              </div>
+              <button
+                className="h-full"
+                onClick={() =>
+                  setDropdownOpenReferences(!dropdownOpenReferences)
+                }
+              >
+                {dropdownOpenReferences ? (
+                  <ChevronUp width={12} height={20} />
+                ) : (
+                  <ChevronDown width={12} height={20} />
+                )}
+              </button>
+            </div>
+            <div
+              className={`grid grid-cols-3 gap-4 ${
+                dropdownOpenReferences ? "" : "hidden"
+              }`}
+            >
               {questMedia?.map((med, index) => {
                 return (
                   <Dialog key={index}>
@@ -269,7 +321,7 @@ const QuestDetails = () => {
                 );
               })}
             </div>
-          </>
+          </div>
         )}
       </div>
     </div>
