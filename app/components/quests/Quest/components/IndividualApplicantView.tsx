@@ -351,16 +351,16 @@ const IndividualApplicantView: FC<Props> = ({
                     className="bg-success h-9 w-fit px-4 py-2
                     title-text rounded-md text-white disabled:cursor-not-allowed disabled:opacity-80"
                     onClick={() => {
-                      // if (
-                      //   Number(quote.price) -
-                      //     Number(currentBounty.escrow.amount) >
-                      //   0
-                      // ) {
-                      //   setShowModal(true);
-                      // } else {
-                      // run approval function anyways
-                      handleApproveForQuest();
-                      // }
+                      if (
+                        Number(quote.price) -
+                          Number(currentBounty.escrow.amount) >
+                        0
+                      ) {
+                        setShowModal(true);
+                      } else {
+                        // run approval function anyways
+                        handleApproveForQuest();
+                      }
                     }}
                     disabled={isLoading || isAwaitingResponse}
                   >
