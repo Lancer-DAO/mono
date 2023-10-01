@@ -165,8 +165,6 @@ const LancerSubmitQuoteView: FC<Props> = ({
             )}
         </div>
       </ActionsCardBanner>
-      {/* sent application and has not been shortlisted OR has been 
-      shortlisted but creator hasn't submitted deposit yet */}
       {hasApplied &&
         (!currentBounty.isShortlistedLancer ||
           (currentBounty.isShortlistedLancer &&
@@ -179,7 +177,6 @@ const LancerSubmitQuoteView: FC<Props> = ({
             />
           </div>
         )}
-      {/* sent application and has been shortlisted AND creator deposited $ */}
       {hasApplied &&
         currentBounty.isShortlistedLancer &&
         Number(currentBounty.escrow.amount) > 0 && (
@@ -191,7 +188,15 @@ const LancerSubmitQuoteView: FC<Props> = ({
             />
           </div>
         )}
-      {/* lancer account has not been approved yet */}
+      {currentBounty.isDeniedLancer && (
+        <div className="px-5 pt-5">
+          <AlertCard
+            type="negative"
+            title="Not Selected"
+            description="The creator of this Quest has decided to go with another Lancer. You can still apply to other Quests!"
+          />
+        </div>
+      )}
       {!currentUser.hasBeenApproved && (
         <div className="px-5 pt-5">
           <AlertCard
@@ -214,7 +219,7 @@ const LancerSubmitQuoteView: FC<Props> = ({
           </div>
           {quoteData.checkpoints.map((checkpoint, index) => (
             <>
-              {!hasApplied ? (
+              {!hasApplied && !currentBounty.isDeniedLancer ? (
                 <CheckpointEdit
                   checkpoint={checkpoint}
                   setQuoteData={setQuoteData}
@@ -255,7 +260,7 @@ const LancerSubmitQuoteView: FC<Props> = ({
           >
             Review Profile
           </button>
-          {!hasApplied && (
+          {!hasApplied && !currentBounty.isDeniedLancer && (
             <motion.button
               {...smallClickAnimation}
               className="bg-primary200 text-white h-9 w-fit px-4 py-2 title-text rounded-md

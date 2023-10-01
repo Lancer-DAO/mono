@@ -66,22 +66,22 @@ const LancerApplyView: FC<Props> = ({
         </div>
       )}
       {currentBounty.isDeniedLancer && (
-        <>
+        <div className="px-5 pt-5">
           <AlertCard
             type="negative"
             title="Not Selected"
             description="The creator of this Quest has decided to go with another Lancer. You can still apply to other Quests!"
           />
-        </>
+        </div>
       )}
       {!currentUser.hasBeenApproved && (
-        <>
+        <div className="px-5 pt-5">
           <AlertCard
             type="negative"
             title="Not Approved"
             description="You Must Be Approved to Apply to Quests"
           />
-        </>
+        </div>
       )}
       <div className="w-full p-6 flex items-center justify-between gap-5">
         <div className="flex items-center gap-4">
