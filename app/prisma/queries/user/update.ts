@@ -251,3 +251,16 @@ export const approveUser = async (email: string): Promise<Prisma.User> => {
     },
   });
 };
+
+export const registerOnboardingBadge = async (
+  email: string
+): Promise<Prisma.User> => {
+  return await prisma.user.update({
+    where: {
+      email,
+    },
+    data: {
+      hasOnboardingBadge: true,
+    },
+  });
+};

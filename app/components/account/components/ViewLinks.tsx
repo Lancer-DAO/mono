@@ -1,7 +1,4 @@
 import Link from "next/link";
-import { Image as ImageIcon } from "lucide-react";
-import { motion } from "framer-motion";
-import { smallClickAnimation } from "@/src/constants";
 import { ResumeCard } from "./ResumeCard";
 
 const ViewLinks = ({
@@ -90,7 +87,11 @@ const ViewLinks = ({
             </div>
           )}
         </div>
-        <ResumeCard resumeUrl={resumeUrl} setResumeUrl={null} />
+        <ResumeCard
+          resumeUrl={resumeUrl}
+          setResumeUrl={() => null}
+          editing={false}
+        />
       </div>
     </>
   );

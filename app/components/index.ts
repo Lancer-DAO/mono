@@ -36,7 +36,6 @@ const StarIcon = dynamic(() => import("./@icons/StarIcon"));
 const USDC = dynamic(() => import("./@icons/USDC"));
 
 // atoms
-const BountyCardFrame = dynamic(() => import("./atoms/BountyCardFrame"));
 const Button = dynamic(() => import("./atoms/Button"));
 const ChatButton = dynamic(() => import("./atoms/ChatButton"));
 const CoinflowOfframp = dynamic(() => import("./atoms/CoinflowOfframp"));
@@ -57,7 +56,6 @@ const AccountHeaderOptions = dynamic(
 );
 const AddReferrerModal = dynamic(() => import("./molecules/AddReferrerModal"));
 const ApiKeyModal = dynamic(() => import("./molecules/ApiKeyModal"));
-const BountyCard = dynamic(() => import("./molecules/BountyCard"));
 const CoinflowFund = dynamic(() => import("./molecules/CoinflowFund"));
 const CopyLinkField = dynamic(() => import("./molecules/CopyLinkField"));
 const ImageUpload = dynamic(() => import("./molecules/ImageUpload"));
@@ -118,7 +116,6 @@ export {
   USDC,
 
   // atoms
-  BountyCardFrame,
   Button,
   ChatButton,
   CoinflowOfframp,
@@ -137,7 +134,6 @@ export {
   AccountHeaderOptions,
   AddReferrerModal,
   ApiKeyModal,
-  BountyCard,
   CoinflowFund,
   CopyLinkField,
   ImageUpload,

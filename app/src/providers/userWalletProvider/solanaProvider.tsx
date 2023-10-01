@@ -47,7 +47,6 @@ const solanaProvider = (provider: SafeEventEmitterProvider): WalletActions => {
     try {
       const solWeb3 = new SolanaWallet(provider);
       const signedTx = await solWeb3.signTransaction(transaction);
-      signedTx.serialize();
       return signedTx;
     } catch (error) {
       console.error("Error", error);

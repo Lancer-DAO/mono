@@ -1,23 +1,24 @@
 import { LockIcon, Logo } from "@/components";
 import { useBounty } from "@/src/providers/bountyProvider";
 import { BountyPreview, Industry, QuestFormData } from "@/types/";
-import { getFormattedDate } from "@/utils";
+import {
+  bountyIndustryColor,
+  cn,
+  formatString,
+  getFormattedDate,
+} from "@/utils";
 import { ExternalLink } from "lucide-react";
 import { marked } from "marked";
 import Image from "next/image";
 import { FC, SVGAttributes } from "react";
 
-export interface BountyCardProps extends SVGAttributes<SVGSVGElement> {
+interface Props extends SVGAttributes<SVGSVGElement> {
   bounty?: BountyPreview;
   formData?: QuestFormData;
   linked?: boolean;
 }
 
-export const QuestRow: FC<BountyCardProps> = ({
-  bounty,
-  formData,
-  linked = true,
-}) => {
+export const QuestRow: FC<Props> = ({ bounty, formData, linked = true }) => {
   const { currentBounty } = useBounty();
 
   const handleBountyLink = () => {
@@ -123,13 +124,21 @@ export const QuestRow: FC<BountyCardProps> = ({
       </div>
 
       <div className="flex flex-wrap gap-2.5 w-full">
+        <div
+          className={cn(
+            "text-xs text-center w-fit px-2 py-1 rounded-lg border",
+            bountyIndustryColor(bounty.industries[0].name)
+          )}
+        >
+          {formatString(bounty.industries[0].name)}
+        </div>
         {displayedTags.filter((tag) => tag !== "").length > 0 &&
           displayedTags[0] !== "" &&
           displayedTags.map((tag) => {
             if (tag === "") return null;
             return (
               <div
-                className="px-[7px] bg-neutral100 text-neutral600 text-xs rounded-md border border-neutral200"
+                className="flex items-center px-[7px] bg-neutral100 text-neutral600 text-xs rounded-md border border-neutral200"
                 key={tag}
               >
                 {tag}

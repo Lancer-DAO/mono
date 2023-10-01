@@ -87,9 +87,9 @@ export const createCustodialFeatureFundingAccountInstruction = async (
 ): Promise<{
   ix: TransactionInstruction;
   account: PublicKey;
+  timestamp: string;
 }> => {
   const timestamp = Date.now().toString();
-  console.log("timestamp = ", timestamp);
   const [feature_account] = await findFeatureAccount(
     timestamp,
     creator,
@@ -121,6 +121,7 @@ export const createCustodialFeatureFundingAccountInstruction = async (
       })
       .instruction(),
     account: feature_account,
+    timestamp: timestamp,
   };
 };
 
@@ -367,6 +368,7 @@ export const approveRequestWithReferralInstruction = async (
   creator: PublicKey,
   submitter: PublicKey,
   submitter_token_account: PublicKey,
+  buddylinkProgramId: PublicKey,
   mint: PublicKey,
   program: Program<MonoProgram>
 ): Promise<TransactionInstruction> => {
@@ -395,6 +397,50 @@ export const approveRequestWithReferralInstruction = async (
     program
   );
 
+  const [lancer_token_program_authority] = await findLancerProgramAuthority(
+    program
+  );
+
+  const referralAccount = await program.account.referralDataAccount.fetch(
+    referral_data_account
+  );
+
+  console.log(
+    "creator referrer, completer refferrer",
+    referralAccount.creatorReferrer.toString(),
+    referralAccount.approvedReferrers[0].toString()
+  );
+
+  const creatorReferrer =
+    referralAccount.creatorReferrer.toString() === PublicKey.default.toString()
+      ? []
+      : [
+          {
+            pubkey: referralAccount.creatorReferrer,
+            isWritable: true,
+            isSigner: false,
+          },
+          {
+            pubkey: referralAccount.creatorMember,
+            isWritable: true,
+            isSigner: false,
+          },
+        ];
+
+  const remainingAccounts = [
+    { pubkey: buddylinkProgramId, isWritable: false, isSigner: false },
+    { pubkey: mint, isWritable: false, isSigner: false },
+    ...referralAccount.approvedReferrers
+      .filter(
+        (referrer) => referrer.toString() !== PublicKey.default.toString()
+      )
+      .map((referrer) => ({
+        pubkey: referrer,
+        isWritable: true,
+        isSigner: false,
+      })),
+    ...creatorReferrer,
+  ];
   return await program.methods
     .approveRequestWithReferral()
     .accounts({
@@ -406,8 +452,10 @@ export const approveRequestWithReferralInstruction = async (
       programAuthority: program_authority,
       referralDataAccount: referral_data_account,
       lancerDaoTokenAccount: lancer_dao_token_account,
+      lancerTokenProgramAuthority: lancer_token_program_authority,
       tokenProgram: TOKEN_PROGRAM_ID,
     })
+    .remainingAccounts(remainingAccounts)
     .instruction();
 };
 
@@ -635,6 +683,8 @@ export const setShareMultipleSubmittersInstruction = async (
 export const createReferralDataAccountInstruction = async (
   creator: PublicKey,
   feature_data_account: PublicKey,
+  referrer: PublicKey,
+  remainingAccounts: AccountMeta[],
   program: Program<MonoProgram>
 ): Promise<TransactionInstruction> => {
   let [referral_data_account] = await findReferralDataAccount(
@@ -646,14 +696,14 @@ export const createReferralDataAccountInstruction = async (
   return await program.methods
     .createReferralDataAccount()
     .accounts({
-      // temp
-      referrer: new Keypair().publicKey,
       creator: creator,
       featureDataAccount: feature_data_account,
       referralDataAccount: referral_data_account,
+      referrer: referrer,
       rent: SYSVAR_RENT_PUBKEY,
       systemProgram: SystemProgram.programId,
     })
+    .remainingAccounts(remainingAccounts)
     .instruction();
 };
 
@@ -662,7 +712,8 @@ export const createCustodialReferralDataAccountInstruction = async (
   custodial_fee_payer: PublicKey,
   feature_data_account: PublicKey,
   program: Program<MonoProgram>,
-  referrer?: PublicKey
+  referrer?: PublicKey,
+  remainingAccounts?: AccountMeta[]
 ): Promise<TransactionInstruction> => {
   let [referral_data_account] = await findReferralDataAccount(
     creator,
@@ -686,6 +737,7 @@ export const createCustodialReferralDataAccountInstruction = async (
       rent: SYSVAR_RENT_PUBKEY,
       systemProgram: SystemProgram.programId,
     })
+    .remainingAccounts(remainingAccounts)
     .instruction();
 };
 

@@ -1,5 +1,5 @@
 import { prisma } from "@/server/db";
-import { QuestProgressState } from "@/types";
+import { BountyState, QuestProgressState } from "@/types";
 import * as Prisma from "@prisma/client";
 import dayjs from "dayjs";
 

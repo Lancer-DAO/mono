@@ -87,7 +87,44 @@ const bountyQuery = async (id: number) => {
   });
 };
 
-const bountyQueryMany = async (page: number, userId?: number) => {
+const bountyQueryMany = async (
+  page: number,
+  userId?: number,
+  industries?: number[]
+) => {
+  let otherQuestsWhereClause: any = industries
+    ? {
+        users: {
+          none: {
+            userid: userId,
+          },
+        },
+        isPrivate: false,
+        isTest: false,
+        state: {
+          in: [BountyState.ACCEPTING_APPLICATIONS],
+        },
+
+        industries: {
+          some: {
+            id: {
+              in: industries,
+            },
+          },
+        },
+      }
+    : {
+        users: {
+          none: {
+            userid: userId,
+          },
+        },
+        isPrivate: false,
+        isTest: false,
+        state: {
+          in: [BountyState.ACCEPTING_APPLICATIONS],
+        },
+      };
   const bounties = await prisma.bounty.findMany({
     where: {
       OR: [
@@ -101,16 +138,7 @@ const bountyQueryMany = async (page: number, userId?: number) => {
           isTest: false,
         },
         {
-          users: {
-            none: {
-              userid: userId,
-            },
-          },
-          isPrivate: false,
-          isTest: false,
-          state: {
-            in: [BountyState.ACCEPTING_APPLICATIONS, BountyState.NEW],
-          },
+          ...otherQuestsWhereClause,
         },
       ],
     },
@@ -183,7 +211,7 @@ const bountyQueryMine = async (userId?: number) => {
             {
               isPrivate: false,
               state: {
-                in: [BountyState.ACCEPTING_APPLICATIONS, BountyState.NEW],
+                in: [BountyState.ACCEPTING_APPLICATIONS],
               },
             },
           ],
@@ -240,7 +268,7 @@ export const getTotalQuests = async (
               isPrivate: false,
               isTest: false,
               state: {
-                in: [BountyState.ACCEPTING_APPLICATIONS, BountyState.NEW],
+                in: [BountyState.ACCEPTING_APPLICATIONS],
               },
             },
           ],
@@ -288,7 +316,26 @@ export const get = async (id: number, currentUserId: number) => {
 };
 
 export const getMany = async (page: number, currentUserId?: number) => {
-  const bounties = await bountyQueryMany(page, currentUserId);
+  const industryIds = [];
+  if (currentUserId) {
+    const user = await prisma.user.findUnique({
+      where: { id: currentUserId },
+      select: {
+        industries: {
+          select: { id: true },
+        },
+      },
+    });
+    user.industries?.forEach((industry) => {
+      industryIds.push(industry.id);
+    });
+  }
+  console.log("industryIds", industryIds);
+  const bounties = await bountyQueryMany(
+    page,
+    currentUserId,
+    industryIds.length > 0 ? industryIds : undefined
+  );
 
   const allBounties = bounties.map((bounty) => {
     const userRelations = bounty.users;

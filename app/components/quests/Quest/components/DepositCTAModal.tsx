@@ -1,16 +1,18 @@
-import { Dispatch, FC, SetStateAction } from "react";
+import { Dispatch, FC, SetStateAction, useState } from "react";
 import Image from "next/image";
 import AlertCardModal from "./AlertCardModal";
 import { smallClickAnimation } from "@/src/constants";
 import { motion } from "framer-motion";
 
 interface Props {
+  prompt: string;
   setShowModal: Dispatch<SetStateAction<boolean>>;
   setShowFundModal: Dispatch<SetStateAction<boolean>>;
   amount: number;
 }
 
 const DepositCTAModal: FC<Props> = ({
+  prompt,
   setShowModal,
   setShowFundModal,
   amount,
@@ -29,12 +31,7 @@ const DepositCTAModal: FC<Props> = ({
             />
           </div>
         </div>
-        <p className="text pt-1">{`Now that you shortlisted some solid candidates, we need you to commit and deposit into an escrow 5% of the highest quote you received, which equates to $${amount}.`}</p>
-        <p className="text pt-1">
-          This unlocks the ability to chat with your shortlisted applicants.
-          Once you decide which candidate you want to work with, we will ask you
-          to deposit 100% of the funds into escrow to kick things off.
-        </p>
+        <p className="text pt-1">{prompt}</p>
         <div className="w-full flex items-center justify-end gap-2 pt-4">
           <motion.button
             {...smallClickAnimation}
@@ -48,7 +45,10 @@ const DepositCTAModal: FC<Props> = ({
             {...smallClickAnimation}
             className="bg-secondary200 h-9 w-fit px-4 py-2
             title-text rounded-md text-white disabled:cursor-not-allowed disabled:opacity-80"
-            onClick={() => setShowFundModal(true)}
+            onClick={() => {
+              setShowFundModal(true);
+              setShowModal(false);
+            }}
           >
             {`Deposit $${amount} into escrow`}
           </motion.button>

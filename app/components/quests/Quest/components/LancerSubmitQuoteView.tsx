@@ -1,5 +1,6 @@
 import Plus from "@/components/@icons/Plus";
 import RedFire from "@/components/@icons/RedFire";
+import { user } from "@/prisma/queries";
 import { smallClickAnimation } from "@/src/constants";
 import { useUserWallet } from "@/src/providers";
 import { useBounty } from "@/src/providers/bountyProvider";
@@ -12,22 +13,28 @@ import AlertCard from "./AlertCard";
 import CheckpointEdit from "./CheckpointEdit";
 import CheckpointView from "./CheckpointView";
 import { QuestApplicationView } from "./LancerApplicationView";
+import { ChatButton } from "@/components";
+import { QuestActionView } from "./QuestActions";
 interface Props {
   quoteData: LancerQuoteData;
   setQuoteData: Dispatch<SetStateAction<LancerQuoteData>>;
   setCurrentApplicationView: Dispatch<SetStateAction<QuestApplicationView>>;
+  setCurrentActionView: Dispatch<SetStateAction<QuestActionView>>;
   hasApplied: boolean;
   onClick: () => Promise<void>;
   isAwaitingResponse: boolean;
+  applicationIsValid: boolean;
 }
 
 const LancerSubmitQuoteView: FC<Props> = ({
   quoteData,
   setQuoteData,
   setCurrentApplicationView,
+  setCurrentActionView,
   hasApplied,
   onClick,
   isAwaitingResponse,
+  applicationIsValid,
 }) => {
   const { currentBounty } = useBounty();
   const { currentUser } = useUserWallet();
@@ -126,84 +133,121 @@ const LancerSubmitQuoteView: FC<Props> = ({
   if (!currentBounty || !currentUser) return null;
 
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col relative">
       <ActionsCardBanner
         title={`Quote to ${currentBounty.creator.user.name}`}
         subtitle={`${quotes?.length || 0} ${
           (quotes?.length || 0) === 1 ? "quote has" : "quotes have"
         } been sent to them already`}
-      />
-      {/* TODO: add check for if user application has been approved or denied. if not, show this: */}
-      {hasApplied && (
+      >
+        {hasApplied &&
+          currentBounty.isShortlistedLancer &&
+          Number(currentBounty.escrow.amount) > 0 && (
+            <ChatButton setCurrentActionView={setCurrentActionView} />
+          )}
+      </ActionsCardBanner>
+      {/* sent application and has not been shortlisted OR has been 
+      shortlisted but creator hasn't submitted deposit yet */}
+      {hasApplied &&
+        (!currentBounty.isShortlistedLancer ||
+          (currentBounty.isShortlistedLancer &&
+            Number(currentBounty.escrow.amount) === 0)) && (
+          <div className="px-5 pt-5">
+            <AlertCard
+              type="positive"
+              title="Nice!"
+              description="Your application has been sent. Fingers crossed! You will hear an answer from the client within 48 hours."
+            />
+          </div>
+        )}
+      {/* sent application and has been shortlisted AND creator deposited $ */}
+      {hasApplied &&
+        currentBounty.isShortlistedLancer &&
+        Number(currentBounty.escrow.amount) > 0 && (
+          <div className="px-5 pt-5">
+            <AlertCard
+              type="positive"
+              title="Good news!"
+              description="You have been added to the creator's shortlist. You can now chat with them to see if you're a good fit for each other!"
+            />
+          </div>
+        )}
+      {/* lancer account has not been approved yet */}
+      {!currentUser.hasBeenApproved && (
         <div className="px-5 pt-5">
           <AlertCard
-            type="positive"
-            title="Nice!"
-            description="Your application has been sent. Fingers crossed! You will hear an answer from the client within 48 hours."
+            type="negative"
+            title="Not Approved"
+            description="You Must Be Approved to Apply to Quests"
           />
         </div>
       )}
-      <div className="px-6 py-4">
-        <div className="flex py-4 justify-between border-b border-neutral200">
-          <div className="flex items-center gap-2">
-            <RedFire />
-            <div className="title-text text-neutral600">Quote Price</div>
-            <div className="w-[1px] h-5 bg-neutral200" />
-            <div className="text-mini text-neutral400">{`${quoteData.estimatedTime}h`}</div>
+      <div className="relative">
+        <div className="px-6 py-4">
+          <div className="flex py-4 justify-between border-b border-neutral200">
+            <div className="flex items-center gap-2">
+              <RedFire />
+              <div className="title-text text-neutral600">Quote Price</div>
+              <div className="w-[1px] h-5 bg-neutral200" />
+              <div className="text-mini text-neutral400">{`${quoteData.estimatedTime}h`}</div>
+            </div>
+            <div className="flex items-center title-text text-primary200">{`$${quoteData.price}`}</div>
           </div>
-          <div className="flex items-center title-text text-primary200">{`$${quoteData.price}`}</div>
+          {quoteData.checkpoints.map((checkpoint, index) => (
+            <>
+              {!hasApplied ? (
+                <CheckpointEdit
+                  checkpoint={checkpoint}
+                  setQuoteData={setQuoteData}
+                  index={index}
+                  closeAllExceptOne={closeAllExceptOne}
+                  closeDetailsAndEdit={closeDetailsAndEdit}
+                  setDetails={setDetails}
+                  key={checkpoint.addedWen}
+                />
+              ) : (
+                <CheckpointView
+                  checkpoint={checkpoint}
+                  key={checkpoint.addedWen}
+                />
+              )}
+            </>
+          ))}
+          {quoteData.checkpoints.length < 5 && !hasApplied && (
+            <div className="py-4">
+              <button
+                className="py-1 px-2 flex gap-1 justify-center items-center 
+                rounded-md border border-neutral200 text-mini text-neutral500"
+                onClick={() => addCheckpoint()}
+              >
+                <Plus />
+                Add a Checkpoint
+              </button>
+            </div>
+          )}
         </div>
-        {quoteData.checkpoints.map((checkpoint, index) => (
-          <>
-            {!hasApplied ? (
-              <CheckpointEdit
-                checkpoint={checkpoint}
-                setQuoteData={setQuoteData}
-                index={index}
-                closeAllExceptOne={closeAllExceptOne}
-                closeDetailsAndEdit={closeDetailsAndEdit}
-                setDetails={setDetails}
-                key={checkpoint.addedWen}
-              />
-            ) : (
-              <CheckpointView
-                checkpoint={checkpoint}
-                key={checkpoint.addedWen}
-              />
-            )}
-          </>
-        ))}
-        {quoteData.checkpoints.length < 5 && !hasApplied && (
-          <div className="py-4">
-            <button
-              className="py-1 px-2 flex gap-1 justify-center items-center rounded-md border border-neutral200 text-mini text-neutral500"
-              onClick={() => addCheckpoint()}
-            >
-              <Plus />
-              Add a Checkpoint
-            </button>
-          </div>
-        )}
-      </div>
-      <div className="flex py-4 px-6 justify-end items-center gap-4 self-stretch opacity-100">
-        <button
-          className="title-text text-neutral600 px-4 py-2 rounded-md border border-neutral300"
-          onClick={() =>
-            setCurrentApplicationView(QuestApplicationView.ProfileInfo)
-          }
-        >
-          Review Profile
-        </button>
-        {!hasApplied && (
-          <motion.button
-            {...smallClickAnimation}
-            className="bg-primary200 text-white h-9 w-fit px-4 py-2 title-text rounded-md"
-            onClick={onClick}
-            disabled={isAwaitingResponse}
+        <div className="flex py-4 px-6 justify-end items-center gap-4 self-stretch opacity-100">
+          <button
+            className="title-text text-neutral600 px-4 py-2 rounded-md border 
+            border-neutral300"
+            onClick={() =>
+              setCurrentApplicationView(QuestApplicationView.ProfileInfo)
+            }
           >
-            Submit Application
-          </motion.button>
-        )}
+            Review Profile
+          </button>
+          {!hasApplied && (
+            <motion.button
+              {...smallClickAnimation}
+              className="bg-primary200 text-white h-9 w-fit px-4 py-2 title-text rounded-md
+              disabled:opacity-70 disabled:cursor-not-allowed"
+              onClick={onClick}
+              disabled={isAwaitingResponse || !applicationIsValid}
+            >
+              Submit Application
+            </motion.button>
+          )}
+        </div>
       </div>
     </div>
   );

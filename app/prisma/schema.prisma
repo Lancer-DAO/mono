@@ -209,6 +209,7 @@ model User {
   isLancerDev           Boolean?
   verified              Boolean?
   hasProfileNFT         Boolean?
+  hasOnboardingBadge    Boolean?
   googleId              String?  @db.VarChar(64)
   githubId              String?  @db.VarChar(24)
   githubLogin           String?  @db.VarChar(64)

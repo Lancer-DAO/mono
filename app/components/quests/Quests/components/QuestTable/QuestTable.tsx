@@ -8,7 +8,6 @@ import {
   BountyState,
   Filters,
   TABLE_BOUNTY_STATES,
-  User,
 } from "@/types";
 import { AnimatePresence } from "framer-motion";
 import { QuestFilters, QuestRow } from "./components";
@@ -30,25 +29,25 @@ const stateMap = {
 
 interface Props {
   type: "profile" | "quests";
-  user: User;
-  allBounties: BountyPreview[];
 }
 
-const QuestTable: React.FC<Props> = ({ type, user, allBounties }) => {
+const QuestTable: React.FC<Props> = ({ type }) => {
   // state
   const [tags, setTags] = useState<string[]>([]);
-  const [bounds, setPriceBounds] = useState<[number, number]>([5, 10000]);
-  const [industriesFilter, setIndustriesFilter] = useState<string[]>([]);
+  const [priceBounds, setPriceBounds] = useState<[number, number]>([5, 10000]);
+  const [industryNames, setIndustryNames] = useState<string[]>([]);
   const [filteredBounties, setFilteredBounties] = useState<BountyPreview[]>();
+
+  // api + context
+  const { questsPage, setQuestsPage, maxPages, allBounties } = useBounty();
+  const { currentUser } = useUserWallet();
+  const { allIndustries, userIndustries } = useIndustry();
+
   const [filters, setFilters] = useState<Filters>({
+    industries: userIndustries?.map((industry) => industry.name) || [],
     tags: tags,
     states: TABLE_BOUNTY_STATES,
   });
-
-  // api + context
-  const { questsPage, setQuestsPage, maxPages } = useBounty();
-  const { currentUser } = useUserWallet();
-  const { allIndustries } = useIndustry();
 
   function snakeToTitleCase(snakeCaseStr: string) {
     return snakeCaseStr
@@ -68,7 +67,9 @@ const QuestTable: React.FC<Props> = ({ type, user, allBounties }) => {
         }
         // filter out quests that don't include the user
         if (
-          !bounty.users.some((bountyUser) => bountyUser.userid === user?.id)
+          !bounty.users.some(
+            (bountyUser) => bountyUser.userid === currentUser?.id
+          )
         ) {
           return false;
         }
@@ -81,6 +82,7 @@ const QuestTable: React.FC<Props> = ({ type, user, allBounties }) => {
       });
     } else {
       filteredBounties = allBounties?.filter((bounty) => {
+        // filter out test quests unless user is a Lancer dev
         if ((!currentUser || !currentUser.isLancerDev) && bounty.isTest) {
           return false;
         }
@@ -97,6 +99,14 @@ const QuestTable: React.FC<Props> = ({ type, user, allBounties }) => {
           return false;
         }
 
+        if (
+          !bounty.industries.some((industry) =>
+            filters.industries.includes(industry.name)
+          )
+        ) {
+          return false;
+        }
+
         if (!filters.states.includes(bounty.state)) {
           return false;
         }
@@ -105,7 +115,7 @@ const QuestTable: React.FC<Props> = ({ type, user, allBounties }) => {
       });
     }
     setFilteredBounties(filteredBounties);
-  }, [filters, allBounties, currentUser, type]);
+  }, [filters, allBounties, currentUser, type, allIndustries, tags?.length]);
 
   useEffect(() => {
     // Get the meta-info off all bounties that are used for filters. Specifically
@@ -115,21 +125,9 @@ const QuestTable: React.FC<Props> = ({ type, user, allBounties }) => {
     // - upper and lower bounds of price
 
     if (allBounties && allBounties?.length !== 0) {
-      const allTags = allBounties
-        ?.map((bounty) => bounty.tags.map((tag) => tag.name))
-        ?.reduce(
-          (accumulator, currentValue) => [
-            ...accumulator,
-            ...(currentValue ? currentValue : []),
-          ],
-          []
-        );
-      const uniqueTags = getUniqueItems(allTags);
       const mappedInds = allIndustries.map((industry) => industry.name);
+      setIndustryNames(mappedInds);
 
-      setIndustriesFilter(mappedInds);
-
-      setTags(uniqueTags);
       const allPrices = allBounties.map((bounty) =>
         bounty.price ? parseFloat(bounty.price.toString()) : 0
       );
@@ -140,12 +138,30 @@ const QuestTable: React.FC<Props> = ({ type, user, allBounties }) => {
         maxPrice === minPrice ? maxPrice + 1 : maxPrice,
       ];
       setPriceBounds(priceBounds);
+    }
+  }, [allBounties, allIndustries]);
+
+  useEffect(() => {
+    if (!userIndustries || !allBounties) return;
+    if (allBounties?.length !== 0) {
+      const allTags = allBounties
+        ?.map((bounty) => bounty.tags.map((tag) => tag.name))
+        ?.reduce(
+          (accumulator, currentValue) => [
+            ...accumulator,
+            ...(currentValue ? currentValue : []),
+          ],
+          []
+        );
+      const uniqueTags = getUniqueItems(allTags);
+      setTags(uniqueTags);
       setFilters({
         ...filters,
         tags: allTags,
+        industries: userIndustries?.map((industry) => industry.name) || [],
       });
     }
-  }, [allBounties, allIndustries]);
+  }, [allBounties, userIndustries]);
 
   return (
     <div
@@ -161,6 +177,7 @@ const QuestTable: React.FC<Props> = ({ type, user, allBounties }) => {
               count={
                 filteredBounties ? filteredBounties.length : allBounties.length
               }
+              industries={allIndustries.map((industry) => industry.name)}
               filters={filters}
               setFilters={setFilters}
             />

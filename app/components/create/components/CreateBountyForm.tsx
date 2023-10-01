@@ -17,12 +17,15 @@ import Tags from "./Tags";
 import Image from "next/image";
 import { Trash, X } from "lucide-react";
 import { Option } from "@/components/molecules/SelectOptions";
-import { PublicKey } from "@solana/web3.js";
+import { PublicKey, Transaction } from "@solana/web3.js";
 import { createFFA } from "@/escrow/adapters";
 import { useReferral } from "@/src/providers/referralProvider";
 import { useBounty } from "@/src/providers/bountyProvider";
 import { useRouter } from "next/router";
-import { createCustodialReferralDataAccountInstruction } from "@/escrow/sdk/instructions";
+import {
+  createCustodialReferralDataAccountInstruction,
+  createReferralDataAccountInstruction,
+} from "@/escrow/sdk/instructions";
 import { sendGaslessTx } from "@/escrow/gasless";
 import { findFeatureAccount } from "@/escrow/sdk/pda";
 
@@ -91,14 +94,16 @@ export const CreateBountyForm: FC<Props> = ({
         mintKey
       );
 
-      const { timestamp, signature, escrowKey } = await createFFA(
+      const { timestamp, signature, escrowKey, error } = await createFFA(
         currentWallet,
-        program,
-        provider,
-        await getSubmitterReferrer(currentWallet.publicKey, mintKey),
-        remainingAccounts,
-        mintKey
+        program
       );
+
+      if (error){
+        setCreateQuestState(error);
+        toast.error(error)
+        return
+      }
       const bounty: Bounty = await mutateAsync({
         email: currentUser.email,
         industryIds: [formData.industryId],
@@ -124,22 +129,24 @@ export const CreateBountyForm: FC<Props> = ({
         new PublicKey(currentWallet.publicKey),
         program
       );
+
       const referralAccountIx =
         await createCustodialReferralDataAccountInstruction(
           new PublicKey(currentWallet.publicKey),
           new PublicKey("pyrSoEahjKGKZpLWEYwCJ8zQAsYZckZH8ZqJ7yGd1ha"),
           feature_account,
-          program
+          program,
+          await getSubmitterReferrer(currentWallet.publicKey, mintKey),
+          remainingAccounts
         );
       const res2 = await sendGaslessTx(
         [referralAccountIx],
-        undefined,
-        undefined,
+        true,
+        currentWallet,
         20000
       );
       console.log("Second gasless tx res: ", res2);
     } catch (error) {
-      console.log("Quest Error: ", error);
       setCreateQuestState({ error });
       if (error.message === "Wallet is registered to another user") {
         toast.error(

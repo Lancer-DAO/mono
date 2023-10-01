@@ -49,12 +49,14 @@ export const ChooseYourClass: FC<{
       <div className="flex items-center justify-center rounded-full bg-neutral-200 h-[32px] w-[32px]">
         <Logo width="27px" height="27px" />
       </div>
-      <h1 className="font-bold text-neutral-600 mt-2">Choose Your Class</h1>
+      <h1 className="font-bold text-neutral-600 mt-2 z-10">
+        Choose Your Class
+      </h1>
 
-      <div className="text-sm text-neutral-500  mt-1">
+      <div className="text-sm text-neutral-500  mt-1 z-10">
         Choose how your adventure begins.
       </div>
-      <div className="flex flex-col h-[550px] items-center justify-center">
+      <div className="flex flex-col h-[430px] items-center justify-center">
         <div className="flex relative">
           <div className="relative h-[500px] w-[500px] z-0">
             <div className="absolute h-[900px] w-[900px] top-[-200px] left-[-150px]">
@@ -143,7 +145,7 @@ export const ChooseYourClass: FC<{
       </div>
       <motion.button
         {...smallClickAnimation}
-        className={`h-[50px] mt-5 w-full rounded-md text-base z-10 ${
+        className={`h-[50px]  w-full rounded-md text-base z-10 ${
           selectedClass === "Noble" ? "bg-noble100" : "bg-primary200"
         } text-white 
         } `}
@@ -153,7 +155,7 @@ export const ChooseYourClass: FC<{
       >
         {`Continue as ${selectedClass}`}
       </motion.button>
-      <div className="flex gap-4 mt-8">
+      <div className="flex gap-4 mt-4">
         <div className="bg-neutral-400 h-2 w-2 rounded-full" />
         <div className="bg-neutral-200 h-2 w-2 rounded-full" />
         <div className="bg-neutral-200 h-2 w-2 rounded-full" />
