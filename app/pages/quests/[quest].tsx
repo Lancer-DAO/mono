@@ -9,7 +9,6 @@ import {
 import { Quest } from "../../components/quests/Quest/Quest";
 import { NextSeo } from "next-seo";
 import { GetServerSidePropsContext } from "next";
-import { prisma } from "@/server/db";
 import * as queries from "@/prisma/queries";
 import { useBounty } from "@/src/providers/bountyProvider";
 import { useMint } from "@/src/providers/mintProvider";
@@ -44,7 +43,6 @@ export async function getServerSideProps(
       };
     }
     const quest = await queries.bounty.get(questId, user.id);
-
     const allMints = await queries.mint.getAll();
     const allIndustries = await queries.industry.getMany();
     return {
