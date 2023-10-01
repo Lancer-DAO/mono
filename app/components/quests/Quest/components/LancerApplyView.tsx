@@ -10,6 +10,7 @@ import ActionsCardBanner from "./ActionsCardBanner";
 import AlertCard from "./AlertCard";
 import { QuestApplicationView } from "./LancerApplicationView";
 import { QuestActionView } from "./QuestActions";
+import AlertCards from "./AlertCards";
 
 interface Props {
   applyData: LancerApplyData;
@@ -47,42 +48,7 @@ const LancerApplyView: FC<Props> = ({
             <ChatButton setCurrentActionView={setCurrentActionView} />
           )}
       </ActionsCardBanner>
-      {hasApplied && !currentBounty.isShortlistedLancer && (
-        <div className="px-5 pt-5">
-          <AlertCard
-            type="positive"
-            title="Nice!"
-            description="Your application has been sent. Fingers crossed! You will hear an answer from the client within 48 hours."
-          />
-        </div>
-      )}
-      {hasApplied && currentBounty.isShortlistedLancer && (
-        <div className="px-5 pt-5">
-          <AlertCard
-            type="positive"
-            title="Good news!"
-            description="You have been added to the creator's shortlist. You can now chat with them to see if you're a good fit for each other!"
-          />
-        </div>
-      )}
-      {currentBounty.isDeniedLancer && (
-        <div className="px-5 pt-5">
-          <AlertCard
-            type="negative"
-            title="Not Selected"
-            description="The creator of this Quest has decided to go with another Lancer. You can still apply to other Quests!"
-          />
-        </div>
-      )}
-      {!currentUser.hasBeenApproved && (
-        <div className="px-5 pt-5">
-          <AlertCard
-            type="negative"
-            title="Not Approved"
-            description="You Must Be Approved to Apply to Quests"
-          />
-        </div>
-      )}
+      <AlertCards />
       <div className="w-full p-6 flex items-center justify-between gap-5">
         <div className="flex items-center gap-4">
           <p className="text-neutral600 text">Portfolio</p>
