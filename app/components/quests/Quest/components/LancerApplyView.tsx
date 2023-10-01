@@ -4,7 +4,7 @@ import { useUserWallet } from "@/src/providers";
 import { useBounty } from "@/src/providers/bountyProvider";
 import { LancerApplyData } from "@/types";
 import { motion } from "framer-motion";
-import { Image } from "lucide-react";
+import { Image as ImageIcon } from "lucide-react";
 import { Dispatch, FC, SetStateAction } from "react";
 import ActionsCardBanner from "./ActionsCardBanner";
 import AlertCard from "./AlertCard";
@@ -17,6 +17,7 @@ interface Props {
   hasApplied: boolean;
   onClick: () => Promise<void>;
   isAwaitingResponse: boolean;
+  applicationIsValid: boolean;
 }
 
 const LancerApplyView: FC<Props> = ({
@@ -26,6 +27,7 @@ const LancerApplyView: FC<Props> = ({
   hasApplied,
   onClick,
   isAwaitingResponse,
+  applicationIsValid,
 }) => {
   const { currentBounty } = useBounty();
   const { currentUser } = useUserWallet();
@@ -105,7 +107,7 @@ const LancerApplyView: FC<Props> = ({
               window.open(currentUser.resume, "_blank", "noopener noreferrer")
             }
           >
-            <Image color="#A1B2AD" size={18} />
+            <ImageIcon color="#A1B2AD" size={18} />
             <p className="text-xs text-neutral400 truncate">resume.pdf</p>
           </button>
         </div>
@@ -138,9 +140,10 @@ const LancerApplyView: FC<Props> = ({
         {!hasApplied && (
           <motion.button
             {...smallClickAnimation}
-            className="bg-primary200 text-white h-9 w-fit px-4 py-2 title-text rounded-md"
+            className="bg-primary200 text-white h-9 w-fit px-4 py-2 title-text 
+            rounded-md disabled:opacity-70 disabled:cursor-not-allowed"
             onClick={onClick}
-            disabled={isAwaitingResponse}
+            disabled={isAwaitingResponse || !applicationIsValid}
           >
             Submit Application
           </motion.button>
