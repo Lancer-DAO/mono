@@ -154,7 +154,9 @@ const UpdateTableItem: React.FC<UpdateItemProps> = ({
                   router.push(`/quests/${extraProps.questId}`);
                 }
               }}
-              className="hover:cursor-pointer flex flex-col px-8 py-4 items-start justify-center w-full border-solid border-b  border-neutralBorder500"
+              className={`${
+                isIndividual ? "" : "hover:cursor-pointer"
+              } flex flex-col px-8 py-4 items-start justify-center w-full border-solid border-b  border-neutralBorder500`}
             >
               <div className="flex justify-start items-center w-full">
                 <Flame height="28px" width="28px" version="orange" />
@@ -178,7 +180,9 @@ const UpdateTableItem: React.FC<UpdateItemProps> = ({
                   router.push(`/quests/${extraProps.questId}`);
                 }
               }}
-              className="hover:cursor-pointer flex flex-col px-8 py-4 items-start justify-center w-full border-solid border-b  border-neutralBorder500"
+              className={`${
+                isIndividual ? "" : "hover:cursor-pointer"
+              } flex flex-col px-8 py-4 items-start justify-center w-full border-solid border-b  border-neutralBorder500`}
             >
               <div className="flex justify-start items-center w-full">
                 <Flame height="28px" width="28px" version="green" />
@@ -205,7 +209,9 @@ const UpdateTableItem: React.FC<UpdateItemProps> = ({
                   router.push(`/quests/${extraProps.questId}`);
                 }
               }}
-              className="hover:cursor-pointer flex flex-col px-8 py-4 items-start justify-center w-full border-solid border-b  border-neutralBorder500"
+              className={`${
+                isIndividual ? "" : "hover:cursor-pointer"
+              } flex flex-col px-8 py-4 items-start justify-center w-full border-solid border-b  border-neutralBorder500`}
             >
               <div className="flex justify-start items-center w-full">
                 <Alert height="28px" width="28px" />
@@ -225,7 +231,9 @@ const UpdateTableItem: React.FC<UpdateItemProps> = ({
                   router.push(`/quests/${extraProps.questId}`);
                 }
               }}
-              className="hover:cursor-pointer flex flex-col px-8 py-4 items-start justify-center w-full border-solid border-b  border-neutralBorder500"
+              className={`${
+                isIndividual ? "" : "hover:cursor-pointer"
+              } flex flex-col px-8 py-4 items-start justify-center w-full border-solid border-b  border-neutralBorder500`}
             >
               <div className="flex justify-start items-center w-full">
                 <Alert height="28px" width="28px" />
@@ -245,7 +253,9 @@ const UpdateTableItem: React.FC<UpdateItemProps> = ({
                   router.push(`/quests/${extraProps.questId}`);
                 }
               }}
-              className="hover:cursor-pointer flex flex-col px-8 py-4 items-start justify-center w-full border-solid border-b  border-neutralBorder500"
+              className={`${
+                isIndividual ? "" : "hover:cursor-pointer"
+              } flex flex-col px-8 py-4 items-start justify-center w-full border-solid border-b  border-neutralBorder500`}
             >
               <div className="flex justify-start items-center w-full">
                 <Alert height="28px" width="28px" />
@@ -265,7 +275,9 @@ const UpdateTableItem: React.FC<UpdateItemProps> = ({
                   router.push(`/quests/${extraProps.questId}`);
                 }
               }}
-              className="hover:cursor-pointer flex flex-col px-8 py-4 items-start justify-center w-full border-solid border-b  border-neutralBorder500"
+              className={`${
+                isIndividual ? "" : "hover:cursor-pointer"
+              } flex flex-col px-8 py-4 items-start justify-center w-full border-solid border-b  border-neutralBorder500`}
             >
               <div className="flex justify-start items-center w-full">
                 <Alert height="28px" width="28px" />
@@ -289,7 +301,9 @@ const UpdateTableItem: React.FC<UpdateItemProps> = ({
                   router.push(`/quests/${extraProps.questId}`);
                 }
               }}
-              className="hover:cursor-pointer flex flex-col px-8 py-4 items-start justify-center w-full border-solid border-b  border-neutralBorder500"
+              className={`${
+                isIndividual ? "" : "hover:cursor-pointer"
+              } flex flex-col px-8 py-4 items-start justify-center w-full border-solid border-b  border-neutralBorder500`}
             >
               <div className="flex justify-start items-center w-full">
                 <Mail height="28px" width="28px" version="blue" />
@@ -309,7 +323,9 @@ const UpdateTableItem: React.FC<UpdateItemProps> = ({
                   router.push(`/quests/${extraProps.questId}`);
                 }
               }}
-              className="hover:cursor-pointer flex flex-col px-8 py-4 items-start justify-center w-full border-solid border-b  border-neutralBorder500"
+              className={`${
+                isIndividual ? "" : "hover:cursor-pointer"
+              } flex flex-col px-8 py-4 items-start justify-center w-full border-solid border-b  border-neutralBorder500`}
             >
               <div className="flex justify-start items-center w-full">
                 <Mail height="28px" width="28px" version="purple" />
@@ -329,7 +345,9 @@ const UpdateTableItem: React.FC<UpdateItemProps> = ({
                   router.push(`/quests/${extraProps.questId}`);
                 }
               }}
-              className="hover:cursor-pointer flex flex-col px-8 py-4 items-start justify-center w-full border-solid border-b  border-neutralBorder500"
+              className={`${
+                isIndividual ? "" : "hover:cursor-pointer"
+              } flex flex-col px-8 py-4 items-start justify-center w-full border-solid border-b  border-neutralBorder500`}
             >
               <div className="flex justify-start items-center w-full">
                 <Mail height="28px" width="28px" version="green" />
@@ -349,7 +367,9 @@ const UpdateTableItem: React.FC<UpdateItemProps> = ({
                   router.push(`/quests/${extraProps.questId}`);
                 }
               }}
-              className="hover:cursor-pointer flex flex-col px-8 py-4 items-start justify-center w-full border-solid border-b  border-neutralBorder500"
+              className={`${
+                isIndividual ? "" : "hover:cursor-pointer"
+              } flex flex-col px-8 py-4 items-start justify-center w-full border-solid border-b  border-neutralBorder500`}
             >
               <div className="flex justify-start items-center w-full">
                 <Mail height="28px" width="28px" version="orange" />
@@ -369,7 +389,9 @@ const UpdateTableItem: React.FC<UpdateItemProps> = ({
                   router.push(`/quests/${extraProps.questId}`);
                 }
               }}
-              className="hover:cursor-pointer flex flex-col px-8 py-4 items-start justify-center w-full border-solid border-b  border-neutralBorder500"
+              className={`${
+                isIndividual ? "" : "hover:cursor-pointer"
+              } flex flex-col px-8 py-4 items-start justify-center w-full border-solid border-b  border-neutralBorder500`}
             >
               <div className="flex justify-start items-center w-full">
                 <Mail height="28px" width="28px" version="orange" />
