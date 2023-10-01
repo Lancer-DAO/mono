@@ -270,10 +270,10 @@ const IndividualApplicantView: FC<Props> = ({
             <p className="text-neutral600 title-text">{`About ${selectedSubmitter.user.name}`}</p>
             <p className="text">{selectedSubmitter.user.bio}</p>
           </div>
-          <div className="flex flex-col gap-2.5">
+          {/* <div className="flex flex-col gap-2.5">
             <p className="text-neutral600 title-text">{`Why is ${selectedSubmitter.user.name} a good fit?`}</p>
             <p className="text">{selectedSubmitter.applicationText}</p>
-          </div>
+          </div> */}
           {/* action buttons */}
           {selectedSubmitter.relations.includes(
             BOUNTY_USER_RELATIONSHIP.RequestedLancer
