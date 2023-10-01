@@ -72,6 +72,25 @@ export const update = protectedProcedure
           escrow
         );
       }
+      if (label === "add-approved-submitter") {
+        const ignoreIds = [user.id, currentUser.id];
+        const _usersToReject = await prisma.bountyUser.findMany({
+          where: {
+            bountyid: bountyId,
+            userid: {
+              notIn: ignoreIds,
+            },
+          },
+          include: {
+            user: true,
+          },
+        });
+        const usersToReject = _usersToReject.map((u) => u.user);
+        usersToReject.forEach(async (user) => {
+          queries.bountyUser.updateRelations(bountyId, ["rejected"], user);
+          // TODO: send email
+        });
+      }
 
       const updatedBounty = await queries.bounty.get(bountyId, currentUserId);
 
