@@ -441,8 +441,6 @@ const QuestUpdatesTable: React.FC = () => {
     lancerUpdates,
     disputes,
   ]);
-  console.log("ALL UPDATES");
-  console.log(allUpdates);
 
   const confirmAction = (confirmText: string): Promise<void> => {
     setIsAwaitingResponse(true);
@@ -734,7 +732,7 @@ const QuestUpdatesTable: React.FC = () => {
               </motion.button>
             )}
           {currentBounty.isCreator &&
-            [BountyState.AWAITING_REVIEW].includes(
+            [BountyState.AWAITING_REVIEW, BountyState.IN_PROGRESS].includes(
               currentBounty.state as BountyState
             ) && (
               <motion.button

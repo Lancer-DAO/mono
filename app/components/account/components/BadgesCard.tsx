@@ -105,7 +105,7 @@ export const BadgesCard: FC = () => {
   }, [wallets]);
 
   return (
-    <div className="w-full pt-0 p-5">
+    <div className="w-full pt-0 p-5 pb-16">
       <p className="title-text text-neutral600">Badges</p>
       {loading ? (
         <div className="w-full flex items-center justify-center">

@@ -91,18 +91,20 @@ const ChatView: FC<Props> = ({ selectedSubmitter, setCurrentActionView }) => {
       </ActionsCardBanner>
       <div className="">
         {update && currentBounty.isCreator && (
-          <AlertCard
-            type="positive"
-            title="Nice!"
-            description="You have received an update!"
-          >
-            <button
-              className="bg-white px-4 py-2"
-              onClick={() => setCurrentActionView(QuestActionView.ViewUpdate)}
+          <div className="px-5 pt-5">
+            <AlertCard
+              type="positive"
+              title="Nice!"
+              description="You have received an update!"
             >
-              View Update
-            </button>
-          </AlertCard>
+              <button
+                className="bg-white px-4 py-2"
+                onClick={() => setCurrentActionView(QuestActionView.ViewUpdate)}
+              >
+                View Update
+              </button>
+            </AlertCard>
+          </div>
         )}
         {update && currentBounty.isApprovedSubmitter && (
           <div className="px-5 pt-5">
