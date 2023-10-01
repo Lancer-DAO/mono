@@ -88,6 +88,12 @@ const CheckpointEdit: FC<Props> = ({
     );
   }, [tempCheckpoint, currentBounty.id]);
 
+  const disabled =
+    tempCheckpoint.title === "" ||
+    tempCheckpoint.description === "" ||
+    tempCheckpoint.price === 0 ||
+    tempCheckpoint.estimatedTime === 0;
+
   return (
     <div className="flex flex-col">
       {!checkpoint.canEdit && (
@@ -228,10 +234,13 @@ const CheckpointEdit: FC<Props> = ({
                 Cancel
               </button>
               <button
-                className="px-4 py-2 rounded-md border border-neutral300 text-neutral600 title-text"
+                className={`px-4 py-2 rounded-md border border-neutral300 text-neutral600 title-text ${
+                  disabled && "opacity-50 hover-none"
+                }"}`}
                 onClick={() => {
                   editCheckpoint();
                 }}
+                disabled={disabled}
               >
                 Save Changes
               </button>
