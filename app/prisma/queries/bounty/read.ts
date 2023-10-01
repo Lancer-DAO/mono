@@ -197,26 +197,23 @@ const bountyQueryMine = async (userId?: number) => {
 
   const bounties = await prisma.bounty.findMany({
     where: {
-      AND: [
-        {
-          users: {
-            some: {
-              userid: userId,
-            },
-          },
-          isTest: false,
+      users: {
+        some: {
+          userid: userId,
         },
-        {
-          OR: [
-            {
-              isPrivate: false,
-              state: {
-                in: [BountyState.ACCEPTING_APPLICATIONS],
-              },
-            },
-          ],
-        },
-      ],
+      },
+      isTest: false,
+      state: {
+        in: [
+          BountyState.ACCEPTING_APPLICATIONS,
+          BountyState.IN_PROGRESS,
+          BountyState.ACH_PENDING,
+          BountyState.AWAITING_REVIEW,
+          BountyState.VOTING_TO_CANCEL,
+          BountyState.DISPUTE_STARTED,
+          BountyState.REVIEWING_SHORTLIST,
+        ],
+      },
     },
     orderBy: {
       createdAt: "desc",

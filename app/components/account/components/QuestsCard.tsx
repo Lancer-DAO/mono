@@ -102,7 +102,7 @@ export const QuestsCard: FC<Props> = ({ user }) => {
         </>
       )}
       <p className="title-text text-neutral600">Completed Quests</p>
-      <QuestTable type="profile" />
+      <QuestTable type="profile" self={user.id === currentUser.id} />
     </div>
   );
 };

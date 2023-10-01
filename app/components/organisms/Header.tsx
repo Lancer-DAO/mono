@@ -81,7 +81,7 @@ export const Header = () => {
             />
             <p className="text-xl text-primary300 font-bold">Lancer</p>
           </Link>
-          {myQuests?.length > 0 && (
+          {/* {myQuests?.length > 0 && (
             <div className="relative" ref={wrapperRef}>
               <div
                 className="rounded-md border border-neutral200 bg-neutral100 
@@ -115,7 +115,7 @@ export const Header = () => {
                 </div>
               )}
             </div>
-          )}
+          )} */}
         </div>
         <div className="flex gap-4 items-center justify-center w-full">
           {currentUser &&
