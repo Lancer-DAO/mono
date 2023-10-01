@@ -9,11 +9,7 @@ import { CoinflowPurchase, SolanaWallet } from "@coinflowlabs/react";
 import { useBounty } from "@/src/providers/bountyProvider";
 import axios from "axios";
 
-const FundBounty: React.FC<{ amount: number }> = ({
-  amount,
-}: {
-  amount: number;
-}) => {
+const FundBounty: React.FC<{ amount: number }> = ({ amount }) => {
   const { provider, currentWallet, program } = useUserWallet();
   const { currentBounty } = useBounty();
   const { mutateAsync: fundB } = api.bounties.fundBounty.useMutation();
