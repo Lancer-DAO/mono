@@ -10,6 +10,7 @@ interface Props {
   onChange: (selected: Option[]) => void;
   version?: "default" | "white";
   extraClasses?: string;
+  title?: string;
 }
 
 const MultiSelectDropdown: React.FC<Props> = ({
@@ -18,6 +19,7 @@ const MultiSelectDropdown: React.FC<Props> = ({
   onChange,
   version,
   extraClasses = "",
+  title,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
 
@@ -78,7 +80,7 @@ const MultiSelectDropdown: React.FC<Props> = ({
   if (version === "white") {
     return (
       <div
-        className={`relative w-full max-w-[100px] h-[29px] ${extraClasses}`}
+        className={`relative max-w-[200px] h-[29px] ${extraClasses}`}
         ref={menuRef}
       >
         <div
@@ -86,11 +88,16 @@ const MultiSelectDropdown: React.FC<Props> = ({
           items-center cursor-pointer px-4 rounded-md"
           onClick={toggleOpen}
         >
-          <div className="text-xs text-neutral-500 truncate">
-            {selected?.length === 0
-              ? "Select"
-              : selected?.map((item) => item.label).join(", ")}
-          </div>
+          {title ? (
+            <div className="text-xs text-neutral-500 w-fit">{title}</div>
+          ) : (
+            <div className="text-xs text-neutral-500 truncate">
+              {selected?.length === 0
+                ? "Select"
+                : selected?.map((item) => item.label).join(", ")}
+            </div>
+          )}
+
           <div className="w-3">
             <ChevronsUpDown
               width={12}

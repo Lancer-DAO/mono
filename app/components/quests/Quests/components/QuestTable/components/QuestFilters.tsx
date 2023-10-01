@@ -23,6 +23,7 @@ export const QuestFilters = ({
       <MultiSelectDropdown
         extraClasses="w-[140px]"
         version="white"
+        title="Specializations"
         options={industries.map((industry) => {
           return {
             value: industry,
@@ -46,6 +47,7 @@ export const QuestFilters = ({
         <MultiSelectDropdown
           extraClasses="w-[160px]"
           version="white"
+          title="Tags"
           options={tags.map((tag) => {
             return {
               value: tag,
@@ -69,6 +71,7 @@ export const QuestFilters = ({
       <MultiSelectDropdown
         extraClasses="w-[140px]"
         version="white"
+        title="States"
         options={BOUNTY_STATES.map((state) => {
           return {
             value: state,
