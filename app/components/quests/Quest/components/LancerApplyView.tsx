@@ -32,8 +32,6 @@ const LancerApplyView: FC<Props> = ({
   const { currentBounty } = useBounty();
   const { currentUser } = useUserWallet();
 
-  const disableSubmit = () => {};
-
   if (!currentBounty || !currentUser) return null;
 
   return (
