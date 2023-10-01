@@ -102,7 +102,7 @@ const bountyQueryMany = async (
         isPrivate: false,
         isTest: false,
         state: {
-          in: [BountyState.ACCEPTING_APPLICATIONS, BountyState.NEW],
+          in: [BountyState.ACCEPTING_APPLICATIONS],
         },
 
         industries: {
@@ -122,7 +122,7 @@ const bountyQueryMany = async (
         isPrivate: false,
         isTest: false,
         state: {
-          in: [BountyState.ACCEPTING_APPLICATIONS, BountyState.NEW],
+          in: [BountyState.ACCEPTING_APPLICATIONS],
         },
       };
   const bounties = await prisma.bounty.findMany({
@@ -211,7 +211,7 @@ const bountyQueryMine = async (userId?: number) => {
             {
               isPrivate: false,
               state: {
-                in: [BountyState.ACCEPTING_APPLICATIONS, BountyState.NEW],
+                in: [BountyState.ACCEPTING_APPLICATIONS],
               },
             },
           ],
@@ -268,7 +268,7 @@ export const getTotalQuests = async (
               isPrivate: false,
               isTest: false,
               state: {
-                in: [BountyState.ACCEPTING_APPLICATIONS, BountyState.NEW],
+                in: [BountyState.ACCEPTING_APPLICATIONS],
               },
             },
           ],

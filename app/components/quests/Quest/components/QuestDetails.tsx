@@ -45,11 +45,12 @@ const QuestDetails = () => {
   const bountyStateColor = (state: string) => {
     return {
       "text-neutral600 bg-[#CBE4A1] border-[#C0D998]": [
-        BountyState.NEW,
         BountyState.ACCEPTING_APPLICATIONS,
       ].includes(state as BountyState),
-      "text-neutral600 bg-[#EDC9FF] border-[#E2C2F2]":
-        state === BountyState.IN_PROGRESS,
+      "text-neutral600 bg-[#EDC9FF] border-[#E2C2F2]": [
+        BountyState.IN_PROGRESS,
+        BountyState.REVIEWING_SHORTLIST,
+      ].includes(state as BountyState),
       "text-white bg-[#3D3D3D] border-[#333]": state === BountyState.COMPLETE,
       "text-neutral600 bg-[#FFBCB5] border-[#F2B0AA]":
         state === BountyState.AWAITING_REVIEW,
