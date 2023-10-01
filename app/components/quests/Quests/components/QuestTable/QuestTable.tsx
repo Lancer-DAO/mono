@@ -10,7 +10,7 @@ import {
   TABLE_BOUNTY_STATES,
 } from "@/types";
 import { AnimatePresence } from "framer-motion";
-import { QuestFilters, QuestRow } from "./components";
+import { QuestFilters, QuestHeader, QuestRow } from "./components";
 
 export const BOUNTY_USER_RELATIONSHIP = [
   "Creator",
@@ -35,7 +35,6 @@ const QuestTable: React.FC<Props> = ({ type }) => {
   // state
   const [tags, setTags] = useState<string[]>([]);
   const [priceBounds, setPriceBounds] = useState<[number, number]>([5, 10000]);
-  const [industryNames, setIndustryNames] = useState<string[]>([]);
   const [filteredBounties, setFilteredBounties] = useState<BountyPreview[]>();
 
   // api + context
@@ -126,9 +125,6 @@ const QuestTable: React.FC<Props> = ({ type }) => {
     // - upper and lower bounds of price
 
     if (allBounties && allBounties?.length !== 0) {
-      const mappedInds = allIndustries.map((industry) => industry.name);
-      setIndustryNames(mappedInds);
-
       const allPrices = allBounties.map((bounty) =>
         bounty.price ? parseFloat(bounty.price.toString()) : 0
       );
@@ -140,7 +136,7 @@ const QuestTable: React.FC<Props> = ({ type }) => {
       ];
       setPriceBounds(priceBounds);
     }
-  }, [allBounties, allIndustries]);
+  }, [allBounties]);
 
   useEffect(() => {
     if (!userIndustries || !allBounties) return;
@@ -173,15 +169,23 @@ const QuestTable: React.FC<Props> = ({ type }) => {
       <div className="w-full flex flex-col bg-white rounded-md gap-2">
         <AnimatePresence>
           {!!allBounties && type === "quests" && (
-            <QuestFilters
-              tags={tags}
-              count={
-                filteredBounties ? filteredBounties.length : allBounties.length
-              }
-              industries={allIndustries.map((industry) => industry.name)}
-              filters={filters}
-              setFilters={setFilters}
-            />
+            <>
+              <QuestHeader
+                count={
+                  filteredBounties
+                    ? filteredBounties.length
+                    : allBounties.length
+                }
+              />
+              <QuestFilters
+                tags={tags}
+                industries={
+                  allIndustries?.map((industry) => industry.name) || []
+                }
+                filters={filters}
+                setFilters={setFilters}
+              />
+            </>
           )}
         </AnimatePresence>
 
@@ -223,26 +227,28 @@ const QuestTable: React.FC<Props> = ({ type }) => {
               </p>
             </div>
           )}
-          <div className="flex items-center justify-center gap-5">
-            <button
-              onClick={() => {
-                setQuestsPage(questsPage - 1);
-              }}
-              className={`text-blue text-sm font-bold mt-4 disabled:opacity-60 disabled:cursor-not-allowed`}
-              disabled={questsPage - 1 < 0}
-            >
-              Prev Page
-            </button>
-            <button
-              onClick={() => {
-                setQuestsPage(questsPage + 1);
-              }}
-              className={`text-blue text-sm font-bold mt-4 disabled:opacity-60 disabled:cursor-not-allowed`}
-              disabled={questsPage + 1 > maxPages - 1}
-            >
-              Next Page
-            </button>
-          </div>
+          {filteredBounties?.length > 0 && (
+            <div className="flex items-center justify-center gap-5">
+              <button
+                onClick={() => {
+                  setQuestsPage(questsPage - 1);
+                }}
+                className={`text-blue text-sm font-bold mt-4 disabled:opacity-60 disabled:cursor-not-allowed`}
+                disabled={questsPage - 1 < 0}
+              >
+                Prev Page
+              </button>
+              <button
+                onClick={() => {
+                  setQuestsPage(questsPage + 1);
+                }}
+                className={`text-blue text-sm font-bold mt-4 disabled:opacity-60 disabled:cursor-not-allowed`}
+                disabled={questsPage + 1 > maxPages - 1}
+              >
+                Next Page
+              </button>
+            </div>
+          )}
         </div>
       </div>
     </div>
