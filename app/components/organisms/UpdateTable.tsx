@@ -759,7 +759,9 @@ const QuestUpdatesTable: React.FC = () => {
             )}
         </div>
         {allUpdates?.map((update) => {
-          return <UpdateTableItem {...update} key={update.key} />;
+          return (
+            <UpdateTableItem {...update} key={update.key} isIndividual={true} />
+          );
         })}
         {showDisputeModal && (
           <DisputeModal setShowModal={setShowDisputeModal} />
