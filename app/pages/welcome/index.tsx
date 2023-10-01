@@ -127,7 +127,10 @@ const WelcomePage: React.FC<{
 
   return (
     <div className="w-full max-w-[1200px] mx-auto flex md:justify-evenly py-24 ">
-      <NextSeo title="Lancer | Bounties" description="Lancer Bounties" />
+      <NextSeo
+        title="Lancer | Onboarding"
+        description="Start your journey with Lancer"
+      />
       {
         [
           <ChooseYourClass
