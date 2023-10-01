@@ -124,42 +124,42 @@ export const CreateBountyForm: FC<Props> = ({
         program
       );
 
-      const referralAccountIx = await createReferralDataAccountInstruction(
-        new PublicKey(currentWallet.publicKey),
-        feature_account,
-        await getSubmitterReferrer(currentWallet.publicKey, mintKey),
-        remainingAccounts,
-        program
-      );
-      const { blockhash, lastValidBlockHeight } =
-        await provider.connection.getLatestBlockhash();
-      const txInfo = {
-        /** The transaction fee payer */
-        feePayer: new PublicKey(currentWallet.publicKey),
-        /** A recent blockhash */
-        blockhash: blockhash,
-        /** the last block chain can advance to before tx is exportd expired */
-        lastValidBlockHeight: lastValidBlockHeight,
-      };
-      const signature2 = await currentWallet.signAndSendTransaction(
-        new Transaction(txInfo).add(referralAccountIx)
-      );
-      // const referralAccountIx =
-      //   await createCustodialReferralDataAccountInstruction(
-      //     new PublicKey(currentWallet.publicKey),
-      //     new PublicKey("pyrSoEahjKGKZpLWEYwCJ8zQAsYZckZH8ZqJ7yGd1ha"),
-      //     feature_account,
-      //     program,
-      //     await getSubmitterReferrer(currentWallet.publicKey, mintKey),
-      //     remainingAccounts
-      //   );
-      // const res2 = await sendGaslessTx(
-      //   [referralAccountIx],
-      //   true,
-      //   currentWallet,
-      //   20000
+      // const referralAccountIx = await createReferralDataAccountInstruction(
+      //   new PublicKey(currentWallet.publicKey),
+      //   feature_account,
+      //   await getSubmitterReferrer(currentWallet.publicKey, mintKey),
+      //   remainingAccounts,
+      //   program
       // );
-      // console.log("Second gasless tx res: ", res2);
+      // const { blockhash, lastValidBlockHeight } =
+      //   await provider.connection.getLatestBlockhash();
+      // const txInfo = {
+      //   /** The transaction fee payer */
+      //   feePayer: new PublicKey(currentWallet.publicKey),
+      //   /** A recent blockhash */
+      //   blockhash: blockhash,
+      //   /** the last block chain can advance to before tx is exportd expired */
+      //   lastValidBlockHeight: lastValidBlockHeight,
+      // };
+      // const signature2 = await currentWallet.signAndSendTransaction(
+      //   new Transaction(txInfo).add(referralAccountIx)
+      // );
+      const referralAccountIx =
+        await createCustodialReferralDataAccountInstruction(
+          new PublicKey(currentWallet.publicKey),
+          new PublicKey("pyrSoEahjKGKZpLWEYwCJ8zQAsYZckZH8ZqJ7yGd1ha"),
+          feature_account,
+          program,
+          await getSubmitterReferrer(currentWallet.publicKey, mintKey),
+          remainingAccounts
+        );
+      const res2 = await sendGaslessTx(
+        [referralAccountIx],
+        true,
+        currentWallet,
+        20000
+      );
+      console.log("Second gasless tx res: ", res2);
     } catch (error) {
       console.log("Quest Error: ", error);
       setCreateQuestState({ error });
