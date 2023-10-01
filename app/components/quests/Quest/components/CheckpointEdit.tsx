@@ -1,6 +1,7 @@
 import Edit from "@/components/@icons/Edit";
 import Fire from "@/components/@icons/Fire";
 import Trash from "@/components/@icons/Trash";
+import { useBounty } from "@/src/providers/bountyProvider";
 import { Checkpoint, LancerQuoteData } from "@/types";
 import { marked } from "marked";
 import { Dispatch, FC, SetStateAction, useEffect, useState } from "react";
@@ -23,12 +24,16 @@ const CheckpointEdit: FC<Props> = ({
   closeDetailsAndEdit,
   setDetails,
 }) => {
-  const [tempCheckpoint, setTempCheckpoint] = useState<Checkpoint>(() => {
-    const savedCheckpointData = localStorage.getItem("checkpointTempData");
-    if (savedCheckpointData) return JSON.parse(savedCheckpointData);
+  const { currentBounty } = useBounty();
 
-    return checkpoint;
-  });
+  const [tempCheckpoint, setTempCheckpoint] = useState<Checkpoint | null>(
+    () => {
+      const savedData = localStorage.getItem(
+        `tempCheckpointData-${currentBounty.id}`
+      );
+      return savedData ? JSON.parse(savedData) : checkpoint;
+    }
+  );
 
   const editCheckpoint = () => {
     setQuoteData((prevData) => {
@@ -47,7 +52,8 @@ const CheckpointEdit: FC<Props> = ({
 
       return updatedData;
     });
-    localStorage.removeItem("checkpointTempData");
+
+    localStorage.removeItem(`tempCheckpointData-${currentBounty.id}`);
   };
 
   const deleteCheckpoint = () => {
@@ -75,8 +81,12 @@ const CheckpointEdit: FC<Props> = ({
   };
 
   useEffect(() => {
-    localStorage.setItem("checkpointTempData", JSON.stringify(tempCheckpoint));
-  }, [tempCheckpoint]);
+    console.log("runningggg");
+    localStorage.setItem(
+      `tempCheckpointData-${currentBounty.id}`,
+      JSON.stringify(tempCheckpoint)
+    );
+  }, [tempCheckpoint, currentBounty.id]);
 
   return (
     <div className="flex flex-col">
@@ -200,9 +210,6 @@ const CheckpointEdit: FC<Props> = ({
           </div>
           {checkpoint.canEdit && (
             <div className="flex justify-end items-center gap-2">
-              {/* <button className="px-4 py-2 text-neutral600 title-text rounded-md border border-neutral300">
-                Add Checkpoint
-              </button> */}
               <button
                 className="px-4 py-2 rounded-md border border-neutral300 text-error title-text"
                 onClick={() => {
