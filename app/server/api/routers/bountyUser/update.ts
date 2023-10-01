@@ -72,6 +72,41 @@ export const update = protectedProcedure
           escrow
         );
       }
+      if (label === "add-approved-submitter") {
+        const ignoreIds = [user.id, currentUser.id];
+        const _usersToReject = await prisma.bountyUser.findMany({
+          where: {
+            bountyid: bountyId,
+            userid: {
+              notIn: ignoreIds,
+            },
+          },
+          include: {
+            user: true,
+          },
+        });
+        _usersToReject.forEach(async (_user) => {
+          const user = _user.user;
+          queries.bountyUser.updateRelations(bountyId, ["rejected"], user);
+          const webhookUpdate = {
+            ...updatedBounty,
+            updateType: _user.relations.includes("shortlist")
+              ? "remove-from-shortlist"
+              : "deny-submitter",
+            currentUserEmail: currentUser.email,
+            updatedUserEmail: user.email,
+            creatorEmail: updatedBounty.creator.user.email,
+            votingToCancelEmails: updatedBounty.votingToCancel.map(
+              (user) => user.user.email
+            ),
+            needsToVoteEmails: updatedBounty.needsToVote.map(
+              (user) => user.user.email
+            ),
+          };
+
+          HostedHooksClient.sendWebhook(webhookUpdate, "bounty.updated");
+        });
+      }
 
       const updatedBounty = await queries.bounty.get(bountyId, currentUserId);
 
