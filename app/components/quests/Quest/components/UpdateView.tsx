@@ -25,10 +25,10 @@ const UpdateView: FC<Props> = ({ selectedSubmitter, setCurrentActionView }) => {
   const [videoHTML, setVideoHTML] = useState("");
   const [review, setReview] = useState(() => {
     const savedReviewData = localStorage.getItem("reviewData");
-    if (savedReviewData) return JSON.parse(savedReviewData)
+    if (savedReviewData) return JSON.parse(savedReviewData);
 
     return "";
-  })
+  });
   const [hasSent, setHasSent] = useState(false);
   const [isAwaitingResponse, setIsAwaitingResponse] = useState(false);
 
@@ -65,7 +65,9 @@ const UpdateView: FC<Props> = ({ selectedSubmitter, setCurrentActionView }) => {
       const toastId = toast(
         (t) => (
           <div>
-            {`Are you sure you want to ${state === QuestProgressState.ACCEPTED ? 'approve' : 'reject'} this update?`}
+            {`Are you sure you want to ${
+              state === QuestProgressState.ACCEPTED ? "approve" : "reject"
+            } this update?`}
             <div className="mt-2 flex items-center gap-4 justify-center">
               <button
                 onClick={handleYes}
@@ -92,38 +94,48 @@ const UpdateView: FC<Props> = ({ selectedSubmitter, setCurrentActionView }) => {
   };
 
   const onClick = async (updateState: QuestProgressState) => {
-    if(review === "") {
+    if (review === "") {
       toast.error("Please provide some feedback.");
       return;
     }
     await confirmAction(updateState);
-    const toastId = toast.loading(`${updateState === QuestProgressState.ACCEPTED ? 'Approving' : 'Rejecting'} update...`);
+    const toastId = toast.loading(
+      `${
+        updateState === QuestProgressState.ACCEPTED ? "Approving" : "Rejecting"
+      } update...`
+    );
     try {
       await submitReview({
         id: update?.id,
         review: review,
         state: updateState,
+        bountyId: currentBounty.id,
       });
 
       setHasSent(true);
-      toast.success(`Update has been ${updateState === QuestProgressState.ACCEPTED ? 'approved' : 'rejected'}`, { id: toastId });
+      toast.success(
+        `Update has been ${
+          updateState === QuestProgressState.ACCEPTED ? "approved" : "rejected"
+        }`,
+        { id: toastId }
+      );
       localStorage.removeItem("reviewData");
     } catch (error) {
       toast.error("Error sending feedback", { id: toastId });
     }
-  }
+  };
 
   const isVideo = (url: string) => {
     return url.includes(".mp4") || url.includes(".mov");
-  }
+  };
 
   const setupLoom = async () => {
     const { html } = await oembed(update?.links);
     setVideoHTML(html);
-  }
+  };
 
-  if(validate.isLoomUrl(update?.links)) {
-    setupLoom()
+  if (validate.isLoomUrl(update?.links)) {
+    setupLoom();
   }
 
   useEffect(() => {
@@ -134,7 +146,9 @@ const UpdateView: FC<Props> = ({ selectedSubmitter, setCurrentActionView }) => {
     <div className="flex flex-col">
       <ActionsCardBanner
         title={`Update from ${currentBounty?.approvedSubmitters[0].user?.name}`}
-        subtitle={`${updates?.length || 0} ${(updates?.length || 0 ) === 1 ? "update" : "updates" } so far`}
+        subtitle={`${updates?.length || 0} ${
+          (updates?.length || 0) === 1 ? "update" : "updates"
+        } so far`}
       >
         {currentBounty.isCreator && (
           <motion.button
@@ -151,11 +165,15 @@ const UpdateView: FC<Props> = ({ selectedSubmitter, setCurrentActionView }) => {
         {update?.type === UPDATE_TYPES.Loom && (
           <div className="w-full flex flex-col gap-6">
             <div className="flex items-center gap-4">
-              <p className="whitespace-nowrap text-neutral600 text">Loom Link</p>
+              <p className="whitespace-nowrap text-neutral600 text">
+                Loom Link
+              </p>
               <div
                 className="w-fit flex items-center text border border-neutral200 placeholder:text-neutral500/60 
                 bg-neutral100 text-neutral500 h-[34px] rounded-md px-3 overflow-hidden"
-              >{update?.links}</div>
+              >
+                {update?.links}
+              </div>
             </div>
             {validate.isLoomUrl(update?.links) === false && (
               <div className="flex justify-center items-center rounded-md border px-[151px] py-[33px] h-[228px]">
@@ -174,14 +192,19 @@ const UpdateView: FC<Props> = ({ selectedSubmitter, setCurrentActionView }) => {
         )}
         {update?.type === UPDATE_TYPES.FileUpload && (
           <div className="w-full flex justify-center">
-            {(media && media[0]) && (
+            {media && media[0] && (
               <>
                 {isVideo(media[0]?.imageUrl) ? (
                   <video controls>
                     <source src={media[0]?.imageUrl} />
                   </video>
                 ) : (
-                  <Image src={media[0]?.imageUrl} alt={`${update?.name} image`} width={610} height={228} />
+                  <Image
+                    src={media[0]?.imageUrl}
+                    alt={`${update?.name} image`}
+                    width={610}
+                    height={228}
+                  />
                 )}
               </>
             )}
@@ -191,24 +214,30 @@ const UpdateView: FC<Props> = ({ selectedSubmitter, setCurrentActionView }) => {
           <div className="flex items-center gap-4">
             <p className="whitespace-nowrap text-neutral600 text">Name</p>
             <div
-                className="min-w-[190px] w-fit flex items-center text border border-neutral200 placeholder:text-neutral500/60 
+              className="min-w-[190px] w-fit flex items-center text border border-neutral200 placeholder:text-neutral500/60 
                 bg-neutral100 text-neutral500 h-[34px] rounded-md px-3 overflow-hidden"
             >
               {update?.name}
             </div>
           </div>
           <div className="flex flex-col justify-center gap-4">
-            <p className="whitespace-nowrap text-neutral600 text">Description</p>
+            <p className="whitespace-nowrap text-neutral600 text">
+              Description
+            </p>
             <div
-                className="flex text border border-neutral200 placeholder:text-neutral500/60 
+              className="flex text border border-neutral200 placeholder:text-neutral500/60 
                 bg-neutral100 text-neutral500 rounded-md px-3 py-2 overflow-hidden"
-              >{update?.description}</div>
+            >
+              {update?.description}
+            </div>
           </div>
         </div>
         <div className="flex flex-col gap-4">
-          <div className="text text-neutral600">Leave actionable feedback please. It will save time!</div>
-          <textarea 
-            className="p-4 min-h-[132px] rounded-md border border-neutral200 bg-neutral100 text placeholder:text-neutral300 resize-none outline-none" 
+          <div className="text text-neutral600">
+            Leave actionable feedback please. It will save time!
+          </div>
+          <textarea
+            className="p-4 min-h-[132px] rounded-md border border-neutral200 bg-neutral100 text placeholder:text-neutral300 resize-none outline-none"
             placeholder="Type here..."
             value={review}
             onChange={(e) => setReview(e.target.value)}
@@ -218,16 +247,16 @@ const UpdateView: FC<Props> = ({ selectedSubmitter, setCurrentActionView }) => {
       {!hasSent && (
         <div className="flex justify-end items-center gap-4 px-6 py-4">
           <motion.button
-            {...smallClickAnimation} 
+            {...smallClickAnimation}
             className="bg-white px-4 py-2 rounded-md border border-neutral200 title-text text-neutral600"
             onClick={() => onClick(QuestProgressState.REJECTED)}
             disabled={isAwaitingResponse}
           >
             Request to change
           </motion.button>
-          <motion.button 
+          <motion.button
             {...smallClickAnimation}
-            className="bg-primary200 px-4 py-2 rounded-md text-white title-text" 
+            className="bg-primary200 px-4 py-2 rounded-md text-white title-text"
             value={QuestProgressState.ACCEPTED}
             onClick={() => onClick(QuestProgressState.ACCEPTED)}
             disabled={isAwaitingResponse}
