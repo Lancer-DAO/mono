@@ -179,7 +179,7 @@ const QuestTable: React.FC<Props> = ({ type }) => {
               <QuestFilters
                 tags={tags}
                 industries={
-                  userIndustries?.map((industry) => industry.name) || []
+                  allIndustries?.map((industry) => industry.name) || []
                 }
                 filters={filters}
                 setFilters={setFilters}

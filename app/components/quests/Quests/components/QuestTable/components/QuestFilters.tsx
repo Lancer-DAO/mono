@@ -42,28 +42,30 @@ export const QuestFilters = ({
           });
         }}
       />
-      <MultiSelectDropdown
-        extraClasses="w-[160px]"
-        version="white"
-        options={tags.map((tag) => {
-          return {
-            value: tag,
-            label: capitalize(tag),
-          };
-        })}
-        selected={filters.tags.map((tag) => {
-          return {
-            value: tag,
-            label: capitalize(tag),
-          };
-        })}
-        onChange={(options) => {
-          setFilters({
-            ...filters,
-            tags: options.map((option) => option.value as string),
-          });
-        }}
-      />
+      {tags.length > 0 && (
+        <MultiSelectDropdown
+          extraClasses="w-[160px]"
+          version="white"
+          options={tags.map((tag) => {
+            return {
+              value: tag,
+              label: capitalize(tag),
+            };
+          })}
+          selected={filters.tags.map((tag) => {
+            return {
+              value: tag,
+              label: capitalize(tag),
+            };
+          })}
+          onChange={(options) => {
+            setFilters({
+              ...filters,
+              tags: options.map((option) => option.value as string),
+            });
+          }}
+        />
+      )}
       <MultiSelectDropdown
         extraClasses="w-[140px]"
         version="white"

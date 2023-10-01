@@ -8,9 +8,9 @@ interface Props {
   setShowModal: Dispatch<SetStateAction<boolean>>;
 }
 
-const { currentUser } = useUserWallet();
-
 export const CompleteProfileModal: FC<Props> = ({ setShowModal }) => {
+  const { currentUser } = useUserWallet();
+
   return (
     <Modal
       setShowModal={setShowModal}
@@ -26,7 +26,9 @@ export const CompleteProfileModal: FC<Props> = ({ setShowModal }) => {
         <ol className="text-center">
           <li className="font-bold">1. Unlock messaging</li>
           <li className="font-bold">
-            {currentUser.class === "Lancer" ? "2. Apply to Quests" : "2. Create Quests"}
+            {currentUser.class === "Lancer"
+              ? "2. Apply to Quests"
+              : "2. Create Quests"}
           </li>
           <li className="font-bold">
             3. Referral commissions for inviting others
