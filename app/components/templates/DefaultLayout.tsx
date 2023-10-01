@@ -1,8 +1,7 @@
+import { Header, JoyrideWrapper, SidePanel } from "@/components";
+import { useUserWallet } from "@/src/providers";
 import { ReactNode, useEffect, useState } from "react";
 import Image from "next/image";
-import { Header, JoyrideWrapper } from "@/components";
-import { useUserWallet } from "@/src/providers";
-import SidePanel from "../molecules/sidebar";
 import { useWindowSize } from "@/src/hooks";
 
 const DefaultLayout: React.FC<{ children: ReactNode }> = ({ children }) => {
@@ -25,13 +24,12 @@ const DefaultLayout: React.FC<{ children: ReactNode }> = ({ children }) => {
   if (isMobile) return <MobilePlaceholder />;
 
   return (
-    <div className="relative flex">
+    <div className="relative flex mr-10">
       <div className="flex-grow">
         <Header />
         {currentUser && <JoyrideWrapper />}
         <main>{children}</main>
       </div>
-
       <SidePanel />
     </div>
   );

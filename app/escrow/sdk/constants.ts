@@ -17,6 +17,7 @@ export const LANCER_COMPANY_TOKENS = "lancer_company_tokens";
 export const MINT_DECIMALS = 9;
 export const MINT_AUTHORITY = "mint_authority";
 export const REFERRER = "referrer";
+export const DISPUTE = "dispute";
 export const LANCER_ADMIN = new PublicKey(
   "WbmLPptTGZTFK5ZSks7oaa4Qx69qS3jFXMrAsbWz1or"
 );

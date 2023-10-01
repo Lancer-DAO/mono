@@ -1,13 +1,16 @@
 import { FC, Dispatch, SetStateAction } from "react";
 import Image from "next/image";
 import { Modal } from "@/components";
-import { BountyActionsButton } from "../../bounties/Bounty/components";
+import { QuestActionsButton } from "../../quests/Quest/components";
+import { useUserWallet } from "@/src/providers";
 
 interface Props {
   setShowModal: Dispatch<SetStateAction<boolean>>;
 }
 
 export const CompleteProfileModal: FC<Props> = ({ setShowModal }) => {
+  const { currentUser } = useUserWallet();
+
   return (
     <Modal
       setShowModal={setShowModal}
@@ -21,8 +24,12 @@ export const CompleteProfileModal: FC<Props> = ({ setShowModal }) => {
           Benefits include:
         </p>
         <ol className="text-center">
-          <li className="font-bold">1. Unlock messaging</li>
-          <li className="font-bold">2. Gain access to all Quests</li>
+          <li className="font-bold">1. Messaging other Users</li>
+          <li className="font-bold">
+            {currentUser.class === "Lancer"
+              ? "2. Applying to Quests"
+              : "2. Creating Quests"}
+          </li>
           <li className="font-bold">
             3. Referral commissions for inviting others
           </li>
@@ -31,7 +38,7 @@ export const CompleteProfileModal: FC<Props> = ({ setShowModal }) => {
           You&apos;ll be notified when you&apos;ve been approved.
         </p>
 
-        <BountyActionsButton
+        <QuestActionsButton
           type="green"
           text="Got it"
           onClick={() => {

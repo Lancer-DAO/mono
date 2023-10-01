@@ -1,12 +1,17 @@
 import { prisma } from "@/server/db";
+import { QUESTS_PER_PAGE } from "@/src/constants";
 import {
   BOUNTY_USER_RELATIONSHIP,
   BountyUserRelations,
   CurrentUserBountyInclusions,
 } from "@/types/";
-import { UnwrapArray, UnwrapPromise } from "@/types/Bounties";
+import {
+  BountyState,
+  BOUNTY_STATES,
+  UnwrapArray,
+  UnwrapPromise,
+} from "@/types/Bounties";
 import * as Prisma from "@prisma/client";
-import { trimEnd } from "lodash";
 
 const BOUNTY_MANY_SELECT = {
   escrow: {
@@ -51,6 +56,7 @@ const BOUNTY_MANY_SELECT = {
   createdAt: true,
   isTest: true,
   price: true,
+  isExternal: true,
 };
 
 const bountyQuery = async (id: number) => {
@@ -59,7 +65,6 @@ const bountyQuery = async (id: number) => {
       id,
     },
     include: {
-      repository: true,
       escrow: {
         include: {
           transactions: {
@@ -76,15 +81,50 @@ const bountyQuery = async (id: number) => {
           wallet: true,
         },
       },
-      issue: true,
       tags: true,
-      pullRequests: true,
       industries: true,
     },
   });
 };
 
-const bountyQueryMany = async (userId?: number, excludePrivate?: boolean) => {
+const bountyQueryMany = async (
+  page: number,
+  userId?: number,
+  industries?: number[]
+) => {
+  let otherQuestsWhereClause: any = industries
+    ? {
+        users: {
+          none: {
+            userid: userId,
+          },
+        },
+        isPrivate: false,
+        isTest: false,
+        state: {
+          in: [BountyState.ACCEPTING_APPLICATIONS],
+        },
+
+        industries: {
+          some: {
+            id: {
+              in: industries,
+            },
+          },
+        },
+      }
+    : {
+        users: {
+          none: {
+            userid: userId,
+          },
+        },
+        isPrivate: false,
+        isTest: false,
+        state: {
+          in: [BountyState.ACCEPTING_APPLICATIONS],
+        },
+      };
   const bounties = await prisma.bounty.findMany({
     where: {
       OR: [
@@ -98,18 +138,82 @@ const bountyQueryMany = async (userId?: number, excludePrivate?: boolean) => {
           isTest: false,
         },
         {
-          users: {
-            none: {
-              userid: userId,
-            },
-          },
-          isPrivate: false,
-          isTest: false,
-          state: {
-            in: ["accepting_applications", "new"],
-          },
+          ...otherQuestsWhereClause,
         },
       ],
+    },
+    orderBy: {
+      createdAt: "desc",
+    },
+    select: BOUNTY_MANY_SELECT,
+    skip: page * QUESTS_PER_PAGE,
+    take: QUESTS_PER_PAGE,
+  });
+
+  return bounties;
+};
+
+const bountyQueryCompletedForUser = async (page: number, userId?: number) => {
+  const bounties = await prisma.bounty.findMany({
+    where: {
+      users: {
+        some: {
+          userid: userId,
+        },
+      },
+      // delete me if local and testing quests page
+      isTest: false,
+      state: {
+        in: [BountyState.COMPLETE],
+      },
+    },
+    orderBy: {
+      createdAt: "desc",
+    },
+    select: BOUNTY_MANY_SELECT,
+    skip: page * QUESTS_PER_PAGE,
+    take: QUESTS_PER_PAGE,
+  });
+
+  return bounties;
+};
+
+const externalBountyQuery = async () => {
+  const bounties = await prisma.bounty.findMany({
+    where: {
+      isExternal: true,
+    },
+    select: {
+      links: true,
+    },
+  });
+
+  return bounties;
+};
+const bountyQueryMine = async (userId?: number) => {
+  if (!userId) {
+    throw new Error("A userId must be provided.");
+  }
+
+  const bounties = await prisma.bounty.findMany({
+    where: {
+      users: {
+        some: {
+          userid: userId,
+        },
+      },
+      isTest: false,
+      state: {
+        in: [
+          BountyState.ACCEPTING_APPLICATIONS,
+          BountyState.IN_PROGRESS,
+          BountyState.ACH_PENDING,
+          BountyState.AWAITING_REVIEW,
+          BountyState.VOTING_TO_CANCEL,
+          BountyState.DISPUTE_STARTED,
+          BountyState.REVIEWING_SHORTLIST,
+        ],
+      },
     },
     orderBy: {
       createdAt: "desc",
@@ -118,6 +222,56 @@ const bountyQueryMany = async (userId?: number, excludePrivate?: boolean) => {
   });
 
   return bounties;
+};
+
+export const getTotalQuests = async (
+  userId?: number,
+  onlyComplete?: boolean
+) => {
+  const count = onlyComplete
+    ? await prisma.bounty.count({
+        where: {
+          users: {
+            some: {
+              userid: userId,
+            },
+          },
+          // delete me if local and testing quests page
+          isTest: false,
+
+          state: {
+            in: [BountyState.COMPLETE],
+          },
+        },
+      })
+    : await prisma.bounty.count({
+        where: {
+          OR: [
+            {
+              users: {
+                some: {
+                  userid: userId,
+                },
+              },
+              // delete me if local and testing quests page
+              isTest: false,
+            },
+            {
+              users: {
+                none: {
+                  userid: userId,
+                },
+              },
+              isPrivate: false,
+              isTest: false,
+              state: {
+                in: [BountyState.ACCEPTING_APPLICATIONS],
+              },
+            },
+          ],
+        },
+      });
+  return count;
 };
 
 export type BountyType = UnwrapPromise<ReturnType<typeof get>>;
@@ -158,8 +312,55 @@ export const get = async (id: number, currentUserId: number) => {
   };
 };
 
-export const getMany = async (currentUserId: number) => {
-  const bounties = await bountyQueryMany(currentUserId);
+export const getMany = async (page: number, currentUserId?: number) => {
+  const industryIds = [];
+  if (currentUserId) {
+    const user = await prisma.user.findUnique({
+      where: { id: currentUserId },
+      select: {
+        industries: {
+          select: { id: true },
+        },
+      },
+    });
+    user.industries?.forEach((industry) => {
+      industryIds.push(industry.id);
+    });
+  }
+  console.log("industryIds", industryIds);
+  const bounties = await bountyQueryMany(
+    page,
+    currentUserId,
+    industryIds.length > 0 ? industryIds : undefined
+  );
+
+  const allBounties = bounties.map((bounty) => {
+    const userRelations = bounty.users;
+    const creator = getBountyCreator(userRelations);
+    return { ...bounty, creator };
+  });
+
+  return allBounties;
+};
+
+export const getCompletedForUser = async (page: number, userId?: number) => {
+  const bounties = await bountyQueryCompletedForUser(page, userId);
+
+  const allBounties = bounties.map((bounty) => {
+    const userRelations = bounty.users;
+    const creator = getBountyCreator(userRelations);
+    return { ...bounty, creator };
+  });
+
+  return allBounties;
+};
+
+export const getExternal = async () => {
+  const bounties = await externalBountyQuery();
+  return bounties;
+};
+export const getMine = async (currentUserId: number) => {
+  const bounties = await bountyQueryMine(currentUserId);
 
   const mappedBounties = bounties.map((bounty) => {
     const userRelations = bounty.users;
@@ -176,7 +377,7 @@ export const convertBountyUserToUser = (user: UserRelation) => {
     relations: user.relations
       .replace(/[\[\]]/g, "")
       .split(",") as BOUNTY_USER_RELATIONSHIP[],
-    publicKey: user.wallet.publicKey,
+    publicKey: user.wallet?.publicKey,
   };
 };
 
@@ -196,17 +397,19 @@ const getBountyRelations = (
   const allUsers = rawUsers.map((user) => {
     return convertBountyUserToUser(user);
   });
-  // console.log(allUsers);
   const newBounty: BountyUserRelations = {
     all: allUsers,
     creator: allUsers.find((submitter) =>
       submitter.relations.includes(BOUNTY_USER_RELATIONSHIP.Creator)
     ),
-    requestedSubmitters: allUsers.filter((submitter) =>
-      submitter.relations.includes(BOUNTY_USER_RELATIONSHIP.RequestedSubmitter)
+    requestedLancers: allUsers.filter((submitter) =>
+      submitter.relations.includes(BOUNTY_USER_RELATIONSHIP.RequestedLancer)
     ),
-    deniedRequesters: allUsers.filter((submitter) =>
-      submitter.relations.includes(BOUNTY_USER_RELATIONSHIP.DeniedRequester)
+    shortlistedLancers: allUsers.filter((submitter) =>
+      submitter.relations.includes(BOUNTY_USER_RELATIONSHIP.ShortlistedLancer)
+    ),
+    deniedLancers: allUsers.filter((submitter) =>
+      submitter.relations.includes(BOUNTY_USER_RELATIONSHIP.DeniedLancer)
     ),
     approvedSubmitters: allUsers.filter((submitter) =>
       submitter.relations.includes(BOUNTY_USER_RELATIONSHIP.ApprovedSubmitter)
@@ -241,6 +444,9 @@ const getBountyRelations = (
           ].includes(relation)
         )
     ),
+    disputer: allUsers.find((submitter) =>
+      submitter.relations.includes(BOUNTY_USER_RELATIONSHIP.Disputer)
+    ),
   };
   return newBounty;
 };
@@ -252,11 +458,14 @@ const getCurrentUserRelations = (
     isCreator: currentUserRelationsList.includes(
       BOUNTY_USER_RELATIONSHIP.Creator
     ),
-    isRequestedSubmitter: currentUserRelationsList.includes(
-      BOUNTY_USER_RELATIONSHIP.RequestedSubmitter
+    isRequestedLancer: currentUserRelationsList.includes(
+      BOUNTY_USER_RELATIONSHIP.RequestedLancer
     ),
-    isDeniedRequester: currentUserRelationsList.includes(
-      BOUNTY_USER_RELATIONSHIP.DeniedRequester
+    isShortlistedLancer: currentUserRelationsList.includes(
+      BOUNTY_USER_RELATIONSHIP.ShortlistedLancer
+    ),
+    isDeniedLancer: currentUserRelationsList.includes(
+      BOUNTY_USER_RELATIONSHIP.DeniedLancer
     ),
     isApprovedSubmitter: currentUserRelationsList.includes(
       BOUNTY_USER_RELATIONSHIP.ApprovedSubmitter

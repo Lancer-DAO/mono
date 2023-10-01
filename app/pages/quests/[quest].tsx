@@ -6,10 +6,9 @@ import {
   getSession,
   withPageAuthRequired,
 } from "@auth0/nextjs-auth0";
-import { Bounty } from "../../components/bounties/Bounty/Bounty";
+import { Quest } from "../../components/quests/Quest/Quest";
 import { NextSeo } from "next-seo";
 import { GetServerSidePropsContext } from "next";
-import { prisma } from "@/server/db";
 import * as queries from "@/prisma/queries";
 import { useBounty } from "@/src/providers/bountyProvider";
 import { useMint } from "@/src/providers/mintProvider";
@@ -29,12 +28,12 @@ export async function getServerSideProps(
       },
     };
   }
+
   try {
     const questId = parseInt(context.query.quest as string);
     const { email } = metadata.user;
 
     const user = await queries.user.getByEmail(email);
-
     if (!user || !user.hasFinishedOnboarding) {
       return {
         redirect: {
@@ -44,7 +43,6 @@ export async function getServerSideProps(
       };
     }
     const quest = await queries.bounty.get(questId, user.id);
-
     const allMints = await queries.mint.getAll();
     const allIndustries = await queries.industry.getMany();
     return {
@@ -56,9 +54,10 @@ export async function getServerSideProps(
       },
     };
   } catch (e) {
+    console.error("error", e);
     return {
       redirect: {
-        destination: "/welcome",
+        destination: "/",
         permanent: false,
       },
     };
@@ -87,7 +86,7 @@ const BountyDetailPage: React.FC<{
   return (
     <>
       <NextSeo title="Lancer | Quest" description="Lancer Quest" />
-      <Bounty />
+      <Quest />
     </>
   );
 };

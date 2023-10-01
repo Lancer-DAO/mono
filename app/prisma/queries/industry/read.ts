@@ -7,7 +7,6 @@ const industryQuery = async (id: number) => {
       id,
     },
     include: {
-      disciplines: true,
       tags: true,
       bounties: true,
       users: true,
@@ -25,10 +24,22 @@ export const get = async (id: number) => {
 export const getMany = async () => {
   const industries = await prisma.industry.findMany({
     include: {
-      disciplines: true,
       tags: true,
       bounties: true,
       users: true,
+    },
+  });
+  return industries;
+};
+
+export const getIndustriesByUserId = async (userId: number) => {
+  const industries = await prisma.industry.findMany({
+    where: {
+      users: {
+        some: {
+          id: userId,
+        },
+      },
     },
   });
   return industries;

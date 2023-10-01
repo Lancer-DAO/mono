@@ -1,9 +1,10 @@
 import { protectedProcedure } from "../../trpc";
 import { z } from "zod";
 import * as queries from "@/prisma/queries";
-import { BountyState } from "@/types/";
+import { BountyState, BOUNTY_USER_RELATIONSHIP } from "@/types/";
 import { createGroupChannel } from "@/src/utils/sendbird";
 import { HostedHooksClient } from "../../webhooks";
+import { prisma } from "@/server/db";
 
 export const update = protectedProcedure
   .input(
@@ -17,6 +18,7 @@ export const update = protectedProcedure
       state: z.optional(z.string()),
       label: z.string(),
       signature: z.string(),
+      applicationText: z.optional(z.string()),
     })
   )
   .mutation(
@@ -31,6 +33,7 @@ export const update = protectedProcedure
         state,
         label,
         signature,
+        applicationText,
       },
     }) => {
       const user = await queries.user.getById(userId);
@@ -46,7 +49,8 @@ export const update = protectedProcedure
           bountyId,
           relations,
           user,
-          wallet
+          wallet,
+          applicationText
         );
       } else {
         await queries.bountyUser.updateRelations(bountyId, relations, user);
@@ -65,31 +69,52 @@ export const update = protectedProcedure
           signature,
           label,
           wallet,
-          escrow.chain,
           escrow
         );
       }
+      if (label === "add-approved-submitter") {
+        const ignoreIds = [user.id, currentUser.id];
+        const _usersToReject = await prisma.bountyUser.findMany({
+          where: {
+            bountyid: bountyId,
+            userid: {
+              notIn: ignoreIds,
+            },
+          },
+          include: {
+            user: true,
+          },
+        });
+        _usersToReject.forEach(async (_user) => {
+          const user = _user.user;
+          queries.bountyUser.updateRelations(
+            bountyId,
+            [BOUNTY_USER_RELATIONSHIP.DeniedLancer],
+            user
+          );
+          await queries.bountyUserAction.create(
+            bountyId,
+            BOUNTY_USER_RELATIONSHIP.DeniedLancer,
+            user
+          );
 
-      // if (label === "add-approved-submitter") {
-      //   // create a messaging group for this bounty
-      //   const bounty = await queries.bounty.get(bountyId, currentUserId);
-      //   const client = String(bounty.creator.userid);
-      //   const approvedSubmitters = bounty.approvedSubmitters.map((submitter) =>
-      //     String(submitter.userid)
-      //   );
+          const webhookUpdate = {
+            ...updatedBounty,
+            updateType: "deny-submitter",
+            currentUserEmail: currentUser.email,
+            updatedUserEmail: user.email,
+            creatorEmail: updatedBounty.creator.user.email,
+            votingToCancelEmails: updatedBounty.votingToCancel.map(
+              (user) => user.user.email
+            ),
+            needsToVoteEmails: updatedBounty.needsToVote.map(
+              (user) => user.user.email
+            ),
+          };
 
-      //   console.log({
-      //     admin: client,
-      //     lancers: approvedSubmitters,
-      //     name: bounty.title,
-      //   });
-
-      //   createGroupChannel({
-      //     admin: client,
-      //     lancers: approvedSubmitters,
-      //     name: bounty.title,
-      //   });
-      // }
+          HostedHooksClient.sendWebhook(webhookUpdate, "bounty.updated");
+        });
+      }
 
       const updatedBounty = await queries.bounty.get(bountyId, currentUserId);
 

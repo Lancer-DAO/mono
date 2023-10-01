@@ -59,20 +59,13 @@ const getCurrentBountyTutorialInitialState = (
   if (currentBounty.isCreator && currentBounty.needsToVote.length === 0) {
     steps.push(CANCEL_STEP);
   }
-  if (currentBounty.isRequestedSubmitter) {
+  if (currentBounty.isRequestedLancer) {
     steps.push(REQUEST_PENDING_STEP);
   }
-  if (currentBounty.isDeniedRequester) {
+  if (currentBounty.isDeniedLancer) {
     steps.push(REQUEST_DENIED_STEP);
   }
-  if (currentBounty.isApprovedSubmitter && !currentBounty.currentSubmitter) {
-    if (currentBounty.pullRequests.length === 0) {
-      steps.push(...SUBMIT_REQUEST_NEEDS_PULL_REQUEST_STEPS);
-    } else {
-      steps.push(...SUBMIT_REQUEST_HAS_PULL_REQUEST_STEPS);
-    }
-  }
-  if (currentBounty.isDeniedRequester) {
+  if (currentBounty.isDeniedLancer) {
     steps.push(SUBMISSION_PENDING_STEP);
   }
 
@@ -80,7 +73,7 @@ const getCurrentBountyTutorialInitialState = (
     steps.push(SUBMISSION_DENIED_STEP);
   }
 
-  if (currentBounty.isCreator && currentBounty.requestedSubmitters.length > 0) {
+  if (currentBounty.isCreator && currentBounty.requestedLancers.length > 0) {
     steps.push(...MANAGE_REQUESTED_SUBMITTER_STEPS);
   }
 

@@ -1,7 +1,6 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
 @font-face {
   font-family: charter;
   font-style: normal;
@@ -35,17 +34,42 @@
 }
 
 html {
-  @apply text-textPrimary bg-bgLancer;
+  @apply text-[#526660] bg-[#F7F7FB];
 }
 
 h1 {
-  @apply text-4xl font-bold;
+  @apply text-2xl font-bold;
+}
+
+h2 {
+  @apply text-xl font-bold;
+}
+
+h3 {
+  @apply text-lg font-bold;
+}
+
+h4 {
+  @apply text-base;
+}
+
+.title-text {
+  @apply text-sm font-bold;
+}
+
+.text {
+  @apply text-sm;
+}
+
+.text-mini {
+  @apply text-xs;
 }
 
 .multi-line-ellipsis {
   display: -webkit-box;
   -webkit-box-orient: vertical;
-  -webkit-line-clamp: 2; /* Number of lines to show */
+  -webkit-line-clamp: 2;
+  /* Number of lines to show */
   overflow: hidden;
 }
 
@@ -55,4 +79,18 @@ h1 {
   top: 0;
   left: 0;
   z-index: -1;
+}
+
+@layer base {
+  input[type="number"]::-webkit-inner-spin-button,
+  input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+}
+
+#sendbird-message-input-text-field {
+  -ms-overflow-style: none;
+  /* IE and Edge */
+  scrollbar-width: none;
 }

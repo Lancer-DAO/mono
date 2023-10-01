@@ -1,13 +1,21 @@
-import Onboard from "@/components/onboarding/Onboard";
-import { prisma } from "@/server/db";
 import { getSession, withPageAuthRequired } from "@auth0/nextjs-auth0";
 import { GetServerSidePropsContext } from "next";
 import { NextSeo } from "next-seo";
 
 import * as queries from "@/prisma/queries";
-import { useMint } from "@/src/providers/mintProvider";
-import { useIndustry } from "@/src/providers/industryProvider";
-
+import { useState } from "react";
+import { Class, Option } from "@/types";
+import { useRouter } from "next/router";
+import { api } from "@/src/utils";
+import toast from "react-hot-toast";
+import { ChooseYourClass } from "@/components/onboarding/ChooseYourClass";
+import { CreateYourProfile } from "@/components/onboarding/CreateYourProfile";
+import { GoodToGo } from "@/components/onboarding/GoodToGo";
+import { useUserWallet } from "@/src/providers";
+import { BADGES_PROJECT_PARAMS } from "@/src/constants";
+import dayjs from "dayjs";
+import { createUnderdogClient } from "@underdog-protocol/js";
+const underdogClient = createUnderdogClient({});
 export async function getServerSideProps(
   context: GetServerSidePropsContext<{ id: string; req; res }>
 ) {
@@ -35,45 +43,124 @@ export async function getServerSideProps(
   if (user && user.hasFinishedOnboarding) {
     return {
       redirect: {
-        destination: "/account",
+        destination: "/",
         permanent: false,
       },
     };
   }
 
-  const allMints = await queries.mint.getAll();
   const allIndustries = await queries.industry.getMany();
   return {
     props: {
       currentUser: JSON.stringify(user),
 
-      mints: JSON.stringify(allMints),
-      industries: JSON.stringify(allIndustries),
+      allIndustries: JSON.stringify(allIndustries),
     },
   };
 }
 
-const WelcomePage: React.FC<{ mints: string; industries: string }> = ({
-  mints,
-  industries,
-}) => {
-  const { setAllMints, allMints } = useMint();
-  const { setAllIndustries, allIndustries } = useIndustry();
+const WelcomePage: React.FC<{
+  allIndustries: string;
+}> = ({ allIndustries }) => {
+  const [page, setPage] = useState(0);
+  const [selectedClass, setSelectedClass] = useState<Class>("Noble");
+  const { currentUser, currentWallet } = useUserWallet();
+  const router = useRouter();
+  const { mutateAsync: registerOnboardingInfo } =
+    api.users.addOnboardingInformation.useMutation();
 
-  if (!allMints && mints) {
-    setAllMints(JSON.parse(mints));
-  }
-  if (!allIndustries && industries) {
-    setAllIndustries(JSON.parse(industries));
-  }
+  const { mutateAsync: registerOnboardingBadge } =
+    api.users.registerOnboardingBadge.useMutation();
+  const [name, setName] = useState("");
+  const [company, setCompany] = useState("");
+  const [description, setDescription] = useState("");
+  const [industry, setIndustry] = useState<Option>({
+    label: "Engineering",
+    value: "Engineering",
+  });
+  const industries = allIndustries ? JSON.parse(allIndustries) : [];
+  const industryOptions = industries.map((industry) => {
+    return {
+      label: industry.name,
+      value: industry.name,
+    };
+  });
+
+  const handleUpdateProfile = async () => {
+    const toastId = toast.loading("Creating your profile...");
+    try {
+      await registerOnboardingInfo({
+        industryId: industries.find((i) => i.name === industry.value).id,
+        name,
+        company,
+        companyDescription: description,
+        bio: description,
+        selectedClass,
+      });
+
+      toast.success("Profile created successfully!", { id: toastId });
+      if (currentWallet?.publicKey) {
+        await underdogClient.createNft({
+          params: BADGES_PROJECT_PARAMS,
+          body: {
+            name: `Onboarded as ${selectedClass}`,
+            image:
+              selectedClass === "Noble"
+                ? "https://utfs.io/f/11550d3d-02d0-4c11-954d-70708786d0db-ejso1z.png"
+                : "https://utfs.io/f/f0b4011d-763e-486a-bc38-9866ed10affd-ejso3p.png",
+            description: `${name} has onboarded as a ${selectedClass}!}`,
+            attributes: {
+              completed: dayjs().toISOString(),
+            },
+            upsert: false,
+            receiverAddress: currentWallet.publicKey.toString(),
+          },
+        });
+        await registerOnboardingBadge();
+      }
+      router.push("/");
+    } catch (e) {
+      console.log("error updating profile: ", e);
+      toast.error("Error updating profile", { id: toastId });
+    }
+  };
+
   return (
-    <>
+    <div className="w-full max-w-[1200px] mx-auto flex md:justify-evenly py-24 ">
       <NextSeo
-        title="Lancer | Welcome"
-        description="Create your Lancer account"
+        title="Lancer | Onboarding"
+        description="Start your journey with Lancer"
       />
-      <Onboard />
-    </>
+      {
+        [
+          <ChooseYourClass
+            key={0}
+            setPage={setPage}
+            selectedClass={selectedClass}
+            setSelectedClass={setSelectedClass}
+          />,
+          <CreateYourProfile
+            key={1}
+            setPage={setPage}
+            selectedClass={selectedClass}
+            name={name}
+            setName={setName}
+            company={company}
+            setCompany={setCompany}
+            description={description}
+            setDescription={setDescription}
+            industry={industry}
+            setIndustry={setIndustry}
+            industryOptions={industryOptions}
+          />,
+          <GoodToGo
+            key={2}
+            selectedClass={selectedClass}
+            updateProfile={handleUpdateProfile}
+          />,
+        ][page]
+      }
+    </div>
   );
 };
 

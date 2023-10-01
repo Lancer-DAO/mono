@@ -13,7 +13,7 @@ const NextArrow: FC<NextArrowProps> = ({
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
   >
-    <path d="M1 1L17 17L1 33" stroke="#DADADA" stroke-width="2.5" />
+    <path d="M1 1L17 17L1 33" stroke="#DADADA" strokeWidth="2.5" />
   </svg>
 );
 
