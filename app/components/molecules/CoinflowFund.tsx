@@ -38,17 +38,28 @@ const FundBounty: React.FC<{ amount: number }> = ({
   const onSuccess = async (args) => {
     console.log("onSuccess", args);
     console.log("parsed", JSON.parse(args));
-    const {
-      info: { paymentId },
-    } = JSON.parse(args);
-    fundB({
-      bountyId: currentBounty?.id,
-      escrowId: currentBounty?.escrow.id,
-      amount,
-      paymentId,
-    });
-    router.push(`/quests/${currentBounty?.id}`);
+    try {
+      const {
+        info: { paymentId },
+      } = JSON.parse(args);
+      fundB({
+        bountyId: currentBounty?.id,
+        escrowId: currentBounty?.escrow.id,
+        amount,
+        paymentId,
+      });
+      router.push(`/quests/${currentBounty?.id}`);
+    } catch (error) {
+      console.error(error);
+      fundB({
+        bountyId: currentBounty?.id,
+        escrowId: currentBounty?.escrow.id,
+        amount,
+      });
+      router.push(`/quests/${currentBounty?.id}`);
+    }
   };
+
   return (
     <>
       {fundTx && amount && (

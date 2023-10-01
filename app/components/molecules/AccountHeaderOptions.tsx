@@ -110,7 +110,7 @@ const AccountHeaderOptions = () => {
             Logout
           </Link>
         )}
-        {IS_CUSTODIAL && currentUser && (
+        {IS_CUSTODIAL && currentUser && currentWallet?.publicKey && (
           <>
             <Button
               onClick={logout}

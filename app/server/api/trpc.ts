@@ -58,7 +58,6 @@ export const createTRPCContext = async (_opts: CreateNextContextOptions) => {
   try {
     const metadata = await getSession(req, res);
     if (!!metadata) {
-      console.log(metadata);
       const token = process.env.NEXT_PUBLIC_IS_CUSTODIAL
         ? metadata?.token
         : (await getAccessToken(req, res))?.accessToken;
@@ -145,7 +144,6 @@ export const publicProcedure = t.procedure;
 export const middleware = t.middleware;
 
 const isUser = middleware(async ({ ctx, next }) => {
-  console.log(ctx.user);
   if (!ctx.user) {
     throw new TRPCError({ code: "UNAUTHORIZED" });
   }
