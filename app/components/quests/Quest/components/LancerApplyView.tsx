@@ -1,4 +1,4 @@
-import { ContributorInfo } from "@/components";
+import { ChatButton, ContributorInfo } from "@/components";
 import { smallClickAnimation } from "@/src/constants";
 import { useUserWallet } from "@/src/providers";
 import { useBounty } from "@/src/providers/bountyProvider";
@@ -9,11 +9,13 @@ import { Dispatch, FC, SetStateAction } from "react";
 import ActionsCardBanner from "./ActionsCardBanner";
 import AlertCard from "./AlertCard";
 import { QuestApplicationView } from "./LancerApplicationView";
+import { QuestActionView } from "./QuestActions";
 
 interface Props {
   applyData: LancerApplyData;
   setApplyData: Dispatch<SetStateAction<LancerApplyData>>;
   setCurrentApplicationView: Dispatch<SetStateAction<QuestApplicationView>>;
+  setCurrentActionView: Dispatch<SetStateAction<QuestActionView>>;
   hasApplied: boolean;
   onClick: () => Promise<void>;
   isAwaitingResponse: boolean;
@@ -24,6 +26,7 @@ const LancerApplyView: FC<Props> = ({
   applyData,
   setApplyData,
   setCurrentApplicationView,
+  setCurrentActionView,
   hasApplied,
   onClick,
   isAwaitingResponse,
@@ -37,10 +40,14 @@ const LancerApplyView: FC<Props> = ({
   return (
     <div className="flex flex-col">
       <ActionsCardBanner title="Apply to this Quest">
-        <ContributorInfo user={currentBounty.creator.user} />
+        {/* <ContributorInfo user={currentBounty.creator.user} /> */}
+        {hasApplied &&
+          currentBounty.isShortlistedLancer &&
+          Number(currentBounty.escrow.amount) > 0 && (
+            <ChatButton setCurrentActionView={setCurrentActionView} />
+          )}
       </ActionsCardBanner>
-      {/* TODO: add check for if user application has been approved or denied. if not, show this: */}
-      {hasApplied && (
+      {hasApplied && !currentBounty.isShortlistedLancer && (
         <div className="px-5 pt-5">
           <AlertCard
             type="positive"
@@ -48,6 +55,24 @@ const LancerApplyView: FC<Props> = ({
             description="Your application has been sent. Fingers crossed! You will hear an answer from the client within 48 hours."
           />
         </div>
+      )}
+      {hasApplied && currentBounty.isShortlistedLancer && (
+        <div className="px-5 pt-5">
+          <AlertCard
+            type="positive"
+            title="Good news!"
+            description="You have been added to the creator's shortlist. You can now chat with them to see if you're a good fit for each other!"
+          />
+        </div>
+      )}
+      {!currentUser.hasBeenApproved && (
+        <>
+          <AlertCard
+            type="negative"
+            title="Not Approved"
+            description="You Must Be Approved to Apply to Quests"
+          />
+        </>
       )}
       <div className="w-full p-6 flex items-center justify-between gap-5">
         <div className="flex items-center gap-4">

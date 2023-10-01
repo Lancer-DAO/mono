@@ -181,16 +181,9 @@ const FundQuestModal: FC<Props> = ({
               <div className="w-full">
                 <div className="w-full pb-5">
                   <p className="w-full mb-2">Price</p>
-                  <input
-                    type="number"
-                    className="placeholder:text-textGreen/70 border bg-neutralBtn
-                    border-neutralBtnBorder w-full h-[50px] rounded-lg px-3
-                    disabled:opacity-50 disabled:cursor-not-allowed text-center"
-                    name="issuePrice"
-                    placeholder={`$2500`}
-                    disabled={!allMints}
-                    value={amount}
-                  />
+                  <p className="border bg-neutral100 border-neutral200 w-full h-[50px] rounded-lg px-3 text-center">
+                    {amount}
+                  </p>
                 </div>
                 {amount && <CoinflowFund amount={amount} />}
               </div>
@@ -202,15 +195,9 @@ const FundQuestModal: FC<Props> = ({
                     Deposit price for your Quest:
                   </p>
                   <div className="relative">
-                    <input
-                      type="number"
-                      className="placeholder:text-neutral400 border bg-neutral100
-                      border-neutral200 w-full h-[50px] rounded-lg px-3
-                      disabled:opacity-50 disabled:cursor-not-allowed text-center"
-                      name="issuePrice"
-                      disabled={!allMints}
-                      value={amount}
-                    />
+                    <p className="border bg-neutral100 border-neutral200 w-full h-[50px] rounded-lg px-3 text-center">
+                      {amount}
+                    </p>
                     <div className="absolute left-4 top-1/2 -translate-y-1/2">
                       <USDC height="25px" width="25px" />
                     </div>
@@ -242,7 +229,7 @@ const FundQuestModal: FC<Props> = ({
                   {...smallClickAnimation}
                   disabled={!amount}
                   onClick={() => onClick()}
-                  className={`bg-secondary200 w-full px-4 py-2 border border-neutral200 rounded-md
+                  className={`bg-primary200 w-full px-4 py-2 border border-neutral200 rounded-md
                   title-text text-white disabled:cursor-not-allowed disabled:opacity-80
                   ${fundQuestState.error ? " bg-neutral100 text-error" : ""} `}
                 >

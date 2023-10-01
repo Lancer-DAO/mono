@@ -31,10 +31,7 @@ const QuestActions: FC = () => {
   useEffect(() => {
     if (!!currentUser && !currentBounty.isCreator) {
       // is not the creator
-      if (
-        currentBounty.isApprovedSubmitter ||
-        currentBounty.isShortlistedLancer
-      ) {
+      if (currentBounty.isApprovedSubmitter) {
         // lancer has been approved to work on the quest
         setCurrentActionView(QuestActionView.Chat);
       } else {
@@ -58,7 +55,7 @@ const QuestActions: FC = () => {
   return (
     <div className="bg-white w-full min-w-[610px] border border-neutral200 rounded-lg overflow-hidden min-h-[600px]">
       {currentActionView === QuestActionView.SubmitApplication && (
-        <LancerApplicationView />
+        <LancerApplicationView setCurrentActionView={setCurrentActionView} />
       )}
       {currentActionView === QuestActionView.ViewApplicants && (
         <ApplicantsView

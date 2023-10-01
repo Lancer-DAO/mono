@@ -2,24 +2,24 @@ import { IS_CUSTODIAL } from "@/src/constants";
 import { useUserWallet } from "@/src/providers";
 import { useBounty } from "@/src/providers/bountyProvider";
 import { api, updateList } from "@/src/utils";
-import {
-  BOUNTY_USER_RELATIONSHIP,
-  LancerApplyData,
-  LancerQuoteData,
-  QuestProgressState,
-} from "@/types";
+import { BOUNTY_USER_RELATIONSHIP, QuestProgressState } from "@/types";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { FC, useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
 import LancerApplyView from "./LancerApplyView";
 import LancerSubmitQuoteView from "./LancerSubmitQuoteView";
+import { QuestActionView } from "./QuestActions";
 
 export enum QuestApplicationView {
   ProfileInfo = "profile-info",
   SubmitQuote = "submit-quote",
 }
 
-const LancerApplicationView: FC = () => {
+interface Props {
+  setCurrentActionView: (view: QuestActionView) => void;
+}
+
+const LancerApplicationView: FC<Props> = ({ setCurrentActionView }) => {
   const { currentBounty, setCurrentBounty } = useBounty();
   const { currentUser, currentWallet } = useUserWallet();
   const { connected } = useWallet();
@@ -176,7 +176,9 @@ const LancerApplicationView: FC = () => {
   useEffect(() => {
     if (!currentBounty || !currentUser) return;
     const hasApplied = currentBounty.currentUserRelationsList?.some(
-      (relation) => relation === BOUNTY_USER_RELATIONSHIP.RequestedLancer
+      (relation) =>
+        relation === BOUNTY_USER_RELATIONSHIP.RequestedLancer ||
+        relation === BOUNTY_USER_RELATIONSHIP.ShortlistedLancer
     );
     setHasApplied(hasApplied);
   }, [currentBounty, currentUser]);
@@ -202,6 +204,7 @@ const LancerApplicationView: FC = () => {
           applyData={applyData}
           setApplyData={setApplyData}
           setCurrentApplicationView={setCurrentApplicationView}
+          setCurrentActionView={setCurrentActionView}
           hasApplied={hasApplied}
           onClick={onClick}
           isAwaitingResponse={isAwaitingResponse}
@@ -213,6 +216,7 @@ const LancerApplicationView: FC = () => {
           quoteData={quoteData}
           setQuoteData={setQuoteData}
           setCurrentApplicationView={setCurrentApplicationView}
+          setCurrentActionView={setCurrentActionView}
           hasApplied={hasApplied}
           onClick={onClick}
           isAwaitingResponse={isAwaitingResponse}
