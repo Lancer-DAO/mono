@@ -141,7 +141,6 @@ const UpdateView: FC<Props> = ({ selectedSubmitter, setCurrentActionView }) => {
   useEffect(() => {
     localStorage.setItem("reviewData", JSON.stringify(review));
   }, [review]);
-
   return (
     <div className="flex flex-col">
       <ActionsCardBanner
@@ -252,7 +251,7 @@ const UpdateView: FC<Props> = ({ selectedSubmitter, setCurrentActionView }) => {
             onClick={() => onClick(QuestProgressState.REJECTED)}
             disabled={isAwaitingResponse}
           >
-            Request to change
+            Request Changes
           </motion.button>
           <motion.button
             {...smallClickAnimation}

@@ -31,7 +31,7 @@ const LancerSubmitUpdateView: FC = () => {
   const [updateData, setUpdateData] = useState<LancerUpdateData>({
     bountyId: currentBounty.id,
     name: "",
-    type: "",
+    type: "Loom recording",
     description: "",
     links: "",
     media: [],
@@ -62,6 +62,7 @@ const LancerSubmitUpdateView: FC = () => {
           provider
         );
       }
+
       await createUpdate(updateData);
       refetch();
       setHasSubmittedUpdate(true);

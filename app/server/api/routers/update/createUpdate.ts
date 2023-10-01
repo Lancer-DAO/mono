@@ -35,7 +35,10 @@ export const createUpdate = protectedProcedure
       const user = await queries.user.getById(userId);
       await queries.bountyUser.updateRelations(
         bountyId,
-        [BOUNTY_USER_RELATIONSHIP.CurrentSubmitter],
+        [
+          BOUNTY_USER_RELATIONSHIP.CurrentSubmitter,
+          BOUNTY_USER_RELATIONSHIP.ApprovedSubmitter,
+        ],
         user
       );
       const medias = await Promise.all(

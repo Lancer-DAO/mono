@@ -91,6 +91,7 @@ const QuestTable: React.FC<Props> = ({ type }) => {
         const commonTags = bountyTags.filter((tag) =>
           filters.tags.includes(tag)
         );
+
         if (
           bountyTags.length !== 0 &&
           commonTags?.length === 0 &&
