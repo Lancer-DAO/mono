@@ -59,6 +59,7 @@ type CommonProps = {
   extraProps?: {};
   key?: string | number;
   type: UpdateType;
+  isIndividual?: boolean;
 };
 
 export type UpdateItemProps =
@@ -103,6 +104,7 @@ const UpdateTableItem: React.FC<UpdateItemProps> = ({
   subType,
   time,
   extraProps,
+  isIndividual,
 }) => {
   const router = useRouter();
   switch (type) {
@@ -124,7 +126,9 @@ const UpdateTableItem: React.FC<UpdateItemProps> = ({
           return (
             <div
               onClick={() => {
-                router.push(`/quests/${extraProps.questId}`);
+                if (!isIndividual) {
+                  router.push(`/quests/${extraProps.questId}`);
+                }
               }}
               className="flex flex-col px-8 py-4 items-start justify-center w-full border-solid border-b  border-neutralBorder500 hover:cursor-pointer"
             >
@@ -146,7 +150,9 @@ const UpdateTableItem: React.FC<UpdateItemProps> = ({
           return (
             <div
               onClick={() => {
-                router.push(`/quests/${extraProps.questId}`);
+                if (!isIndividual) {
+                  router.push(`/quests/${extraProps.questId}`);
+                }
               }}
               className="hover:cursor-pointer flex flex-col px-8 py-4 items-start justify-center w-full border-solid border-b  border-neutralBorder500"
             >
@@ -168,7 +174,9 @@ const UpdateTableItem: React.FC<UpdateItemProps> = ({
           return (
             <div
               onClick={() => {
-                router.push(`/quests/${extraProps.questId}`);
+                if (!isIndividual) {
+                  router.push(`/quests/${extraProps.questId}`);
+                }
               }}
               className="hover:cursor-pointer flex flex-col px-8 py-4 items-start justify-center w-full border-solid border-b  border-neutralBorder500"
             >
@@ -193,7 +201,9 @@ const UpdateTableItem: React.FC<UpdateItemProps> = ({
           return (
             <div
               onClick={() => {
-                router.push(`/quests/${extraProps.questId}`);
+                if (!isIndividual) {
+                  router.push(`/quests/${extraProps.questId}`);
+                }
               }}
               className="hover:cursor-pointer flex flex-col px-8 py-4 items-start justify-center w-full border-solid border-b  border-neutralBorder500"
             >
@@ -211,7 +221,9 @@ const UpdateTableItem: React.FC<UpdateItemProps> = ({
           return (
             <div
               onClick={() => {
-                router.push(`/quests/${extraProps.questId}`);
+                if (!isIndividual) {
+                  router.push(`/quests/${extraProps.questId}`);
+                }
               }}
               className="hover:cursor-pointer flex flex-col px-8 py-4 items-start justify-center w-full border-solid border-b  border-neutralBorder500"
             >
@@ -229,7 +241,9 @@ const UpdateTableItem: React.FC<UpdateItemProps> = ({
           return (
             <div
               onClick={() => {
-                router.push(`/quests/${extraProps.questId}`);
+                if (!isIndividual) {
+                  router.push(`/quests/${extraProps.questId}`);
+                }
               }}
               className="hover:cursor-pointer flex flex-col px-8 py-4 items-start justify-center w-full border-solid border-b  border-neutralBorder500"
             >
@@ -247,7 +261,9 @@ const UpdateTableItem: React.FC<UpdateItemProps> = ({
           return (
             <div
               onClick={() => {
-                router.push(`/quests/${extraProps.questId}`);
+                if (!isIndividual) {
+                  router.push(`/quests/${extraProps.questId}`);
+                }
               }}
               className="hover:cursor-pointer flex flex-col px-8 py-4 items-start justify-center w-full border-solid border-b  border-neutralBorder500"
             >
@@ -269,7 +285,9 @@ const UpdateTableItem: React.FC<UpdateItemProps> = ({
           return (
             <div
               onClick={() => {
-                router.push(`/quests/${extraProps.questId}`);
+                if (!isIndividual) {
+                  router.push(`/quests/${extraProps.questId}`);
+                }
               }}
               className="hover:cursor-pointer flex flex-col px-8 py-4 items-start justify-center w-full border-solid border-b  border-neutralBorder500"
             >
@@ -287,7 +305,9 @@ const UpdateTableItem: React.FC<UpdateItemProps> = ({
           return (
             <div
               onClick={() => {
-                router.push(`/quests/${extraProps.questId}`);
+                if (!isIndividual) {
+                  router.push(`/quests/${extraProps.questId}`);
+                }
               }}
               className="hover:cursor-pointer flex flex-col px-8 py-4 items-start justify-center w-full border-solid border-b  border-neutralBorder500"
             >
@@ -305,7 +325,9 @@ const UpdateTableItem: React.FC<UpdateItemProps> = ({
           return (
             <div
               onClick={() => {
-                router.push(`/quests/${extraProps.questId}`);
+                if (!isIndividual) {
+                  router.push(`/quests/${extraProps.questId}`);
+                }
               }}
               className="hover:cursor-pointer flex flex-col px-8 py-4 items-start justify-center w-full border-solid border-b  border-neutralBorder500"
             >
@@ -323,7 +345,9 @@ const UpdateTableItem: React.FC<UpdateItemProps> = ({
           return (
             <div
               onClick={() => {
-                router.push(`/quests/${extraProps.questId}`);
+                if (!isIndividual) {
+                  router.push(`/quests/${extraProps.questId}`);
+                }
               }}
               className="hover:cursor-pointer flex flex-col px-8 py-4 items-start justify-center w-full border-solid border-b  border-neutralBorder500"
             >
@@ -341,7 +365,9 @@ const UpdateTableItem: React.FC<UpdateItemProps> = ({
           return (
             <div
               onClick={() => {
-                router.push(`/quests/${extraProps.questId}`);
+                if (!isIndividual) {
+                  router.push(`/quests/${extraProps.questId}`);
+                }
               }}
               className="hover:cursor-pointer flex flex-col px-8 py-4 items-start justify-center w-full border-solid border-b  border-neutralBorder500"
             >
