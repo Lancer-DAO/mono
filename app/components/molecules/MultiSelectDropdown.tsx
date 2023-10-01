@@ -2,6 +2,7 @@ import { useOutsideAlerter } from "@/src/hooks";
 import Image from "next/image";
 import { useRef, useState } from "react";
 import { Option } from "@/types";
+import { ChevronsUpDown } from "lucide-react";
 
 interface Props {
   options: Option[];
@@ -49,14 +50,14 @@ const MultiSelectDropdown: React.FC<Props> = ({
       return (
         <label
           key={option.value}
-          className="bg-neutralBtn w-full flex items-center py-2 px-4 text-lg cursor-pointer"
+          className="bg-neutralBtn w-full flex items-center px-2 py-1 text-lg cursor-pointer"
         >
           <input
             type="checkbox"
             value={option.value}
             checked={isChecked ? true : false}
             onChange={() => handleCheckboxChange(option)}
-            className="mr-[10px]"
+            className="mr-[8px] w-2"
           />
           <div className="flex items-center gap-2 text-xs">
             {option.icon && (
@@ -76,19 +77,26 @@ const MultiSelectDropdown: React.FC<Props> = ({
 
   if (version === "white") {
     return (
-      <div className={`relative w-full h-[34px] ${extraClasses}`} ref={menuRef}>
+      <div
+        className={`relative w-full max-w-[100px] h-[29px] ${extraClasses}`}
+        ref={menuRef}
+      >
         <div
-          className="h-full w-full flex justify-between bg-transparent border border-neutral-200 text-neutral500 
-          items-center cursor-pointer px-4 rounded-lg"
+          className="h-full w-full flex justify-between bg-white border border-neutral-200 text-neutral500 
+          items-center cursor-pointer px-4 rounded-md"
           onClick={toggleOpen}
         >
-          <div className="text-[14px] text-neutral-500 overflow-hidden whitespace-nowrap overflow-ellipsis">
+          <div className="text-xs text-neutral-500 truncate">
             {selected?.length === 0
               ? "Select"
               : selected?.map((item) => item.label).join(", ")}
           </div>
-          <div className={`text-xl ${isOpen ? "transform rotate-180" : ""}`}>
-            ▾
+          <div className="w-3">
+            <ChevronsUpDown
+              width={12}
+              height={12}
+              className="text-neutral500"
+            />
           </div>
         </div>
         {isOpen && (
