@@ -181,7 +181,7 @@ const FundQuestModal: FC<Props> = ({
               <div className="w-full">
                 <div className="w-full pb-5">
                   <p className="w-full mb-2">Price</p>
-                  <p className="border bg-neutral100 border-neutral200 w-full h-[50px] rounded-lg px-3 text-center">
+                  <p className="border bg-neutral100 border-neutral200 w-full h-[50px] rounded-lg px-3 text-center flex justify-center items-center">
                     {amount}
                   </p>
                 </div>
@@ -195,7 +195,7 @@ const FundQuestModal: FC<Props> = ({
                     Deposit price for your Quest:
                   </p>
                   <div className="relative">
-                    <p className="border bg-neutral100 border-neutral200 w-full h-[50px] rounded-lg px-3 text-center">
+                    <p className="border bg-neutral100 border-neutral200 w-full h-[50px] rounded-lg px-3 text-center flex justify-center items-center">
                       {amount}
                     </p>
                     <div className="absolute left-4 top-1/2 -translate-y-1/2">

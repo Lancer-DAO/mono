@@ -92,6 +92,12 @@ export const update = protectedProcedure
             [BOUNTY_USER_RELATIONSHIP.DeniedLancer],
             user
           );
+          await queries.bountyUserAction.create(
+            bountyId,
+            BOUNTY_USER_RELATIONSHIP.DeniedLancer,
+            user
+          );
+
           const webhookUpdate = {
             ...updatedBounty,
             updateType: "deny-submitter",
