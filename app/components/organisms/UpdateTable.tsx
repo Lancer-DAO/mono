@@ -215,7 +215,7 @@ const AllUpdatesTable: React.FC = () => {
   ]);
   console.log("ALL UPDATES");
   console.log(allUpdates);
-  if (!allUpdates) {
+  if (!allUpdates || allUpdates.length === 0) {
     return <EmptyUpdatesHistory width="612px" height="423px" />;
   }
 
@@ -442,7 +442,7 @@ const QuestUpdatesTable: React.FC = () => {
   ]);
   console.log("ALL UPDATES");
   console.log(allUpdates);
-  if (!allUpdates) {
+  if (!allUpdates || allUpdates.length === 0) {
     return <EmptyUpdatesHistory width="612px" height="423px" />;
   }
 
