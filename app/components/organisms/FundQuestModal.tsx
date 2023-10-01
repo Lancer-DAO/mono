@@ -14,7 +14,6 @@ import toast from "react-hot-toast";
 import { Modal } from "@/components";
 import { useMint } from "@/src/providers/mintProvider";
 import Image from "next/image";
-import { BountyUserType } from "@/prisma/queries/bounty";
 
 interface Props {
   setShowModal: Dispatch<SetStateAction<boolean>>;
