@@ -182,6 +182,7 @@ const IndividualApplicantView: FC<Props> = ({
         publicKey: selectedSubmitter.publicKey,
         escrowId: currentBounty?.escrowid,
         signature: "n/a",
+        state: BountyState.REVIEWING_SHORTLIST,
         label: action === "add" ? "add-to-shortlist" : "remove-from-shortlist",
       });
 

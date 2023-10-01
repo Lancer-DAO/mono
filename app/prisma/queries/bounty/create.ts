@@ -30,7 +30,7 @@ export const create = async (
           };
         }),
       },
-      state: "new",
+      state: BountyState.ACCEPTING_APPLICATIONS,
       title,
       escrow: {
         connect: {
@@ -86,7 +86,7 @@ export const createExternal = async (
           return {
             name: industry,
           };
-        })
+        }),
       },
       isPrivate: false,
       isExternal: true,
