@@ -15,15 +15,17 @@ export const QuestHeader = ({ count }: Props) => {
         <p className="text-white text-xs opacity-60">Showing {count} Quests</p>
       </div>
 
-      <div className="flex items-center justify-end">
-        <button
-          disabled={!currentUser || !currentUser.hasBeenApproved}
-          onClick={() => (window.location.href = "/create")}
-          className="disabled:opacity-60 bg-primary200 py-2 px-4 text-white text-sm title-text rounded-md"
-        >
-          Create Quest
-        </button>
-      </div>
+      {currentUser.class === "Noble" && (
+        <div className="flex items-center justify-end">
+          <button
+            disabled={!currentUser || !currentUser.hasBeenApproved}
+            onClick={() => (window.location.href = "/create")}
+            className="disabled:opacity-60 bg-primary200 py-2 px-4 text-white text-sm title-text rounded-md"
+          >
+            Create Quest
+          </button>
+        </div>
+      )}
     </div>
   );
 };

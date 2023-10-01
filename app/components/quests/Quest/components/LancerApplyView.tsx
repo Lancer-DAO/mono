@@ -65,6 +65,15 @@ const LancerApplyView: FC<Props> = ({
           />
         </div>
       )}
+      {currentBounty.isDeniedLancer && (
+        <>
+          <AlertCard
+            type="negative"
+            title="Not Selected"
+            description="The creator of this Quest has decided to go with another Lancer. You can still apply to other Quests!"
+          />
+        </>
+      )}
       {!currentUser.hasBeenApproved && (
         <>
           <AlertCard
@@ -84,7 +93,7 @@ const LancerApplyView: FC<Props> = ({
             name={`link-portfolio`}
             placeholder="Paste Link"
             id={`link-portfolio`}
-            disabled={hasApplied}
+            disabled={hasApplied || currentBounty.isDeniedLancer}
             value={applyData.portfolio}
             onChange={(e) =>
               setApplyData({ ...applyData, portfolio: e.target.value })
@@ -100,7 +109,7 @@ const LancerApplyView: FC<Props> = ({
             name={`link-linkedin`}
             placeholder="Paste Link"
             id={`link-linkedin`}
-            disabled={hasApplied}
+            disabled={hasApplied || currentBounty.isDeniedLancer}
             value={applyData.linkedin}
             onChange={(e) =>
               setApplyData({ ...applyData, linkedin: e.target.value })
@@ -117,7 +126,7 @@ const LancerApplyView: FC<Props> = ({
           name={`about`}
           placeholder="Tell us about yourself"
           id={`about`}
-          disabled={hasApplied}
+          disabled={hasApplied || currentBounty.isDeniedLancer}
           value={applyData.about}
           onChange={(e) =>
             setApplyData({ ...applyData, about: e.target.value })
@@ -127,7 +136,7 @@ const LancerApplyView: FC<Props> = ({
         <div className="flex items-center justify-end text text-neutral600">
           <button
             className="rounded-md bg-white border border-neutral200 flex items-center justify-center gap-2 h-8 px-2"
-            disabled={hasApplied}
+            disabled={hasApplied || currentBounty.isDeniedLancer}
             onClick={() =>
               window.open(currentUser.resume, "_blank", "noopener noreferrer")
             }
@@ -146,7 +155,7 @@ const LancerApplyView: FC<Props> = ({
           name={`details`}
           placeholder="Type your message here..."
           id={`details`}
-          disabled={hasApplied}
+          disabled={hasApplied || currentBounty.isDeniedLancer}
           value={applyData.details}
           onChange={(e) =>
             setApplyData({ ...applyData, details: e.target.value })

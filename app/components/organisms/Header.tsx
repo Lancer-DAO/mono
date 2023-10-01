@@ -120,6 +120,8 @@ export const Header = () => {
         <div className="flex gap-4 items-center justify-center w-full">
           {currentUser &&
             HEADER_LINKS.map(({ href, children, id }) => {
+              if (currentUser.class === "Lancer" && id === "create-bounty-link")
+                return null;
               return (
                 <LinkButton
                   href={href}

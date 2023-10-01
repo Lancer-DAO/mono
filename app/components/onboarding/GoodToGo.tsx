@@ -17,7 +17,9 @@ export const GoodToGo: FC<{
       <div className="flex items-center justify-center rounded-full bg-neutral-200 h-[32px] w-[32px]">
         <Logo width="27px" height="27px" />
       </div>
-      <h1 className="font-bold text-neutral-600 mt-2">You are good to go.</h1>
+      <h1 className="font-bold text-neutral-600 mt-2">
+        You&apos;re good to go.
+      </h1>
       <div className="text-sm text-neutral-500 mt-1">
         {selectedClass === "Noble"
           ? "Create a quest on Lancer to see how the future works."
@@ -73,7 +75,7 @@ export const GoodToGo: FC<{
               <Wallet />
             </div>
             <div className="mt-4 text-neutral-600 text-sm ">
-              Work Seemlessly
+              Work Seamlessly
             </div>
             <div className="text-sm mt-4 text-neutral-500">
               {selectedClass === "Noble"
