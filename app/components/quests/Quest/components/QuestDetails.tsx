@@ -17,6 +17,7 @@ import Link from "next/link";
 import { ArrowLeft, ChevronDown, ChevronUp, ExternalLink } from "react-feather";
 import { ArchiveBounty } from ".";
 import { useRouter } from "next/router";
+import { Dialog, DialogContent, DialogTrigger } from "@/components/atoms/Modal";
 
 const Divider = () => <div className="h-[20px] w-[1px] mx-4 bg-slate-200" />;
 
@@ -221,21 +222,49 @@ const QuestDetails = () => {
         {questMedia?.length > 0 && (
           <>
             <div className="w-full title-text my-4">Reference Media</div>
-            <div className="grid grid-cols-4 gap-4">
+            <div className="grid grid-cols-3 gap-4">
               {questMedia?.map((med, index) => {
                 return (
-                  <div
-                    className="flex items-center justify-center relative border 
-                    border-neutral-200 rounded-md"
-                    key={index}
-                  >
-                    <Image
-                      src={med.imageUrl}
-                      alt={med.title}
-                      fill
-                      style={{ objectFit: "contain" }}
-                    />
-                  </div>
+                  <Dialog key={index}>
+                    <div className="relative" key={index}>
+                      <DialogTrigger
+                        className="relative border-2 border-neutral200 rounded-[4px] w-[150px] h-[90px] overflow-hidden"
+                        key={`dialog-${index}`}
+                      >
+                        <Image
+                          src={med.imageUrl}
+                          alt={med.title}
+                          fill
+                          style={{ objectFit: "contain" }}
+                        />
+                      </DialogTrigger>
+                    </div>
+                    <DialogContent className="w-2/3 flex flex-col gap-3 items-center p-6">
+                      <div
+                        className="relative gap-5 w-full h-[240px] 
+                        overflow-hidden mt-4 rounded-md border-2 border-neutral200"
+                      >
+                        <Image
+                          src={med.imageUrl}
+                          alt={med.title}
+                          fill
+                          style={{ objectFit: "contain" }}
+                        />
+                      </div>
+                      <div className="w-full flex items-center gap-3 text-sm text-neutral600">
+                        <p className="w-32 text-left">Title</p>
+                        <p className="w-full text-left p-2 bg-neutral100 border border-neutral200 rounded-md">
+                          {med.title}
+                        </p>
+                      </div>
+                      <div className="w-full flex items-center gap-3 text-sm">
+                        <p className="w-32 text-left">Description</p>
+                        <p className="w-full text-left p-2 bg-neutral100 border border-neutral200 rounded-md">
+                          {med.description}
+                        </p>
+                      </div>
+                    </DialogContent>
+                  </Dialog>
                 );
               })}
             </div>
