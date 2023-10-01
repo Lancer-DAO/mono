@@ -4,7 +4,6 @@ import { ACHState, BountyState } from "@/types/";
 import * as queries from "@/prisma/queries";
 import { HostedHooksClient } from "../../webhooks";
 import axios from "axios";
-import e from "express";
 
 export const fundBounty = protectedProcedure
   .input(
@@ -17,7 +16,10 @@ export const fundBounty = protectedProcedure
   )
   .mutation(
     async ({ input: { bountyId, escrowId, amount, paymentId }, ctx }) => {
-      const bounty = await queries.bounty.updateState(
+      const currentEscrow = await queries.escrow.get(escrowId);
+      const escrowBalance = Number(currentEscrow.amount);
+
+      await queries.bounty.updateState(
         bountyId,
         BountyState.ACCEPTING_APPLICATIONS
       );
@@ -32,17 +34,17 @@ export const fundBounty = protectedProcedure
           }
         );
         if (data.bankTransferInfo) {
-          const escrow = await queries.escrow.updateAmount(
+          await queries.escrow.updateAmount(
             escrowId,
             amount,
             paymentId,
             ACHState.PRE_INITATION
           );
         } else {
-          const escrow = await queries.escrow.updateAmount(escrowId, amount);
+          await queries.escrow.updateAmount(escrowId, escrowBalance + amount);
         }
       } else {
-        const escrow = await queries.escrow.updateAmount(escrowId, amount);
+        await queries.escrow.updateAmount(escrowId, escrowBalance + amount);
       }
 
       const returnValue = await queries.bounty.get(bountyId, ctx.user.id);
