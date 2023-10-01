@@ -20,6 +20,7 @@ interface Props {
   hasApplied: boolean;
   onClick: () => Promise<void>;
   isAwaitingResponse: boolean;
+  applicationIsValid: boolean;
 }
 
 const LancerSubmitQuoteView: FC<Props> = ({
@@ -29,6 +30,7 @@ const LancerSubmitQuoteView: FC<Props> = ({
   hasApplied,
   onClick,
   isAwaitingResponse,
+  applicationIsValid,
 }) => {
   const { currentBounty } = useBounty();
   const { currentUser } = useUserWallet();
@@ -211,9 +213,10 @@ const LancerSubmitQuoteView: FC<Props> = ({
           {!hasApplied && (
             <motion.button
               {...smallClickAnimation}
-              className="bg-primary200 text-white h-9 w-fit px-4 py-2 title-text rounded-md"
+              className="bg-primary200 text-white h-9 w-fit px-4 py-2 title-text rounded-md
+              disabled:opacity-70 disabled:cursor-not-allowed"
               onClick={onClick}
-              disabled={isAwaitingResponse}
+              disabled={isAwaitingResponse || !applicationIsValid}
             >
               Submit Application
             </motion.button>

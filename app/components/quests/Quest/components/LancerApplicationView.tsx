@@ -59,6 +59,13 @@ const LancerApplicationView: FC = () => {
         };
   });
 
+  const applicationIsValid =
+    quoteData.checkpoints.length > 0 &&
+    quoteData.checkpoints[0].title !== "" &&
+    quoteData.checkpoints[0].description !== "" &&
+    quoteData.checkpoints[0].price !== 0 &&
+    quoteData.checkpoints[0].estimatedTime !== 0;
+
   const confirmAction = (): Promise<void> => {
     setIsAwaitingResponse(true);
 
@@ -110,7 +117,7 @@ const LancerApplicationView: FC = () => {
       return;
     }
 
-    if(!connected && !IS_CUSTODIAL) {
+    if (!connected && !IS_CUSTODIAL) {
       toast.error("Please connect your wallet.");
       return;
     }
@@ -198,6 +205,7 @@ const LancerApplicationView: FC = () => {
           hasApplied={hasApplied}
           onClick={onClick}
           isAwaitingResponse={isAwaitingResponse}
+          applicationIsValid={applicationIsValid}
         />
       )}
       {currentApplicationView === QuestApplicationView.SubmitQuote && (
@@ -208,6 +216,7 @@ const LancerApplicationView: FC = () => {
           hasApplied={hasApplied}
           onClick={onClick}
           isAwaitingResponse={isAwaitingResponse}
+          applicationIsValid={applicationIsValid}
         />
       )}
     </>
