@@ -226,9 +226,11 @@ const AllUpdatesTable: React.FC = () => {
             <EmptyUpdatesHistory width="270px" height="143px" />
           </div>
         ) : (
-          allUpdates.map((update) => {
-            return <UpdateTableItem {...update} key={update.key} />;
-          })
+          <div className="flex flex-col max-h-[616px] overflow-y-scroll">
+            {allUpdates.map((update) => {
+              return <UpdateTableItem {...update} key={update.key} />;
+            })}
+          </div>
         )
       ) : (
         <Image
@@ -732,6 +734,7 @@ const QuestUpdatesTable: React.FC = () => {
               </motion.button>
             )}
           {currentBounty.isCreator &&
+            !!currentBounty.currentSubmitter &&
             [BountyState.AWAITING_REVIEW, BountyState.IN_PROGRESS].includes(
               currentBounty.state as BountyState
             ) && (
@@ -821,15 +824,17 @@ const QuestUpdatesTable: React.FC = () => {
             <EmptyUpdatesHistory width="270px" height="143px" />
           </div>
         ) : (
-          allUpdates.map((update) => {
-            return (
-              <UpdateTableItem
-                {...update}
-                key={update.key}
-                isIndividual={true}
-              />
-            );
-          })
+          <div className="flex flex-col max-h-[1200px] overflow-y-scroll">
+            {allUpdates.map((update) => {
+              return (
+                <UpdateTableItem
+                  {...update}
+                  key={update.key}
+                  isIndividual={true}
+                />
+              );
+            })}
+          </div>
         )}
         {showDisputeModal ? (
           <DisputeModal setShowModal={setShowDisputeModal} />

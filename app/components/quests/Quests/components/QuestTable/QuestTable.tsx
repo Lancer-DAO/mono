@@ -190,44 +190,44 @@ const QuestTable: React.FC<Props> = ({ type }) => {
         </AnimatePresence>
 
         <div className="w-full flex flex-col bg-white rounded-md py-4 px-6">
-          {filteredBounties?.length > 0 &&
-            (() => {
-              // Create an object to store bounties grouped by state
-              const bountyGroups = {};
+          <div className="flex flex-col max-h-[500px] overflow-y-scroll">
+            {filteredBounties?.length > 0 &&
+              (() => {
+                // Create an object to store bounties grouped by state
+                const bountyGroups = {};
 
-              // Group bounties by state
-              filteredBounties.forEach((bounty) => {
-                const state = bounty.state;
-                if (!bountyGroups[state]) {
-                  bountyGroups[state] = [];
-                }
-                bountyGroups[state].push(bounty);
-              });
+                // Group bounties by state
+                filteredBounties.forEach((bounty) => {
+                  const state = bounty.state;
+                  if (!bountyGroups[state]) {
+                    bountyGroups[state] = [];
+                  }
+                  bountyGroups[state].push(bounty);
+                });
 
-              // reorder bountyGroups by state: new, accepting_applications, in_progress, complete, canceled
-              const orderedBountyGroups = {};
-              TABLE_BOUNTY_STATES.forEach((state) => {
-                if (bountyGroups[state]) {
-                  orderedBountyGroups[state] = bountyGroups[state];
-                }
-              });
+                const orderedBountyGroups = {};
+                TABLE_BOUNTY_STATES.forEach((state) => {
+                  if (bountyGroups[state]) {
+                    orderedBountyGroups[state] = bountyGroups[state];
+                  }
+                });
 
-              // Iterate through the groups and render headers and bounties
-              return Object.keys(orderedBountyGroups).map((state, index) => (
-                <div key={index}>
-                  <h2
-                    className={`${
-                      type === "profile" && "hidden"
-                    } text-neutral600 text-sm ${index > 0 && "mt-8"} mb-4`}
-                  >
-                    {stateMap[state] || snakeToTitleCase(state)}
-                  </h2>
-                  {bountyGroups[state].map((bounty, index) => (
-                    <QuestRow bounty={bounty} key={index} />
-                  ))}
-                </div>
-              ));
-            })()}
+                return Object.keys(orderedBountyGroups).map((state, index) => (
+                  <div key={index}>
+                    <h2
+                      className={`${
+                        type === "profile" && "hidden"
+                      } text-neutral600 text-sm ${index > 0 && "mt-8"} mb-4`}
+                    >
+                      {stateMap[state] || snakeToTitleCase(state)}
+                    </h2>
+                    {bountyGroups[state].map((bounty, index) => (
+                      <QuestRow bounty={bounty} key={index} />
+                    ))}
+                  </div>
+                ));
+              })()}
+          </div>
           {filteredBounties?.length === 0 && (
             <div className="w-full flex flex-col items-center justify-center gap-2">
               <p className="text-neutral600 text-sm mt-[5px]">
