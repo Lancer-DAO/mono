@@ -23,7 +23,6 @@ export const getBountyUpdatesCreator = async (
   JOIN BountyUser ON Bounty.id = BountyUser.bountyid
   WHERE BountyUser.userid = ${userid}
   AND BountyUser.relations like '%creator%'
-  AND Bounty.state NOT IN ('complete', 'canceled');
 `) as [{ id: number }]
     ).map((bounty) => bounty.id);
   return prisma.bountyUser.findMany({
@@ -57,7 +56,6 @@ export const getBountyUpdatesCreator = async (
     orderBy: {
       bountyid: "desc",
     },
-    take: 5,
   });
 };
 
@@ -74,7 +72,6 @@ export const getBountyUpdatesLancer = async (
     JOIN BountyUser ON Bounty.id = BountyUser.bountyid
     WHERE BountyUser.userid = ${userid}
     AND BountyUser.relations not like '%creator%'
-    AND Bounty.state NOT IN ('complete', 'canceled');
   `) as [{ id: number }]
     ).map((bounty) => bounty.id);
   return prisma.bountyUser.findMany({
@@ -113,7 +110,6 @@ export const getBountyUpdatesLancer = async (
     orderBy: {
       bountyid: "desc",
     },
-    take: 5,
   });
 };
 
