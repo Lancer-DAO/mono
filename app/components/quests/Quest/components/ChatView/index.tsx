@@ -51,7 +51,7 @@ const ChatView: FC<Props> = ({ selectedSubmitter, setCurrentActionView }) => {
   }, [selectedSubmitter, currentBounty]);
 
   return (
-    <div className="flex h-full max-h-[44.5rem] flex-col relative overflow-hidden">
+    <div className="flex h-full flex-col relative overflow-hidden">
       <ActionsCardBanner
         title={`Conversation with ${
           currentBounty.isCreator
