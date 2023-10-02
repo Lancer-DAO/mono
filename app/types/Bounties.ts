@@ -62,12 +62,12 @@ export interface BountyUserRelations {
 }
 
 export enum BountyState {
-  CANCELED = "canceled",
-  COMPLETE = "complete",
-  ACH_PENDING = "ach_pending",
   ACCEPTING_APPLICATIONS = "accepting_applications",
-  REVIEWING_SHORTLIST = "reviewing_shortlist",
   IN_PROGRESS = "in_progress",
+  COMPLETE = "complete",
+  CANCELED = "canceled",
+  ACH_PENDING = "ach_pending",
+  REVIEWING_SHORTLIST = "reviewing_shortlist",
   AWAITING_REVIEW = "awaiting_review",
   VOTING_TO_CANCEL = "voting_to_cancel",
   DISPUTE_STARTED = "dispute_started",

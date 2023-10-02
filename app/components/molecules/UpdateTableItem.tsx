@@ -112,12 +112,12 @@ const UpdateTableItem: React.FC<UpdateItemProps> = ({
       return (
         <div className="flex px-8 py-4 items-center justify-start w-full border-solid border-b bg-primary100 border-neutralBorder500">
           <Message height="28px" width="28px" />
-          <div className="text-sm ml-1.5 text-black mr-4">{`${
+          <div className="text-sm ml-1.5 text-neutral600 mr-4">{`${
             extraProps.messageCount
           } New message${extraProps.messageCount > 1 ? "s" : ""} from ${
             extraProps.updater
           }`}</div>
-          <div className="text-sm  text-neutral400 mr-4">{`${time.fromNow()}`}</div>
+          <div className="text-sm mr-4">{`${time.fromNow()}`}</div>
         </div>
       );
     case "submission":
@@ -134,14 +134,14 @@ const UpdateTableItem: React.FC<UpdateItemProps> = ({
             >
               <div className="flex justify-start items-center w-full">
                 <ServiceBell height="28px" width="28px" />
-                <div className="text-sm ml-1.5 text-neutral-500 mr-2">
+                <div className="text-sm ml-1.5 text-neutral500 mr-2">
                   {`New Update for ${extraProps.questName}`}
                 </div>
-                <div className="h-5 w-[1px] bg-neutral-200"></div>
-                <div className="text-sm ml-2 text-neutral-400">{`${time.fromNow()}`}</div>
+                <div className="h-5 w-[1px] bg-neutral200"></div>
+                <div className="text-sm ml-2 text-neutral400">{`${time.fromNow()}`}</div>
                 <div className="ml-auto flex items-center justify-end text text-neutral600"></div>
               </div>
-              <div className="mt-4 rounded-md text-xs leading-normal text-neutral-500 border border-neutralBorder-200 py-2.5 px-3.5 bg-neutral-100 w-full rounder-md">
+              <div className="mt-4 rounded-md text-xs leading-normal text-neutral500 border border-neutralBorder-200 py-2.5 px-3.5 bg-neutral100 w-full rounder-md">
                 {extraProps.description}
               </div>
             </div>
@@ -160,14 +160,14 @@ const UpdateTableItem: React.FC<UpdateItemProps> = ({
             >
               <div className="flex justify-start items-center w-full">
                 <Flame height="28px" width="28px" version="orange" />
-                <div className="text-sm ml-1.5 text-neutral-500 mr-2">
+                <div className="text-sm ml-1.5 text-neutral500 mr-2">
                   {`Review for ${extraProps.questName}`}
                 </div>
-                <div className="h-5 w-[1px] bg-neutral-200"></div>
-                <div className="text-sm ml-2 text-neutral-400 mr-auto">{`${time.fromNow()}`}</div>
+                <div className="h-5 w-[1px] bg-neutral200"></div>
+                <div className="text-sm ml-2 text-neutral400 mr-auto">{`${time.fromNow()}`}</div>
                 <div className="text-sm ml-auto text-warning">Rejected</div>
               </div>
-              <div className="mt-4 rounded-md text-xs leading-normal text-neutral-500 border border-neutralBorder-200 py-2.5 px-3.5 bg-neutral-100 w-full rounder-md">
+              <div className="mt-4 rounded-md text-xs leading-normal text-neutral500 border border-neutralBorder-200 py-2.5 px-3.5 bg-neutral100 w-full rounder-md">
                 {extraProps.description}
               </div>
             </div>
@@ -186,14 +186,14 @@ const UpdateTableItem: React.FC<UpdateItemProps> = ({
             >
               <div className="flex justify-start items-center w-full">
                 <Flame height="28px" width="28px" version="green" />
-                <div className="text-sm ml-1.5 text-neutral-500 mr-2">
+                <div className="text-sm ml-1.5 text-neutral500 mr-2">
                   {`Review for ${extraProps.questName}`}
                 </div>
-                <div className="h-5 w-[1px] bg-neutral-200"></div>
-                <div className="text-sm ml-2 text-neutral-400 mr-auto">{`${time.fromNow()}`}</div>
+                <div className="h-5 w-[1px] bg-neutral200"></div>
+                <div className="text-sm ml-2 text-neutral400 mr-auto">{`${time.fromNow()}`}</div>
                 <div className="text-sm ml-auto text-success">Accepted</div>
               </div>
-              <div className="mt-4 rounded-md text-xs leading-normal text-neutral-500 border border-neutralBorder-200 py-2.5 px-3.5 bg-neutral-100 w-full rounder-md">
+              <div className="mt-4 rounded-md text-xs leading-normal text-neutral500 border border-neutralBorder-200 py-2.5 px-3.5 bg-neutral100 w-full rounder-md">
                 {extraProps.description}
               </div>
             </div>
@@ -218,8 +218,8 @@ const UpdateTableItem: React.FC<UpdateItemProps> = ({
                 <div className="text-sm ml-1.5 text-warning mr-2">
                   {`Client Voted To Cancel ${extraProps.questName}`}
                 </div>
-                <div className="h-5 w-[1px] bg-neutral-200"></div>
-                <div className="text-sm ml-2 text-neutral-400 mr-auto">{`${time.fromNow()}`}</div>
+                <div className="h-5 w-[1px] bg-neutral200"></div>
+                <div className="text-sm ml-2 text-neutral400 mr-auto">{`${time.fromNow()}`}</div>
               </div>
             </div>
           );
@@ -240,8 +240,8 @@ const UpdateTableItem: React.FC<UpdateItemProps> = ({
                 <div className="text-sm ml-1.5 text-warning mr-2">
                   {`Client Cancelled ${extraProps.questName}`}
                 </div>
-                <div className="h-5 w-[1px] bg-neutral-200"></div>
-                <div className="text-sm ml-2 text-neutral-400 mr-auto">{`${time.fromNow()}`}</div>
+                <div className="h-5 w-[1px] bg-neutral200"></div>
+                <div className="text-sm ml-2 text-neutral400 mr-auto">{`${time.fromNow()}`}</div>
               </div>
             </div>
           );
@@ -262,8 +262,8 @@ const UpdateTableItem: React.FC<UpdateItemProps> = ({
                 <div className="text-sm ml-1.5 text-warning mr-2">
                   {`Lancer Initiated Dispute for ${extraProps.questName}`}
                 </div>
-                <div className="h-5 w-[1px] bg-neutral-200"></div>
-                <div className="text-sm ml-2 text-neutral-400 mr-auto">{`${time.fromNow()}`}</div>
+                <div className="h-5 w-[1px] bg-neutral200"></div>
+                <div className="text-sm ml-2 text-neutral400 mr-auto">{`${time.fromNow()}`}</div>
               </div>
             </div>
           );
@@ -284,8 +284,8 @@ const UpdateTableItem: React.FC<UpdateItemProps> = ({
                 <div className="text-sm ml-1.5 text-warning mr-2">
                   {`Lancer Admin Settled the Dispute for ${extraProps.questName}`}
                 </div>
-                <div className="h-5 w-[1px] bg-neutral-200"></div>
-                <div className="text-sm ml-2 text-neutral-400 mr-auto">{`${time.fromNow()}`}</div>
+                <div className="h-5 w-[1px] bg-neutral200"></div>
+                <div className="text-sm ml-2 text-neutral400 mr-auto">{`${time.fromNow()}`}</div>
               </div>
             </div>
           );
@@ -307,11 +307,11 @@ const UpdateTableItem: React.FC<UpdateItemProps> = ({
             >
               <div className="flex justify-start items-center w-full">
                 <Mail height="28px" width="28px" version="blue" />
-                <div className="text-sm ml-1.5 text-neutral-500 mr-2">
+                <div className="text-sm ml-1.5 text-neutral500 mr-2">
                   {`New Application for ${extraProps.questName}`}
                 </div>
-                <div className="h-5 w-[1px] bg-neutral-200"></div>
-                <div className="text-sm ml-2 text-neutral-400">{`${time.fromNow()}`}</div>
+                <div className="h-5 w-[1px] bg-neutral200"></div>
+                <div className="text-sm ml-2 text-neutral400">{`${time.fromNow()}`}</div>
               </div>
             </div>
           );
@@ -329,11 +329,11 @@ const UpdateTableItem: React.FC<UpdateItemProps> = ({
             >
               <div className="flex justify-start items-center w-full">
                 <Mail height="28px" width="28px" version="purple" />
-                <div className="text-sm ml-1.5 text-neutral-500 mr-2">
+                <div className="text-sm ml-1.5 text-neutral500 mr-2">
                   {`Shortlisted for ${extraProps.questName}`}
                 </div>
-                <div className="h-5 w-[1px] bg-neutral-200"></div>
-                <div className="text-sm ml-2 text-neutral-400">{`${time.fromNow()}`}</div>
+                <div className="h-5 w-[1px] bg-neutral200"></div>
+                <div className="text-sm ml-2 text-neutral400">{`${time.fromNow()}`}</div>
               </div>
             </div>
           );
@@ -354,8 +354,8 @@ const UpdateTableItem: React.FC<UpdateItemProps> = ({
                 <div className="text-sm ml-1.5 text-success mr-2">
                   {`Selected for ${extraProps.questName}`}
                 </div>
-                <div className="h-5 w-[1px] bg-neutral-200"></div>
-                <div className="text-sm ml-2 text-neutral-400">{`${time.fromNow()}`}</div>
+                <div className="h-5 w-[1px] bg-neutral200"></div>
+                <div className="text-sm ml-2 text-neutral400">{`${time.fromNow()}`}</div>
               </div>
             </div>
           );
@@ -376,8 +376,8 @@ const UpdateTableItem: React.FC<UpdateItemProps> = ({
                 <div className="text-sm ml-1.5 text-warning mr-2">
                   {`Application Denied for ${extraProps.questName}`}
                 </div>
-                <div className="h-5 w-[1px] bg-neutral-200"></div>
-                <div className="text-sm ml-2 text-neutral-400">{`${time.fromNow()}`}</div>
+                <div className="h-5 w-[1px] bg-neutral200"></div>
+                <div className="text-sm ml-2 text-neutral400">{`${time.fromNow()}`}</div>
               </div>
             </div>
           );
@@ -398,8 +398,8 @@ const UpdateTableItem: React.FC<UpdateItemProps> = ({
                 <div className="text-sm ml-1.5 text-warning mr-2">
                   {`Removed from Shortlist for ${extraProps.questName}`}
                 </div>
-                <div className="h-5 w-[1px] bg-neutral-200"></div>
-                <div className="text-sm ml-2 text-neutral-400">{`${time.fromNow()}`}</div>
+                <div className="h-5 w-[1px] bg-neutral200"></div>
+                <div className="text-sm ml-2 text-neutral400">{`${time.fromNow()}`}</div>
               </div>
             </div>
           );
