@@ -753,100 +753,98 @@ const QuestUpdatesTable: React.FC = () => {
             currentBounty.needsToVote
               .map((user) => user.userid)
               .includes(currentUser.id) && (
+              <motion.button
+                {...smallClickAnimation}
+                className="bg-white border border-neutral200 ml-auto h-9 w-fit px-4 py-2
+                title-text rounded-md text-error disabled:cursor-not-allowed disabled:opacity-80 whitespace-nowrap"
+                onClick={handleVoteToCancel}
+                disabled={isLoading || isAwaitingResponse}
+              >
+                Vote to Cancel
+              </motion.button>
+            )}
+          {currentBounty.isCreator &&
+            [BountyState.AWAITING_REVIEW, BountyState.IN_PROGRESS].includes(
+              currentBounty.state as BountyState
+            ) && (
+              <motion.button
+                {...smallClickAnimation}
+                className="bg-white border border-neutral200 ml-auto h-9 w-fit px-4 py-2
+                  title-text rounded-md text-success disabled:cursor-not-allowed disabled:opacity-80 whitespace-nowrap"
+                onClick={handlePayoutQuest}
+                disabled={isLoading || isAwaitingResponse}
+              >
+                Payout Quest
+              </motion.button>
+            )}
+          {!currentBounty.isCreator &&
+            currentBounty.state === BountyState.VOTING_TO_CANCEL &&
+            currentBounty.needsToVote
+              .map((user) => user.userid)
+              .includes(currentUser.id) && (
               <>
                 <motion.button
                   {...smallClickAnimation}
-                  className="bg-white border border-neutral200 ml-auto h-9 w-fit px-4 py-2
-                title-text rounded-md text-error disabled:cursor-not-allowed disabled:opacity-80 whitespace-nowrap"
+                  className="bg-white border border-neutral200 ml-auto mr-4 h-9 w-fit px-4 py-2
+                  title-text rounded-md text-error disabled:cursor-not-allowed disabled:opacity-80 whitespace-nowrap"
                   onClick={handleVoteToCancel}
                   disabled={isLoading || isAwaitingResponse}
                 >
                   Vote to Cancel
                 </motion.button>
-              )}
-            {currentBounty.isCreator &&
-              [BountyState.AWAITING_REVIEW, BountyState.IN_PROGRESS].includes(
-                currentBounty.state as BountyState
-              ) && (
                 <motion.button
                   {...smallClickAnimation}
-                  className="bg-white border border-neutral200 ml-auto h-9 w-fit px-4 py-2
-              title-text rounded-md text-success disabled:cursor-not-allowed disabled:opacity-80 whitespace-nowrap"
-                  onClick={handlePayoutQuest}
+                  className="bg-white border border-neutral200 h-9 w-fit px-4 py-2
+                  title-text rounded-md text-error disabled:cursor-not-allowed disabled:opacity-80 whitespace-nowrap"
+                  onClick={handleStartDispute}
                   disabled={isLoading || isAwaitingResponse}
                 >
-                  Payout Quest
-                </motion.button>
-              )}
-            {!currentBounty.isCreator &&
-              currentBounty.state === BountyState.VOTING_TO_CANCEL &&
-              currentBounty.needsToVote
-                .map((user) => user.userid)
-                .includes(currentUser.id) && (
-                <>
-                  <motion.button
-                    {...smallClickAnimation}
-                    className="bg-white border border-neutral200 ml-auto mr-4 h-9 w-fit px-4 py-2
-                  title-text rounded-md text-error disabled:cursor-not-allowed disabled:opacity-80 whitespace-nowrap"
-                    onClick={handleVoteToCancel}
-                    disabled={isLoading || isAwaitingResponse}
-                  >
-                    Vote to Cancel
-                  </motion.button>
-                  <motion.button
-                    {...smallClickAnimation}
-                    className="bg-white border border-neutral200 h-9 w-fit px-4 py-2
-                  title-text rounded-md text-error disabled:cursor-not-allowed disabled:opacity-80 whitespace-nowrap"
-                    onClick={handleStartDispute}
-                    disabled={isLoading || isAwaitingResponse}
-                  >
-                    Dispute Cancellation
-                  </motion.button>
-                </>
-              )}
-            {currentBounty.state === BountyState.DISPUTE_STARTED && (
-              <>
-                <motion.button
-                  {...smallClickAnimation}
-                  className="ml-auto text-white bg-[#B26B9B] border-[#A66390] h-9 w-fit px-4 py-2
-                title-text rounded-md  disabled:cursor-not-allowed disabled:opacity-80 whitespace-nowrap"
-                  onClick={() => {}}
-                  disabled={true}
-                >
-                  Dispute in Progress
+                  Dispute Cancellation
                 </motion.button>
               </>
             )}
-            {currentBounty.isCreator &&
-              currentBounty.state === BountyState.VOTING_TO_CANCEL &&
-              currentBounty.needsToVote.length === 0 && (
-                <motion.button
-                  {...smallClickAnimation}
-                  className="bg-white border border-neutral200 h-9 w-fit px-4 py-2
+          {currentBounty.state === BountyState.DISPUTE_STARTED && (
+            <>
+              <motion.button
+                {...smallClickAnimation}
+                className="ml-auto text-white bg-[#B26B9B] border-[#A66390] h-9 w-fit px-4 py-2
+                title-text rounded-md  disabled:cursor-not-allowed disabled:opacity-80 whitespace-nowrap"
+                onClick={() => {}}
+                disabled={true}
+              >
+                Dispute in Progress
+              </motion.button>
+            </>
+          )}
+          {currentBounty.isCreator &&
+            currentBounty.state === BountyState.VOTING_TO_CANCEL &&
+            currentBounty.needsToVote.length === 0 && (
+              <motion.button
+                {...smallClickAnimation}
+                className="bg-white border border-neutral200 h-9 w-fit px-4 py-2
                 title-text rounded-md text-error disabled:cursor-not-allowed disabled:opacity-80 whitespace-nowrap mr-4"
-                  onClick={handleCancel}
-                  disabled={isLoading || isAwaitingResponse}
-                >
-                  Cancel Quest
-                </motion.button>
-              )}
-            {currentUser.isAdmin &&
-              currentWallet &&
-              ADMIN_WALLETS.includes(currentWallet.publicKey.toString()) &&
-              currentBounty.state === BountyState.DISPUTE_STARTED && (
-                <motion.button
-                  {...smallClickAnimation}
-                  className="bg-white border border-neutral200 h-9 w-fit px-4 py-2
+                onClick={handleCancel}
+                disabled={isLoading || isAwaitingResponse}
+              >
+                Cancel Quest
+              </motion.button>
+            )}
+          {currentUser.isAdmin &&
+            currentWallet &&
+            ADMIN_WALLETS.includes(currentWallet.publicKey.toString()) &&
+            currentBounty.state === BountyState.DISPUTE_STARTED && (
+              <motion.button
+                {...smallClickAnimation}
+                className="bg-white border border-neutral200 h-9 w-fit px-4 py-2
                 title-text rounded-md text-error disabled:cursor-not-allowed disabled:opacity-80 whitespace-nowrap"
-                  onClick={() => {
-                    setShowDisputeModal(true);
-                  }}
-                  disabled={isLoading || isAwaitingResponse}
-                >
-                  Settle Dispute
-                </motion.button>
-              )}
-          </div>
+                onClick={() => {
+                  setShowDisputeModal(true);
+                }}
+                disabled={isLoading || isAwaitingResponse}
+              >
+                Settle Dispute
+              </motion.button>
+            )}
         </div>
         <div className="h-[1px] w-full bg-neutral100" />
 
