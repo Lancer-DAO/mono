@@ -85,21 +85,21 @@ const LancerApplicationView: FC<Props> = ({ setCurrentActionView }) => {
       const toastId = toast(
         (t) => (
           <div>
-            Are you sure you want to send your application?
+            Are you sure you want to submit your application?
             <div className="mt-2 flex items-center gap-4 justify-center">
               <button
                 onClick={handleYes}
                 className="bg-primary200 text-white flex title-text
                 items-center justify-center rounded-md px-3 py-1"
               >
-                Yes
+                Submit
               </button>
               <button
                 onClick={handleNo}
                 className="bg-white border border-neutral300 flex text-error title-text
                 items-center justify-center rounded-md px-3 py-1"
               >
-                No
+                Cancel
               </button>
             </div>
           </div>
