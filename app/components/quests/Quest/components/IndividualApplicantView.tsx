@@ -258,9 +258,13 @@ const IndividualApplicantView: FC<Props> = ({
                 <RedFire />
                 <div className="title-text text-neutral600">Quote Price</div>
                 <div className="w-[1px] h-5 bg-neutral200" />
-                <div className="text-mini text-neutral400">{`${quote?.estimatedTime}h`}</div>
+                <div className="text-mini text-neutral400">{`${
+                  quote?.estimatedTime ?? 0
+                }h`}</div>
               </div>
-              <div className="flex items-center title-text text-primary200">{`$${quote?.price}`}</div>
+              <div className="flex items-center title-text text-primary200">{`$${
+                quote?.price ?? 0
+              }`}</div>
             </div>
             {checkpoints?.map((checkpoint, index) => (
               <CheckpointView checkpoint={checkpoint} key={index} />

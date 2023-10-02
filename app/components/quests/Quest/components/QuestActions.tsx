@@ -53,7 +53,11 @@ const QuestActions: FC = () => {
   if (!currentUser || !currentBounty || currentBounty.isExternal) return null;
 
   return (
-    <div className="bg-white w-full min-w-[610px] border border-neutral200 rounded-lg overflow-hidden min-h-[600px]">
+    <div
+      className={`bg-white w-full min-w-[610px] border border-neutral200 rounded-lg overflow-hidden ${
+        currentActionView === QuestActionView.Chat && "max-h-[44.5rem]"
+      }`}
+    >
       {currentActionView === QuestActionView.SubmitApplication && (
         <LancerApplicationView setCurrentActionView={setCurrentActionView} />
       )}

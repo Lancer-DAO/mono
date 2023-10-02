@@ -223,7 +223,7 @@ const AllUpdatesTable: React.FC = () => {
       {currentUser ? (
         !allUpdates || allUpdates?.length === 0 ? (
           <div className="mt-4 flex justify-center">
-            <EmptyUpdatesHistory width="270px" height="143px" />
+            <EmptyUpdatesHistory width="290px" height="154px" />
           </div>
         ) : (
           <div className="flex flex-col max-h-[616px] overflow-y-scroll">
@@ -715,10 +715,10 @@ const QuestUpdatesTable: React.FC = () => {
   return (
     currentUser && (
       <div className="flex flex-col w-full border-solid border bg-white border-neutralBorder500 rounded-lg">
-        <div className="flex items-center">
-          <div className="px-8 py-4 text-neutral600 font-bold text-lg whitespace-nowrap">
+        <div className="flex items-center justify-between px-8 py-4">
+          <p className="text-neutral600 font-bold text-lg whitespace-nowrap">
             Updates History
-          </div>
+          </p>
           {currentBounty.isCreator &&
             currentBounty.state !== BountyState.VOTING_TO_CANCEL &&
             currentBounty.state !== BountyState.DISPUTE_STARTED &&
@@ -753,6 +753,35 @@ const QuestUpdatesTable: React.FC = () => {
             currentBounty.needsToVote
               .map((user) => user.userid)
               .includes(currentUser.id) && (
+              <motion.button
+                {...smallClickAnimation}
+                className="bg-white border border-neutral200 ml-auto h-9 w-fit px-4 py-2
+                title-text rounded-md text-error disabled:cursor-not-allowed disabled:opacity-80 whitespace-nowrap"
+                onClick={handleVoteToCancel}
+                disabled={isLoading || isAwaitingResponse}
+              >
+                Vote to Cancel
+              </motion.button>
+            )}
+          {currentBounty.isCreator &&
+            [BountyState.AWAITING_REVIEW, BountyState.IN_PROGRESS].includes(
+              currentBounty.state as BountyState
+            ) && (
+              <motion.button
+                {...smallClickAnimation}
+                className="bg-white border border-neutral200 ml-auto h-9 w-fit px-4 py-2
+                  title-text rounded-md text-success disabled:cursor-not-allowed disabled:opacity-80 whitespace-nowrap"
+                onClick={handlePayoutQuest}
+                disabled={isLoading || isAwaitingResponse}
+              >
+                Payout Quest
+              </motion.button>
+            )}
+          {!currentBounty.isCreator &&
+            currentBounty.state === BountyState.VOTING_TO_CANCEL &&
+            currentBounty.needsToVote
+              .map((user) => user.userid)
+              .includes(currentUser.id) && (
               <>
                 <motion.button
                   {...smallClickAnimation}
@@ -765,7 +794,7 @@ const QuestUpdatesTable: React.FC = () => {
                 </motion.button>
                 <motion.button
                   {...smallClickAnimation}
-                  className="bg-white border border-neutral200 mr-8 h-9 w-fit px-4 py-2
+                  className="bg-white border border-neutral200 h-9 w-fit px-4 py-2
                   title-text rounded-md text-error disabled:cursor-not-allowed disabled:opacity-80 whitespace-nowrap"
                   onClick={handleStartDispute}
                   disabled={isLoading || isAwaitingResponse}
@@ -778,7 +807,7 @@ const QuestUpdatesTable: React.FC = () => {
             <>
               <motion.button
                 {...smallClickAnimation}
-                className="ml-auto text-white bg-[#B26B9B] border-[#A66390] mr-8 h-9 w-fit px-4 py-2
+                className="ml-auto text-white bg-[#B26B9B] border-[#A66390] h-9 w-fit px-4 py-2
                 title-text rounded-md  disabled:cursor-not-allowed disabled:opacity-80 whitespace-nowrap"
                 onClick={() => {}}
                 disabled={true}
@@ -806,7 +835,7 @@ const QuestUpdatesTable: React.FC = () => {
             currentBounty.state === BountyState.DISPUTE_STARTED && (
               <motion.button
                 {...smallClickAnimation}
-                className="bg-white border border-neutral200 h-9 w-fit px-4 py-2 mr-8
+                className="bg-white border border-neutral200 h-9 w-fit px-4 py-2
                 title-text rounded-md text-error disabled:cursor-not-allowed disabled:opacity-80 whitespace-nowrap"
                 onClick={() => {
                   setShowDisputeModal(true);
