@@ -31,7 +31,10 @@ export const ArchiveBounty = () => {
 
     setIsLoading(false);
 
-    toast.success("Quest archived successfully!");
+    const toastId = toast.success("Quest archived successfully!");
+    setTimeout(() => {
+      toast.dismiss(toastId);
+    }, 2000);
   };
 
   return (

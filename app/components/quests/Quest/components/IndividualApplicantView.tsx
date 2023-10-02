@@ -112,6 +112,9 @@ const IndividualApplicantView: FC<Props> = ({
 
       setCurrentBounty(updatedBounty);
       toast.success("Successfully approved submitter", { id: toastId });
+      setTimeout(() => {
+        toast.dismiss(toastId);
+      }, 2000);
     } catch (error) {
       if (
         (error.message as string).includes(
@@ -147,6 +150,9 @@ const IndividualApplicantView: FC<Props> = ({
       setCurrentBounty(updatedBounty);
       setSelectedSubmitter(null);
       toast.success("Rejection submitted", { id: toastId });
+      setTimeout(() => {
+        toast.dismiss(toastId);
+      }, 2000);
     } catch (error) {
       if (
         (error.message as string).includes(
@@ -194,6 +200,9 @@ const IndividualApplicantView: FC<Props> = ({
           : "Successfully removed from shortlist",
         { id: toastId }
       );
+      setTimeout(() => {
+        toast.dismiss(toastId);
+      }, 2000);
     } catch (error) {
       if (
         (error.message as string).includes(

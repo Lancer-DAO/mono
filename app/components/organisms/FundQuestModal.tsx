@@ -76,6 +76,9 @@ const FundQuestModal: FC<Props> = ({
         amount: amount,
       });
       toast.success("Quest funded!", { id: toastId });
+      setTimeout(() => {
+        toast.dismiss(toastId);
+      }, 2000);
       setCurrentBounty(bounty);
       setShowModal(false);
       setShowFundModal(false);

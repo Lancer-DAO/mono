@@ -156,6 +156,9 @@ const LancerApplicationView: FC<Props> = ({ setCurrentActionView }) => {
       setHasApplied(true);
       toast.success("Application sent", { id: toastId });
 
+      setTimeout(() => {
+        toast.dismiss(toastId);
+      }, 2000);
       // remove locally stored form data
       localStorage.removeItem(`quoteData-${currentBounty.id}`);
       localStorage.removeItem(`applyData-${currentBounty.id}`);

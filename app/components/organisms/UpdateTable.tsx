@@ -523,6 +523,10 @@ const QuestUpdatesTable: React.FC = () => {
       });
       setCurrentBounty(updatedBounty);
       toast.success("Successfully voted to cancel", { id: toastId });
+
+      setTimeout(() => {
+        toast.dismiss(toastId);
+      }, 2000);
     } catch (error) {
       if (
         (error.message as string).includes(
@@ -614,6 +618,9 @@ const QuestUpdatesTable: React.FC = () => {
         });
       }
       toast.success("Successfully paid out", { id: toastId });
+      setTimeout(() => {
+        toast.dismiss(toastId);
+      }, 2000);
     } catch (error) {
       if (
         (error.message as string).includes(
@@ -661,6 +668,9 @@ const QuestUpdatesTable: React.FC = () => {
       setCurrentBounty(updatedBounty);
       setIsLoading(false);
       toast.success("Quest canceled", { id: toastId });
+      setTimeout(() => {
+        toast.dismiss(toastId);
+      }, 2000);
     } catch (error) {
       if (
         (error.message as string).includes(
@@ -699,6 +709,9 @@ const QuestUpdatesTable: React.FC = () => {
       setCurrentBounty(updatedBounty);
       setIsLoading(false);
       toast.success("Dispute Initiated", { id: toastId });
+      setTimeout(() => {
+        toast.dismiss(toastId);
+      }, 2000);
     } catch (error) {
       if (
         (error.message as string).includes(
@@ -721,6 +734,7 @@ const QuestUpdatesTable: React.FC = () => {
           </div>
           {currentBounty.isCreator &&
             currentBounty.state !== BountyState.VOTING_TO_CANCEL &&
+            currentBounty.state !== BountyState.CANCELED &&
             currentBounty.state !== BountyState.DISPUTE_STARTED &&
             currentBounty.state !== BountyState.DISPUTE_SETTLED && (
               <motion.button

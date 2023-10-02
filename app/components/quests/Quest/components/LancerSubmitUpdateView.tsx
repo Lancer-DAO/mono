@@ -67,6 +67,9 @@ const LancerSubmitUpdateView: FC = () => {
       refetch();
       setHasSubmittedUpdate(true);
       toast.success("Update sent", { id: toastId });
+      setTimeout(() => {
+        toast.dismiss(toastId);
+      }, 2000);
     } catch (error) {
       toast.error("Error submitting update", { id: toastId });
     }

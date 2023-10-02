@@ -2,7 +2,7 @@ import { BountyUserType } from "@/prisma/queries/bounty";
 import { currentUser } from "@/server/api/routers/users/currentUser";
 import { useUserWallet } from "@/src/providers";
 import { useBounty } from "@/src/providers/bountyProvider";
-import { Bounty, User } from "@/types";
+import { Bounty, BountyState, User } from "@/types";
 import { FC, useEffect, useState } from "react";
 import ApplicantsView from "./ApplicantsView";
 import ChatView from "./ChatView";
@@ -31,7 +31,10 @@ const QuestActions: FC = () => {
   useEffect(() => {
     if (!!currentUser && !currentBounty.isCreator) {
       // is not the creator
-      if (currentBounty.isApprovedSubmitter) {
+      if (
+        currentBounty.isApprovedSubmitter &&
+        currentBounty.state !== BountyState.CANCELED
+      ) {
         // lancer has been approved to work on the quest
         setCurrentActionView(QuestActionView.Chat);
       } else {
