@@ -205,13 +205,19 @@ const QuestTable: React.FC<Props> = ({ type }) => {
                   bountyGroups[state].push(bounty);
                 });
 
-                // Iterate through the groups and render headers and bounties
-                return Object.keys(bountyGroups).map((state) => (
-                  <div key={state}>
+                const orderedBountyGroups = {};
+                TABLE_BOUNTY_STATES.forEach((state) => {
+                  if (bountyGroups[state]) {
+                    orderedBountyGroups[state] = bountyGroups[state];
+                  }
+                });
+
+                return Object.keys(orderedBountyGroups).map((state, index) => (
+                  <div key={index}>
                     <h2
                       className={`${
                         type === "profile" && "hidden"
-                      } text-neutral600 text-sm mt-[5px]`}
+                      } text-neutral600 text-sm ${index > 0 && "mt-8"} mb-4`}
                     >
                       {stateMap[state] || snakeToTitleCase(state)}
                     </h2>
@@ -235,7 +241,7 @@ const QuestTable: React.FC<Props> = ({ type }) => {
                 onClick={() => {
                   setQuestsPage(questsPage - 1);
                 }}
-                className={`text-blue text-sm font-bold mt-4 disabled:opacity-60 disabled:cursor-not-allowed`}
+                className={`text-neutral500 text-sm font-bold mt-4 disabled:text-neutral400 disabled:cursor-not-allowed`}
                 disabled={questsPage - 1 < 0}
               >
                 Prev Page
@@ -244,7 +250,7 @@ const QuestTable: React.FC<Props> = ({ type }) => {
                 onClick={() => {
                   setQuestsPage(questsPage + 1);
                 }}
-                className={`text-blue text-sm font-bold mt-4 disabled:opacity-60 disabled:cursor-not-allowed`}
+                className={`text-neutral500 text-sm font-bold mt-4 disabled:text-neutral400 disabled:cursor-not-allowed`}
                 disabled={questsPage + 1 > maxPages - 1}
               >
                 Next Page

@@ -12,10 +12,10 @@ export const QuestHeader = ({ count }: Props) => {
     <div className="bg-secondary300 flex rounded-t-md items-center justify-between px-6 py-4 h-[75px]">
       <div>
         <h1 className="text-white text-xl font-bold">All Quests</h1>
-        <p className="text-white text-xs opacity-60">Showing {count} Quests</p>
+        <p className="text-white text-sm opacity-60">Showing {count} Quests</p>
       </div>
 
-      {currentUser.class === "Noble" && (
+      {!!currentUser && currentUser.class === "Noble" && (
         <div className="flex items-center justify-end">
           <button
             disabled={!currentUser || !currentUser.hasBeenApproved}

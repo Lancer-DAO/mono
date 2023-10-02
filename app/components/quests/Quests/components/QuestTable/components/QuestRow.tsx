@@ -54,7 +54,7 @@ export const QuestRow: FC<Props> = ({ bounty, formData, linked = true }) => {
         borderBottom: "1px solid #EDF2F1",
         opacity: bounty.state == "complete" ? "80%" : "100%",
       }}
-      className="items-center bg-white gap-2.5 rounded-md flex py-5 px-2.5 flex-col justify-start h-[110px] hover:bg-neutral100"
+      className="items-center bg-white gap-2.5 flex px-2.5 flex-col justify-center h-[125px]"
     >
       <div className="w-full flex justify-between">
         <div className="flex h-full items-center justify-center gap-2.5">
@@ -65,25 +65,25 @@ export const QuestRow: FC<Props> = ({ bounty, formData, linked = true }) => {
                   ? bounty?.creator?.user.picture
                   : ``
               }
-              width={28}
-              height={28}
+              width={40}
+              height={40}
               alt={bounty?.creator?.user.name}
-              className="h-[28px] w-[28px] rounded-full"
+              className="rounded-full"
             />
           ) : (
-            <Logo width="28px" height="28px" />
+            <Logo width="40px" height="40px" />
           )}
 
-          <div className="flex flex-col">
+          <div className="flex flex-col gap-1">
             <p className="text-sm text-neutral600 font-bold">
-              {bounty?.creator?.user.name}
+              {bounty?.creator?.user.name ?? "Lancer"}
             </p>
-            <p className="text-xs">{bounty.title}</p>
+            <p className="text-sm truncate text-neutral500">{bounty.title}</p>
           </div>
         </div>
 
-        <div className="flex justify-center items-center gap-5">
-          <div className="flex flex-col items-end justify-center">
+        <div className="flex justify-center items-center gap-5 ml-10">
+          <div className="flex flex-col gap-1 items-end justify-center">
             {bounty && !bounty.isExternal && Number(bounty?.escrow.amount) ? (
               <div className="flex items-center justify-center gap-1">
                 <LockIcon
@@ -110,13 +110,13 @@ export const QuestRow: FC<Props> = ({ bounty, formData, linked = true }) => {
               <p className="text-sm text-neutral600">Requesting Quotes</p>
             )}
 
-            <p className="text-xs text-neutral500">
+            <p className="text-sm text-neutral500">
               Created on {getFormattedDate(bounty)}
             </p>
           </div>
           <a
             href={handleBountyLink()}
-            className="rounded-md py-2 px-4 text-neutral600 text-sm border border-neutral200"
+            className="rounded-md py-2 px-4 text-neutral600 text-sm border border-neutral200 hover:bg-neutral200"
           >
             Details
           </a>
