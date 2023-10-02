@@ -22,7 +22,7 @@ export const Create = () => {
   };
 
   return (
-    <div className="w-full max-w-[1200px] mx-auto flex md:justify-evenly mt-10 py-24 ">
+    <div className="w-full max-w-[1200px] mx-auto flex md:justify-evenly py-24">
       {/* quest info entry section */}
       <div className={"md:w-[515px]"}>
         <CreateBountyForm

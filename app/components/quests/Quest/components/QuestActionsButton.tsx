@@ -23,7 +23,7 @@ export const QuestActionsButton: React.FC<QuestActionsButtonProps> = ({
     disabled={disabled}
     className={`flex justify-center items-center disabled:opacity-80 
     disabled:cursor-not-allowed rounded-md 
-    ${type === "green" && "bg-primary200 text-white font-bold"}
+    ${type === "green" && "bg-primary200 text-white title-text"}
     ${type === "neutral" && "bg-neutral100 border-neutral200 text-neutral600"}
     ${type === "red" && "bg-primary300 text-white"}
     border py-2 px-4 text-textPrimary ${extraClasses}`}

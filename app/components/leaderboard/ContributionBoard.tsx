@@ -87,7 +87,7 @@ export const ContributionBoard: FC<any> = () => {
   }, [selectedLanguage]);
 
   return (
-    <div className="w-full flex flex-col items-center justify-center mt-10 gap-2.5 py-24">
+    <div className="w-full flex flex-col items-center justify-center gap-2.5 py-24">
       <LeaderBoardSelector />
       <div className="w-full max-w-[1200px] mx-auto flex items-start gap-2.5">
         <div className="p-4 bg-gray-200 rounded-md w-fit">

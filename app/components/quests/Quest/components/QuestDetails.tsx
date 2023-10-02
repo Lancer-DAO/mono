@@ -71,7 +71,7 @@ const QuestDetails = () => {
       <div className="flex w-full justify-between items-center">
         <div className="flex w-full flex-col items-start px-4 py-6">
           {/* back arrow */}
-          <div className="flex items-center pb-1 gap-2">
+          <div className="w-full flex items-center pb-1 gap-2">
             <ArrowLeft
               className="text-neutral400 cursor-pointer"
               width={16}
@@ -81,6 +81,31 @@ const QuestDetails = () => {
             <h2 className="text-neutral600 font-bold">
               {currentBounty?.title}
             </h2>
+            <div className="flex items-center gap-1 ml-auto">
+              <ArchiveBounty />
+              {currentBounty.isExternal && (
+                <div className="ml-auto">
+                  <Link
+                    href={currentBounty.links}
+                    passHref
+                    target="_blank"
+                    rel="noreferrer noopener"
+                  >
+                    <button
+                      className="whitespace-nowrap p-3 bg-primary200 text-white title-text 
+                      text-center rounded-md border flex items-center justify-between gap-1"
+                    >
+                      Go To Quest{" "}
+                      <ExternalLink
+                        className="text-white"
+                        width={20}
+                        height={20}
+                      />
+                    </button>
+                  </Link>
+                </div>
+              )}
+            </div>
           </div>
           {/* quest info */}
           <div className="w-full flex items-center pb-2.5 px-6">
@@ -117,9 +142,6 @@ const QuestDetails = () => {
                 )}`}</p>
               </div>
             )}
-            <div className="ml-auto">
-              <ArchiveBounty />
-            </div>
           </div>
           <div className="flex px-5 gap-2">
             {currentBounty.tags.length > 0 && (
@@ -154,21 +176,6 @@ const QuestDetails = () => {
             </div>
           </div>
         </div>
-        {currentBounty.isExternal && (
-          <div>
-            <Link
-              href={currentBounty.links}
-              passHref
-              target="_blank"
-              rel="noreferrer noopener"
-            >
-              <button className="whitespace-nowrap p-3 bg-primary200 mr-8 text-white text-xl  text-center rounded-lg border flex items-center justify-between gap-1">
-                Go To Quest{" "}
-                <ExternalLink className="text-white" width={20} height={20} />
-              </button>
-            </Link>
-          </div>
-        )}
       </div>
 
       <div className="h-[1px] w-full bg-neutral200" />
