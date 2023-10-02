@@ -241,7 +241,7 @@ const QuestTable: React.FC<Props> = ({ type }) => {
                 onClick={() => {
                   setQuestsPage(questsPage - 1);
                 }}
-                className={`text-blue text-sm font-bold mt-4 disabled:opacity-60 disabled:cursor-not-allowed`}
+                className={`text-neutral500 text-sm font-bold mt-4 disabled:text-neutral400 disabled:cursor-not-allowed`}
                 disabled={questsPage - 1 < 0}
               >
                 Prev Page
@@ -250,7 +250,7 @@ const QuestTable: React.FC<Props> = ({ type }) => {
                 onClick={() => {
                   setQuestsPage(questsPage + 1);
                 }}
-                className={`text-blue text-sm font-bold mt-4 disabled:opacity-60 disabled:cursor-not-allowed`}
+                className={`text-neutral500 text-sm font-bold mt-4 disabled:text-neutral400 disabled:cursor-not-allowed`}
                 disabled={questsPage + 1 > maxPages - 1}
               >
                 Next Page
