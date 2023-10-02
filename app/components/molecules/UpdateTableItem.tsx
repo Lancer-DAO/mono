@@ -111,7 +111,7 @@ const UpdateTableItem: React.FC<UpdateItemProps> = ({
     case "message":
       return (
         <div className="flex px-8 py-4 items-center justify-start w-full border-solid border-b bg-primary100 border-neutralBorder500">
-          <Message height="28px" width="28px" />
+          <Message height="32px" width="32px" />
           <div className="text-sm ml-1.5 text-neutral600 mr-4">{`${
             extraProps.messageCount
           } New message${extraProps.messageCount > 1 ? "s" : ""} from ${
@@ -133,7 +133,7 @@ const UpdateTableItem: React.FC<UpdateItemProps> = ({
               className="flex flex-col px-8 py-4 items-start justify-center w-full border-solid border-b  border-neutralBorder500 hover:cursor-pointer"
             >
               <div className="flex justify-start items-center w-full">
-                <ServiceBell height="28px" width="28px" />
+                <ServiceBell height="32px" width="32px" />
                 <div className="text-sm ml-1.5 text-neutral500 mr-2">
                   {`New Update for ${extraProps.questName}`}
                 </div>
@@ -159,7 +159,7 @@ const UpdateTableItem: React.FC<UpdateItemProps> = ({
               } flex flex-col px-8 py-4 items-start justify-center w-full border-solid border-b  border-neutralBorder500`}
             >
               <div className="flex justify-start items-center w-full">
-                <Flame height="28px" width="28px" version="orange" />
+                <Flame height="32px" width="32px" version="orange" />
                 <div className="text-sm ml-1.5 text-neutral500 mr-2">
                   {`Review for ${extraProps.questName}`}
                 </div>
@@ -185,7 +185,7 @@ const UpdateTableItem: React.FC<UpdateItemProps> = ({
               } flex flex-col px-8 py-4 items-start justify-center w-full border-solid border-b  border-neutralBorder500`}
             >
               <div className="flex justify-start items-center w-full">
-                <Flame height="28px" width="28px" version="green" />
+                <Flame height="32px" width="32px" version="green" />
                 <div className="text-sm ml-1.5 text-neutral500 mr-2">
                   {`Review for ${extraProps.questName}`}
                 </div>
@@ -214,7 +214,7 @@ const UpdateTableItem: React.FC<UpdateItemProps> = ({
               } flex flex-col px-8 py-4 items-start justify-center w-full border-solid border-b  border-neutralBorder500`}
             >
               <div className="flex justify-start items-center w-full">
-                <Alert height="28px" width="28px" />
+                <Alert height="32px" width="32px" />
                 <div className="text-sm ml-1.5 text-warning mr-2">
                   {`Client Voted To Cancel ${extraProps.questName}`}
                 </div>
@@ -236,7 +236,7 @@ const UpdateTableItem: React.FC<UpdateItemProps> = ({
               } flex flex-col px-8 py-4 items-start justify-center w-full border-solid border-b  border-neutralBorder500`}
             >
               <div className="flex justify-start items-center w-full">
-                <Alert height="28px" width="28px" />
+                <Alert height="32px" width="32px" />
                 <div className="text-sm ml-1.5 text-warning mr-2">
                   {`Client Cancelled ${extraProps.questName}`}
                 </div>
@@ -258,7 +258,7 @@ const UpdateTableItem: React.FC<UpdateItemProps> = ({
               } flex flex-col px-8 py-4 items-start justify-center w-full border-solid border-b  border-neutralBorder500`}
             >
               <div className="flex justify-start items-center w-full">
-                <Alert height="28px" width="28px" />
+                <Alert height="32px" width="32px" />
                 <div className="text-sm ml-1.5 text-warning mr-2">
                   {`Lancer Initiated Dispute for ${extraProps.questName}`}
                 </div>
@@ -280,7 +280,7 @@ const UpdateTableItem: React.FC<UpdateItemProps> = ({
               } flex flex-col px-8 py-4 items-start justify-center w-full border-solid border-b  border-neutralBorder500`}
             >
               <div className="flex justify-start items-center w-full">
-                <Alert height="28px" width="28px" />
+                <Alert height="32px" width="32px" />
                 <div className="text-sm ml-1.5 text-warning mr-2">
                   {`Lancer Admin Settled the Dispute for ${extraProps.questName}`}
                 </div>
@@ -306,7 +306,7 @@ const UpdateTableItem: React.FC<UpdateItemProps> = ({
               } flex flex-col px-8 py-4 items-start justify-center w-full border-solid border-b  border-neutralBorder500`}
             >
               <div className="flex justify-start items-center w-full">
-                <Mail height="28px" width="28px" version="blue" />
+                <Mail height="32px" width="32px" version="blue" />
                 <div className="text-sm ml-1.5 text-neutral500 mr-2">
                   {`New Application for ${extraProps.questName}`}
                 </div>
@@ -328,7 +328,7 @@ const UpdateTableItem: React.FC<UpdateItemProps> = ({
               } flex flex-col px-8 py-4 items-start justify-center w-full border-solid border-b  border-neutralBorder500`}
             >
               <div className="flex justify-start items-center w-full">
-                <Mail height="28px" width="28px" version="purple" />
+                <Mail height="32px" width="32px" version="purple" />
                 <div className="text-sm ml-1.5 text-neutral500 mr-2">
                   {`Shortlisted for ${extraProps.questName}`}
                 </div>
@@ -350,7 +350,7 @@ const UpdateTableItem: React.FC<UpdateItemProps> = ({
               } flex flex-col px-8 py-4 items-start justify-center w-full border-solid border-b  border-neutralBorder500`}
             >
               <div className="flex justify-start items-center w-full">
-                <Mail height="28px" width="28px" version="green" />
+                <Mail height="32px" width="32px" version="green" />
                 <div className="text-sm ml-1.5 text-success mr-2">
                   {`Selected for ${extraProps.questName}`}
                 </div>
@@ -372,7 +372,7 @@ const UpdateTableItem: React.FC<UpdateItemProps> = ({
               } flex flex-col px-8 py-4 items-start justify-center w-full border-solid border-b  border-neutralBorder500`}
             >
               <div className="flex justify-start items-center w-full">
-                <Mail height="28px" width="28px" version="orange" />
+                <Mail height="32px" width="32px" version="orange" />
                 <div className="text-sm ml-1.5 text-warning mr-2">
                   {`Application Denied for ${extraProps.questName}`}
                 </div>
@@ -394,7 +394,7 @@ const UpdateTableItem: React.FC<UpdateItemProps> = ({
               } flex flex-col px-8 py-4 items-start justify-center w-full border-solid border-b  border-neutralBorder500`}
             >
               <div className="flex justify-start items-center w-full">
-                <Mail height="28px" width="28px" version="orange" />
+                <Mail height="32px" width="32px" version="orange" />
                 <div className="text-sm ml-1.5 text-warning mr-2">
                   {`Removed from Shortlist for ${extraProps.questName}`}
                 </div>
