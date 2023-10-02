@@ -35,11 +35,13 @@ export const ArchiveBounty = () => {
   };
 
   return (
-    <QuestActionsButton
-      type="green"
+    <button
+      className="whitespace-nowrap p-3 bg-primary200 text-white title-text 
+      text-center rounded-md border flex items-center justify-between gap-1"
       disabled={isLoading}
-      text={isLoading ? "Loading..." : "Make Private"}
       onClick={onClick}
-    />
+    >
+      {isLoading ? "Loading..." : "Make Private"}
+    </button>
   );
 };

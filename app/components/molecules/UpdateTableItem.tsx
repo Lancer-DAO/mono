@@ -112,7 +112,7 @@ const UpdateTableItem: React.FC<UpdateItemProps> = ({
       return (
         <div className="flex px-8 py-4 items-center justify-start w-full border-solid border-b bg-primary100 border-neutralBorder500">
           <Message height="32px" width="32px" />
-          <div className="text-sm ml-1.5 text-neutral600 mr-4">{`${
+          <div className="text-sm ml-1.5 text-neutral500 mr-4">{`${
             extraProps.messageCount
           } New message${extraProps.messageCount > 1 ? "s" : ""} from ${
             extraProps.updater
@@ -165,7 +165,7 @@ const UpdateTableItem: React.FC<UpdateItemProps> = ({
                 </div>
                 <div className="h-5 w-[1px] bg-neutral200"></div>
                 <div className="text-sm ml-2 text-neutral400 mr-auto">{`${time.fromNow()}`}</div>
-                <div className="text-sm ml-auto text-warning">Rejected</div>
+                <div className="text-sm ml-auto text-neutral500">Rejected</div>
               </div>
               <div className="mt-4 rounded-md text-xs leading-normal text-neutral500 border border-neutralBorder-200 py-2.5 px-3.5 bg-neutral100 w-full rounder-md">
                 {extraProps.description}
@@ -191,7 +191,7 @@ const UpdateTableItem: React.FC<UpdateItemProps> = ({
                 </div>
                 <div className="h-5 w-[1px] bg-neutral200"></div>
                 <div className="text-sm ml-2 text-neutral400 mr-auto">{`${time.fromNow()}`}</div>
-                <div className="text-sm ml-auto text-success">Accepted</div>
+                <div className="text-sm ml-auto text-neutral500">Accepted</div>
               </div>
               <div className="mt-4 rounded-md text-xs leading-normal text-neutral500 border border-neutralBorder-200 py-2.5 px-3.5 bg-neutral100 w-full rounder-md">
                 {extraProps.description}
@@ -215,7 +215,7 @@ const UpdateTableItem: React.FC<UpdateItemProps> = ({
             >
               <div className="flex justify-start items-center w-full">
                 <Alert height="32px" width="32px" />
-                <div className="text-sm ml-1.5 text-warning mr-2">
+                <div className="text-sm ml-1.5 text-neutral500 mr-2">
                   {`Client Voted To Cancel ${extraProps.questName}`}
                 </div>
                 <div className="h-5 w-[1px] bg-neutral200"></div>
@@ -237,7 +237,7 @@ const UpdateTableItem: React.FC<UpdateItemProps> = ({
             >
               <div className="flex justify-start items-center w-full">
                 <Alert height="32px" width="32px" />
-                <div className="text-sm ml-1.5 text-warning mr-2">
+                <div className="text-sm ml-1.5 text-neutral500 mr-2">
                   {`Client Cancelled ${extraProps.questName}`}
                 </div>
                 <div className="h-5 w-[1px] bg-neutral200"></div>
@@ -259,7 +259,7 @@ const UpdateTableItem: React.FC<UpdateItemProps> = ({
             >
               <div className="flex justify-start items-center w-full">
                 <Alert height="32px" width="32px" />
-                <div className="text-sm ml-1.5 text-warning mr-2">
+                <div className="text-sm ml-1.5 text-neutral500 mr-2">
                   {`Lancer Initiated Dispute for ${extraProps.questName}`}
                 </div>
                 <div className="h-5 w-[1px] bg-neutral200"></div>
@@ -281,7 +281,7 @@ const UpdateTableItem: React.FC<UpdateItemProps> = ({
             >
               <div className="flex justify-start items-center w-full">
                 <Alert height="32px" width="32px" />
-                <div className="text-sm ml-1.5 text-warning mr-2">
+                <div className="text-sm ml-1.5 text-neutral500 mr-2">
                   {`Lancer Admin Settled the Dispute for ${extraProps.questName}`}
                 </div>
                 <div className="h-5 w-[1px] bg-neutral200"></div>
@@ -351,7 +351,7 @@ const UpdateTableItem: React.FC<UpdateItemProps> = ({
             >
               <div className="flex justify-start items-center w-full">
                 <Mail height="32px" width="32px" version="green" />
-                <div className="text-sm ml-1.5 text-success mr-2">
+                <div className="text-sm ml-1.5 text-neutral500 mr-2">
                   {`Selected for ${extraProps.questName}`}
                 </div>
                 <div className="h-5 w-[1px] bg-neutral200"></div>
@@ -373,7 +373,7 @@ const UpdateTableItem: React.FC<UpdateItemProps> = ({
             >
               <div className="flex justify-start items-center w-full">
                 <Mail height="32px" width="32px" version="orange" />
-                <div className="text-sm ml-1.5 text-warning mr-2">
+                <div className="text-sm ml-1.5 text-neutral500 mr-2">
                   {`Application Denied for ${extraProps.questName}`}
                 </div>
                 <div className="h-5 w-[1px] bg-neutral200"></div>
@@ -395,7 +395,7 @@ const UpdateTableItem: React.FC<UpdateItemProps> = ({
             >
               <div className="flex justify-start items-center w-full">
                 <Mail height="32px" width="32px" version="orange" />
-                <div className="text-sm ml-1.5 text-warning mr-2">
+                <div className="text-sm ml-1.5 text-neutral500 mr-2">
                   {`Removed from Shortlist for ${extraProps.questName}`}
                 </div>
                 <div className="h-5 w-[1px] bg-neutral200"></div>
