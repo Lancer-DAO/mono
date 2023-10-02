@@ -52,16 +52,16 @@ const MultiSelectDropdown: React.FC<Props> = ({
       return (
         <label
           key={option.value}
-          className="bg-neutralBtn w-full flex items-center px-2 py-1 text-lg cursor-pointer"
+          className="bg-neutralBtn w-full flex items-center px-3 py-2 text-lg cursor-pointer"
         >
           <input
             type="checkbox"
             value={option.value}
             checked={isChecked ? true : false}
             onChange={() => handleCheckboxChange(option)}
-            className="mr-[8px] w-2"
+            className="mr-[8px] w-3"
           />
-          <div className="flex items-center gap-2 text-xs">
+          <div className="flex items-center gap-2 text-sm">
             {option.icon && (
               <Image
                 src={option?.icon}
@@ -85,13 +85,13 @@ const MultiSelectDropdown: React.FC<Props> = ({
       >
         <div
           className="h-full w-full flex justify-between bg-white border border-neutral-200 text-neutral500 
-          items-center cursor-pointer px-4 rounded-md"
+          items-center cursor-pointer px-3 rounded-md"
           onClick={toggleOpen}
         >
           {title ? (
-            <div className="text-xs text-neutral-500 w-fit">{title}</div>
+            <div className="text-sm text-neutral-500 w-fit">{title}</div>
           ) : (
-            <div className="text-xs text-neutral-500 truncate">
+            <div className="text-sm text-neutral-500 truncate">
               {selected?.length === 0
                 ? "Select"
                 : selected?.map((item) => item.label).join(", ")}
@@ -109,7 +109,7 @@ const MultiSelectDropdown: React.FC<Props> = ({
         {isOpen && (
           <div
             className="absolute top-full left-0 z-10 flex flex-col max-h-[200px] overflow-y-auto 
-          bg-neutralBtn border border-neutralBtnBorder rounded-lg shadow-md w-full"
+            bg-neutralBtn border border-neutralBtnBorder rounded-lg shadow-md w-full"
           >
             {renderOptions()}
           </div>
@@ -125,7 +125,7 @@ const MultiSelectDropdown: React.FC<Props> = ({
     >
       <div
         className="h-full flex justify-between bg-transparent border border-[#6B7699] text-white 
-        items-center cursor-pointer px-4 rounded-lg"
+        items-center cursor-pointer px-3 rounded-lg"
         onClick={toggleOpen}
       >
         <div className="text-[14px] text-white overflow-hidden whitespace-nowrap overflow-ellipsis">

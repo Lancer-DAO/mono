@@ -34,7 +34,7 @@
 }
 
 html {
-  @apply text-[#526660] bg-[#F7F7FB];
+  @apply text-neutral500 bg-[#F7F7FB];
 }
 
 h1 {

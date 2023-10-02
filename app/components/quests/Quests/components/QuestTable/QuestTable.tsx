@@ -204,13 +204,21 @@ const QuestTable: React.FC<Props> = ({ type }) => {
                 bountyGroups[state].push(bounty);
               });
 
+              // reorder bountyGroups by state: new, accepting_applications, in_progress, complete, canceled
+              const orderedBountyGroups = {};
+              TABLE_BOUNTY_STATES.forEach((state) => {
+                if (bountyGroups[state]) {
+                  orderedBountyGroups[state] = bountyGroups[state];
+                }
+              });
+
               // Iterate through the groups and render headers and bounties
-              return Object.keys(bountyGroups).map((state) => (
-                <div key={state}>
+              return Object.keys(orderedBountyGroups).map((state, index) => (
+                <div key={index}>
                   <h2
                     className={`${
                       type === "profile" && "hidden"
-                    } text-neutral600 text-sm mt-[5px]`}
+                    } text-neutral600 text-sm ${index > 0 && "mt-8"} mb-4`}
                   >
                     {stateMap[state] || snakeToTitleCase(state)}
                   </h2>
