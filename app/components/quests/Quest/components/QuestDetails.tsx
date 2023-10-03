@@ -22,9 +22,7 @@ import { ArchiveBounty } from ".";
 const Divider = () => <div className="h-[20px] w-[1px] mx-4 bg-slate-200" />;
 
 const QuestDetails = () => {
-  const [dropdownOpenDescription, setDropdownOpenDescription] = useState(true);
-  const [dropdownOpenLinks, setDropdownOpenLinks] = useState(true);
-  const [dropdownOpenReferences, setDropdownOpenReferences] = useState(true);
+  const [dropdownOpenDetails, setDropdownOpenDetails] = useState(true);
   const { currentBounty } = useBounty();
   const { data: questMedia } = api.media.getMediaByBounty.useQuery(
     {
@@ -81,7 +79,7 @@ const QuestDetails = () => {
             <h2 className="text-neutral600 font-bold">
               {currentBounty?.title}
             </h2>
-            <div className="flex items-center gap-1 ml-auto">
+            <div className="flex items-center gap-1 ml-auto pr-4">
               <ArchiveBounty />
               {currentBounty.isExternal && (
                 <div className="ml-auto">
@@ -144,6 +142,14 @@ const QuestDetails = () => {
             )}
           </div>
           <div className="flex px-5 gap-2">
+            <div
+              className={cn(
+                "text-xs text-center w-fit px-2 py-1 rounded-lg border",
+                bountyStateColor(currentBounty.state)
+              )}
+            >
+              {formatString(currentBounty.state)}
+            </div>
             {currentBounty.tags.length > 0 && (
               <div className="flex flex-wrap gap-2">
                 {currentBounty.tags
@@ -161,14 +167,6 @@ const QuestDetails = () => {
             <div
               className={cn(
                 "text-xs text-center w-fit px-2 py-1 rounded-lg border",
-                bountyStateColor(currentBounty.state)
-              )}
-            >
-              {formatString(currentBounty.state)}
-            </div>
-            <div
-              className={cn(
-                "text-xs text-center w-fit px-2 py-1 rounded-lg border",
                 industryColor
               )}
             >
@@ -181,161 +179,119 @@ const QuestDetails = () => {
       <div className="h-[1px] w-full bg-neutral200" />
       {/* quest content */}
       {currentBounty.state !== BountyState.CANCELED && (
-        <div className="px-10 py-4 flex flex-col gap-6">
-          <div>
-            <div
-              className={`flex justify-between ${
-                dropdownOpenDescription ? "pb-[10px]" : ""
-              }`}
+        <>
+          <div
+            className={`px-10 pt-4 flex justify-between ${
+              dropdownOpenDetails ? "" : "pb-4"
+            }`}
+          >
+            <p className="text font-bold text-neutral600">Job Description</p>
+            <button
+              className="h-full"
+              onClick={() => setDropdownOpenDetails(!dropdownOpenDetails)}
             >
-              <p className="text font-bold text-neutral600">Job Description</p>
-              <button
-                className="h-full"
-                onClick={() =>
-                  setDropdownOpenDescription(!dropdownOpenDescription)
-                }
-              >
-                {dropdownOpenDescription ? (
-                  <ChevronUp width={12} height={20} />
-                ) : (
-                  <ChevronDown width={12} height={20} />
-                )}
-              </button>
-            </div>
+              {dropdownOpenDetails ? (
+                <ChevronUp width={12} height={20} />
+              ) : (
+                <ChevronDown width={12} height={20} />
+              )}
+            </button>
+          </div>
+          <div
+            className={`flex flex-col gap-6 ${
+              dropdownOpenDetails ? "" : "hidden"
+            }`}
+          >
             <p
-              className={`leading-[25.2px] text-sm text-neutral500 ${
-                dropdownOpenDescription ? "" : "hidden"
-              }`}
+              className={`px-10 leading-[25.2px] text-sm text-neutral500`}
               dangerouslySetInnerHTML={previewMarkup()}
             />
-          </div>
-          {currentBounty.links !== "" ||
-            (questMedia?.length > 0 && (
-              <div className="h-[1px] w-full bg-neutral200" />
-            ))}
-          {currentBounty.links !== "" && (
-            <div>
-              <div
-                className={`flex justify-between ${
-                  dropdownOpenLinks ? "pb-[10px]" : ""
-                }`}
-              >
-                <div className="text font-bold text-neutral600">
-                  Additional Links
+            {currentBounty.links !== "" && (
+              <div className="px-10 pb-4">
+                <div className={`flex justify-between pb-[10px]`}>
+                  <div className="text font-bold text-neutral600">
+                    Additional Links
+                  </div>
                 </div>
-                <button
-                  className="h-full"
-                  onClick={() => setDropdownOpenLinks(!dropdownOpenLinks)}
-                >
-                  {dropdownOpenLinks ? (
-                    <ChevronUp width={12} height={20} />
-                  ) : (
-                    <ChevronDown width={12} height={20} />
-                  )}
-                </button>
-              </div>
-              <div
-                className={`relative w-full flex flex-col gap-2 ${
-                  dropdownOpenLinks ? "" : "hidden"
-                }`}
-              >
-                {currentBounty.links
-                  .split(",")
-                  .map((link: string, index: number) => (
-                    <a
-                      href={link}
-                      target="_blank"
-                      rel="noreferrer noopener"
-                      className="text-sm border bg-neutral-100 truncate
+                <div className={`relative w-full flex flex-col gap-2`}>
+                  {currentBounty.links
+                    .split(",")
+                    .map((link: string, index: number) => (
+                      <a
+                        href={link}
+                        target="_blank"
+                        rel="noreferrer noopener"
+                        className="text-sm border bg-neutral-100 truncate
                     border-neutral-200 w-full rounded-md px-4 py-2"
-                      key={`link-${index}`}
-                    >
-                      {link}
-                    </a>
-                  ))}
-              </div>
-            </div>
-          )}
-          {questMedia?.length > 0 && (
-            <div>
-              <div
-                className={`flex justify-between ${
-                  dropdownOpenReferences ? "pb-[10px]" : ""
-                }`}
-              >
-                <div className="text font-bold text-neutral600">
-                  Reference Media
+                        key={`link-${index}`}
+                      >
+                        {link}
+                      </a>
+                    ))}
                 </div>
-                <button
-                  className="h-full"
-                  onClick={() =>
-                    setDropdownOpenReferences(!dropdownOpenReferences)
-                  }
-                >
-                  {dropdownOpenReferences ? (
-                    <ChevronUp width={12} height={20} />
-                  ) : (
-                    <ChevronDown width={12} height={20} />
-                  )}
-                </button>
               </div>
-              <div
-                className={`grid grid-cols-3 gap-4 ${
-                  dropdownOpenReferences ? "" : "hidden"
-                }`}
-              >
-                {questMedia?.map((med, index) => {
-                  return (
-                    <Dialog key={index}>
-                      <div className="relative" key={index}>
-                        <DialogTrigger
-                          className="relative border-2 border-neutral200 rounded-[4px] w-[150px] h-[90px] overflow-hidden"
-                          key={`dialog-${index}`}
-                        >
-                          <Image
-                            src={med.imageUrl}
-                            alt={med.title}
-                            fill
-                            style={{ objectFit: "contain" }}
-                          />
-                        </DialogTrigger>
-                      </div>
-                      <DialogContent className="w-2/3 flex flex-col gap-3 items-center p-6">
-                        <div
-                          className="relative gap-5 w-full h-[240px] 
-                        overflow-hidden mt-4 rounded-md border-2 border-neutral200"
-                        >
-                          <Image
-                            src={med.imageUrl}
-                            alt={med.title}
-                            fill
-                            style={{ objectFit: "contain" }}
-                          />
+            )}
+            {questMedia?.length > 0 && (
+              <div>
+                <div className={`flex justify-between pb-[10px]`}>
+                  <div className="text font-bold text-neutral600">
+                    Reference Media
+                  </div>
+                </div>
+                <div className={`grid grid-cols-3 gap-4`}>
+                  {questMedia?.map((med, index) => {
+                    return (
+                      <Dialog key={index}>
+                        <div className="relative" key={index}>
+                          <DialogTrigger
+                            className="relative border-2 border-neutral200 rounded-[4px] w-[150px] h-[90px] overflow-hidden"
+                            key={`dialog-${index}`}
+                          >
+                            <Image
+                              src={med.imageUrl}
+                              alt={med.title}
+                              fill
+                              style={{ objectFit: "contain" }}
+                            />
+                          </DialogTrigger>
                         </div>
-                        {med.title && (
-                          <div className="w-full flex items-center gap-3 text-sm text-neutral600">
-                            <p className="w-32 text-left">Title</p>
-                            <p className="w-full text-left p-2 bg-neutral100 border border-neutral200 rounded-md">
-                              {med.title}
-                            </p>
+                        <DialogContent className="w-2/3 flex flex-col gap-3 items-center p-6">
+                          <div
+                            className="relative gap-5 w-full h-[240px] 
+                        overflow-hidden mt-4 rounded-md border-2 border-neutral200"
+                          >
+                            <Image
+                              src={med.imageUrl}
+                              alt={med.title}
+                              fill
+                              style={{ objectFit: "contain" }}
+                            />
                           </div>
-                        )}
-                        {med.description && (
-                          <div className="w-full flex items-center gap-3 text-sm">
-                            <p className="w-32 text-left">Description</p>
-                            <p className="w-full text-left p-2 bg-neutral100 border border-neutral200 rounded-md">
-                              {med.description}
-                            </p>
-                          </div>
-                        )}
-                      </DialogContent>
-                    </Dialog>
-                  );
-                })}
+                          {med.title && (
+                            <div className="w-full flex items-center gap-3 text-sm text-neutral600">
+                              <p className="w-32 text-left">Title</p>
+                              <p className="w-full text-left p-2 bg-neutral100 border border-neutral200 rounded-md">
+                                {med.title}
+                              </p>
+                            </div>
+                          )}
+                          {med.description && (
+                            <div className="w-full flex items-center gap-3 text-sm">
+                              <p className="w-32 text-left">Description</p>
+                              <p className="w-full text-left p-2 bg-neutral100 border border-neutral200 rounded-md">
+                                {med.description}
+                              </p>
+                            </div>
+                          )}
+                        </DialogContent>
+                      </Dialog>
+                    );
+                  })}
+                </div>
               </div>
-            </div>
-          )}
-        </div>
+            )}
+          </div>
+        </>
       )}
     </div>
   );

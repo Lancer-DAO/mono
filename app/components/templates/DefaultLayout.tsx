@@ -15,6 +15,7 @@ const DefaultLayout: React.FC<{ children: ReactNode }> = ({ children }) => {
   }, []);
 
   useEffect(() => {
+    if (!width) return;
     const mobileView = width <= 830;
     setIsMobile(mobileView);
   }, [width]);

@@ -27,20 +27,20 @@ const ChatList = () => {
                 {
                   // if theres 2 consiqutive messages from the same sender, only show profile pic on the last one
                   channelState.allMessages[key + 1] &&
-                    channelState.allMessages[key + 1].sender.userId ===
-                      message.sender.userId ? null : (
-                      <Image
-                        src={message.sender.plainProfileUrl}
-                        alt="chat user"
-                        width={32}
-                        height={32}
-                        className="rounded-full overflow-hidden flex-shrink-0"
-                      />
-                    )
+                  channelState.allMessages[key + 1].sender.userId ===
+                    message.sender.userId ? null : (
+                    <Image
+                      src={message.sender.plainProfileUrl}
+                      alt="chat user"
+                      width={32}
+                      height={32}
+                      className="rounded-full overflow-hidden flex-shrink-0"
+                    />
+                  )
                 }
               </div>
               <div
-                className={`p-2.5 py-1.5 rounded text-black ${
+                className={`p-2.5 py-1.5 rounded text-black text-sm ${
                   isSender ? "bg-secondary100" : "bg-neutral100"
                 }`}
               >

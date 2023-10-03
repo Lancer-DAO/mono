@@ -137,7 +137,7 @@ const LancerSubmitQuoteView: FC<Props> = ({
   if (!currentBounty || !currentUser) return null;
 
   return (
-    <div className="flex flex-col relative">
+    <div className="flex flex-col relative h-full">
       <ActionsCardBanner
         title={`Quote to ${currentBounty.creator.user.name}`}
         subtitle={`${quotes?.length || 0} ${
@@ -165,7 +165,7 @@ const LancerSubmitQuoteView: FC<Props> = ({
         </div>
       </ActionsCardBanner>
       <AlertCards />
-      <div className="relative">
+      <div className="relative flex flex-col flex-1 h-full">
         <div className="px-6 py-4">
           <div className="flex py-4 justify-between border-b border-neutral200">
             <div className="flex items-center gap-2">
@@ -209,7 +209,7 @@ const LancerSubmitQuoteView: FC<Props> = ({
             </div>
           )}
         </div>
-        <div className="flex py-4 px-6 justify-end items-center gap-4 self-stretch opacity-100">
+        <div className="flex py-4 px-6 justify-end mt-auto items-center gap-4 self-stretch opacity-100">
           <button
             className="title-text text-neutral600 px-4 py-2 rounded-md border 
             border-neutral300"
