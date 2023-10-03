@@ -31,7 +31,7 @@ const DefaultLayout: React.FC<{ children: ReactNode }> = ({ children }) => {
         {currentUser && <JoyrideWrapper />}
         <main>{children}</main>
       </div>
-      <SidePanel />
+      {/* <SidePanel /> */}
     </div>
   );
 };
