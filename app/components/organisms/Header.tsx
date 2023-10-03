@@ -131,12 +131,6 @@ export const Header = () => {
                   }
                   className="text-sm text-neutral-500"
                   key={href}
-                  disabled={
-                    (id === "create-bounty-link" &&
-                      !currentUser.hasBeenApproved) ||
-                    !currentUser?.hasFinishedOnboarding
-                  }
-                  disabledText={"You must be approved to create a Quest"}
                 >
                   {children}
                 </LinkButton>
