@@ -88,6 +88,14 @@ export const CreateBountyForm: FC<Props> = ({
       return;
     }
 
+    if (!formData.issueTitle || !formData.issueDescription) {
+      const toastId = toast.error("Please enter all required Quest info");
+      setTimeout(() => {
+        toast.dismiss(toastId);
+      }, 2000);
+      return;
+    }
+
     setCreateQuestState({ isLoading: true, loadingPrompt: "Creating Quest" });
     const toastId = toast.loading("Creating Quest");
     try {
@@ -214,7 +222,12 @@ export const CreateBountyForm: FC<Props> = ({
     });
   };
 
+  const buttonDisabled = () => {
+    return !formData.issueTitle || !formData.issueDescription;
+  };
+
   useEffect(() => {
+    console.log("visibilityOption: ", visibilityOption);
     if (visibilityOption.value === "Private") {
       setFormData({
         ...formData,
@@ -229,6 +242,7 @@ export const CreateBountyForm: FC<Props> = ({
   }, [visibilityOption]);
 
   useEffect(() => {
+    console.log("testOption: ", testOption);
     if (testOption.name === "Test") {
       setFormData({
         ...formData,
@@ -244,10 +258,10 @@ export const CreateBountyForm: FC<Props> = ({
 
   return (
     <div className="w-[500px] px-10 lg:px-0 flex flex-col items-center justify-center">
-      <div className="flex items-center justify-center rounded-full bg-neutral-200 h-[32px] w-[32px]">
+      <div className="flex items-center justify-center rounded-full bg-neutral200 h-[32px] w-[32px]">
         <Logo width="27px" height="27px" />
       </div>
-      <h1 className="font-bold text-neutral-600">Let’s Create a Quest.</h1>
+      <h1 className="font-bold text-neutral600">Let’s Create a Quest.</h1>
       <div className="flex flex-col bg-white rounded-md p-6 mt-6">
         <IndustryOptions
           options={allIndustries}
@@ -261,13 +275,13 @@ export const CreateBountyForm: FC<Props> = ({
             });
           }}
         />
-        <div className="w-full h-[1px] bg-neutral-200 my-7" />
+        <div className="w-full h-[1px] bg-neutral200 my-7" />
         <div className="relative flex items-center mb-7">
-          <div className="mr-4 text-sm">Title</div>
+          <div className="mr-4 text-sm text-neutral600">Title*</div>
           <input
             type="text"
-            className="placeholder:text-neutral-500 border bg-neutral-100 
-            border-neutral-200 w-full py-2 px-4 rounded-md text-sm"
+            className="placeholder:text-neutral400 border bg-neutral100 
+            border-neutral200 w-full py-2 px-4 rounded-md text-sm"
             name="issueTitle"
             placeholder="Marketing Website"
             id="issue-title-input"
@@ -276,28 +290,28 @@ export const CreateBountyForm: FC<Props> = ({
           />
         </div>
         <div className="w-full text-sm flex flex-col gap-1 mb-4">
-          <p>Project Description</p>
-          <p className="text-sm text-neutral400">
+          <p className="text-neutral600">Project Description*</p>
+          <p className="text-sm text-neutral5   00">
             Detailed descriptions tend to attract more applicants and even more
             accurate quotes.
           </p>
         </div>
 
         <textarea
-          className="placeholder:text-neutral-500 border bg-neutral-100 text-sm min-h-[150px] 
-          border-neutral-200 w-full rounded-md px-3 py-2 resize-y"
+          className="placeholder:text-neutral400 border bg-neutral100 text-sm min-h-[150px] 
+          border-neutral200 w-full rounded-md px-3 py-2 resize-y"
           name="issueDescription"
           placeholder="Landing page for a HR Software focusing on SME’s. We have something outdated and we need a new website that shows new shiny features and reflect our Brand."
           id="issue-description-input"
           value={formData.issueDescription}
           onChange={handleChange}
         />
-        <div className="relative flex  my-7">
-          <div className="mr-4 text-sm mt-2">Tags</div>
+        <div className="relative flex my-7">
+          <div className="mr-4 text-sm mt-2 text-neutral600">Tags</div>
           <Tags formData={formData} setFormData={setFormData} />
         </div>
-        <div className="relative flex  mb-4">
-          <div className="mr-4 text-sm">Visibility</div>
+        <div className="relative flex mb-4">
+          <div className="mr-4 text-sm text-neutral600">Visibility</div>
           <SelectOptions
             options={VISIBILITY_OPTIONS}
             selected={visibilityOption}
@@ -305,8 +319,8 @@ export const CreateBountyForm: FC<Props> = ({
           />
         </div>
         {currentUser?.isLancerDev && (
-          <div className="relative flex  mb-4">
-            <div className="mr-4 text-sm">Test Options</div>
+          <div className="relative flex mb-4">
+            <div className="mr-4 text-sm text-neutral600">Test Options</div>
             <SelectOptions
               options={TEST_OPTIONS}
               selected={testOption}
@@ -314,15 +328,17 @@ export const CreateBountyForm: FC<Props> = ({
             />
           </div>
         )}
-        <div className="w-full text-sm mb-4">Additional Links</div>
+        <div className="w-full text-sm mb-4 text-neutral600">
+          Additional Links
+        </div>
         <div>
           <div className="relative w-full flex flex-col gap-2">
             {formData.links.map((link: string, index: number) => (
               <div className="flex items-center gap-1" key={index}>
                 <input
                   type="text"
-                  className="text-sm placeholder:text-neutral-500 border bg-neutral-100 
-                  border-neutral-200 w-full rounded-md px-4 py-2"
+                  className="text-sm placeholder:text-neutral400 border bg-neutral100 
+                  border-neutral200 w-full rounded-md px-4 py-2"
                   name={`link-${index}`}
                   placeholder="Paste Link"
                   id={`link-input-${index}`}
@@ -335,8 +351,8 @@ export const CreateBountyForm: FC<Props> = ({
                   key={index}
                   className={`${
                     index === 0 && "invisible"
-                  } bg-neutral-100 border border-neutral-200 
-                    text-neutral-500 w-12 px-4 py-1.5 rounded-md flex items-center justify-center`}
+                  } bg-neutral100 border border-neutral200 
+                    text-neutral500 w-12 px-4 py-1.5 rounded-md flex items-center justify-center`}
                 >
                   <Trash />
                 </motion.button>
@@ -347,19 +363,21 @@ export const CreateBountyForm: FC<Props> = ({
             <motion.button
               onClick={() => addLink()}
               {...smallClickAnimation}
-              className="bg-neutral-100 border border-neutral-200 text-neutral-500 text-sm h-8 w-14 rounded-md mt-2"
+              className="bg-neutral100 border border-neutral200 text-neutral500 text-sm h-8 w-14 rounded-md mt-2"
             >
               +
             </motion.button>
           )}
-          <div className="w-full text-sm my-4">Attach Files</div>
+          <div className="w-full text-sm my-4 text-neutral600">
+            Attach Files
+          </div>
           <div className="grid grid-cols-4 gap-4">
             {[...Array(maxReferences)].map((_, index) => {
               if (index < formData.media.length) {
                 const media = formData.media[index];
                 return (
                   <div
-                    className="flex items-center justify-center relative border border-neutral-200 rounded-md"
+                    className="flex items-center justify-center relative border border-neutral200 rounded-md"
                     key={index}
                   >
                     <Image
@@ -370,7 +388,7 @@ export const CreateBountyForm: FC<Props> = ({
                     />
 
                     <motion.button
-                      className="absolute top-[-10px] right-[-10px] p-1 bg-neutral-100 border border-neutral-200 rounded-full"
+                      className="absolute top-[-10px] right-[-10px] p-1 bg-neutral100 border border-neutral200 rounded-full"
                       {...smallClickAnimation}
                       onClick={() => handleReferenceRemoved(index)}
                     >
@@ -393,7 +411,8 @@ export const CreateBountyForm: FC<Props> = ({
       <motion.button
         {...smallClickAnimation}
         onClick={() => createBounty()}
-        className={`h-[50px] mt-5 w-full rounded-md text-base ${
+        disabled={buttonDisabled()}
+        className={`h-[50px] mt-5 w-full rounded-md text-base disabled:cursor-not-allowed disabled:opacity-60 ${
           createQuestState.error
             ? "bg-error text-white"
             : "bg-primary200 text-white"

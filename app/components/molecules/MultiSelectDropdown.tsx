@@ -52,7 +52,7 @@ const MultiSelectDropdown: React.FC<Props> = ({
       return (
         <label
           key={option.value}
-          className="bg-neutralBtn w-full flex items-center px-3 py-2 text-lg cursor-pointer"
+          className="bg-white w-full flex items-center px-3 py-2 text-lg cursor-pointer"
         >
           <input
             type="checkbox"
@@ -84,7 +84,7 @@ const MultiSelectDropdown: React.FC<Props> = ({
         ref={menuRef}
       >
         <div
-          className="h-full w-full flex justify-between bg-white border border-neutral-200 text-neutral500 
+          className="h-full w-full flex justify-between bg-white border border-neutral200 text-neutral500 
           items-center cursor-pointer px-3 rounded-md"
           onClick={toggleOpen}
         >

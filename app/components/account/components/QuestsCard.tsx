@@ -16,19 +16,7 @@ interface Props {
 
 export const QuestsCard: FC<Props> = ({ user }) => {
   const { referralId, initialized, createReferralMember } = useReferral();
-  const { currentUser } = useUserWallet();
-  const { questsPage } = useBounty();
-
-  const { data: allBounties } =
-    api.bounties.getCompletedBountiesForUser.useQuery(
-      {
-        userId: user.id,
-        page: questsPage,
-      },
-      {
-        enabled: !!currentUser,
-      }
-    );
+  const { currentUser, currentWallet } = useUserWallet();
 
   const [isCopied, setIsCopied] = useState(false);
 
@@ -63,7 +51,7 @@ export const QuestsCard: FC<Props> = ({ user }) => {
       {user.id === currentUser.id && currentUser.hasBeenApproved && (
         <>
           <AlertCard
-            type="positive"
+            type="neutral"
             title="Share and earn 1% of each quest completed your referred profiles. Forever."
             description={null}
           >
@@ -87,12 +75,15 @@ export const QuestsCard: FC<Props> = ({ user }) => {
               </div>
             ) : (
               <div>
-                <div className="flex items-center px-4 py-4 bg-white border border-primaryBtnBorder uppercase rounded-md gap-2">
+                <div className="flex items-center py-2 rounded-md gap-2">
+                  {/* TODO: connect wallet fn or generate referral link fn */}
                   <Button
-                    className="text-[#6BB274] title-text flex items-center p-2 bg-neutral100 border border-neutral200 rounded-md"
+                    className="text-neutral500 title-text flex items-center p-2 bg-white border border-neutral200 rounded-md"
                     onClick={handleCreateLink}
                   >
-                    Generate Referral Link
+                    {!!currentWallet
+                      ? "Generate Referral Link"
+                      : "Connect Wallet"}
                   </Button>
                 </div>
               </div>

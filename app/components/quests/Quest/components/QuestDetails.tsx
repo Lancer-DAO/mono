@@ -145,10 +145,10 @@ const QuestDetails = () => {
             <div
               className={cn(
                 "text-xs text-center w-fit px-2 py-1 rounded-lg border",
-                bountyStateColor(currentBounty.state)
+                industryColor
               )}
             >
-              {formatString(currentBounty.state)}
+              {formatString(currentBounty.industries[0].name)}
             </div>
             {currentBounty.tags.length > 0 && (
               <div className="flex flex-wrap gap-2">
@@ -167,10 +167,10 @@ const QuestDetails = () => {
             <div
               className={cn(
                 "text-xs text-center w-fit px-2 py-1 rounded-lg border",
-                industryColor
+                bountyStateColor(currentBounty.state)
               )}
             >
-              {formatString(currentBounty.industries[0].name)}
+              {formatString(currentBounty.state)}
             </div>
           </div>
         </div>
@@ -185,7 +185,13 @@ const QuestDetails = () => {
               dropdownOpenDetails ? "" : "pb-4"
             }`}
           >
-            <p className="text font-bold text-neutral600">Job Description</p>
+            <p
+              className={`text font-bold text-neutral600 ${
+                !dropdownOpenDetails ? "" : "pb-2.5"
+              }`}
+            >
+              Job Description
+            </p>
             <button
               className="h-full"
               onClick={() => setDropdownOpenDetails(!dropdownOpenDetails)}
@@ -203,7 +209,13 @@ const QuestDetails = () => {
             }`}
           >
             <p
-              className={`px-10 leading-[25.2px] text-sm text-neutral500`}
+              className={`px-10 leading-[25.2px] text-sm text-neutral500 ${
+                !dropdownOpenDetails &&
+                !currentBounty.links &&
+                questMedia.length === 0
+                  ? ""
+                  : "pb-4"
+              }`}
               dangerouslySetInnerHTML={previewMarkup()}
             />
             {currentBounty.links !== "" && (
@@ -232,7 +244,7 @@ const QuestDetails = () => {
               </div>
             )}
             {questMedia?.length > 0 && (
-              <div>
+              <div className="px-10 pb-6">
                 <div className={`flex justify-between pb-[10px]`}>
                   <div className="text font-bold text-neutral600">
                     Reference Media
@@ -251,7 +263,7 @@ const QuestDetails = () => {
                               src={med.imageUrl}
                               alt={med.title}
                               fill
-                              style={{ objectFit: "contain" }}
+                              style={{ objectFit: "cover" }}
                             />
                           </DialogTrigger>
                         </div>

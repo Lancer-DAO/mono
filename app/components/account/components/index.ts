@@ -5,6 +5,5 @@ export * from "./LinksCard";
 export * from "./PortfolioCard";
 export * from "./ProfileCard";
 export * from "./QuestsCard";
-export * from "./ReferCard";
 export * from "./ResumeCard";
 export * from "./ViewLinks";

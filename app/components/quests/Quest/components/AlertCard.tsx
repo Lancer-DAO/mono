@@ -16,12 +16,12 @@ const AlertCard: FC<Props> = ({ type, title, description, children }) => {
       type === "positive"
         ? "bg-successBg text-[#6BB274]"
         : type === "negative"
-        ? "bg-errorBg text-error"
-        : "bg-neutral100 text-neutral-500"
+        ? "bg-white border border-neutral200 text-error"
+        : "bg-neutral100 text-neutral500"
     }`}
     >
       <div className="relative w-full">
-        <p className="title-text">{title}</p>
+        <p className={`title-text`}>{title}</p>
         <div className="absolute top-0 -left-8">
           <Rocket
             width={24}
