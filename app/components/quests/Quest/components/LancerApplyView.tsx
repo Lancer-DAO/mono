@@ -11,6 +11,7 @@ import AlertCard from "./AlertCard";
 import { QuestApplicationView } from "./LancerApplicationView";
 import { QuestActionView } from "./QuestActions";
 import AlertCards from "./AlertCards";
+import { api } from "@/src/utils";
 
 interface Props {
   applyData: LancerApplyData;
@@ -35,12 +36,28 @@ const LancerApplyView: FC<Props> = ({
 }) => {
   const { currentBounty } = useBounty();
   const { currentUser } = useUserWallet();
-
+  const { data: quotes } = api.quote.getQuotesByBounty.useQuery(
+    { id: currentBounty.id },
+    { enabled: !!currentBounty }
+  );
   if (!currentBounty || !currentUser) return null;
 
   return (
     <div className="flex flex-col">
-      <ActionsCardBanner title="Apply to this Quest">
+      <ActionsCardBanner
+        title={
+          hasApplied
+            ? `Quote to ${currentBounty.creator.user.name}`
+            : "Apply to this Quest"
+        }
+        subtitle={
+          hasApplied
+            ? `${quotes?.length || 0} ${
+                (quotes?.length || 0) === 1 ? "quote has" : "quotes have"
+              } been sent to them already`
+            : ""
+        }
+      >
         {/* <ContributorInfo user={currentBounty.creator.user} /> */}
         {hasApplied &&
           currentBounty.isShortlistedLancer &&

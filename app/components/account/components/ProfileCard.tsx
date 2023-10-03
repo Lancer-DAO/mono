@@ -163,6 +163,9 @@ export const ProfileCard = ({
     await registerOnboardingBadge();
     setOnboardingBadgeClaimed(true);
     toast.success("Onboarding Badge claimed successfully!", { id: toastId });
+    setTimeout(() => {
+      toast.dismiss(toastId);
+    }, 2000);
   };
 
   const handleMessageChange = (event: React.ChangeEvent<HTMLInputElement>) => {

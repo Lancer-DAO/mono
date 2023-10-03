@@ -98,7 +98,10 @@ export const ResumeCard: React.FC<{
       await updateResume({ resume: "" });
       await deleteResume({ fileUrl: resumeUrl });
       setResumeUrl("");
-      toast.success("Resume deleted successfully");
+      const toastId = toast.success("Resume deleted successfully");
+      setTimeout(() => {
+        toast.dismiss(toastId);
+      }, 2000);
     } catch (error) {
       console.log(error);
       toast.error(`Error deleting resume: ${error.message}`);

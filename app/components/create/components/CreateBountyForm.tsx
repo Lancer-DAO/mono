@@ -86,6 +86,7 @@ export const CreateBountyForm: FC<Props> = ({
     }
 
     setCreateQuestState({ isLoading: true, loadingPrompt: "Creating Quest" });
+    const toastId = toast.loading("Creating Quest");
     try {
       const mintKey = new PublicKey(USDC_MINT);
 
@@ -99,10 +100,10 @@ export const CreateBountyForm: FC<Props> = ({
         program
       );
 
-      if (error){
+      if (error) {
         setCreateQuestState(error);
-        toast.error(error)
-        return
+        toast.error(error);
+        return;
       }
       const bounty: Bounty = await mutateAsync({
         email: currentUser.email,
@@ -121,6 +122,10 @@ export const CreateBountyForm: FC<Props> = ({
         mint: 1,
       });
       setCreateQuestState({ isLoading: false, result: "Quest Created" });
+      toast.success("Quest Created");
+      setTimeout(() => {
+        toast.dismiss(toastId);
+      }, 2000);
       setCurrentBounty(bounty);
       router.push(`/quests/${bounty.id}`);
 

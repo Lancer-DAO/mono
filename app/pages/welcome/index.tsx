@@ -99,6 +99,9 @@ const WelcomePage: React.FC<{
       });
 
       toast.success("Profile created successfully!", { id: toastId });
+      setTimeout(() => {
+        toast.dismiss(toastId);
+      }, 2000);
       if (currentWallet?.publicKey) {
         await underdogClient.createNft({
           params: BADGES_PROJECT_PARAMS,
