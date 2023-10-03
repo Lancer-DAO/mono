@@ -103,6 +103,7 @@ const QuestTable: React.FC<Props> = ({ type }) => {
         }
 
         if (
+          currentUser?.class === "Lancer" &&
           !bounty.industries.some((industry) =>
             filters.industries.includes(industry.name)
           )
