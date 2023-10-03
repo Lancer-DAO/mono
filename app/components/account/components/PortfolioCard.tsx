@@ -110,7 +110,10 @@ export const PortfolioCard: React.FC = () => {
       refetch();
     } catch (error) {
       console.log(error);
-      toast.error(`Error deleting media: ${error.message}`);
+      const toastId = toast.error(`Error deleting media: ${error.message}`);
+      setTimeout(() => {
+        toast.dismiss(toastId);
+      }, 2000);
     }
   };
 

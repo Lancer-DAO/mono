@@ -81,7 +81,10 @@ export const CreateBountyForm: FC<Props> = ({
 
   const createBounty = async () => {
     if (!currentWallet?.publicKey) {
-      toast.error("Please connect your wallet");
+      const toastId = toast.error("Please connect your wallet");
+      setTimeout(() => {
+        toast.dismiss(toastId);
+      }, 2000);
       return;
     }
 
@@ -102,7 +105,10 @@ export const CreateBountyForm: FC<Props> = ({
 
       if (error) {
         setCreateQuestState(error);
-        toast.error(error);
+        const toastId = toast.error(error);
+        setTimeout(() => {
+          toast.dismiss(toastId);
+        }, 2000);
         return;
       }
       const bounty: Bounty = await mutateAsync({
@@ -154,9 +160,12 @@ export const CreateBountyForm: FC<Props> = ({
     } catch (error) {
       setCreateQuestState({ error });
       if (error.message === "Wallet is registered to another user") {
-        toast.error(
+        const toastId = toast.error(
           "Wallet is registered to another user. Use another wallet to create this Quest."
         );
+        setTimeout(() => {
+          toast.dismiss(toastId);
+        }, 2000);
       }
     }
   };

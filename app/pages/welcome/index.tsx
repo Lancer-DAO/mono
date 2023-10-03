@@ -126,6 +126,9 @@ const WelcomePage: React.FC<{
     } catch (e) {
       console.log("error updating profile: ", e);
       toast.error("Error updating profile", { id: toastId });
+      setTimeout(() => {
+        toast.dismiss(toastId);
+      }, 2000);
     }
   };
 

@@ -1,4 +1,3 @@
-
 import { Tooltip } from "@/components";
 import {
   Dialog,
@@ -29,7 +28,6 @@ const EditReferenceDialogue = ({ media, onReferenceAdded }) => {
   const isSaveDisabled = reference.imageUrl === "" || reference.title === "";
 
   const { mutateAsync: deleteMedia } = api.bounties.deleteMedia.useMutation();
-  
 
   const handleImageUpload = (url) => {
     setReference((prevReference) => ({
@@ -74,11 +72,11 @@ const EditReferenceDialogue = ({ media, onReferenceAdded }) => {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <motion.button 
+        <motion.button
           className="absolute top-[-10px] left-[-10px] p-1 bg-yellow-100 border border-yellow-200 rounded-full"
           {...smallClickAnimation}
-          >
-          <Pencil size={18} strokeWidth={1.25}  />
+        >
+          <Pencil size={18} strokeWidth={1.25} />
         </motion.button>
       </DialogTrigger>
       <DialogContent>
@@ -117,7 +115,12 @@ const EditReferenceDialogue = ({ media, onReferenceAdded }) => {
                 }}
                 onUploadError={(error: Error) => {
                   console.log(error);
-                  toast.error(`Error uploading: ${error.message}`);
+                  const toastId = toast.error(
+                    `Error uploading: ${error.message}`
+                  );
+                  setTimeout(() => {
+                    toast.dismiss(toastId);
+                  }, 2000);
                 }}
                 config={{ mode: "auto" }}
               />
@@ -145,12 +148,22 @@ const EditReferenceDialogue = ({ media, onReferenceAdded }) => {
         <DialogFooter>
           <DialogPrimitive.Close>
             <div className="group">
-              <button type="submit" onClick={handleSubmit} disabled={isSaveDisabled}>
+              <button
+                type="submit"
+                onClick={handleSubmit}
+                disabled={isSaveDisabled}
+              >
                 Save changes
               </button>
-              {(isSaveDisabled) ? (
-                <Tooltip text={`${reference.imageUrl === "" ? 'Please upload an image' : 'Please input a title'}`} />
-              ): null}
+              {isSaveDisabled ? (
+                <Tooltip
+                  text={`${
+                    reference.imageUrl === ""
+                      ? "Please upload an image"
+                      : "Please input a title"
+                  }`}
+                />
+              ) : null}
             </div>
           </DialogPrimitive.Close>
         </DialogFooter>

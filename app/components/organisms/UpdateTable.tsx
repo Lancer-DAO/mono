@@ -529,9 +529,19 @@ const QuestUpdatesTable: React.FC = () => {
           "Wallet is registered to another user"
         )
       ) {
-        toast.error("Wallet is registered to another user", { id: toastId });
+        toast.error("Wallet is registered to another user", {
+          id: toastId,
+        });
+        setTimeout(() => {
+          toast.dismiss(toastId);
+        }, 2000);
       } else {
-        toast.error("Error submitting application", { id: toastId });
+        toast.error("Error submitting application", {
+          id: toastId,
+        });
+        setTimeout(() => {
+          toast.dismiss(toastId);
+        }, 2000);
       }
     } finally {
       setIsLoading(false);
@@ -623,10 +633,18 @@ const QuestUpdatesTable: React.FC = () => {
           "Wallet is registered to another user"
         )
       ) {
-        toast.error("Wallet is registered to another user", { id: toastId });
+        toast.error("Wallet is registered to another user", {
+          id: toastId,
+        });
+        setTimeout(() => {
+          toast.dismiss(toastId);
+        }, 2000);
       } else {
         console.error(error);
         toast.error("Error paying out bounty", { id: toastId });
+        setTimeout(() => {
+          toast.dismiss(toastId);
+        }, 2000);
       }
     } finally {
       setIsLoading(false);
@@ -673,9 +691,17 @@ const QuestUpdatesTable: React.FC = () => {
           "Wallet is registered to another user"
         )
       ) {
-        toast.error("Wallet is registered to another user", { id: toastId });
+        toast.error("Wallet is registered to another user", {
+          id: toastId,
+        });
+        setTimeout(() => {
+          toast.dismiss(toastId);
+        }, 2000);
       } else {
         toast.error("Error cancelling Quest", { id: toastId });
+        setTimeout(() => {
+          toast.dismiss(toastId);
+        }, 2000);
       }
     }
   };
@@ -714,9 +740,19 @@ const QuestUpdatesTable: React.FC = () => {
           "Wallet is registered to another user"
         )
       ) {
-        toast.error("Wallet is registered to another user", { id: toastId });
+        toast.error("Wallet is registered to another user", {
+          id: toastId,
+        });
+        setTimeout(() => {
+          toast.dismiss(toastId);
+        }, 2000);
       } else {
-        toast.error("Error initiating Dispute", { id: toastId });
+        toast.error("Error initiating Dispute", {
+          id: toastId,
+        });
+        setTimeout(() => {
+          toast.dismiss(toastId);
+        }, 2000);
       }
     }
   };

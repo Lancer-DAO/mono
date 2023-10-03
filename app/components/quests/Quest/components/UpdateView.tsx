@@ -95,7 +95,10 @@ const UpdateView: FC<Props> = ({ selectedSubmitter, setCurrentActionView }) => {
 
   const onClick = async (updateState: QuestProgressState) => {
     if (review === "") {
-      toast.error("Please provide some feedback.");
+      const toastId = toast.error("Please provide some feedback.");
+      setTimeout(() => {
+        toast.dismiss(toastId);
+      }, 2000);
       return;
     }
     await confirmAction(updateState);
@@ -125,6 +128,9 @@ const UpdateView: FC<Props> = ({ selectedSubmitter, setCurrentActionView }) => {
       localStorage.removeItem("reviewData");
     } catch (error) {
       toast.error("Error sending feedback", { id: toastId });
+      setTimeout(() => {
+        toast.dismiss(toastId);
+      }, 2000);
     }
   };
 

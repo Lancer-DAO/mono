@@ -121,9 +121,19 @@ const IndividualApplicantView: FC<Props> = ({
           "Wallet is registered to another user"
         )
       ) {
-        toast.error("Wallet is registered to another user", { id: toastId });
+        toast.error("Wallet is registered to another user", {
+          id: toastId,
+        });
+        setTimeout(() => {
+          toast.dismiss(toastId);
+        }, 2000);
       } else {
-        toast.error("Error approving submitter", { id: toastId });
+        toast.error("Error approving submitter", {
+          id: toastId,
+        });
+        setTimeout(() => {
+          toast.dismiss(toastId);
+        }, 2000);
       }
     }
   };
@@ -159,9 +169,16 @@ const IndividualApplicantView: FC<Props> = ({
           "Wallet is registered to another user"
         )
       ) {
-        toast.error("Wallet is registered to another user", { id: toastId });
+        toast.error("Wallet is registered to another user", {
+          id: toastId,
+        });
       } else {
-        toast.error("Error submitting rejection", { id: toastId });
+        toast.error("Error submitting rejection", {
+          id: toastId,
+        });
+        setTimeout(() => {
+          toast.dismiss(toastId);
+        }, 2000);
       }
     } finally {
       setIsLoading(false);
@@ -209,7 +226,12 @@ const IndividualApplicantView: FC<Props> = ({
           "Wallet is registered to another user"
         )
       ) {
-        toast.error("Wallet is registered to another user", { id: toastId });
+        toast.error("Wallet is registered to another user", {
+          id: toastId,
+        });
+        setTimeout(() => {
+          toast.dismiss(toastId);
+        }, 2000);
       } else {
         toast.error(
           action === "add"
@@ -217,6 +239,9 @@ const IndividualApplicantView: FC<Props> = ({
             : "Error removing from shortlist",
           { id: toastId }
         );
+        setTimeout(() => {
+          toast.dismiss(toastId);
+        }, 2000);
       }
     } finally {
       setIsLoading(false);

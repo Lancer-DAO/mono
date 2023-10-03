@@ -113,12 +113,18 @@ const LancerApplicationView: FC<Props> = ({ setCurrentActionView }) => {
 
   const onClick = async () => {
     if (quoteData.checkpoints.length === 0) {
-      toast.error("Please create at least one milestone.");
+      const toastId = toast.error("Please create at least one milestone.");
+      setTimeout(() => {
+        toast.dismiss(toastId);
+      }, 2000);
       return;
     }
 
     if (!connected && !IS_CUSTODIAL) {
-      toast.error("Please connect your wallet.");
+      const toastId = toast.error("Please connect your wallet.");
+      setTimeout(() => {
+        toast.dismiss(toastId);
+      }, 2000);
       return;
     }
 
@@ -168,9 +174,19 @@ const LancerApplicationView: FC<Props> = ({ setCurrentActionView }) => {
           "Wallet is registered to another user"
         )
       ) {
-        toast.error("Wallet is registered to another user", { id: toastId });
+        toast.error("Wallet is registered to another user", {
+          id: toastId,
+        });
+        setTimeout(() => {
+          toast.dismiss(toastId);
+        }, 2000);
       } else {
-        toast.error("Error submitting application", { id: toastId });
+        toast.error("Error submitting application", {
+          id: toastId,
+        });
+        setTimeout(() => {
+          toast.dismiss(toastId);
+        }, 2000);
       }
     }
   };

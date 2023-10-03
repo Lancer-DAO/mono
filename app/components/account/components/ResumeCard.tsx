@@ -34,7 +34,10 @@ export const ResumeCard: React.FC<{
       },
       onUploadError: (error: Error) => {
         console.log(error);
-        toast.error(`Error uploading resume: ${error.message}`);
+        const toastId = toast.error(`Error uploading resume: ${error.message}`);
+        setTimeout(() => {
+          toast.dismiss(toastId);
+        }, 2000);
       },
     }
   );
@@ -104,7 +107,10 @@ export const ResumeCard: React.FC<{
       }, 2000);
     } catch (error) {
       console.log(error);
-      toast.error(`Error deleting resume: ${error.message}`);
+      const toastId = toast.error(`Error deleting resume: ${error.message}`);
+      setTimeout(() => {
+        toast.dismiss(toastId);
+      }, 2000);
     }
   };
 

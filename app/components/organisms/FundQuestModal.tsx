@@ -97,6 +97,9 @@ const FundQuestModal: FC<Props> = ({
     } catch (error) {
       console.log("error funding Quest: ", error);
       toast.error("Error funding Quest", { id: toastId });
+      setTimeout(() => {
+        toast.dismiss(toastId);
+      }, 2000);
       setFundQuestState({ error });
     }
   };

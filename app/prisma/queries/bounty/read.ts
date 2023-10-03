@@ -92,6 +92,23 @@ const bountyQueryMany = async (
   userId?: number,
   industries?: number[]
 ) => {
+  if (!userId) {
+    return await prisma.bounty.findMany({
+      where: {
+        isTest: false,
+        isPrivate: false,
+        state: {
+          in: [BountyState.ACCEPTING_APPLICATIONS],
+        },
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+      select: BOUNTY_MANY_SELECT,
+      skip: page * QUESTS_PER_PAGE,
+      take: QUESTS_PER_PAGE,
+    });
+  }
   let otherQuestsWhereClause: any = industries
     ? {
         users: {
