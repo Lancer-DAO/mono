@@ -198,6 +198,20 @@ export const updateBio = async (
   });
 };
 
+export const updateCompanyName = async (
+  id: number,
+  companyName: string
+): Promise<Prisma.User> => {
+  return await prisma.user.update({
+    where: {
+      id: id,
+    },
+    data: {
+      company: companyName,
+    },
+  });
+};
+
 export const updateCompanyDescription = async (
   id: number,
   companyDescription: string

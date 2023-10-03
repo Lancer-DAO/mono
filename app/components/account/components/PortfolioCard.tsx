@@ -25,7 +25,7 @@ export const PortfolioCard: React.FC = () => {
   const { account } = useAccount();
 
   const { currentUser } = useUserWallet();
-  const maxMedia = 5;
+  const maxMedia = 4;
   const { mutateAsync: createMedia } = api.media.createMedia.useMutation();
   const { mutateAsync: deleteMedia } = api.media.deleteMedia.useMutation();
   const { mutateAsync: updateMedia } = api.media.updateMedia.useMutation();
@@ -144,7 +144,7 @@ export const PortfolioCard: React.FC = () => {
       border-neutral200 rounded-md p-6"
     >
       <p className="text-neutral600 title-text">Portfolio</p>
-      <div className="grid grid-cols-5 gap-4">
+      <div className="grid grid-cols-4 h-[100px] gap-4">
         {[...Array(maxMedia)].map((_, index) => {
           if (index < portfolio.length) {
             const media = portfolio[index];
@@ -152,7 +152,7 @@ export const PortfolioCard: React.FC = () => {
               <Dialog key={index}>
                 <div className="relative" key={index}>
                   <DialogTrigger
-                    className="relative border-2 border-neutral200 rounded-[4px] w-[150px] h-[90px] overflow-hidden"
+                    className="relative border-2 border-neutral200 rounded-[4px] w-full h-[90px] overflow-hidden"
                     key={`dialog-${index}`}
                   >
                     <Image
