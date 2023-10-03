@@ -74,7 +74,10 @@ export const CreateDispute: React.FC<{
         currentStep: 2,
       });
     }
-    toast.success("Successfully created dispute account");
+    const toastId = toast.success("Successfully created dispute account");
+    setTimeout(() => {
+      toast.dismiss(toastId);
+    }, 2000);
     setHasCreatedDispute(true);
   };
 

@@ -140,6 +140,9 @@ const ApplicantsView: FC<Props> = ({
       });
       setCurrentBounty(updatedBounty);
       toast.success("Successfully voted to cancel", { id: toastId });
+      setTimeout(() => {
+        toast.dismiss(toastId);
+      }, 2000);
     } catch (error) {
       console.log(error);
       if (
@@ -187,6 +190,9 @@ const ApplicantsView: FC<Props> = ({
       setCurrentBounty(updatedBounty);
       setIsLoading(false);
       toast.success("Quest canceled", { id: toastId });
+      setTimeout(() => {
+        toast.dismiss(toastId);
+      }, 2000);
     } catch (error) {
       if (
         (error.message as string).includes(

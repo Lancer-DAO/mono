@@ -13,7 +13,7 @@ import { GetServerSidePropsContext } from "next";
 import * as queries from "@/prisma/queries";
 // import your default seo configuration
 import SEO from "../next-seo.config";
-import { Toaster } from "react-hot-toast";
+import { Toaster, resolveValue } from "react-hot-toast";
 import DebugModeProvider from "@/src/providers/debugModeProvider";
 
 const COOKIE_REF = "referrer";
@@ -47,8 +47,24 @@ const App = ({ Component, pageProps }: AppPropsWithLayout) => {
     <DebugModeProvider>
       <AllProviders user={user}>
         <DefaultSeo {...SEO} />
-        <Toaster />
-        {getLayout(<Component {...pageProps} />)}
+        <Toaster
+          gutter={0}
+          containerStyle={{
+            top: 0,
+            left: 0,
+            bottom: 0,
+            right: 0,
+          }}
+        >
+          {(t) => (
+            <div className="w-screen h-screen bg-neutral-500 bg-opacity-30 flex justify-center items-start box-content top-[-20px]">
+              <div className="p-4 w-fit  bg-white mb-8 rounded-md mt-4">
+                {resolveValue(t.message, t)}
+              </div>
+            </div>
+          )}
+        </Toaster>
+        ;{getLayout(<Component {...pageProps} />)}
       </AllProviders>
     </DebugModeProvider>
   );

@@ -78,7 +78,10 @@ export const SettleDispute = () => {
         currentStep: 2,
       });
     }
-    toast.success("Successfully submitted request");
+    const toastId = toast.success("Successfully submitted request");
+    setTimeout(() => {
+      toast.dismiss(toastId);
+    }, 2000);
   };
 
   return (

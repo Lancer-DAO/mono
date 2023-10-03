@@ -119,6 +119,9 @@ const UpdateView: FC<Props> = ({ selectedSubmitter, setCurrentActionView }) => {
         }`,
         { id: toastId }
       );
+      setTimeout(() => {
+        toast.dismiss(toastId);
+      }, 2000);
       localStorage.removeItem("reviewData");
     } catch (error) {
       toast.error("Error sending feedback", { id: toastId });

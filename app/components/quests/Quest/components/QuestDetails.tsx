@@ -178,115 +178,121 @@ const QuestDetails = () => {
 
       <div className="h-[1px] w-full bg-neutral200" />
       {/* quest content */}
-      <div
-        className={`px-10 pt-4 flex justify-between ${
-          dropdownOpenDetails ? "" : "pb-4"
-        }`}
-      >
-        <p className="text font-bold text-neutral600">Job Description</p>
-        <button
-          className="h-full"
-          onClick={() => setDropdownOpenDetails(!dropdownOpenDetails)}
-        >
-          {dropdownOpenDetails ? (
-            <ChevronUp width={12} height={20} />
-          ) : (
-            <ChevronDown width={12} height={20} />
-          )}
-        </button>
-      </div>
-      <div
-        className={`flex flex-col gap-6 ${dropdownOpenDetails ? "" : "hidden"}`}
-      >
-        <p
-          className={`px-10 leading-[25.2px] text-sm text-neutral500`}
-          dangerouslySetInnerHTML={previewMarkup()}
-        />
-        {currentBounty.links !== "" && (
-          <div className="px-10">
-            <div className={`flex justify-between pb-[10px]`}>
-              <div className="text font-bold text-neutral600">
-                Additional Links
-              </div>
-            </div>
-            <div className={`relative w-full flex flex-col gap-2`}>
-              {currentBounty.links
-                .split(",")
-                .map((link: string, index: number) => (
-                  <a
-                    href={link}
-                    target="_blank"
-                    rel="noreferrer noopener"
-                    className="text-sm border bg-neutral-100 truncate
-                    border-neutral-200 w-full rounded-md px-4 py-2"
-                    key={`link-${index}`}
-                  >
-                    {link}
-                  </a>
-                ))}
-            </div>
+      {currentBounty.state !== BountyState.CANCELED && (
+        <>
+          <div
+            className={`px-10 pt-4 flex justify-between ${
+              dropdownOpenDetails ? "" : "pb-4"
+            }`}
+          >
+            <p className="text font-bold text-neutral600">Job Description</p>
+            <button
+              className="h-full"
+              onClick={() => setDropdownOpenDetails(!dropdownOpenDetails)}
+            >
+              {dropdownOpenDetails ? (
+                <ChevronUp width={12} height={20} />
+              ) : (
+                <ChevronDown width={12} height={20} />
+              )}
+            </button>
           </div>
-        )}
-        {questMedia?.length > 0 && (
-          <div className="px-10 pb-4">
-            <div className={`flex justify-between pb-[10px]`}>
-              <div className="text font-bold text-neutral600">
-                Reference Media
-              </div>
-            </div>
-            <div className={`grid grid-cols-3 gap-4`}>
-              {questMedia?.map((med, index) => {
-                return (
-                  <Dialog key={index}>
-                    <div className="relative" key={index}>
-                      <DialogTrigger
-                        className="relative border-2 border-neutral200 rounded-[4px] w-[150px] h-[90px] overflow-hidden"
-                        key={`dialog-${index}`}
+          <div
+            className={`flex flex-col gap-6 ${
+              dropdownOpenDetails ? "" : "hidden"
+            }`}
+          >
+            <p
+              className={`px-10 leading-[25.2px] text-sm text-neutral500`}
+              dangerouslySetInnerHTML={previewMarkup()}
+            />
+            {currentBounty.links !== "" && (
+              <div className="px-10 pb-4">
+                <div className={`flex justify-between pb-[10px]`}>
+                  <div className="text font-bold text-neutral600">
+                    Additional Links
+                  </div>
+                </div>
+                <div className={`relative w-full flex flex-col gap-2`}>
+                  {currentBounty.links
+                    .split(",")
+                    .map((link: string, index: number) => (
+                      <a
+                        href={link}
+                        target="_blank"
+                        rel="noreferrer noopener"
+                        className="text-sm border bg-neutral-100 truncate
+                        border-neutral-200 w-full rounded-md px-4 py-2"
+                        key={`link-${index}`}
                       >
-                        <Image
-                          src={med.imageUrl}
-                          alt={med.title}
-                          fill
-                          style={{ objectFit: "contain" }}
-                        />
-                      </DialogTrigger>
-                    </div>
-                    <DialogContent className="w-2/3 flex flex-col gap-3 items-center p-6">
-                      <div
-                        className="relative gap-5 w-full h-[240px] 
+                        {link}
+                      </a>
+                    ))}
+                </div>
+              </div>
+            )}
+            {questMedia?.length > 0 && (
+              <div>
+                <div className={`flex justify-between pb-[10px]`}>
+                  <div className="text font-bold text-neutral600">
+                    Reference Media
+                  </div>
+                </div>
+                <div className={`grid grid-cols-3 gap-4`}>
+                  {questMedia?.map((med, index) => {
+                    return (
+                      <Dialog key={index}>
+                        <div className="relative" key={index}>
+                          <DialogTrigger
+                            className="relative border-2 border-neutral200 rounded-[4px] w-[150px] h-[90px] overflow-hidden"
+                            key={`dialog-${index}`}
+                          >
+                            <Image
+                              src={med.imageUrl}
+                              alt={med.title}
+                              fill
+                              style={{ objectFit: "contain" }}
+                            />
+                          </DialogTrigger>
+                        </div>
+                        <DialogContent className="w-2/3 flex flex-col gap-3 items-center p-6">
+                          <div
+                            className="relative gap-5 w-full h-[240px] 
                         overflow-hidden mt-4 rounded-md border-2 border-neutral200"
-                      >
-                        <Image
-                          src={med.imageUrl}
-                          alt={med.title}
-                          fill
-                          style={{ objectFit: "contain" }}
-                        />
-                      </div>
-                      {med.title && (
-                        <div className="w-full flex items-center gap-3 text-sm text-neutral600">
-                          <p className="w-32 text-left">Title</p>
-                          <p className="w-full text-left p-2 bg-neutral100 border border-neutral200 rounded-md">
-                            {med.title}
-                          </p>
-                        </div>
-                      )}
-                      {med.description && (
-                        <div className="w-full flex items-center gap-3 text-sm">
-                          <p className="w-32 text-left">Description</p>
-                          <p className="w-full text-left p-2 bg-neutral100 border border-neutral200 rounded-md">
-                            {med.description}
-                          </p>
-                        </div>
-                      )}
-                    </DialogContent>
-                  </Dialog>
-                );
-              })}
-            </div>
+                          >
+                            <Image
+                              src={med.imageUrl}
+                              alt={med.title}
+                              fill
+                              style={{ objectFit: "contain" }}
+                            />
+                          </div>
+                          {med.title && (
+                            <div className="w-full flex items-center gap-3 text-sm text-neutral600">
+                              <p className="w-32 text-left">Title</p>
+                              <p className="w-full text-left p-2 bg-neutral100 border border-neutral200 rounded-md">
+                                {med.title}
+                              </p>
+                            </div>
+                          )}
+                          {med.description && (
+                            <div className="w-full flex items-center gap-3 text-sm">
+                              <p className="w-32 text-left">Description</p>
+                              <p className="w-full text-left p-2 bg-neutral100 border border-neutral200 rounded-md">
+                                {med.description}
+                              </p>
+                            </div>
+                          )}
+                        </DialogContent>
+                      </Dialog>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
           </div>
-        )}
-      </div>
+        </>
+      )}
     </div>
   );
 };
