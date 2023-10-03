@@ -272,7 +272,7 @@ export const ProfileCard = ({
               )}
             </div>
             <div className="flex gap-3 items-center">
-              {industryEdit && (
+              {!!industryEdit && (
                 <>
                   <div className="px-2 py-1 rounded-md bg-neutral100 border border-neutral200">
                     <p className="text-neutral500 text-sm">
@@ -356,47 +356,53 @@ export const ProfileCard = ({
                 />
               </div>
               {/* industry input field */}
-              <div className="w-full flex items-center gap-2">
-                <p className="text-neutral600 w-14 text-sm">Industry</p>
-                <div className="relative" ref={wrapperRef}>
-                  <div
-                    className="rounded-md border border-neutral200 bg-neutral100 
-                    px-3 py-2 h-9 w-40 flex items-center justify-between gap-2 cursor-pointer"
-                    onClick={toggleDropdown}
-                  >
-                    <p className="text-neutral500 w-full truncate text-mini">
-                      {industryEdit.industry.name}
-                    </p>
-                    <div className="w-3">
-                      <ChevronsUpDown height={12} width={12} />
+              {!!industryEdit && currentUser.class === "Lancer" && (
+                <div className="w-full flex items-center gap-2">
+                  <p className="text-neutral600 w-14 text-sm">Industry</p>
+                  <div className="relative" ref={wrapperRef}>
+                    <div
+                      className="rounded-md border border-neutral200 bg-neutral100 
+                      px-3 py-2 h-9 w-40 flex items-center justify-between gap-2 cursor-pointer"
+                      onClick={toggleDropdown}
+                    >
+                      <p className="text-neutral500 w-full truncate text-mini">
+                        {industryEdit.industry.name}
+                      </p>
+                      <div className="w-3">
+                        <ChevronsUpDown height={12} width={12} />
+                      </div>
                     </div>
+                    {dropdownOpen && (
+                      <div className="absolute top-full left-0 z-10 bg-secondary200 p-[5px] rounded-md text-mini text-white w-full">
+                        {allIndustries.map((i) => (
+                          <div
+                            key={i.id}
+                            className="p-2 truncate cursor-pointer"
+                            onClick={() => {
+                              if (industryEdit.industry?.id !== i.id) {
+                                setIndustryEdit({
+                                  ...industryEdit,
+                                  industry: i,
+                                });
+                                setDropdownOpen(false);
+                              }
+                            }}
+                          >
+                            {i.name}
+                          </div>
+                        ))}
+                      </div>
+                    )}
                   </div>
-                  {dropdownOpen && (
-                    <div className="absolute top-full left-0 z-10 bg-secondary200 p-[5px] rounded-md text-mini text-white w-full">
-                      {allIndustries.map((i) => (
-                        <div
-                          key={i.id}
-                          className="p-2 truncate cursor-pointer"
-                          onClick={() => {
-                            if (industryEdit.industry?.id !== i.id) {
-                              setIndustryEdit({ ...industryEdit, industry: i });
-                              setDropdownOpen(false);
-                            }
-                          }}
-                        >
-                          {i.name}
-                        </div>
-                      ))}
-                    </div>
-                  )}
                 </div>
-              </div>
+              )}
+
               <div className="flex items-center gap-1">
                 <button
                   onClick={() => {
                     updateName({ name: nameEdit.name });
                     setNameEdit({ ...nameEdit, editing: false });
-                    if (industryEdit) {
+                    if (!!industryEdit) {
                       updateIndustry({
                         newIndustryId: industryEdit.industry.id,
                         oldIndustryId: user.industries[0].id,
@@ -421,7 +427,7 @@ export const ProfileCard = ({
                       editing: false,
                       name: user.name,
                     });
-                    if (industryEdit) {
+                    if (!!industryEdit) {
                       setIndustryEdit({
                         editing: false,
                         industry: user.industries[0],

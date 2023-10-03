@@ -152,7 +152,8 @@ export const PortfolioCard: React.FC = () => {
               <Dialog key={index}>
                 <div className="relative" key={index}>
                   <DialogTrigger
-                    className="relative border-2 border-neutral200 rounded-[4px] w-[150px] h-[90px] overflow-hidden"
+                    className="relative border-2 border-neutral200 rounded-[4px] 
+                    w-full h-[90px] overflow-hidden"
                     key={`dialog-${index}`}
                   >
                     <Image
