@@ -75,12 +75,12 @@ export const GoodToGo: FC<{
               <Wallet />
             </div>
             <div className="mt-4 text-neutral-600 text-sm ">
-              Work Seamlessly
+              {"Secure and Fast"}
             </div>
             <div className="text-sm mt-4 text-neutral-500">
-              {selectedClass === "Noble"
-                ? "Pay safely in milestones and have a win-win process with contractors. We are here to make everything just work."
-                : "Get paid safely in milestones and have a win-win process with clients. We are here to make everything just work."}
+              {
+                "All funds are secured in escrow, and can be paid out instantly using milestones."
+              }
             </div>
           </div>
           <div className="h-full w-[1px] bg-neutral-200" />
@@ -98,8 +98,8 @@ export const GoodToGo: FC<{
             </div>
             <div className="text-sm mt-4 text-neutral-500">
               {selectedClass === "Noble"
-                ? "Receive quotes directly from Lancers, helping you manage your budget and avoid scope creep."
-                : "Send quotes to Nobles before starting work, helping you plan your work and avoid scope creep."}
+                ? "Receive quotes directly from Lancers, helping you manage your budget and prevent scope creep."
+                : "Send quotes to Nobles before starting work, helping you plan your work and prevent scope creep."}
             </div>
           </div>
         </div>
