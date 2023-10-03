@@ -69,7 +69,12 @@ export const getOrCreateByEmail = async (
   picture
 ) => {
   try {
-    const user = await userQuery(email);
+    const user = await prisma.user.findUniqueOrThrow({
+      where: {
+        email,
+      },
+      include: USER_INCLUDE,
+    });
     return user;
   } catch (e) {
     await create(email, sub, nickname, picture);

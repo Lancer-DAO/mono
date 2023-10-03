@@ -31,16 +31,16 @@ export const addOnboardingInformation = protectedProcedure
 
       if (selectedClass === "Noble") {
         await queries.user.onboardingUpdateNoble(
+          id,
           name,
           company,
-          companyDescription,
-          id
+          companyDescription
         );
       } else {
         const industry = await prisma.industry.findFirstOrThrow({
           where: { id: industryId },
         });
-        await queries.user.onboardingUpdateLancer(name, bio, industry, id);
+        await queries.user.onboardingUpdateLancer(id, name, bio, industry);
       }
 
       return { success: true };

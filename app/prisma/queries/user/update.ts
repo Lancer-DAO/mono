@@ -69,71 +69,47 @@ export const updateName = async (
 };
 
 export const onboardingUpdateNoble = async (
+  id: number,
   name: string,
   company: string,
-  companyDescription: string,
-  id?: number
+  companyDescription: string
 ): Promise<Prisma.User> => {
-  return id
-    ? await prisma.user.update({
-        where: {
-          id: id,
-        },
-        data: {
-          name,
-          company,
-          companyDescription,
-          class: "Noble",
-          hasFinishedOnboarding: true,
-        },
-      })
-    : await prisma.user.create({
-        data: {
-          name,
-          company,
-          companyDescription,
-          class: "Noble",
-          hasFinishedOnboarding: true,
-        },
-      });
+  return await prisma.user.update({
+    where: {
+      id: id,
+    },
+    data: {
+      name,
+      company,
+      companyDescription,
+      class: "Noble",
+      hasFinishedOnboarding: true,
+    },
+  });
 };
 
 export const onboardingUpdateLancer = async (
+  id: number,
   name: string,
   bio: string,
-  industry: Industry,
-  id?: number
+  industry: Industry
 ): Promise<Prisma.User> => {
-  return id
-    ? await prisma.user.update({
-        where: {
-          id: id,
+  return await prisma.user.update({
+    where: {
+      id: id,
+    },
+    data: {
+      name,
+      bio,
+      industries: {
+        connect: {
+          id: industry.id,
         },
-        data: {
-          name,
-          bio,
-          industries: {
-            connect: {
-              id: industry.id,
-            },
-          },
-          class: "Lancer",
-          hasFinishedOnboarding: true,
-        },
-      })
-    : await prisma.user.create({
-        data: {
-          name,
-          bio,
-          industries: {
-            connect: {
-              id: industry.id,
-            },
-          },
-          class: "Lancer",
-          hasFinishedOnboarding: true,
-        },
-      });
+      },
+      class: "Lancer",
+      hasFinishedOnboarding: true,
+    },
+  });
 };
 
 export const updateHasFinishedOnboarding = async (
