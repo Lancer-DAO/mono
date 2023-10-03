@@ -57,12 +57,12 @@ export const QuestsCard: FC<Props> = ({ user }) => {
           >
             {referralId && initialized ? (
               <div className="flex items-center gap-1 mt-1">
-                <p className="text-[#6BB274] text-xs">{`${SITE_URL}${referralId}`}</p>
+                <p className="text-neutral500 text-xs">{`${SITE_URL}${referralId}`}</p>
                 <button
                   className="relative"
                   onClick={() => handleCopyClick(`${SITE_URL}${referralId}`)}
                 >
-                  <Copy size={12} className="text-[#6BB274]" />
+                  <Copy size={12} className="text-neutral500" />
                   <div
                     className={`absolute text-sm right-0 -bottom-10 transition-opacity text-neutral600
                 duration-500 bg-neutral100 border border-neutral200 rounded-md py-1 px-2 ${
