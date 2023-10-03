@@ -57,7 +57,7 @@ const QuestActions: FC = () => {
     !currentUser ||
     !currentBounty ||
     currentBounty.isExternal ||
-    currentUser.class === "Noble"
+    (currentUser.class === "Noble" && !currentBounty.isCreator)
   )
     return null;
 
