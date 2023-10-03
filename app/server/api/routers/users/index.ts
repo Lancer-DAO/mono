@@ -14,6 +14,7 @@ import { registerOnboardingBadge } from "./registerOnboardingBadge";
 import { search } from "./search";
 import { updateBio } from "./updateBio";
 import { updateCompanyDescription } from "./updateCompanyDescription";
+import { updateCompanyName } from "./updateCompanyName";
 import { updateHasCompletedProfile } from "./updateHasCompletedProfile";
 import { updateIndustry } from "./updateIndustry";
 import { updateLinks } from "./updateLinks";
@@ -35,6 +36,7 @@ export const users = createTRPCRouter({
   registerProfileNFT,
   search,
   updateBio,
+  updateCompanyName,
   updateCompanyDescription,
   updateHasCompletedProfile,
   updateIndustry,

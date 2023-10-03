@@ -62,6 +62,10 @@ export const ProfileCard = ({
     editing: false,
     companyDescription: user.companyDescription,
   });
+  const [companyNameEdit, setCompanyNameEdit] = useState({
+    editing: false,
+    companyName: user.company,
+  });
   const [balance, setBalance] = useState<IAsyncResult<number>>({
     isLoading: true,
     loadingPrompt: "Loading Balance",
@@ -90,6 +94,8 @@ export const ProfileCard = ({
     api.users.registerOnboardingBadge.useMutation();
   const { mutateAsync: updateCompanyDescription } =
     api.users.updateCompanyDescription.useMutation();
+  const { mutateAsync: updateCompanyName } =
+    api.users.updateCompanyName.useMutation();
   const { mutateAsync: updateIndustry } =
     api.users.updateIndustry.useMutation();
   const { mutateAsync: approveUser } = api.users.approveUser.useMutation();
@@ -254,7 +260,7 @@ export const ProfileCard = ({
             alt="profile picture"
             className="rounded-full overflow-hidden"
           />
-          <div className="flex flex-col gap-1">
+          <div className="flex flex-col">
             <div className="flex items-center gap-2">
               <h1 className="text-neutral600">{user.name}</h1>
               {self && !nameEdit.editing && (
@@ -271,6 +277,9 @@ export const ProfileCard = ({
                 </button>
               )}
             </div>
+            {user.class === "Noble" && (
+              <p className="title-text text-neutral500">{account.company}</p>
+            )}
             <div className="flex gap-3 items-center">
               {!!industryEdit && (
                 <>
@@ -356,7 +365,7 @@ export const ProfileCard = ({
                 />
               </div>
               {/* industry input field */}
-              {!!industryEdit && currentUser.class === "Lancer" && (
+              {!!industryEdit && currentUser.class === "Lancer" ? (
                 <div className="w-full flex items-center gap-2">
                   <p className="text-neutral600 w-14 text-sm">Industry</p>
                   <div className="relative" ref={wrapperRef}>
@@ -395,6 +404,24 @@ export const ProfileCard = ({
                     )}
                   </div>
                 </div>
+              ) : (
+                <div className="w-full flex items-center gap-2">
+                  <p className="text-neutral600 w-14 text-sm">Company</p>
+                  <input
+                    type="text"
+                    value={companyNameEdit.companyName}
+                    onChange={(e) =>
+                      setCompanyNameEdit({
+                        ...companyNameEdit,
+                        companyName: e.target.value,
+                      })
+                    }
+                    className="placeholder:text-neutral400 w-40 
+                    p-2 bg-neutral100 border border-neutral200 
+                    rounded-md gap-2 text-neutral500 text-sm"
+                    placeholder="Google"
+                  />
+                </div>
               )}
 
               <div className="flex items-center gap-1">
@@ -402,7 +429,7 @@ export const ProfileCard = ({
                   onClick={() => {
                     updateName({ name: nameEdit.name });
                     setNameEdit({ ...nameEdit, editing: false });
-                    if (!!industryEdit) {
+                    if (currentUser.class === "Lancer") {
                       updateIndustry({
                         newIndustryId: industryEdit.industry.id,
                         oldIndustryId: user.industries[0].id,
@@ -413,8 +440,19 @@ export const ProfileCard = ({
                         name: nameEdit.name,
                         industries: [industryEdit.industry],
                       });
-                    } else {
-                      setAccount({ ...account, name: nameEdit.name });
+                    } else if (currentUser.class === "Noble") {
+                      updateCompanyName({
+                        companyName: companyNameEdit.companyName,
+                      });
+                      setCompanyNameEdit({
+                        ...companyNameEdit,
+                        editing: false,
+                      });
+                      setAccount({
+                        ...account,
+                        name: nameEdit.name,
+                        company: companyNameEdit.companyName,
+                      });
                     }
                   }}
                   className="rounded-md uppercase font-bold text-success"
@@ -427,10 +465,15 @@ export const ProfileCard = ({
                       editing: false,
                       name: user.name,
                     });
-                    if (!!industryEdit) {
+                    if (currentUser.class === "Lancer") {
                       setIndustryEdit({
                         editing: false,
                         industry: user.industries[0],
+                      });
+                    } else if (currentUser.class === "Noble") {
+                      setCompanyNameEdit({
+                        editing: false,
+                        companyName: user.company,
                       });
                     }
                   }}
@@ -537,7 +580,7 @@ export const ProfileCard = ({
               <>
                 <textarea
                   className="placeholder:text-neutral400/80 border border-neutral200 bg-neutral100
-              min-h-[50px] w-full h-[150px] rounded-md p-3 resize-y"
+                  min-h-[50px] w-full h-[150px] rounded-md p-3 resize-y"
                   name="bio"
                   placeholder="Add bio"
                   id="profile-bio"

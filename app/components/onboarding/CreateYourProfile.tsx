@@ -75,7 +75,7 @@ export const CreateYourProfile: FC<{
             <input
               type="text"
               className="placeholder:text-neutral-500 border bg-neutral-100 
-            border-neutral-200 w-full py-2 px-4 rounded-md text-sm"
+              border-neutral-200 w-full py-2 px-4 rounded-md text-sm"
               name="issueTitle"
               placeholder="Sir Lance"
               id="issue-title-input"
@@ -97,7 +97,7 @@ export const CreateYourProfile: FC<{
               <input
                 type="text"
                 className="placeholder:text-neutral-500 border bg-neutral-100 
-            border-neutral-200 w-full py-2 px-4 rounded-md text-sm"
+                border-neutral-200 w-full py-2 px-4 rounded-md text-sm"
                 name="issueTitle"
                 placeholder="Company Name"
                 id="issue-title-input"
@@ -125,7 +125,7 @@ export const CreateYourProfile: FC<{
             <p>{selectedClass === "Noble" ? "Company Description" : "Bio"}</p>
             <textarea
               className="placeholder:text-neutral-500 border bg-neutral-100 text-sm min-h-[100px] 
-          border-neutral-200 w-full rounded-md px-3 py-2 resize-y mt-2"
+              border-neutral-200 w-full rounded-md px-3 py-2 mt-2"
               name="issueDescription"
               placeholder="Landing page for a HR Software focusing on SME’s. We have something outdated and we need a new website that shows new shiny features and reflect our Brand."
               id="issue-description-input"
