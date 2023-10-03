@@ -344,11 +344,11 @@ export const getMany = async (page: number, currentUserId?: number) => {
       industryIds.push(industry.id);
     });
   }
-  console.log("industryIds", industryIds);
+
   const bounties = await bountyQueryMany(
     page,
-    currentUserId,
-    industryIds.length > 0 ? industryIds : undefined
+    currentUserId
+    // industryIds.length > 0 ? industryIds : undefined
   );
 
   const allBounties = bounties.map((bounty) => {
