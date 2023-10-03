@@ -233,13 +233,9 @@ const AllUpdatesTable: React.FC = () => {
           </div>
         )
       ) : (
-        <Image
-          src="/assets/images/placeholder.png"
-          width={200}
-          height={200}
-          alt="no updates"
-          className="mx-auto py-5"
-        />
+        <div className="mt-4 flex justify-center">
+          <EmptyUpdatesHistory width="290px" height="154px" />
+        </div>
       )}
 
       <div className="px-8 py-4 text-neutral600"></div>
@@ -754,7 +750,7 @@ const QuestUpdatesTable: React.FC = () => {
             ) && (
               <motion.button
                 {...smallClickAnimation}
-                className="bg-white border border-neutral200 ml-auto mr-8 h-9 w-fit px-4 py-2
+                className="bg-white border border-neutral200 ml-auto h-9 w-fit px-4 py-2
               title-text rounded-md text-success disabled:cursor-not-allowed disabled:opacity-80 whitespace-nowrap"
                 onClick={handlePayoutQuest}
                 disabled={isLoading || isAwaitingResponse}
@@ -799,7 +795,7 @@ const QuestUpdatesTable: React.FC = () => {
               <>
                 <motion.button
                   {...smallClickAnimation}
-                  className="bg-white border border-neutral200 ml-auto mr-4 h-9 w-fit px-4 py-2
+                  className="bg-white border border-neutral200 ml-auto h-9 w-fit px-4 py-2
                   title-text rounded-md text-error disabled:cursor-not-allowed disabled:opacity-80 whitespace-nowrap"
                   onClick={handleVoteToCancel}
                   disabled={isLoading || isAwaitingResponse}
@@ -836,7 +832,7 @@ const QuestUpdatesTable: React.FC = () => {
               <motion.button
                 {...smallClickAnimation}
                 className="bg-white border border-neutral200 h-9 w-fit px-4 py-2
-                title-text rounded-md text-error disabled:cursor-not-allowed disabled:opacity-80 whitespace-nowrap mr-4"
+                title-text rounded-md text-error disabled:cursor-not-allowed disabled:opacity-80 whitespace-nowrap"
                 onClick={handleCancel}
                 disabled={isLoading || isAwaitingResponse}
               >

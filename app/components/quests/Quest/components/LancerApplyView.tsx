@@ -58,7 +58,6 @@ const LancerApplyView: FC<Props> = ({
             : ""
         }
       >
-        {/* <ContributorInfo user={currentBounty.creator.user} /> */}
         {hasApplied &&
           currentBounty.isShortlistedLancer &&
           Number(currentBounty.escrow.amount) > 0 && (
@@ -66,13 +65,13 @@ const LancerApplyView: FC<Props> = ({
           )}
       </ActionsCardBanner>
       <AlertCards />
-      <div className="w-full p-6 flex items-center justify-between gap-5">
-        <div className="flex items-center gap-4">
+      <div className="w-full p-6 flex items-center justify-between gap-6">
+        <div className="w-full flex items-center gap-4">
           <p className="text-neutral600 text">Portfolio</p>
           <input
             type="text"
             className="text border border-neutral200 placeholder:text-neutral500/60 
-            bg-neutral100 text-neutral500 w-[190px] h-[34px] rounded-md px-3"
+              bg-neutral100 text-neutral500 w-full h-[34px] rounded-md px-3"
             name={`link-portfolio`}
             placeholder="Paste Link"
             id={`link-portfolio`}
@@ -83,12 +82,12 @@ const LancerApplyView: FC<Props> = ({
             }
           />
         </div>
-        <div className="flex items-center gap-4">
+        <div className="w-full flex items-center gap-4">
           <p className="text-neutral600 text">LinkedIn</p>
           <input
             type="text"
             className="text border border-neutral200 placeholder:text-neutral500/60 
-            bg-neutral100 text-neutral500 w-[190px] h-[34px] rounded-md px-3"
+            bg-neutral100 text-neutral500 w-full h-[34px] rounded-md px-3"
             name={`link-linkedin`}
             placeholder="Paste Link"
             id={`link-linkedin`}
@@ -101,10 +100,10 @@ const LancerApplyView: FC<Props> = ({
         </div>
       </div>
       <div className="h-[1px] w-full bg-neutral200" />
-      <div className="w-full px-6 py-4 flex flex-col gap-4">
+      <div className="w-full flex-1 px-6 py-4 flex flex-col gap-4">
         <p className="text-neutral600 text">Who am I?</p>
         <textarea
-          className="text border border-neutral200 placeholder:text-neutral500/80 resize-none h-[232px]
+          className="text border border-neutral200 placeholder:text-neutral500/80 resize-y min-h-[150px] max-h-[500px] overflow-y-auto
           bg-neutral100 text-neutral500 w-full rounded-md px-3 p-2 disabled:opacity-60"
           name={`about`}
           placeholder="Tell us about yourself"

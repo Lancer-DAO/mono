@@ -222,7 +222,7 @@ const QuestDetails = () => {
                         target="_blank"
                         rel="noreferrer noopener"
                         className="text-sm border bg-neutral-100 truncate
-                    border-neutral-200 w-full rounded-md px-4 py-2"
+                        border-neutral-200 w-full rounded-md px-4 py-2"
                         key={`link-${index}`}
                       >
                         {link}

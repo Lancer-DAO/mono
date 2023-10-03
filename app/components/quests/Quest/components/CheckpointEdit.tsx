@@ -80,8 +80,39 @@ const CheckpointEdit: FC<Props> = ({
     return { __html: markdown };
   };
 
+  const handlePriceChange = (e: any) => {
+    const inputValue: string = e.target.value;
+
+    if (
+      /^\d+(\.\d{0,2})?$/.test(inputValue) ||
+      inputValue === "" ||
+      inputValue === "."
+    ) {
+      setTempCheckpoint({
+        ...tempCheckpoint,
+        price:
+          inputValue === "" || inputValue === "." ? 0 : parseFloat(inputValue),
+      });
+    }
+  };
+
+  const handleTimeChange = (e: any) => {
+    const inputValue: string = e.target.value;
+
+    if (
+      /^\d+(\.\d{0,2})?$/.test(inputValue) ||
+      inputValue === "" ||
+      inputValue === "."
+    ) {
+      setTempCheckpoint({
+        ...tempCheckpoint,
+        estimatedTime:
+          inputValue === "" || inputValue === "." ? 0 : parseFloat(inputValue),
+      });
+    }
+  };
+
   useEffect(() => {
-    console.log("runningggg");
     localStorage.setItem(
       `tempCheckpointData-${currentBounty.id}`,
       JSON.stringify(tempCheckpoint)
@@ -151,16 +182,13 @@ const CheckpointEdit: FC<Props> = ({
               <div className="text text-neutral600">Price</div>
               <div className="flex items-center gap-2 bg-neutral100 px-3 py-2 rounded-md border border-neutral200">
                 <input
+                  type="text"
+                  inputMode="decimal"
                   className="w-12 bg-neutral100 text text-neutral600 outline-none"
-                  type="number"
-                  min={0}
-                  value={tempCheckpoint.price}
-                  onChange={(e) =>
-                    setTempCheckpoint({
-                      ...tempCheckpoint,
-                      price: Number(e.target.value),
-                    })
+                  value={
+                    tempCheckpoint.price === null ? "0" : tempCheckpoint.price
                   }
+                  onChange={(e) => handlePriceChange(e)}
                   placeholder="0"
                   disabled={!checkpoint.canEdit}
                 />
@@ -174,15 +202,14 @@ const CheckpointEdit: FC<Props> = ({
               <div className="flex items-center gap-2 bg-neutral100 px-3 py-2 rounded-md border border-neutral200">
                 <input
                   className="w-8 bg-neutral100 text text-neutral600 outline-none"
-                  type="number"
-                  min={0}
-                  value={tempCheckpoint.estimatedTime}
-                  onChange={(e) =>
-                    setTempCheckpoint({
-                      ...tempCheckpoint,
-                      estimatedTime: Number(e.target.value),
-                    })
+                  type="text"
+                  inputMode="decimal"
+                  value={
+                    tempCheckpoint.estimatedTime === null
+                      ? "0"
+                      : tempCheckpoint.estimatedTime
                   }
+                  onChange={(e) => handleTimeChange(e)}
                   placeholder="0"
                   disabled={!checkpoint.canEdit}
                 />
@@ -192,12 +219,12 @@ const CheckpointEdit: FC<Props> = ({
           </div>
           <div className="flex flex-col gap-4">
             <div className="text text-black">
-              Add few bullet points about the process (try to be as clear as
+              Add a few bullet points about the process (try to be as clear as
               possible):
             </div>
             {checkpoint.canEdit ? (
               <textarea
-                className="px-2 py-3 h-[162px] text-mini text-neutral600 rounded-md border border-[#E8F8F3] bg-[#FAFCFC] outline-none resize-none"
+                className="px-2 py-3 h-[162px] text-sm text-neutral600 rounded-md border border-[#E8F8F3] bg-[#FAFCFC] outline-none resize-none"
                 placeholder="Type your message here..."
                 value={tempCheckpoint.description}
                 onChange={(e) =>
@@ -209,7 +236,7 @@ const CheckpointEdit: FC<Props> = ({
                 disabled={!checkpoint.canEdit}
               />
             ) : (
-              <div className="px-2 py-3 h-[162px] text-mini text-neutral600 rounded-md border border-[#E8F8F3] bg-[#FAFCFC] outline-none resize-none">
+              <div className="px-2 py-3 h-[162px] text-sm text-neutral600 rounded-md border border-[#E8F8F3] bg-[#FAFCFC] outline-none resize-none">
                 <div dangerouslySetInnerHTML={previewMarkup()} />
               </div>
             )}
