@@ -18,7 +18,7 @@ const USER_INCLUDE = {
 };
 
 const userQuery = async (email: string) =>
-  prisma.user.findUniqueOrThrow({
+  prisma.user.findUnique({
     where: {
       email,
     },

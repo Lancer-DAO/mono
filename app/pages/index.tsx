@@ -61,9 +61,8 @@ export async function getServerSideProps(
   if (metadata) {
     try {
       const { email } = metadata.user;
-
       const user = await queries.user.getByEmail(email);
-      if (!user.hasFinishedOnboarding) {
+      if ((!user && !!email) || !user.hasFinishedOnboarding) {
         return {
           redirect: {
             destination: "/welcome",
