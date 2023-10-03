@@ -32,6 +32,11 @@ const HEADER_LINKS = [
     children: "Leaderboard",
     id: "leaderboards-link",
   },
+  {
+    href: "/account",
+    children: "Profile",
+    id: "account-link",
+  },
 ];
 
 export const Header = () => {
