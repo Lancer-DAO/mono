@@ -297,7 +297,8 @@ const ApplicantsView: FC<Props> = ({
                 );
               })}
             </>
-          ) : currentBounty.approvedSubmitters.length === 0 ? (
+          ) : currentBounty.approvedSubmitters.length === 0 &&
+            currentBounty.requestedLancers.length > 0 ? (
             <p className="text-sm text-neutral-600">
               You haven&apos;t answered any applicants yet. Shortlist up to 5
               profiles to move on.
@@ -305,7 +306,7 @@ const ApplicantsView: FC<Props> = ({
           ) : null}
           {currentBounty.approvedSubmitters.length === 0 ? (
             <>
-              <p className="title-text">Pending</p>
+              <p className="title-text text-neutral600">Pending</p>
               {currentBounty.requestedLancers.length > 0 ? (
                 currentBounty.requestedLancers.map((submitter, index) => {
                   return (
@@ -328,7 +329,7 @@ const ApplicantsView: FC<Props> = ({
                 })
               ) : (
                 <p className="text-neutral500 text pb-5">
-                  No pending applicants
+                  No pending applicants.
                 </p>
               )}
             </>

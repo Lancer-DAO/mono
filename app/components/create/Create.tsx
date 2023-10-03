@@ -10,7 +10,7 @@ export const Create = () => {
     tags: [],
     links: [""],
     media: [],
-    isPrivate: true,
+    isPrivate: false,
     isTest: false,
   });
 

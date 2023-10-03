@@ -19,7 +19,7 @@ export const QuestFilters = ({
   setFilters,
 }: QuestFiltersProps) => {
   return (
-    <div className="w-full flex items-center justify-end gap-3 px-5 pt-5">
+    <div className="w-full flex items-center justify-end gap-3 px-8 pt-3">
       <MultiSelectDropdown
         extraClasses="w-[140px]"
         version="white"

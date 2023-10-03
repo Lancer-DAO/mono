@@ -18,6 +18,10 @@ const Tags = ({
     }
   );
 
+  // const displayedTags = formData.tags.slice(0, 4).map((tag) => tag);
+
+  // const tagOverflow = formData.tags.filter((tag) => tag !== "").length > 4;
+
   const handleInput = (e: any) => {
     if (e.target.value === "") {
       setQuery(null);
@@ -51,14 +55,16 @@ const Tags = ({
 
   return (
     <div className="relative w-full">
-      <div className="flex">
+      <div className="flex flex-wrap">
         {formData.tags.map((tag, key) => (
           <div
-            className="bg-neutral-100 border flex border-neutral-200 hover:bg-neutral-50 cursor-pointer rounded-lg px-4 py-2 pr-2  items-center gap-x-1.5 mr-2 mb-2 text-neutral-500 text-sm"
+            className="bg-neutral100 border flex border-neutral200 
+              hover:bg-neutral50 cursor-pointer rounded-lg px-4 py-2 pr-2
+              items-center gap-x-1.5 mr-2 mb-2 text-neutral500 text-sm"
             key={key}
             onClick={() => removeTag(tag)}
           >
-            <div className="-mt-0.5">{tag}</div>
+            <div className="-mt-0.5 truncate">{tag}</div>
 
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -78,7 +84,7 @@ const Tags = ({
         ))}
       </div>
       <input
-        className="placeholder:text-neutral-500 text-sm border bg-neutral-100 border-neutral-200 w-full  rounded-lg px-4 py-2"
+        className="placeholder:text-neutral400 text-sm border bg-neutral100 border-neutral200 w-full  rounded-lg px-4 py-2"
         placeholder="Enter tags"
         value={query ? query : ""}
         onChange={handleInput}
@@ -92,15 +98,15 @@ const Tags = ({
         >
           {isLoading ? (
             <>
-              <div className="w-1/3 h-6 animate-pulse bg-neutral-200 rounded m-2"></div>
-              <div className="w-1/3 h-6 animate-pulse bg-neutral-200 rounded m-2"></div>
-              <div className="w-1/3 h-6 animate-pulse bg-neutral-200 rounded m-2"></div>
+              <div className="w-1/3 h-6 animate-pulse bg-neutral200 rounded m-2"></div>
+              <div className="w-1/3 h-6 animate-pulse bg-neutral200 rounded m-2"></div>
+              <div className="w-1/3 h-6 animate-pulse bg-neutral200 rounded m-2"></div>
             </>
           ) : data.length > 0 ? (
             <>
               {data?.map((tag, key) => (
                 <div
-                  className="rounded hover:bg-neutral-100 transition-all p-2 cursor-pointer"
+                  className="rounded hover:bg-neutral100 transition-all p-2 cursor-pointer"
                   key={key}
                   onClick={() => handleTagClick(tag.name)}
                 >
@@ -110,11 +116,10 @@ const Tags = ({
             </>
           ) : (
             <div
-              className="flex items-center justify-between rounded hover:bg-neutral-100 transition-all p-2 cursor-pointer"
+              className="flex items-center justify-between rounded hover:bg-neutral100 transition-all p-2 cursor-pointer"
               onClick={() => handleTagClick(query)}
             >
               {query}
-
               <div className="p-1 border rounded-full px-3">+ create</div>
             </div>
           )}

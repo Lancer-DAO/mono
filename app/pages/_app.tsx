@@ -58,7 +58,7 @@ const App = ({ Component, pageProps }: AppPropsWithLayout) => {
         >
           {(t) => (
             <div className="w-screen h-screen bg-neutral-500 bg-opacity-30 flex justify-center items-start box-content top-[-20px]">
-              <div className="p-4 w-fit  bg-white mb-8 rounded-md mt-4">
+              <div className="p-4 w-fit bg-white mb-8 rounded-md mt-4">
                 {resolveValue(t.message, t)}
               </div>
             </div>

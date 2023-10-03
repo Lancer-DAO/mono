@@ -57,7 +57,7 @@ export const QuestRow: FC<Props> = ({ bounty, formData, linked = true }) => {
       className="items-center bg-white gap-2.5 flex px-2.5 flex-col justify-center h-[125px]"
     >
       <div className="w-full flex justify-between">
-        <div className="flex h-full items-center justify-center gap-2.5">
+        <div className="flex h-full items-center justify-center gap-2.5 max-w-1/2">
           {bounty?.creator?.user?.picture ? (
             <Image
               src={
@@ -75,14 +75,16 @@ export const QuestRow: FC<Props> = ({ bounty, formData, linked = true }) => {
           )}
 
           <div className="flex flex-col gap-1">
-            <p className="text-sm text-neutral600 font-bold">
+            <p className="text-sm text-neutral600 font-bold truncate max-w-[200px] xl:max-w-[400px]">
+              {bounty.title}
+            </p>
+            <p className="text-sm text-neutral500">
               {bounty?.creator?.user.name ?? "Lancer"}
             </p>
-            <p className="text-sm truncate text-neutral500">{bounty.title}</p>
           </div>
         </div>
 
-        <div className="flex justify-center items-center gap-5 ml-10">
+        <div className="flex justify-center items-center gap-5">
           <div className="flex flex-col gap-1 items-end justify-center">
             {bounty && !bounty.isExternal && Number(bounty?.escrow.amount) ? (
               <div className="flex items-center justify-center gap-1">
@@ -110,7 +112,7 @@ export const QuestRow: FC<Props> = ({ bounty, formData, linked = true }) => {
               <p className="text-sm text-neutral600">Requesting Quotes</p>
             )}
 
-            <p className="text-sm text-neutral500">
+            <p className="text-sm text-right text-neutral500">
               Created on {getFormattedDate(bounty)}
             </p>
           </div>
@@ -123,7 +125,7 @@ export const QuestRow: FC<Props> = ({ bounty, formData, linked = true }) => {
         </div>
       </div>
 
-      <div className="flex flex-wrap gap-2.5 w-full">
+      <div className="ml-24 flex flex-wrap gap-2.5 w-full">
         <div
           className={cn(
             "text-xs text-center w-fit px-2 py-1 rounded-lg border",

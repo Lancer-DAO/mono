@@ -43,7 +43,7 @@ const LancerApplyView: FC<Props> = ({
   if (!currentBounty || !currentUser) return null;
 
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col h-full">
       <ActionsCardBanner
         title={
           hasApplied

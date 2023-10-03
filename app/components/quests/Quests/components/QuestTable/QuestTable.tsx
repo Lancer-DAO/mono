@@ -197,7 +197,7 @@ const QuestTable: React.FC<Props> = ({ type }) => {
         </AnimatePresence>
 
         <div className="w-full flex flex-col bg-white rounded-md py-4 px-6">
-          <div className="flex flex-col max-h-[500px] overflow-y-scroll">
+          <div className="flex flex-col max-h-[500px] overflow-y-auto overflow-x-hidden">
             {filteredBounties?.length > 0 &&
               (() => {
                 // Create an object to store bounties grouped by state
