@@ -43,7 +43,10 @@ const QuestTable: React.FC<Props> = ({ type }) => {
   const { allIndustries, userIndustries } = useIndustry();
 
   const [filters, setFilters] = useState<Filters>({
-    industries: userIndustries?.map((industry) => industry.name) || [],
+    industries:
+      userIndustries?.map((industry) => industry.name) ||
+      allIndustries?.map((industry) => industry.name) ||
+      [],
     tags: tags,
     states: TABLE_BOUNTY_STATES,
   });
@@ -139,7 +142,7 @@ const QuestTable: React.FC<Props> = ({ type }) => {
   }, [allBounties]);
 
   useEffect(() => {
-    if (!userIndustries || !allBounties) return;
+    if (!allBounties) return;
     if (allBounties?.length !== 0) {
       const allTags = allBounties
         ?.map((bounty) => bounty.tags.map((tag) => tag.name))
@@ -155,10 +158,13 @@ const QuestTable: React.FC<Props> = ({ type }) => {
       setFilters({
         ...filters,
         tags: allTags,
-        industries: userIndustries?.map((industry) => industry.name) || [],
+        industries:
+          userIndustries?.map((industry) => industry.name) ||
+          allIndustries?.map((industry) => industry.name) ||
+          [],
       });
     }
-  }, [allBounties, userIndustries]);
+  }, [allBounties, userIndustries, allIndustries]);
 
   return (
     <div

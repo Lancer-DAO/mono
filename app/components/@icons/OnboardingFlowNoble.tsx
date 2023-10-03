@@ -172,7 +172,7 @@ const OnboardingFlowNoble = ({
         strokeWidth="0.675239"
       />
       <circle cx="817.157" cy="25.3356" r="10.1286" fill="#7991E8" />
-      <g clip-path="url(#clip0_1182_27144)">
+      <g clipPath="url(#clip0_1182_27144)">
         <path
           d="M820.534 21.9609L814.345 28.1506L811.531 25.3371"
           stroke="white"

@@ -9,7 +9,7 @@ const Alert = ({ height, width }: { height: string; width: string }) => {
     >
       <circle cx="15" cy="15" r="12" fill="#FAEBE1" />
       <circle cx="15" cy="15" r="14" stroke="#FAEBE1" />
-      <g clip-path="url(#clip0_838_14274)">
+      <g clipPath="url(#clip0_838_14274)">
         <path
           d="M12.5 14C12.5 13.337 12.7634 12.7011 13.2322 12.2322C13.7011 11.7634 14.337 11.5 15 11.5C15.663 11.5 16.2989 11.7634 16.7678 12.2322C17.2366 12.7011 17.5 13.337 17.5 14V17H12.5V14Z"
           stroke="#F46036"

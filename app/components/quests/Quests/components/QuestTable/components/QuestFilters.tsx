@@ -30,7 +30,7 @@ export const QuestFilters = ({
             label: capitalize(industry),
           };
         })}
-        selected={filters.industries.map((industry) => {
+        selected={filters.industries?.map((industry) => {
           return {
             value: industry,
             label: capitalize(industry),

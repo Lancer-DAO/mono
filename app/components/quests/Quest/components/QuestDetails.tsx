@@ -203,7 +203,7 @@ const QuestDetails = () => {
           dangerouslySetInnerHTML={previewMarkup()}
         />
         {currentBounty.links !== "" && (
-          <div className="px-10 pb-4">
+          <div className="px-10">
             <div className={`flex justify-between pb-[10px]`}>
               <div className="text font-bold text-neutral600">
                 Additional Links
@@ -228,7 +228,7 @@ const QuestDetails = () => {
           </div>
         )}
         {questMedia?.length > 0 && (
-          <div>
+          <div className="px-10 pb-4">
             <div className={`flex justify-between pb-[10px]`}>
               <div className="text font-bold text-neutral600">
                 Reference Media

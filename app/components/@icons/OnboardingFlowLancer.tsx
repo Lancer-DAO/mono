@@ -148,7 +148,7 @@ const OnboardingFlowLancer = ({
         strokeWidth="0.675239"
       />
       <circle cx="820.157" cy="26.3356" r="10.1286" fill="#14BB88" />
-      <g clip-path="url(#clip0_1182_27182)">
+      <g clipPath="url(#clip0_1182_27182)">
         <path
           d="M823.534 22.9609L817.345 29.1506L814.531 26.3371"
           stroke="white"
