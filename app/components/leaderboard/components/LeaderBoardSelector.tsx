@@ -19,6 +19,7 @@ const LEADERBOARD_LINKS = [
     href: "/leaderboard/earners",
     children: "Earners",
   },
+  
 ];
 
 export const LeaderBoardSelector = () => {
