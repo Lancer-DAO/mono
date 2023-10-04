@@ -60,7 +60,7 @@ export const getHighestQuoteByBounty = async (
     },
   });
 
-  return Number(bounty.quotes[0].price);
+  return Number(bounty.quotes[0].price) ?? 0;
 };
 
 export const getQuoteByBountyAndUser = async (

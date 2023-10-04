@@ -1,23 +1,24 @@
-import { Dispatch, FC, SetStateAction, useState } from "react";
 import { ChatButton, FundQuestModal } from "@/components";
 import RedFire from "@/components/@icons/RedFire";
+import { addSubmitterFFA } from "@/escrow/adapters";
 import { BountyUserType } from "@/prisma/queries/bounty";
 import { MAX_SHORTLIST, smallClickAnimation } from "@/src/constants";
 import { useUserWallet } from "@/src/providers";
 import { useBounty } from "@/src/providers/bountyProvider";
+import { useReferral } from "@/src/providers/referralProvider";
 import { api, updateList } from "@/src/utils";
 import { BOUNTY_USER_RELATIONSHIP, BountyState } from "@/types";
+import { PublicKey } from "@solana/web3.js";
 import { motion } from "framer-motion";
+import { orderBy } from "lodash";
 import { X } from "lucide-react";
 import Image from "next/image";
+import { Dispatch, FC, SetStateAction, useState } from "react";
 import toast from "react-hot-toast";
 import { EApplicantsView } from "./ApplicantsView";
 import CheckpointView from "./CheckpointView";
-import { QuestActionView } from "./QuestActions";
 import DepositCTAModal from "./DepositCTAModal";
-import { useReferral } from "@/src/providers/referralProvider";
-import { PublicKey } from "@solana/web3.js";
-import { addSubmitterFFA } from "@/escrow/adapters";
+import { QuestActionView } from "./QuestActions";
 
 interface Props {
   selectedSubmitter: BountyUserType;

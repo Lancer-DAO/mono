@@ -8,8 +8,8 @@ export const getCheckpointsByQuote = protectedProcedure
       id: z.number(),
     })
   )
-  .query(
-    async ({ input: { id } }) => {
-      return await queries.checkpoint.getCheckpointsByQuote(id);
-    }
-  );
+  .query(async ({ input: { id } }) => {
+    return (await queries.checkpoint.getCheckpointsByQuote(id)).sort((a, b) => {
+      return a.order - b.order;
+    });
+  });

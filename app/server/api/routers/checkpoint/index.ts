@@ -1,5 +1,5 @@
 import { createTRPCRouter } from "../../trpc";
-import { getCheckpointsByQuote } from "./getCheckpointsByBounty";
+import { getCheckpointsByQuote } from "./getCheckpointsByQuote";
 
 export const checkpoint = createTRPCRouter({
   getCheckpointsByQuote,
