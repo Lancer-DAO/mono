@@ -60,6 +60,7 @@ const LancerApplicationView: FC<Props> = ({ setCurrentActionView }) => {
   });
 
   const applicationIsValid =
+    currentUser.hasBeenApproved &&
     quoteData.checkpoints.length > 0 &&
     quoteData.checkpoints[0].title !== "" &&
     quoteData.checkpoints[0].description !== "" &&
