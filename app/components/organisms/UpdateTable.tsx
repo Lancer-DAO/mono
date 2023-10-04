@@ -810,20 +810,7 @@ const QuestUpdatesTable: React.FC = () => {
                   Vote to Cancel
                 </motion.button>
               )}
-            {currentBounty.isCreator &&
-              [BountyState.AWAITING_REVIEW, BountyState.IN_PROGRESS].includes(
-                currentBounty.state as BountyState
-              ) && (
-                <motion.button
-                  {...smallClickAnimation}
-                  className="bg-white border border-neutral200 h-9 w-fit px-4 py-2
-                  title-text rounded-md text-success disabled:cursor-not-allowed disabled:opacity-80 whitespace-nowrap"
-                  onClick={handlePayoutQuest}
-                  disabled={isLoading || isAwaitingResponse}
-                >
-                  Payout Quest
-                </motion.button>
-              )}
+
             {!currentBounty.isCreator &&
               currentBounty.state === BountyState.VOTING_TO_CANCEL &&
               currentBounty.needsToVote
