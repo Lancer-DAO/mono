@@ -23,7 +23,7 @@ const HEADER_LINKS = [
   },
   {
     href: "/create",
-    children: "New Quest",
+    children: "Create Quest",
     id: "create-bounty-link",
   },
   ,

@@ -15,7 +15,7 @@ export const QuestHeader = ({ count }: Props) => {
         <p className="text-white text-sm opacity-60">Showing {count} Quests</p>
       </div>
 
-      {!!currentUser && currentUser.class === "Noble" && (
+      {/* {!!currentUser && currentUser.class === "Noble" && (
         <div className="flex items-center justify-end">
           <button
             disabled={!currentUser || !currentUser.hasBeenApproved}
@@ -25,7 +25,7 @@ export const QuestHeader = ({ count }: Props) => {
             Create Quest
           </button>
         </div>
-      )}
+      )} */}
     </div>
   );
 };
