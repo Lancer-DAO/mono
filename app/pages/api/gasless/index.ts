@@ -70,7 +70,6 @@ export default async function handler(
     res.status(400).send({ status: "error", message: "Bad transaction" });
     return;
   }
-
   // Wont work with fee payer being signer for actions like initialzing an account on our contract
   // try {
   //   await core.validateInstructions(transaction, feePayer);
@@ -98,9 +97,8 @@ export default async function handler(
 
     console.log("Tx Id: ", txid);
     res.status(200).json({ status: "ok", txid });
-  }
-  catch (e) {
-    res.status(200).json({ status: "error", message: e.toString() })
-
+  } catch (e) {
+    console.error(e);
+    res.status(400).json({ status: "error", message: e.toString() });
   }
 }

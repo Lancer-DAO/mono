@@ -61,7 +61,7 @@ const FundQuestModal: FC<Props> = ({
       });
     }
     try {
-      await fundFFATXGasless(
+      const result = await fundFFATXGasless(
         amount,
         currentBounty?.escrow,
         currentWallet,
@@ -70,6 +70,9 @@ const FundQuestModal: FC<Props> = ({
         currentBounty?.escrow.mint.decimals,
         new PublicKey(currentBounty?.escrow.mint.publicKey)
       );
+      if (result.status === "error") {
+        throw new Error(result.message);
+      }
       const bounty = await fundB({
         bountyId: currentBounty?.id,
         escrowId: currentBounty?.escrow.id,
