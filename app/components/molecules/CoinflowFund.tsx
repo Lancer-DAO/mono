@@ -18,7 +18,6 @@ const FundBounty: React.FC<{ amount: number }> = ({ amount }) => {
   const [fundTx, setFundTx] = useState<Transaction>(null);
   useEffect(() => {
     const getFundTransaction = async () => {
-      // console.log("coinflow amount", amount);
       const transaction = await getACHTransaction(
         amount,
         currentBounty?.escrow,
@@ -32,8 +31,6 @@ const FundBounty: React.FC<{ amount: number }> = ({ amount }) => {
   }, [amount]);
 
   const onSuccess = async (args) => {
-    console.log("onSuccess", args);
-    console.log("parsed", JSON.parse(args));
     try {
       const {
         info: { paymentId },

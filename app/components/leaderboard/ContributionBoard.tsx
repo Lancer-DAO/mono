@@ -42,8 +42,6 @@ const fetchDataForLanguage = async (
       );
       const [oldRank, newRank] = [oldEntry?.rank || Infinity, newEntry.rank];
 
-      console.log(oldRank, newRank, newEntry.github_name);
-
       if (newRank < oldRank) return [newEntry.github_name, "up"];
       if (newRank > oldRank) return [newEntry.github_name, "down"];
       return [newEntry.github_name, "no_change"];

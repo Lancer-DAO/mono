@@ -13,7 +13,6 @@ export const TopEarnersBoard: FC<any> = () => {
   useEffect(() => {
     const fetchData = async () => {
       const res = (await getTopEarners()) as any[];
-      console.log("AAA", res);
       setTopDevs(res);
     };
 

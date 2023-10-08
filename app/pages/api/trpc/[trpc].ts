@@ -36,7 +36,6 @@ export default async function handler(
   // res.setHeader('Access-Control-Allow-Headers', 'content-type');
   // res.setHeader('Referrer-Policy', 'no-referrer');
   // res.setHeader('Access-Control-Allow-Credentials', 'true');
-  console.log("[trpc]");
   if (req.method === "OPTIONS") {
     res.writeHead(200);
     return res.end();

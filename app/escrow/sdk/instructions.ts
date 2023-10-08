@@ -45,10 +45,7 @@ export const createFeatureFundingAccountInstruction = async (
   creator: PublicKey,
   program: Program<MonoProgram>
 ): Promise<TransactionInstruction> => {
-  console.log("Mint: ", mint.toBase58());
-
   const timestamp = Date.now().toString();
-  console.log("timestamp = ", timestamp);
   const [feature_account] = await findFeatureAccount(
     timestamp,
     creator,
@@ -405,12 +402,6 @@ export const approveRequestWithReferralInstruction = async (
     referral_data_account
   );
 
-  console.log(
-    "creator referrer, completer refferrer",
-    referralAccount.creatorReferrer.toString(),
-    referralAccount.approvedReferrers[0].toString()
-  );
-
   const creatorReferrer =
     referralAccount.creatorReferrer.toString() === PublicKey.default.toString()
       ? []
@@ -724,7 +715,6 @@ export const createCustodialReferralDataAccountInstruction = async (
   if (!referrer) {
     referrer = PublicKey.default;
   }
-  console.log("FDA", feature_data_account.toBase58());
 
   return await program.methods
     .createCustodialReferralDataAccount()
@@ -899,7 +889,6 @@ export const custodialTransaction = async (
   tx.sign(backend_signer);
   // tx.partialSign(signer);
   tx.feePayer = backend_signer.publicKey;
-  console.log("fee payer = ", backend_signer.publicKey.toString());
   // const rawTx = tx.serialize();
   // const signature = await connection.sendRawTransaction(rawTx);
   // const serializedTx = tx.serialize({requireAllSignatures: false});

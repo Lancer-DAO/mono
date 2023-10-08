@@ -3,7 +3,6 @@ const prisma = new PrismaClient();
 
 async function main() {
   const allIndustries = await prisma.industry.findMany();
-  console.log("DONE!", allIndustries);
 }
 
 main()

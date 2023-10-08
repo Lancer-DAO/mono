@@ -33,7 +33,7 @@ export const getOrCreate = async (
       });
       wallet = await walletQuery(publicKey);
     } catch (e) {
-      console.log("e", e);
+      console.error(e);
     }
   }
   return wallet;

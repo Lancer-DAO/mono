@@ -98,7 +98,6 @@ const ReferralProvider: FunctionComponent<IReferralProps> = ({ children }) => {
         setTreasuries(treasuries);
       }
     } catch (e) {
-      console.log("Buddy Error: ", e);
       throw new Error("Failed to create buddy account");
     } finally {
       setProgramId(client.getProgramId());
@@ -240,7 +239,6 @@ const ReferralProvider: FunctionComponent<IReferralProps> = ({ children }) => {
 
         return { txId: signature, memberPDA };
       } catch (e) {
-        console.log("Buddy Error: ", e);
         throw new Error(`Failed to create buddy member account`, e);
       }
     },

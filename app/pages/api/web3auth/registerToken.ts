@@ -8,7 +8,6 @@ export default async function handler(
   const userInfo = req.body.data;
   const session = await getSession(req, res);
 
-  console.log(userInfo);
   if (
     !session?.user?.email &&
     userInfo.email &&

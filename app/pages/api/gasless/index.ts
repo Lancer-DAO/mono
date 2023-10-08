@@ -48,16 +48,14 @@ export default async function handler(
   try {
     transaction = Transaction.from(base58.decode(serialized));
   } catch (e) {
-    console.log("\n", e);
     res
       .status(400)
       .send({ status: "error", message: "Can't decode transaction" });
     return;
   }
-  console.log("Account and properties (address-signer-writable");
   for (const instruction of transaction.instructions) {
     for (const key of instruction.keys) {
-      console.log(key.pubkey.toBase58(), key.isSigner, key.isWritable);
+      // console.log(key.pubkey.toBase58(), key.isSigner, key.isWritable);
     }
   }
   let signature: string;
@@ -66,7 +64,7 @@ export default async function handler(
       await validateTransaction(connection, transaction, feePayer, 2, 5000)
     ).signature;
   } catch (e) {
-    console.log("\n", e);
+    console.errpr(e);
     res.status(400).send({ status: "error", message: "Bad transaction" });
     return;
   }
@@ -83,7 +81,7 @@ export default async function handler(
   try {
     await connection.simulateTransaction(transaction);
   } catch (e) {
-    console.log("Error, simulation failed: ", e);
+    console.error(e);
     res.status(400).send({ status: "error", message: "Simulation failed" });
     return;
   }
@@ -96,7 +94,6 @@ export default async function handler(
   try {
     const txid = await connection.sendRawTransaction(transaction.serialize());
 
-    console.log("Tx Id: ", txid);
     res.status(200).json({ status: "ok", txid });
   }
   catch (e) {

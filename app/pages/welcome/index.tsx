@@ -32,7 +32,6 @@ export async function getServerSideProps(
   }
 
   const { email, sub, nickname, picture } = metadata.user;
-  console.log(metadata.user, "metadata.user");
 
   const user = await queries.user.getOrCreateByEmail(
     email,
@@ -124,7 +123,6 @@ const WelcomePage: React.FC<{
         await registerOnboardingBadge();
       }
     } catch (e) {
-      console.log("error updating profile: ", e);
       toast.error("Error updating profile", { id: toastId });
       setTimeout(() => {
         toast.dismiss(toastId);

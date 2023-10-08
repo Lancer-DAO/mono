@@ -41,7 +41,6 @@ const CashoutModal: FC<Props> = ({ setShowModal }) => {
           currentWallet.publicKey
         );
         const usdcAccount = await getAccount(connection, usdcAccountAddress);
-        console.log(usdcAccount);
         const balance = parseFloat(usdcAccount.amount.toString()) / 10.0 ** 6;
         setBalance({ result: balance, isLoading: false });
       } catch (err) {

@@ -137,7 +137,6 @@ export const CustodialWalletProvider: FunctionComponent<IWeb3AuthState> = ({
       const solanaWallet = new SolanaWallet(web3authProvider);
       setTimeout(async () => {
         const acc = await solanaWallet.requestAccounts();
-        console.log("acc", acc);
         const wallet = {
           ...walletProvider,
           connected: true,
@@ -159,7 +158,6 @@ export const CustodialWalletProvider: FunctionComponent<IWeb3AuthState> = ({
         setProvider(provider);
         setProgram(program);
         setWeb3AuthProvider(web3authProvider);
-        console.log("ready");
       }, 1000);
     },
     [maybeInitAccount, connection]
@@ -183,7 +181,6 @@ export const CustodialWalletProvider: FunctionComponent<IWeb3AuthState> = ({
   }, [user, getCurrUser, router]);
 
   useEffect(() => {
-    console.log("maybeLogin", isLoading, user);
     if (!isLoading && !user && isWeb3AuthInit) {
       loginRWA(WALLET_ADAPTERS.OPENLOGIN, "jwt", jwt);
     }
@@ -193,18 +190,14 @@ export const CustodialWalletProvider: FunctionComponent<IWeb3AuthState> = ({
     const subscribeAuthEvents = (web3auth: Web3AuthNoModal) => {
       // Can subscribe to all ADAPTER_EVENTS and LOGIN_MODAL_EVENTS
       web3auth.on(ADAPTER_EVENTS.CONNECTED, (data: unknown) => {
-        console.log("Yeah!, you are successfully logged in", data);
         axios.post("/api/web3auth/registerToken", { data: data });
         setUser(data);
         setWalletProvider(web3auth.provider!);
       });
 
-      web3auth.on(ADAPTER_EVENTS.CONNECTING, () => {
-        console.log("connecting");
-      });
+      web3auth.on(ADAPTER_EVENTS.CONNECTING, () => {});
 
       web3auth.on(ADAPTER_EVENTS.DISCONNECTED, () => {
-        console.log("disconnected");
         setCurrentUser(null);
       });
 
@@ -216,7 +209,6 @@ export const CustodialWalletProvider: FunctionComponent<IWeb3AuthState> = ({
     const currentChainConfig = SOLANA_CHAIN_CONFIG.solana;
 
     async function init() {
-      console.log("init");
       try {
         setIsLoading(true);
         // get your client id from https://dashboard.web3auth.io by registering a plug and play application.
@@ -254,7 +246,6 @@ export const CustodialWalletProvider: FunctionComponent<IWeb3AuthState> = ({
         await web3AuthInstance.init();
         setWeb3Auth(web3AuthInstance);
         setweb3authinit(true);
-        console.log("initialized");
       } catch (error) {
         console.error(error);
       } finally {
@@ -269,11 +260,9 @@ export const CustodialWalletProvider: FunctionComponent<IWeb3AuthState> = ({
     loginProvider: LOGIN_PROVIDER_TYPE,
     jwt_token: string
   ) => {
-    console.log("logging in");
     try {
       setIsLoading(true);
       if (!web3Auth) {
-        console.log("web3auth not initialized yet");
         uiConsole("web3auth not initialized yet");
         return;
       }
@@ -287,7 +276,7 @@ export const CustodialWalletProvider: FunctionComponent<IWeb3AuthState> = ({
       });
       setWalletProvider(localProvider!);
     } catch (error) {
-      console.log("error", error);
+      console.error(error);
     } finally {
       setIsLoading(false);
     }
@@ -295,7 +284,6 @@ export const CustodialWalletProvider: FunctionComponent<IWeb3AuthState> = ({
 
   const logout = async () => {
     if (!web3Auth) {
-      console.log("web3auth not initialized yet");
       uiConsole("web3auth not initialized yet");
       return;
     }
@@ -308,7 +296,6 @@ export const CustodialWalletProvider: FunctionComponent<IWeb3AuthState> = ({
 
   const getUserInfo = async () => {
     if (!web3Auth) {
-      console.log("web3auth not initialized yet");
       uiConsole("web3auth not initialized yet");
       return;
     }

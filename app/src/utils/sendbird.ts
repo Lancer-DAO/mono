@@ -61,7 +61,6 @@ export const getUnreadChannels = async (userId: string) => {
   };
   const listQuery = sendbird.groupChannel.createMyGroupChannelListQuery(params);
   const channels = await listQuery.next();
-  console.log(channels);
   const messagesInfo: UnreadMessage[] = channels.map((channel) => {
     const sentAt = channel.lastMessage?.createdAt;
     const unreadCount = channel.unreadMessageCount;
@@ -74,7 +73,6 @@ export const getUnreadChannels = async (userId: string) => {
       userName,
     };
   });
-  console.log(messagesInfo);
 
   return messagesInfo;
 };

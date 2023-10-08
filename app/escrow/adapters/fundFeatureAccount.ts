@@ -21,7 +21,6 @@ export const getFundFFATX = async (
   mint?: PublicKey
 ) => {
   const amount = baseAmount * Math.pow(10, decimals ? decimals : 6);
-  console.log("baseAmount, amount", baseAmount, amount);
   // check balaance before funding feature
   let fund_feature_ix = await fundFeatureInstruction(
     amount,
@@ -76,7 +75,6 @@ export const getACHTransaction = async (
   mint?: PublicKey
 ) => {
   const amount = baseAmount * Math.pow(10, decimals ? decimals : 6);
-  console.log("baseAmount, amount", baseAmount, amount);
   // check balaance before funding feature
   let fund_feature_ix = await achFundFeatureInstruction(
     amount,
@@ -108,7 +106,6 @@ export const fundFFATXGasless = async (
   mint?: PublicKey
 ) => {
   const amount = baseAmount * Math.pow(10, decimals ? decimals : 6);
-  console.log("baseAmount, amount", baseAmount, amount, "[This is gasless]");
   // check balaance before funding feature
   let fund_feature_ix = await fundFeatureInstruction(
     amount,

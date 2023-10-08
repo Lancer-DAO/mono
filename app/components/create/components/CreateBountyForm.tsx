@@ -164,7 +164,6 @@ export const CreateBountyForm: FC<Props> = ({
         currentWallet,
         20000
       );
-      console.log("Second gasless tx res: ", res2);
     } catch (error) {
       setCreateQuestState({ error });
       if (error.message === "Wallet is registered to another user") {
@@ -227,7 +226,6 @@ export const CreateBountyForm: FC<Props> = ({
   };
 
   useEffect(() => {
-    console.log("visibilityOption: ", visibilityOption);
     if (visibilityOption.value === "Private") {
       setFormData({
         ...formData,
@@ -242,7 +240,6 @@ export const CreateBountyForm: FC<Props> = ({
   }, [visibilityOption]);
 
   useEffect(() => {
-    console.log("testOption: ", testOption);
     if (testOption.name === "Test") {
       setFormData({
         ...formData,

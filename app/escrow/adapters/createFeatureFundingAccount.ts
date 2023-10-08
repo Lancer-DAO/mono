@@ -33,7 +33,6 @@ export const createFFA = async (
     );
 
   const res = await sendGaslessTx([ix]);
-  console.log("Sending out second tx");
 
   if (res.status == "error") {
     return {

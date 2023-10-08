@@ -198,7 +198,6 @@ const AllUpdatesTable: React.FC = () => {
         allUpdates.sort((a, b) => {
           return b.time.unix() - a.time.unix();
         });
-        // console.log("allUpdates", allUpdates);
         setAllUpdates(allUpdates);
       };
       getChannels();

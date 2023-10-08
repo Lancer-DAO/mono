@@ -15,11 +15,6 @@ export const LeaderboardCommits: FC<any> = ({ self }) => {
     endDate: new Date().toISOString().split("T")[0],
   });
 
-  const handleValueChange = (newValue) => {
-    console.log("newValue:", newValue);
-    setDateValue(newValue);
-  };
-
   useEffect(() => {
     const fetchData = async () => {
       const sDate = new Date(dateValue.startDate);
@@ -37,7 +32,6 @@ export const LeaderboardCommits: FC<any> = ({ self }) => {
         `https://lancer.up.railway.app/ranking/top_devs/commits?start_date=${dateValue.startDate}&till=${diffDays}&limit=10`
       );
       const data = await res.json();
-      console.log(data);
       setTopDevs(data);
     };
     fetchData();

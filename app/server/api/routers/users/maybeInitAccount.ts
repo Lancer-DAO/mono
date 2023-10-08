@@ -26,7 +26,6 @@ export const maybeInitAccount = protectedProcedure
   .mutation(async ({ ctx, input: { publicKey } }) => {
     const { id } = ctx.user;
     try {
-      console.log("maybeInitAccount1");
       const connection = new Connection(
         process.env.NEXT_PUBLIC_IS_MAINNET
           ? "https://winter-necessary-smoke.solana-mainnet.discover.quiknode.pro"
@@ -34,7 +33,6 @@ export const maybeInitAccount = protectedProcedure
       );
       const toPubkey = new PublicKey(publicKey);
       const balance = await connection.getBalance(toPubkey);
-      console.log("maybeInitAccount2", balance);
       let walletInstance;
 
       if (balance === 0) {
