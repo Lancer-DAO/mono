@@ -64,7 +64,7 @@ export default async function handler(
       await validateTransaction(connection, transaction, feePayer, 2, 5000)
     ).signature;
   } catch (e) {
-    console.errpr(e);
+    console.error(e);
     res.status(400).send({ status: "error", message: "Bad transaction" });
     return;
   }
@@ -95,9 +95,7 @@ export default async function handler(
     const txid = await connection.sendRawTransaction(transaction.serialize());
 
     res.status(200).json({ status: "ok", txid });
-  }
-  catch (e) {
-    res.status(200).json({ status: "error", message: e.toString() })
-
+  } catch (e) {
+    res.status(200).json({ status: "error", message: e.toString() });
   }
 }

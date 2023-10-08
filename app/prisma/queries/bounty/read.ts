@@ -344,10 +344,6 @@ export const getMany = async (page: number, currentUserId?: number) => {
       industryIds.push(industry.id);
     });
   }
-<<<<<<< Updated upstream
-
-=======
->>>>>>> Stashed changes
   const bounties = await bountyQueryMany(
     page,
     currentUserId
