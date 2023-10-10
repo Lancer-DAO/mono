@@ -167,7 +167,9 @@ export const CreateBountyForm: FC<Props> = ({
         currentWallet
       );
       router.push(`/quests/${bounty.id}`);
-
+      setTimeout(() => {
+        toast.dismiss(toastId);
+      }, 2000);
       if (!res2.signature) {
         throw new Error("Error creating referral account");
       }
