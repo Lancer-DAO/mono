@@ -17,12 +17,6 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<Data>
 ) {
-  const { delay } = req.query;
-
-  if (delay) {
-    await new Promise((r) => setTimeout(r, Number(delay)));
-  }
-
   const connection = new Connection(
     process.env.NEXT_PUBLIC_IS_MAINNET
       ? "https://winter-necessary-smoke.solana-mainnet.discover.quiknode.pro"
