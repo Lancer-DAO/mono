@@ -1,17 +1,15 @@
-import { ChatButton, ContributorInfo } from "@/components";
+import { Dispatch, FC, SetStateAction, useEffect, useState } from "react";
+import { ChatButton } from "@/components";
 import { smallClickAnimation } from "@/src/constants";
 import { useUserWallet } from "@/src/providers";
 import { useBounty } from "@/src/providers/bountyProvider";
 import { LancerApplyData } from "@/types";
 import { motion } from "framer-motion";
-import { Image as ImageIcon } from "lucide-react";
-import { Dispatch, FC, SetStateAction } from "react";
 import ActionsCardBanner from "./ActionsCardBanner";
-import AlertCard from "./AlertCard";
 import { QuestApplicationView } from "./LancerApplicationView";
 import { QuestActionView } from "./QuestActions";
 import AlertCards from "./AlertCards";
-import { api } from "@/src/utils";
+import { ResumeCard } from "@/components/account/components";
 
 interface Props {
   applyData: LancerApplyData;
@@ -36,27 +34,27 @@ const LancerApplyView: FC<Props> = ({
 }) => {
   const { currentBounty } = useBounty();
   const { currentUser } = useUserWallet();
-  const { data: quotes } = api.quote.getQuotesByBounty.useQuery(
-    { id: currentBounty.id },
-    { enabled: !!currentBounty }
-  );
+  const [resumeUrl, setResumeUrl] = useState<string>();
+
+  useEffect(() => {
+    if (!currentUser) return;
+    setResumeUrl(currentUser.resume);
+  }, [currentUser]);
+
   if (!currentBounty || !currentUser) return null;
 
   return (
     <div className="flex flex-col h-full">
       <ActionsCardBanner
-        title={
-          hasApplied
-            ? `Quote to ${currentBounty.creator.user.name}`
-            : "Apply to this Quest"
-        }
-        subtitle={
-          hasApplied
-            ? `${quotes?.length || 0} ${
-                (quotes?.length || 0) === 1 ? "quote has" : "quotes have"
-              } been sent to them already`
-            : ""
-        }
+        title={"Your Details"}
+        subtitle="Quest Application"
+        // subtitle={
+        //   hasApplied
+        //     ? `${quotes?.length || 0} ${
+        //         (quotes?.length || 0) === 1 ? "quote has" : "quotes have"
+        //       } been sent to them already`
+        //     : ""
+        // }
       >
         {hasApplied &&
           currentBounty.isShortlistedLancer &&
@@ -115,16 +113,11 @@ const LancerApplyView: FC<Props> = ({
           }
         />
         <div className="flex items-center justify-end text text-neutral600">
-          <button
-            className="rounded-md bg-white border border-neutral200 flex items-center justify-center gap-2 h-8 px-2"
-            disabled={hasApplied || currentBounty.isDeniedLancer}
-            onClick={() =>
-              window.open(currentUser.resume, "_blank", "noopener noreferrer")
-            }
-          >
-            <ImageIcon color="#A1B2AD" size={18} />
-            <p className="text-xs text-neutral400 truncate">resume.pdf</p>
-          </button>
+          <ResumeCard
+            resumeUrl={resumeUrl}
+            editing={!hasApplied}
+            setResumeUrl={setResumeUrl}
+          />
         </div>
       </div>
       <div className="h-[1px] w-full bg-neutral200" />

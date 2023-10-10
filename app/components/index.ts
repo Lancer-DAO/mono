@@ -79,7 +79,6 @@ const SelectOptions = dynamic(() => import("./molecules/SelectOptions"));
 const SidePanel = dynamic(() => import("./molecules/sidebar/index"));
 const TutorialsModal = dynamic(() => import("./molecules/TutorialsModal"));
 const UpdateTableItem = dynamic(() => import("./molecules/UpdateTableItem"));
-const WalletInfo = dynamic(() => import("./molecules/WalletInfo"));
 
 // organisms
 const CashoutModal = dynamic(() => import("./organisms/CashoutModal"));
@@ -154,7 +153,6 @@ export {
   SidePanel,
   TutorialsModal,
   UpdateTableItem,
-  WalletInfo,
 
   // organisms
   CashoutModal,

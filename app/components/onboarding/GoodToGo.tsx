@@ -9,9 +9,10 @@ import OnboardingFlowLancer from "../@icons/OnboardingFlowLancer";
 import OnboardingFlowNoble from "../@icons/OnboardingFlowNoble";
 
 export const GoodToGo: FC<{
+  setPage: (page: number) => void;
   selectedClass: Class;
   updateProfile: () => void;
-}> = ({ selectedClass, updateProfile }) => {
+}> = ({ setPage, selectedClass, updateProfile }) => {
   return (
     <div className="w-[500px] px-10 lg:px-0 flex flex-col items-center justify-center">
       <div className="flex items-center justify-center rounded-full bg-neutral-200 h-[32px] w-[32px]">
@@ -117,9 +118,15 @@ export const GoodToGo: FC<{
         {`Start your Journey`}
       </motion.button>
       <div className="flex gap-4 mt-4">
-        <div className="bg-neutral-200 h-2 w-2 rounded-full" />
-        <div className="bg-neutral-200 h-2 w-2 rounded-full" />
-        <div className="bg-neutral-400 h-2 w-2 rounded-full" />
+        <button
+          className="bg-neutral-200 h-3 w-3 rounded-full"
+          onClick={() => setPage(0)}
+        />
+        <button
+          className="bg-neutral-200 h-3 w-3 rounded-full"
+          onClick={() => setPage(1)}
+        />
+        <div className="bg-neutral-400 h-3 w-3 rounded-full" />
       </div>
     </div>
   );

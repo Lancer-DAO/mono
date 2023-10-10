@@ -84,8 +84,9 @@ const ChatView: FC<Props> = ({ selectedSubmitter, setCurrentActionView }) => {
               }
             }}
             {...smallClickAnimation}
+            className="bg-white border border-neutral200 px-4 py-2 rounded-md flex items-center gap-2 title-text text-neutral600"
           >
-            <X height={24} width={24} className="text-white" />
+            View Application
           </motion.button>
         </div>
       </ActionsCardBanner>

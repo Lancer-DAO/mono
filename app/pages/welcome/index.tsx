@@ -1,7 +1,6 @@
 import { getSession, withPageAuthRequired } from "@auth0/nextjs-auth0";
 import { GetServerSidePropsContext } from "next";
 import { NextSeo } from "next-seo";
-
 import * as queries from "@/prisma/queries";
 import { useState } from "react";
 import { Class, Option } from "@/types";
@@ -162,6 +161,7 @@ const WelcomePage: React.FC<{
           />,
           <GoodToGo
             key={2}
+            setPage={setPage}
             selectedClass={selectedClass}
             updateProfile={handleUpdateProfile}
           />,

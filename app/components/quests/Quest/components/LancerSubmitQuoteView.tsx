@@ -38,10 +38,6 @@ const LancerSubmitQuoteView: FC<Props> = ({
 }) => {
   const { currentBounty } = useBounty();
   const { currentUser } = useUserWallet();
-  const { data: quotes } = api.quote.getQuotesByBounty.useQuery(
-    { id: currentBounty.id },
-    { enabled: !!currentBounty }
-  );
   const { data: quote } = api.quote.getQuoteByBountyAndUser.useQuery(
     {
       bountyId: currentBounty.id,
@@ -134,15 +130,20 @@ const LancerSubmitQuoteView: FC<Props> = ({
     setQuoteData({ ...quoteData, checkpoints: newCheckpoints });
   };
 
+  useEffect(() => {
+    if (quoteData.checkpoints.length === 0) addCheckpoint();
+  }, []);
+
   if (!currentBounty || !currentUser) return null;
 
   return (
     <div className="flex flex-col relative h-full">
       <ActionsCardBanner
-        title={`Quote to ${currentBounty.creator.user.name}`}
-        subtitle={`${quotes?.length || 0} ${
-          (quotes?.length || 0) === 1 ? "quote has" : "quotes have"
-        } been sent to them already`}
+        title={`Submit Quote`}
+        subtitle="Quest Application"
+        // subtitle={`${quotes?.length || 0} ${
+        //   (quotes?.length || 0) === 1 ? "quote has" : "quotes have"
+        // } been sent to them already`}
       >
         <div className="flex items-center gap-3">
           {currentBounty.isApprovedSubmitter &&
@@ -204,7 +205,7 @@ const LancerSubmitQuoteView: FC<Props> = ({
                 onClick={() => addCheckpoint()}
               >
                 <Plus />
-                Add a Checkpoint
+                Add a Milestone
               </button>
             </div>
           )}
@@ -217,7 +218,7 @@ const LancerSubmitQuoteView: FC<Props> = ({
               setCurrentApplicationView(QuestApplicationView.ProfileInfo)
             }
           >
-            Review Profile
+            Application Details
           </button>
           {!hasApplied && !currentBounty.isDeniedLancer && (
             <motion.button
