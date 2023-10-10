@@ -11,13 +11,13 @@ import useCursorInside from "@/src/hooks/useInsideAlerter";
 
 const Highlight: React.FC<{ label: string }> = ({ label }) => {
   return (
-    <div className="w-fit p-2 rounded-full shadow-black-100 border border-neutral-200 inline-flex items-center cursor-pointer px-4">
+    <div className="w-fit p-2 rounded-full shadow-black-100 border border-neutral-200 inline-flex items-center px-4">
       <span className="text-neutral-500 mr-2 text-sm">{label}</span>
       <div
         className={`flex items-center justify-center w-5 h-5 border rounded-full bg-neutral-200
             `}
       >
-        <div className={`w-2 h-2  rounded-full bg-neutral-400`} />
+        <div className={`w-2 h-2 rounded-full bg-neutral-400`} />
       </div>
     </div>
   );
@@ -156,9 +156,9 @@ export const ChooseYourClass: FC<{
         {`Continue as ${selectedClass}`}
       </motion.button>
       <div className="flex gap-4 mt-4">
-        <div className="bg-neutral-400 h-2 w-2 rounded-full" />
-        <div className="bg-neutral-200 h-2 w-2 rounded-full" />
-        <div className="bg-neutral-200 h-2 w-2 rounded-full" />
+        <div className="bg-neutral-500 h-3 w-3 rounded-full" />
+        <div className="bg-neutral-300 h-3 w-3 rounded-full" />
+        <div className="bg-neutral-300 h-3 w-3 rounded-full" />
       </div>
     </div>
   );

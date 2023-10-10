@@ -38,15 +38,15 @@ export const CreateYourProfile: FC<{
     !name || (selectedClass === "Noble" && !company) || !description;
   return (
     <div className="w-[500px] px-10 lg:px-0 flex flex-col items-center justify-center">
-      <div className="flex items-center justify-center rounded-full bg-neutral-200 h-[32px] w-[32px]">
+      <div className="flex items-center justify-center rounded-full bg-neutral200 h-[32px] w-[32px]">
         <Logo width="27px" height="27px" />
       </div>
-      <h1 className="font-bold text-neutral-600 mt-2">
+      <h1 className="font-bold text-neutral600 mt-2">
         Now, create your Profile.
       </h1>
-      <div className="text-sm text-neutral-500 w-[520px] mt-1">
+      <div className="text-sm text-neutral500 w-[420px] text-center mx-auto mt-2">
         {` Give some love to your profile and earn the Level 1 badge to be able to
-        ${selectedClass === "Noble" ? "post" : "view"} quests.`}
+        ${selectedClass === "Noble" ? "post" : "apply to"} quests.`}
       </div>
       <div className="flex flex-col h-[430px] items-center justify-center">
         <div className="flex relative">
@@ -60,7 +60,7 @@ export const CreateYourProfile: FC<{
             </div>
           </div>
         </div>
-        <div className="flex flex-col bg-white rounded-md px-8 py-4 mt-6 z-10 w-[500px]">
+        <div className="flex flex-col bg-white rounded-md px-8 py-6 mt-6 z-10 w-[500px]">
           <div className="relative flex items-center mb-7">
             {currentUser && (
               <Image
@@ -74,10 +74,10 @@ export const CreateYourProfile: FC<{
             <div className="mr-4 text-sm ml-4 w-[72px]">Name</div>
             <input
               type="text"
-              className="placeholder:text-neutral-500 border bg-neutral-100 
-              border-neutral-200 w-full py-2 px-4 rounded-md text-sm"
+              className="placeholder:text-neutral400 border bg-neutral100 
+              border-neutral200 w-full py-2 px-4 rounded-md text-sm"
               name="issueTitle"
-              placeholder="Sir Lance"
+              placeholder="Your name"
               id="issue-title-input"
               value={name}
               onChange={(e) => {
@@ -96,8 +96,8 @@ export const CreateYourProfile: FC<{
             {selectedClass === "Noble" ? (
               <input
                 type="text"
-                className="placeholder:text-neutral-500 border bg-neutral-100 
-                border-neutral-200 w-full py-2 px-4 rounded-md text-sm"
+                className="placeholder:text-neutral400 border bg-neutral100 
+                border-neutral200 w-full py-2 px-4 rounded-md text-sm"
                 name="issueTitle"
                 placeholder="Company Name"
                 id="issue-title-input"
@@ -117,6 +117,7 @@ export const CreateYourProfile: FC<{
                 }}
                 options={industryOptions}
                 version="white"
+                extraClasses="w-[420px]"
               />
             )}
           </div>
@@ -124,10 +125,14 @@ export const CreateYourProfile: FC<{
           <div className="w-full text-sm flex flex-col gap-1 mt-4">
             <p>{selectedClass === "Noble" ? "Company Description" : "Bio"}</p>
             <textarea
-              className="placeholder:text-neutral-500 border bg-neutral-100 text-sm min-h-[100px] 
-              border-neutral-200 w-full rounded-md px-3 py-2 mt-2"
+              className="placeholder:text-neutral400 border bg-neutral100 text-sm min-h-[100px] 
+              border-neutral200 w-full rounded-md px-3 py-2 mt-2 resize-none"
               name="issueDescription"
-              placeholder="Landing page for a HR Software focusing on SME’s. We have something outdated and we need a new website that shows new shiny features and reflect our Brand."
+              placeholder={
+                selectedClass === "Noble"
+                  ? "Tell the world about your business"
+                  : "Tell the world about yourself"
+              }
               id="issue-description-input"
               value={description}
               onChange={(e) => {
@@ -139,7 +144,7 @@ export const CreateYourProfile: FC<{
       </div>
       <motion.button
         {...smallClickAnimation}
-        className={`h-[50px]  w-full rounded-md text-base z-10 ${
+        className={`h-[50px] w-full rounded-md text-base z-10 ${
           disabled
             ? "bg-error"
             : selectedClass === "Noble"
@@ -155,9 +160,15 @@ export const CreateYourProfile: FC<{
         {disabled ? "Please complete all fields" : `Continue as ${name}`}
       </motion.button>
       <div className="flex gap-4 mt-4">
-        <div className="bg-neutral-200 h-2 w-2 rounded-full" />
-        <div className="bg-neutral-400 h-2 w-2 rounded-full" />
-        <div className="bg-neutral-200 h-2 w-2 rounded-full" />
+        <button
+          className="bg-neutral300 hover:bg-neutral400 h-3 w-3 rounded-full"
+          onClick={() => setPage(0)}
+        />
+        <div className="bg-neutral500 h-3 w-3 rounded-full" />
+        <button
+          className="bg-neutral300 h-3 w-3 rounded-full disabled:cursor-not-allowed"
+          disabled
+        />
       </div>
     </div>
   );
