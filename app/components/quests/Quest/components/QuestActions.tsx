@@ -32,7 +32,8 @@ const QuestActions: FC = () => {
     if (!!currentUser && !currentBounty.isCreator) {
       // is not the creator
       if (
-        currentBounty.isApprovedSubmitter &&
+        (currentBounty.isApprovedSubmitter ||
+          currentBounty.isShortlistedLancer) &&
         currentBounty.state !== BountyState.CANCELED
       ) {
         // lancer has been approved to work on the quest

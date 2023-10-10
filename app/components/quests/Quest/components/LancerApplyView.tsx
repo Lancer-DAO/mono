@@ -45,18 +45,15 @@ const LancerApplyView: FC<Props> = ({
   return (
     <div className="flex flex-col h-full">
       <ActionsCardBanner
-        title={
-          hasApplied
-            ? `Quote to ${currentBounty.creator.user.name}`
-            : "Apply to this Quest"
-        }
-        subtitle={
-          hasApplied
-            ? `${quotes?.length || 0} ${
-                (quotes?.length || 0) === 1 ? "quote has" : "quotes have"
-              } been sent to them already`
-            : ""
-        }
+        title={"Your Details"}
+        subtitle="Quest Application"
+        // subtitle={
+        //   hasApplied
+        //     ? `${quotes?.length || 0} ${
+        //         (quotes?.length || 0) === 1 ? "quote has" : "quotes have"
+        //       } been sent to them already`
+        //     : ""
+        // }
       >
         {hasApplied &&
           currentBounty.isShortlistedLancer &&
