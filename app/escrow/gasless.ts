@@ -9,8 +9,7 @@ import {
 export const sendGaslessTx = async (
   instructions: TransactionInstruction[],
   sign?: boolean,
-  wallet?,
-  delay?: number
+  wallet?
 ) => {
   const tx = new Transaction();
 
@@ -35,7 +34,7 @@ export const sendGaslessTx = async (
     ? signed.serialize({ requireAllSignatures: false })
     : tx.serialize({ requireAllSignatures: false });
 
-  const res = await fetch(`/api/gasless?delay=${delay}`, {
+  const res = await fetch(`/api/gasless`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ transaction: bs58.encode(serialized) }),
