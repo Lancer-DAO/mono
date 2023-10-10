@@ -141,6 +141,17 @@ const QuestDetails = () => {
               </div>
             )}
           </div>
+          {currentBounty.isCreator && (
+            <p className="text-sm text-neutral500 px-6 pb-3">
+              {`Creator wallet: ${
+                currentBounty.creator.publicKey
+                  ? currentBounty.creator.publicKey.slice(0, 4) +
+                    " ... " +
+                    currentBounty.creator.publicKey.slice(-4)
+                  : ""
+              }`}
+            </p>
+          )}
           <div className="flex px-5 gap-2">
             <div
               className={cn(
