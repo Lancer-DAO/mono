@@ -94,13 +94,23 @@ const bountyQueryMany = async (
 ) => {
   if (!userId) {
     return await prisma.bounty.findMany({
-      where: {
-        isTest: false,
-        isPrivate: false,
-        state: {
-          in: [BountyState.ACCEPTING_APPLICATIONS],
-        },
-      },
+      where:
+        process.env.NEXT_PUBLIC_IS_CUSTODIAL === "true"
+          ? {
+              isTest: false,
+              isPrivate: false,
+              isExternal: false,
+              state: {
+                in: [BountyState.ACCEPTING_APPLICATIONS],
+              },
+            }
+          : {
+              isTest: false,
+              isPrivate: false,
+              state: {
+                in: [BountyState.ACCEPTING_APPLICATIONS],
+              },
+            },
       orderBy: {
         createdAt: "desc",
       },
@@ -142,6 +152,9 @@ const bountyQueryMany = async (
           in: [BountyState.ACCEPTING_APPLICATIONS],
         },
       };
+  if (process.env.NEXT_PUBLIC_IS_CUSTODIAL === "true") {
+    otherQuestsWhereClause = { ...otherQuestsWhereClause, isExternal: false };
+  }
   const bounties = await prisma.bounty.findMany({
     where: {
       OR: [
