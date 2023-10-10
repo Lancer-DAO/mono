@@ -12,13 +12,13 @@ import useCursorInside from "@/src/hooks/useInsideAlerter";
 const Highlight: React.FC<{ label: string }> = ({ label }) => {
   return (
     <div className="w-fit p-2 rounded-full shadow-black-100 border border-neutral-200 inline-flex items-center px-4">
-      <span className="text-neutral-500 mr-2 text-sm">{label}</span>
       <div
         className={`flex items-center justify-center w-5 h-5 border rounded-full bg-neutral-200
-            `}
+        `}
       >
         <div className={`w-2 h-2 rounded-full bg-neutral-400`} />
       </div>
+      <span className="text-neutral-500 ml-2 text-sm">{label}</span>
     </div>
   );
 };
@@ -27,13 +27,13 @@ const NOBLE_HEIGHLIGHTS = [
   "Crush product backlog",
   "Access top talent",
   "Deliver seamlessly",
-  "Pay Automatically",
+  "Pay automatically",
 ];
 
 const LANCER_HEIGHLIGHTS = [
   "Flexible work schedule",
-  "Instant Payments",
-  "Clear Expectations",
+  "Instant payments",
+  "Clear expectations",
   "Variety of projects",
 ];
 

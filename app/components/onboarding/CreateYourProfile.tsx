@@ -1,4 +1,4 @@
-import { FC, useState } from "react";
+import { FC } from "react";
 import { Logo, MultiSelectDropdown } from "@/components";
 import { smallClickAnimation } from "@/src/constants";
 import { motion } from "framer-motion";
