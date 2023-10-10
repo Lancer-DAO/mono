@@ -22,7 +22,7 @@ export const QuestsCard: FC<Props> = ({ user }) => {
 
   const SITE_URL = `https://${
     IS_CUSTODIAL ? "app" : "pro"
-  }.lancer.so/account?r=`;
+  }.lancer.so/welcome?r=`;
 
   const handleCreateLink = useCallback(async () => {
     try {
