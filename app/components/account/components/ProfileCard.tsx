@@ -296,16 +296,17 @@ export const ProfileCard = ({
           </div>
         </div>
         {currentUser.hasBeenApproved && !self ? (
-          <QuestActionsButton
-            onClick={async () => {
-              const url = await createDM([String(currentUser.id), String(id)]);
-              setCurrentChannel({ url });
-              setIsChatOpen(true);
-            }}
-            type="green"
-            text="Send Message"
-            extraClasses="w-fit mb-[6px]"
-          />
+          // <QuestActionsButton
+          //   onClick={async () => {
+          //     const url = await createDM([String(currentUser.id), String(id)]);
+          //     setCurrentChannel({ url });
+          //     setIsChatOpen(true);
+          //   }}
+          //   type="green"
+          //   text="Send Message"
+          //   extraClasses="w-fit mb-[6px]"
+          // />
+          <></>
         ) : self ? (
           <div className="flex flex-col items-end justify-end gap-2">
             <QuestActionsButton
