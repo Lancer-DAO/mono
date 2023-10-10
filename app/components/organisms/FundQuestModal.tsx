@@ -18,7 +18,7 @@ import Image from "next/image";
 interface Props {
   setShowModal: Dispatch<SetStateAction<boolean>>;
   setShowFundModal: Dispatch<SetStateAction<boolean>>;
-  handleApproveForQuest?: () => Promise<void>;
+  handleApproveForQuest?: (addDelay?: boolean) => Promise<void>;
   amount?: number;
   approving?: boolean;
 }
