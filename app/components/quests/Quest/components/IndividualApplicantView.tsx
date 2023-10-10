@@ -68,10 +68,12 @@ const IndividualApplicantView: FC<Props> = ({
   const [showModal, setShowModal] = useState(false);
   const [showFundModal, setShowFundModal] = useState(false);
 
-  const handleApproveForQuest = async () => {
+  const handleApproveForQuest = async (addDelay?: boolean) => {
     if (!currentBounty || !selectedSubmitter) return;
     const toastId = toast.loading("Approving Your Lancer...");
-
+    if (addDelay) {
+      await new Promise((r) => setTimeout(r, Number(5000)));
+    }
     try {
       const submitterWallet = new PublicKey(selectedSubmitter.publicKey);
       const remainingAccounts = await getRemainingAccounts(

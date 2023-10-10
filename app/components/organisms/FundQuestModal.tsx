@@ -88,9 +88,8 @@ const FundQuestModal: FC<Props> = ({
           isLoading: true,
           loadingPrompt: "Approving Lancer",
         });
-        await new Promise((r) => setTimeout(r, Number(5000)));
 
-        await handleApproveForQuest();
+        await handleApproveForQuest(true);
         setFundQuestState({
           isLoading: false,
           loadingPrompt: "",
