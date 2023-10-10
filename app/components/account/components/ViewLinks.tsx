@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { ResumeCard } from "./ResumeCard";
 
 const ViewLinks = ({
@@ -33,7 +32,7 @@ const ViewLinks = ({
           {website && (
             <div className="w-full flex items-center gap-2">
               <p className="text-neutral600 w-14 text-sm">Portfolio</p>
-              <Link
+              <a
                 className="w-64 text-sm border border-neutral200 bg-neutral100
                 text-neutral600 rounded-md p-2 truncate"
                 href={formatLinks(website)}
@@ -41,13 +40,13 @@ const ViewLinks = ({
                 rel="noreferrer noopener"
               >
                 {formatLinks(website)}
-              </Link>
+              </a>
             </div>
           )}
           {github && (
             <div className="w-full flex items-center gap-2">
               <p className="text-neutral600 w-14 text-sm">GitHub</p>
-              <Link
+              <a
                 className="w-64 text-sm border border-neutral200 bg-neutral100
                 text-neutral600 rounded-md p-2 truncate"
                 href={formatLinks(github)}
@@ -55,13 +54,13 @@ const ViewLinks = ({
                 rel="noreferrer noopener"
               >
                 {formatLinks(github)}
-              </Link>
+              </a>
             </div>
           )}
           {twitter && (
             <div className="w-full flex items-center gap-2">
               <p className="text-neutral600 w-14 text-sm">Twitter</p>
-              <Link
+              <a
                 className="w-64 text-sm border border-neutral200 bg-neutral100
                 text-neutral600 rounded-md p-2 truncate"
                 href={formatLinks(twitter)}
@@ -69,13 +68,13 @@ const ViewLinks = ({
                 rel="noreferrer noopener"
               >
                 {formatLinks(twitter)}
-              </Link>
+              </a>
             </div>
           )}
           {linkedin && (
             <div className="w-full flex items-center gap-2">
               <p className="text-neutral600 w-14 text-sm">LinkedIn</p>
-              <Link
+              <a
                 className="w-64 text-sm border border-neutral200 bg-neutral100
                 text-neutral600 rounded-md p-2 truncate"
                 href={formatLinks(linkedin)}
@@ -83,7 +82,7 @@ const ViewLinks = ({
                 rel="noreferrer noopener"
               >
                 {formatLinks(linkedin)}
-              </Link>
+              </a>
             </div>
           )}
         </div>
