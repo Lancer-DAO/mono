@@ -41,9 +41,11 @@ export async function getServerSideProps(
   );
 
   if (user && user.hasFinishedOnboarding) {
+    const referrer = req.url.split("?r=");
+
     return {
       redirect: {
-        destination: "/",
+        destination: referrer.length === 2 ? `/?r=${referrer[1]}` : "/",
         permanent: false,
       },
     };
