@@ -138,10 +138,13 @@ export const CreateBountyForm: FC<Props> = ({
       setCreateQuestState({ isLoading: false, result: "Quest Created" });
       toast.success("Quest Created");
       setTimeout(() => {
-        toast.dismiss(toastId);
+        toast.loading("Creating Referral Account, this may take some time", {
+          id: toastId,
+        });
       }, 2000);
+
       setCurrentBounty(bounty);
-      router.push(`/quests/${bounty.id}`);
+      await new Promise((r) => setTimeout(r, Number(20000)));
 
       const [feature_account] = await findFeatureAccount(
         timestamp,
@@ -161,9 +164,13 @@ export const CreateBountyForm: FC<Props> = ({
       const res2 = await sendGaslessTx(
         [referralAccountIx],
         true,
-        currentWallet,
-        20000
+        currentWallet
       );
+      router.push(`/quests/${bounty.id}`);
+
+      if (!res2.signature) {
+        throw new Error("Error creating referral account");
+      }
     } catch (error) {
       setCreateQuestState({ error });
       if (error.message === "Wallet is registered to another user") {
