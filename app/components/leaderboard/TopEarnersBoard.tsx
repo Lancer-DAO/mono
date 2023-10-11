@@ -22,7 +22,7 @@ export const TopEarnersBoard: FC<any> = () => {
   return (
     <div className="w-full flex flex-col items-center justify-center gap-2.5 py-24">
       <LeaderBoardSelector />
-      <div className="bg-gray-100 w-[70%] flex flex-col px-5 py-2.5 items-center justify-center">
+      <div className="bg-white w-[70%] flex flex-col px-5 py-2.5 items-center justify-center">
         <h1 className="mb-2.5">Top Earners</h1>
         <div className="w-full flex justify-between border-b border-gray-300">
           <p className="font-bold text-lg">User</p>

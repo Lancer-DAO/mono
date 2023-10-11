@@ -88,7 +88,7 @@ export const ContributionBoard: FC<any> = () => {
     <div className="w-full flex flex-col items-center justify-center gap-2.5 py-24">
       <LeaderBoardSelector />
       <div className="w-full max-w-[1200px] mx-auto flex items-start gap-2.5">
-        <div className="p-4 bg-gray-200 rounded-md w-fit">
+        <div className="p-4 bg-white rounded-md w-fit">
           <h2 className="text-lg font-bold mb-2">
             Filter by Programming Language
           </h2>
@@ -108,8 +108,8 @@ export const ContributionBoard: FC<any> = () => {
             ))}
           </ul>
         </div>
-        <div className="bg-gray-100 w-full flex flex-col px-[20px] py-2.5 items-center justify-center">
-          <h1 className="text-3xl font-semibold mb-4 w-full">Top Developers</h1>
+        <div className="bg-white rounded-md w-full flex flex-col px-[20px] py-2.5 items-center justify-center">
+          <h1 className="text-2xl font-bold mb-4 w-full">Top Developers</h1>
           <div className="w-full flex justify-between border-b border-gray-300">
             <p className="font-bold text-xl">Github Username</p>
             <p className="font-bold text-xl">Total Lines Contributed</p>
@@ -131,9 +131,9 @@ export const ContributionBoard: FC<any> = () => {
                     </p>
                   </a>
                   {change[dev.github_name] == "up" ? (
-                    <ArrowUp color="green" />
+                    <ArrowUp color="#6BB274" />
                   ) : change[dev.github_name] == "down" ? (
-                    <ArrowDown color="red" />
+                    <ArrowDown color="#F5364F" />
                   ) : (
                     <span>—</span>
                   )}

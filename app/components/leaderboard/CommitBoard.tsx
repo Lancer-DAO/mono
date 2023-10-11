@@ -40,8 +40,8 @@ export const LeaderboardCommits: FC<any> = ({ self }) => {
   return (
     <div className="flex flex-col items-center justify-center gap-2.5 py-24">
       <LeaderBoardSelector />
-      <div className="bg-gray-100 w-[70%] flex flex-col px-5 py-2.5 items-center justify-center">
-        <h1 className="text-3xl font-semibold mb-4 w-full">
+      <div className="bg-white rounded-md w-[70%] flex flex-col px-6 py-3 items-center justify-center">
+        <h1 className="text-2xl font-bold text-neutral500 mb-4 w-full">
           Top Developers By Commits
         </h1>
 
