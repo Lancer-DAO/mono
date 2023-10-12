@@ -125,7 +125,7 @@ export const CreateBountyForm: FC<Props> = ({
         title: formData.issueTitle,
         description: formData.issueDescription,
         tags: formData.tags,
-        links: formData.links,
+        links: formData.links.filter((link) => link !== ""),
         media: formData.media,
         isPrivate: formData.isPrivate,
         isTest: formData.isTest,
