@@ -56,11 +56,9 @@ const LancerApplyView: FC<Props> = ({
         //     : ""
         // }
       >
-        {hasApplied &&
-          currentBounty.isShortlistedLancer &&
-          Number(currentBounty.escrow.amount) > 0 && (
-            <ChatButton setCurrentActionView={setCurrentActionView} />
-          )}
+        {hasApplied && (
+          <ChatButton setCurrentActionView={setCurrentActionView} />
+        )}
       </ActionsCardBanner>
       <AlertCards />
       <div className="w-full p-6 flex items-center justify-between gap-6">

@@ -138,7 +138,7 @@ const LancerSubmitQuoteView: FC<Props> = ({
   return (
     <div className="flex flex-col relative h-full">
       <ActionsCardBanner
-        title={`Submit Quote`}
+        title={hasApplied ? "Your Quote" : "Submit Quote"}
         subtitle="Quest Application"
         // subtitle={`${quotes?.length || 0} ${
         //   (quotes?.length || 0) === 1 ? "quote has" : "quotes have"
@@ -158,10 +158,9 @@ const LancerSubmitQuoteView: FC<Props> = ({
                 Submit Update
               </motion.button>
             )}
-          {currentBounty.isShortlistedLancer &&
-            Number(currentBounty.escrow.amount) > 0 && (
-              <ChatButton setCurrentActionView={setCurrentActionView} />
-            )}
+          {hasApplied && Number(currentBounty.escrow.amount) > 0 && (
+            <ChatButton setCurrentActionView={setCurrentActionView} />
+          )}
         </div>
       </ActionsCardBanner>
       <AlertCards />
