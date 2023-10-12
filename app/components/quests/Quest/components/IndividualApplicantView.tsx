@@ -10,7 +10,6 @@ import { api, updateList } from "@/src/utils";
 import { BOUNTY_USER_RELATIONSHIP, BountyState } from "@/types";
 import { PublicKey } from "@solana/web3.js";
 import { motion } from "framer-motion";
-import { orderBy } from "lodash";
 import { X } from "lucide-react";
 import Image from "next/image";
 import { Dispatch, FC, SetStateAction, useState } from "react";

@@ -2,13 +2,11 @@ import { FC, useCallback, useState } from "react";
 import QuestTable from "@/components/quests/Quests/components/QuestTable/QuestTable";
 import { User } from "@/types";
 import AlertCard from "@/components/quests/Quest/components/AlertCard";
-import { Button, CopyLinkField } from "@/components";
+import { Button } from "@/components";
 import { useReferral } from "@/src/providers/referralProvider";
 import { IS_CUSTODIAL } from "@/src/constants";
 import { Copy } from "lucide-react";
 import { useUserWallet } from "@/src/providers";
-import { useBounty } from "@/src/providers/bountyProvider";
-import { api } from "@/src/utils";
 
 interface Props {
   user: User;

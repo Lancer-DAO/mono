@@ -1,12 +1,5 @@
 import { useEffect, useState } from "react";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/atoms/Modal";
+import { Dialog, DialogContent, DialogTrigger } from "@/components/atoms/Modal";
 import EditReferenceDialogue from "@/components/molecules/EditReferenceDialogue";
 import ReferenceDialogue from "@/components/molecules/ReferenceDialogue";
 import { smallClickAnimation } from "@/src/constants";

@@ -17,11 +17,10 @@ export const CompleteProfileModal: FC<Props> = ({ setShowModal }) => {
       disableOutsideClick
       className="py-20 relative"
     >
-      <div className="w-full flex flex-col items-center justify-center gap-5 max-w-[400px] mx-auto">
-        <h1 className="text-center">Profile Complete!</h1>
+      <div className="text-neutral500 w-full flex flex-col items-center justify-center gap-5 max-w-[400px] mx-auto">
+        <h1 className="text-center text-neutral600">Profile Complete!</h1>
         <p className="text-center">
-          You are now qualified to be considered for full access to Lancer.
-          Benefits include:
+          You are now in line for full access to Lancer. Benefits include:
         </p>
         <ol className="text-center">
           <li className="font-bold">1. Messaging other Users</li>

@@ -1,6 +1,5 @@
 import Plus from "@/components/@icons/Plus";
 import RedFire from "@/components/@icons/RedFire";
-import { user } from "@/prisma/queries";
 import { smallClickAnimation } from "@/src/constants";
 import { useUserWallet } from "@/src/providers";
 import { useBounty } from "@/src/providers/bountyProvider";

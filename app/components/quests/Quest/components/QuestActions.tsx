@@ -1,9 +1,8 @@
+import { FC, useEffect, useState } from "react";
 import { BountyUserType } from "@/prisma/queries/bounty";
-import { currentUser } from "@/server/api/routers/users/currentUser";
 import { useUserWallet } from "@/src/providers";
 import { useBounty } from "@/src/providers/bountyProvider";
-import { Bounty, BountyState, User } from "@/types";
-import { FC, useEffect, useState } from "react";
+import { BountyState } from "@/types";
 import ApplicantsView from "./ApplicantsView";
 import ChatView from "./ChatView";
 import LancerApplicationView from "./LancerApplicationView";

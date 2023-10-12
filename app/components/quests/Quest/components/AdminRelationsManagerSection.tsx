@@ -1,20 +1,9 @@
-import { useUserWallet } from "@/src/providers/userWalletProvider";
-import { BOUNTY_USER_RELATIONSHIP, BountyState, RELATIONS } from "@/types/";
-import {
-  addSubmitterFFA,
-  removeSubmitterFFA,
-  addSubmitterFFAOld,
-} from "@/escrow/adapters";
-import { Button, ContributorInfo, MultiSelectDropdown } from "@/components";
-import { Check, X } from "react-feather";
-import { PublicKey } from "@solana/web3.js";
+import { BOUNTY_USER_RELATIONSHIP, RELATIONS } from "@/types/";
+import { Button, MultiSelectDropdown } from "@/components";
+import { Check } from "react-feather";
 import { api } from "@/src/utils/api";
-import { useReferral } from "@/src/providers/referralProvider";
-import { BOUNTY_ACTIONS_TUTORIAL_I_INITIAL_STATE } from "@/src/constants/tutorials";
 import { useBounty } from "@/src/providers/bountyProvider";
-import { useTutorial } from "@/src/providers/tutorialProvider";
 import { BountyUserType } from "@/prisma/queries/bounty";
-import { updateList } from "@/src/utils";
 import { useState } from "react";
 import { capitalize } from "lodash";
 import Image from "next/image";

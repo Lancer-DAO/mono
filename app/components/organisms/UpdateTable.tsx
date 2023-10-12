@@ -25,7 +25,6 @@ import {
   cancelFFA,
   voteToCancelFFA,
 } from "@/escrow/adapters";
-import Image from "next/image";
 
 import { createUnderdogClient } from "@underdog-protocol/js";
 const underdogClient = createUnderdogClient({});
