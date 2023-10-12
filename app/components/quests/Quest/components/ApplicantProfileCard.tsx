@@ -10,6 +10,7 @@ import Image from "next/image";
 import { Dispatch, FC, SetStateAction } from "react";
 import { EApplicantsView } from "./ApplicantsView";
 import { QuestActionView } from "./QuestActions";
+import Link from "next/link";
 
 dayjs.extend(relativeTime);
 
@@ -43,19 +44,27 @@ const ApplicantProfileCard: FC<Props> = ({
       justify-center rounded-md"
     >
       <div className="w-full flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <Image
-            src={user.user.picture}
-            alt="user avatar"
-            width={36}
-            height={36}
-            className="rounded-full overflow-hidden"
-          />
-          <div className="flex flex-col">
-            <p className="text-neutral600 title-text">{user.user.name}</p>
-            <p className="text-neutral500 text-xs">{`${user.user.experience} XP`}</p>
+        <Link
+          href={`/account/${user.userid}`}
+          target="_blank"
+          rel="noreferrer noopener"
+        >
+          <div className="flex items-center gap-2 cursor-pointer group">
+            <Image
+              src={user.user.picture}
+              alt="user avatar"
+              width={36}
+              height={36}
+              className="rounded-full overflow-hidden"
+            />
+            <div className="flex flex-col">
+              <p className="text-neutral600 title-text group-hover:underline">
+                {user.user.name}
+              </p>
+              <p className="text-neutral500 text-xs">{`${user.user.experience} XP`}</p>
+            </div>
           </div>
-        </div>
+        </Link>
 
         {/* requested */}
         {currentBounty.requestedLancers.some(

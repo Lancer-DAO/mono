@@ -175,69 +175,6 @@ const IndividualApplicantView: FC<Props> = ({
     }
   };
 
-  // const handleManageShortlist = async (action: "add" | "remove") => {
-  //   if (!currentBounty || !selectedSubmitter) return;
-
-  //   setIsLoading(true);
-  //   const toastId = toast.loading(
-  //     action === "add" ? "Adding to shortlist..." : "Removing from shortlist..."
-  //   );
-  //   try {
-  //     const newRelations =
-  //       action === "add"
-  //         ? [BOUNTY_USER_RELATIONSHIP.ShortlistedLancer]
-  //         : [BOUNTY_USER_RELATIONSHIP.RequestedLancer];
-  //     const updatedBounty = await updateBounty({
-  //       bountyId: currentBounty?.id,
-  //       currentUserId: currentUser.id,
-  //       userId: selectedSubmitter.userid,
-  //       relations: newRelations,
-  //       publicKey: selectedSubmitter.publicKey,
-  //       escrowId: currentBounty?.escrowid,
-  //       signature: "n/a",
-  //       state: BountyState.REVIEWING_SHORTLIST,
-  //       label: action === "add" ? "add-to-shortlist" : "remove-from-shortlist",
-  //     });
-
-  //     setCurrentBounty(updatedBounty);
-  //     setSelectedSubmitter(null);
-  //     toast.success(
-  //       action === "add"
-  //         ? "Successfully added to shortlist"
-  //         : "Successfully removed from shortlist",
-  //       { id: toastId }
-  //     );
-  //     setTimeout(() => {
-  //       toast.dismiss(toastId);
-  //     }, 2000);
-  //   } catch (error) {
-  //     if (
-  //       (error.message as string).includes(
-  //         "Wallet is registered to another user"
-  //       )
-  //     ) {
-  //       toast.error("Wallet is registered to another user", {
-  //         id: toastId,
-  //       });
-  //       setTimeout(() => {
-  //         toast.dismiss(toastId);
-  //       }, 2000);
-  //     } else {
-  //       toast.error(
-  //         action === "add"
-  //           ? "Error adding to shortlist"
-  //           : "Error removing from shortlist",
-  //         { id: toastId }
-  //       );
-  //       setTimeout(() => {
-  //         toast.dismiss(toastId);
-  //       }, 2000);
-  //     }
-  //   } finally {
-  //     setIsLoading(false);
-  //   }
-  // };
-
   return (
     <>
       <div className="flex flex-col h-full">
@@ -276,34 +213,32 @@ const IndividualApplicantView: FC<Props> = ({
           </div>
         </div>
         <div className="h-full relative flex flex-col gap-8">
-          <div className="flex flex-col px-8 py-2">
-            <div className="flex py-4 justify-between border-b border-neutral200">
-              <div className="flex items-center gap-2">
-                <RedFire />
-                <div className="title-text text-neutral600">Quote Price</div>
-                <div className="w-[1px] h-5 bg-neutral200" />
-                <div className="text-mini text-neutral400">{`${
-                  quote?.estimatedTime ?? 0
-                }h`}</div>
+          {!!quote && (
+            <div className="flex flex-col px-8 py-2">
+              <div className="flex py-4 justify-between border-b border-neutral200">
+                <div className="flex items-center gap-2">
+                  <RedFire />
+                  <div className="title-text text-neutral600">Quote Price</div>
+                  <div className="w-[1px] h-5 bg-neutral200" />
+                  <div className="text-mini text-neutral400">{`${
+                    quote?.estimatedTime ?? 0
+                  }h`}</div>
+                </div>
+                <div className="flex items-center title-text text-primary200">{`$${
+                  quote?.price ?? 0
+                }`}</div>
               </div>
-              <div className="flex items-center title-text text-primary200">{`$${
-                quote?.price ?? 0
-              }`}</div>
+              {checkpoints?.map((checkpoint, index) => (
+                <CheckpointView checkpoint={checkpoint} key={index} />
+              ))}
             </div>
-            {checkpoints?.map((checkpoint, index) => (
-              <CheckpointView checkpoint={checkpoint} key={index} />
-            ))}
-          </div>
-          <div className="flex flex-col gap-2.5 px-8 py-2">
-            <p className="text-neutral600 title-text">{`About ${selectedSubmitter.user.name}`}</p>
-            <p className="text">{selectedSubmitter.user.bio}</p>
-          </div>
+          )}
+
           {/* action buttons */}
           {selectedSubmitter.relations.includes(
             BOUNTY_USER_RELATIONSHIP.RequestedLancer
           ) ? (
             <div className="mt-auto self-stretch">
-              <div className="h-[1px] w-full bg-neutral200" />
               <div className="w-full flex items-center justify-end gap-4 px-8 py-4">
                 <ChatButton
                   setCurrentActionView={setCurrentActionView}
@@ -321,7 +256,7 @@ const IndividualApplicantView: FC<Props> = ({
                 <motion.button
                   {...smallClickAnimation}
                   className="bg-primary200 h-9 w-fit px-4 py-2
-                title-text rounded-md text-white disabled:cursor-not-allowed disabled:opacity-80"
+                  title-text rounded-md text-white disabled:cursor-not-allowed disabled:opacity-80"
                   onClick={() => {
                     if (
                       Number(quote.price) -
@@ -340,7 +275,9 @@ const IndividualApplicantView: FC<Props> = ({
                 </motion.button>
               </div>
             </div>
-          ) : null}
+          ) : (
+            <div className="pt-3" />
+          )}
           {showModal && (
             <DepositCTAModal
               prompt="Now that you have selected a Lancer for your Quest, you will need to deposit the quoted price into escrow. This will be released to the Lancer once you have approved their work. These funds are fully refundable if the Quest is cancelled or the Lancer is unable to complete the Quest."

@@ -81,10 +81,16 @@ const ApplicantsView: FC<Props> = ({
     <>
       <div className="flex flex-col h-full">
         <ActionsCardBanner
-          title="Applications Review"
-          subtitle={`Started on ${createdAtDate}`}
+          title="Review Applications"
+          subtitle={`Quest started on ${createdAtDate}`}
         />
         <div className="relative flex flex-col h-full gap-5 px-6 py-4">
+          <p className="text">
+            Review all incoming Applications and Quotes here. Lancers will
+            apply, opening up the ability to chat with you. Once you get to know
+            them and answer their questions, they will submit Quotes for you to
+            review. Select the best one and deposit funds to kick things off 🔥
+          </p>
           {currentBounty.approvedSubmitters.length === 0 ? (
             <>
               <p className="title-text text-neutral600">Pending</p>

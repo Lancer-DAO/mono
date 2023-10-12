@@ -68,7 +68,7 @@ const QuestActions: FC = () => {
 
   return (
     <div
-      className={`bg-white w-full min-w-[610px] border border-neutral200 rounded-lg overflow-hidden ${
+      className={`bg-white h-fit w-full min-w-[610px] border border-neutral200 rounded-lg overflow-hidden ${
         currentActionView === QuestActionView.Chat && "max-h-[44.5rem]"
       }`}
     >
