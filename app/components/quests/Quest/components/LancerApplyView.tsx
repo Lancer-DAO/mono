@@ -3,13 +3,14 @@ import { ChatButton } from "@/components";
 import { smallClickAnimation } from "@/src/constants";
 import { useUserWallet } from "@/src/providers";
 import { useBounty } from "@/src/providers/bountyProvider";
-import { LancerApplyData } from "@/types";
+import { BountyState, LancerApplyData } from "@/types";
 import { motion } from "framer-motion";
 import ActionsCardBanner from "./ActionsCardBanner";
 import { QuestApplicationView } from "./LancerApplicationView";
 import { QuestActionView } from "./QuestActions";
 import AlertCards from "./AlertCards";
 import { ResumeCard } from "@/components/account/components";
+import { api } from "@/src/utils";
 
 interface Props {
   applyData: LancerApplyData;
@@ -34,6 +35,11 @@ const LancerApplyView: FC<Props> = ({
 }) => {
   const { currentBounty } = useBounty();
   const { currentUser } = useUserWallet();
+  const { data: update } = api.update.getNewUpdateByBounty.useQuery(
+    { id: currentBounty.id },
+    { enabled: !!currentBounty }
+  );
+
   const [resumeUrl, setResumeUrl] = useState<string>();
 
   useEffect(() => {
@@ -56,9 +62,24 @@ const LancerApplyView: FC<Props> = ({
         //     : ""
         // }
       >
-        {hasApplied && (
-          <ChatButton setCurrentActionView={setCurrentActionView} />
-        )}
+        <div className="flex items-center gap-3">
+          {currentBounty.isApprovedSubmitter &&
+            !!update === false &&
+            currentBounty.state === BountyState.IN_PROGRESS && (
+              <motion.button
+                {...smallClickAnimation}
+                className="bg-secondary200 text-white title-text px-4 py-2 rounded-md"
+                onClick={() =>
+                  setCurrentActionView(QuestActionView.SubmitUpdate)
+                }
+              >
+                Submit Update
+              </motion.button>
+            )}
+          {hasApplied && (
+            <ChatButton setCurrentActionView={setCurrentActionView} />
+          )}
+        </div>
       </ActionsCardBanner>
       <AlertCards />
       <div className="w-full p-6 flex items-center justify-between gap-6">
@@ -67,7 +88,7 @@ const LancerApplyView: FC<Props> = ({
           <input
             type="text"
             className="text border border-neutral200 placeholder:text-neutral500/60 
-              bg-neutral100 text-neutral500 w-full h-[34px] rounded-md px-3"
+            bg-neutral100 text-neutral500 w-full h-[34px] rounded-md px-3"
             name={`link-portfolio`}
             placeholder="Paste Link"
             id={`link-portfolio`}
