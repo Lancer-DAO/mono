@@ -10,7 +10,8 @@ import LancerSubmitUpdateView from "./LancerSubmitUpdateView";
 import UpdateView from "./UpdateView";
 
 export enum QuestActionView {
-  SubmitApplication = "submit-application", // one-way (Lancer) - contains apply & quote
+  SubmitApplication = "submit-application", // one-way (Lancer)
+  SubmitQuote = "submit-quote", // one-way (Lancer)
   ViewApplicants = "view-applicants", // one-way (client)
   Chat = "chat", // two-way (client, Lancer)
   SubmitUpdate = "submit-update", // one-way (Lancer)

@@ -9,18 +9,16 @@ const AlertCards: FC = () => {
   const { currentUser } = useUserWallet();
   return (
     <>
-      {(currentBounty.isRequestedLancer ||
-        (currentBounty.isShortlistedLancer &&
-          Number(currentBounty.escrow.amount) === 0)) && (
+      {currentBounty.isRequestedLancer && (
         <div className="px-5 pt-5">
           <AlertCard
             type="positive"
             title="Nice!"
-            description="Your application has been sent. Fingers crossed! You will hear an answer from the client within 48 hours."
+            description="Your application has been sent! Now, chat with the creator to get more information about the Quest. Then, submit a detailed Quote!"
           />
         </div>
       )}
-      {currentBounty.isShortlistedLancer &&
+      {/* {currentBounty.isShortlistedLancer &&
         Number(currentBounty.escrow.amount) > 0 && (
           <div className="px-5 pt-5">
             <AlertCard
@@ -29,7 +27,7 @@ const AlertCards: FC = () => {
               description="You have been added to the creator's shortlist. You can now chat with them to see if you're a good fit for each other!"
             />
           </div>
-        )}
+        )} */}
       {currentBounty.isApprovedSubmitter &&
         currentBounty.state !== BountyState.CANCELED &&
         Number(currentBounty.escrow.amount) > 0 && (
@@ -37,13 +35,12 @@ const AlertCards: FC = () => {
             <AlertCard
               type="positive"
               title="Congrats!"
-              description="You have been selected for this Quest. You can now chat with and submit updates to the creator!"
+              description="You have been selected for this Quest. You can now submit updates to the creator and work towards completing the Quest!"
             />
           </div>
         )}
       {currentBounty.isApprovedSubmitter &&
-        currentBounty.state === BountyState.CANCELED &&
-        Number(currentBounty.escrow.amount) > 0 && (
+        currentBounty.state === BountyState.CANCELED && (
           <div className="px-5 pt-5">
             <AlertCard
               type="negative"

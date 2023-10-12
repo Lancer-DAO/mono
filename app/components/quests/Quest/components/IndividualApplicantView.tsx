@@ -51,14 +51,6 @@ const IndividualApplicantView: FC<Props> = ({
     { id: quote?.id },
     { enabled: !!quote }
   );
-  // const { data: highestQuote } = api.quote.getHighestQuoteByBounty.useQuery(
-  //   {
-  //     bountyId: currentBounty.id,
-  //   },
-  //   {
-  //     enabled: !!currentBounty,
-  //   }
-  // );
 
   const [showModal, setShowModal] = useState(false);
   const [showFundModal, setShowFundModal] = useState(false);
@@ -324,7 +316,7 @@ const IndividualApplicantView: FC<Props> = ({
                   onClick={handleReject}
                   disabled={isLoading}
                 >
-                  Reject this quote
+                  Reject this Quote
                 </motion.button>
                 <motion.button
                   {...smallClickAnimation}
@@ -351,7 +343,7 @@ const IndividualApplicantView: FC<Props> = ({
           ) : null}
           {showModal && (
             <DepositCTAModal
-              prompt="Now that you have selected a Lancer for your Quest, you will need to deposit the remaining amount of the quote into escrow. This will be released to the submitter once you have approved their work. These funds are fully refundable if the Quest is cancelled or the submitter is unable to complete the Quest."
+              prompt="Now that you have selected a Lancer for your Quest, you will need to deposit the quoted price into escrow. This will be released to the Lancer once you have approved their work. These funds are fully refundable if the Quest is cancelled or the Lancer is unable to complete the Quest."
               setShowModal={setShowModal}
               setShowFundModal={setShowFundModal}
               amount={Number(quote.price)}

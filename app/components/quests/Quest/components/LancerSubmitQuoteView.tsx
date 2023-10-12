@@ -19,10 +19,8 @@ interface Props {
   setQuoteData: Dispatch<SetStateAction<LancerQuoteData>>;
   setCurrentApplicationView: Dispatch<SetStateAction<QuestApplicationView>>;
   setCurrentActionView: Dispatch<SetStateAction<QuestActionView>>;
-  hasApplied: boolean;
   onClick: () => Promise<void>;
   isAwaitingResponse: boolean;
-  applicationIsValid: boolean;
 }
 
 const LancerSubmitQuoteView: FC<Props> = ({
@@ -30,10 +28,8 @@ const LancerSubmitQuoteView: FC<Props> = ({
   setQuoteData,
   setCurrentApplicationView,
   setCurrentActionView,
-  hasApplied,
   onClick,
   isAwaitingResponse,
-  applicationIsValid,
 }) => {
   const { currentBounty } = useBounty();
   const { currentUser } = useUserWallet();
@@ -52,6 +48,14 @@ const LancerSubmitQuoteView: FC<Props> = ({
     { id: currentBounty.id },
     { enabled: !!currentBounty }
   );
+
+  const quoteIsValid =
+    currentUser.hasBeenApproved &&
+    quoteData.checkpoints.length > 0 &&
+    quoteData.checkpoints[0].title !== "" &&
+    quoteData.checkpoints[0].description !== "" &&
+    quoteData.checkpoints[0].price !== 0 &&
+    quoteData.checkpoints[0].estimatedTime !== 0;
 
   useEffect(() => {
     if (!!quote && !!checkpoints) {
@@ -138,11 +142,8 @@ const LancerSubmitQuoteView: FC<Props> = ({
   return (
     <div className="flex flex-col relative h-full">
       <ActionsCardBanner
-        title={hasApplied ? "Your Quote" : "Submit Quote"}
+        title={!!quote ? "Your Quote" : "Submit Quote"}
         subtitle="Quest Application"
-        // subtitle={`${quotes?.length || 0} ${
-        //   (quotes?.length || 0) === 1 ? "quote has" : "quotes have"
-        // } been sent to them already`}
       >
         <div className="flex items-center gap-3">
           {currentBounty.isApprovedSubmitter &&
@@ -158,9 +159,7 @@ const LancerSubmitQuoteView: FC<Props> = ({
                 Submit Update
               </motion.button>
             )}
-          {hasApplied && Number(currentBounty.escrow.amount) > 0 && (
-            <ChatButton setCurrentActionView={setCurrentActionView} />
-          )}
+          <ChatButton setCurrentActionView={setCurrentActionView} />
         </div>
       </ActionsCardBanner>
       <AlertCards />
@@ -177,7 +176,7 @@ const LancerSubmitQuoteView: FC<Props> = ({
           </div>
           {quoteData.checkpoints.map((checkpoint, index) => (
             <>
-              {!hasApplied && !currentBounty.isDeniedLancer ? (
+              {!quote && !currentBounty.isDeniedLancer ? (
                 <CheckpointEdit
                   checkpoint={checkpoint}
                   setQuoteData={setQuoteData}
@@ -195,7 +194,7 @@ const LancerSubmitQuoteView: FC<Props> = ({
               )}
             </>
           ))}
-          {quoteData.checkpoints.length < 5 && !hasApplied && (
+          {quoteData.checkpoints.length < 5 && !quote && (
             <div className="py-4">
               <button
                 className="py-1 px-2 flex gap-1 justify-center items-center 
@@ -220,15 +219,15 @@ const LancerSubmitQuoteView: FC<Props> = ({
             >
               Application Details
             </button>
-            {!hasApplied && !currentBounty.isDeniedLancer && (
+            {currentBounty.isRequestedLancer && !quote && (
               <motion.button
                 {...smallClickAnimation}
                 className="bg-primary200 text-white h-9 w-fit px-4 py-2 title-text rounded-md
                 disabled:opacity-70 disabled:cursor-not-allowed"
                 onClick={onClick}
-                disabled={isAwaitingResponse || !applicationIsValid}
+                disabled={isAwaitingResponse || !quoteIsValid}
               >
-                Submit Application
+                Send Quote
               </motion.button>
             )}
           </div>

@@ -29,7 +29,7 @@ const LancerApplicationView: FC<Props> = ({
   const { connected } = useWallet();
 
   const [currentApplicationView, setCurrentApplicationView] =
-    useState<QuestApplicationView>(QuestApplicationView.SubmitQuote);
+    useState<QuestApplicationView>(QuestApplicationView.ProfileInfo);
   const [isAwaitingResponse, setIsAwaitingResponse] = useState(false);
   const { mutateAsync: updateBountyUsers } =
     api.bountyUsers.update.useMutation();
@@ -63,14 +63,9 @@ const LancerApplicationView: FC<Props> = ({
   });
 
   const applicationIsValid =
-    currentUser.hasBeenApproved &&
-    quoteData.checkpoints.length > 0 &&
-    quoteData.checkpoints[0].title !== "" &&
-    quoteData.checkpoints[0].description !== "" &&
-    quoteData.checkpoints[0].price !== 0 &&
-    quoteData.checkpoints[0].estimatedTime !== 0;
+    currentUser.hasBeenApproved && applyData.about.length > 0;
 
-  const confirmAction = (): Promise<void> => {
+  const confirmAction = (action?: string): Promise<void> => {
     setIsAwaitingResponse(true);
 
     return new Promise<void>((resolve, reject) => {
@@ -89,7 +84,9 @@ const LancerApplicationView: FC<Props> = ({
       const toastId = toast(
         (t) => (
           <div>
-            Are you sure you want to submit your application?
+            {`Are you sure you want to ${
+              action ? action : "submit your application"
+            }?`}
             <div className="mt-2 flex items-center gap-4 justify-center">
               <button
                 onClick={handleYes}
@@ -115,15 +112,7 @@ const LancerApplicationView: FC<Props> = ({
     });
   };
 
-  const onClick = async () => {
-    if (quoteData.checkpoints.length === 0) {
-      const toastId = toast.error("Please create at least one milestone.");
-      setTimeout(() => {
-        toast.dismiss(toastId);
-      }, 2000);
-      return;
-    }
-
+  const applyLite = async () => {
     if (!connected && !IS_CUSTODIAL) {
       const toastId = toast.error("Please connect your wallet.");
       setTimeout(() => {
@@ -152,6 +141,50 @@ const LancerApplicationView: FC<Props> = ({
         signature: "n/a",
         applicationText: applyData.details,
       });
+
+      setCurrentBounty(updatedBounty);
+      toast.success("Application sent", { id: toastId });
+
+      setTimeout(() => {
+        toast.dismiss(toastId);
+      }, 2000);
+    } catch (error) {
+      if (
+        (error.message as string).includes(
+          "Wallet is registered to another user"
+        )
+      ) {
+        toast.error("Wallet is registered to another user", {
+          id: toastId,
+        });
+        setTimeout(() => {
+          toast.dismiss(toastId);
+        }, 2000);
+      } else {
+        toast.error("Error submitting application", {
+          id: toastId,
+        });
+        setTimeout(() => {
+          toast.dismiss(toastId);
+        }, 2000);
+      }
+    }
+  };
+
+  const submitQuote = async () => {
+    await confirmAction("submit your quote");
+
+    if (quoteData.checkpoints.length === 0) {
+      const toastId = toast.error("Please create at least one milestone.");
+      setTimeout(() => {
+        toast.dismiss(toastId);
+      }, 2000);
+      return;
+    }
+
+    const toastId = toast.loading("Sending Quote...");
+
+    try {
       await createQuote({
         bountyId: currentBounty.id,
         title: quoteData.title,
@@ -162,12 +195,8 @@ const LancerApplicationView: FC<Props> = ({
         checkpoints: quoteData.checkpoints,
       });
 
-      setCurrentBounty(updatedBounty);
-      toast.success("Application sent", { id: toastId });
+      toast.success("Quote sent!", { id: toastId });
 
-      setTimeout(() => {
-        toast.dismiss(toastId);
-      }, 2000);
       // remove locally stored form data
       localStorage.removeItem(`quoteData-${currentBounty.id}`);
       localStorage.removeItem(`applyData-${currentBounty.id}`);
@@ -217,7 +246,7 @@ const LancerApplicationView: FC<Props> = ({
           setCurrentApplicationView={setCurrentApplicationView}
           setCurrentActionView={setCurrentActionView}
           hasApplied={hasApplied}
-          onClick={onClick}
+          onClick={applyLite}
           isAwaitingResponse={isAwaitingResponse}
           applicationIsValid={applicationIsValid}
         />
@@ -228,10 +257,8 @@ const LancerApplicationView: FC<Props> = ({
           setQuoteData={setQuoteData}
           setCurrentApplicationView={setCurrentApplicationView}
           setCurrentActionView={setCurrentActionView}
-          hasApplied={hasApplied}
-          onClick={onClick}
+          onClick={submitQuote}
           isAwaitingResponse={isAwaitingResponse}
-          applicationIsValid={applicationIsValid}
         />
       )}
     </>

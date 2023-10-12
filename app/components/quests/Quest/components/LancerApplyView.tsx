@@ -39,6 +39,13 @@ const LancerApplyView: FC<Props> = ({
     { id: currentBounty.id },
     { enabled: !!currentBounty }
   );
+  const { data: quote } = api.quote.getQuoteByBountyAndUser.useQuery(
+    {
+      bountyId: currentBounty.id,
+      userId: currentUser.id,
+    },
+    { enabled: !!currentBounty && !!currentUser }
+  );
 
   const [resumeUrl, setResumeUrl] = useState<string>();
 
@@ -118,7 +125,14 @@ const LancerApplyView: FC<Props> = ({
       </div>
       <div className="h-[1px] w-full bg-neutral200" />
       <div className="w-full flex-1 px-6 py-4 flex flex-col gap-4">
-        <p className="text-neutral600 text">Who am I?</p>
+        <div>
+          <p className="text-neutral600 text">
+            Why are you good fit for this role?
+          </p>
+          <p className="text-neutral500 text">
+            Don&apos;t be modest! You rule!
+          </p>
+        </div>
         <textarea
           className="text border border-neutral200 placeholder:text-neutral500/80 resize-y min-h-[150px] max-h-[500px] overflow-y-auto
           bg-neutral100 text-neutral500 w-full rounded-md px-3 p-2 disabled:opacity-60"
@@ -141,14 +155,17 @@ const LancerApplyView: FC<Props> = ({
       </div>
       <div className="h-[1px] w-full bg-neutral200" />
       <div className="flex items-center justify-end gap-4 px-6 py-4">
-        <button
-          className="title-text text-neutral600 px-4 py-2 rounded-md border border-neutral300"
-          onClick={() =>
-            setCurrentApplicationView(QuestApplicationView.SubmitQuote)
-          }
-        >
-          Back to Quote
-        </button>
+        {hasApplied && (
+          <button
+            className="title-text text-neutral600 px-4 py-2 rounded-md border border-neutral300"
+            onClick={() =>
+              setCurrentApplicationView(QuestApplicationView.SubmitQuote)
+            }
+          >
+            {!!quote ? "View Quote" : "Submit a Quote"}
+          </button>
+        )}
+
         {!hasApplied && (
           <motion.button
             {...smallClickAnimation}
@@ -157,7 +174,7 @@ const LancerApplyView: FC<Props> = ({
             onClick={onClick}
             disabled={isAwaitingResponse || !applicationIsValid}
           >
-            Submit Application
+            Apply for Quest
           </motion.button>
         )}
       </div>

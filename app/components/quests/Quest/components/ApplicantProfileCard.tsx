@@ -62,19 +62,22 @@ const ApplicantProfileCard: FC<Props> = ({
           (submitter) => submitter.userid === user.userid
         ) && (
           <div className="flex items-center gap-2">
-            <motion.button
-              {...smallClickAnimation}
-              onClick={() => {
-                setSelectedSubmitter(user);
-                setCurrentApplicantsView(EApplicantsView.Individual);
-              }}
-              className="bg-[#F0F0F0] rounded-md flex items-center gap-1
-            text-neutral600 title-text px-4 py-2 
-            disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              <Flame width={16} height={16} className="text-tertiary200" />{" "}
-              {`$${quote?.price} Quote`}
-            </motion.button>
+            {!!quote && (
+              <motion.button
+                {...smallClickAnimation}
+                onClick={() => {
+                  setSelectedSubmitter(user);
+                  setCurrentApplicantsView(EApplicantsView.Individual);
+                }}
+                className="bg-[#F0F0F0] rounded-md flex items-center gap-1
+                text-neutral600 title-text px-4 py-2 
+                disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                <Flame width={16} height={16} className="text-tertiary200" />{" "}
+                {`$${quote?.price} Quote`}
+              </motion.button>
+            )}
+
             <motion.button
               {...smallClickAnimation}
               onClick={() => {
