@@ -26,19 +26,23 @@ const QuestActions: FC = () => {
   const [currentActionView, setCurrentActionView] = useState<QuestActionView>();
   const [selectedSubmitter, setSelectedSubmitter] =
     useState<BountyUserType | null>();
+  const [hasApplied, setHasApplied] = useState(false);
+
+  // check if user has applied
+  useEffect(() => {
+    if (!currentBounty || !currentUser) return;
+    const hasApplied = !!currentBounty.currentUserRelationsList;
+    setHasApplied(hasApplied);
+  }, [currentBounty, currentUser]);
 
   useEffect(() => {
     if (!!currentUser && !currentBounty.isCreator) {
       // is not the creator
-      if (
-        (currentBounty.isApprovedSubmitter ||
-          currentBounty.isShortlistedLancer) &&
-        currentBounty.state !== BountyState.CANCELED
-      ) {
-        // lancer has been approved to work on the quest
+      if (hasApplied && currentBounty.state !== BountyState.CANCELED) {
+        // lancer has applied to this quest already
         setCurrentActionView(QuestActionView.Chat);
       } else {
-        // lancer needs to apply or is waiting for approval
+        // lancer needs to apply
         setCurrentActionView(QuestActionView.SubmitApplication);
       }
     } else if (!!currentUser && currentBounty.isCreator) {
@@ -51,7 +55,7 @@ const QuestActions: FC = () => {
         setCurrentActionView(QuestActionView.Chat);
       }
     }
-  }, [currentUser, currentBounty]);
+  }, [currentUser, currentBounty, hasApplied]);
 
   if (
     !currentUser ||
@@ -68,7 +72,10 @@ const QuestActions: FC = () => {
       }`}
     >
       {currentActionView === QuestActionView.SubmitApplication && (
-        <LancerApplicationView setCurrentActionView={setCurrentActionView} />
+        <LancerApplicationView
+          hasApplied={hasApplied}
+          setCurrentActionView={setCurrentActionView}
+        />
       )}
       {currentActionView === QuestActionView.ViewApplicants && (
         <ApplicantsView

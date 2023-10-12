@@ -26,8 +26,6 @@ interface Props {
   setCurrentActionView: Dispatch<SetStateAction<QuestActionView>>;
   isLoading: boolean;
   setIsLoading: Dispatch<SetStateAction<boolean>>;
-  isAwaitingResponse: boolean;
-  setIsAwaitingResponse: Dispatch<SetStateAction<boolean>>;
 }
 
 const IndividualApplicantView: FC<Props> = ({
@@ -37,8 +35,6 @@ const IndividualApplicantView: FC<Props> = ({
   setCurrentApplicantsView,
   isLoading,
   setIsLoading,
-  isAwaitingResponse,
-  setIsAwaitingResponse,
 }) => {
   const { currentUser, currentWallet, program, provider } = useUserWallet();
   const { currentBounty, setCurrentBounty } = useBounty();
@@ -55,14 +51,14 @@ const IndividualApplicantView: FC<Props> = ({
     { id: quote?.id },
     { enabled: !!quote }
   );
-  const { data: highestQuote } = api.quote.getHighestQuoteByBounty.useQuery(
-    {
-      bountyId: currentBounty.id,
-    },
-    {
-      enabled: !!currentBounty,
-    }
-  );
+  // const { data: highestQuote } = api.quote.getHighestQuoteByBounty.useQuery(
+  //   {
+  //     bountyId: currentBounty.id,
+  //   },
+  //   {
+  //     enabled: !!currentBounty,
+  //   }
+  // );
 
   const [showModal, setShowModal] = useState(false);
   const [showFundModal, setShowFundModal] = useState(false);
@@ -187,68 +183,68 @@ const IndividualApplicantView: FC<Props> = ({
     }
   };
 
-  const handleManageShortlist = async (action: "add" | "remove") => {
-    if (!currentBounty || !selectedSubmitter) return;
+  // const handleManageShortlist = async (action: "add" | "remove") => {
+  //   if (!currentBounty || !selectedSubmitter) return;
 
-    setIsLoading(true);
-    const toastId = toast.loading(
-      action === "add" ? "Adding to shortlist..." : "Removing from shortlist..."
-    );
-    try {
-      const newRelations =
-        action === "add"
-          ? [BOUNTY_USER_RELATIONSHIP.ShortlistedLancer]
-          : [BOUNTY_USER_RELATIONSHIP.RequestedLancer];
-      const updatedBounty = await updateBounty({
-        bountyId: currentBounty?.id,
-        currentUserId: currentUser.id,
-        userId: selectedSubmitter.userid,
-        relations: newRelations,
-        publicKey: selectedSubmitter.publicKey,
-        escrowId: currentBounty?.escrowid,
-        signature: "n/a",
-        state: BountyState.REVIEWING_SHORTLIST,
-        label: action === "add" ? "add-to-shortlist" : "remove-from-shortlist",
-      });
+  //   setIsLoading(true);
+  //   const toastId = toast.loading(
+  //     action === "add" ? "Adding to shortlist..." : "Removing from shortlist..."
+  //   );
+  //   try {
+  //     const newRelations =
+  //       action === "add"
+  //         ? [BOUNTY_USER_RELATIONSHIP.ShortlistedLancer]
+  //         : [BOUNTY_USER_RELATIONSHIP.RequestedLancer];
+  //     const updatedBounty = await updateBounty({
+  //       bountyId: currentBounty?.id,
+  //       currentUserId: currentUser.id,
+  //       userId: selectedSubmitter.userid,
+  //       relations: newRelations,
+  //       publicKey: selectedSubmitter.publicKey,
+  //       escrowId: currentBounty?.escrowid,
+  //       signature: "n/a",
+  //       state: BountyState.REVIEWING_SHORTLIST,
+  //       label: action === "add" ? "add-to-shortlist" : "remove-from-shortlist",
+  //     });
 
-      setCurrentBounty(updatedBounty);
-      setSelectedSubmitter(null);
-      toast.success(
-        action === "add"
-          ? "Successfully added to shortlist"
-          : "Successfully removed from shortlist",
-        { id: toastId }
-      );
-      setTimeout(() => {
-        toast.dismiss(toastId);
-      }, 2000);
-    } catch (error) {
-      if (
-        (error.message as string).includes(
-          "Wallet is registered to another user"
-        )
-      ) {
-        toast.error("Wallet is registered to another user", {
-          id: toastId,
-        });
-        setTimeout(() => {
-          toast.dismiss(toastId);
-        }, 2000);
-      } else {
-        toast.error(
-          action === "add"
-            ? "Error adding to shortlist"
-            : "Error removing from shortlist",
-          { id: toastId }
-        );
-        setTimeout(() => {
-          toast.dismiss(toastId);
-        }, 2000);
-      }
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  //     setCurrentBounty(updatedBounty);
+  //     setSelectedSubmitter(null);
+  //     toast.success(
+  //       action === "add"
+  //         ? "Successfully added to shortlist"
+  //         : "Successfully removed from shortlist",
+  //       { id: toastId }
+  //     );
+  //     setTimeout(() => {
+  //       toast.dismiss(toastId);
+  //     }, 2000);
+  //   } catch (error) {
+  //     if (
+  //       (error.message as string).includes(
+  //         "Wallet is registered to another user"
+  //       )
+  //     ) {
+  //       toast.error("Wallet is registered to another user", {
+  //         id: toastId,
+  //       });
+  //       setTimeout(() => {
+  //         toast.dismiss(toastId);
+  //       }, 2000);
+  //     } else {
+  //       toast.error(
+  //         action === "add"
+  //           ? "Error adding to shortlist"
+  //           : "Error removing from shortlist",
+  //         { id: toastId }
+  //       );
+  //       setTimeout(() => {
+  //         toast.dismiss(toastId);
+  //       }, 2000);
+  //     }
+  //   } finally {
+  //     setIsLoading(false);
+  //   }
+  // };
 
   return (
     <>
@@ -287,8 +283,8 @@ const IndividualApplicantView: FC<Props> = ({
             </motion.button>
           </div>
         </div>
-        <div className="relative flex flex-col gap-8 px-8 py-2">
-          <div className="flex flex-col">
+        <div className="h-full relative flex flex-col gap-8">
+          <div className="flex flex-col px-8 py-2">
             <div className="flex py-4 justify-between border-b border-neutral200">
               <div className="flex items-center gap-2">
                 <RedFire />
@@ -306,123 +302,59 @@ const IndividualApplicantView: FC<Props> = ({
               <CheckpointView checkpoint={checkpoint} key={index} />
             ))}
           </div>
-          <div className="flex flex-col gap-2.5">
+          <div className="flex flex-col gap-2.5 px-8 py-2">
             <p className="text-neutral600 title-text">{`About ${selectedSubmitter.user.name}`}</p>
             <p className="text">{selectedSubmitter.user.bio}</p>
           </div>
-          {/* <div className="flex flex-col gap-2.5">
-            <p className="text-neutral600 title-text">{`Why is ${selectedSubmitter.user.name} a good fit?`}</p>
-            <p className="text">{selectedSubmitter.applicationText}</p>
-          </div> */}
           {/* action buttons */}
           {selectedSubmitter.relations.includes(
             BOUNTY_USER_RELATIONSHIP.RequestedLancer
           ) ? (
-            <div className="w-full flex items-center justify-end gap-4 pb-4">
-              <motion.button
-                {...smallClickAnimation}
-                className="bg-white border border-neutral200 h-9 w-fit px-4 py-2
-                  title-text rounded-md text-error disabled:cursor-not-allowed disabled:opacity-80"
-                onClick={handleReject}
-                disabled={isLoading || isAwaitingResponse}
-              >
-                Reject this quote
-              </motion.button>
-              <motion.button
-                {...smallClickAnimation}
-                className="bg-primary200 border border-neutral200 h-9 w-fit px-4 py-2
-                title-text rounded-md text-white disabled:cursor-not-allowed disabled:opacity-60"
-                onClick={() => handleManageShortlist("add")}
-                disabled={
-                  isLoading ||
-                  isAwaitingResponse ||
-                  currentBounty.shortlistedLancers.length === MAX_SHORTLIST
-                }
-              >
-                {`${
-                  currentBounty.shortlistedLancers.length === MAX_SHORTLIST
-                    ? "Shortlist full"
-                    : `Add to shortlist`
-                }`}
-              </motion.button>
-            </div>
-          ) : null}
-          {/* applicant is shortlisted but client has not funded escrow with deposit */}
-          {selectedSubmitter.relations.includes(
-            BOUNTY_USER_RELATIONSHIP.ShortlistedLancer
-          ) && Number(currentBounty.escrow.amount) === 0 ? (
-            <div className="w-full flex items-center justify-end gap-4">
-              <motion.button
-                {...smallClickAnimation}
-                className="bg-white border border-neutral200 h-9 w-fit px-4 py-2
-                title-text rounded-md text-error disabled:cursor-not-allowed disabled:opacity-80"
-                onClick={() => handleManageShortlist("remove")}
-                disabled={isLoading || isAwaitingResponse}
-              >
-                Remove from shortlist
-              </motion.button>
-            </div>
-          ) : null}
-          {/* applicant is shortlisted and client has funded escrow with deposit */}
-          {selectedSubmitter.relations.includes(
-            BOUNTY_USER_RELATIONSHIP.ShortlistedLancer
-          ) && (
-            <div className="w-full flex items-center justify-end gap-4">
-              {(selectedSubmitter.relations.includes(
-                BOUNTY_USER_RELATIONSHIP.ShortlistedLancer
-              ) ||
-                selectedSubmitter.relations.includes(
-                  BOUNTY_USER_RELATIONSHIP.ApprovedSubmitter
-                )) &&
-              Number(currentBounty.escrow.amount) > 0 ? (
+            <div className="mt-auto self-stretch">
+              <div className="h-[1px] w-full bg-neutral200" />
+              <div className="w-full flex items-center justify-end gap-4 px-8 py-4">
                 <ChatButton
                   setCurrentActionView={setCurrentActionView}
-                  disabled={isLoading || isAwaitingResponse}
+                  disabled={isLoading}
                 />
-              ) : null}
-              {selectedSubmitter.relations.includes(
-                BOUNTY_USER_RELATIONSHIP.ShortlistedLancer
-              ) && Number(currentBounty.escrow.amount) > 0 ? (
-                <>
-                  <motion.button
-                    {...smallClickAnimation}
-                    className="bg-white border border-neutral300 h-9 w-fit px-4 py-2
-                    title-text rounded-md text-neutral600 disabled:cursor-not-allowed disabled:opacity-80"
-                    onClick={() => handleManageShortlist("remove")}
-                    disabled={isLoading || isAwaitingResponse}
-                  >
-                    Reject for the Quest
-                  </motion.button>
-                  <motion.button
-                    {...smallClickAnimation}
-                    className="bg-success h-9 w-fit px-4 py-2
-                    title-text rounded-md text-white disabled:cursor-not-allowed disabled:opacity-80"
-                    onClick={() => {
-                      if (
-                        Number(quote.price) -
-                          Number(currentBounty.escrow.amount) >
-                        0
-                      ) {
-                        setShowModal(true);
-                      } else {
-                        // run approval function anyways
-                        handleApproveForQuest();
-                      }
-                    }}
-                    disabled={isLoading || isAwaitingResponse}
-                  >
-                    Select for the Quest
-                  </motion.button>
-                </>
-              ) : null}
+                <motion.button
+                  {...smallClickAnimation}
+                  className="bg-white border border-neutral200 h-9 w-fit px-4 py-2
+                  title-text rounded-md text-error disabled:cursor-not-allowed disabled:opacity-80"
+                  onClick={handleReject}
+                  disabled={isLoading}
+                >
+                  Reject this quote
+                </motion.button>
+                <motion.button
+                  {...smallClickAnimation}
+                  className="bg-primary200 h-9 w-fit px-4 py-2
+                title-text rounded-md text-white disabled:cursor-not-allowed disabled:opacity-80"
+                  onClick={() => {
+                    if (
+                      Number(quote.price) -
+                        Number(currentBounty.escrow.amount) >
+                      0
+                    ) {
+                      setShowModal(true);
+                    } else {
+                      // run approval function anyways
+                      handleApproveForQuest();
+                    }
+                  }}
+                  disabled={isLoading}
+                >
+                  Select for the Quest
+                </motion.button>
+              </div>
             </div>
-          )}
+          ) : null}
           {showModal && (
             <DepositCTAModal
               prompt="Now that you have selected a Lancer for your Quest, you will need to deposit the remaining amount of the quote into escrow. This will be released to the submitter once you have approved their work. These funds are fully refundable if the Quest is cancelled or the submitter is unable to complete the Quest."
               setShowModal={setShowModal}
               setShowFundModal={setShowFundModal}
-              amount={Number(quote.price) - Number(highestQuote * 0.05)}
+              amount={Number(quote.price)}
             />
           )}
         </div>
@@ -431,7 +363,7 @@ const IndividualApplicantView: FC<Props> = ({
         <FundQuestModal
           setShowModal={setShowFundModal}
           setShowFundModal={setShowFundModal}
-          amount={Number(quote.price) - Number(highestQuote * 0.05)}
+          amount={Number(quote.price)}
           handleApproveForQuest={handleApproveForQuest}
           approving={true}
         />

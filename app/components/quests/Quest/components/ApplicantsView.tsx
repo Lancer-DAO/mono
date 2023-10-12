@@ -1,5 +1,4 @@
 import { Dispatch, FC, SetStateAction, useEffect, useState } from "react";
-import { useUserWallet } from "@/src/providers";
 import { useBounty } from "@/src/providers/bountyProvider";
 import ActionsCardBanner from "./ActionsCardBanner";
 import ApplicantProfileCard from "./ApplicantProfileCard";
@@ -7,12 +6,9 @@ import { Lock, X } from "lucide-react";
 import { motion } from "framer-motion";
 import { MAX_SHORTLIST, smallClickAnimation } from "@/src/constants";
 import { BountyUserType } from "@/prisma/queries/bounty";
-import { api, updateList } from "@/src/utils";
-import { BOUNTY_USER_RELATIONSHIP, BountyState } from "@/types";
-import toast from "react-hot-toast";
+import { api } from "@/src/utils";
+import { BountyState } from "@/types";
 import { QuestActionView } from "./QuestActions";
-import { cancelFFA, voteToCancelFFA } from "@/escrow/adapters";
-import { PublicKey } from "@solana/web3.js";
 import { FundQuestModal } from "@/components";
 import DepositCTAModal from "./DepositCTAModal";
 import IndividualApplicantView from "./IndividualApplicantView";
@@ -33,9 +29,7 @@ const ApplicantsView: FC<Props> = ({
   selectedSubmitter,
   setSelectedSubmitter,
 }) => {
-  const { currentUser, currentWallet, program, provider } = useUserWallet();
-  const { currentBounty, setCurrentBounty } = useBounty();
-  const { mutateAsync: updateBounty } = api.bountyUsers.update.useMutation();
+  const { currentBounty } = useBounty();
   const { refetch } = api.quote.getHighestQuoteByBounty.useQuery(
     {
       bountyId: currentBounty.id,
@@ -52,7 +46,6 @@ const ApplicantsView: FC<Props> = ({
   const [currentApplicantsView, setCurrentApplicantsView] =
     useState<EApplicantsView>(EApplicantsView.All);
   const [isLoading, setIsLoading] = useState(false);
-  const [isAwaitingResponse, setIsAwaitingResponse] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [showFundModal, setShowFundModal] = useState(false);
   const [depositAmount, setDepositAmount] = useState(0);
@@ -60,169 +53,6 @@ const ApplicantsView: FC<Props> = ({
   const createdAtDate = new Date(
     Number(currentBounty?.createdAt)
   ).toLocaleDateString();
-
-  const confirmAction = (action: string): Promise<void> => {
-    setIsAwaitingResponse(true);
-
-    return new Promise<void>((resolve, reject) => {
-      const handleYes = () => {
-        toast.dismiss(toastId);
-        setIsAwaitingResponse(false);
-        resolve();
-      };
-
-      const handleNo = () => {
-        toast.dismiss(toastId);
-        setIsAwaitingResponse(false);
-        reject();
-      };
-
-      const toastId = toast(
-        (t) => (
-          <div>
-            <p className="text-center">{`Are you sure you want to ${action}?`}</p>
-            <div className="mt-2 flex items-center gap-4 justify-center">
-              <button
-                onClick={handleYes}
-                className="bg-white border border-neutral300 text-error flex title-text
-                items-center justify-center rounded-md px-3 py-1"
-              >
-                Yes
-              </button>
-              <button
-                onClick={handleNo}
-                className="bg-primary200 flex text-white title-text
-                items-center justify-center rounded-md px-3 py-1"
-              >
-                No
-              </button>
-            </div>
-          </div>
-        ),
-        {
-          duration: Infinity,
-        }
-      );
-    });
-  };
-
-  const handleVoteToCancel = async () => {
-    await confirmAction("vote to cancel the Quest");
-    const toastId = toast.loading("Submitting vote to cancel...");
-    try {
-      setIsLoading(true);
-      let signature = "";
-      if (currentBounty?.isCreator || currentBounty?.isCurrentSubmitter) {
-        signature = await voteToCancelFFA(
-          new PublicKey(currentBounty?.creator.publicKey),
-          new PublicKey(currentWallet.publicKey),
-          currentBounty?.escrow,
-          currentWallet,
-          program,
-          provider
-        );
-      }
-      const newRelations = updateList(
-        currentBounty?.currentUserRelationsList,
-        [],
-        [BOUNTY_USER_RELATIONSHIP.VotingCancel]
-      );
-      const updatedBounty = await updateBounty({
-        bountyId: currentBounty?.id,
-        currentUserId: currentUser.id,
-        userId: currentUser.id,
-        relations: newRelations,
-        state: BountyState.VOTING_TO_CANCEL,
-        publicKey: currentWallet.publicKey.toString(),
-        escrowId: currentBounty?.escrowid,
-        signature,
-        label: "vote-to-cancel",
-      });
-      setCurrentBounty(updatedBounty);
-      toast.success("Successfully voted to cancel", { id: toastId });
-      setTimeout(() => {
-        toast.dismiss(toastId);
-      }, 2000);
-    } catch (error) {
-      console.log(error);
-      if (
-        (error.message as string).includes(
-          "Wallet is registered to another user"
-        )
-      ) {
-        toast.error("Wallet is registered to another user", {
-          id: toastId,
-        });
-        setTimeout(() => {
-          toast.dismiss(toastId);
-        }, 2000);
-      } else {
-        toast.error("Error submitting application", {
-          id: toastId,
-        });
-        setTimeout(() => {
-          toast.dismiss(toastId);
-        }, 2000);
-      }
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const handleCancel = async () => {
-    await confirmAction("cancel the Quest");
-    const toastId = toast.loading("Cancelling Quest...");
-    try {
-      setIsLoading(true);
-      const signature = await cancelFFA(
-        currentBounty.escrow,
-        currentWallet,
-        program,
-        provider
-      );
-      const newRelation = updateList(
-        currentBounty.currentUserRelationsList,
-        [],
-        [BOUNTY_USER_RELATIONSHIP.Canceler]
-      );
-      const updatedBounty = await updateBounty({
-        bountyId: currentBounty.id,
-        currentUserId: currentUser.id,
-        userId: currentUser.id,
-        relations: newRelation,
-        state: BountyState.CANCELED,
-        publicKey: currentWallet.publicKey.toString(),
-        escrowId: currentBounty.escrowid,
-        signature,
-        label: "cancel-escrow",
-      });
-
-      setCurrentBounty(updatedBounty);
-      setIsLoading(false);
-      toast.success("Quest canceled", { id: toastId });
-      setTimeout(() => {
-        toast.dismiss(toastId);
-      }, 2000);
-    } catch (error) {
-      if (
-        (error.message as string).includes(
-          "Wallet is registered to another user"
-        )
-      ) {
-        toast.error("Wallet is registered to another user", {
-          id: toastId,
-        });
-        setTimeout(() => {
-          toast.dismiss(toastId);
-        }, 2000);
-      } else {
-        toast.error("Error cancelling Quest", { id: toastId });
-        setTimeout(() => {
-          toast.dismiss(toastId);
-        }, 2000);
-      }
-    }
-  };
 
   useEffect(() => {
     if (currentBounty?.shortlistedLancers) {
@@ -244,8 +74,6 @@ const ApplicantsView: FC<Props> = ({
         setCurrentActionView={setCurrentActionView}
         isLoading={isLoading}
         setIsLoading={setIsLoading}
-        isAwaitingResponse={isAwaitingResponse}
-        setIsAwaitingResponse={setIsAwaitingResponse}
       />
     );
 
@@ -257,53 +85,6 @@ const ApplicantsView: FC<Props> = ({
           subtitle={`Started on ${createdAtDate}`}
         />
         <div className="relative flex flex-col h-full gap-5 px-6 py-4">
-          {currentBounty.shortlistedLancers.length > 0 ? (
-            <>
-              {Number(currentBounty.escrow.amount) === 0 ? (
-                <div className="flex items-center justify-between mt-2">
-                  <p className="text-sm text-neutral-600">
-                    {`You've added ${currentBounty.shortlistedLancers.length}/${MAX_SHORTLIST} candidates to your shortlist.`}
-                  </p>
-                  <motion.button
-                    {...smallClickAnimation}
-                    className="bg-secondary200 text-white title-text px-4 py-2 rounded-md"
-                    onClick={() => setShowModal(true)}
-                  >
-                    Proceed with Shortlist
-                  </motion.button>
-                </div>
-              ) : null}
-              <div className="flex items-center gap-2">
-                <p className="title-text">Shortlist</p>
-                {Number(currentBounty.escrow.amount) > 0 && <Lock size={14} />}
-              </div>
-              {currentBounty.shortlistedLancers.map((submitter, index) => {
-                return (
-                  <div
-                    className={`w-full pb-5 ${
-                      index !== currentBounty.shortlistedLancers.length - 1
-                        ? "border-b border-neutral200"
-                        : ""
-                    }`}
-                    key={index}
-                  >
-                    <ApplicantProfileCard
-                      user={submitter}
-                      setSelectedSubmitter={setSelectedSubmitter}
-                      setCurrentApplicantsView={setCurrentApplicantsView}
-                      setCurrentActionView={setCurrentActionView}
-                    />
-                  </div>
-                );
-              })}
-            </>
-          ) : currentBounty.approvedSubmitters.length === 0 &&
-            currentBounty.requestedLancers.length > 0 ? (
-            <p className="text-sm text-neutral-600">
-              You haven&apos;t answered any applicants yet. Shortlist up to 5
-              profiles to move on.
-            </p>
-          ) : null}
           {currentBounty.approvedSubmitters.length === 0 ? (
             <>
               <p className="title-text text-neutral600">Pending</p>

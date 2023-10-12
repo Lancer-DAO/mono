@@ -17,16 +17,19 @@ export enum QuestApplicationView {
 
 interface Props {
   setCurrentActionView: (view: QuestActionView) => void;
+  hasApplied: boolean;
 }
 
-const LancerApplicationView: FC<Props> = ({ setCurrentActionView }) => {
+const LancerApplicationView: FC<Props> = ({
+  setCurrentActionView,
+  hasApplied,
+}) => {
   const { currentBounty, setCurrentBounty } = useBounty();
   const { currentUser, currentWallet } = useUserWallet();
   const { connected } = useWallet();
 
   const [currentApplicationView, setCurrentApplicationView] =
     useState<QuestApplicationView>(QuestApplicationView.SubmitQuote);
-  const [hasApplied, setHasApplied] = useState(false);
   const [isAwaitingResponse, setIsAwaitingResponse] = useState(false);
   const { mutateAsync: updateBountyUsers } =
     api.bountyUsers.update.useMutation();
@@ -160,7 +163,6 @@ const LancerApplicationView: FC<Props> = ({ setCurrentActionView }) => {
       });
 
       setCurrentBounty(updatedBounty);
-      setHasApplied(true);
       toast.success("Application sent", { id: toastId });
 
       setTimeout(() => {
@@ -191,13 +193,6 @@ const LancerApplicationView: FC<Props> = ({ setCurrentActionView }) => {
       }
     }
   };
-
-  // check if user has applied
-  useEffect(() => {
-    if (!currentBounty || !currentUser) return;
-    const hasApplied = !!currentBounty.currentUserRelationsList;
-    setHasApplied(hasApplied);
-  }, [currentBounty, currentUser]);
 
   useEffect(() => {
     localStorage.setItem(

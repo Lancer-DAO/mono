@@ -75,6 +75,7 @@ const ChatView: FC<Props> = ({ selectedSubmitter, setCurrentActionView }) => {
                 Submit Update
               </motion.button>
             )}
+
           <motion.button
             onClick={() => {
               if (currentBounty.isCreator) {
@@ -86,7 +87,7 @@ const ChatView: FC<Props> = ({ selectedSubmitter, setCurrentActionView }) => {
             {...smallClickAnimation}
             className="bg-white border border-neutral200 px-4 py-2 rounded-md flex items-center gap-2 title-text text-neutral600"
           >
-            View Application
+            {currentBounty.isCreator ? "View Applicants" : "View Application"}
           </motion.button>
         </div>
       </ActionsCardBanner>
