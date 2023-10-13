@@ -1,6 +1,10 @@
 import { IS_CUSTODIAL } from "@/src/constants";
 import { useUserWallet } from "@/src/providers";
-import { useBounty } from "@/src/providers/bountyProvider";
+import {
+  QuestActionView,
+  QuestApplicationView,
+  useBounty,
+} from "@/src/providers/bountyProvider";
 import { api, updateList } from "@/src/utils";
 import { BOUNTY_USER_RELATIONSHIP, QuestProgressState } from "@/types";
 import { useWallet } from "@solana/wallet-adapter-react";
@@ -8,12 +12,6 @@ import { FC, useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
 import LancerApplyView from "./LancerApplyView";
 import LancerSubmitQuoteView from "./LancerSubmitQuoteView";
-import { QuestActionView } from "./QuestActions";
-
-export enum QuestApplicationView {
-  ProfileInfo = "profile-info",
-  SubmitQuote = "submit-quote",
-}
 
 interface Props {
   setCurrentActionView: (view: QuestActionView) => void;
@@ -24,12 +22,15 @@ const LancerApplicationView: FC<Props> = ({
   setCurrentActionView,
   hasApplied,
 }) => {
-  const { currentBounty, setCurrentBounty } = useBounty();
+  const {
+    currentBounty,
+    setCurrentBounty,
+    currentApplicationView,
+    setCurrentApplicationView,
+  } = useBounty();
   const { currentUser, currentWallet } = useUserWallet();
   const { connected } = useWallet();
 
-  const [currentApplicationView, setCurrentApplicationView] =
-    useState<QuestApplicationView>(QuestApplicationView.ProfileInfo);
   const [isAwaitingResponse, setIsAwaitingResponse] = useState(false);
   const { mutateAsync: updateBountyUsers } =
     api.bountyUsers.update.useMutation();
@@ -49,21 +50,7 @@ const LancerApplicationView: FC<Props> = ({
         };
   });
 
-  const [applyData, setApplyData] = useState(() => {
-    const savedData = localStorage.getItem(`applyData-${currentBounty.id}`);
-    return savedData
-      ? JSON.parse(savedData)
-      : {
-          portfolio: currentUser.website,
-          linkedin: currentUser.linkedin,
-          about: currentUser.bio,
-          resume: currentUser.resume,
-          details: "",
-        };
-  });
-
-  const applicationIsValid =
-    currentUser.hasBeenApproved && applyData.about.length > 0;
+  const applicationIsValid = currentUser.hasBeenApproved;
 
   const confirmAction = (action?: string): Promise<void> => {
     setIsAwaitingResponse(true);
@@ -139,11 +126,11 @@ const LancerApplicationView: FC<Props> = ({
         escrowId: currentBounty.escrowid,
         label: "request-to-submit",
         signature: "n/a",
-        applicationText: applyData.details,
       });
 
       setCurrentBounty(updatedBounty);
       toast.success("Application sent", { id: toastId });
+      setCurrentActionView(QuestActionView.Chat);
 
       setTimeout(() => {
         toast.dismiss(toastId);
@@ -230,25 +217,13 @@ const LancerApplicationView: FC<Props> = ({
     );
   }, [quoteData, currentBounty.id]);
 
-  useEffect(() => {
-    localStorage.setItem(
-      `applyData-${currentBounty.id}`,
-      JSON.stringify(applyData)
-    );
-  }, [applyData, currentBounty.id]);
-
   return (
     <>
       {currentApplicationView === QuestApplicationView.ProfileInfo && (
         <LancerApplyView
-          applyData={applyData}
-          setApplyData={setApplyData}
-          setCurrentApplicationView={setCurrentApplicationView}
           setCurrentActionView={setCurrentActionView}
           hasApplied={hasApplied}
           onClick={applyLite}
-          isAwaitingResponse={isAwaitingResponse}
-          applicationIsValid={applicationIsValid}
         />
       )}
       {currentApplicationView === QuestApplicationView.SubmitQuote && (

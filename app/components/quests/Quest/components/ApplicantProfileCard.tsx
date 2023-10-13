@@ -1,6 +1,6 @@
 import { BountyUserType } from "@/prisma/queries/bounty";
 import { smallClickAnimation } from "@/src/constants";
-import { useBounty } from "@/src/providers/bountyProvider";
+import { QuestActionView, useBounty } from "@/src/providers/bountyProvider";
 import { api } from "@/src/utils";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
@@ -9,7 +9,6 @@ import { Flame } from "lucide-react";
 import Image from "next/image";
 import { Dispatch, FC, SetStateAction } from "react";
 import { EApplicantsView } from "./ApplicantsView";
-import { QuestActionView } from "./QuestActions";
 import Link from "next/link";
 
 dayjs.extend(relativeTime);

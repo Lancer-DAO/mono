@@ -1,14 +1,12 @@
 import { Dispatch, FC, SetStateAction, useEffect, useState } from "react";
-import { useBounty } from "@/src/providers/bountyProvider";
+import { QuestActionView, useBounty } from "@/src/providers/bountyProvider";
 import ActionsCardBanner from "./ActionsCardBanner";
 import ApplicantProfileCard from "./ApplicantProfileCard";
-import { Lock, X } from "lucide-react";
 import { motion } from "framer-motion";
-import { MAX_SHORTLIST, smallClickAnimation } from "@/src/constants";
+import { smallClickAnimation } from "@/src/constants";
 import { BountyUserType } from "@/prisma/queries/bounty";
 import { api } from "@/src/utils";
 import { BountyState } from "@/types";
-import { QuestActionView } from "./QuestActions";
 import { FundQuestModal } from "@/components";
 import DepositCTAModal from "./DepositCTAModal";
 import IndividualApplicantView from "./IndividualApplicantView";

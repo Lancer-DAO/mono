@@ -72,10 +72,10 @@ const AccountHeaderOptions = () => {
               }
             }}
             className="flex h-[48px] py-[6px] items-center justify-center 
-              border-b-gray-400 border-b-[1px] hover:bg-bgLancer text-gray-800 
-              transition-colors duration-300 ease-in-out"
+            border-b-gray-400 border-b-[1px] hover:bg-bgLancer text-gray-800 
+            transition-colors duration-300 ease-in-out"
           >
-            Account
+            Profile
           </Link>
         ) : (
           <Link

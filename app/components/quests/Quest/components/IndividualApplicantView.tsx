@@ -2,9 +2,9 @@ import { ChatButton, FundQuestModal } from "@/components";
 import RedFire from "@/components/@icons/RedFire";
 import { addSubmitterFFA } from "@/escrow/adapters";
 import { BountyUserType } from "@/prisma/queries/bounty";
-import { MAX_SHORTLIST, smallClickAnimation } from "@/src/constants";
+import { smallClickAnimation } from "@/src/constants";
 import { useUserWallet } from "@/src/providers";
-import { useBounty } from "@/src/providers/bountyProvider";
+import { QuestActionView, useBounty } from "@/src/providers/bountyProvider";
 import { useReferral } from "@/src/providers/referralProvider";
 import { api, updateList } from "@/src/utils";
 import { BOUNTY_USER_RELATIONSHIP, BountyState } from "@/types";
@@ -17,7 +17,6 @@ import toast from "react-hot-toast";
 import { EApplicantsView } from "./ApplicantsView";
 import CheckpointView from "./CheckpointView";
 import DepositCTAModal from "./DepositCTAModal";
-import { QuestActionView } from "./QuestActions";
 
 interface Props {
   selectedSubmitter: BountyUserType;
@@ -240,10 +239,7 @@ const IndividualApplicantView: FC<Props> = ({
           ) ? (
             <div className="mt-auto self-stretch">
               <div className="w-full flex items-center justify-end gap-4 px-8 py-4">
-                <ChatButton
-                  setCurrentActionView={setCurrentActionView}
-                  disabled={isLoading}
-                />
+                <ChatButton disabled={isLoading} />
                 <motion.button
                   {...smallClickAnimation}
                   className="bg-white border border-neutral200 h-9 w-fit px-4 py-2

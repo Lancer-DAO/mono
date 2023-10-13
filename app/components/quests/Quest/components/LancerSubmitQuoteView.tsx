@@ -2,7 +2,11 @@ import Plus from "@/components/@icons/Plus";
 import RedFire from "@/components/@icons/RedFire";
 import { smallClickAnimation } from "@/src/constants";
 import { useUserWallet } from "@/src/providers";
-import { useBounty } from "@/src/providers/bountyProvider";
+import {
+  QuestActionView,
+  QuestApplicationView,
+  useBounty,
+} from "@/src/providers/bountyProvider";
 import { api } from "@/src/utils";
 import { BountyState, LancerQuoteData } from "@/types";
 import { motion } from "framer-motion";
@@ -11,9 +15,7 @@ import ActionsCardBanner from "./ActionsCardBanner";
 import AlertCards from "./AlertCards";
 import CheckpointEdit from "./CheckpointEdit";
 import CheckpointView from "./CheckpointView";
-import { QuestApplicationView } from "./LancerApplicationView";
 import { ChatButton } from "@/components";
-import { QuestActionView } from "./QuestActions";
 interface Props {
   quoteData: LancerQuoteData;
   setQuoteData: Dispatch<SetStateAction<LancerQuoteData>>;
@@ -159,7 +161,7 @@ const LancerSubmitQuoteView: FC<Props> = ({
                 Submit Update
               </motion.button>
             )}
-          <ChatButton setCurrentActionView={setCurrentActionView} />
+          <ChatButton />
         </div>
       </ActionsCardBanner>
       <AlertCards />
@@ -210,15 +212,6 @@ const LancerSubmitQuoteView: FC<Props> = ({
         <div className="mt-auto self-stretch">
           <div className="h-[1px] w-full bg-neutral200" />
           <div className="flex py-4 px-6 justify-end mt-auto items-center gap-4 self-stretch opacity-100">
-            <button
-              className="title-text text-neutral600 px-4 py-2 rounded-md border 
-              border-neutral300"
-              onClick={() =>
-                setCurrentApplicationView(QuestApplicationView.ProfileInfo)
-              }
-            >
-              Application Details
-            </button>
             {currentBounty.isRequestedLancer && !quote && (
               <motion.button
                 {...smallClickAnimation}

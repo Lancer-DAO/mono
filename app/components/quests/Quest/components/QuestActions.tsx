@@ -1,39 +1,32 @@
 import { FC, useEffect, useState } from "react";
 import { BountyUserType } from "@/prisma/queries/bounty";
 import { useUserWallet } from "@/src/providers";
-import { useBounty } from "@/src/providers/bountyProvider";
+import { QuestActionView, useBounty } from "@/src/providers/bountyProvider";
 import { BountyState } from "@/types";
 import ApplicantsView from "./ApplicantsView";
 import ChatView from "./ChatView";
 import LancerApplicationView from "./LancerApplicationView";
 import LancerSubmitUpdateView from "./LancerSubmitUpdateView";
 import UpdateView from "./UpdateView";
-
-export enum QuestActionView {
-  SubmitApplication = "submit-application", // one-way (Lancer)
-  SubmitQuote = "submit-quote", // one-way (Lancer)
-  ViewApplicants = "view-applicants", // one-way (client)
-  Chat = "chat", // two-way (client, Lancer)
-  SubmitUpdate = "submit-update", // one-way (Lancer)
-  ViewUpdate = "view-update", // one-way (client)
-}
+import LancerSubmitQuoteView from "./LancerSubmitQuoteView";
 
 const QuestActions: FC = () => {
   const { currentUser } = useUserWallet();
-  const { currentBounty } = useBounty();
-
-  // TODO: set loading state, check for user status (creator or applicant?)
-  // and then set initial view based on that
-  const [currentActionView, setCurrentActionView] = useState<QuestActionView>();
-  const [selectedSubmitter, setSelectedSubmitter] =
-    useState<BountyUserType | null>();
-  const [hasApplied, setHasApplied] = useState(false);
+  const {
+    currentBounty,
+    hasApplied,
+    setHasApplied,
+    currentActionView,
+    setCurrentActionView,
+    selectedSubmitter,
+    setSelectedSubmitter,
+  } = useBounty();
 
   // check if user has applied
   useEffect(() => {
     if (!currentBounty || !currentUser) return;
-    const hasApplied = !!currentBounty.currentUserRelationsList;
-    setHasApplied(hasApplied);
+    const checkHasApplied = !!currentBounty.currentUserRelationsList;
+    setHasApplied(checkHasApplied);
   }, [currentBounty, currentUser]);
 
   useEffect(() => {
