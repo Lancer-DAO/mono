@@ -31,7 +31,7 @@ const ChatView: FC<Props> = ({ selectedSubmitter, setCurrentActionView }) => {
   );
 
   const { currentUser } = useUserWallet();
-  const { currentBounty, setCurrentApplicationView } = useBounty();
+  const { currentBounty, setCurrentApplicationView, hasApplied } = useBounty();
 
   const { data: update } = api.update.getNewUpdateByBounty.useQuery(
     { id: currentBounty.id },
@@ -66,33 +66,33 @@ const ChatView: FC<Props> = ({ selectedSubmitter, setCurrentActionView }) => {
         } `}
       >
         <div className="flex items-center gap-4">
-          {/* {currentBounty.isApprovedSubmitter &&
+          {currentBounty.isApprovedSubmitter &&
             !!update === false &&
-            currentBounty.state === BountyState.IN_PROGRESS && ( */}
-          <motion.button
-            {...smallClickAnimation}
-            onClick={() => {
-              setCurrentActionView(QuestActionView.SubmitUpdate);
-            }}
-            className="group"
-          >
-            <ConciergeBell size={20} color="white" />
-            <Tooltip text="Submit Update" right="0px" bottom="-25px" />
-          </motion.button>
-          {/* )} */}
-          {/* {hasApplied && ( */}
-          <motion.button
-            {...smallClickAnimation}
-            onClick={() => {
-              setCurrentActionView(QuestActionView.SubmitApplication);
-              setCurrentApplicationView(QuestApplicationView.SubmitQuote);
-            }}
-            className="group"
-          >
-            <DollarSign size={20} color="white" />
-            <Tooltip text="Submit/View Quote" right="0px" bottom="-25px" />
-          </motion.button>
-          {/* )} */}
+            currentBounty.state === BountyState.IN_PROGRESS && (
+              <motion.button
+                {...smallClickAnimation}
+                onClick={() => {
+                  setCurrentActionView(QuestActionView.SubmitUpdate);
+                }}
+                className="group"
+              >
+                <ConciergeBell size={20} color="white" />
+                <Tooltip text="Submit Update" right="0px" bottom="-25px" />
+              </motion.button>
+            )}
+          {hasApplied && (
+            <motion.button
+              {...smallClickAnimation}
+              onClick={() => {
+                setCurrentActionView(QuestActionView.SubmitApplication);
+                setCurrentApplicationView(QuestApplicationView.SubmitQuote);
+              }}
+              className="group"
+            >
+              <DollarSign size={20} color="white" />
+              <Tooltip text="Submit/View Quote" right="0px" bottom="-25px" />
+            </motion.button>
+          )}
         </div>
       </ActionsCardBanner>
       <div>
