@@ -2,7 +2,11 @@ import Plus from "@/components/@icons/Plus";
 import RedFire from "@/components/@icons/RedFire";
 import { smallClickAnimation } from "@/src/constants";
 import { useUserWallet } from "@/src/providers";
-import { useBounty } from "@/src/providers/bountyProvider";
+import {
+  QuestActionView,
+  QuestApplicationView,
+  useBounty,
+} from "@/src/providers/bountyProvider";
 import { api } from "@/src/utils";
 import { BountyState, LancerQuoteData } from "@/types";
 import { motion } from "framer-motion";
@@ -11,18 +15,14 @@ import ActionsCardBanner from "./ActionsCardBanner";
 import AlertCards from "./AlertCards";
 import CheckpointEdit from "./CheckpointEdit";
 import CheckpointView from "./CheckpointView";
-import { QuestApplicationView } from "./LancerApplicationView";
 import { ChatButton } from "@/components";
-import { QuestActionView } from "./QuestActions";
 interface Props {
   quoteData: LancerQuoteData;
   setQuoteData: Dispatch<SetStateAction<LancerQuoteData>>;
   setCurrentApplicationView: Dispatch<SetStateAction<QuestApplicationView>>;
   setCurrentActionView: Dispatch<SetStateAction<QuestActionView>>;
-  hasApplied: boolean;
   onClick: () => Promise<void>;
   isAwaitingResponse: boolean;
-  applicationIsValid: boolean;
 }
 
 const LancerSubmitQuoteView: FC<Props> = ({
@@ -30,10 +30,8 @@ const LancerSubmitQuoteView: FC<Props> = ({
   setQuoteData,
   setCurrentApplicationView,
   setCurrentActionView,
-  hasApplied,
   onClick,
   isAwaitingResponse,
-  applicationIsValid,
 }) => {
   const { currentBounty } = useBounty();
   const { currentUser } = useUserWallet();
@@ -52,6 +50,14 @@ const LancerSubmitQuoteView: FC<Props> = ({
     { id: currentBounty.id },
     { enabled: !!currentBounty }
   );
+
+  const quoteIsValid =
+    currentUser.hasBeenApproved &&
+    quoteData.checkpoints.length > 0 &&
+    quoteData.checkpoints[0].title !== "" &&
+    quoteData.checkpoints[0].description !== "" &&
+    quoteData.checkpoints[0].price !== 0 &&
+    quoteData.checkpoints[0].estimatedTime !== 0;
 
   useEffect(() => {
     if (!!quote && !!checkpoints) {
@@ -138,11 +144,8 @@ const LancerSubmitQuoteView: FC<Props> = ({
   return (
     <div className="flex flex-col relative h-full">
       <ActionsCardBanner
-        title={`Submit Quote`}
+        title={!!quote ? "Your Quote" : "Submit Quote"}
         subtitle="Quest Application"
-        // subtitle={`${quotes?.length || 0} ${
-        //   (quotes?.length || 0) === 1 ? "quote has" : "quotes have"
-        // } been sent to them already`}
       >
         <div className="flex items-center gap-3">
           {currentBounty.isApprovedSubmitter &&
@@ -158,10 +161,7 @@ const LancerSubmitQuoteView: FC<Props> = ({
                 Submit Update
               </motion.button>
             )}
-          {currentBounty.isShortlistedLancer &&
-            Number(currentBounty.escrow.amount) > 0 && (
-              <ChatButton setCurrentActionView={setCurrentActionView} />
-            )}
+          <ChatButton />
         </div>
       </ActionsCardBanner>
       <AlertCards />
@@ -178,7 +178,7 @@ const LancerSubmitQuoteView: FC<Props> = ({
           </div>
           {quoteData.checkpoints.map((checkpoint, index) => (
             <>
-              {!hasApplied && !currentBounty.isDeniedLancer ? (
+              {!quote && !currentBounty.isDeniedLancer ? (
                 <CheckpointEdit
                   checkpoint={checkpoint}
                   setQuoteData={setQuoteData}
@@ -196,7 +196,7 @@ const LancerSubmitQuoteView: FC<Props> = ({
               )}
             </>
           ))}
-          {quoteData.checkpoints.length < 5 && !hasApplied && (
+          {quoteData.checkpoints.length < 5 && !quote && (
             <div className="py-4">
               <button
                 className="py-1 px-2 flex gap-1 justify-center items-center 
@@ -209,28 +209,22 @@ const LancerSubmitQuoteView: FC<Props> = ({
             </div>
           )}
         </div>
-        <div className="flex py-4 px-6 justify-end mt-auto items-center gap-4 self-stretch opacity-100">
-          <button
-            className="title-text text-neutral600 px-4 py-2 rounded-md border 
-            border-neutral300"
-            onClick={() =>
-              setCurrentApplicationView(QuestApplicationView.ProfileInfo)
-            }
-          >
-            Application Details
-          </button>
-          {!hasApplied && !currentBounty.isDeniedLancer && (
-            <motion.button
-              {...smallClickAnimation}
-              className="bg-primary200 text-white h-9 w-fit px-4 py-2 title-text rounded-md
-              disabled:opacity-70 disabled:cursor-not-allowed"
-              onClick={onClick}
-              disabled={isAwaitingResponse || !applicationIsValid}
-            >
-              Submit Application
-            </motion.button>
-          )}
-        </div>
+        {currentBounty.isRequestedLancer && !quote && (
+          <div className="mt-auto self-stretch">
+            <div className="h-[1px] w-full bg-neutral200" />
+            <div className="flex py-4 px-6 justify-end mt-auto items-center gap-4 self-stretch opacity-100">
+              <motion.button
+                {...smallClickAnimation}
+                className="bg-primary200 text-white h-9 w-fit px-4 py-2 title-text rounded-md
+                disabled:opacity-70 disabled:cursor-not-allowed"
+                onClick={onClick}
+                disabled={isAwaitingResponse || !quoteIsValid}
+              >
+                Send Quote
+              </motion.button>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

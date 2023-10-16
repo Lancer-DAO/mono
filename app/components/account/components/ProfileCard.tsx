@@ -1,4 +1,4 @@
-import { CashoutModal } from "@/components";
+import { CashoutModal, Tooltip } from "@/components";
 import { QuestActionsButton } from "@/components/quests/Quest/components";
 import { BADGES_PROJECT_PARAMS, USDC_MINT } from "@/src/constants";
 import { useUserWallet } from "@/src/providers";
@@ -249,7 +249,7 @@ export const ProfileCard = ({
   return (
     <div
       className="bg-white w-full border 
-      border-neutral200 rounded-md overflow-hidden"
+      border-neutral200 rounded-md overflow-visible"
     >
       <div className="flex items-start justify-between p-5">
         <div className="flex items-center gap-5">
@@ -262,7 +262,25 @@ export const ProfileCard = ({
           />
           <div className="flex flex-col">
             <div className="flex items-center gap-2">
-              <h1 className="text-neutral600">{user.name}</h1>
+              <div className="flex items-center gap-1">
+                <h1 className="text-neutral600">{user.name}</h1>
+                {user.isLancerDev ? (
+                  <div className="relative group flex items-center">
+                    <Image
+                      src="/assets/images/lancer_logo_flat.png"
+                      width={20}
+                      height={20}
+                      alt="Lancer logo"
+                    />
+                    <Tooltip
+                      top="-40px"
+                      left="10px"
+                      text="Lancer Core Team"
+                      oneLine
+                    />
+                  </div>
+                ) : null}
+              </div>
               {self && !nameEdit.editing && (
                 <button
                   onClick={() =>

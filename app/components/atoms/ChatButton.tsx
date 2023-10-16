@@ -1,13 +1,13 @@
-import { Dispatch, FC, SetStateAction } from "react";
+import { FC } from "react";
 import { smallClickAnimation } from "@/src/constants";
 import { motion } from "framer-motion";
-import { QuestActionView } from "../quests/Quest/components";
+import { QuestActionView, useBounty } from "@/src/providers/bountyProvider";
 
 interface Props {
-  setCurrentActionView: Dispatch<SetStateAction<QuestActionView>>;
   disabled?: boolean;
 }
-const ChatButton: FC<Props> = ({ setCurrentActionView, disabled = false }) => {
+const ChatButton: FC<Props> = ({ disabled = false }) => {
+  const { setCurrentActionView } = useBounty();
   return (
     <motion.button
       {...smallClickAnimation}
