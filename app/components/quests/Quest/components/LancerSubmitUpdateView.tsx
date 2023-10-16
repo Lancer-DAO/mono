@@ -2,7 +2,7 @@ import Crown from "@/components/@icons/Crown";
 import { submitRequestFFA } from "@/escrow/adapters";
 import { smallClickAnimation } from "@/src/constants";
 import { useUserWallet } from "@/src/providers";
-import { useBounty } from "@/src/providers/bountyProvider";
+import { QuestActionView, useBounty } from "@/src/providers/bountyProvider";
 import { api } from "@/src/utils";
 import { UploadDropzone } from "@/src/utils/uploadthing";
 import { LancerUpdateData, QuestProgressState } from "@/types";
@@ -14,6 +14,7 @@ import Image from "next/image";
 import { FC, useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
 import ActionsCardBanner from "./ActionsCardBanner";
+import { X } from "react-feather";
 
 export enum UPDATE_TYPES {
   Loom = "Loom recording",
@@ -22,7 +23,7 @@ export enum UPDATE_TYPES {
 }
 
 const LancerSubmitUpdateView: FC = () => {
-  const { currentBounty } = useBounty();
+  const { currentBounty, setCurrentActionView } = useBounty();
   const { currentUser, currentWallet, program, provider } = useUserWallet();
 
   const [hasSubmittedUpdate, setHasSubmittedUpdate] = useState(false);
@@ -117,7 +118,17 @@ const LancerSubmitUpdateView: FC = () => {
         subtitle={`${updates?.length || 0} ${
           (updates?.length || 0) === 1 ? "update" : "updates"
         } so far`}
-      ></ActionsCardBanner>
+      >
+        <motion.button
+          {...smallClickAnimation}
+          onClick={() => {
+            // go back to chat
+            setCurrentActionView(QuestActionView.Chat);
+          }}
+        >
+          <X size={24} color="white" />
+        </motion.button>
+      </ActionsCardBanner>
       <div className="w-full p-6 flex items-center gap-4">
         <div className="flex items-center gap-4">
           <p className="text-neutral600 text">Name</p>

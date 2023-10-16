@@ -1,6 +1,10 @@
 import { IS_CUSTODIAL } from "@/src/constants";
 import { useUserWallet } from "@/src/providers";
-import { useBounty } from "@/src/providers/bountyProvider";
+import {
+  QuestActionView,
+  QuestApplicationView,
+  useBounty,
+} from "@/src/providers/bountyProvider";
 import { api, updateList } from "@/src/utils";
 import { BOUNTY_USER_RELATIONSHIP, QuestProgressState } from "@/types";
 import { useWallet } from "@solana/wallet-adapter-react";
@@ -8,25 +12,25 @@ import { FC, useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
 import LancerApplyView from "./LancerApplyView";
 import LancerSubmitQuoteView from "./LancerSubmitQuoteView";
-import { QuestActionView } from "./QuestActions";
-
-export enum QuestApplicationView {
-  ProfileInfo = "profile-info",
-  SubmitQuote = "submit-quote",
-}
 
 interface Props {
   setCurrentActionView: (view: QuestActionView) => void;
+  hasApplied: boolean;
 }
 
-const LancerApplicationView: FC<Props> = ({ setCurrentActionView }) => {
-  const { currentBounty, setCurrentBounty } = useBounty();
+const LancerApplicationView: FC<Props> = ({
+  setCurrentActionView,
+  hasApplied,
+}) => {
+  const {
+    currentBounty,
+    setCurrentBounty,
+    currentApplicationView,
+    setCurrentApplicationView,
+  } = useBounty();
   const { currentUser, currentWallet } = useUserWallet();
   const { connected } = useWallet();
 
-  const [currentApplicationView, setCurrentApplicationView] =
-    useState<QuestApplicationView>(QuestApplicationView.SubmitQuote);
-  const [hasApplied, setHasApplied] = useState(false);
   const [isAwaitingResponse, setIsAwaitingResponse] = useState(false);
   const { mutateAsync: updateBountyUsers } =
     api.bountyUsers.update.useMutation();
@@ -46,28 +50,9 @@ const LancerApplicationView: FC<Props> = ({ setCurrentActionView }) => {
         };
   });
 
-  const [applyData, setApplyData] = useState(() => {
-    const savedData = localStorage.getItem(`applyData-${currentBounty.id}`);
-    return savedData
-      ? JSON.parse(savedData)
-      : {
-          portfolio: currentUser.website,
-          linkedin: currentUser.linkedin,
-          about: currentUser.bio,
-          resume: currentUser.resume,
-          details: "",
-        };
-  });
+  const applicationIsValid = currentUser.hasBeenApproved;
 
-  const applicationIsValid =
-    currentUser.hasBeenApproved &&
-    quoteData.checkpoints.length > 0 &&
-    quoteData.checkpoints[0].title !== "" &&
-    quoteData.checkpoints[0].description !== "" &&
-    quoteData.checkpoints[0].price !== 0 &&
-    quoteData.checkpoints[0].estimatedTime !== 0;
-
-  const confirmAction = (): Promise<void> => {
+  const confirmAction = (action?: string): Promise<void> => {
     setIsAwaitingResponse(true);
 
     return new Promise<void>((resolve, reject) => {
@@ -86,7 +71,9 @@ const LancerApplicationView: FC<Props> = ({ setCurrentActionView }) => {
       const toastId = toast(
         (t) => (
           <div>
-            Are you sure you want to submit your application?
+            {`Are you sure you want to ${
+              action ? action : "submit your application"
+            }?`}
             <div className="mt-2 flex items-center gap-4 justify-center">
               <button
                 onClick={handleYes}
@@ -112,15 +99,7 @@ const LancerApplicationView: FC<Props> = ({ setCurrentActionView }) => {
     });
   };
 
-  const onClick = async () => {
-    if (quoteData.checkpoints.length === 0) {
-      const toastId = toast.error("Please create at least one milestone.");
-      setTimeout(() => {
-        toast.dismiss(toastId);
-      }, 2000);
-      return;
-    }
-
+  const applyLite = async () => {
     if (!connected && !IS_CUSTODIAL) {
       const toastId = toast.error("Please connect your wallet.");
       setTimeout(() => {
@@ -147,8 +126,52 @@ const LancerApplicationView: FC<Props> = ({ setCurrentActionView }) => {
         escrowId: currentBounty.escrowid,
         label: "request-to-submit",
         signature: "n/a",
-        applicationText: applyData.details,
       });
+
+      setCurrentBounty(updatedBounty);
+      toast.success("Application sent", { id: toastId });
+      setCurrentActionView(QuestActionView.Chat);
+
+      setTimeout(() => {
+        toast.dismiss(toastId);
+      }, 2000);
+    } catch (error) {
+      if (
+        (error.message as string).includes(
+          "Wallet is registered to another user"
+        )
+      ) {
+        toast.error("Wallet is registered to another user", {
+          id: toastId,
+        });
+        setTimeout(() => {
+          toast.dismiss(toastId);
+        }, 2000);
+      } else {
+        toast.error("Error submitting application", {
+          id: toastId,
+        });
+        setTimeout(() => {
+          toast.dismiss(toastId);
+        }, 2000);
+      }
+    }
+  };
+
+  const submitQuote = async () => {
+    await confirmAction("submit your quote");
+
+    if (quoteData.checkpoints.length === 0) {
+      const toastId = toast.error("Please create at least one milestone.");
+      setTimeout(() => {
+        toast.dismiss(toastId);
+      }, 2000);
+      return;
+    }
+
+    const toastId = toast.loading("Sending Quote...");
+
+    try {
       await createQuote({
         bountyId: currentBounty.id,
         title: quoteData.title,
@@ -159,13 +182,8 @@ const LancerApplicationView: FC<Props> = ({ setCurrentActionView }) => {
         checkpoints: quoteData.checkpoints,
       });
 
-      setCurrentBounty(updatedBounty);
-      setHasApplied(true);
-      toast.success("Application sent", { id: toastId });
+      toast.success("Quote sent!", { id: toastId });
 
-      setTimeout(() => {
-        toast.dismiss(toastId);
-      }, 2000);
       // remove locally stored form data
       localStorage.removeItem(`quoteData-${currentBounty.id}`);
       localStorage.removeItem(`applyData-${currentBounty.id}`);
@@ -192,13 +210,6 @@ const LancerApplicationView: FC<Props> = ({ setCurrentActionView }) => {
     }
   };
 
-  // check if user has applied
-  useEffect(() => {
-    if (!currentBounty || !currentUser) return;
-    const hasApplied = !!currentBounty.currentUserRelationsList;
-    setHasApplied(hasApplied);
-  }, [currentBounty, currentUser]);
-
   useEffect(() => {
     localStorage.setItem(
       `quoteData-${currentBounty.id}`,
@@ -206,25 +217,13 @@ const LancerApplicationView: FC<Props> = ({ setCurrentActionView }) => {
     );
   }, [quoteData, currentBounty.id]);
 
-  useEffect(() => {
-    localStorage.setItem(
-      `applyData-${currentBounty.id}`,
-      JSON.stringify(applyData)
-    );
-  }, [applyData, currentBounty.id]);
-
   return (
     <>
       {currentApplicationView === QuestApplicationView.ProfileInfo && (
         <LancerApplyView
-          applyData={applyData}
-          setApplyData={setApplyData}
-          setCurrentApplicationView={setCurrentApplicationView}
           setCurrentActionView={setCurrentActionView}
           hasApplied={hasApplied}
-          onClick={onClick}
-          isAwaitingResponse={isAwaitingResponse}
-          applicationIsValid={applicationIsValid}
+          onClick={applyLite}
         />
       )}
       {currentApplicationView === QuestApplicationView.SubmitQuote && (
@@ -233,10 +232,8 @@ const LancerApplicationView: FC<Props> = ({ setCurrentActionView }) => {
           setQuoteData={setQuoteData}
           setCurrentApplicationView={setCurrentApplicationView}
           setCurrentActionView={setCurrentActionView}
-          hasApplied={hasApplied}
-          onClick={onClick}
+          onClick={submitQuote}
           isAwaitingResponse={isAwaitingResponse}
-          applicationIsValid={applicationIsValid}
         />
       )}
     </>

@@ -44,7 +44,7 @@ const Modal: FC<Props> = (props: Props) => {
         onClick={(e) => e.stopPropagation()}
         className={`absolute left-1/2 top-1/2 transform 
         -translate-y-1/2 -translate-x-1/2 overflow-x-hidden overflow-y-auto
-        bg-bgLancer rounded-md w-[90%] p-5 max-h-[90vh]
+        bg-neutral100 rounded-md w-[90%] p-5 max-h-[90vh]
         lg:w-[100vh] 3xl:w-[70vh] ${className}`}
         ref={wrapperRef}
       >

@@ -1,5 +1,4 @@
 import { useBounty } from "@/src/providers/bountyProvider";
-import { BountyUserType } from "@/prisma/queries/bounty";
 import { AdminRelationsManagerSection } from ".";
 
 export type AdminRelationsManagerListType = "approved" | "requested";

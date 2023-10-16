@@ -1,20 +1,24 @@
 import { BountyUserType } from "@/prisma/queries/bounty";
 import { smallClickAnimation } from "@/src/constants";
-import { useBounty } from "@/src/providers/bountyProvider";
+import {
+  QuestActionView,
+  QuestApplicationView,
+  useBounty,
+} from "@/src/providers/bountyProvider";
 import { api } from "@/src/utils";
 import { BountyState } from "@/types";
-import { cubicBezier, motion } from "framer-motion";
-import { X } from "lucide-react";
+import { motion } from "framer-motion";
 import { Dispatch, FC, SetStateAction, useEffect, useState } from "react";
 import ActionsCardBanner from "../ActionsCardBanner";
-import AlertCard from "../AlertCard";
-import { QuestActionView } from "../QuestActions";
 import { createDM } from "@/src/utils/sendbird";
 import { ChannelProvider } from "@sendbird/uikit-react/Channel/context";
 import ChatList from "./ChatList";
 import SendMessage from "./SendMessage";
-import { currentUser } from "@/server/api/routers/users/currentUser";
 import { useUserWallet } from "@/src/providers";
+import AlertCards from "../AlertCards";
+import { ConciergeBell, X } from "lucide-react";
+import { Tooltip } from "@/components";
+import { DollarSign } from "react-feather";
 
 interface Props {
   selectedSubmitter: BountyUserType | null;
@@ -27,7 +31,7 @@ const ChatView: FC<Props> = ({ selectedSubmitter, setCurrentActionView }) => {
   );
 
   const { currentUser } = useUserWallet();
-  const { currentBounty } = useBounty();
+  const { currentBounty, setCurrentApplicationView, hasApplied } = useBounty();
 
   const { data: update } = api.update.getNewUpdateByBounty.useQuery(
     { id: currentBounty.id },
@@ -61,64 +65,62 @@ const ChatView: FC<Props> = ({ selectedSubmitter, setCurrentActionView }) => {
             : currentBounty.creator.user.name
         } `}
       >
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-4">
           {currentBounty.isApprovedSubmitter &&
             !!update === false &&
             currentBounty.state === BountyState.IN_PROGRESS && (
               <motion.button
                 {...smallClickAnimation}
-                className="bg-secondary200 text-white title-text px-4 py-2 rounded-md"
-                onClick={() =>
-                  setCurrentActionView(QuestActionView.SubmitUpdate)
-                }
+                onClick={() => {
+                  setCurrentActionView(QuestActionView.SubmitUpdate);
+                }}
+                className="group"
               >
-                Submit Update
+                <ConciergeBell size={20} color="white" />
+                <Tooltip text="Submit Update" right="0px" bottom="-25px" />
               </motion.button>
             )}
-          <motion.button
-            onClick={() => {
-              if (currentBounty.isCreator) {
-                setCurrentActionView(QuestActionView.ViewApplicants);
-              } else {
+          {!!update && currentBounty.state === BountyState.AWAITING_REVIEW && (
+            <motion.button
+              {...smallClickAnimation}
+              onClick={() => {
+                setCurrentActionView(QuestActionView.ViewUpdate);
+              }}
+              className="group"
+            >
+              <ConciergeBell size={20} color="white" />
+              <Tooltip text="View Lancer Update" right="0px" bottom="-25px" />
+            </motion.button>
+          )}
+          {hasApplied && !currentBounty.isCreator && (
+            <motion.button
+              {...smallClickAnimation}
+              onClick={() => {
                 setCurrentActionView(QuestActionView.SubmitApplication);
-              }
-            }}
-            {...smallClickAnimation}
-            className="bg-white border border-neutral200 px-4 py-2 rounded-md flex items-center gap-2 title-text text-neutral600"
-          >
-            View Application
-          </motion.button>
+                setCurrentApplicationView(QuestApplicationView.SubmitQuote);
+              }}
+              className="group"
+            >
+              <DollarSign size={20} color="white" />
+              <Tooltip text="Submit/View Quote" right="0px" bottom="-25px" />
+            </motion.button>
+          )}
+          {currentBounty.isCreator && (
+            <motion.button
+              onClick={() => {
+                setCurrentActionView(QuestActionView.ViewApplicants);
+              }}
+              {...smallClickAnimation}
+            >
+              <X height={24} width={24} className="text-white" />
+            </motion.button>
+          )}
         </div>
       </ActionsCardBanner>
-      <div className="">
-        {update && currentBounty.isCreator && (
-          <div className="px-5 pt-5">
-            <AlertCard
-              type="positive"
-              title="Nice!"
-              description="You have received an update!"
-            >
-              <button
-                className="bg-white px-4 py-2"
-                onClick={() => setCurrentActionView(QuestActionView.ViewUpdate)}
-              >
-                View Update
-              </button>
-            </AlertCard>
-          </div>
-        )}
-        {update && currentBounty.isApprovedSubmitter && (
-          <div className="px-5 pt-5">
-            <AlertCard
-              type="positive"
-              title="Nice!"
-              description="Your update has been sent!"
-            />
-          </div>
-        )}
-
+      <div>
+        <AlertCards />
         <ChannelProvider channelUrl={channel}>
-          <div className="w-full h-[calc(44.5rem-68px)] flex flex-col justify-between">
+          <div className="w-full h-[calc(44.5rem-180px)] flex flex-col justify-between">
             <div id="chat" className="flex-grow overflow-y-auto">
               <ChatList />
             </div>

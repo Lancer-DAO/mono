@@ -166,7 +166,7 @@ const CheckpointEdit: FC<Props> = ({
       {checkpoint.detailsOpen && (
         <div className="flex flex-col pt-4 gap-6">
           <div className="flex gap-4 items-center">
-            <div className="text text-neutral600">Checkpoint name</div>
+            <div className="text text-neutral600">Milestone title</div>
             <input
               className="bg-neutral100 text text-neutral600 px-3 py-2 rounded-md border border-neutral200 outline-none"
               value={tempCheckpoint.title}
@@ -197,7 +197,7 @@ const CheckpointEdit: FC<Props> = ({
             </div>
             <div className="flex gap-4 items-center">
               <div className="text text-neutral600 whitespace-nowrap">
-                Time to spend
+                Estimated time
               </div>
               <div className="flex items-center gap-2 bg-neutral100 px-3 py-2 rounded-md border border-neutral200">
                 <input
@@ -213,7 +213,7 @@ const CheckpointEdit: FC<Props> = ({
                   placeholder="0"
                   disabled={!checkpoint.canEdit}
                 />
-                <div className="text text-neutral400">Hours</div>
+                <div className="text text-neutral400">hours</div>
               </div>
             </div>
           </div>

@@ -1,6 +1,6 @@
 import { LockIcon, Logo } from "@/components";
 import { useBounty } from "@/src/providers/bountyProvider";
-import { BountyPreview, Industry, QuestFormData } from "@/types/";
+import { BountyPreview, QuestFormData } from "@/types/";
 import {
   bountyIndustryColor,
   cn,

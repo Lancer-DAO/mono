@@ -1,45 +1,42 @@
-import { BountyUserType } from "@/prisma/queries/bounty";
-import { currentUser } from "@/server/api/routers/users/currentUser";
-import { useUserWallet } from "@/src/providers";
-import { useBounty } from "@/src/providers/bountyProvider";
-import { Bounty, BountyState, User } from "@/types";
 import { FC, useEffect, useState } from "react";
+import { BountyUserType } from "@/prisma/queries/bounty";
+import { useUserWallet } from "@/src/providers";
+import { QuestActionView, useBounty } from "@/src/providers/bountyProvider";
+import { BountyState } from "@/types";
 import ApplicantsView from "./ApplicantsView";
 import ChatView from "./ChatView";
 import LancerApplicationView from "./LancerApplicationView";
 import LancerSubmitUpdateView from "./LancerSubmitUpdateView";
 import UpdateView from "./UpdateView";
-
-export enum QuestActionView {
-  SubmitApplication = "submit-application", // one-way (Lancer) - contains apply & quote
-  ViewApplicants = "view-applicants", // one-way (client)
-  Chat = "chat", // two-way (client, Lancer)
-  SubmitUpdate = "submit-update", // one-way (Lancer)
-  ViewUpdate = "view-update", // one-way (client)
-}
+import LancerSubmitQuoteView from "./LancerSubmitQuoteView";
 
 const QuestActions: FC = () => {
   const { currentUser } = useUserWallet();
-  const { currentBounty } = useBounty();
+  const {
+    currentBounty,
+    hasApplied,
+    setHasApplied,
+    currentActionView,
+    setCurrentActionView,
+    selectedSubmitter,
+    setSelectedSubmitter,
+  } = useBounty();
 
-  // TODO: set loading state, check for user status (creator or applicant?)
-  // and then set initial view based on that
-  const [currentActionView, setCurrentActionView] = useState<QuestActionView>();
-  const [selectedSubmitter, setSelectedSubmitter] =
-    useState<BountyUserType | null>();
+  // check if user has applied
+  useEffect(() => {
+    if (!currentBounty || !currentUser) return;
+    const checkHasApplied = !!currentBounty.currentUserRelationsList;
+    setHasApplied(checkHasApplied);
+  }, [currentBounty, currentUser]);
 
   useEffect(() => {
     if (!!currentUser && !currentBounty.isCreator) {
       // is not the creator
-      if (
-        (currentBounty.isApprovedSubmitter ||
-          currentBounty.isShortlistedLancer) &&
-        currentBounty.state !== BountyState.CANCELED
-      ) {
-        // lancer has been approved to work on the quest
+      if (hasApplied && currentBounty.state !== BountyState.CANCELED) {
+        // lancer has applied to this quest already
         setCurrentActionView(QuestActionView.Chat);
       } else {
-        // lancer needs to apply or is waiting for approval
+        // lancer needs to apply
         setCurrentActionView(QuestActionView.SubmitApplication);
       }
     } else if (!!currentUser && currentBounty.isCreator) {
@@ -52,7 +49,7 @@ const QuestActions: FC = () => {
         setCurrentActionView(QuestActionView.Chat);
       }
     }
-  }, [currentUser, currentBounty]);
+  }, [currentUser, currentBounty, hasApplied]);
 
   if (
     !currentUser ||
@@ -64,12 +61,15 @@ const QuestActions: FC = () => {
 
   return (
     <div
-      className={`bg-white w-full min-w-[610px] border border-neutral200 rounded-lg overflow-hidden ${
+      className={`bg-white h-fit w-full min-w-[610px] border border-neutral200 rounded-lg overflow-hidden ${
         currentActionView === QuestActionView.Chat && "max-h-[44.5rem]"
       }`}
     >
       {currentActionView === QuestActionView.SubmitApplication && (
-        <LancerApplicationView setCurrentActionView={setCurrentActionView} />
+        <LancerApplicationView
+          hasApplied={hasApplied}
+          setCurrentActionView={setCurrentActionView}
+        />
       )}
       {currentActionView === QuestActionView.ViewApplicants && (
         <ApplicantsView

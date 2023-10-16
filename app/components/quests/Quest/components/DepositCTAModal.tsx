@@ -1,4 +1,4 @@
-import { Dispatch, FC, SetStateAction, useState } from "react";
+import { Dispatch, FC, SetStateAction } from "react";
 import Image from "next/image";
 import AlertCardModal from "./AlertCardModal";
 import { smallClickAnimation } from "@/src/constants";

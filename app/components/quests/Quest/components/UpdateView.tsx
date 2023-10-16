@@ -1,7 +1,7 @@
 import Crown from "@/components/@icons/Crown";
 import { BountyUserType } from "@/prisma/queries/bounty";
 import { smallClickAnimation } from "@/src/constants";
-import { useBounty } from "@/src/providers/bountyProvider";
+import { QuestActionView, useBounty } from "@/src/providers/bountyProvider";
 import { api } from "@/src/utils";
 import { QuestProgressState } from "@/types";
 import { oembed, validate } from "@loomhq/loom-embed";
@@ -12,7 +12,6 @@ import { Dispatch, FC, SetStateAction, useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
 import ActionsCardBanner from "./ActionsCardBanner";
 import { UPDATE_TYPES } from "./LancerSubmitUpdateView";
-import { QuestActionView } from "./QuestActions";
 
 interface Props {
   selectedSubmitter: BountyUserType | null;

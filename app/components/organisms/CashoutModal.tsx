@@ -1,16 +1,9 @@
 import { useEffect, useState, FC, Dispatch, SetStateAction } from "react";
-import { motion } from "framer-motion";
 import { useUserWallet } from "@/src/providers/userWalletProvider";
 import { PublicKey } from "@solana/web3.js";
-import { api } from "@/src/utils/api";
-import { fundFFA } from "@/escrow/adapters";
-import { IS_CUSTODIAL, smallClickAnimation, USDC_MINT } from "@/src/constants";
-import { CoinflowFund, USDC, CoinflowOfframp } from "@/components";
-import { CREATE_BOUNTY_TUTORIAL_INITIAL_STATE } from "@/src/constants/tutorials";
-import { useBounty } from "@/src/providers/bountyProvider";
-import { useTutorial } from "@/src/providers/tutorialProvider";
+import { USDC_MINT } from "@/src/constants";
+import { CoinflowOfframp } from "@/components";
 import { IAsyncResult } from "@/types";
-import toast from "react-hot-toast";
 import { Modal } from "@/components";
 import {
   TokenAccountNotFoundError,
@@ -18,7 +11,7 @@ import {
   getAssociatedTokenAddressSync,
 } from "@solana/spl-token";
 import { useConnection } from "@solana/wallet-adapter-react";
-import { formatPrice, formatTwoDecimals } from "@/src/utils";
+import { formatTwoDecimals } from "@/src/utils";
 
 interface Props {
   setShowModal: Dispatch<SetStateAction<boolean>>;

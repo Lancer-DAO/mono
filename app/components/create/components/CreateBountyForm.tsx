@@ -125,7 +125,7 @@ export const CreateBountyForm: FC<Props> = ({
         title: formData.issueTitle,
         description: formData.issueDescription,
         tags: formData.tags,
-        links: formData.links,
+        links: formData.links.filter((link) => link !== ""),
         media: formData.media,
         isPrivate: formData.isPrivate,
         isTest: formData.isTest,
@@ -144,6 +144,8 @@ export const CreateBountyForm: FC<Props> = ({
       }, 2000);
 
       setCurrentBounty(bounty);
+      // TODO: why are we waiting 20s before finding the feature account?
+      // is this something we can do in the background as the user moves on?
       await new Promise((r) => setTimeout(r, Number(20000)));
 
       const [feature_account] = await findFeatureAccount(

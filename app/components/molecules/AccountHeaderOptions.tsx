@@ -1,7 +1,7 @@
 import { useRef, useState } from "react";
 import Image from "next/image";
 import { useUserWallet } from "@/src/providers";
-import { ApiKeyModal, Button, PubKey } from "@/components";
+import { Button, PubKey } from "@/components";
 import { useOutsideAlerter } from "@/src/hooks/useOutsideAlerter";
 import Link from "next/link";
 import { BOUNTY_ACTIONS_TUTORIAL_II_INITIAL_STATE } from "@/src/constants/tutorials";
@@ -15,8 +15,6 @@ const AccountHeaderOptions = () => {
   const { currentUser, logout, currentWallet } = useUserWallet();
   const { isDebugMode, setIsDebugMode } = useDebugMode();
   const { currentTutorialState, setCurrentTutorialState } = useTutorial();
-
-  const [showModal, setShowModal] = useState(false);
   const [showOptions, setShowOptions] = useState(false);
   const wrapperRef = useRef(null);
   useOutsideAlerter(wrapperRef, () => {
@@ -74,10 +72,10 @@ const AccountHeaderOptions = () => {
               }
             }}
             className="flex h-[48px] py-[6px] items-center justify-center 
-              border-b-gray-400 border-b-[1px] hover:bg-bgLancer text-gray-800 
-              transition-colors duration-300 ease-in-out"
+            border-b-gray-400 border-b-[1px] hover:bg-bgLancer text-gray-800 
+            transition-colors duration-300 ease-in-out"
           >
-            Account
+            Profile
           </Link>
         ) : (
           <Link
@@ -134,7 +132,6 @@ const AccountHeaderOptions = () => {
           onClick={() => setIsDebugMode(!isDebugMode)}
         >{`Debug ${isDebugMode ? "On" : "Off"}`}</Button>
       </div>
-      <ApiKeyModal showModal={showModal} setShowModal={setShowModal} />
     </div>
   );
 };

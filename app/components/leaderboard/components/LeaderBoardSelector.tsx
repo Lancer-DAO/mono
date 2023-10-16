@@ -33,7 +33,9 @@ export const LeaderBoardSelector = () => {
           <LinkButton
             href={href}
             className={`text-lg font-bold ${
-              currentLeaderboard === href ? "" : "opacity-50"
+              currentLeaderboard === href
+                ? "text-neutral600"
+                : "text-neutral400"
             }`}
             key={href}
           >
