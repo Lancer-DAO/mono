@@ -17,6 +17,7 @@ import toast from "react-hot-toast";
 import { EApplicantsView } from "./ApplicantsView";
 import CheckpointView from "./CheckpointView";
 import DepositCTAModal from "./DepositCTAModal";
+import Link from "next/link";
 
 interface Props {
   selectedSubmitter: BountyUserType;
@@ -183,23 +184,24 @@ const IndividualApplicantView: FC<Props> = ({
             className="w-full px-6 py-4 bg-white flex items-center 
             justify-between border-b border-neutral200"
           >
-            <div className="flex items-center gap-2">
-              <Image
-                src={selectedSubmitter.user.picture}
-                alt="user avatar"
-                width={40}
-                height={40}
-                className="rounded-full overflow-hidden"
-              />
-              <div className="flex flex-col">
-                <h1 className="text-neutral600">
+            <Link
+              href={`/account/${selectedSubmitter.user.id}`}
+              target="_blank"
+              rel="noreferrer noopener"
+            >
+              <div className="flex items-center gap-2 group">
+                <Image
+                  src={selectedSubmitter.user.picture}
+                  alt="user avatar"
+                  width={40}
+                  height={40}
+                  className="rounded-full overflow-hidden"
+                />
+                <h1 className="text-neutral600 group-hover:underline">
                   {selectedSubmitter.user.name}
                 </h1>
-                {/* <p className="text text-neutral400">
-                  {selectedSubmitter.user.industries[0]}
-                </p> */}
               </div>
-            </div>
+            </Link>
             <motion.button
               onClick={() => {
                 setCurrentApplicantsView(EApplicantsView.All);
@@ -207,7 +209,7 @@ const IndividualApplicantView: FC<Props> = ({
               }}
               {...smallClickAnimation}
             >
-              <X height={24} width={24} />
+              <X height={24} width={24} className="text-black" />
             </motion.button>
           </div>
         </div>
