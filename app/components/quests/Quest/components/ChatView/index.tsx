@@ -16,7 +16,7 @@ import ChatList from "./ChatList";
 import SendMessage from "./SendMessage";
 import { useUserWallet } from "@/src/providers";
 import AlertCards from "../AlertCards";
-import { ConciergeBell } from "lucide-react";
+import { ConciergeBell, X } from "lucide-react";
 import { Tooltip } from "@/components";
 import { DollarSign } from "react-feather";
 
@@ -80,7 +80,21 @@ const ChatView: FC<Props> = ({ selectedSubmitter, setCurrentActionView }) => {
                 <Tooltip text="Submit Update" right="0px" bottom="-25px" />
               </motion.button>
             )}
-          {hasApplied && (
+          {currentBounty.isCreator &&
+            !!update &&
+            currentBounty.state !== BountyState.AWAITING_REVIEW && (
+              <motion.button
+                {...smallClickAnimation}
+                onClick={() => {
+                  setCurrentActionView(QuestActionView.ViewUpdate);
+                }}
+                className="group"
+              >
+                <ConciergeBell size={20} color="white" />
+                <Tooltip text="View Lancer Update" right="0px" bottom="-25px" />
+              </motion.button>
+            )}
+          {hasApplied && !currentBounty.isCreator && (
             <motion.button
               {...smallClickAnimation}
               onClick={() => {
@@ -91,6 +105,16 @@ const ChatView: FC<Props> = ({ selectedSubmitter, setCurrentActionView }) => {
             >
               <DollarSign size={20} color="white" />
               <Tooltip text="Submit/View Quote" right="0px" bottom="-25px" />
+            </motion.button>
+          )}
+          {currentBounty.isCreator && (
+            <motion.button
+              onClick={() => {
+                setCurrentActionView(QuestActionView.ViewApplicants);
+              }}
+              {...smallClickAnimation}
+            >
+              <X height={24} width={24} className="text-white" />
             </motion.button>
           )}
         </div>

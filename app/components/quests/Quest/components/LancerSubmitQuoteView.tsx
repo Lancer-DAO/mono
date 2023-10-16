@@ -209,10 +209,10 @@ const LancerSubmitQuoteView: FC<Props> = ({
             </div>
           )}
         </div>
-        <div className="mt-auto self-stretch">
-          <div className="h-[1px] w-full bg-neutral200" />
-          <div className="flex py-4 px-6 justify-end mt-auto items-center gap-4 self-stretch opacity-100">
-            {currentBounty.isRequestedLancer && !quote && (
+        {currentBounty.isRequestedLancer && !quote && (
+          <div className="mt-auto self-stretch">
+            <div className="h-[1px] w-full bg-neutral200" />
+            <div className="flex py-4 px-6 justify-end mt-auto items-center gap-4 self-stretch opacity-100">
               <motion.button
                 {...smallClickAnimation}
                 className="bg-primary200 text-white h-9 w-fit px-4 py-2 title-text rounded-md
@@ -222,9 +222,9 @@ const LancerSubmitQuoteView: FC<Props> = ({
               >
                 Send Quote
               </motion.button>
-            )}
+            </div>
           </div>
-        </div>
+        )}
       </div>
     </div>
   );

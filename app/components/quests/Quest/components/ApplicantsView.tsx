@@ -7,9 +7,10 @@ import { smallClickAnimation } from "@/src/constants";
 import { BountyUserType } from "@/prisma/queries/bounty";
 import { api } from "@/src/utils";
 import { BountyState } from "@/types";
-import { FundQuestModal } from "@/components";
+import { FundQuestModal, Tooltip } from "@/components";
 import DepositCTAModal from "./DepositCTAModal";
 import IndividualApplicantView from "./IndividualApplicantView";
+import { ConciergeBell } from "lucide-react";
 
 export enum EApplicantsView {
   All,
@@ -28,6 +29,10 @@ const ApplicantsView: FC<Props> = ({
   setSelectedSubmitter,
 }) => {
   const { currentBounty } = useBounty();
+  const { data: update } = api.update.getNewUpdateByBounty.useQuery(
+    { id: currentBounty.id },
+    { enabled: !!currentBounty }
+  );
   const { refetch } = api.quote.getHighestQuoteByBounty.useQuery(
     {
       bountyId: currentBounty.id,
@@ -81,13 +86,31 @@ const ApplicantsView: FC<Props> = ({
         <ActionsCardBanner
           title="Review Applications"
           subtitle={`Quest started on ${createdAtDate}`}
-        />
+        >
+          {currentBounty.isCreator &&
+            !!update &&
+            currentBounty.state !== BountyState.AWAITING_REVIEW && (
+              <motion.button
+                {...smallClickAnimation}
+                onClick={() => {
+                  setCurrentActionView(QuestActionView.ViewUpdate);
+                }}
+                className="group"
+              >
+                <ConciergeBell size={20} color="white" />
+                <Tooltip text="View Lancer Update" right="0px" bottom="-25px" />
+              </motion.button>
+            )}
+        </ActionsCardBanner>
         <div className="relative flex flex-col h-full gap-5 px-6 py-4">
           <p className="text">
             Review all incoming Applications and Quotes here. Lancers will
-            apply, opening up the ability to chat with you. Once you get to know
-            them and answer their questions, they will submit Quotes for you to
-            review. Select the best one and deposit funds to kick things off 🔥
+            apply, opening up the ability to chat with you.
+          </p>
+          <p className="text">
+            Once you get to know them and answer their questions, they will
+            submit Quotes for you to review. Select the best one and deposit
+            funds to kick things off 🔥
           </p>
           {currentBounty.approvedSubmitters.length === 0 ? (
             <>
