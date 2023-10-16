@@ -80,20 +80,18 @@ const ChatView: FC<Props> = ({ selectedSubmitter, setCurrentActionView }) => {
                 <Tooltip text="Submit Update" right="0px" bottom="-25px" />
               </motion.button>
             )}
-          {currentBounty.isCreator &&
-            !!update &&
-            currentBounty.state !== BountyState.AWAITING_REVIEW && (
-              <motion.button
-                {...smallClickAnimation}
-                onClick={() => {
-                  setCurrentActionView(QuestActionView.ViewUpdate);
-                }}
-                className="group"
-              >
-                <ConciergeBell size={20} color="white" />
-                <Tooltip text="View Lancer Update" right="0px" bottom="-25px" />
-              </motion.button>
-            )}
+          {!!update && currentBounty.state !== BountyState.AWAITING_REVIEW && (
+            <motion.button
+              {...smallClickAnimation}
+              onClick={() => {
+                setCurrentActionView(QuestActionView.ViewUpdate);
+              }}
+              className="group"
+            >
+              <ConciergeBell size={20} color="white" />
+              <Tooltip text="View Lancer Update" right="0px" bottom="-25px" />
+            </motion.button>
+          )}
           {hasApplied && !currentBounty.isCreator && (
             <motion.button
               {...smallClickAnimation}
