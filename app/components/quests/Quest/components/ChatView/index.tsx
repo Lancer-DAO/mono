@@ -80,7 +80,7 @@ const ChatView: FC<Props> = ({ selectedSubmitter, setCurrentActionView }) => {
                 <Tooltip text="Submit Update" right="0px" bottom="-25px" />
               </motion.button>
             )}
-          {!!update && currentBounty.state !== BountyState.AWAITING_REVIEW && (
+          {!!update && currentBounty.state === BountyState.AWAITING_REVIEW && (
             <motion.button
               {...smallClickAnimation}
               onClick={() => {
