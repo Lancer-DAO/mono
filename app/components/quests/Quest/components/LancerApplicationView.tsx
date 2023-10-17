@@ -108,7 +108,7 @@ const LancerApplicationView: FC<Props> = ({
       return;
     }
 
-    await confirmAction();
+    // await confirmAction();
     // Request to submit. Does not interact on chain
     const toastId = toast.loading("Sending application...");
     try {
