@@ -82,7 +82,7 @@ const ChatView: FC<Props> = ({ selectedSubmitter, setCurrentActionView }) => {
                 }}
                 className="bg-white border border-neutral200 px-4 py-2 rounded-md flex items-center gap-2"
               >
-                <p className="text-neutral600 title-text">Submit Milestone</p>
+                <p className="text-neutral600 title-text">Submit for Payment</p>
               </motion.button>
             )}
           {!!update && currentBounty.state === BountyState.AWAITING_REVIEW && (
@@ -93,7 +93,7 @@ const ChatView: FC<Props> = ({ selectedSubmitter, setCurrentActionView }) => {
               }}
               className="bg-white border border-neutral200 px-4 py-2 rounded-md flex items-center gap-2"
             >
-              <p className="text-neutral600 title-text">View Milestone</p>
+              <p className="text-neutral600 title-text">View Update</p>
             </motion.button>
           )}
           {hasApplied && !currentBounty.isCreator && (
