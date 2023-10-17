@@ -241,7 +241,6 @@ const bountyQueryMine = async (userId?: number) => {
           BountyState.AWAITING_REVIEW,
           BountyState.VOTING_TO_CANCEL,
           BountyState.DISPUTE_STARTED,
-          BountyState.REVIEWING_SHORTLIST,
         ],
       },
     },

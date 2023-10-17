@@ -67,7 +67,6 @@ export enum BountyState {
   COMPLETE = "complete",
   CANCELED = "canceled",
   ACH_PENDING = "ach_pending",
-  REVIEWING_SHORTLIST = "reviewing_shortlist",
   AWAITING_REVIEW = "awaiting_review",
   VOTING_TO_CANCEL = "voting_to_cancel",
   DISPUTE_STARTED = "dispute_started",
