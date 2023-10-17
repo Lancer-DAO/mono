@@ -138,7 +138,7 @@ export const CreateBountyForm: FC<Props> = ({
       setCreateQuestState({ isLoading: false, result: "Quest Created" });
       toast.success("Quest Created");
       setTimeout(() => {
-        toast.loading("Creating Referral Account, this may take some time", {
+        toast.loading("Please wait 20s, doing things on the blockchain", {
           id: toastId,
         });
       }, 2000);

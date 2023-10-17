@@ -86,13 +86,7 @@ const ApplicantsView: FC<Props> = ({
         </ActionsCardBanner>
         <div className="relative flex flex-col h-full gap-5 px-6 py-4">
           <p className="text">
-            Review all incoming Applications and Quotes here. Lancers will
-            apply, opening up the ability to chat with you.
-          </p>
-          <p className="text">
-            Once you get to know them and answer their questions, they will
-            submit Quotes for you to review. Select the best one and deposit
-            funds to kick things off 🔥
+            Speak with applications and receive quotes here.
           </p>
           {currentBounty.approvedSubmitters.length === 0 ? (
             <>
