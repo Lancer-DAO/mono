@@ -167,15 +167,6 @@ const LancerSubmitQuoteView: FC<Props> = ({
       <AlertCards />
       <div className="relative flex flex-col flex-1 h-full">
         <div className="px-6 py-4">
-          <div className="flex py-4 justify-between border-b border-neutral200">
-            <div className="flex items-center gap-2">
-              <RedFire />
-              <div className="title-text text-neutral600">Quote Price</div>
-              <div className="w-[1px] h-5 bg-neutral200" />
-              <div className="text-mini text-neutral400">{`${quoteData.estimatedTime}h`}</div>
-            </div>
-            <div className="flex items-center title-text text-primary200">{`$${quoteData.price}`}</div>
-          </div>
           {quoteData.checkpoints.map((checkpoint, index) => (
             <>
               {!quote && !currentBounty.isDeniedLancer ? (
@@ -199,8 +190,8 @@ const LancerSubmitQuoteView: FC<Props> = ({
           {quoteData.checkpoints.length < 5 && !quote && (
             <div className="py-4">
               <button
-                className="py-1 px-2 flex gap-1 justify-center items-center 
-                rounded-md border border-neutral200 text-mini text-neutral500"
+                className="py-1 px-2 flex gap-1 justify-center items-center hover:bg-neutral100
+                rounded-md border border-neutral300 text-sm text-neutral600"
                 onClick={() => addCheckpoint()}
               >
                 <Plus />
@@ -208,6 +199,17 @@ const LancerSubmitQuoteView: FC<Props> = ({
               </button>
             </div>
           )}
+          <div className="flex py-4 justify-between">
+            <div className="flex items-center gap-2">
+              <RedFire />
+              <div className="title-text text-neutral600">
+                Total Quote Price
+              </div>
+              <div className="w-[1px] h-5 bg-neutral200" />
+              <div className="text-mini text-neutral400">{`${quoteData.estimatedTime}h`}</div>
+            </div>
+            <div className="flex items-center title-text text-primary200">{`$${quoteData.price}`}</div>
+          </div>
         </div>
         {currentBounty.isRequestedLancer && !quote && (
           <div className="mt-auto self-stretch">

@@ -99,10 +99,9 @@ const ChatView: FC<Props> = ({ selectedSubmitter, setCurrentActionView }) => {
                 setCurrentActionView(QuestActionView.SubmitApplication);
                 setCurrentApplicationView(QuestApplicationView.SubmitQuote);
               }}
-              className="group"
+              className="bg-white border border-neutral200 px-4 py-2 rounded-md flex items-center gap-2"
             >
-              <DollarSign size={20} color="white" />
-              <Tooltip text="Submit/View Quote" right="0px" bottom="-25px" />
+              <p className="text-neutral600 title-text">Submit Quote</p>
             </motion.button>
           )}
           {currentBounty.isCreator && (

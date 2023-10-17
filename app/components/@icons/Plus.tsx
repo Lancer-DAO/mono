@@ -5,8 +5,9 @@ export interface PlusProps extends SVGAttributes<SVGSVGElement> {}
 const Plus: FC<PlusProps> = ({ ...componentProps }: PlusProps) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
-    width="16"
-    height="16"
+    width="16px"
+    height="16px"
+    {...componentProps}
     viewBox="0 0 16 16"
     fill="none"
   >

@@ -216,10 +216,15 @@ const IndividualApplicantView: FC<Props> = ({
         <div className="h-full relative flex flex-col gap-8">
           {!!quote && (
             <div className="flex flex-col px-8 py-2">
-              <div className="flex py-4 justify-between border-b border-neutral200">
+              {checkpoints?.map((checkpoint, index) => (
+                <CheckpointView checkpoint={checkpoint} key={index} />
+              ))}
+              <div className="flex py-4 justify-between">
                 <div className="flex items-center gap-2">
                   <RedFire />
-                  <div className="title-text text-neutral600">Quote Price</div>
+                  <div className="title-text text-neutral600">
+                    Total Quote Price
+                  </div>
                   <div className="w-[1px] h-5 bg-neutral200" />
                   <div className="text-mini text-neutral400">{`${
                     quote?.estimatedTime ?? 0
@@ -229,9 +234,6 @@ const IndividualApplicantView: FC<Props> = ({
                   quote?.price ?? 0
                 }`}</div>
               </div>
-              {checkpoints?.map((checkpoint, index) => (
-                <CheckpointView checkpoint={checkpoint} key={index} />
-              ))}
             </div>
           )}
 
