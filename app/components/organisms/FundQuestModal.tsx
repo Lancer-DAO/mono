@@ -146,15 +146,12 @@ const FundQuestModal: FC<Props> = ({
   return (
     <Modal setShowModal={setShowModal} className="pt-10">
       <div className="relative w-full p-5">
-        <div className="w-[900] flex items-start justify-center gap-10">
+        <div className="w-[900] flex items-start justify-center gap-8">
           <div className="w-full flex flex-col gap-5 max-w-[400px]">
-            <h1>Funding Details</h1>
+            <h1>Fund Your Quest</h1>
             <p>
-              This deposit shows your commitment to the Quest and will be held
-              in escrow until the Quest is completed or canceled.
-            </p>
-            <p>
-              By proceeding you are agreeing to Lancer&apos;s Terms of Service.
+              Choose between funding this secure escrow with USDC or a Credit
+              Card. Then you&apos;re off to the races!
             </p>
           </div>
           <div className="w-full p-5 flex flex-col items-center gap-5 bg-white rounded-md">
@@ -180,7 +177,7 @@ const FundQuestModal: FC<Props> = ({
                   }`}
                   onClick={() => setFundingType("card")}
                 >
-                  Pay with Fiat
+                  Pay with Card
                 </motion.button>
               </div>
             )}

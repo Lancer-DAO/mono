@@ -21,7 +21,7 @@ const DepositCTAModal: FC<Props> = ({
     <AlertCardModal setShowModal={setShowModal}>
       <div className="w-full p-4 pl-12 mt-4 flex flex-col justify-evenly bg-neutral100">
         <div className="relative w-full">
-          <p className="title-text">Almost done!</p>
+          <p className="title-text">Last step!</p>
           <div className="absolute top-0 -left-8">
             <Image
               src="/assets/icons/rocket.svg"
@@ -50,7 +50,7 @@ const DepositCTAModal: FC<Props> = ({
               setShowModal(false);
             }}
           >
-            {`Deposit $${amount} into escrow`}
+            {`Deposit $${amount}`}
           </motion.button>
         </div>
       </div>

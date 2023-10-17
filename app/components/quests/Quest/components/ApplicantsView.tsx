@@ -33,18 +33,6 @@ const ApplicantsView: FC<Props> = ({
     { id: currentBounty.id },
     { enabled: !!currentBounty }
   );
-  const { refetch } = api.quote.getHighestQuoteByBounty.useQuery(
-    {
-      bountyId: currentBounty.id,
-    },
-    {
-      enabled: !!currentBounty,
-      onSuccess: (data) => {
-        const tempDepositAmount = data * 0.05;
-        setDepositAmount(Math.floor(tempDepositAmount * 100) / 100);
-      },
-    }
-  );
 
   const [currentApplicantsView, setCurrentApplicantsView] =
     useState<EApplicantsView>(EApplicantsView.All);
@@ -56,12 +44,6 @@ const ApplicantsView: FC<Props> = ({
   const createdAtDate = new Date(
     Number(currentBounty?.createdAt)
   ).toLocaleDateString();
-
-  useEffect(() => {
-    if (currentBounty?.shortlistedLancers) {
-      refetch();
-    }
-  }, [currentBounty?.shortlistedLancers]);
 
   if (!currentBounty || !currentBounty.isCreator) return null;
 
