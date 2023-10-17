@@ -1,12 +1,7 @@
-import { User } from "@/types";
 import dayjs, { Dayjs } from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
-import { Alert, Button, Flame, Mail, Message, ServiceBell } from "@/components";
+import { Alert, Flame, Mail, Message, ServiceBell } from "@/components";
 dayjs.extend(relativeTime);
-import { Image } from "lucide-react";
-
-import { motion } from "framer-motion";
-import { smallClickAnimation } from "@/src/constants";
 import { useRouter } from "next/router";
 export type UpdateType = "submission" | "message" | "application" | "cancel";
 export type SubmissionType =
@@ -109,17 +104,18 @@ const UpdateTableItem: React.FC<UpdateItemProps> = ({
   const router = useRouter();
   switch (type) {
     case "message":
-      return (
-        <div className="flex px-8 py-4 items-center justify-start w-full border-solid border-b bg-primary100 border-neutralBorder500">
-          <Message height="32px" width="32px" />
-          <div className="text-sm ml-1.5 text-neutral500 mr-4">{`${
-            extraProps.messageCount
-          } New message${extraProps.messageCount > 1 ? "s" : ""} from ${
-            extraProps.updater
-          }`}</div>
-          <div className="text-sm mr-4">{`${time.fromNow()}`}</div>
-        </div>
-      );
+      // return (
+      //   <div className="flex px-8 py-4 items-center justify-start w-full border-solid border-b border-neutralBorder500">
+      //     <Message height="32px" width="32px" />
+      //     <div className="text-sm ml-1.5 text-neutral500 mr-4">{`${
+      //       extraProps.messageCount
+      //     } New message${extraProps.messageCount > 1 ? "s" : ""} from ${
+      //       extraProps.updater
+      //     }`}</div>
+      //     <div className="text-sm mr-4">{`${time.fromNow()}`}</div>
+      //   </div>
+      // );
+      return null;
     case "submission":
       switch (subType) {
         case "new":
@@ -130,7 +126,7 @@ const UpdateTableItem: React.FC<UpdateItemProps> = ({
                   router.push(`/quests/${extraProps.questId}`);
                 }
               }}
-              className="flex flex-col px-8 py-4 items-start justify-center w-full border-solid border-b  border-neutralBorder500 hover:cursor-pointer"
+              className="flex flex-col px-8 py-4 items-start justify-center w-full border-solid border-b border-neutralBorder500 hover:cursor-pointer"
             >
               <div className="flex justify-start items-center w-full">
                 <ServiceBell height="32px" width="32px" />

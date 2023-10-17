@@ -18,7 +18,6 @@ import { useUserWallet } from "@/src/providers";
 import AlertCards from "../AlertCards";
 import { ConciergeBell, X } from "lucide-react";
 import { Tooltip } from "@/components";
-import { DollarSign } from "react-feather";
 
 interface Props {
   selectedSubmitter: BountyUserType | null;
@@ -36,6 +35,13 @@ const ChatView: FC<Props> = ({ selectedSubmitter, setCurrentActionView }) => {
   const { data: update } = api.update.getNewUpdateByBounty.useQuery(
     { id: currentBounty.id },
     { enabled: !!currentBounty }
+  );
+  const { data: quote } = api.quote.getQuoteByBountyAndUser.useQuery(
+    {
+      bountyId: currentBounty.id,
+      userId: currentUser.id,
+    },
+    { enabled: !!currentBounty && !!currentUser }
   );
 
   useEffect(() => {
@@ -101,7 +107,9 @@ const ChatView: FC<Props> = ({ selectedSubmitter, setCurrentActionView }) => {
               }}
               className="bg-white border border-neutral200 px-4 py-2 rounded-md flex items-center gap-2"
             >
-              <p className="text-neutral600 title-text">Submit Quote</p>
+              <p className="text-neutral600 title-text">
+                {!!quote ? "Your Quote" : "Submit Quote"}
+              </p>
             </motion.button>
           )}
           {currentBounty.isCreator && (
