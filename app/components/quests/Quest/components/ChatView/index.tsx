@@ -118,7 +118,9 @@ const ChatView: FC<Props> = ({ selectedSubmitter, setCurrentActionView }) => {
         </div>
       </ActionsCardBanner>
       <div>
-        <AlertCards />
+        <div className="pb-4">
+          <AlertCards />
+        </div>
         <ChannelProvider channelUrl={channel}>
           <div className="w-full h-[calc(44.5rem-180px)] flex flex-col justify-between">
             <div id="chat" className="flex-grow overflow-y-auto">
