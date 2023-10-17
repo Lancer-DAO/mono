@@ -80,10 +80,9 @@ const ChatView: FC<Props> = ({ selectedSubmitter, setCurrentActionView }) => {
                 onClick={() => {
                   setCurrentActionView(QuestActionView.SubmitUpdate);
                 }}
-                className="group"
+                className="bg-white border border-neutral200 px-4 py-2 rounded-md flex items-center gap-2"
               >
-                <ConciergeBell size={20} color="white" />
-                <Tooltip text="Submit Update" right="0px" bottom="-25px" />
+                <p className="text-neutral600 title-text">Submit Milestone</p>
               </motion.button>
             )}
           {!!update && currentBounty.state === BountyState.AWAITING_REVIEW && (
@@ -92,10 +91,9 @@ const ChatView: FC<Props> = ({ selectedSubmitter, setCurrentActionView }) => {
               onClick={() => {
                 setCurrentActionView(QuestActionView.ViewUpdate);
               }}
-              className="group"
+              className="bg-white border border-neutral200 px-4 py-2 rounded-md flex items-center gap-2"
             >
-              <ConciergeBell size={20} color="white" />
-              <Tooltip text="View Lancer Update" right="0px" bottom="-25px" />
+              <p className="text-neutral600 title-text">View Milestone</p>
             </motion.button>
           )}
           {hasApplied && !currentBounty.isCreator && (
