@@ -280,7 +280,7 @@ const IndividualApplicantView: FC<Props> = ({
           )}
           {showModal && (
             <DepositCTAModal
-              prompt="Now that you have selected a Lancer for your Quest, you will need to deposit the quoted price into escrow. This will be released to the Lancer once you have approved their work. These funds are fully refundable if the Quest is cancelled or the Lancer is unable to complete the Quest."
+              prompt="Deposit into escrow to kick off this contract. Pay out when the job is done!"
               setShowModal={setShowModal}
               setShowFundModal={setShowFundModal}
               amount={Number(quote.price)}

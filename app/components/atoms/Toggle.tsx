@@ -27,29 +27,21 @@ const Toggle: FC<Props> = ({ toggleConfig, setToggleConfig }) => {
   };
 
   return (
-    <div
-      className={`w-[285px] h-[50px] bg-neutralBtn flex items-center justify-between px-[2.5px] rounded-lg`}
-    >
-      <div
-        className={`${
-          toggleConfig.selected === "option1"
-            ? "bg-primaryBtn font-bold text-textGreen"
-            : "bg-neutralBtn text-textPrimary font-base"
-        } w-[135px] h-[45px] flex flex-col items-center justify-center hover:cursor-pointer rounded-lg text-sm`}
-        onClick={() => handleClick("option1")}
-      >
-        {toggleConfig.option1.title.toUpperCase()}
-      </div>
-      <div
-        className={`${
-          toggleConfig.selected === "option2"
-            ? "bg-primaryBtn font-bold text-textGreen"
-            : "bg-neutralBtn text-textPrimary font-base"
-        } w-[135px] h-[45px] flex flex-col items-center justify-center hover:cursor-pointer rounded-lg text-sm`}
-        onClick={() => handleClick("option2")}
-      >
-        {toggleConfig.option2.title.toUpperCase()}
-      </div>
+    <div className="toggle-button flex items-center gap-2">
+      <p className="text-neutral500 whitespace-nowrap text-sm">
+        {toggleConfig.selected === "option1" ? "All Quests" : "My Quests"}
+      </p>
+      <input
+        type="checkbox"
+        id="toggle"
+        checked={toggleConfig.selected === "option2"}
+        onChange={() => {
+          handleClick(
+            toggleConfig.selected === "option1" ? "option2" : "option1"
+          );
+        }}
+      />
+      <label htmlFor="toggle"></label>
     </div>
   );
 };

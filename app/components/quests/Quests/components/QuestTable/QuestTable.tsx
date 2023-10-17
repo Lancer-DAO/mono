@@ -43,6 +43,7 @@ const QuestTable: React.FC<Props> = ({ type }) => {
   const { allIndustries, userIndustries } = useIndustry();
 
   const [filters, setFilters] = useState<Filters>({
+    myQuests: false,
     industries:
       userIndustries?.map((industry) => industry.name) ||
       allIndustries?.map((industry) => industry.name) ||
@@ -98,6 +99,22 @@ const QuestTable: React.FC<Props> = ({ type }) => {
           bountyTags.length !== 0 &&
           commonTags?.length === 0 &&
           tags?.length !== 0
+        ) {
+          return false;
+        }
+
+        if (
+          filters.myQuests === true &&
+          !bounty.users.some(
+            (bountyUser) => bountyUser.userid === currentUser?.id
+          )
+        ) {
+          return false;
+        } else if (
+          filters.myQuests === false &&
+          bounty.users.some(
+            (bountyUser) => bountyUser.userid === currentUser?.id
+          )
         ) {
           return false;
         }
