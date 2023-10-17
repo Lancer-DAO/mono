@@ -137,7 +137,7 @@ export const PortfolioCard: React.FC = () => {
       border-neutral200 rounded-md p-6"
     >
       <p className="text-neutral600 title-text">Portfolio</p>
-      <div className="grid grid-cols-4 h-[100px] gap-4">
+      <div className="grid grid-cols-4 h-[150px] gap-4">
         {[...Array(maxMedia)].map((_, index) => {
           if (index < portfolio.length) {
             const media = portfolio[index];
@@ -145,7 +145,7 @@ export const PortfolioCard: React.FC = () => {
               <Dialog key={index}>
                 <div className="relative" key={index}>
                   <DialogTrigger
-                    className="relative border-2 border-neutral200 rounded-[4px] w-full h-[90px] overflow-hidden"
+                    className="relative border-2 border-neutral200 rounded-[4px] w-full h-[130px] overflow-hidden"
                     key={`dialog-${index}`}
                   >
                     <Image
