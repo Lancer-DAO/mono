@@ -309,7 +309,7 @@ export const CreateBountyForm: FC<Props> = ({
           className="placeholder:text-neutral400 border bg-neutral100 text-sm min-h-[150px] 
           border-neutral200 w-full rounded-md px-3 py-2 resize-y"
           name="issueDescription"
-          placeholder="Landing page for a HR Software focusing on SME’s. We have something outdated and we need a new website that shows new shiny features and reflect our Brand."
+          placeholder="Add a detailed description of your Quest here."
           id="issue-description-input"
           value={formData.issueDescription}
           onChange={handleChange}
