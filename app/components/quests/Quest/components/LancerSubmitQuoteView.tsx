@@ -16,6 +16,7 @@ import AlertCards from "./AlertCards";
 import CheckpointEdit from "./CheckpointEdit";
 import CheckpointView from "./CheckpointView";
 import { ChatButton } from "@/components";
+import { X } from "lucide-react";
 interface Props {
   quoteData: LancerQuoteData;
   setQuoteData: Dispatch<SetStateAction<LancerQuoteData>>;
@@ -148,20 +149,14 @@ const LancerSubmitQuoteView: FC<Props> = ({
         subtitle="Quest Application"
       >
         <div className="flex items-center gap-3">
-          {currentBounty.isApprovedSubmitter &&
-            !!update === false &&
-            currentBounty.state === BountyState.IN_PROGRESS && (
-              <motion.button
-                {...smallClickAnimation}
-                className="bg-secondary200 text-white title-text px-4 py-2 rounded-md"
-                onClick={() =>
-                  setCurrentActionView(QuestActionView.SubmitUpdate)
-                }
-              >
-                Submit Update
-              </motion.button>
-            )}
-          <ChatButton />
+          <motion.button
+            {...smallClickAnimation}
+            onClick={() => {
+              setCurrentActionView(QuestActionView.Chat);
+            }}
+          >
+            <X color="white" />
+          </motion.button>
         </div>
       </ActionsCardBanner>
       <AlertCards />

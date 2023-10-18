@@ -152,7 +152,7 @@ const UpdateTableItem: React.FC<UpdateItemProps> = ({
               }}
               className={`${
                 isIndividual ? "" : "hover:cursor-pointer"
-              } flex flex-col px-8 py-4 items-start justify-center w-full border-solid border-b  border-neutralBorder500`}
+              } flex flex-col px-8 py-4 items-start justify-center w-full border-solid border-b border-neutralBorder500`}
             >
               <div className="flex justify-start items-center w-full">
                 <Flame height="32px" width="32px" version="orange" />

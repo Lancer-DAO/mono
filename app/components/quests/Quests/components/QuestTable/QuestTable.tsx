@@ -44,10 +44,13 @@ const QuestTable: React.FC<Props> = ({ type }) => {
 
   const [filters, setFilters] = useState<Filters>({
     myQuests: false,
-    industries:
-      userIndustries?.map((industry) => industry.name) ||
-      allIndustries?.map((industry) => industry.name) ||
-      [],
+    industries: userIndustries?.map((industry) => industry.name) ||
+      allIndustries?.map((industry) => industry.name) || [
+        // TODO: hardcoded - fix this
+        "Engineering",
+        "Design",
+        "Content",
+      ],
     tags: tags,
     states: TABLE_BOUNTY_STATES,
   });
@@ -176,10 +179,11 @@ const QuestTable: React.FC<Props> = ({ type }) => {
       setFilters({
         ...filters,
         tags: allTags,
-        industries:
-          userIndustries?.map((industry) => industry.name) ||
-          allIndustries?.map((industry) => industry.name) ||
-          [],
+        industries: userIndustries?.map((industry) => industry.name) ||
+          allIndustries?.map(
+            (industry) => industry.name
+          ) || // TODO: hardcoded - fix this
+          ["Engineering", "Design", "Content"],
       });
     }
   }, [allBounties, userIndustries, allIndustries]);
@@ -214,7 +218,7 @@ const QuestTable: React.FC<Props> = ({ type }) => {
         </AnimatePresence>
 
         <div className="w-full flex flex-col bg-white rounded-md py-4 px-6">
-          <div className="flex flex-col max-h-[500px] overflow-y-auto overflow-x-hidden">
+          <div className="flex flex-col h-full overflow-y-auto overflow-x-hidden">
             {filteredBounties?.length > 0 &&
               (() => {
                 // Create an object to store bounties grouped by state
@@ -259,7 +263,7 @@ const QuestTable: React.FC<Props> = ({ type }) => {
               </p>
             </div>
           )}
-          {filteredBounties?.length > 0 && (
+          {/* {filteredBounties?.length > 0 && (
             <div className="flex items-center justify-center gap-5">
               <button
                 onClick={() => {
@@ -280,7 +284,7 @@ const QuestTable: React.FC<Props> = ({ type }) => {
                 Next Page
               </button>
             </div>
-          )}
+          )} */}
         </div>
       </div>
     </div>

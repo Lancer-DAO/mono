@@ -80,9 +80,9 @@ const ChatView: FC<Props> = ({ selectedSubmitter, setCurrentActionView }) => {
                 onClick={() => {
                   setCurrentActionView(QuestActionView.SubmitUpdate);
                 }}
-                className="bg-white border border-neutral200 px-4 py-2 rounded-md flex items-center gap-2"
+                className="bg-primary200 px-4 py-[9px] rounded-md flex items-center gap-2"
               >
-                <p className="text-neutral600 title-text">Submit for Payment</p>
+                <p className="text-white title-text">Submit Update</p>
               </motion.button>
             )}
           {!!update && currentBounty.state === BountyState.AWAITING_REVIEW && (
@@ -127,7 +127,7 @@ const ChatView: FC<Props> = ({ selectedSubmitter, setCurrentActionView }) => {
           <AlertCards />
         </div>
         <ChannelProvider channelUrl={channel}>
-          <div className="w-full h-[calc(44.5rem-180px)] flex flex-col justify-between">
+          <div className="w-full h-[calc(44.5rem-200px)] flex flex-col justify-between">
             <div id="chat" className="flex-grow overflow-y-auto">
               <ChatList />
             </div>

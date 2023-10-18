@@ -12,6 +12,7 @@ import { Dispatch, FC, SetStateAction, useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
 import ActionsCardBanner from "./ActionsCardBanner";
 import { UPDATE_TYPES } from "./LancerSubmitUpdateView";
+import { useRouter } from "next/router";
 
 interface Props {
   selectedSubmitter: BountyUserType | null;
@@ -30,6 +31,8 @@ const UpdateView: FC<Props> = ({ selectedSubmitter, setCurrentActionView }) => {
   });
   const [hasSent, setHasSent] = useState(false);
   const [isAwaitingResponse, setIsAwaitingResponse] = useState(false);
+
+  const router = useRouter();
 
   const { data: updates } = api.update.getUpdatesByBounty.useQuery(
     { id: currentBounty.id },
@@ -124,6 +127,7 @@ const UpdateView: FC<Props> = ({ selectedSubmitter, setCurrentActionView }) => {
       setTimeout(() => {
         toast.dismiss(toastId);
       }, 2000);
+      router.reload();
       localStorage.removeItem("reviewData");
     } catch (error) {
       toast.error("Error sending feedback", { id: toastId });
@@ -157,16 +161,14 @@ const UpdateView: FC<Props> = ({ selectedSubmitter, setCurrentActionView }) => {
           (updates?.length || 0) === 1 ? "update" : "updates"
         } so far`}
       >
-        {currentBounty.isCreator && (
-          <motion.button
-            onClick={() => {
-              setCurrentActionView(QuestActionView.Chat);
-            }}
-            {...smallClickAnimation}
-          >
-            <X height={24} width={24} className="text-white" />
-          </motion.button>
-        )}
+        <motion.button
+          onClick={() => {
+            setCurrentActionView(QuestActionView.Chat);
+          }}
+          {...smallClickAnimation}
+        >
+          <X height={24} width={24} className="text-white" />
+        </motion.button>
       </ActionsCardBanner>
       <div className="w-full flex flex-col px-6 py-4 gap-6">
         {update?.type === UPDATE_TYPES.Loom && (
@@ -239,19 +241,21 @@ const UpdateView: FC<Props> = ({ selectedSubmitter, setCurrentActionView }) => {
             </div>
           </div>
         </div>
-        <div className="flex flex-col gap-4">
-          <div className="text text-neutral600">
-            Leave actionable feedback please. It will save time!
+        {currentBounty.isCreator && (
+          <div className="flex flex-col gap-4">
+            <div className="text text-neutral600">
+              Leave actionable feedback please. It will save time!
+            </div>
+            <textarea
+              className="p-4 min-h-[132px] rounded-md border border-neutral200 bg-neutral100 text placeholder:text-neutral300 resize-none outline-none"
+              placeholder="Type here..."
+              value={review}
+              onChange={(e) => setReview(e.target.value)}
+            />
           </div>
-          <textarea
-            className="p-4 min-h-[132px] rounded-md border border-neutral200 bg-neutral100 text placeholder:text-neutral300 resize-none outline-none"
-            placeholder="Type here..."
-            value={review}
-            onChange={(e) => setReview(e.target.value)}
-          />
-        </div>
+        )}
       </div>
-      {!hasSent && (
+      {!hasSent && currentBounty.isCreator && (
         <div className="flex justify-end items-center gap-4 px-6 py-4">
           <motion.button
             {...smallClickAnimation}

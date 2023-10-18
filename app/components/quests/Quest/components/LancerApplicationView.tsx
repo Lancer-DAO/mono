@@ -12,6 +12,7 @@ import { FC, useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
 import LancerApplyView from "./LancerApplyView";
 import LancerSubmitQuoteView from "./LancerSubmitQuoteView";
+import { useRouter } from "next/router";
 
 interface Props {
   setCurrentActionView: (view: QuestActionView) => void;
@@ -35,6 +36,8 @@ const LancerApplicationView: FC<Props> = ({
   const { mutateAsync: updateBountyUsers } =
     api.bountyUsers.update.useMutation();
   const { mutateAsync: createQuote } = api.quote.createQuote.useMutation();
+
+  const router = useRouter();
 
   const [quoteData, setQuoteData] = useState(() => {
     const savedData = localStorage.getItem(`quoteData-${currentBounty.id}`);
@@ -187,6 +190,7 @@ const LancerApplicationView: FC<Props> = ({
       // remove locally stored form data
       localStorage.removeItem(`quoteData-${currentBounty.id}`);
       localStorage.removeItem(`applyData-${currentBounty.id}`);
+      router.reload();
     } catch (error) {
       if (
         (error.message as string).includes(

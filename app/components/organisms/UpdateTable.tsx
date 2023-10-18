@@ -224,7 +224,7 @@ const AllUpdatesTable: React.FC = () => {
             <EmptyUpdatesHistory width="290px" height="154px" />
           </div>
         ) : (
-          <div className="flex flex-col max-h-[616px] overflow-y-scroll">
+          <div className="flex flex-col h-full overflow-y-auto">
             {allUpdates.map((update) => {
               return <UpdateTableItem {...update} key={update.key} />;
             })}
@@ -766,6 +766,7 @@ const QuestUpdatesTable: React.FC = () => {
             {currentBounty.isCreator &&
               currentBounty.state !== BountyState.VOTING_TO_CANCEL &&
               currentBounty.state !== BountyState.CANCELED &&
+              currentBounty.state !== BountyState.COMPLETE &&
               currentBounty.state !== BountyState.DISPUTE_STARTED &&
               currentBounty.state !== BountyState.DISPUTE_SETTLED && (
                 <motion.button
@@ -791,21 +792,6 @@ const QuestUpdatesTable: React.FC = () => {
                   disabled={isLoading || isAwaitingResponse}
                 >
                   Payout Quest
-                </motion.button>
-              )}
-            {!currentBounty.isCreator &&
-              currentBounty.state === BountyState.VOTING_TO_CANCEL &&
-              currentBounty.needsToVote
-                .map((user) => user.userid)
-                .includes(currentUser.id) && (
-                <motion.button
-                  {...smallClickAnimation}
-                  className="bg-white border border-neutral200 h-9 w-fit px-4 py-2
-                  title-text rounded-md text-error disabled:cursor-not-allowed disabled:opacity-80 whitespace-nowrap"
-                  onClick={handleVoteToCancel}
-                  disabled={isLoading || isAwaitingResponse}
-                >
-                  Vote to Cancel
                 </motion.button>
               )}
 
