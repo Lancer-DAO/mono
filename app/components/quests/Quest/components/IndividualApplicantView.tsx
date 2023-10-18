@@ -1,6 +1,6 @@
 import { ChatButton, FundQuestModal } from "@/components";
 import RedFire from "@/components/@icons/RedFire";
-import { addSubmitterFFA } from "@/escrow/adapters";
+import { addSubmitterFFA, addSubmitterFFAOld } from "@/escrow/adapters";
 import { BountyUserType } from "@/prisma/queries/bounty";
 import { smallClickAnimation } from "@/src/constants";
 import { useUserWallet } from "@/src/providers";
@@ -63,23 +63,12 @@ const IndividualApplicantView: FC<Props> = ({
     }
     try {
       const submitterWallet = new PublicKey(selectedSubmitter.publicKey);
-      const remainingAccounts = await getRemainingAccounts(
-        submitterWallet,
-        new PublicKey(currentBounty?.escrow.mint.publicKey)
-      );
-      const refferer = await getSubmitterReferrer(
-        submitterWallet,
-        new PublicKey(currentBounty?.escrow.mint.publicKey)
-      );
-      console.log("refferer", refferer.toBase58());
-      const signature = await addSubmitterFFA(
+
+      const signature = await addSubmitterFFAOld(
         submitterWallet,
         currentBounty?.escrow,
         currentWallet,
-        refferer,
-        remainingAccounts,
-        program,
-        provider
+        program
       );
       const newRelations = updateList(
         selectedSubmitter.userid === currentUser.id
