@@ -89,7 +89,7 @@ export const QuestFilters = ({
             }}
           />
         )}
-        <MultiSelectDropdown
+        {/* <MultiSelectDropdown
           extraClasses="w-[140px]"
           version="white"
           title="States"
@@ -117,7 +117,7 @@ export const QuestFilters = ({
               states: options.map((option) => option.value) as string[],
             });
           }}
-        />
+        /> */}
       </div>
     </div>
   );

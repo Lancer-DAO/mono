@@ -115,8 +115,8 @@ const bountyQueryMany = async (
         createdAt: "desc",
       },
       select: BOUNTY_MANY_SELECT,
-      skip: page * QUESTS_PER_PAGE,
-      take: QUESTS_PER_PAGE,
+      // skip: page * QUESTS_PER_PAGE,
+      // take: QUESTS_PER_PAGE,
     });
   }
   let otherQuestsWhereClause: any = industries

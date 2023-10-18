@@ -15,6 +15,7 @@ import { FC, useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
 import ActionsCardBanner from "./ActionsCardBanner";
 import { X } from "react-feather";
+import { useRouter } from "next/router";
 
 export enum UPDATE_TYPES {
   Loom = "Loom recording",
@@ -48,6 +49,8 @@ const LancerSubmitUpdateView: FC = () => {
 
   const types = [UPDATE_TYPES.Loom, UPDATE_TYPES.FileUpload, UPDATE_TYPES.Text];
 
+  const router = useRouter();
+
   const toggleDropdown = () => setDropdownOpen(!dropdownOpen);
 
   const handleSubmitUpdate = async () => {
@@ -71,6 +74,7 @@ const LancerSubmitUpdateView: FC = () => {
       setTimeout(() => {
         toast.dismiss(toastId);
       }, 2000);
+      router.reload();
     } catch (error) {
       toast.error("Error submitting update", { id: toastId });
       setTimeout(() => {
@@ -157,7 +161,7 @@ const LancerSubmitUpdateView: FC = () => {
               {types.map((type) => (
                 <div
                   key={type}
-                  className="px-2 py-[6px]"
+                  className="px-2 py-[6px] cursor-hover"
                   onClick={() => handleDropdownChange(type)}
                 >
                   {type}
