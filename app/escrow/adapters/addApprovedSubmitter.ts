@@ -49,7 +49,8 @@ export const addSubmitterFFAOld = async (
   submitter: PublicKey,
   acc: Escrow,
   wallet: LancerWallet,
-  program: Program<MonoProgram>
+  program: Program<MonoProgram>,
+  provider: AnchorProvider
 ) => {
   let approveSubmitterIx = await addApprovedSubmittersInstruction(
     acc.timestamp,
