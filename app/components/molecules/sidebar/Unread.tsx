@@ -1,6 +1,6 @@
 import { useUserWallet } from "@/src/providers";
 import { useChat } from "@/src/providers/chatProvider";
-import { getUnreadMessageCount } from "@/src/utils/sendbird";
+// import { getUnreadMessageCount } from "@/src/utils/sendbird";
 import { useEffect, useState } from "react";
 
 const Unread = () => {
@@ -15,14 +15,14 @@ const Unread = () => {
     }
   }, [isChatOpen]);
 
-  useEffect(() => {
-    if (currentUser && !count) {
-      (async () => {
-        const _count = await getUnreadMessageCount(String(currentUser.id));
-        setCount(_count);
-      })();
-    }
-  }, [currentUser]);
+  // useEffect(() => {
+  //   if (currentUser && !count) {
+  //     (async () => {
+  //       const _count = await getUnreadMessageCount(String(currentUser.id));
+  //       setCount(_count);
+  //     })();
+  //   }
+  // }, [currentUser]);
 
   return (
     <div className="mt-5 relative flex items-center justify-center">

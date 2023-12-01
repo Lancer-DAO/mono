@@ -2,7 +2,7 @@ import { protectedProcedure } from "../../trpc";
 import { z } from "zod";
 import * as queries from "@/prisma/queries";
 import { BountyState } from "@/types/";
-import { createGroupChannel } from "@/src/utils/sendbird";
+// import { createGroupChannel } from "@/src/utils/sendbird";
 import { HostedHooksClient } from "../../webhooks";
 
 export const updateRelations = protectedProcedure

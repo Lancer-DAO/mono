@@ -2,7 +2,6 @@ import { protectedProcedure } from "../../trpc";
 import { z } from "zod";
 import * as queries from "@/prisma/queries";
 import { BountyState, BOUNTY_USER_RELATIONSHIP } from "@/types/";
-import { createGroupChannel } from "@/src/utils/sendbird";
 import { HostedHooksClient } from "../../webhooks";
 import { prisma } from "@/server/db";
 
