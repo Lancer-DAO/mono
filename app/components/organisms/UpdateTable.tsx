@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useUserWallet } from "@/src/providers";
 import dayjs from "dayjs";
 import { DisputeModal, UpdateTableItem } from "..";
-import { getUnreadChannels } from "@/src/utils/sendbird";
+// import { getUnreadChannels } from "@/src/utils/sendbird";
 import { api, decimalToNumber, updateList } from "@/src/utils";
 import {
   getApplicationTypeFromLabel,
@@ -32,7 +32,7 @@ const underdogClient = createUnderdogClient({});
 
 const AllUpdatesTable: React.FC = () => {
   const { currentUser } = useUserWallet();
-  const [unreadMessages, setUnreadMessages] = useState<UpdateItemProps[]>(null);
+  // const [unreadMessages, setUnreadMessages] = useState<UpdateItemProps[]>(null);
   const [allUpdates, setAllUpdates] = useState<UpdateItemProps[]>(null);
   const { data: newApplications } =
     api.bountyUsers.getBountyUpdatesCreator.useQuery(undefined, {
@@ -67,27 +67,27 @@ const AllUpdatesTable: React.FC = () => {
     }
   );
 
-  useEffect(() => {
-    if (currentUser && !unreadMessages) {
-      const getChannels = async () => {
-        const unreadChannels = await getUnreadChannels(String(currentUser.id));
-        const messageUpdates = unreadChannels?.map((message) => {
-          return {
-            type: "message" as any,
-            time: dayjs(message.sentAt),
-            extraProps: {
-              messageCount: message.unreadCount,
-              updater: message.userName,
-            },
-            key: message.userId,
-          };
-        });
+  // useEffect(() => {
+  //   if (currentUser && !unreadMessages) {
+  //     const getChannels = async () => {
+  //       const unreadChannels = await getUnreadChannels(String(currentUser.id));
+  //       const messageUpdates = unreadChannels?.map((message) => {
+  //         return {
+  //           type: "message" as any,
+  //           time: dayjs(message.sentAt),
+  //           extraProps: {
+  //             messageCount: message.unreadCount,
+  //             updater: message.userName,
+  //           },
+  //           key: message.userId,
+  //         };
+  //       });
 
-        setUnreadMessages(messageUpdates);
-      };
-      getChannels();
-    }
-  }, [currentUser, unreadMessages]);
+  //       setUnreadMessages(messageUpdates);
+  //     };
+  //     getChannels();
+  //   }
+  // }, [currentUser, unreadMessages]);
 
   useEffect(() => {
     if (currentUser) {
@@ -185,9 +185,9 @@ const AllUpdatesTable: React.FC = () => {
             key: lancerUpdate.reviewedAt,
           });
         });
-        const messageUpdates = unreadMessages ? unreadMessages : [];
+        // const messageUpdates = unreadMessages ? unreadMessages : [];
         const allUpdates: UpdateItemProps[] = [
-          ...messageUpdates,
+          // ...messageUpdates,
           ...newApplicationUpdates,
           ...newApplicationReviewsUpdates,
           ...cancelVotesUpdates,
@@ -203,7 +203,7 @@ const AllUpdatesTable: React.FC = () => {
       getChannels();
     }
   }, [
-    unreadMessages,
+    // unreadMessages,
     newApplications,
     newApplicationReviews,
     cancelVotes,
@@ -244,7 +244,7 @@ const AllUpdatesTable: React.FC = () => {
 
 const QuestUpdatesTable: React.FC = () => {
   const { currentBounty, setCurrentBounty } = useBounty();
-  const [unreadMessages, setUnreadMessages] = useState<UpdateItemProps[]>(null);
+  // const [unreadMessages, setUnreadMessages] = useState<UpdateItemProps[]>(null);
   const [allUpdates, setAllUpdates] = useState<UpdateItemProps[]>(null);
   const [showDisputeModal, setShowDisputeModal] = useState(false);
   const { mutateAsync: updateBounty } = api.bountyUsers.update.useMutation();
@@ -291,37 +291,37 @@ const QuestUpdatesTable: React.FC = () => {
     { enabled: !!currentUser && !!currentBounty && !currentBounty.isCreator }
   );
 
-  useEffect(() => {
-    if (currentUser && !unreadMessages) {
-      const getChannels = async () => {
-        const userIds = currentBounty.all.map((user) => user.userid);
-        const unreadChannels = await getUnreadChannels(String(currentUser.id));
-        const filteredMessages = unreadChannels.filter((message) => {
-          return currentBounty.isCreator
-            ? userIds.includes(message.userId)
-            : (message.userId as number) ===
-                (currentBounty.creator.userid as number);
-        });
-        const messageUpdates = filteredMessages.map((message) => {
-          return {
-            type: "message" as any,
-            time: dayjs(message.sentAt),
-            extraProps: {
-              messageCount: message.unreadCount,
-              updater: message.userName,
-            },
-            key: message.userId,
-          };
-        });
+  // useEffect(() => {
+  //   if (currentUser && !unreadMessages) {
+  //     const getChannels = async () => {
+  //       const userIds = currentBounty.all.map((user) => user.userid);
+  //       const unreadChannels = await getUnreadChannels(String(currentUser.id));
+  //       const filteredMessages = unreadChannels.filter((message) => {
+  //         return currentBounty.isCreator
+  //           ? userIds.includes(message.userId)
+  //           : (message.userId as number) ===
+  //               (currentBounty.creator.userid as number);
+  //       });
+  //       const messageUpdates = filteredMessages.map((message) => {
+  //         return {
+  //           type: "message" as any,
+  //           time: dayjs(message.sentAt),
+  //           extraProps: {
+  //             messageCount: message.unreadCount,
+  //             updater: message.userName,
+  //           },
+  //           key: message.userId,
+  //         };
+  //       });
 
-        setUnreadMessages(messageUpdates);
-      };
-      getChannels();
-    }
-  }, [currentUser, unreadMessages, currentBounty]);
+  //       setUnreadMessages(messageUpdates);
+  //     };
+  //     getChannels();
+  //   }
+  // }, [currentUser, unreadMessages, currentBounty]);
 
   useEffect(() => {
-    if (currentUser && !!unreadMessages) {
+    if (currentUser) {
       const getChannels = async () => {
         const newApplicationUpdates = [];
         newApplications?.forEach((application) => {
@@ -413,7 +413,7 @@ const QuestUpdatesTable: React.FC = () => {
           });
         });
         const allUpdates: UpdateItemProps[] = [
-          ...unreadMessages,
+          // ...unreadMessages,
           ...newApplicationUpdates,
           ...newApplicationReviewsUpdates,
           ...disputeUpdates,
@@ -429,7 +429,7 @@ const QuestUpdatesTable: React.FC = () => {
       getChannels();
     }
   }, [
-    unreadMessages,
+    // unreadMessages,
     newApplications,
     newApplicationReviews,
     cancelVotes,

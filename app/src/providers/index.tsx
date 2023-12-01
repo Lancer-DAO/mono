@@ -20,8 +20,6 @@ import CustodialWalletProvider from "./userWalletProvider/custodialProvider";
 import { IS_CUSTODIAL, IS_MAINNET, MAINNET_RPC } from "../constants";
 import ReferralProvider from "./referralProvider";
 import { useDebugMode } from "./debugModeProvider";
-import ChatProvider from "./chatProvider";
-import SendbirdProvider from "@sendbird/uikit-react/SendbirdProvider";
 
 export * from "./userWalletProvider";
 
@@ -74,9 +72,7 @@ export const AllProviders: React.FC<{ children: ReactNode; user }> = ({
                   <ReferralProvider>
                     <IndustryProvider>
                       <MintProvider>
-                        <AccountProvider>
-                          <ChatProvider>{children}</ChatProvider>
-                        </AccountProvider>
+                        <AccountProvider>{children}</AccountProvider>
                       </MintProvider>
                     </IndustryProvider>
                   </ReferralProvider>
@@ -102,9 +98,7 @@ export const AllProviders: React.FC<{ children: ReactNode; user }> = ({
                     <ReferralProvider>
                       <IndustryProvider>
                         <MintProvider>
-                          <AccountProvider>
-                            <ChatProvider>{children}</ChatProvider>
-                          </AccountProvider>
+                          <AccountProvider>{children}</AccountProvider>
                         </MintProvider>
                       </IndustryProvider>
                     </ReferralProvider>

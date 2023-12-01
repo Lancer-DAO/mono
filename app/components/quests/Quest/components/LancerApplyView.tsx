@@ -22,7 +22,7 @@ const LancerApplyView: FC<Props> = ({ hasApplied, onClick }) => {
   return (
     <div className="flex flex-col h-full">
       <ActionsCardBanner
-        title={`Conversation with ${currentBounty.creator.user.name}`}
+        title={`Apply for ${currentBounty.creator.user.name}' Quest`}
       >
         {!hasApplied && (
           <motion.button

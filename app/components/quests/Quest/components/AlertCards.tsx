@@ -21,7 +21,7 @@ const AlertCards: FC = () => {
           <AlertCard
             type="positive"
             title="Application sent!"
-            description="Chat with the creator and submit a quote to kick things off."
+            description="Submit a quote to kick things off."
           />
         </div>
       )}

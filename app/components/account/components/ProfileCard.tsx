@@ -3,10 +3,8 @@ import { QuestActionsButton } from "@/components/quests/Quest/components";
 import { BADGES_PROJECT_PARAMS, USDC_MINT } from "@/src/constants";
 import { useUserWallet } from "@/src/providers";
 import { useAccount } from "@/src/providers/accountProvider";
-import { useChat } from "@/src/providers/chatProvider";
 import { useIndustry } from "@/src/providers/industryProvider";
 import { api } from "@/src/utils";
-import { createDM } from "@/src/utils/sendbird";
 import { IAsyncResult, User } from "@/types/";
 import {
   TokenAccountNotFoundError,
@@ -99,7 +97,6 @@ export const ProfileCard = ({
   const { mutateAsync: updateIndustry } =
     api.users.updateIndustry.useMutation();
   const { mutateAsync: approveUser } = api.users.approveUser.useMutation();
-  const { setIsChatOpen, setCurrentChannel } = useChat();
   const { refetch: refetchUser } = api.users.getUser.useQuery(
     {
       id: currentUser?.id,

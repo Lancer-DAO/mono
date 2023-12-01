@@ -10,7 +10,6 @@ import { BountyState } from "@/types";
 import { motion } from "framer-motion";
 import { Dispatch, FC, SetStateAction, useEffect, useState } from "react";
 import ActionsCardBanner from "../ActionsCardBanner";
-import { createDM } from "@/src/utils/sendbird";
 import { ChannelProvider } from "@sendbird/uikit-react/Channel/context";
 import ChatList from "./ChatList";
 import SendMessage from "./SendMessage";
@@ -25,10 +24,6 @@ interface Props {
 }
 
 const ChatView: FC<Props> = ({ selectedSubmitter, setCurrentActionView }) => {
-  const [channel, setChannel] = useState<string>(
-    "sendbird_group_channel_285084156_0b7fc17ca999c4eccd1bc09829866ef026473658"
-  );
-
   const { currentUser } = useUserWallet();
   const { currentBounty, setCurrentApplicationView, hasApplied } = useBounty();
 
@@ -44,26 +39,10 @@ const ChatView: FC<Props> = ({ selectedSubmitter, setCurrentActionView }) => {
     { enabled: !!currentBounty && !!currentUser }
   );
 
-  useEffect(() => {
-    (async () => {
-      const chatter = currentBounty?.isCreator
-        ? currentBounty.state === BountyState.ACCEPTING_APPLICATIONS
-          ? selectedSubmitter.user.id
-          : currentBounty.approvedSubmitters[0].user.id
-        : currentUser.id;
-      const _url = await createDM([
-        String(currentBounty.creator.userid),
-        String(chatter),
-      ]);
-
-      setChannel(_url);
-    })();
-  }, [selectedSubmitter, currentBounty]);
-
   return (
     <div className="flex h-full flex-col relative overflow-hidden">
       <ActionsCardBanner
-        title={`Conversation with ${
+        title={`Quest with ${
           currentBounty.isCreator
             ? currentBounty.state === BountyState.ACCEPTING_APPLICATIONS
               ? selectedSubmitter.user.name
@@ -126,14 +105,6 @@ const ChatView: FC<Props> = ({ selectedSubmitter, setCurrentActionView }) => {
         <div className="pb-4">
           <AlertCards />
         </div>
-        <ChannelProvider channelUrl={channel}>
-          <div className="w-full h-[calc(44.5rem-200px)] flex flex-col justify-between">
-            <div id="chat" className="flex-grow overflow-y-auto">
-              <ChatList />
-            </div>
-            <SendMessage />
-          </div>
-        </ChannelProvider>
       </div>
     </div>
   );
