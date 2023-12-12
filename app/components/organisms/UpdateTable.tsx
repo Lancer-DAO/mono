@@ -22,7 +22,6 @@ import { PublicKey } from "@solana/web3.js";
 import EmptyUpdatesHistory from "../@icons/EmptyUpdatesHistory";
 import {
   approveRequestFFA,
-  approveRequestFFAOld,
   cancelFFA,
   voteToCancelFFA,
 } from "@/escrow/adapters";
@@ -555,7 +554,7 @@ const QuestUpdatesTable: React.FC = () => {
       setIsLoading(true);
       let signature = "";
       if (currentBounty?.isCreator && currentBounty.currentSubmitter) {
-        signature = await approveRequestFFAOld(
+        signature = await approveRequestFFA(
           new PublicKey(currentBounty.currentSubmitter.publicKey),
           currentBounty?.escrow,
           currentWallet,

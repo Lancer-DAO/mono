@@ -144,11 +144,37 @@ export const CreateBountyForm: FC<Props> = ({
       }, 2000);
 
       setCurrentBounty(bounty);
+      // TODO: why are we waiting 20s before finding the feature account?
+      // is this something we can do in the background as the user moves on?
+      await new Promise((r) => setTimeout(r, Number(20000)));
 
+      const [feature_account] = await findFeatureAccount(
+        timestamp,
+        new PublicKey(currentWallet.publicKey),
+        program
+      );
+
+      const referralAccountIx =
+        await createCustodialReferralDataAccountInstruction(
+          new PublicKey(currentWallet.publicKey),
+          new PublicKey("pyrSoEahjKGKZpLWEYwCJ8zQAsYZckZH8ZqJ7yGd1ha"),
+          feature_account,
+          program,
+          await getSubmitterReferrer(currentWallet.publicKey, mintKey),
+          remainingAccounts
+        );
+      const res2 = await sendGaslessTx(
+        [referralAccountIx],
+        true,
+        currentWallet
+      );
       router.push(`/quests/${bounty.id}`);
       setTimeout(() => {
         toast.dismiss(toastId);
       }, 2000);
+      if (!res2.signature) {
+        throw new Error("Error creating referral account");
+      }
     } catch (error) {
       setCreateQuestState({ error });
       if (error.message === "Wallet is registered to another user") {
