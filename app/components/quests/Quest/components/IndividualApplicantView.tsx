@@ -232,7 +232,6 @@ const IndividualApplicantView: FC<Props> = ({
           ) ? (
             <div className="mt-auto self-stretch">
               <div className="w-full flex items-center justify-end gap-4 px-8 py-4">
-                <ChatButton disabled={isLoading} />
                 <motion.button
                   {...smallClickAnimation}
                   className="bg-white border border-neutral200 h-9 w-fit px-4 py-2

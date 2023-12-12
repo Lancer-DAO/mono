@@ -15,7 +15,6 @@ import ActionsCardBanner from "./ActionsCardBanner";
 import AlertCards from "./AlertCards";
 import CheckpointEdit from "./CheckpointEdit";
 import CheckpointView from "./CheckpointView";
-import { ChatButton } from "@/components";
 import { X } from "lucide-react";
 interface Props {
   quoteData: LancerQuoteData;
