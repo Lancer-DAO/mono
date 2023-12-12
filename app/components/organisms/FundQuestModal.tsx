@@ -111,9 +111,9 @@ const FundQuestModal: FC<Props> = ({
       return new Intl.NumberFormat("en-US", {
         notation: "compact",
         compactDisplay: "short",
-      }).format(1.05 * amount);
+      }).format(1 * amount);
     } else {
-      return (1.05 * amount).toFixed(2);
+      return (1.0 * amount).toFixed(2);
     }
   };
 
@@ -123,9 +123,9 @@ const FundQuestModal: FC<Props> = ({
       return new Intl.NumberFormat("en-US", {
         notation: "compact",
         compactDisplay: "short",
-      }).format(0.05 * amount);
+      }).format(0.0 * amount);
     } else {
-      return (0.05 * amount).toFixed(2);
+      return (0.0 * amount).toFixed(2);
     }
   };
 

@@ -126,14 +126,16 @@ export const QuestRow: FC<Props> = ({ bounty, formData, linked = true }) => {
       </div>
 
       <div className="ml-24 flex flex-wrap gap-2.5 w-full">
-        <div
-          className={cn(
-            "text-xs text-center w-fit px-2 py-1 rounded-lg border",
-            bountyIndustryColor(bounty.industries[0].name)
-          )}
-        >
-          {formatString(bounty.industries[0].name)}
-        </div>
+        {bounty.industries?.length > 0 && (
+          <div
+            className={cn(
+              "text-xs text-center w-fit px-2 py-1 rounded-lg border",
+              bountyIndustryColor(bounty.industries[0].name)
+            )}
+          >
+            {formatString(bounty.industries[0].name)}
+          </div>
+        )}
         {displayedTags.filter((tag) => tag !== "").length > 0 &&
           displayedTags[0] !== "" &&
           displayedTags.map((tag) => {
